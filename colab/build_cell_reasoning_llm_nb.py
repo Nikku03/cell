@@ -1,0 +1,624 @@
+"""Builds colab/cell_reasoning_llm_a100.ipynb and a flat .py copy for a CPU smoke test."""
+import json, sys
+
+CELLS = []
+md = lambda s: CELLS.append(("markdown", s.strip("\n")))
+code = lambda s: CELLS.append(("code", s.strip("\n")))
+
+md(r"""
+# Cell reasoning engine + 30B LLM context, on an A100
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Nikku03/cell/blob/claude/vectorize-gex-propensity-zp09w8/colab/cell_reasoning_llm_a100.ipynb)
+
+This notebook asks one question: **can a reasoning engine predict what happens to a human cell when one gene is switched off, better than a plain learner, if a 30-billion-parameter language model gives it context about each gene?**
+
+What it does, step by step:
+
+1. **Data.** Downloads every input it needs:
+   - the Human Protein Atlas (gene descriptions, protein classes, functions, subcellular locations, K-562 RNA levels, protein–protein interactions);
+   - two Perturb-seq experiments in K562 cells (Replogle et al. 2022);
+   - DepMap gene-dependency data and Reactome pathways.
+2. **GPU data processing.** Loads the knockdown experiments onto the A100. It removes the response every knockdown shares (the "tide") and splits genes into TRAIN and TEST by a fixed hash.
+3. **LLM context.** `Qwen3-30B-A3B-Instruct-2507` (30.5B parameters, Apache 2.0) reads a Protein Atlas profile of each knocked-down gene and is asked what knocking it down would do. Its internal representation of that answer becomes the gene's *context vector*. It also writes plain-text context for a few genes.
+4. **Reasoning engine** (PyTorch, on the GPU).
+   - Each "neuron" is a bump node, wired as a dendritic tree.
+   - The tree runs for 3 steps.
+   - At every step it **snaps** to the k most similar *real measured experiments* in its memory and reads their responses.
+   - The memory holds the TRAIN knockdowns, never the gene being predicted.
+5. **Fair test.**
+   - **Baselines:** the engine, a plain ridge learner and a plain neural net all get the same inputs.
+   - **Is it the LLM?** Versions without the LLM context, and with the LLM context shuffled across genes, show whether the LLM is what helps.
+   - **Upper bound:** the same protein measured in the second, independent K562 experiment.
+6. **LLM action.** For a few random TEST genes, the LLM reads the engine's predicted pathway changes and writes a mechanism and an experiment to test it. Its output is labelled as a hypothesis.
+
+**Runtime.** About 45–90 min on an A100. Most of that is downloading the model weights (≈61 GB) and the data, plus the LLM pass over ~5,000 genes. On a 40 GB A100 the LLM loads in 4-bit; on 80 GB, in bf16.
+
+**Runtime → Change runtime type → A100 GPU** before running. Then *Runtime → Run all*.
+""")
+
+md(r"""
+## Predeclared tests (fixed before any result exists)
+
+Every prediction is scored per TEST knockdown as the Pearson r between the predicted and measured *specific* response, over ~8,200 genes (the knocked-down gene itself is left out). Comparisons are paired over TEST knockdowns with a two-sided sign test.
+
+**BETTER** needs both of:
+- p < 0.05;
+- a median gain of at least **+0.01**.
+
+**WORSE** is the mirror; anything else is **NO DIFFERENCE**.
+
+| Test | Comparison | Question |
+|---|---|---|
+| **H0** | — | Leak check: ridge trained on shuffled answers must score median r < 0.02. |
+| **E1** | ENGINE vs RIDGE | Does the reasoning engine beat the plain learner? |
+| **E2** | ENGINE vs ENGINE-noLLM | Does the LLM context help the engine? |
+| **E3** | RIDGE vs RIDGE-noLLM | Does the LLM context help the plain learner? |
+| **E4** | ENGINE vs ENGINE-shuffledLLM | Does the LLM's *content* matter? (Must be BETTER for E2 to count.) |
+| **E5** | ENGINE vs MLP | Do memory + snapped steps beat a plain network on the same inputs? |
+
+**Caveats, stated now.**
+- The LLM was trained on public text that may include papers describing these very knockdowns. A gain from the LLM could partly be remembered results, not reasoning.
+- One cell line (K562), steady state.
+- The upper bound is the same reagent on a different day.
+
+**Licences.**
+- Replogle 2022 Perturb-seq: CC BY 4.0.
+- Human Protein Atlas v25: CC BY 4.0. Its interaction edges come from IntAct, BioGRID, BioPlex and OpenCell, each under its own terms.
+- DepMap 24Q4: CC BY 4.0.
+- Reactome: CC0.
+- Qwen3: Apache 2.0.
+""")
+
+code(r"""
+# ---- 0. setup ---------------------------------------------------------------------------------------
+import os, sys, json, math, time, hashlib, gzip, zipfile, io, csv, collections, subprocess, urllib.request
+SMOKE = os.environ.get("CELL_SMOKE") == "1"           # CPU smoke test of the non-LLM parts (used before release)
+if not SMOKE:
+    subprocess.run([sys.executable, "-m", "pip", "install", "-q", "transformers>=4.51,<4.58", "accelerate>=1.0",
+                    "bitsandbytes>=0.45", "h5py", "scipy"], check=True)
+import numpy as np
+import torch, torch.nn as nn, torch.nn.functional as F
+from scipy.stats import binomtest
+
+DATA = os.environ.get("CELL_DATA", "/content/data")
+OUTD = os.environ.get("CELL_OUT", "/content/outputs")
+os.makedirs(DATA, exist_ok=True); os.makedirs(OUTD, exist_ok=True)
+MODEL_ID = "Qwen/Qwen3-30B-A3B-Instruct-2507"         # 30.5B parameters (MoE, 3.3B active), Apache 2.0
+FALLBACK_MODEL_ID = "Qwen/Qwen3-32B"                  # dense 32.8B, used only if the MoE cannot load on this GPU
+EMB_LAYER_FRAC = 0.66                                  # which layer gives the context vector (fixed in advance)
+N_EXPLAIN, MIN_GAIN = 6, 0.01
+SEEDS = (0,) if SMOKE else (0, 1, 2)
+EPOCHS = 3 if SMOKE else 150
+DEV = "cuda" if torch.cuda.is_available() else "cpu"
+VRAM_GB = torch.cuda.get_device_properties(0).total_memory / 1e9 if DEV == "cuda" else 0.0
+print("device:", DEV, torch.cuda.get_device_name(0) if DEV == "cuda" else "", f"{VRAM_GB:.0f} GB")
+if DEV != "cuda" and not SMOKE:
+    print("WARNING: no GPU. Runtime > Change runtime type > A100 GPU, then run again.")
+torch.manual_seed(0); np.random.seed(0)
+""")
+
+code(r"""
+# ---- 1. download the data ---------------------------------------------------------------------------
+FILES = {
+    "gwps.h5ad": "https://ndownloader.figshare.com/files/35773217",          # K562 genome-wide Perturb-seq, CC BY 4.0
+    "ess.h5ad": "https://ndownloader.figshare.com/files/35780870",           # K562 essential (independent experiment)
+    "proteinatlas.tsv.zip": "https://www.proteinatlas.org/download/proteinatlas.tsv.zip",
+    "rna_celline.tsv.zip": "https://www.proteinatlas.org/download/tsv/rna_celline.tsv.zip",
+    "subcellular_location.tsv.zip": "https://www.proteinatlas.org/download/tsv/subcellular_location.tsv.zip",
+    "interaction_consensus.tsv.zip": "https://www.proteinatlas.org/download/tsv/interaction_consensus.tsv.zip",
+    "CRISPRGeneEffect.csv": "https://ndownloader.figshare.com/files/51064667",  # DepMap 24Q4, CC BY 4.0
+    "ReactomePathways.gmt.zip": "https://reactome.org/download/current/ReactomePathways.gmt.zip",
+}
+
+def fetch(name, url, tries=5):
+    path = os.path.join(DATA, name)
+    if os.path.exists(path) and os.path.getsize(path) > 0:
+        return path
+    for k in range(tries):
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": "cell-notebook"})
+            with urllib.request.urlopen(req, timeout=600) as r, open(path + ".part", "wb") as fh:
+                while True:
+                    b = r.read(1 << 22)
+                    if not b:
+                        break
+                    fh.write(b)
+            os.replace(path + ".part", path)
+            return path
+        except Exception as ex:
+            print(f"  {name}: attempt {k + 1} failed ({ex}); retrying")
+            time.sleep(2 ** (k + 1))
+    raise RuntimeError(f"could not download {name}")
+
+t0 = time.time()
+P = {n: fetch(n, u) for n, u in FILES.items()}
+for n, p in P.items():
+    print(f"  {n:32s} {os.path.getsize(p) / 1e6:8.1f} MB")
+print(f"downloads ready in {time.time() - t0:.0f}s")
+""")
+
+code(r"""
+# ---- 2. Perturb-seq onto the GPU ------------------------------------------------------------------
+import h5py
+
+def load_screen(path):
+    # One row per knocked-down gene (its strongest-knockdown row), plus non-targeting control rows.
+    f = h5py.File(path, "r")
+    X = f["X"][()]
+    gt = [s.decode() for s in f["obs/gene_transcript"][()]]
+    fold, core, ep = f["obs/fold_expr"][()], f["obs/core_control"][()], f["obs/energy_test_p_value"][()]
+    cats = [s.decode() for s in f["var/__categories/gene_name"][()]]
+    genes = [cats[c] for c in f["var/gene_name"][()]]
+    best, ens = {}, {}
+    for i, g in enumerate(gt):
+        p = g.split("_"); sym = p[1] if len(p) > 1 else g
+        if "non-targeting" in g.lower() or core[i]:
+            continue
+        fv = fold[i] if np.isfinite(fold[i]) else 1.0
+        if sym not in best or fv < best[sym][1]:
+            best[sym] = (i, fv)
+        if p[-1].startswith("ENSG"):
+            ens[sym] = p[-1]
+    kos = sorted(best); rows = [best[k][0] for k in kos]
+    Xt = torch.tensor(X[rows], dtype=torch.float32, device=DEV)
+    Xt[~torch.isfinite(Xt)] = float("nan")
+    return dict(X=Xt, kos=kos, ens=[ens.get(k) for k in kos], genes=genes, ep=np.array([ep[r] for r in rows]))
+
+split = lambda k: "TRAIN" if int(hashlib.sha256(k.encode()).hexdigest(), 16) % 2 == 0 else "TEST"   # same split as the repo
+
+A = load_screen(P["gwps.h5ad"])
+gidx = {}
+for j, g in enumerate(A["genes"]):
+    gidx.setdefault(g, j)
+phen = [i for i, e in enumerate(A["ep"]) if np.isfinite(e) and e < 0.05]
+TR = [i for i in phen if split(A["kos"][i]) == "TRAIN"]; TE = [i for i in phen if split(A["kos"][i]) == "TEST"]
+ACT = A["X"].clone()
+for i in phen:
+    if A["kos"][i] in gidx:
+        ACT[i, gidx[A["kos"][i]]] = float("nan")              # never score a knockdown on its own gene
+tide = torch.nanmean(ACT[TR], 0)
+Y_tr = torch.nan_to_num(ACT[TR] - tide)                      # specific responses the model learns from
+A_te = ACT[TE] - tide                                        # TEST answers (NaN kept, never trained on)
+print(f"knockdowns with a phenotype {len(phen):,}: TRAIN {len(TR):,}, TEST {len(TE):,}; genes {A['X'].shape[1]:,}")
+
+def pearson_rows(Pm, Am):
+    m = torch.isfinite(Am) & torch.isfinite(Pm)
+    n = m.sum(1, keepdim=True).clamp(min=1)
+    Pz, Az = torch.where(m, Pm, 0.0), torch.where(m, Am, 0.0)
+    dp = torch.where(m, Pm - Pz.sum(1, keepdim=True) / n, 0.0)
+    da = torch.where(m, Am - Az.sum(1, keepdim=True) / n, 0.0)
+    return (dp * da).sum(1) / (dp.norm(dim=1) * da.norm(dim=1)).clamp(min=1e-12)
+""")
+
+code(r"""
+# ---- 3. Human Protein Atlas: per-gene profile, locations, K-562 RNA, interactions ----------------------
+def tsv_rows(zpath):
+    z = zipfile.ZipFile(zpath)
+    with z.open(z.namelist()[0]) as fh:
+        yield from csv.DictReader(io.TextIOWrapper(fh, encoding="utf-8"), delimiter="\t")
+
+HPA = {}
+for r in tsv_rows(P["proteinatlas.tsv.zip"]):
+    HPA[r["Ensembl"]] = dict(sym=r["Gene"], desc=r.get("Gene description", ""), syn=r.get("Gene synonym", ""),
+                             cls=", ".join(x.strip() for x in (r.get("Protein class") or "").split(",") if x.strip() and "essential" not in x.lower()),
+                             bp=r.get("Biological process", ""), mf=r.get("Molecular function", ""),
+                             loc=r.get("Subcellular location", ""), cl_spec=r.get("RNA cell line specificity", ""))
+LOCW = {"Enhanced": 1.0, "Supported": 0.75, "Approved": 0.5, "Uncertain": 0.25}
+LOC = collections.defaultdict(dict)
+for r in tsv_rows(P["subcellular_location.tsv.zip"]):
+    for lev, w in LOCW.items():
+        for x in (r.get(lev) or "").split(";"):
+            if x.strip():
+                LOC[r["Gene"]][x.strip()] = max(w, LOC[r["Gene"]].get(x.strip(), 0.0))
+K562_TPM = {}
+z = zipfile.ZipFile(P["rna_celline.tsv.zip"])
+with z.open(z.namelist()[0]) as fh:
+    next(fh)
+    for line in fh:
+        p = line.decode().rstrip("\n").split("\t")
+        if p[2] == "K-562":
+            K562_TPM[p[0]] = float(p[5])
+PPI = collections.defaultdict(set)
+for r in tsv_rows(P["interaction_consensus.tsv.zip"]):
+    a, b = r["ensembl_gene_id_1"], r["ensembl_gene_id_2"]
+    if a != b:
+        PPI[a].add(b); PPI[b].add(a)
+print(f"HPA genes {len(HPA):,}; with locations {len(LOC):,}; K-562 RNA {len(K562_TPM):,}; with interactions {len(PPI):,}")
+
+KN = [A["kos"][i] for i in phen]; KE = [A["ens"][i] for i in phen]
+NPH = len(phen); ROW = {i: j for j, i in enumerate(phen)}
+rtr = torch.tensor([ROW[i] for i in TR]); rte = torch.tensor([ROW[i] for i in TE])
+cov = dict(profile=sum(e in HPA for e in KE), location=sum(e in LOC for e in KE),
+           k562_rna=sum(e in K562_TPM for e in KE), interactions=sum(e in PPI for e in KE))
+print("HPA coverage of the knocked-down genes:", cov, "of", NPH)
+""")
+
+code(r"""
+# ---- 4. per-gene feature blocks (no LLM yet) ---------------------------------------------------------
+def multihot(dicts):
+    vocab = sorted({k for d in dicts for k in d}); ix = {k: j for j, k in enumerate(vocab)}
+    M = torch.zeros(len(dicts), len(vocab) + 1)
+    for i, d in enumerate(dicts):
+        if d:
+            for k, w in d.items():
+                M[i, ix[k]] = w
+        else:
+            M[i, -1] = 1.0
+    return M
+
+B = {}
+B["hloc"] = multihot([LOC.get(e, {}) for e in KE])
+B["hcls"] = multihot([{c.strip(): 1.0 for c in HPA[e]["cls"].split(",") if c.strip()} if e in HPA else {} for e in KE])
+B["hexp"] = torch.tensor([[math.log1p(K562_TPM[e]), 1.0] if e in K562_TPM else [0.0, 0.0] for e in KE])
+# interactions: low-rank embedding of the HPA consensus network (computed on the GPU)
+allg = sorted(set(PPI) | {e for e in KE if e}); pix = {g: j for j, g in enumerate(allg)}
+ii, jj = zip(*[(pix[a], pix[b]) for a in PPI for b in PPI[a]])
+Adj = torch.sparse_coo_tensor(torch.tensor([ii, jj]), torch.ones(len(ii)), (len(allg), len(allg))).to(DEV)
+U, S, _ = torch.svd_lowrank(Adj, q=128, niter=4)
+emb = (U * S).cpu()
+B["ppi"] = torch.stack([emb[pix[e]] if e in PPI else torch.zeros(emb.shape[1]) for e in KE])
+# DepMap gene effects across 1,177 lines, K562 itself removed
+import pandas as pd
+dep = pd.read_csv(P["CRISPRGeneEffect.csv"], index_col=0)
+dep = dep.drop(index=[r for r in dep.index if r == "ACH-000551"])
+dep.columns = [c.split(" (")[0] for c in dep.columns]
+dep = dep.loc[:, ~dep.columns.duplicated()]
+D = torch.zeros(NPH, dep.shape[0] + 1)
+for i, (s, e) in enumerate(zip(KN, KE)):
+    name = s if s in dep.columns else (HPA[e]["sym"] if e in HPA and HPA[e]["sym"] in dep.columns else None)
+    if name:
+        v = torch.tensor(dep[name].values, dtype=torch.float32)
+        D[i, :-1] = torch.nan_to_num(v, nan=float(np.nanmean(dep[name].values)) if np.isfinite(dep[name].values).any() else 0.0)
+        D[i, -1] = 1.0
+mu, sd = D[rtr].mean(0), D[rtr].std(0) + 1e-6
+B["dep"] = (D - mu) / sd
+print({k: tuple(v.shape) for k, v in B.items()}, "| DepMap matched", int(D[:, -1].sum()), "of", NPH)
+""")
+
+code(r"""
+# ---- 5. the 30B LLM: context vectors for every knocked-down gene ---------------------------------------
+def prompt_for(sym, e):
+    h = HPA.get(e, {})
+    lines = [f"Gene: {sym}" + (f" ({h['desc']})" if h.get("desc") else "")]
+    for key, label in (("cls", "Protein class"), ("bp", "Biological process"), ("mf", "Molecular function"),
+                       ("loc", "Subcellular location"), ("cl_spec", "RNA cell line specificity")):
+        if h.get(key):
+            lines.append(f"{label}: {h[key]}")
+    if e in K562_TPM:
+        lines.append(f"RNA level in K-562 cells: {K562_TPM[e]:.1f} nTPM")
+    partners = sorted(HPA[p]["sym"] for p in PPI.get(e, ()) if p in HPA)[:20]
+    if partners:
+        lines.append("Known interaction partners: " + ", ".join(partners))
+    lines.append(f"Question: in K562 erythroleukemia cells, what happens to the cell when {sym} is knocked down "
+                 f"by CRISPRi? Which cellular processes and pathways go up, and which go down?")
+    return "\n".join(lines)
+
+PROMPTS = [prompt_for(s, e) for s, e in zip(KN, KE)]
+print(PROMPTS[0][:800])
+tok = llm = None; USED_MODEL = None
+
+def load_llm(mid, four_bit):
+    from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
+    t = AutoTokenizer.from_pretrained(mid)
+    if t.pad_token is None:
+        t.pad_token = t.eos_token
+    kw = dict(device_map="auto", torch_dtype=torch.bfloat16, low_cpu_mem_usage=True)
+    if four_bit:
+        kw["quantization_config"] = BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_quant_type="nf4",
+                                                       bnb_4bit_compute_dtype=torch.bfloat16, bnb_4bit_use_double_quant=True)
+    m = AutoModelForCausalLM.from_pretrained(mid, **kw).eval()
+    off = [d for d in getattr(m, "hf_device_map", {}).values() if str(d) in ("cpu", "disk")]
+    if off:
+        raise RuntimeError(f"{mid} did not fit on the GPU ({len(off)} modules offloaded)")
+    return t, m
+
+emb_path = os.path.join(OUTD, "llm_context_vectors.npz")
+if SMOKE:
+    E_llm = torch.randn(NPH, 64)                               # stand-in; the real run uses the LLM below
+    print("SMOKE: random stand-in context vectors")
+elif os.path.exists(emb_path) and list(np.load(emb_path, allow_pickle=True)["genes"]) == KN:
+    z_ = np.load(emb_path, allow_pickle=True); E_llm = torch.tensor(z_["E"]); USED_MODEL = str(z_["model"])
+    print("loaded cached context vectors from", USED_MODEL)
+else:
+    four = VRAM_GB < 75
+    try:
+        tok, llm = load_llm(MODEL_ID, four); USED_MODEL = MODEL_ID
+    except Exception as ex:
+        print("primary model failed:", ex, "-> falling back to", FALLBACK_MODEL_ID, "(4-bit)")
+        llm = None; torch.cuda.empty_cache()
+        tok, llm = load_llm(FALLBACK_MODEL_ID, True); USED_MODEL = FALLBACK_MODEL_ID
+    print("LLM:", USED_MODEL, "| 4-bit" if four else "| bf16", f"| GPU memory used {torch.cuda.memory_allocated() / 1e9:.1f} GB")
+    layers = llm.model.layers; L_ix = int(round(EMB_LAYER_FRAC * (len(layers) - 1)))
+    grab = {}
+    hook = layers[L_ix].register_forward_hook(lambda m, i, o: grab.__setitem__("h", o[0] if isinstance(o, tuple) else o))
+    chat = lambda p: tok.apply_chat_template([{"role": "user", "content": p}], tokenize=False, add_generation_prompt=True)
+    texts = [chat(p) for p in PROMPTS]
+    order = np.argsort([len(t) for t in texts]); E_llm = torch.zeros(NPH, llm.config.hidden_size)
+    bs, t1 = 16, time.time()
+    with torch.no_grad():
+        for b0 in range(0, NPH, bs):
+            idx = order[b0:b0 + bs]
+            enc = tok([texts[i] for i in idx], return_tensors="pt", padding=True).to(llm.device)
+            llm(**enc, use_cache=False)
+            h = grab["h"].float(); m = enc["attention_mask"].unsqueeze(-1).float()
+            E_llm[torch.tensor(idx)] = ((h * m).sum(1) / m.sum(1)).cpu()
+            if b0 % (bs * 50) == 0:
+                print(f"  {b0:,}/{NPH:,} genes, {time.time() - t1:.0f}s")
+    hook.remove()
+    np.savez(emb_path, E=E_llm.numpy(), genes=np.array(KN, dtype=object), model=USED_MODEL, layer=L_ix)
+    print(f"context vectors {tuple(E_llm.shape)} from layer {L_ix} in {time.time() - t1:.0f}s")
+
+# compress to 256 dimensions with a PCA fitted on TRAIN genes only
+E0 = E_llm - E_llm[rtr].mean(0)
+_, _, V = torch.pca_lowrank(E0[rtr], q=min(256, len(rtr) - 1, E0.shape[1]), center=False)
+B["llm"] = E0 @ V
+g = torch.Generator().manual_seed(7)
+B["llm_shuffled"] = B["llm"][torch.randperm(NPH, generator=g)]
+""")
+
+code(r"""
+# ---- 6. what the LLM says about a few genes (plain-text context) --------------------------------------
+def generate(prompts, max_new_tokens=220):
+    tok.padding_side = "left"
+    chat = [tok.apply_chat_template([{"role": "user", "content": p}], tokenize=False, add_generation_prompt=True) for p in prompts]
+    enc = tok(chat, return_tensors="pt", padding=True).to(llm.device)
+    with torch.no_grad():
+        out = llm.generate(**enc, max_new_tokens=max_new_tokens, do_sample=False)
+    tok.padding_side = "right"
+    return [tok.decode(o[enc["input_ids"].shape[1]:], skip_special_tokens=True).strip() for o in out]
+
+if llm is not None:
+    for s, txt in zip(KN[:3], generate(PROMPTS[:3])):
+        print(f"=== {s} ===\n{txt}\n")
+else:
+    print("(LLM not loaded in this run: cached vectors or smoke test)")
+""")
+
+code(r"""
+# ---- 7. design matrices: every model gets the same inputs ----------------------------------------------
+def design(names):
+    out = []
+    for n in names:
+        M = B[n].float()
+        c = float((M[rtr] ** 2).sum(1).mean()) + 1e-12          # each block scaled to unit mean squared row norm
+        out.append(M / math.sqrt(c))
+    return torch.cat(out, 1).to(DEV)
+
+BASE = ["dep", "ppi", "hloc", "hcls", "hexp"]
+X_full, X_nollm, X_shuf = design(BASE + ["llm"]), design(BASE), design(BASE + ["llm_shuffled"])
+print("features:", X_full.shape[1], "with LLM,", X_nollm.shape[1], "without")
+# targets in a compact basis: top 128 principal components of TRAIN responses
+_, _, Vy = torch.pca_lowrank(Y_tr, q=128, center=False)
+Ztr = Y_tr @ Vy                                              # TRAIN responses as 128 numbers each
+print("128 components keep", f"{float((Ztr ** 2).sum() / (Y_tr ** 2).sum()):.1%}", "of TRAIN response energy")
+""")
+
+code(r"""
+# ---- 8. plain learner: ridge with lambda by 5-fold CV inside TRAIN -------------------------------------
+LAMS = [10.0 ** k for k in range(-2, 5)]
+
+def ridge_fit_predict(Xtr, Ytr, Xte, lams):
+    xm, ym = Xtr.mean(0), Ytr.mean(0)
+    U_, S_, Vt_ = torch.linalg.svd(Xtr - xm, full_matrices=False)
+    UtY = U_.T @ (Ytr - ym); FV = (Xte - xm) @ Vt_.T
+    return {l: FV @ ((S_ / (S_ ** 2 + l))[:, None] * UtY) + ym for l in lams}
+
+def ridge(X, Ytr_, shuffle=False):
+    Xtr, Xte = X[rtr], X[rte]
+    Yt = Ytr_[torch.randperm(len(Ytr_), generator=torch.Generator().manual_seed(11))] if shuffle else Ytr_
+    folds = torch.randperm(len(Xtr), generator=torch.Generator().manual_seed(2)).chunk(5)
+    acc = collections.defaultdict(list)
+    for f in folds:
+        keep = torch.ones(len(Xtr), dtype=torch.bool); keep[f] = False
+        for l, Pm in ridge_fit_predict(Xtr[keep.to(DEV)], Yt[keep.to(DEV)], Xtr[f.to(DEV)], LAMS).items():
+            acc[l].append(float(pearson_rows(Pm, Yt[f.to(DEV)]).median()))
+    lam = max(LAMS, key=lambda l: np.mean(acc[l]))
+    return ridge_fit_predict(Xtr, Yt, Xte, [lam])[lam], lam
+
+PRED, INFO = {}, {}
+for name, X in (("RIDGE", X_full), ("RIDGE-noLLM", X_nollm)):
+    PRED[name], INFO[name] = ridge(X, Y_tr)
+PRED["RIDGE shuffled answers"], _ = ridge(X_full, Y_tr, shuffle=True)
+print("ridge lambdas:", INFO)
+""")
+
+code(r"""
+# ---- 9. the reasoning engine: bump-node dendritic tree, 3 steps, snap to real experiments ---------------
+class BumpTree(nn.Module):
+    # units x (branch ** levels) linear leaves; each level sums `branch` children, then a learnt bump:
+    # out = v + a * exp(-(v - mu)^2 / (s^2 + 0.01))   (the node that beat the ion-channel node 10/10)
+    def __init__(self, d_in, units=96, branch=4, levels=2):
+        super().__init__()
+        self.u, self.b, self.L = units, branch, levels
+        self.leaf = nn.Linear(d_in, units * branch ** levels)
+        self.w, self.a, self.mu, self.s = (nn.ParameterList() for _ in range(4))
+        nodes = branch ** levels
+        for _ in range(levels):
+            nodes //= branch
+            self.w.append(nn.Parameter(torch.randn(units, nodes, branch) / math.sqrt(branch)))
+            self.a.append(nn.Parameter(torch.full((units, nodes), 0.5)))
+            self.mu.append(nn.Parameter(torch.zeros(units, nodes)))
+            self.s.append(nn.Parameter(torch.ones(units, nodes)))
+
+    def forward(self, z):
+        h = self.leaf(z).view(z.shape[0], self.u, -1)
+        for l in range(self.L):
+            v = (h.view(h.shape[0], self.u, -1, self.b) * self.w[l]).sum(-1)
+            h = v + self.a[l] * torch.exp(-(v - self.mu[l]) ** 2 / (self.s[l] ** 2 + 0.01))
+        return h.squeeze(-1)
+
+
+class Engine(nn.Module):
+    # state h; each step: query the memory of measured experiments, SNAP to the k most similar real ones,
+    # read their responses, update h with the bump tree. Output mixes the snapped real responses with a decoder.
+    def __init__(self, d_x, d_y, units=96, steps=3, k=16, d_key=64):
+        super().__init__()
+        self.steps, self.k = steps, k
+        self.enc = nn.Sequential(nn.Linear(d_x, units), nn.Tanh())
+        self.q, self.key, self.val = nn.Linear(units, d_key), nn.Linear(d_x, d_key), nn.Linear(d_y, units)
+        self.tree = BumpTree(d_x + 2 * units, units)
+        self.out, self.mix = nn.Linear(units, d_y), nn.Linear(units, 1)
+
+    def forward(self, x, mx, my, self_idx=None):
+        h = self.enc(x); K = self.key(mx); V = self.val(my)
+        for _ in range(self.steps):
+            S = self.q(h) @ K.T / math.sqrt(K.shape[1])
+            if self_idx is not None:                         # a TRAIN item may not look itself up
+                S = S.masked_fill(F.one_hot(self_idx, S.shape[1]).bool(), float("-inf"))
+            top = S.topk(self.k, dim=1)
+            w = torch.softmax(top.values, 1).unsqueeze(-1)
+            r_y = (w * my[top.indices]).sum(1); r_h = (w * V[top.indices]).sum(1)
+            h = torch.tanh(self.tree(torch.cat([x, r_h, h], 1)))
+        g = torch.sigmoid(self.mix(h))
+        return g * r_y + (1 - g) * self.out(h)
+
+
+class MLP(nn.Module):
+    def __init__(self, d_x, d_y, hidden=384):
+        super().__init__()
+        self.f = nn.Sequential(nn.Linear(d_x, hidden), nn.GELU(), nn.Linear(hidden, hidden), nn.GELU(), nn.Linear(hidden, d_y))
+
+    def forward(self, x, mx=None, my=None, self_idx=None):
+        return self.f(x)
+
+
+def mlp_hidden(d_x, d_y):
+    # hidden width that gives the plain net about as many parameters as the engine
+    P_eng = sum(p.numel() for p in Engine(d_x, d_y).parameters())
+    b = d_x + d_y + 3
+    return int((-b + math.sqrt(b * b + 4 * P_eng)) / 2)
+
+
+def train_eval(kind, X, seed):
+    # 90/10 split of TRAIN for early stopping; loss = 1 - Pearson r in gene space; memory = TRAIN items only
+    torch.manual_seed(seed)
+    n = len(rtr); perm = torch.randperm(n, generator=torch.Generator().manual_seed(100 + seed)).to(DEV)
+    va, fi = perm[: n // 10], perm[n // 10:]
+    Xtr, Xte = X[rtr.to(DEV)], X[rte.to(DEV)]
+    m = (Engine(X.shape[1], Ztr.shape[1]) if kind == "engine" else MLP(X.shape[1], Ztr.shape[1], mlp_hidden(X.shape[1], Ztr.shape[1]))).to(DEV)
+    opt = torch.optim.AdamW(m.parameters(), lr=2e-3, weight_decay=1e-4)
+    mx, my = Xtr[fi], Ztr[fi]                                    # the memory during training
+    slot = torch.full((n,), -1, dtype=torch.long, device=DEV); slot[fi] = torch.arange(len(fi), device=DEV)
+    best, state = -2.0, None
+    for ep in range(EPOCHS):
+        m.train()
+        for b in fi[torch.randperm(len(fi), device=DEV)].split(256):
+            pz = m(Xtr[b], mx, my, self_idx=slot[b] if kind == "engine" else None)
+            loss = 1 - pearson_rows(pz @ Vy.T, Y_tr[b]).mean()
+            opt.zero_grad(); loss.backward(); nn.utils.clip_grad_norm_(m.parameters(), 1.0); opt.step()
+        if ep % 5 == 4 or ep == EPOCHS - 1:
+            m.eval()
+            with torch.no_grad():
+                r = float(pearson_rows(m(Xtr[va], mx, my) @ Vy.T, Y_tr[va]).median())
+            if r > best:
+                best, state = r, {k: v.detach().clone() for k, v in m.state_dict().items()}
+    m.load_state_dict(state); m.eval()
+    with torch.no_grad():                                        # at test time the memory is all of TRAIN
+        return (m(Xte, Xtr, Ztr) @ Vy.T), best, sum(p.numel() for p in m.parameters())
+
+for name, kind, X in (("ENGINE", "engine", X_full), ("ENGINE-noLLM", "engine", X_nollm),
+                      ("ENGINE-shuffledLLM", "engine", X_shuf), ("MLP", "mlp", X_full)):
+    t1 = time.time(); outs = [train_eval(kind, X, s) for s in SEEDS]
+    PRED[name] = torch.stack([o[0] for o in outs]).mean(0)
+    INFO[name] = dict(val_r=[round(o[1], 3) for o in outs], params=outs[0][2])
+    print(f"{name:20s} seeds {len(SEEDS)}  validation r {INFO[name]['val_r']}  params {outs[0][2]:,}  {time.time() - t1:.0f}s")
+""")
+
+code(r"""
+# ---- 10. scores on TEST, the upper bound, and the predeclared verdicts -------------------------------
+R = {n: torch.nan_to_num(pearson_rows(Pm, A_te)).cpu().numpy() for n, Pm in PRED.items()}
+Bs = load_screen(P["ess.h5ad"]); bk = {p: i for i, p in enumerate(Bs["kos"])}
+bg = {}
+for j, g in enumerate(Bs["genes"]):
+    bg.setdefault(g, j)
+cols = [j for j, g in enumerate(A["genes"]) if g in bg]; bcols = [bg[A["genes"][j]] for j in cols]
+btr = [bk[A["kos"][i]] for i in TR if A["kos"][i] in bk]
+btide = torch.nanmean(Bs["X"][btr][:, bcols], 0)
+te_in_b = [t for t, i in enumerate(TE) if A["kos"][i] in bk]
+Bp = torch.nan_to_num(Bs["X"][[bk[A["kos"][TE[t]]] for t in te_in_b]][:, bcols] - btide)
+ceil = torch.nan_to_num(pearson_rows(Bp, A_te[te_in_b][:, cols])).cpu().numpy()
+
+print("TEST knockdowns: median / mean r of the predicted specific response")
+for n in ("RIDGE", "RIDGE-noLLM", "MLP", "ENGINE", "ENGINE-noLLM", "ENGINE-shuffledLLM", "RIDGE shuffled answers"):
+    print(f"  {n:24s} {np.median(R[n]):+.3f} / {np.mean(R[n]):+.3f}")
+print(f"  {'UPPER BOUND: screen B':24s} {np.median(ceil):+.3f} / {np.mean(ceil):+.3f}   ({len(ceil)} TEST genes also in B)")
+
+def verdict(a, b):
+    d = R[a] - R[b]; d = d[d != 0]
+    w, l = int((d > 0).sum()), int((d < 0).sum())
+    p = binomtest(w, w + l, 0.5).pvalue if w + l else 1.0; md = float(np.median(R[a] - R[b]))
+    v = "BETTER" if p < 0.05 and md >= MIN_GAIN else "WORSE" if p < 0.05 and md <= -MIN_GAIN else "NO DIFFERENCE"
+    return dict(better=w, worse=l, p=float(p), median_diff=md, verdict=v)
+
+h0 = float(np.median(R["RIDGE shuffled answers"])) < 0.02
+print(f"\nH0 leak check: shuffled-answer median r {np.median(R['RIDGE shuffled answers']):+.3f} -> {'PASS' if h0 else 'FAIL'}")
+GATES = {}
+for tag, a, b in (("E1 engine vs plain learner", "ENGINE", "RIDGE"), ("E2 LLM context helps the engine", "ENGINE", "ENGINE-noLLM"),
+                  ("E3 LLM context helps the plain learner", "RIDGE", "RIDGE-noLLM"),
+                  ("E4 LLM content matters (vs shuffled)", "ENGINE", "ENGINE-shuffledLLM"), ("E5 memory + steps vs plain net", "ENGINE", "MLP")):
+    GATES[tag] = verdict(a, b)
+    g_ = GATES[tag]
+    print(f"{tag:42s} better {g_['better']:,} / worse {g_['worse']:,}  median diff {g_['median_diff']:+.4f}  p {g_['p']:.2g} -> {g_['verdict']}")
+if GATES["E2 LLM context helps the engine"]["verdict"] == "BETTER" and GATES["E4 LLM content matters (vs shuffled)"]["verdict"] != "BETTER":
+    print("NOTE: E2 does not count -- shuffled LLM vectors did as well, so the gain is not from the LLM's content.")
+""")
+
+code(r"""
+# ---- 11. LLM action: explain the engine's predictions for a few random TEST genes ------------------------
+GMT = {}
+z = zipfile.ZipFile(P["ReactomePathways.gmt.zip"])
+for line in z.read(z.namelist()[0]).decode().splitlines():
+    p = line.split("\t"); mem = [gidx[g] for g in p[2:] if g in gidx]
+    if 15 <= len(mem) <= 300:
+        GMT[p[0]] = mem
+names = list(GMT); Mp = torch.zeros(A["X"].shape[1], len(names), device=DEV)
+for c, n in enumerate(names):
+    Mp[GMT[n], c] = 1.0
+pw = lambda v: (torch.nan_to_num(v) @ Mp) / Mp.sum(0)
+rng = np.random.default_rng(3); pick = rng.choice(len(TE), size=min(N_EXPLAIN, len(TE)), replace=False)   # random, not cherry-picked
+REPORTS = []
+for t in pick:
+    s, e = A["kos"][TE[t]], A["ens"][TE[t]]
+    pp, pa = pw(PRED["ENGINE"][t]), pw(A_te[t])
+    up = [names[i] for i in pp.argsort(descending=True)[:5].tolist()]; dn = [names[i] for i in pp.argsort()[:5].tolist()]
+    mup = [names[i] for i in pa.argsort(descending=True)[:5].tolist()]; mdn = [names[i] for i in pa.argsort()[:5].tolist()]
+    rep = dict(gene=s, r=float(R["ENGINE"][t]), predicted_up=up, predicted_down=dn, measured_up=mup, measured_down=mdn)
+    if llm is not None:
+        q = (prompt_for(s, e).rsplit("Question:", 1)[0] + f"\nA reasoning engine predicts that knocking down {s} in K562 cells "
+             f"RAISES: {'; '.join(up)}\nand LOWERS: {'; '.join(dn)}.\nIn 3-4 sentences, give the most likely mechanism, "
+             f"say which parts you doubt, and propose one experiment that would test it. This is a hypothesis.")
+        rep["llm_hypothesis"] = generate([q], max_new_tokens=260)[0]
+    REPORTS.append(rep)
+    print(f"=== {s}  (engine r on this gene {rep['r']:+.2f}) ===")
+    print("  predicted up:  ", "; ".join(up)); print("  measured up:   ", "; ".join(mup))
+    print("  predicted down:", "; ".join(dn)); print("  measured down: ", "; ".join(mdn))
+    if "llm_hypothesis" in rep:
+        print("  LLM hypothesis:", rep["llm_hypothesis"])
+    print()
+""")
+
+code(r"""
+# ---- 12. save everything ----------------------------------------------------------------------------
+res = dict(model=USED_MODEL, smoke=SMOKE, device=DEV, n_train=len(TR), n_test=len(TE), hpa_coverage=cov,
+           scores={n: dict(median=float(np.median(v)), mean=float(np.mean(v))) for n, v in R.items()},
+           upper_bound=dict(median=float(np.median(ceil)), mean=float(np.mean(ceil)), n=len(ceil)),
+           H0=bool(h0), gates=GATES, info=INFO, explanations=REPORTS)
+with open(os.path.join(OUTD, "results.json"), "w") as fh:
+    json.dump(res, fh, indent=1, default=str)
+print("saved", os.path.join(OUTD, "results.json"))
+# To keep results after the session ends:  from google.colab import drive; drive.mount('/content/drive')
+# then copy /content/outputs to /content/drive/MyDrive/.
+""")
+
+nb = dict(nbformat=4, nbformat_minor=5, metadata=dict(
+    accelerator="GPU", colab=dict(gpuType="A100", machine_shape="hm", provenance=[]),
+    kernelspec=dict(display_name="Python 3", language="python", name="python3"), language_info=dict(name="python")),
+    cells=[])
+for k, (t, s) in enumerate(CELLS):
+    c = dict(cell_type=t, metadata={}, source=s.splitlines(keepends=True), id=f"c{k:02d}")
+    if t == "code":
+        c.update(execution_count=None, outputs=[])
+    nb["cells"].append(c)
+json.dump(nb, open(sys.argv[1], "w"), indent=1)
+open(sys.argv[2], "w").write("\n\n".join(s for t, s in CELLS if t == "code") + "\n")
+print("cells:", len(CELLS))
