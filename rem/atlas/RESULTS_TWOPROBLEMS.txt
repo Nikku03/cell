@@ -5517,3 +5517,28 @@ NOTEBOOK SECTION 12 -- A 30B LLM FINE-TUNED ON GENE DOCUMENTS -> MEASURED KNOCKD
   gene, and the LLM was pretrained on public text that may include these screens' papers, so part of the
   gain could be recall of published results rather than reasoning from biology. The next test removes
   gene names and synonyms from the documents (predeclared before running). One fine-tuning seed.
+
+=================================================================================================
+NOTEBOOK SECTION 13 -- THE NAMELESS-DOCUMENTS TEST: VERDICT UNRESOLVED (THE GAIN MOSTLY SURVIVES)
+=================================================================================================
+  Gates N1-N4 / S1-S3 and the verdict rule predeclared in the notebook (pushed before the run). Run by
+  the user on a Colab A100; numbers from the printed output. Fresh adapters, identical settings, same
+  TRAIN / held-out / TEST genes as section 12. Own-name mentions scrubbed (6); no document names its gene.
+        median / mean r on TEST: named LLM-FT 0.194 / 0.205 | NAMELESS LLM-FT 0.188 / 0.191 (another
+        gene's doc 0.046) | nameless ensemble 0.202 / 0.203 | NO NAMES AT ALL (partner names -> count)
+        LLM-FT 0.168 / 0.162 (another gene's doc 0.050) | its ensemble 0.189 / 0.190 | ridge 0.181 / 0.170
+  N1 nameless vs named: -0.0020 (1,190 / 1,335) -> NO DIFFERENCE. The gene's own name adds little.
+  N2 nameless LLM-FT vs ridge: +0.0065 (1,415 / 1,110, p 1e-9) -> NO DIFFERENCE.
+  N3 nameless ensemble vs ridge (PRIMARY): +0.0098 (1,720 / 805, p 1e-75) -> NO DIFFERENCE, 0.0002 under
+     the predeclared +0.01 bar. The named ensemble's +0.0116 shrank to +0.0098: about 85% survives.
+  N4 nameless reads its document: +0.045 -> BETTER.
+  S1 no names at all vs named: -0.0072 (1,068 / 1,457, p 1e-14) -> NO DIFFERENCE by the bar, but
+     consistently lower: partner names carry real information (who works with whom).
+  S2 no names at all vs ridge: +0.0004 -> NO DIFFERENCE.   S3 its ensemble vs ridge: +0.0067 -> NO DIFFERENCE.
+  VERDICT, by the predeclared rule: UNRESOLVED (N3 not BETTER, N1 not WORSE).
+  READING, not a verdict: removing the gene's own name costs almost nothing, so recall of the named gene
+  is at most a small part of section 12's gain; removing partner names costs more, so most of what the
+  LLM uses is the gene's functional description plus whom it works with. Partner names could in
+  principle also let the model recall a complex's published results; this test cannot separate that from
+  biology. Section 12's F4 BETTER stands as recorded, with this caveat attached. One fine-tuning seed per
+  arm: the N3 miss (0.0098 vs 0.0100) is well inside seed-to-seed variation, which was not measured.
