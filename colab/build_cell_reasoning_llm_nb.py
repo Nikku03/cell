@@ -31,8 +31,9 @@ What it does, step by step:
    - **Upper bound:** the same protein measured in the second, independent K562 experiment.
 6. **LLM action.** For a few random TEST genes, the LLM reads the engine's predicted pathway changes and writes a mechanism and an experiment to test it. Its output is labelled as a hypothesis.
 7. **Fine-tuning the LLM on documents → results (QLoRA).** The LLM is taught, on TRAIN genes only, to read a gene's Atlas document and predict what was actually measured when that gene was knocked down. It then predicts TEST genes it never saw. Only small adapter layers (LoRA) and a prediction head are trained.
+8. **The nameless-documents test.** The LLM was pretrained on public text that may include these screens' papers. If it does well only because it recognises the gene's *name* and recalls published results, that is memory, not reasoning. Section 13 fine-tunes again, from scratch and with identical settings, on documents with the gene's name, aliases and full name removed. A second version also replaces the interaction partners' names with a count.
 
-**Runtime.** About 45–90 min on an A100 for sections 1–11, plus about 30–60 min for the fine-tuning (section 12). Most of that is downloading the model weights (≈61 GB) and the data, plus the LLM pass over ~5,000 genes. On a 40 GB A100 the LLM loads in 4-bit; on 80 GB, in bf16.
+**Runtime.** About 45–90 min on an A100 for sections 1–11, plus about 30 min per fine-tuning run: one in section 12, two in section 13 (set `RUN_STRICT = False` to skip the second). Most of that is downloading the model weights (≈61 GB) and the data, plus the LLM pass over ~5,000 genes. On a 40 GB A100 the LLM loads in 4-bit; on 80 GB, in bf16.
 
 **Runtime → Change runtime type → A100 GPU** before running. Then *Runtime → Run all*.
 """)
@@ -67,6 +68,21 @@ Every prediction is scored per TEST knockdown as the Pearson r between the predi
 | **F4** | ENSEMBLE (mean of LLM-FT and RIDGE, each put on the same scale first) vs RIDGE | Does it add something the plain learner lacks? |
 
 Fine-tuning sees TRAIN genes only. 10% of TRAIN is held out to pick the best epoch. TEST genes are touched once, at the end.
+
+**Nameless-documents tests (section 13), same rule.**
+
+| Test | Comparison | Question |
+|---|---|---|
+| **N1** | LLM-FT-nameless vs LLM-FT (named) | Did names carry part of the gain? WORSE = yes. |
+| **N2** | LLM-FT-nameless vs RIDGE | Same question as F1, without names. |
+| **N3** | ENSEMBLE-nameless vs RIDGE | Same question as F4, without names. **Primary.** |
+| **N4** | LLM-FT-nameless vs reading another gene's nameless document | Must be BETTER for N2/N3 to count. |
+| **S1–S3** | As N1–N3, with partner names also removed | Is it still there with no gene names at all? |
+
+**Verdicts, fixed now.**
+- **GAIN SURVIVES WITHOUT NAMES** if N3 and N4 are both BETTER.
+- **GAIN SURVIVES WITHOUT ANY GENE NAMES** if S3 is also BETTER.
+- **GAIN NEEDS NAMES** if N3 is not BETTER and N1 is WORSE.
 
 **Caveats, stated now.**
 - The LLM was trained on public text that may include papers describing these very knockdowns. A gain from the LLM could partly be remembered results, not reasoning.
@@ -731,11 +747,136 @@ else:
 """)
 
 code(r"""
-# ---- 13. save everything ----------------------------------------------------------------------------
+# ---- 13. the nameless-documents test: biology from the text, or recall of a named gene? -------------------
+# Fine-tunes again from scratch (fresh LoRA + head, identical settings, same TRAIN / held-out / TEST genes) on
+# documents with the gene's own names removed. A second run also replaces partner names with a count.
+import re
+NAMELESS = {}
+RUN_STRICT = True
+
+def prompt_nameless(sym, e, partners=True):
+    h = HPA.get(e, {})
+    lines = ["Gene: [name withheld]"]
+    for key, label in (("cls", "Protein class"), ("bp", "Biological process"), ("mf", "Molecular function"),
+                       ("loc", "Subcellular location"), ("cl_spec", "RNA cell line specificity")):
+        if h.get(key):
+            lines.append(f"{label}: {h[key]}")
+    if e in K562_TPM:
+        lines.append(f"RNA level in K-562 cells: {K562_TPM[e]:.1f} nTPM")
+    ps = sorted(HPA[q]["sym"] for q in PPI.get(e, ()) if q in HPA)
+    if ps:
+        lines.append("Known interaction partners: " + ", ".join(ps[:20]) if partners else f"Number of known interaction partners: {len(ps)}")
+    lines.append("Question: in K562 erythroleukemia cells, what happens to the cell when this gene is knocked down "
+                 "by CRISPRi? Which cellular processes and pathways go up, and which go down?")
+    text = "\n".join(lines)
+    names = {sym, h.get("sym", "")} | {x.strip() for x in h.get("syn", "").split(",") if x.strip()}
+    hits = 0
+    for nm in sorted((x for x in names if len(x) >= 2), key=len, reverse=True):   # any leftover own-name mention
+        text, k = re.subn(r"(?<![A-Za-z0-9-])" + re.escape(nm) + r"(?![A-Za-z0-9-])", "[name withheld]", text)
+        hits += k
+    return text, hits
+
+def finetune_on(texts, label):
+    # identical to section 12, but starting again from fresh adapters and a fresh head
+    torch.manual_seed(0)
+    for mod in pm.modules():
+        if hasattr(mod, "reset_lora_parameters") and "default" in getattr(mod, "lora_A", {}):
+            mod.reset_lora_parameters("default", True)
+    hd = nn.Sequential(nn.LayerNorm(llm.config.hidden_size), nn.Linear(llm.config.hidden_size, Ztr.shape[1])).to(DEV)
+    chat = [tok.apply_chat_template([{"role": "user", "content": q}], tokenize=False, add_generation_prompt=True) for q in texts]
+
+    def pool(ix):
+        enc = tok([chat[i] for i in ix], return_tensors="pt", padding=True, truncation=True, max_length=FT_MAXLEN)
+        enc = {k: v.to(dev0) for k, v in enc.items()}
+        h = dec(input_ids=enc["input_ids"], attention_mask=enc["attention_mask"]).last_hidden_state.float()
+        m = enc["attention_mask"].unsqueeze(-1).float()
+        return ((h * m).sum(1) / m.sum(1)).to(DEV)
+
+    def predict(rows, bs=16):
+        pm.eval(); hd.eval(); out = []
+        with torch.no_grad():
+            for k in range(0, len(rows), bs):
+                out.append(hd(pool(rows[k:k + bs])) @ Vy.T)
+        return torch.cat(out)
+
+    lora = [q for q in pm.parameters() if q.requires_grad]
+    opt = torch.optim.AdamW([{"params": lora, "lr": 1e-4}, {"params": hd.parameters(), "lr": 1e-3}])
+    best, state, t1 = -2.0, None, time.time()
+    for ep in range(FT_EPOCHS):
+        pm.train(); hd.train(); opt.zero_grad()
+        for k, b in enumerate(fi[torch.randperm(len(fi))].split(FT_BATCH)):
+            z = hd(pool([rtr_l[j] for j in b.tolist()]))
+            loss = (1 - pearson_rows(z @ Vy.T, Y_tr[b.to(DEV)]).mean()) / FT_ACCUM
+            loss.backward()
+            if (k + 1) % FT_ACCUM == 0:
+                nn.utils.clip_grad_norm_(lora + list(hd.parameters()), 1.0); opt.step(); opt.zero_grad()
+        r_va = float(pearson_rows(predict([rtr_l[j] for j in va.tolist()]), Y_tr[va.to(DEV)]).median())
+        print(f"  [{label}] epoch {ep + 1}: held-out TRAIN median r {r_va:+.3f}  ({time.time() - t1:.0f}s)")
+        if r_va > best:
+            best = r_va
+            state = ({nm: q.detach().clone() for nm, q in pm.named_parameters() if q.requires_grad},
+                     {kk: v.detach().clone() for kk, v in hd.state_dict().items()})
+    with torch.no_grad():
+        for nm, q in pm.named_parameters():
+            if nm in state[0]:
+                q.copy_(state[0][nm])
+    hd.load_state_dict(state[1])
+    te_rows = rte.tolist()
+    return predict(te_rows), predict([te_rows[i] for i in sh]), best
+
+if not DO_FT:
+    print("Nameless test skipped: no fine-tuning in this run.")
+else:
+    runs = [("nameless", True)] + ([("nameless, no partner names", False)] if RUN_STRICT else [])
+    unit_ = lambda M: (M - M.mean(1, keepdim=True)) / (M - M.mean(1, keepdim=True)).norm(dim=1, keepdim=True).clamp(min=1e-12)
+    for tag, partners in runs:
+        made = [prompt_nameless(sname, e, partners) for sname, e in zip(KN, KE)]
+        texts = [t for t, _ in made]
+        left = sum(1 for t, sname in zip(texts, KN) if re.search(r"(?<![A-Za-z0-9-])" + re.escape(sname) + r"(?![A-Za-z0-9-])", t))
+        print(f"{tag}: own-name mentions removed {sum(h for _, h in made):,}; documents still naming their gene: {left}")
+        print("  example:", texts[0][:400].replace("\n", " | "))
+        p_ft, p_other, best = finetune_on(texts, tag)
+        PRED[f"LLM-FT {tag}"] = p_ft
+        PRED[f"LLM-FT {tag}, another gene's document"] = p_other
+        PRED[f"ENSEMBLE {tag}"] = (unit_(p_ft) + unit_(PRED["RIDGE"])) / 2
+        NAMELESS[tag] = dict(best_heldout_r=best)
+        for nm in (f"LLM-FT {tag}", f"LLM-FT {tag}, another gene's document", f"ENSEMBLE {tag}"):
+            R[nm] = torch.nan_to_num(pearson_rows(PRED[nm], A_te)).cpu().numpy()
+            print(f"  {nm:58s} {np.median(R[nm]):+.3f} / {np.mean(R[nm]):+.3f}")
+    print(f"  {'LLM-FT (named, section 12)':58s} {np.median(R['LLM-FT']):+.3f} / {np.mean(R['LLM-FT']):+.3f}")
+    print(f"  {'RIDGE':58s} {np.median(R['RIDGE']):+.3f} / {np.mean(R['RIDGE']):+.3f}")
+    tests = [("N1 names carried part of the gain? (nameless vs named)", "LLM-FT nameless", "LLM-FT"),
+             ("N2 nameless fine-tuned LLM vs plain learner", "LLM-FT nameless", "RIDGE"),
+             ("N3 nameless ensemble vs plain learner (PRIMARY)", "ENSEMBLE nameless", "RIDGE"),
+             ("N4 nameless: reads the document (vs another gene's)", "LLM-FT nameless", "LLM-FT nameless, another gene's document")]
+    if RUN_STRICT:
+        t2 = "nameless, no partner names"
+        tests += [("S1 no names at all vs named", f"LLM-FT {t2}", "LLM-FT"),
+                  ("S2 no names at all vs plain learner", f"LLM-FT {t2}", "RIDGE"),
+                  ("S3 no names at all, ensemble vs plain learner", f"ENSEMBLE {t2}", "RIDGE")]
+    for tag, a, b in tests:
+        GATES[tag] = verdict(a, b); g_ = GATES[tag]
+        print(f"{tag:54s} better {g_['better']:,} / worse {g_['worse']:,}  median diff {g_['median_diff']:+.4f}  p {g_['p']:.2g} -> {g_['verdict']}")
+    v = lambda t: GATES[t]["verdict"]
+    n3, n4, n1 = v(tests[2][0]), v(tests[3][0]), v(tests[0][0])
+    if n3 == "BETTER" and n4 == "BETTER":
+        final = "GAIN SURVIVES WITHOUT NAMES"
+        if RUN_STRICT and v(tests[6][0]) == "BETTER":
+            final = "GAIN SURVIVES WITHOUT ANY GENE NAMES"
+    elif n1 == "WORSE":
+        final = "GAIN NEEDS NAMES"
+    else:
+        final = "UNRESOLVED (see the lines above)"
+    NAMELESS["verdict"] = final
+    print("\nVERDICT:", final)
+""")
+
+code(r"""
+# ---- 14. save everything ----------------------------------------------------------------------------
 res = dict(model=USED_MODEL, smoke=SMOKE, device=DEV, n_train=len(TR), n_test=len(TE), hpa_coverage=cov,
            scores={n: dict(median=float(np.median(v)), mean=float(np.mean(v))) for n, v in R.items()},
            upper_bound=dict(median=float(np.median(ceil)), mean=float(np.mean(ceil)), n=len(ceil)),
-           H0=bool(h0), gates=GATES, info=INFO, explanations=REPORTS, fine_tuning=FT)
+           H0=bool(h0), gates=GATES, info=INFO, explanations=REPORTS, fine_tuning=FT, nameless=NAMELESS)
 with open(os.path.join(OUTD, "results.json"), "w") as fh:
     json.dump(res, fh, indent=1, default=str)
 print("saved", os.path.join(OUTD, "results.json"))
