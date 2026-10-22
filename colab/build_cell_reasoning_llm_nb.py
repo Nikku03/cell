@@ -86,6 +86,7 @@ code(r"""
 import os, sys, json, math, time, hashlib, gzip, zipfile, io, csv, collections, subprocess, urllib.request
 SMOKE = os.environ.get("CELL_SMOKE") == "1"           # CPU smoke test of the non-LLM parts (used before release)
 if not SMOKE:
+    subprocess.run([sys.executable, "-m", "pip", "uninstall", "-y", "-q", "torchao"], check=False)   # unused here; old versions break peft
     subprocess.run([sys.executable, "-m", "pip", "install", "-q", "transformers>=4.51,<4.58", "accelerate>=1.0",
                     "bitsandbytes>=0.45", "peft>=0.13", "h5py", "scipy"], check=True)
 import numpy as np
@@ -324,14 +325,11 @@ def load_llm(mid, four_bit):
         raise RuntimeError(f"{mid} did not fit on the GPU ({len(off)} modules offloaded)")
     return t, m
 
-emb_path = os.path.join(OUTD, "llm_context_vectors.npz")
-if SMOKE:
-    E_llm = torch.randn(NPH, 64)                               # stand-in; the real run uses the LLM below
-    print("SMOKE: random stand-in context vectors")
-elif os.path.exists(emb_path) and list(np.load(emb_path, allow_pickle=True)["genes"]) == KN:
-    z_ = np.load(emb_path, allow_pickle=True); E_llm = torch.tensor(z_["E"]); USED_MODEL = str(z_["model"])
-    print("loaded cached context vectors from", USED_MODEL)
-else:
+def get_llm():
+    # load the LLM once: bf16 on an 80 GB GPU, 4-bit on 40 GB; fall back to the dense 32B model if needed
+    global tok, llm, USED_MODEL
+    if llm is not None:
+        return
     four = VRAM_GB < 75
     try:
         tok, llm = load_llm(MODEL_ID, four); USED_MODEL = MODEL_ID
@@ -340,6 +338,16 @@ else:
         llm = None; torch.cuda.empty_cache()
         tok, llm = load_llm(FALLBACK_MODEL_ID, True); USED_MODEL = FALLBACK_MODEL_ID
     print("LLM:", USED_MODEL, "| 4-bit" if four else "| bf16", f"| GPU memory used {torch.cuda.memory_allocated() / 1e9:.1f} GB")
+
+emb_path = os.path.join(OUTD, "llm_context_vectors.npz")
+if SMOKE:
+    E_llm = torch.randn(NPH, 64)                               # stand-in; the real run uses the LLM below
+    print("SMOKE: random stand-in context vectors")
+elif os.path.exists(emb_path) and list(np.load(emb_path, allow_pickle=True)["genes"]) == KN:
+    z_ = np.load(emb_path, allow_pickle=True); E_llm = torch.tensor(z_["E"]); USED_MODEL = str(z_["model"])
+    print("loaded cached context vectors from", USED_MODEL)
+else:
+    get_llm()
     layers = llm.model.layers; L_ix = int(round(EMB_LAYER_FRAC * (len(layers) - 1)))
     grab = {}
     hook = layers[L_ix].register_forward_hook(lambda m, i, o: grab.__setitem__("h", o[0] if isinstance(o, tuple) else o))
@@ -627,10 +635,12 @@ def tiny_llm_for_smoke_test():
 
 if SMOKE and llm is None and os.environ.get("CELL_TINY_LLM") == "1":
     tok, llm = tiny_llm_for_smoke_test(); USED_MODEL = "tiny smoke-test model"
+if llm is None and not SMOKE:
+    print("Loading the LLM for fine-tuning (the context vectors above came from the cache).")
+    get_llm()
 DO_FT = llm is not None
 if not DO_FT:
-    print("Fine-tuning skipped: the LLM is not loaded in this session (cached vectors were used).",
-          "Delete", emb_path, "and run all cells again to load it.")
+    print("Fine-tuning skipped: no LLM in this smoke test.")
 else:
     from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
     FT_EPOCHS = 1 if SMOKE else (2 if USED_MODEL == MODEL_ID else 1)
