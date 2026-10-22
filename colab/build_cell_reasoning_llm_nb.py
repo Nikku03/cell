@@ -30,8 +30,9 @@ What it does, step by step:
    - **Is it the LLM?** Versions without the LLM context, and with the LLM context shuffled across genes, show whether the LLM is what helps.
    - **Upper bound:** the same protein measured in the second, independent K562 experiment.
 6. **LLM action.** For a few random TEST genes, the LLM reads the engine's predicted pathway changes and writes a mechanism and an experiment to test it. Its output is labelled as a hypothesis.
+7. **Fine-tuning the LLM on documents → results (QLoRA).** The LLM is taught, on TRAIN genes only, to read a gene's Atlas document and predict what was actually measured when that gene was knocked down. It then predicts TEST genes it never saw. Only small adapter layers (LoRA) and a prediction head are trained.
 
-**Runtime.** About 45–90 min on an A100. Most of that is downloading the model weights (≈61 GB) and the data, plus the LLM pass over ~5,000 genes. On a 40 GB A100 the LLM loads in 4-bit; on 80 GB, in bf16.
+**Runtime.** About 45–90 min on an A100 for sections 1–11, plus about 30–60 min for the fine-tuning (section 12). Most of that is downloading the model weights (≈61 GB) and the data, plus the LLM pass over ~5,000 genes. On a 40 GB A100 the LLM loads in 4-bit; on 80 GB, in bf16.
 
 **Runtime → Change runtime type → A100 GPU** before running. Then *Runtime → Run all*.
 """)
@@ -56,6 +57,17 @@ Every prediction is scored per TEST knockdown as the Pearson r between the predi
 | **E4** | ENGINE vs ENGINE-shuffledLLM | Does the LLM's *content* matter? (Must be BETTER for E2 to count.) |
 | **E5** | ENGINE vs MLP | Do memory + snapped steps beat a plain network on the same inputs? |
 
+**Fine-tuning tests (section 12), same rule.**
+
+| Test | Comparison | Question |
+|---|---|---|
+| **F1** | LLM-FT vs RIDGE | Does the fine-tuned LLM beat the plain learner? |
+| **F2** | LLM-FT vs RIDGE on frozen-LLM vectors | Does fine-tuning add anything over the same LLM left as it was? |
+| **F3** | LLM-FT vs LLM-FT reading another gene's document | Does it really read the document? (Must be BETTER for F1/F2 to count.) |
+| **F4** | ENSEMBLE (mean of LLM-FT and RIDGE, each put on the same scale first) vs RIDGE | Does it add something the plain learner lacks? |
+
+Fine-tuning sees TRAIN genes only. 10% of TRAIN is held out to pick the best epoch. TEST genes are touched once, at the end.
+
 **Caveats, stated now.**
 - The LLM was trained on public text that may include papers describing these very knockdowns. A gain from the LLM could partly be remembered results, not reasoning.
 - One cell line (K562), steady state.
@@ -75,7 +87,7 @@ import os, sys, json, math, time, hashlib, gzip, zipfile, io, csv, collections, 
 SMOKE = os.environ.get("CELL_SMOKE") == "1"           # CPU smoke test of the non-LLM parts (used before release)
 if not SMOKE:
     subprocess.run([sys.executable, "-m", "pip", "install", "-q", "transformers>=4.51,<4.58", "accelerate>=1.0",
-                    "bitsandbytes>=0.45", "h5py", "scipy"], check=True)
+                    "bitsandbytes>=0.45", "peft>=0.13", "h5py", "scipy"], check=True)
 import numpy as np
 import torch, torch.nn as nn, torch.nn.functional as F
 from scipy.stats import binomtest
@@ -598,11 +610,122 @@ for t in pick:
 """)
 
 code(r"""
-# ---- 12. save everything ----------------------------------------------------------------------------
+# ---- 12. fine-tune the LLM: gene document in, measured knockdown response out (QLoRA) -------------------
+# Only small LoRA adapters on the attention layers and a linear prediction head are trained, on TRAIN genes.
+# The head reads the mean of the LLM's last hidden layer and predicts the 128 response components; the loss is
+# the same as the engine's (1 - Pearson r in gene space). 10% of TRAIN picks the best epoch; TEST is used once.
+FT = {}
+
+def tiny_llm_for_smoke_test():
+    # used only by the CPU smoke test before release: a 2-layer random Qwen3-MoE with the real tokenizer
+    from transformers import AutoTokenizer, Qwen3MoeConfig, Qwen3MoeForCausalLM
+    t = AutoTokenizer.from_pretrained(MODEL_ID)
+    cfg = Qwen3MoeConfig(vocab_size=len(t), hidden_size=64, intermediate_size=128, moe_intermediate_size=32,
+                         num_hidden_layers=2, num_attention_heads=4, num_key_value_heads=2, head_dim=16,
+                         num_experts=8, num_experts_per_tok=2, max_position_embeddings=4096)
+    return t, Qwen3MoeForCausalLM(cfg)
+
+if SMOKE and llm is None and os.environ.get("CELL_TINY_LLM") == "1":
+    tok, llm = tiny_llm_for_smoke_test(); USED_MODEL = "tiny smoke-test model"
+DO_FT = llm is not None
+if not DO_FT:
+    print("Fine-tuning skipped: the LLM is not loaded in this session (cached vectors were used).",
+          "Delete", emb_path, "and run all cells again to load it.")
+else:
+    from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
+    FT_EPOCHS = 1 if SMOKE else (2 if USED_MODEL == MODEL_ID else 1)
+    FT_BATCH, FT_ACCUM, FT_MAXLEN = 8, 2, 512
+    tok.padding_side = "right"
+    llm.config.use_cache = False
+    gc_kw = dict(gradient_checkpointing_kwargs={"use_reentrant": False})
+    if getattr(llm, "is_loaded_in_4bit", False):
+        llm = prepare_model_for_kbit_training(llm, use_gradient_checkpointing=True, **gc_kw)
+    else:
+        llm.gradient_checkpointing_enable(**gc_kw)
+    pm = get_peft_model(llm, LoraConfig(r=16, lora_alpha=32, lora_dropout=0.05, task_type="CAUSAL_LM",
+                                        target_modules=["q_proj", "k_proj", "v_proj", "o_proj"]))
+    dec = pm.get_base_model().model                     # transformer body with LoRA inside; no vocabulary head
+    dev0 = next(dec.parameters()).device
+    head = nn.Sequential(nn.LayerNorm(llm.config.hidden_size), nn.Linear(llm.config.hidden_size, Ztr.shape[1])).to(DEV)
+    CHAT = [tok.apply_chat_template([{"role": "user", "content": q}], tokenize=False, add_generation_prompt=True) for q in PROMPTS]
+
+    def pooled(ix):
+        enc = tok([CHAT[i] for i in ix], return_tensors="pt", padding=True, truncation=True, max_length=FT_MAXLEN)
+        enc = {k: v.to(dev0) for k, v in enc.items()}
+        h = dec(input_ids=enc["input_ids"], attention_mask=enc["attention_mask"]).last_hidden_state.float()
+        m = enc["attention_mask"].unsqueeze(-1).float()
+        return ((h * m).sum(1) / m.sum(1)).to(DEV)
+
+    def ft_predict(phen_rows, bs=16):
+        pm.eval(); head.eval(); out = []
+        with torch.no_grad():
+            for k in range(0, len(phen_rows), bs):
+                out.append(head(pooled(phen_rows[k:k + bs])) @ Vy.T)
+        return torch.cat(out)
+
+    n_tr = len(rtr); perm = torch.randperm(n_tr, generator=torch.Generator().manual_seed(100))
+    va, fi = perm[: n_tr // 10], perm[n_tr // 10:]
+    if SMOKE:
+        va, fi = va[:32], fi[:64]
+    rtr_l = rtr.tolist()
+    lora = [q for q in pm.parameters() if q.requires_grad]
+    opt = torch.optim.AdamW([{"params": lora, "lr": 1e-4}, {"params": head.parameters(), "lr": 1e-3}])
+    print(f"fine-tuning {USED_MODEL}: {sum(q.numel() for q in lora):,} LoRA + {sum(q.numel() for q in head.parameters()):,} head "
+          f"parameters; {len(fi):,} TRAIN genes, {len(va):,} held out; {FT_EPOCHS} epoch(s)")
+    best, best_state, t1, step = -2.0, None, time.time(), 0
+    for ep in range(FT_EPOCHS):
+        pm.train(); head.train(); opt.zero_grad()
+        for k, b in enumerate(fi[torch.randperm(len(fi))].split(FT_BATCH)):
+            z = head(pooled([rtr_l[j] for j in b.tolist()]))
+            loss = (1 - pearson_rows(z @ Vy.T, Y_tr[b.to(DEV)]).mean()) / FT_ACCUM
+            loss.backward()
+            if (k + 1) % FT_ACCUM == 0:
+                nn.utils.clip_grad_norm_(lora + list(head.parameters()), 1.0); opt.step(); opt.zero_grad()
+            step += 1
+            if step == 10:
+                per = (time.time() - t1) / 10
+                print(f"  {per:.1f}s per batch -> about {per * FT_EPOCHS * math.ceil(len(fi) / FT_BATCH) / 60:.0f} min of training")
+        r_va = float(pearson_rows(ft_predict([rtr_l[j] for j in va.tolist()]), Y_tr[va.to(DEV)]).median())
+        print(f"  epoch {ep + 1}: held-out TRAIN median r {r_va:+.3f}  ({time.time() - t1:.0f}s)")
+        if r_va > best:
+            best = r_va
+            best_state = ({nm: q.detach().clone() for nm, q in pm.named_parameters() if q.requires_grad},
+                          {kk: v.detach().clone() for kk, v in head.state_dict().items()})
+    with torch.no_grad():
+        for nm, q in pm.named_parameters():
+            if nm in best_state[0]:
+                q.copy_(best_state[0][nm])
+    head.load_state_dict(best_state[1])
+    te_rows = rte.tolist()
+    PRED["LLM-FT"] = ft_predict(te_rows)
+    sh = np.random.default_rng(5).permutation(len(te_rows))
+    while (sh == np.arange(len(te_rows))).any():
+        sh = np.random.default_rng(int(sh[0]) + 6).permutation(len(te_rows))
+    PRED["LLM-FT reading another gene's document"] = ft_predict([te_rows[i] for i in sh])
+    PRED["RIDGE on frozen-LLM vectors"], _ = ridge(design(["llm"]), Y_tr)
+    unitrow = lambda M: (M - M.mean(1, keepdim=True)) / (M - M.mean(1, keepdim=True)).norm(dim=1, keepdim=True).clamp(min=1e-12)
+    PRED["ENSEMBLE (LLM-FT + RIDGE)"] = (unitrow(PRED["LLM-FT"]) + unitrow(PRED["RIDGE"])) / 2   # same scale first: the FT loss ignores scale
+    FT = dict(model=USED_MODEL, epochs=FT_EPOCHS, best_heldout_r=best, minutes=(time.time() - t1) / 60)
+    for nm in ("LLM-FT", "LLM-FT reading another gene's document", "RIDGE on frozen-LLM vectors", "ENSEMBLE (LLM-FT + RIDGE)"):
+        R[nm] = torch.nan_to_num(pearson_rows(PRED[nm], A_te)).cpu().numpy()
+        print(f"  {nm:40s} {np.median(R[nm]):+.3f} / {np.mean(R[nm]):+.3f}")
+    print(f"  {'RIDGE (for comparison)':40s} {np.median(R['RIDGE']):+.3f} / {np.mean(R['RIDGE']):+.3f}")
+    for tag, a, b in (("F1 fine-tuned LLM vs plain learner", "LLM-FT", "RIDGE"),
+                      ("F2 fine-tuning vs frozen LLM", "LLM-FT", "RIDGE on frozen-LLM vectors"),
+                      ("F3 reads the document (vs another gene's)", "LLM-FT", "LLM-FT reading another gene's document"),
+                      ("F4 ensemble vs plain learner", "ENSEMBLE (LLM-FT + RIDGE)", "RIDGE")):
+        GATES[tag] = verdict(a, b); g_ = GATES[tag]
+        print(f"{tag:44s} better {g_['better']:,} / worse {g_['worse']:,}  median diff {g_['median_diff']:+.4f}  p {g_['p']:.2g} -> {g_['verdict']}")
+    if GATES["F3 reads the document (vs another gene's)"]["verdict"] != "BETTER":
+        print("NOTE: F1/F2 do not count -- predictions were as good with another gene's document.")
+""")
+
+code(r"""
+# ---- 13. save everything ----------------------------------------------------------------------------
 res = dict(model=USED_MODEL, smoke=SMOKE, device=DEV, n_train=len(TR), n_test=len(TE), hpa_coverage=cov,
            scores={n: dict(median=float(np.median(v)), mean=float(np.mean(v))) for n, v in R.items()},
            upper_bound=dict(median=float(np.median(ceil)), mean=float(np.mean(ceil)), n=len(ceil)),
-           H0=bool(h0), gates=GATES, info=INFO, explanations=REPORTS)
+           H0=bool(h0), gates=GATES, info=INFO, explanations=REPORTS, fine_tuning=FT)
 with open(os.path.join(OUTD, "results.json"), "w") as fh:
     json.dump(res, fh, indent=1, default=str)
 print("saved", os.path.join(OUTD, "results.json"))
