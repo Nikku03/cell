@@ -5491,3 +5491,29 @@ EXPMEM -- A MEMORY OF MEASURED EXPERIMENTS INSTEAD OF LITERATURE; AND THE HUMAN 
   what an independent measurement of the same protein gives. The limit is what the inputs say about an
   unmeasured protein, not how the model reasons over them. HPA's value is elsewhere (explaining K562 vs
   RPE1 differences, untested here).
+
+=================================================================================================
+NOTEBOOK SECTION 12 -- A 30B LLM FINE-TUNED ON GENE DOCUMENTS -> MEASURED KNOCKDOWN RESPONSES
+=================================================================================================
+  colab/cell_reasoning_llm_a100.ipynb (gates F1-F4 predeclared in the notebook, committed before the
+  run). Run by the user on a Colab A100; numbers below are from the printed output (results.json stayed
+  in the Colab session). Qwen3-30B-A3B-Instruct-2507 (Apache 2.0), 4-bit, LoRA r 16 on attention
+  (13.4M parameters) + a linear head (0.27M), trained 2 epochs on 2,275 TRAIN genes (252 held out for
+  epoch choice; held-out r 0.209 -> 0.214), ~30 min. Input: each gene's Human Protein Atlas document
+  (description, class, function, location, K-562 RNA, interaction partners). Output: its specific
+  (tide-removed) whole-cell response. TEST: 2,525 unseen knockdowns, the same split as every module.
+        median / mean r: fine-tuned LLM 0.194 / 0.205 | ridge (DepMap, interactions, HPA blocks, frozen-LLM
+        vectors) 0.181 / 0.170 | ridge on frozen-LLM vectors alone 0.138 / 0.154 | fine-tuned LLM reading
+        ANOTHER gene's document 0.042 / 0.042 | ensemble (both rescaled, equal weight) 0.205 / 0.210 |
+        upper bound (same protein in screen B) 0.315
+  F1 fine-tuned LLM vs ridge: better 1,446 / worse 1,079, median +0.0082 (p 3e-13) -> NO DIFFERENCE
+     (significant, just under the +0.01 bar).
+  F2 fine-tuning vs the same LLM frozen: +0.040, 1,837 / 688 -> BETTER.
+  F3 it reads the document: another gene's document drops it to 0.042 -> BETTER (F1/F2 count).
+  F4 ensemble vs ridge: +0.0116, 1,738 / 787 (p 1e-81) -> BETTER. THE FIRST PREDECLARED WIN OVER THE
+     PLAIN LEARNER IN THIS RECORD. The ensemble reaches 0.205 / 0.315 = 65% of the upper bound (ridge 57%).
+  WHAT IT MEANS. Text about a gene, read by a large language model and tuned on measured knockdowns,
+  carries information the numeric blocks lack, and it adds to them. NOT SETTLED: the documents name the
+  gene, and the LLM was pretrained on public text that may include these screens' papers, so part of the
+  gain could be recall of published results rather than reasoning from biology. The next test removes
+  gene names and synonyms from the documents (predeclared before running). One fine-tuning seed.
