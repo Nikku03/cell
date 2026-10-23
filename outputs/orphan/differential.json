@@ -1,0 +1,157 @@
+{
+ "n_pairs": 14734,
+ "n_pos": 820,
+ "cells_in_panel": [
+  "A549",
+  "GM12878",
+  "H1",
+  "HCT116",
+  "K562",
+  "MCF-7",
+  "WTC11"
+ ],
+ "diff_features": [
+  "d_elem_accessibility",
+  "d_tss_accessibility",
+  "concord_accessibility",
+  "d_elem_h3k27ac",
+  "d_tss_h3k27ac",
+  "concord_h3k27ac",
+  "d_elem_ctcf",
+  "d_tss_ctcf",
+  "concord_ctcf",
+  "d_elem_polr2a",
+  "d_tss_polr2a",
+  "concord_polr2a",
+  "ep_spearman_xcell",
+  "ep_sign_concord"
+ ],
+ "n_groups": 279,
+ "arms": {
+  "M3 baseline": {
+   "pooled_auprc": 0.5372243483525505,
+   "r1": 0.6967741935483871,
+   "r3": 0.8544802867383513,
+   "mrr": 0.7909850249968551,
+   "rank": 2.539784946236559,
+   "nrank": 0.1472459964714757,
+   "ap": 0.7513063856557074,
+   "rescue_at_1": 0.2860215053763441,
+   "break_at_1": 0.09784946236559133,
+   "dmrr_sign_p": NaN
+  },
+  "M4 +differential": {
+   "pooled_auprc": 0.5762480747601965,
+   "r1": 0.6953405017921147,
+   "r3": 0.864516129032258,
+   "mrr": 0.7925444595020024,
+   "rank": 2.4738351254480286,
+   "nrank": 0.13768134484178562,
+   "ap": 0.754269870954942,
+   "rescue_at_1": 0.31827956989247314,
+   "break_at_1": 0.11612903225806448,
+   "dmrr_sign_p": 0.12514100234596104
+  },
+  "M4-compat +LevelA only": {
+   "pooled_auprc": 0.543544490165546,
+   "r1": 0.6795698924731183,
+   "r3": 0.8544802867383513,
+   "mrr": 0.7795237429957077,
+   "rank": 2.5448028673835124,
+   "nrank": 0.1542936004319911,
+   "ap": 0.7416608388013496,
+   "rescue_at_1": 0.2516129032258065,
+   "break_at_1": 0.10645161290322591,
+   "dmrr_sign_p": 0.9901549076000766
+  },
+  "M4 +diff +compat": {
+   "pooled_auprc": 0.5747346430954068,
+   "r1": 0.6931899641577061,
+   "r3": 0.868100358422939,
+   "mrr": 0.7910808303510393,
+   "rank": 2.429390681003584,
+   "nrank": 0.13755491100877207,
+   "ap": 0.7532598749493289,
+   "rescue_at_1": 0.2989247311827957,
+   "break_at_1": 0.10967741935483877,
+   "dmrr_sign_p": 0.28104634252689503
+  },
+  "CTRL +cell-type ID": {
+   "pooled_auprc": 0.5489476104094508,
+   "r1": 0.6867383512544802,
+   "r3": 0.8594982078853047,
+   "mrr": 0.7877231976715691,
+   "rank": 2.5032258064516126,
+   "nrank": 0.14546183503650031,
+   "ap": 0.7485194790049534,
+   "rescue_at_1": 0.27311827956989243,
+   "break_at_1": 0.10645161290322591,
+   "dmrr_sign_p": 0.22787063971895619
+  },
+  "CTRL +shuffled diff": {
+   "pooled_auprc": 0.5277993081363613,
+   "r1": 0.6831541218637993,
+   "r3": 0.8523297491039427,
+   "mrr": 0.7818314494868116,
+   "rank": 2.572759856630824,
+   "nrank": 0.1504752750168889,
+   "ap": 0.7461586175069103,
+   "rescue_at_1": 0.2645161290322581,
+   "break_at_1": 0.10752688172043012,
+   "dmrr_sign_p": 0.9972320504479038
+  }
+ },
+ "loco": {
+  "per_cell": {
+   "GM12878": {
+    "M3 base": 0.8905300781270853,
+    "M4 +diff": 0.9153408881921341
+   },
+   "HCT116": {
+    "M3 base": 0.48834156097420556,
+    "M4 +diff": 0.4574139844853785
+   },
+   "K562": {
+    "M3 base": 0.38896332104444203,
+    "M4 +diff": 0.3406919431666324
+   },
+   "WTC11": {
+    "M3 base": 0.25784613123696815,
+    "M4 +diff": 0.221505399440983
+   }
+  },
+  "macro_base": 0.5064202728456753,
+  "macro_diff": 0.483738053821282,
+  "macro_delta": -0.02268221902439327
+ },
+ "gate": {
+  "base_arm": "M3 baseline",
+  "r1": 0.7017921146953405,
+  "mrr": 0.7954141124052956,
+  "d_r1": 0.00501792114695343,
+  "d_mrr": 0.004429087408440502
+ },
+ "verdict": "DIFFERENTIAL FEATURES REJECTED. Pooled AUPRC rises +0.0390 but ranking does not move (MRR +0.0016, R@1 -0.0014) and LOCO macro FALLS -0.0227. A bare cell-type index buys +0.0117 pooled on its own, so the pooled gain is consistent with encoding cell identity rather than cell specificity. Pooled-up / transfer-down is the signature of fitting the cell, and ranking is the metric that matters.",
+ "raw_deltas": {
+  "differential": {
+   "pooled": 0.03902372640764595,
+   "r1": -0.0014336917562723928,
+   "mrr": 0.0015594345051472835
+  },
+  "compat": {
+   "pooled": 0.00632014181299545,
+   "r1": -0.017204301075268824,
+   "mrr": -0.011461282001147377
+  },
+  "cellid": {
+   "pooled": 0.01172326205690033,
+   "r1": -0.01003584229390686,
+   "mrr": -0.0032618273252860153
+  },
+  "shuf": {
+   "pooled": -0.009425040216189173,
+   "r1": -0.013620071684587787,
+   "mrr": -0.009153575510043477
+  }
+ }
+}

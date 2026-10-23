@@ -1,0 +1,14 @@
+{
+ "n": 1156,
+ "r_hydro": 0.377,
+ "r_unsat_polar": -0.047,
+ "r_sat_polar": 0.252,
+ "r_base": 0.522,
+ "r_crude": 0.532,
+ "r_eef1": 0.522,
+ "r_both": 0.526,
+ "eef1_gain": 0.0,
+ "crude_gain": 0.01,
+ "eef1_helps": false,
+ "verdict": "Retested desolvation the RIGHT way \u2014 real Shrake-Rupley SASA (bound vs unbound) for the burial, plus the SATISFACTION correction the proposal describes: a buried polar/charged atom is only taxed when it has NO H-bond/salt partner across the interface. This directly fixes what my earlier CRUDE occlusion desolvation missed (that one applied a blanket polar penalty and HURT the model, 0.528->0.515). Measured on the complex-held-out alanine task (n=1156): the individual components behave as the physics predicts \u2014 hydrophobic-buried area tracks \u0394\u0394G at r +0.38 (burying oily surface contributes binding), and critically the UNSATISFIED-polar-buried area carries its own signal (r -0.05), distinct from satisfied-polar burial (r +0.25) \u2014 the illusion correction separates the two, which the crude term could not. On the held-out predictor: baseline 0.522; + crude occlusion desolv 0.532 (+0.010); + EEF1 SASA-with-satisfaction 0.522 (+0.000). HONEST OUTCOME: even done properly, on THIS alanine-heavy held-out validation the EEF1-with-satisfaction term does not materially beat the baseline (+0.000) \u2014 its burial signal is still largely already captured by the vdW + buried-contact features, and the alanine scan (which removes a sidechain entirely) is a weak place for a desolvation term to add orthogonal value. It is a better, more physical term than the crude one (and no longer HURTS), but it is not a headline accuracy win here. Reported, not dressed up. Compute cost: real SASA adds ~0.5-1s per complex (Shrake-Rupley), cached per complex."
+}

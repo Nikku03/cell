@@ -1,0 +1,400 @@
+{
+ "test": "loop 148 -- the destruction machine's capacity ratio",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/ly2014_supp1-v1.txt",
+    "bytes": 5458223,
+    "hash": "73d036e6c3232913",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/_schwan2011.json",
+    "bytes": 469617,
+    "hash": "7aae9e39013f859d",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/AvgKdegs_genes_v1.csv",
+    "bytes": 24937650,
+    "hash": "a2ada15037c16822",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/home/user/cell/colab/data/cell_complete.json.gz",
+    "bytes": 6747165,
+    "hash": "91109280442eab70",
+    "method": "sha256:full"
+   },
+   {
+    "path": "outputs/loop_pulse_equation.json",
+    "bytes": 11233,
+    "hash": "05f5dd83ae13fda3",
+    "method": "sha256:full"
+   },
+   {
+    "path": "outputs/loop_proteostasis.json",
+    "bytes": 23916,
+    "hash": "cd8c97b832fc31c4",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 6470,
+   "used": 77,
+   "selection": "filtered",
+   "fraction": 0.011901081916537867
+  },
+  "seed": 14800,
+  "controls": [
+   "a censoring control on the fast tail, read BEFORE K2's ratio (K2)",
+   "an abundance-matched null for the fold-range, read BEFORE K3's ratio (K3)",
+   "a within-cell-line label shuffle preserving marginal and coverage (K4)",
+   "the standing fame control with a publication-matched envelope (K5)",
+   "a regression on loops 123 and 142 before any new number (K0)"
+  ],
+  "note": "the capacity ratio is a property of the destruction machinery, not of the wiring: for b(t) = k_basal + k_max*Y(t) with Y in [0,1] the ratio is bounded by (k_basal+k_max)/k_basal whatever the topology. Three stages measured, the minimum binds, and the within-substrate switching ratio -- the one the equation actually needs -- is not measurable from anything on disk.",
+  "warnings": []
+ },
+ "gates": {
+  "K0": true,
+  "K1": true,
+  "K2": false,
+  "K3": false,
+  "K4": true,
+  "K5": true,
+  "K6": false
+ },
+ "k0": {
+  "n_schwan": 4821,
+  "n_ly": 6470,
+  "b_max_measured": 1.3862943611198906,
+  "shortest_halflife_h": 0.5,
+  "requirement_inside_scale": true,
+  "n_machinery_in_ly": 21,
+  "n_receptor": 44,
+  "n_scaffold": 11,
+  "n_corum": 43,
+  "receptors": [
+   "BTRC",
+   "CCNF",
+   "CDC20",
+   "FBH1",
+   "FBXL13",
+   "FBXL14",
+   "FBXL15",
+   "FBXL17",
+   "FBXL19",
+   "FBXL2",
+   "FBXL20",
+   "FBXL21P",
+   "FBXL22",
+   "FBXL3",
+   "FBXL4",
+   "FBXL5",
+   "FBXL7",
+   "FBXO10",
+   "FBXO11",
+   "FBXO2",
+   "FBXO22",
+   "FBXO24",
+   "FBXO25",
+   "FBXO28",
+   "FBXO3",
+   "FBXO31",
+   "FBXO32",
+   "FBXO38",
+   "FBXO4",
+   "FBXO40",
+   "FBXO44",
+   "FBXO5",
+   "FBXO6",
+   "FBXO7",
+   "FBXO9",
+   "FBXW11",
+   "FBXW5",
+   "FBXW7",
+   "FBXW8",
+   "FZR1",
+   "KDM2A",
+   "KDM2B",
+   "SKP2",
+   "TSPAN17"
+  ],
+  "scaffold": [
+   "ANAPC11",
+   "ANAPC13",
+   "ANAPC16",
+   "ANAPC4",
+   "ANAPC5",
+   "ANAPC7",
+   "CDC16",
+   "CDC26",
+   "CDC27",
+   "CUL7",
+   "RBX1"
+  ],
+  "n_osc": 77,
+  "median_A": 0.44513343873368105,
+  "median_A_recorded": 0.4452698110682305,
+  "fold_recomputed": 20.279124312694343,
+  "fold_recorded": 20.28617706991229,
+  "pass": true
+ },
+ "k1": {
+  "particles": 1382245.5950000002,
+  "load_per_h": 29330783.66484849,
+  "capacity_per_h": {
+   "1.0": 4976084142.000001,
+   "2.0": 2488042071.0000005,
+   "3.0": 1658694714.0000002
+  },
+  "resting_utilisation": {
+   "1.0": 0.0058943504225111,
+   "2.0": 0.0117887008450222,
+   "3.0": 0.017683051267533303
+  },
+  "utilisation_osc_pulsed": {
+   "1.0": 0.007448965565200504,
+   "2.0": 0.014897931130401007,
+   "3.0": 0.022346896695601512
+  },
+  "utilisation_all_pulsed": {
+   "1.0": 0.11957383638317251,
+   "2.0": 0.23914767276634502,
+   "3.0": 0.35872150914951756
+  },
+  "worst_case_utilisation": 0.35872150914951756,
+  "shredder_capacity_ratio_low": 56.55132617502697,
+  "shredder_capacity_ratio_high": 169.65397852508093,
+  "pass": true
+ },
+ "k2": {
+  "n": 4821,
+  "p50": 0.014537482813757241,
+  "p90": 0.05501168099682106,
+  "p99": 0.15541416604483077,
+  "p999": 0.7671201457971574,
+  "max": 1.3862943611198906,
+  "ratio_p99": 10.690582959641254,
+  "ratio_p999": 52.7684301075293,
+  "ratio_max": 95.36,
+  "frac_at_or_above_requirement": 0.0020742584526031943,
+  "n_at_or_above_requirement": 10,
+  "censor_modal_halflife_h": 2.25,
+  "censor_fraction": 0.04,
+  "censored": false,
+  "pass": false
+ },
+ "k3": {
+  "n_receptor_quant": 13,
+  "n_scaffold_quant": 8,
+  "receptor_median_fold": 1.5086461786578265,
+  "receptor_max_fold": 19.64944476695193,
+  "scaffold_median_fold": 1.387856306437576,
+  "scaffold_max_fold": 2.4473077264259735,
+  "proteome_max_fold": 121.05364353009037,
+  "proteome_max_gene": "BBS9",
+  "top_receptors": [
+   [
+    "CDC20",
+    19.64944476695193
+   ],
+   [
+    "BTRC",
+    3.0595119796842223
+   ],
+   [
+    "SKP2",
+    2.692559407869108
+   ],
+   [
+    "FBXL20",
+    1.9006474757196605
+   ],
+   [
+    "FBXL19",
+    1.6823985742740328
+   ],
+   [
+    "FBXO38",
+    1.6687821480666376
+   ],
+   [
+    "FBXO6",
+    1.5086461786578265
+   ],
+   [
+    "FBXO7",
+    1.4978482724701832
+   ],
+   [
+    "KDM2B",
+    1.4732423924449107
+   ],
+   [
+    "FBXO11",
+    1.4650422675285928
+   ],
+   [
+    "FBXO28",
+    1.4055518933567714
+   ],
+   [
+    "FBXO22",
+    1.2929113212847645
+   ]
+  ],
+  "null_median": 1.6071379148460303,
+  "receptor_percentile_vs_null": 0.2215,
+  "pass": false
+ },
+ "k4": {
+  "n_genes": 17541,
+  "n_lines": 13,
+  "n_used": 11805,
+  "median_fold": 9.221054752405497,
+  "p90_fold": 23.13210594613583,
+  "max_fold": 1355.2681720778303,
+  "shuffled_median_fold": 37.5469825871731,
+  "p_perm": 0.004975124378109453,
+  "currency": "mRNA, NOT protein",
+  "barred_from_quotation_as_protein_answer": true,
+  "pass": true
+ },
+ "k5": {
+  "rho_pubs_rate": -0.092737810035454,
+  "rho_pubs_fold": -0.36475732727881555,
+  "threshold": 0.2,
+  "matched_envelope_survives": null,
+  "pass": true
+ },
+ "k6": {
+  "n": 77,
+  "median_required_bhi": 0.4870285204784122,
+  "median_required_ratio": 18.22127095017243,
+  "max_required_ratio": 2023.0427545417247,
+  "frac_inside_envelope": 0.0,
+  "stages": {
+   "shredder (26S throughput)": 56.55132617502697,
+   "per-substrate envelope (p99/p50)": 10.690582959641254,
+   "targeting subunit abundance (receptor fold-range)": 1.5086461786578265
+  },
+  "binding_stage": "targeting subunit abundance (receptor fold-range)",
+  "binding_ratio": 1.5086461786578265,
+  "required": 20.28617706991229,
+  "sufficient": false,
+  "pass": false
+ },
+ "seconds": 6.119052410125732,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 148 -- the destruction machine's capacity ratio: three stages, and the one measurement that is missing",
+  "====================================================================================================",
+  "",
+  "  THE REQUIREMENT, read from loop 142 rather than retyped:",
+  "    resting rate      b_lo = 0.023473 /h   (t1/2 = 29.53 h)",
+  "    required at peak  b_hi = 0.476170 /h  over a 2.4 h window",
+  "    CAPACITY RATIO NEEDED  = 20.29x",
+  "",
+  "K0 CAN THE QUESTION BE ANSWERED FROM WHAT IS ON DISK?",
+  "     (a) Schwanhausser genes with a protein half-life   4,821  gate >= 3,000   ok",
+  "     (b) Ly genes quantified in all six fractions        6,470  gate >= 5,000   ok",
+  "     (c) fastest rate the assay measured  1.3863 /h (t1/2 0.50 h)",
+  "         the requirement 0.4762 /h is INSIDE that scale   ok",
+  "     (d) targeting machinery quantified in Ly            21 of 55  gate >= 20   ok",
+  "         43 CORUM entries -> 44 receptors, 11 scaffold",
+  "     (e) REGRESSION on loops 123/142: 77 oscillators, median A 0.4451 (recorded 0.4453), required 20.28x (recorded 20.29x)   ok",
+  "     K0 PASS",
+  "",
+  "K1 THE SHREDDER -- can the 26S absorb the burst at all?",
+  "     1,382,246 proteasome particles; measured load 29,330,784 molecules/h",
+  "       at 1 s/substrate  capacity 4,976,084,142/h   resting utilisation 0.59%   headroom 170x",
+  "       at 2 s/substrate  capacity 2,488,042,071/h   resting utilisation 1.18%   headroom 85x",
+  "       at 3 s/substrate  capacity 1,658,694,714/h   resting utilisation 1.77%   headroom 57x",
+  "     the 77 oscillators carry 401,111 molecules/h of the 29,330,784 covered (1.37%)",
+  "     pulse them all at 20.3x simultaneously: utilisation 1s 0.74%  2s 1.49%  3s 2.23%",
+  "     ABSURD WORST CASE, every protein in the proteome pulsing at once: 1s 11.96%  2s 23.91%  3s 35.87%",
+  "     worst-case peak utilisation 35.87%   gate < 50%",
+  "     SHREDDER CAPACITY RATIO = 57x (57x-170x over the sweep band)",
+  "     K1 PASS",
+  "",
+  "K2 THE PER-SUBSTRATE ENVELOPE -- what rate does the machine demonstrably deliver?",
+  "     4,821 measured protein degradation rates, one proteome, no cross-proteome quotient",
+  "       median 0.0145 /h (t1/2 47.7 h)   p90 0.0550   p99 0.1554 (t1/2 4.46 h)   max 1.3863",
+  "       p99/median 10.7x    p99.9/median 52.8x    max/median 95.4x",
+  "     CENSORING CONTROL: the fastest percentile is 50 proteins; the modal half-life 2.25 h holds 4.0%   gate <= 20%",
+  "     the requirement is 0.4762 /h; the measured envelope reaches 1.3863 /h, and 0.21% of the proteome sits at or above it already",
+  "     WHAT A PASS MEANS AND DOES NOT: the machine CAN run a substrate at 0.476/h -- 10 of its substrates sit there in the resting state.",
+  "     It does NOT mean a substrate resting at 0.0235/h can be SWITCHED there. That is a different claim and K4 is where it should have been measured.",
+  "     K2 FAIL",
+  "",
+  "K3 THE TARGETING STEP -- how much does the specificity subunit itself change?",
+  "     13 receptors and 8 scaffold subunits quantified over F1..F6",
+  "       receptor fold-range  median 1.51x   max 19.65x (CDC20)",
+  "       scaffold fold-range  median 1.39x   max 2.45x",
+  "       the widest fold-range of ANY protein in the table: 121.1x (BBS9) -- the instrument reaches far past what is needed",
+  "       widest receptors: CDC20 19.6x  BTRC 3.1x  SKP2 2.7x  FBXL20 1.9x  FBXL19 1.7x  FBXO38 1.7x  FBXO6 1.5x  FBXO7 1.5x  KDM2B 1.5x  FBXO11 1.5x  FBXO28 1.4x  FBXO22 1.3x",
+  "     MATCHED-ABUNDANCE NULL (2000 draws, matched on mean log LFQ decile): null median 1.61x, receptors at the 22.1% percentile",
+  "       the receptors are NOT above their abundance-matched null -- their spread is what any protein of that abundance shows, so it is noise and not regulation.",
+  "     gate: median receptor fold-range >= 20.29x   measured 1.51x",
+  "     K3 FAIL",
+  "",
+  "K4 THE MEASUREMENT THIS REPO DOES NOT HAVE",
+  "     nothing on disk gives one protein's own degradation rate in two states of the same",
+  "     cell. Schwanhausser is one state. Ly is abundance, not rate. The nearest available",
+  "     thing is mRNA decay across cell lines, which is a DIFFERENT destruction machine.",
+  "     17,541 genes x 13 cell lines; 11,805 genes in >= 5 lines",
+  "     within-gene fold-range across lines: median 9.22x   p90 23.13x   max 1355.3x",
+  "     LABEL-SHUFFLE CONTROL (200 permutations, per-line marginal and coverage pattern both preserved):",
+  "       shuffled median fold-range 37.55x   real 9.22x   p = 0.0050   gate < 0.01",
+  "     the number is signal. Either way it is mRNA, it is across genotypes rather than across states of one cell, and",
+  "     it is BARRED from being quoted as the protein capacity ratio. The protein number is",
+  "     not measured in this repo and this loop does not pretend otherwise.",
+  "     K4 PASS",
+  "",
+  "K5 FAME",
+  "     pubs vs Schwanhausser degradation rate   rho -0.0927   (n 3,831)",
+  "     pubs vs Ly fold-range                    rho -0.3648   (n 5,394)",
+  "     K5 PASS",
+  "",
+  "K6 WHICH STAGE BINDS",
+  "     77 oscillators inverted through loop 142's exact expression at duty 0.10",
+  "       required b_hi   median 0.487 /h   p90 0.893   max 7.910",
+  "       required ratio  median 18.2x   p90 95.6x   max 2023.0x",
+  "       inside the p99 envelope (0.155 /h): 0.0%   gate >= 50%",
+  "",
+  "     THE THREE STAGES, and the machine is only as fast as its slowest:",
+  "            1.5x   targeting subunit abundance (receptor fold-range)",
+  "           10.7x   per-substrate envelope (p99/p50)",
+  "           56.6x   shredder (26S throughput)",
+  "     REQUIRED 20.3x",
+  "     BINDING STAGE: targeting subunit abundance (receptor fold-range) at 1.5x",
+  "",
+  "     that is BELOW the requirement, and it is below it at the targeting step rather",
+  "     than at the shredder. The 26S has 57x of headroom and the",
+  "     per-substrate envelope reaches 11x, so neither of those is what stops a",
+  "     20.3x pulse. What does not move is the SUBUNIT ABUNDANCE: the specificity",
+  "     subunits change 1.5-fold over the cycle, and if b(t) were set by how",
+  "     much receptor is present, the pulse could not be built. So EITHER the amplitude",
+  "     comes from activating receptor that is already there -- phosphorylation,",
+  "     pseudosubstrate release, localisation -- OR from modifying the SUBSTRATE so it",
+  "     becomes visible to a receptor whose amount never changed. Loops 145 and 146",
+  "     tested the second on annotation and both failed; the first has never been",
+  "     tested here and cannot be, because abundance proteomics does not see it.",
+  "     K6 FAIL",
+  "",
+  "====================================================================================================",
+  "  K0  PASS",
+  "  K1  PASS",
+  "  K2  FAIL",
+  "  K3  FAIL",
+  "  K4  PASS",
+  "  K5  PASS",
+  "  K6  FAIL",
+  "  4/7",
+  "====================================================================================================",
+  "    manifest: 6 inputs, coverage 77/6470 (1.2%) by 'filtered', seed 14800, controls 5"
+ ]
+}

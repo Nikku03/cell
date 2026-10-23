@@ -1,0 +1,380 @@
+{
+ "example_card": {
+  "gene": "GATA1",
+  "identity": {
+   "locus": "chrX:48786589",
+   "compartment": "nucleus",
+   "process": "transcription",
+   "publications": 325,
+   "dark": 0,
+   "confidence": "split",
+   "essential": 0,
+   "loeuf": 0.321,
+   "abundance_ppm": 0.423
+  },
+  "function": {
+   "GO_molecular_function": [
+    "transcription cis-regulatory region binding",
+    "RNA polymerase II transcription regulatory region sequence-specific DNA binding",
+    "RNA polymerase II cis-regulatory region sequence-specific DNA binding",
+    "DNA-binding transcription factor activity, RNA polymerase II-specific",
+    "cis-regulatory region sequence-specific DNA binding",
+    "transcription coregulator binding"
+   ],
+   "GO_biological_process": [
+    "negative regulation of transcription by RNA polymerase II",
+    "regulation of DNA-templated transcription",
+    "regulation of transcription by RNA polymerase II",
+    "positive regulation of cytosolic calcium ion concentration",
+    "male gonad development",
+    "anatomical structure morphogenesis"
+   ],
+   "GO_component": [
+    "chromatin",
+    "nucleus",
+    "nucleoplasm",
+    "transcription regulator complex"
+   ],
+   "reactome": [],
+   "reactome_primary": "Factors involved in megakaryocyte developmen"
+  },
+  "machinery": {
+   "complexes": [],
+   "n_complexes": 0,
+   "complex_partners": [],
+   "n_complex_partners": 0,
+   "ppi_degree": 33,
+   "ppi_partners": [
+    "BRD3",
+    "BRD4",
+    "CBFA2T3",
+    "CHRD",
+    "DGCR6L",
+    "DHX36",
+    "EP300",
+    "FANCL",
+    "FRS3",
+    "GATA2",
+    "HNRNPK",
+    "HOXA1",
+    "IKZF1",
+    "KANK2"
+   ],
+   "catalyses": [],
+   "ptm": {
+    "n": 17,
+    "c": [
+     "Phospho",
+     "Acetyl"
+    ]
+   }
+  },
+  "control": {
+   "is_tf": true,
+   "n_targets": 883,
+   "n_targets_with_known_function": 840,
+   "frac_targets_annotated": 0.951,
+   "regulon_by_process": [
+    [
+     "other",
+     235
+    ],
+    [
+     "transcription",
+     191
+    ],
+    [
+     "transport/uptake",
+     136
+    ],
+    [
+     "signaling",
+     112
+    ],
+    [
+     "trafficking/secretion",
+     76
+    ],
+    [
+     "metabolism",
+     34
+    ],
+    [
+     "degradation",
+     31
+    ],
+    [
+     "structure/cytoskeleton",
+     31
+    ]
+   ],
+   "note": "n_targets_with_known_function uses the strict definition: an informative GO molecular function term, or a process outside the 'other' bucket",
+   "regulon_by_compartment": [
+    [
+     "nucleus",
+     261
+    ],
+    [
+     "cytoplasm",
+     231
+    ],
+    [
+     "plasma membrane",
+     109
+    ],
+    [
+     "membrane",
+     62
+    ],
+    [
+     "cytoskeleton",
+     56
+    ],
+    [
+     "ER",
+     36
+    ]
+   ],
+   "example_targets": [
+    {
+     "gene": "BCL2L1",
+     "sign": 1,
+     "process": "signaling",
+     "function": "protein binding"
+    },
+    {
+     "gene": "FCGRT",
+     "sign": 1,
+     "process": "transport/uptake",
+     "function": "protein binding"
+    },
+    {
+     "gene": "IGHE",
+     "sign": 1,
+     "process": "trafficking/secretion",
+     "function": "antigen binding"
+    },
+    {
+     "gene": "EPB42",
+     "sign": 1,
+     "process": "transport/uptake",
+     "function": "protein-glutamine gamma-glutamyltransferase activity"
+    },
+    {
+     "gene": "PRG2",
+     "sign": 1,
+     "process": "trafficking/secretion",
+     "function": "protein binding"
+    },
+    {
+     "gene": "MBP",
+     "sign": 1,
+     "process": "transport/uptake",
+     "function": "protein binding"
+    },
+    {
+     "gene": "SPTB",
+     "sign": 1,
+     "process": "transport/uptake",
+     "function": "actin binding"
+    },
+    {
+     "gene": "MPL",
+     "sign": 1,
+     "process": "transport/uptake",
+     "function": "cytokine receptor activity"
+    },
+    {
+     "gene": "SPI1",
+     "sign": -1,
+     "process": "transcription",
+     "function": "transcription cis-regulatory region binding"
+    },
+    {
+     "gene": "NFIL3",
+     "sign": 1,
+     "process": "transcription",
+     "function": "RNA polymerase II transcription regulatory region sequence-specific DNA binding"
+    },
+    {
+     "gene": "NPR1",
+     "sign": -1,
+     "process": "transport/uptake",
+     "function": "peptide receptor activity"
+    },
+    {
+     "gene": "GP6",
+     "sign": 1,
+     "process": "transport/uptake",
+     "function": "transmembrane signaling receptor activity"
+    }
+   ]
+  },
+  "controlled_by": {
+   "n_regulators": 40,
+   "regulators": [
+    {
+     "tf": "DLX4",
+     "sign": 1
+    },
+    {
+     "tf": "SPI1",
+     "sign": 1
+    },
+    {
+     "tf": "MYB",
+     "sign": 1
+    },
+    {
+     "tf": "MYC",
+     "sign": -1
+    },
+    {
+     "tf": "GATA2",
+     "sign": 1
+    },
+    {
+     "tf": "ETS1",
+     "sign": 1
+    },
+    {
+     "tf": "TFCP2",
+     "sign": 1
+    },
+    {
+     "tf": "NR2C1",
+     "sign": -1
+    },
+    {
+     "tf": "NR2C2",
+     "sign": -1
+    },
+    {
+     "tf": "ZNF148",
+     "sign": 1
+    },
+    {
+     "tf": "TP53",
+     "sign": 1
+    },
+    {
+     "tf": "CBFB",
+     "sign": 1
+    }
+   ]
+  }
+ },
+ "audit": {
+  "compartment": {
+   "all genes": 1.0,
+   "measured in Perturb-seq": 1.0,
+   "knocked out (>=20 movers)": 1.0
+  },
+  "process (excl. \"other\")": {
+   "all genes": 0.7391,
+   "measured in Perturb-seq": 0.6889,
+   "knocked out (>=20 movers)": 0.8197
+  },
+  "GO mol. function (any)": {
+   "all genes": 0.9488,
+   "measured in Perturb-seq": 0.9734,
+   "knocked out (>=20 movers)": 1.0
+  },
+  "GO mol. function (informative)": {
+   "all genes": 0.8347,
+   "measured in Perturb-seq": 0.8433,
+   "knocked out (>=20 movers)": 0.8721
+  },
+  "GO biological process": {
+   "all genes": 0.9241,
+   "measured in Perturb-seq": 0.9492,
+   "knocked out (>=20 movers)": 0.9902
+  },
+  "Reactome pathway": {
+   "all genes": 0.6277,
+   "measured in Perturb-seq": 0.6968,
+   "knocked out (>=20 movers)": 0.9344
+  },
+  "in a curated complex": {
+   "all genes": 0.1974,
+   "measured in Perturb-seq": 0.3284,
+   "knocked out (>=20 movers)": 0.8164
+  },
+  "any PPI partner": {
+   "all genes": 0.8628,
+   "measured in Perturb-seq": 0.9623,
+   "knocked out (>=20 movers)": 0.9967
+  },
+  "catalyses a reaction": {
+   "all genes": 0.1546,
+   "measured in Perturb-seq": 0.1827,
+   "knocked out (>=20 movers)": 0.0787
+  },
+  "PTM sites": {
+   "all genes": 0.5109,
+   "measured in Perturb-seq": 0.713,
+   "knocked out (>=20 movers)": 0.8689
+  },
+  "protein abundance": {
+   "all genes": 0.9711,
+   "measured in Perturb-seq": 0.995,
+   "knocked out (>=20 movers)": 1.0
+  },
+  "has any regulator": {
+   "all genes": 0.962,
+   "measured in Perturb-seq": 0.9945,
+   "knocked out (>=20 movers)": 1.0
+  },
+  "is annotated a TF": {
+   "all genes": 0.0779,
+   "measured in Perturb-seq": 0.0894,
+   "knocked out (>=20 movers)": 0.0852
+  },
+  ">=5 publications": {
+   "all genes": 0.9724,
+   "measured in Perturb-seq": 0.9964,
+   "knocked out (>=20 movers)": 1.0
+  }
+ },
+ "composite": {
+  "function known": {
+   "all genes": 0.9439,
+   "measured in Perturb-seq": 0.942,
+   "knocked out (>=20 movers)": 0.9541
+  },
+  "machinery known": {
+   "all genes": 0.8666,
+   "measured in Perturb-seq": 0.9632,
+   "knocked out (>=20 movers)": 0.9967
+  },
+  "BOTH function and machinery": {
+   "all genes": 0.8212,
+   "measured in Perturb-seq": 0.9088,
+   "knocked out (>=20 movers)": 0.9508
+  },
+  "function + machinery + pathway": {
+   "all genes": 0.5665,
+   "measured in Perturb-seq": 0.6676,
+   "knocked out (>=20 movers)": 0.8984
+  },
+  "STRICT: informative fn + complex + pathway": {
+   "all genes": 0.1487,
+   "measured in Perturb-seq": 0.2478,
+   "knocked out (>=20 movers)": 0.6951
+  }
+ },
+ "tf_chain": {
+  "n_tf_annotated": 1285,
+  "n_tf_with_targets": 1283,
+  "median_regulon_size": 92,
+  "median_frac_targets_with_known_function": 0.965,
+  "frac_tf_whose_regulon_is_>=80pct_annotated": 0.995
+ },
+ "population_sizes": {
+  "all genes": 16492,
+  "measured in Perturb-seq": 7223,
+  "knocked out (>=20 movers)": 305
+ },
+ "verdict": "GENE IDENTITY + COVERAGE AUDIT: asks the question that precedes prediction -- what is this gene, what machinery does it work in, and if it is a TF what does it control and what do those targets do -- and then measures whether that can be answered for the whole cell or only for a well-studied corner. PLACEHOLDERS ARE EXCLUDED: a first version counted proc=='other' (4,302 genes, 26% of the genome) and generic GO terms like 'protein binding' as knowledge and reported 100% function coverage. Both are placeholders and both are now excluded. Genome-wide over 16492 genes: function (an INFORMATIVE GO molecular function, or a process outside the 'other' bucket) is available for 94.4%, machinery (a curated complex or any PPI partner) for 86.7%, BOTH for 82.1%, and all three including a Reactome pathway for 56.6%. The populations differ sharply and that difference is the finding: over the 7223 genes measured in Perturb-seq the both-fields figure is 90.9%, and over the 305 genes actually knocked out with a strong phenotype it is 95.1% -- the genes we experiment on are far better annotated than the genome they are drawn from, so coverage measured on the experimental set OVERSTATES what is known about the cell as a whole. For transcription factors the chain matters more than the count: 1283 of 1285 annotated TFs have at least one curated target, median regulon 92 genes, and the median TF has 96% of its targets carrying a known function, with 100% of TFs having a regulon that is at least 80% annotated. Deterministic; every figure is a count over the merged annotation model, not an estimate.",
+ "note": "GENE IDENTITY + COVERAGE AUDIT: asks the question that precedes prediction -- what is this gene, what machinery does it work in, and if it is a TF what does it control and what do those targets do -- and then measures whether that can be answered for the whole cell or only for a well-studied corner. PLACEHOLDERS ARE EXCLUDED: a first version counted proc=='other' (4,302 genes, 26% of the genome) and generic GO terms like 'protein binding' as knowledge and reported 100% function coverage. Both are placeholders and both are now excluded. Genome-wide over 16492 genes: function (an INFORMATIVE GO molecular function, or a process outside the 'other' bucket) is available for 94.4%, machinery (a curated complex or any PPI partner) for 86.7%, BOTH for 82.1%, and all three including a Reactome pathway for 56.6%. The populations differ sharply and that difference is the finding: over the 7223 genes measured in Perturb-seq the both-fields figure is 90.9%, and over the 305 genes actually knocked out with a strong phenotype it is 95.1% -- the genes we experiment on are far better annotated than the genome they are drawn from, so coverage measured on the experimental set OVERSTATES what is known about the cell as a whole. For transcription factors the chain matters more than the count: 1283 of 1285 annotated TFs have at least one curated target, median regulon 92 genes, and the median TF has 96% of its targets carrying a known function, with 100% of TFs having a regulon that is at least 80% annotated. Deterministic; every figure is a count over the merged annotation model, not an estimate."
+}

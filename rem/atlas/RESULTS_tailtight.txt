@@ -1,0 +1,99 @@
+=================================================================================================
+HOW TIGHTLY DOES THE COMPOSED CERTIFICATE BOUND THE ACTUAL RARE-EVENT PROBABILITY?
+=================================================================================================
+  Four modules certified the summed dropped bound. None asked what it says about the tail.
+  What the certificate buys is an interval:  pruned <= true <= pruned + certificate.
+
+  4 controllers, n = 16, L = 4, 1,048,576 paths enumerated exactly.
+  EXACT tail: 1.187971e-102. sha 9b909319ccc8.
+
+=================================================================================================
+T0  THE CEILING GATE: DOES THE INTERVAL ACTUALLY CONTAIN THE TRUTH?
+=================================================================================================
+  Never checked in four modules. A single violation and the certificate fails its purpose.
+
+      cap         pruned   + certificate          exact  contains?
+        2  1.410152e-104    9.172253e-79  1.187971e-102        yes
+        4  1.477919e-104    7.432102e-79  1.187971e-102        yes
+        8  2.336378e-104    4.284802e-79  1.187971e-102        yes
+       16  2.346966e-104    5.373697e-81  1.187971e-102        yes
+       32  6.188568e-104    4.289507e-81  1.187971e-102        yes
+       64  1.111847e-103    3.077439e-81  1.187971e-102        yes
+
+  T0: the interval contains the exact tail at every cap, and the pruned value is below it at every cap. The certificate does bound what it claims to.
+
+=================================================================================================
+T1  THE INTERVAL'S WIDTH, WHICH IS THE ANSWER TO THE QUESTION
+=================================================================================================
+
+      cap  paths kept  interval width, orders   cert/true deficit
+        2           2                   25.81           7.814e+23
+        4           4                   25.70           6.335e+23
+        8           8                   25.26           3.679e+23
+       16          16                   23.36           4.615e+21
+       32          32                   22.84           3.809e+21
+       64          64                   22.44           2.858e+21
+
+  Read the third column as the answer. The certificate is a VALID upper bound on the tail
+  and it places the tail inside an interval spanning that many orders of magnitude. The
+  fourth column is why: the certificate exceeds the deficit it is bounding by that factor.
+  A statement about a probability that spans twenty orders is not a statement about a
+  probability. Its validity is not offered as consolation.
+
+=================================================================================================
+T2  THE SAME AT THE ENGINE'S WIDTH
+=================================================================================================
+  10 controllers, n = 1024, L = 6, cap 1000. sha 9b909319ccc8.
+
+    pruned tail (a lower bound)          7.371433e-99
+    composed certificate                 4.293539e-72
+    upper end of the interval            4.293539e-72
+    interval width                       26.77 orders
+
+    backpoly's estimate of the truth     1.6127e-95  +/- 0.30 orders
+    the certificate's upper end is       23.43 orders above that estimate
+    and the pruned lower bound is        3.34 orders below it
+  Carrying backpolyerr's interval explicitly: even at the estimate's upper end the
+  certificate is 23.13 orders too high.
+
+=================================================================================================
+T3  THE DECOMPOSITION: WHERE THE LOOSENESS ACTUALLY IS
+=================================================================================================
+  total looseness, certificate over the true deficit: 23.43 orders
+
+    term                                           orders
+    sampling slack (composecert, ~1.10x)             0.04
+    family floor 0.52 n^1.05 m^1.03, m_eff = 4.99     3.59
+    THE BOX RELAXATION, by subtraction              19.80
+    total                                           23.43
+
+  T3: THE BOX RELAXATION DOMINATES. exactcert measured that term at ten to twenty orders
+  independently and showed it is the one thing in this family that is fixable in principle:
+  a bound over the REACHABLE completions rather than a box recovers it. Which means the
+  four modules that made this certificate valid, composable and adaptive were tightening
+  the sampling term -- worth 0.04 orders of the total.
+
+=================================================================================================
+T4  WHAT WOULD CLOSE IT, AND WHAT COULD NOT
+=================================================================================================
+  best conceivable certificate of this family, floor x sampling x true deficit: 6.8681e-92
+  observed certificate:                                                        4.2935e-72
+  the gap between them -- entirely the box -- is 19.80 orders.
+
+  If the box were fixed, the interval would be 6.97 orders wide instead of 26.77.
+  That is still 3.59 orders of irreducible floor, which no member of this family
+  escapes -- so even the best version of this certificate bounds the rare-event
+  probability to within a factor of about 4,261, not to within a few percent.
+  A certificate tight on the TAIL requires leaving the family, which is exactly what
+  exactcert concluded and what nothing since has changed.
+
+=================================================================================================
+T5  WHAT THIS DOES NOT SETTLE
+=================================================================================================
+  1. T1 is exact at four controllers. T2's engine-width comparison rests on backpoly's
+     ESTIMATE of the truth, whose error interval is carried but which is not a bound.
+  2. The decomposition attributes the residual to the box by SUBTRACTION, using exactcert's
+     floor law and composecert's sampling slack. It is a budget that sums to the observed
+     total, not three independent measurements.
+  3. m_eff is the certificate-weighted mean of levels remaining, which is the right
+     summary for a sum dominated by one level but is a summary nonetheless.

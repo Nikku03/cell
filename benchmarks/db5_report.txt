@@ -1,0 +1,50 @@
+  DB5 docking run: 60 complexes
+  2000 rotations (nn angle mean 10.75 deg), 1.5 A/voxel, top 50 poses kept
+  rescoring on 20 poses, repacking 6 interface residues
+
+  BOUND CHECK: floor_L <= best_L on every row -- 0 violations of 120
+
+  DISCRETIZATION FLOOR at 2000 rotations (floor_L: the best L-RMSD ANY pose from this rotation set can reach)
+      n=60   min 0.58   median 2.18   mean 2.43   max 6.68 A
+      tiers the SAMPLING can still reach (floor_L vs CAPRI L-RMSD bars):
+        floor_L <=   1.0 (high      ):   5/60 cases
+        floor_L <=   5.0 (medium    ):  56/60 cases
+        floor_L <=  10.0 (acceptable):  60/60 cases
+
+      FLOOR-LIMITED on the L-route (floor_L > 10.0 A): 0/60
+      worst floors: 4FQI(6.7), 1N2C(6.2), 4GXU(5.9), 1EER(5.6), 3MJ9(4.2), 4JCV(4.2)
+
+  CAPRI success (acceptable or better), rank-1 vs best-available
+  HEADLINE excludes the 0 floor-limited case(s); they are reported separately above.
+  class         n |  BB rank1   BB best |  UU rank1   UU best
+  rigid        20 |      0/20     13/20 |      0/20     16/20
+  medium       20 |      0/20     17/20 |      0/20      8/20
+  difficult    20 |      1/20     12/20 |      0/20      6/20
+
+  ERROR DECOMPOSITION in L-RMSD (the metric where the floor is a valid bound)
+  class      arm   floor    best   rank1 |  search scoring   (medians, A)
+  rigid      bb     2.01   10.60   45.18 |    7.92   38.70
+  rigid      uu     2.03    8.60   49.85 |    6.49   41.04
+  medium     bb     2.55    8.42   67.22 |    5.55   56.72
+  medium     uu     2.53   12.26   55.62 |    9.21   42.73
+  difficult  bb     2.10    7.37   52.37 |    4.30   42.47
+  difficult  uu     2.08   11.82   49.77 |    8.92   40.94
+
+  RESCORING the same 20 poses five ways (58 complexes). Search held fixed; only the score changes.
+  score     median I-RMSD   success   what it is
+  grid              18.16     0/ 58   Katchalski-Katzir shape (the baseline that made the list)
+  pair              26.82     0/ 58   Lennard-Jones + Coulomb at deposited rotamers
+  ve                21.12     0/ 58   Algorithm 2: exact repacking by variable elimination
+  greedy            21.12     0/ 58   the same repacking by best-of-20 restarts
+  Z                 21.12     0/ 58   Algorithm 4: -RT ln Z over the rotamer ensemble
+  CEILING           12.26     0/ 58   the best pose present in the rescored set at all
+
+  VE vs GREEDY on the repacking inside the rescoring:
+      poses where greedy MISSED the exact optimum: 0 of 1160
+      largest greedy gap seen: 0.000000 kcal/mol
+      cases where greedy changed which pose ranked first: 0 of 58
+      repacking treewidth: median 5, max 5
+
+  FLEXIBLE REFINEMENT (Algorithm 3) on the rank-1 UU pose, 28 medium/difficult cases
+      I-RMSD before 17.70  after 17.78  (median); improved on 10 of 28
+      median energy gain 2.034 kcal/mol; treewidth max 5

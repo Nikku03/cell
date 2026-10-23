@@ -1,0 +1,96 @@
+{
+  "test": "chromatin_partition_probes",
+  "question": "why is Wr/dLk 0.94 when measured DNA gives 0.72",
+  "probes": [
+    {
+      "bp": 2000.0,
+      "N": 61,
+      "bp_per_bead": 32.78688524590164,
+      "d_excl_nm": 5.0,
+      "C_nm": 55.0,
+      "Lp_lengths": 13.6,
+      "dlk": -9.523809523809524,
+      "wr": -8.581811714847689,
+      "frac": 0.9010902300590073,
+      "tw": -0.941997808961835,
+      "rg_nm": 35.382833078160864,
+      "acc": 0.3574964018675185,
+      "sweeps": 700,
+      "sec": 87.08218145370483
+    },
+    {
+      "bp": 2000.0,
+      "N": 61,
+      "bp_per_bead": 32.78688524590164,
+      "d_excl_nm": 5.0,
+      "C_nm": 95.0,
+      "Lp_lengths": 13.6,
+      "dlk": -9.523809523809524,
+      "wr": -8.924115922065981,
+      "frac": 0.9370321718169281,
+      "tw": -0.5996936017435424,
+      "rg_nm": 34.93499921431202,
+      "acc": 0.4066065222733176,
+      "sweeps": 700,
+      "sec": 87.63684916496277
+    },
+    {
+      "bp": 2000.0,
+      "N": 61,
+      "bp_per_bead": 32.78688524590164,
+      "d_excl_nm": 8.0,
+      "C_nm": 95.0,
+      "Lp_lengths": 13.6,
+      "dlk": -9.523809523809524,
+      "wr": -8.801710755424871,
+      "frac": 0.9241796293196115,
+      "tw": -0.7220987683846527,
+      "rg_nm": 37.63667233042431,
+      "acc": 0.3748727489732158,
+      "sweeps": 700,
+      "sec": 88.0347650051117
+    },
+    {
+      "bp": 4000.0,
+      "N": 121,
+      "bp_per_bead": 33.05785123966942,
+      "d_excl_nm": 5.0,
+      "C_nm": 95.0,
+      "Lp_lengths": 27.2,
+      "dlk": -19.047619047619047,
+      "wr": -17.957010336991676,
+      "frac": 0.942743042692063,
+      "tw": -1.0906087106273716,
+      "rg_nm": 54.47096701077592,
+      "acc": 0.1633701674559693,
+      "sweeps": 400,
+      "sec": 303.64741683006287
+    }
+  ],
+  "excluded_volume_sweep": [
+    {
+      "k": 20,
+      "d": 5.0,
+      "frac": 0.933
+    },
+    {
+      "k": 100,
+      "d": 5.0,
+      "frac": 0.927
+    },
+    {
+      "k": 400,
+      "d": 5.0,
+      "frac": 0.902
+    }
+  ],
+  "note_excl": "the sweep was killed after 3 of 5 rows; values transcribed from its log",
+  "reading": [
+    "chain length does nothing (0.937 -> 0.943 for 2x length)",
+    "C acts as 1/C exactly as the energy balance predicts, but only -0.036 for a 42% cut",
+    "excluded volume: diameter -0.013 for +60%, stiffness -0.031 for 20x",
+    "residual is entirely in E_bend prime (Wr), the marginal bending cost of writhe",
+    "directional consequence: too little dLk stays as TWIST, so torque is UNDER-estimated,",
+    "and torque is what drives melting and topoisomerase action"
+  ]
+}

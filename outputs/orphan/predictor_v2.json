@@ -1,0 +1,19 @@
+{
+ "holdout_recall_at50": 0.4887,
+ "observed_precision_by_band": {
+  "very low": 0.211,
+  "low": 0.407,
+  "moderate": 0.667,
+  "high": 0.67,
+  "very high": 0.792
+ },
+ "n_by_band": {
+  "very low": 9194,
+  "low": 1144,
+  "moderate": 735,
+  "high": 203,
+  "very high": 24
+ },
+ "verdict": "PREDICTOR V2 (predictor_v2.py): the deployable predictor packaging what survived testing. improve_v2 showed the four recall levers (similarity-weighting, rank fusion, agreement-gating, similarity-level fusion) all sit within seed noise of ~0.49 -- recall is SATURATED for this model class on this data -- so v2 adds CAPABILITY rather than recall: it returns a ranked, SIGNED (up/down) and CALIBRATED list instead of a bare ranking. Held-out specific recall@50 0.489. The calibration is MEASURED, not asserted: observed precision by confidence band = very high 79% (n=24), high 67% (n=203), moderate 67% (n=735), low 41% (n=1144), very low 21% (n=9194). Practically: a user asks for a knockout's effects and gets a short high-confidence list they can take to the bench (moderate-and-above bands run far above the 27% precision of the raw top-50), each entry carrying a predicted DIRECTION. Leave-one-out by construction -- the query is excluded from its own retrieval pool, so an in-panel gene is scored exactly as an unseen one. HONEST BOUND: this does not move the ceiling (oracle 0.62); it makes the existing signal usable and honest about where it is weak. Deterministic.",
+ "note": "PREDICTOR V2 (predictor_v2.py): the deployable predictor packaging what survived testing. improve_v2 showed the four recall levers (similarity-weighting, rank fusion, agreement-gating, similarity-level fusion) all sit within seed noise of ~0.49 -- recall is SATURATED for this model class on this data -- so v2 adds CAPABILITY rather than recall: it returns a ranked, SIGNED (up/down) and CALIBRATED list instead of a bare ranking. Held-out specific recall@50 0.489. The calibration is MEASURED, not asserted: observed precision by confidence band = very high 79% (n=24), high 67% (n=203), moderate 67% (n=735), low 41% (n=1144), very low 21% (n=9194). Practically: a user asks for a knockout's effects and gets a short high-confidence list they can take to the bench (moderate-and-above bands run far above the 27% precision of the raw top-50), each entry carrying a predicted DIRECTION. Leave-one-out by construction -- the query is excluded from its own retrieval pool, so an in-panel gene is scored exactly as an unseen one. HONEST BOUND: this does not move the ceiling (oracle 0.62); it makes the existing signal usable and honest about where it is weak. Deterministic."
+}

@@ -1,0 +1,299 @@
+{
+  "test": "loop_tail",
+  "manifest": {
+    "manifest_version": 1,
+    "inputs": [
+      {
+        "path": "outputs/loop_medium.json",
+        "bytes": 630150,
+        "hash": "27f9b5d490c811b1",
+        "method": "sha256:full"
+      },
+      {
+        "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+        "bytes": 38524393,
+        "hash": "b857a72939e09be8",
+        "method": "sha256:full"
+      }
+    ],
+    "coverage": {
+      "available": 1775,
+      "used": 1775,
+      "selection": "all",
+      "fraction": 1.0
+    },
+    "seed": 1904,
+    "controls": [
+      "200 label shuffles for membership and for order",
+      "the FULL scored set for T1, conditioning on nothing",
+      "DepMap dependency fraction as the external standard"
+    ],
+    "note": "separates 'wrong set' from 'wrong order', which loop_slack's single rank correlation could not",
+    "warnings": []
+  },
+  "gates": {
+    "T1 the tail is the right set": true,
+    "T2 the tail is in the right order": true,
+    "T3 the disagreement is nameable": true
+  },
+  "auc_membership": 0.65898968946373,
+  "null_p95": 0.5165800676523025,
+  "spearman_order": 0.5563397481873142,
+  "order_null_p95": 0.49225618376448305,
+  "precision": 0.7669902912621359,
+  "recall": 0.35665914221218964,
+  "n_model_tail": 206,
+  "n_dep_tail": 443,
+  "n_overlap": 158,
+  "over_called": [
+    "ALAD",
+    "ALDH9A1",
+    "ATP5MC2",
+    "ATP5MC3",
+    "ATP5MK",
+    "CLYBL",
+    "COQ3",
+    "COQ6",
+    "COX8A",
+    "CPOX",
+    "DDX19B",
+    "DHCR24",
+    "DHCR7",
+    "DLAT",
+    "EBP",
+    "FDFT1",
+    "GCH1",
+    "GNPNAT1",
+    "HMBS",
+    "LSS",
+    "MMAA",
+    "NDUFA12",
+    "NDUFA3",
+    "NDUFA7",
+    "NDUFS4",
+    "NDUFS6",
+    "NDUFV3",
+    "NSDHL",
+    "NUP210",
+    "NUP37",
+    "NUP42",
+    "PDHB",
+    "PDHX",
+    "PDXK",
+    "POM121",
+    "RRM2B",
+    "SEC11A",
+    "SEC11C",
+    "SHMT2",
+    "SLC5A6",
+    "SPCS1",
+    "SPR",
+    "SQLE",
+    "SUCLG1",
+    "TECR",
+    "TMLHE",
+    "UQCR11",
+    "UROS"
+  ],
+  "missed": [
+    "AASDHPPT",
+    "ACLY",
+    "ACO2",
+    "ACSL3",
+    "ADSS2",
+    "AHCY",
+    "AK4",
+    "AK6",
+    "ALDOA",
+    "ALG1",
+    "ALG10B",
+    "ALG11",
+    "ALG13",
+    "ALG14",
+    "ALG2",
+    "ALG5",
+    "ALG8",
+    "ANAPC11",
+    "ARCN1",
+    "ARID4B",
+    "ATP1A1",
+    "ATP1B3",
+    "ATP2A2",
+    "ATP2B1",
+    "ATP6AP1",
+    "ATP6V0B",
+    "ATP6V0C",
+    "ATP6V0D1",
+    "ATP6V1A",
+    "ATP6V1B2",
+    "ATP6V1C1",
+    "ATP6V1D",
+    "ATP6V1E1",
+    "ATP6V1F",
+    "ATP6V1G1",
+    "ATP6V1H",
+    "BARD1",
+    "BIRC6",
+    "BRAP",
+    "BRPF1",
+    "CBLL1",
+    "CDS2",
+    "CEPT1",
+    "CERS2",
+    "CHKA",
+    "CMPK1",
+    "CMTR1",
+    "COP1",
+    "COPE",
+    "COPG1",
+    "COQ5",
+    "COX10",
+    "COX4I1",
+    "COX6A1",
+    "COX6B1",
+    "CRLS1",
+    "CS",
+    "CTDSPL2",
+    "CTPS1",
+    "CYB5R4"
+  ],
+  "model_tail_paths": [
+    [
+      "aerobic respiration",
+      43,
+      0.2087378640776699
+    ],
+    [
+      "proton motive force-driven mitochondrial ATP synthesis",
+      41,
+      0.19902912621359223
+    ],
+    [
+      "mitochondrial electron transport, NADH to ubiquinone",
+      34,
+      0.1650485436893204
+    ],
+    [
+      "Complex I biogenesis",
+      34,
+      0.1650485436893204
+    ],
+    [
+      "snRNP Assembly",
+      28,
+      0.13592233009708737
+    ],
+    [
+      "proton transmembrane transport",
+      28,
+      0.13592233009708737
+    ],
+    [
+      "nucleocytoplasmic transport",
+      26,
+      0.1262135922330097
+    ],
+    [
+      "DNA-templated transcription",
+      21,
+      0.10194174757281553
+    ]
+  ],
+  "dep_tail_paths": [
+    [
+      "aerobic respiration",
+      36,
+      0.08126410835214447
+    ],
+    [
+      "proton motive force-driven mitochondrial ATP synthesis",
+      36,
+      0.08126410835214447
+    ],
+    [
+      "mitochondrial electron transport, NADH to ubiquinone",
+      29,
+      0.0654627539503386
+    ],
+    [
+      "Complex I biogenesis",
+      29,
+      0.0654627539503386
+    ],
+    [
+      "proton transmembrane transport",
+      25,
+      0.056433408577878104
+    ],
+    [
+      "snRNP Assembly",
+      24,
+      0.05417607223476298
+    ],
+    [
+      "nucleocytoplasmic transport",
+      22,
+      0.04966139954853273
+    ],
+    [
+      "protein ubiquitination",
+      22,
+      0.04966139954853273
+    ]
+  ],
+  "log": [
+    "====================================================================================================",
+    "WHICH GENES BELONG IN THE TAIL",
+    "====================================================================================================",
+    "  loop_slack said the remaining problem is 'the ordering of the tail rather than its size'.",
+    "  That hides two different failures -- wrong SET and wrong ORDER -- and its rank correlation",
+    "  was computed only among genes the model had already put in its tail, which conditions on",
+    "  the model being right about membership.",
+    "\n  1,775 genes with both a model cost and a DepMap dependency fraction; 443 are dependencies in >= 10% of lines",
+    "\n  T1 MEMBERSHIP -- does the model's cost pick out DepMap dependencies at all?",
+    "    AUC 0.6590 against a shuffled null of 0.5013 +/- 0.0101 (95th 0.5166)   T1 PASS",
+    "    the model's tail is 206 genes; DepMap's is 443; 158 in both",
+    "    precision 76.7% (of what the model calls costly, this fraction are real dependencies)",
+    "    recall    35.7% (of real dependencies, this fraction are called costly)",
+    "\n  T2 ORDER -- among the 158 genes BOTH call important, do they agree on how important?",
+    "    Spearman +0.5563 against |null| 95th pct 0.4923   T2 PASS",
+    "\n  T3 WHAT IS IN EACH TAIL -- pathways over-represented, as a fraction of that tail",
+    "    THE MODEL CALLS COSTLY                                   n    frac",
+    "    aerobic respiration                                     43   20.9%",
+    "    proton motive force-driven mitochondrial ATP synth      41   19.9%",
+    "    mitochondrial electron transport, NADH to ubiquino      34   16.5%",
+    "    Complex I biogenesis                                    34   16.5%",
+    "    snRNP Assembly                                          28   13.6%",
+    "    proton transmembrane transport                          28   13.6%",
+    "    nucleocytoplasmic transport                             26   12.6%",
+    "    DNA-templated transcription                             21   10.2%",
+    "    DEPMAP CALLS A DEPENDENCY                                n    frac",
+    "    aerobic respiration                                     36    8.1%",
+    "    proton motive force-driven mitochondrial ATP synth      36    8.1%",
+    "    mitochondrial electron transport, NADH to ubiquino      29    6.5%",
+    "    Complex I biogenesis                                    29    6.5%",
+    "    proton transmembrane transport                          25    5.6%",
+    "    snRNP Assembly                                          24    5.4%",
+    "    nucleocytoplasmic transport                             22    5.0%",
+    "    protein ubiquitination                                  22    5.0%",
+    "\n    48 genes the model over-calls; 285 real dependencies it",
+    "    misses. Examples over-called: ALAD, ALDH9A1, ATP5MC2, ATP5MC3, ATP5MK, CLYBL, COQ3, COQ6, COX8A, CPOX",
+    "    Examples missed:            AASDHPPT, ACLY, ACO2, ACSL3, ADSS2, AHCY, AK4, AK6, ALDOA, ALG1",
+    "\n====================================================================================================",
+    "  T1 the tail is the right set            PASS",
+    "  T2 the tail is in the right order       PASS",
+    "  T3 the disagreement is nameable         PASS",
+    "  RIGHT SET AND RIGHT ORDER on the full set. loop_slack's P3 was measuring a subset that",
+    "  had been conditioned on the model's own tail, which made the ordering look worse than",
+    "  it is.",
+    "  THE REAL LIMITATION IS RECALL, not ordering: precision 77% against recall 36%.",
+    "  When this model calls a gene costly it is usually right; it simply cannot see most of",
+    "  what cells depend on, because 285 of those dependencies are outside",
+    "  metabolism or outside the reactions Human-GEM carries. That is a coverage problem with",
+    "  a named gene list, not an ordering problem.",
+    "  NOTE T2's WEAKNESS: the |null| 95th percentile is 0.4923 on 158 genes, so",
+    "  the ordering test only just clears a very wide band and should not be leaned on.",
+    "====================================================================================================",
+    "    manifest: 2 inputs, coverage 1775/1775 (100.0%) by 'all', seed 1904, controls 3"
+  ]
+}

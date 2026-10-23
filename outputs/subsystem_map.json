@@ -1,0 +1,1093 @@
+{
+  "test": "subsystem_map",
+  "subsystems": {
+    "cell model": {
+      "modules": 35,
+      "traced": 14,
+      "ran_clean": 13,
+      "before_datasets": [
+        "cand_struct.json",
+        "causal_edges.json",
+        "cell_complete.json",
+        "cell_complete.json.gz",
+        "cell_orphan_fill.json",
+        "chebi_compounds.tsv.gz",
+        "chebi_names.tsv.gz",
+        "chebi_structures.tsv.gz",
+        "depmap_vecs.npz",
+        "evidence_blocks.json",
+        "hgnc_protein_coding.json",
+        "holdout_answers.json",
+        "holdout_meta.json",
+        "holdout_top50_partial.json",
+        "incontext_answers.json",
+        "incontext_shown.json",
+        "keymap.json",
+        "multivote.json",
+        "obscurity_answers.json",
+        "pathway_position.json",
+        "prot_pfam.json",
+        "rankv2_answers.json",
+        "rankv2_meta.json",
+        "reaction_network.json",
+        "reactome_pathways.json",
+        "rx_ChEBI2Reactome_PE_All_Levels.txt",
+        "second.json",
+        "tf_core.json",
+        "trrust_regulon.json"
+      ],
+      "after_datasets": [
+        "causal_edges.json",
+        "cell_complete.json",
+        "celltype_capacity.json",
+        "context_dependency.json",
+        "dark_function_table.json",
+        "domains.json",
+        "gene_additions.json",
+        "ghost_patch.json",
+        "holdout_meta.json",
+        "holdout_top50_partial.json",
+        "incontext_answers.json",
+        "incontext_shown_strict.json",
+        "kinetics_refined_corrected.json",
+        "metabolic_levels.json",
+        "metabolite_enzyme.json",
+        "obscurity_answers.json",
+        "obscurity_puzzles.json",
+        "prot_pfam.json",
+        "rankv2_answers.json",
+        "rankv2_meta.json",
+        "reaction_network.json",
+        "reactome_pathways.json",
+        "saturation_kapp.json",
+        "tf_core.json",
+        "tf_motifs.json",
+        "translation.json",
+        "trrust_regulon.json"
+      ],
+      "gained": [
+        "celltype_capacity.json",
+        "context_dependency.json",
+        "dark_function_table.json",
+        "domains.json",
+        "gene_additions.json",
+        "ghost_patch.json",
+        "incontext_shown_strict.json",
+        "kinetics_refined_corrected.json",
+        "metabolic_levels.json",
+        "metabolite_enzyme.json",
+        "obscurity_puzzles.json",
+        "saturation_kapp.json",
+        "tf_motifs.json",
+        "translation.json"
+      ],
+      "lost": [
+        "cand_struct.json",
+        "cell_complete.json.gz",
+        "cell_orphan_fill.json",
+        "chebi_compounds.tsv.gz",
+        "chebi_names.tsv.gz",
+        "chebi_structures.tsv.gz",
+        "depmap_vecs.npz",
+        "evidence_blocks.json",
+        "hgnc_protein_coding.json",
+        "holdout_answers.json",
+        "incontext_shown.json",
+        "keymap.json",
+        "multivote.json",
+        "pathway_position.json",
+        "rx_ChEBI2Reactome_PE_All_Levels.txt",
+        "second.json"
+      ],
+      "rows": [
+        {
+          "module": "colab/cell_conditions.py",
+          "before": [
+            "causal_edges.json",
+            "cell_complete.json",
+            "reactome_pathways.json",
+            "trrust_regulon.json"
+          ],
+          "after": [],
+          "n_before": 4,
+          "n_after": 0,
+          "status": "not traced",
+          "keys": 0
+        },
+        {
+          "module": "colab/cell_levels.py",
+          "before": [
+            "pathway_position.json",
+            "reactome_pathways.json"
+          ],
+          "after": [
+            "causal_edges.json",
+            "cell_complete.json",
+            "celltype_capacity.json",
+            "context_dependency.json",
+            "dark_function_table.json",
+            "domains.json",
+            "gene_additions.json",
+            "ghost_patch.json",
+            "kinetics_refined_corrected.json",
+            "metabolic_levels.json",
+            "metabolite_enzyme.json",
+            "reactome_pathways.json",
+            "saturation_kapp.json",
+            "tf_motifs.json",
+            "translation.json"
+          ],
+          "n_before": 2,
+          "n_after": 15,
+          "status": "ok",
+          "keys": 30
+        },
+        {
+          "module": "colab/cell_map.py",
+          "before": [
+            "depmap_vecs.npz"
+          ],
+          "after": [],
+          "n_before": 1,
+          "n_after": 0,
+          "status": "ok",
+          "keys": 0
+        },
+        {
+          "module": "colab/cell_orphan_candidates.py",
+          "before": [
+            "reaction_network.json"
+          ],
+          "after": [],
+          "n_before": 1,
+          "n_after": 0,
+          "status": "not traced",
+          "keys": 0
+        },
+        {
+          "module": "colab/cell_orphan_channel_gate.py",
+          "before": [
+            "cell_complete.json",
+            "prot_pfam.json",
+            "tf_core.json"
+          ],
+          "after": [
+            "cell_complete.json",
+            "prot_pfam.json",
+            "reaction_network.json",
+            "reactome_pathways.json",
+            "tf_core.json",
+            "trrust_regulon.json"
+          ],
+          "n_before": 3,
+          "n_after": 6,
+          "status": "ok",
+          "keys": 10
+        },
+        {
+          "module": "colab/cell_orphan_chem_coverage.py",
+          "before": [
+            "chebi_compounds.tsv.gz",
+            "chebi_names.tsv.gz",
+            "chebi_structures.tsv.gz",
+            "holdout_meta.json"
+          ],
+          "after": [
+            "cell_complete.json",
+            "holdout_meta.json",
+            "reaction_network.json",
+            "reactome_pathways.json",
+            "trrust_regulon.json"
+          ],
+          "n_before": 4,
+          "n_after": 5,
+          "status": "ok",
+          "keys": 9
+        },
+        {
+          "module": "colab/cell_orphan_cluster_stats.py",
+          "before": [
+            "incontext_answers.json",
+            "incontext_shown.json",
+            "obscurity_answers.json"
+          ],
+          "after": [
+            "cell_complete.json",
+            "incontext_answers.json",
+            "incontext_shown_strict.json",
+            "obscurity_answers.json",
+            "obscurity_puzzles.json",
+            "reaction_network.json",
+            "reactome_pathways.json",
+            "trrust_regulon.json"
+          ],
+          "n_before": 3,
+          "n_after": 8,
+          "status": "ok",
+          "keys": 5935
+        },
+        {
+          "module": "colab/cell_orphan_context.py",
+          "before": [
+            "reaction_network.json"
+          ],
+          "after": [],
+          "n_before": 1,
+          "n_after": 0,
+          "status": "not traced",
+          "keys": 0
+        },
+        {
+          "module": "colab/cell_orphan_evidence.py",
+          "before": [],
+          "after": [],
+          "n_before": 0,
+          "n_after": 0,
+          "status": "not traced",
+          "keys": 0
+        },
+        {
+          "module": "colab/cell_orphan_evidence_score.py",
+          "before": [
+            "evidence_blocks.json"
+          ],
+          "after": [],
+          "n_before": 1,
+          "n_after": 0,
+          "status": "not traced",
+          "keys": 0
+        },
+        {
+          "module": "colab/cell_orphan_fill.py",
+          "before": [
+            "cell_complete.json",
+            "hgnc_protein_coding.json"
+          ],
+          "after": [],
+          "n_before": 2,
+          "n_after": 0,
+          "status": "ok",
+          "keys": 0
+        },
+        {
+          "module": "colab/cell_orphan_holdout.py",
+          "before": [],
+          "after": [],
+          "n_before": 0,
+          "n_after": 0,
+          "status": "ok",
+          "keys": 0
+        },
+        {
+          "module": "colab/cell_orphan_howmany.py",
+          "before": [
+            "cell_orphan_fill.json",
+            "holdout_answers.json",
+            "holdout_meta.json",
+            "keymap.json",
+            "multivote.json",
+            "rankv2_answers.json",
+            "rankv2_meta.json",
+            "second.json"
+          ],
+          "after": [],
+          "n_before": 8,
+          "n_after": 0,
+          "status": "ok",
+          "keys": 0
+        },
+        {
+          "module": "colab/cell_orphan_incontext.py",
+          "before": [
+            "obscurity_answers.json"
+          ],
+          "after": [],
+          "n_before": 1,
+          "n_after": 0,
+          "status": "not traced",
+          "keys": 0
+        },
+        {
+          "module": "colab/cell_orphan_llm.py",
+          "before": [],
+          "after": [],
+          "n_before": 0,
+          "n_after": 0,
+          "status": "not traced",
+          "keys": 0
+        },
+        {
+          "module": "colab/cell_orphan_llm_audit.py",
+          "before": [],
+          "after": [],
+          "n_before": 0,
+          "n_after": 0,
+          "status": "not traced",
+          "keys": 0
+        },
+        {
+          "module": "colab/cell_orphan_llm_merge.py",
+          "before": [],
+          "after": [],
+          "n_before": 0,
+          "n_after": 0,
+          "status": "not traced",
+          "keys": 0
+        },
+        {
+          "module": "colab/cell_orphan_obscurity.py",
+          "before": [],
+          "after": [],
+          "n_before": 0,
+          "n_after": 0,
+          "status": "not traced",
+          "keys": 0
+        },
+        {
+          "module": "colab/cell_orphan_rank_v2.py",
+          "before": [
+            "holdout_meta.json",
+            "holdout_top50_partial.json"
+          ],
+          "after": [],
+          "n_before": 2,
+          "n_after": 0,
+          "status": "ok",
+          "keys": 0
+        },
+        {
+          "module": "colab/cell_orphan_selective.py",
+          "before": [
+            "cand_struct.json",
+            "holdout_meta.json",
+            "rankv2_answers.json",
+            "rankv2_meta.json",
+            "rx_ChEBI2Reactome_PE_All_Levels.txt"
+          ],
+          "after": [
+            "cell_complete.json",
+            "holdout_meta.json",
+            "rankv2_answers.json",
+            "rankv2_meta.json",
+            "reaction_network.json",
+            "reactome_pathways.json",
+            "trrust_regulon.json"
+          ],
+          "n_before": 5,
+          "n_after": 7,
+          "status": "TIMEOUT after 240s",
+          "keys": 614
+        },
+        {
+          "module": "colab/cell_orphan_shortlist.py",
+          "before": [],
+          "after": [],
+          "n_before": 0,
+          "n_after": 0,
+          "status": "not traced",
+          "keys": 0
+        },
+        {
+          "module": "colab/cell_orphan_spatial.py",
+          "before": [
+            "cell_complete.json",
+            "holdout_meta.json",
+            "rankv2_answers.json",
+            "rankv2_meta.json"
+          ],
+          "after": [
+            "cell_complete.json",
+            "holdout_meta.json",
+            "rankv2_answers.json",
+            "rankv2_meta.json",
+            "reaction_network.json",
+            "reactome_pathways.json",
+            "trrust_regulon.json"
+          ],
+          "n_before": 4,
+          "n_after": 7,
+          "status": "ok",
+          "keys": 579
+        },
+        {
+          "module": "colab/cell_orphan_ties.py",
+          "before": [
+            "reaction_network.json"
+          ],
+          "after": [],
+          "n_before": 1,
+          "n_after": 0,
+          "status": "not traced",
+          "keys": 0
+        },
+        {
+          "module": "colab/cell_orphan_ties_nn.py",
+          "before": [
+            "reaction_network.json"
+          ],
+          "after": [],
+          "n_before": 1,
+          "n_after": 0,
+          "status": "not traced",
+          "keys": 0
+        },
+        {
+          "module": "colab/cell_orphan_transfer.py",
+          "before": [
+            "incontext_answers.json"
+          ],
+          "after": [
+            "cell_complete.json",
+            "incontext_answers.json",
+            "obscurity_puzzles.json",
+            "reaction_network.json",
+            "reactome_pathways.json",
+            "trrust_regulon.json"
+          ],
+          "n_before": 1,
+          "n_after": 6,
+          "status": "ok",
+          "keys": 5535
+        },
+        {
+          "module": "colab/cell_orphan_truthset.py",
+          "before": [
+            "holdout_meta.json",
+            "rankv2_answers.json",
+            "rankv2_meta.json"
+          ],
+          "after": [
+            "cell_complete.json",
+            "holdout_meta.json",
+            "rankv2_answers.json",
+            "rankv2_meta.json",
+            "reaction_network.json",
+            "reactome_pathways.json",
+            "trrust_regulon.json"
+          ],
+          "n_before": 3,
+          "n_after": 7,
+          "status": "ok",
+          "keys": 579
+        },
+        {
+          "module": "colab/cell_orphan_why_unsure.py",
+          "before": [
+            "holdout_meta.json",
+            "holdout_top50_partial.json",
+            "rankv2_answers.json",
+            "rankv2_meta.json"
+          ],
+          "after": [
+            "holdout_meta.json",
+            "holdout_top50_partial.json",
+            "rankv2_answers.json",
+            "rankv2_meta.json"
+          ],
+          "n_before": 4,
+          "n_after": 4,
+          "status": "ok",
+          "keys": 856
+        },
+        {
+          "module": "colab/cell_partslist.py",
+          "before": [
+            "cell_complete.json.gz",
+            "reaction_network.json"
+          ],
+          "after": [],
+          "n_before": 2,
+          "n_after": 0,
+          "status": "not traced",
+          "keys": 0
+        },
+        {
+          "module": "colab/cell_pathway_map.py",
+          "before": [
+            "cell_complete.json",
+            "reactome_pathways.json"
+          ],
+          "after": [],
+          "n_before": 2,
+          "n_after": 0,
+          "status": "not traced",
+          "keys": 0
+        },
+        {
+          "module": "colab/cell_qa.py",
+          "before": [],
+          "after": [],
+          "n_before": 0,
+          "n_after": 0,
+          "status": "not traced",
+          "keys": 0
+        },
+        {
+          "module": "colab/cell_sim.py",
+          "before": [],
+          "after": [],
+          "n_before": 0,
+          "n_after": 0,
+          "status": "not traced",
+          "keys": 0
+        },
+        {
+          "module": "colab/cell_state.py",
+          "before": [
+            "cell_complete.json"
+          ],
+          "after": [],
+          "n_before": 1,
+          "n_after": 0,
+          "status": "not traced",
+          "keys": 0
+        },
+        {
+          "module": "colab/cell_stats.py",
+          "before": [],
+          "after": [],
+          "n_before": 0,
+          "n_after": 0,
+          "status": "not traced",
+          "keys": 0
+        },
+        {
+          "module": "colab/cell_web_fill.py",
+          "before": [
+            "reaction_network.json"
+          ],
+          "after": [],
+          "n_before": 1,
+          "n_after": 0,
+          "status": "not traced",
+          "keys": 0
+        },
+        {
+          "module": "colab/cell_would_we_have_found_it.py",
+          "before": [
+            "cell_complete.json.gz",
+            "reaction_network.json"
+          ],
+          "after": [],
+          "n_before": 2,
+          "n_after": 0,
+          "status": "not traced",
+          "keys": 0
+        }
+      ]
+    },
+    "nexus": {
+      "modules": 22,
+      "traced": 5,
+      "ran_clean": 2,
+      "before_datasets": [
+        "AvgKdegs.csv",
+        "_abcfeat.json",
+        "cand_struct.json",
+        "cell_complete.json",
+        "holdout_meta.json",
+        "holdout_top50_partial.json",
+        "k562_atac.bed.gz",
+        "lambert_tf_symbols.json",
+        "nlz_K562.pkl",
+        "skempi_v2.csv",
+        "trrust_regulon.json"
+      ],
+      "after_datasets": [
+        "cell_complete.json",
+        "ddg_model.pkl",
+        "holdout_meta.json",
+        "holdout_top50_partial.json",
+        "reaction_network.json",
+        "reactome_pathways.json",
+        "trrust_regulon.json"
+      ],
+      "gained": [
+        "ddg_model.pkl",
+        "reaction_network.json",
+        "reactome_pathways.json"
+      ],
+      "lost": [
+        "AvgKdegs.csv",
+        "_abcfeat.json",
+        "cand_struct.json",
+        "k562_atac.bed.gz",
+        "lambert_tf_symbols.json",
+        "nlz_K562.pkl",
+        "skempi_v2.csv"
+      ],
+      "rows": [
+        {
+          "module": "colab/nexus.py",
+          "before": [],
+          "after": [
+            "ddg_model.pkl"
+          ],
+          "n_before": 0,
+          "n_after": 1,
+          "status": "FileNotFoundError: [Errno 2] No such file or directory: '/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/skempi_v2.csv'",
+          "keys": 0
+        },
+        {
+          "module": "colab/nexus_catalyst_compose.py",
+          "before": [],
+          "after": [],
+          "n_before": 0,
+          "n_after": 0,
+          "status": "not traced",
+          "keys": 0
+        },
+        {
+          "module": "colab/nexus_catalyst_esm.py",
+          "before": [],
+          "after": [],
+          "n_before": 0,
+          "n_after": 0,
+          "status": "not traced",
+          "keys": 0
+        },
+        {
+          "module": "colab/nexus_catalyst_nn.py",
+          "before": [],
+          "after": [],
+          "n_before": 0,
+          "n_after": 0,
+          "status": "not traced",
+          "keys": 0
+        },
+        {
+          "module": "colab/nexus_catalyst_pilot.py",
+          "before": [],
+          "after": [],
+          "n_before": 0,
+          "n_after": 0,
+          "status": "not traced",
+          "keys": 0
+        },
+        {
+          "module": "colab/nexus_cell.py",
+          "before": [],
+          "after": [],
+          "n_before": 0,
+          "n_after": 0,
+          "status": "not traced",
+          "keys": 0
+        },
+        {
+          "module": "colab/nexus_dna_scale.py",
+          "before": [],
+          "after": [],
+          "n_before": 0,
+          "n_after": 0,
+          "status": "ok",
+          "keys": 0
+        },
+        {
+          "module": "colab/nexus_dna_spheres.py",
+          "before": [],
+          "after": [],
+          "n_before": 0,
+          "n_after": 0,
+          "status": "ok",
+          "keys": 0
+        },
+        {
+          "module": "colab/nexus_dock_screen.py",
+          "before": [
+            "cand_struct.json",
+            "holdout_meta.json",
+            "holdout_top50_partial.json"
+          ],
+          "after": [
+            "cell_complete.json",
+            "holdout_meta.json",
+            "holdout_top50_partial.json",
+            "reaction_network.json",
+            "reactome_pathways.json",
+            "trrust_regulon.json"
+          ],
+          "n_before": 3,
+          "n_after": 6,
+          "status": "TIMEOUT after 240s",
+          "keys": 311
+        },
+        {
+          "module": "colab/nexus_doesitbind.py",
+          "before": [],
+          "after": [],
+          "n_before": 0,
+          "n_after": 0,
+          "status": "not traced",
+          "keys": 0
+        },
+        {
+          "module": "colab/nexus_ko.py",
+          "before": [
+            "cell_complete.json",
+            "nlz_K562.pkl"
+          ],
+          "after": [],
+          "n_before": 2,
+          "n_after": 0,
+          "status": "not traced",
+          "keys": 0
+        },
+        {
+          "module": "colab/nexus_ko_fetch.py",
+          "before": [
+            "cell_complete.json"
+          ],
+          "after": [],
+          "n_before": 1,
+          "n_after": 0,
+          "status": "not traced",
+          "keys": 0
+        },
+        {
+          "module": "colab/nexus_ko_struct.py",
+          "before": [
+            "cell_complete.json"
+          ],
+          "after": [],
+          "n_before": 1,
+          "n_after": 0,
+          "status": "not traced",
+          "keys": 0
+        },
+        {
+          "module": "colab/nexus_massaction.py",
+          "before": [
+            "skempi_v2.csv"
+          ],
+          "after": [],
+          "n_before": 1,
+          "n_after": 0,
+          "status": "not traced",
+          "keys": 0
+        },
+        {
+          "module": "colab/nexus_methyl_propagate.py",
+          "before": [],
+          "after": [],
+          "n_before": 0,
+          "n_after": 0,
+          "status": "not traced",
+          "keys": 0
+        },
+        {
+          "module": "colab/nexus_pairs.py",
+          "before": [],
+          "after": [],
+          "n_before": 0,
+          "n_after": 0,
+          "status": "not traced",
+          "keys": 0
+        },
+        {
+          "module": "colab/nexus_pocket_modes.py",
+          "before": [
+            "cand_struct.json",
+            "holdout_meta.json",
+            "holdout_top50_partial.json"
+          ],
+          "after": [
+            "holdout_meta.json",
+            "holdout_top50_partial.json"
+          ],
+          "n_before": 3,
+          "n_after": 2,
+          "status": "TIMEOUT after 240s",
+          "keys": 344
+        },
+        {
+          "module": "colab/nexus_regulate.py",
+          "before": [
+            "trrust_regulon.json"
+          ],
+          "after": [],
+          "n_before": 1,
+          "n_after": 0,
+          "status": "not traced",
+          "keys": 0
+        },
+        {
+          "module": "colab/nexus_screen_feasibility.py",
+          "before": [],
+          "after": [],
+          "n_before": 0,
+          "n_after": 0,
+          "status": "not traced",
+          "keys": 0
+        },
+        {
+          "module": "colab/nexus_train.py",
+          "before": [],
+          "after": [],
+          "n_before": 0,
+          "n_after": 0,
+          "status": "not traced",
+          "keys": 0
+        },
+        {
+          "module": "colab/nexus_txn.py",
+          "before": [
+            "AvgKdegs.csv",
+            "_abcfeat.json",
+            "cell_complete.json",
+            "k562_atac.bed.gz",
+            "lambert_tf_symbols.json"
+          ],
+          "after": [],
+          "n_before": 5,
+          "n_after": 0,
+          "status": "not traced",
+          "keys": 0
+        },
+        {
+          "module": "colab/nexus_wall.py",
+          "before": [
+            "cell_complete.json",
+            "nlz_K562.pkl",
+            "trrust_regulon.json"
+          ],
+          "after": [],
+          "n_before": 3,
+          "n_after": 0,
+          "status": "not traced",
+          "keys": 0
+        }
+      ]
+    },
+    "4d chromatin": {
+      "modules": 14,
+      "traced": 13,
+      "ran_clean": 3,
+      "before_datasets": [],
+      "after_datasets": [],
+      "gained": [],
+      "lost": [],
+      "rows": [
+        {
+          "module": "colab/chromatin_bond_energy.py",
+          "before": [],
+          "after": [],
+          "n_before": 0,
+          "n_after": 0,
+          "status": "TIMEOUT after 240s",
+          "keys": 0
+        },
+        {
+          "module": "colab/chromatin_cost_model.py",
+          "before": [],
+          "after": [],
+          "n_before": 0,
+          "n_after": 0,
+          "status": "ok",
+          "keys": 0
+        },
+        {
+          "module": "colab/chromatin_greens.py",
+          "before": [],
+          "after": [],
+          "n_before": 0,
+          "n_after": 0,
+          "status": "TIMEOUT after 240s",
+          "keys": 0
+        },
+        {
+          "module": "colab/chromatin_mark_cost.py",
+          "before": [],
+          "after": [],
+          "n_before": 0,
+          "n_after": 0,
+          "status": "TIMEOUT after 240s",
+          "keys": 0
+        },
+        {
+          "module": "colab/chromatin_modal.py",
+          "before": [],
+          "after": [],
+          "n_before": 0,
+          "n_after": 0,
+          "status": "TIMEOUT after 240s",
+          "keys": 0
+        },
+        {
+          "module": "colab/chromatin_resolution.py",
+          "before": [],
+          "after": [],
+          "n_before": 0,
+          "n_after": 0,
+          "status": "TIMEOUT after 240s",
+          "keys": 0
+        },
+        {
+          "module": "colab/chromatin_rod.py",
+          "before": [],
+          "after": [],
+          "n_before": 0,
+          "n_after": 0,
+          "status": "ok",
+          "keys": 0
+        },
+        {
+          "module": "colab/chromatin_sphere_scaling.py",
+          "before": [],
+          "after": [],
+          "n_before": 0,
+          "n_after": 0,
+          "status": "TIMEOUT after 240s",
+          "keys": 0
+        },
+        {
+          "module": "colab/chromatin_spheres.py",
+          "before": [],
+          "after": [],
+          "n_before": 0,
+          "n_after": 0,
+          "status": "not traced",
+          "keys": 0
+        },
+        {
+          "module": "colab/chromatin_supercoil.py",
+          "before": [],
+          "after": [],
+          "n_before": 0,
+          "n_after": 0,
+          "status": "TIMEOUT after 240s",
+          "keys": 0
+        },
+        {
+          "module": "colab/chromatin_time.py",
+          "before": [],
+          "after": [],
+          "n_before": 0,
+          "n_after": 0,
+          "status": "TIMEOUT after 240s",
+          "keys": 0
+        },
+        {
+          "module": "colab/chromatin_timescale.py",
+          "before": [],
+          "after": [],
+          "n_before": 0,
+          "n_after": 0,
+          "status": "ok",
+          "keys": 1
+        },
+        {
+          "module": "colab/chromatin_twist_energy.py",
+          "before": [],
+          "after": [],
+          "n_before": 0,
+          "n_after": 0,
+          "status": "TIMEOUT after 240s",
+          "keys": 0
+        },
+        {
+          "module": "colab/chromatin_twolevel.py",
+          "before": [],
+          "after": [],
+          "n_before": 0,
+          "n_after": 0,
+          "status": "TIMEOUT after 240s",
+          "keys": 0
+        }
+      ]
+    }
+  },
+  "log": [
+    "====================================================================================================",
+    "DATA MAP -- BEFORE (what the source names) vs AFTER (what the run opened)",
+    "====================================================================================================",
+    "  BEFORE walks the AST for filename literals. AFTER wraps open/json.load/np.load/pandas and",
+    "  records every path the process actually touched. A built path -- pd.read_parquet(UP),",
+    "  f\"ko_dossier_{ko}.json\", a hash-prefixed cache -- is invisible to one and exact in the other.",
+    "\n  ==============================================================================================",
+    "  CELL MODEL   35 modules, 14 traced, 13 ran clean",
+    "  ==============================================================================================",
+    "    module                                  before  after    keys  status",
+    "    cell_conditions.py                           4      0       0  not traced",
+    "    cell_levels.py                               2     15      30  ok",
+    "    cell_map.py                                  1      0       0  ok",
+    "    cell_orphan_candidates.py                    1      0       0  not traced",
+    "    cell_orphan_channel_gate.py                  3      6      10  ok",
+    "    cell_orphan_chem_coverage.py                 4      5       9  ok",
+    "    cell_orphan_cluster_stats.py                 3      8    5935  ok",
+    "    cell_orphan_context.py                       1      0       0  not traced",
+    "    cell_orphan_evidence_score.py                1      0       0  not traced",
+    "    cell_orphan_fill.py                          2      0       0  ok",
+    "    cell_orphan_holdout.py                       0      0       0  ok",
+    "    cell_orphan_howmany.py                       8      0       0  ok",
+    "    cell_orphan_incontext.py                     1      0       0  not traced",
+    "    cell_orphan_rank_v2.py                       2      0       0  ok",
+    "    cell_orphan_selective.py                     5      7     614  TIMEOUT after 240s",
+    "    cell_orphan_spatial.py                       4      7     579  ok",
+    "    cell_orphan_ties.py                          1      0       0  not traced",
+    "    cell_orphan_ties_nn.py                       1      0       0  not traced",
+    "    cell_orphan_transfer.py                      1      6    5535  ok",
+    "    cell_orphan_truthset.py                      3      7     579  ok",
+    "    cell_orphan_why_unsure.py                    4      4     856  ok",
+    "    cell_partslist.py                            2      0       0  not traced",
+    "    cell_pathway_map.py                          2      0       0  not traced",
+    "    cell_state.py                                1      0       0  not traced",
+    "    cell_web_fill.py                             1      0       0  not traced",
+    "    cell_would_we_have_found_it.py               2      0       0  not traced",
+    "    ------------------------------------------------------------------------------------------",
+    "    DISTINCT DATASETS                           29     27",
+    "    files the source never named ....... 14",
+    "      celltype_capacity.json, context_dependency.json, dark_function_table.json, domains.jso",
+    "    named but not opened in this run ... 16",
+    "      cand_struct.json, cell_complete.json.gz, cell_orphan_fill.json, chebi_compounds.tsv.gz",
+    "\n  ==============================================================================================",
+    "  NEXUS   22 modules, 5 traced, 2 ran clean",
+    "  ==============================================================================================",
+    "    module                                  before  after    keys  status",
+    "    nexus.py                                     0      1       0  FileNotFoundError",
+    "    nexus_dna_scale.py                           0      0       0  ok",
+    "    nexus_dna_spheres.py                         0      0       0  ok",
+    "    nexus_dock_screen.py                         3      6     311  TIMEOUT after 240s",
+    "    nexus_ko.py                                  2      0       0  not traced",
+    "    nexus_ko_fetch.py                            1      0       0  not traced",
+    "    nexus_ko_struct.py                           1      0       0  not traced",
+    "    nexus_massaction.py                          1      0       0  not traced",
+    "    nexus_pocket_modes.py                        3      2     344  TIMEOUT after 240s",
+    "    nexus_regulate.py                            1      0       0  not traced",
+    "    nexus_txn.py                                 5      0       0  not traced",
+    "    nexus_wall.py                                3      0       0  not traced",
+    "    ------------------------------------------------------------------------------------------",
+    "    DISTINCT DATASETS                           11      7",
+    "    files the source never named ....... 3",
+    "      ddg_model.pkl, reaction_network.json, reactome_pathways.json",
+    "    named but not opened in this run ... 7",
+    "      AvgKdegs.csv, _abcfeat.json, cand_struct.json, k562_atac.bed.gz, lambert_tf_symbols.js",
+    "\n  ==============================================================================================",
+    "  4D CHROMATIN   14 modules, 13 traced, 3 ran clean",
+    "  ==============================================================================================",
+    "    module                                  before  after    keys  status",
+    "    chromatin_bond_energy.py                     0      0       0  TIMEOUT after 240s",
+    "    chromatin_cost_model.py                      0      0       0  ok",
+    "    chromatin_greens.py                          0      0       0  TIMEOUT after 240s",
+    "    chromatin_mark_cost.py                       0      0       0  TIMEOUT after 240s",
+    "    chromatin_modal.py                           0      0       0  TIMEOUT after 240s",
+    "    chromatin_resolution.py                      0      0       0  TIMEOUT after 240s",
+    "    chromatin_rod.py                             0      0       0  ok",
+    "    chromatin_sphere_scaling.py                  0      0       0  TIMEOUT after 240s",
+    "    chromatin_supercoil.py                       0      0       0  TIMEOUT after 240s",
+    "    chromatin_time.py                            0      0       0  TIMEOUT after 240s",
+    "    chromatin_timescale.py                       0      0       1  ok",
+    "    chromatin_twist_energy.py                    0      0       0  TIMEOUT after 240s",
+    "    chromatin_twolevel.py                        0      0       0  TIMEOUT after 240s",
+    "    ------------------------------------------------------------------------------------------",
+    "    DISTINCT DATASETS                            0      0",
+    "    files the source never named ....... 0",
+    "    named but not opened in this run ... 0",
+    "\n  ==============================================================================================",
+    "  SUMMARY",
+    "  ==============================================================================================",
+    "    subsystem           mods  traced  clean   before   after   new",
+    "    cell model            35      14     13       29      27    14",
+    "    nexus                 22       5      2       11       7     3",
+    "    4d chromatin          14      13      3        0       0     0"
+  ]
+}

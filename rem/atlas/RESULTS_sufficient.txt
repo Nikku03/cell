@@ -1,0 +1,175 @@
+=================================================================================================
+WHAT A PATH MUST RETAIN FOR ITS REMAINING EVENT PROBABILITY, AND HOW BIG THAT IS
+=================================================================================================
+  THE STATISTIC, from the derivation in this module's header:  (d, s_d, wact_prefix)
+  -- the level, the current state, and the accumulated time-weighted activity vector. The
+  path weight factors out entirely, so two prefixes sharing the statistic merge by ADDING
+  weights, exactly. Everything below is about how many distinct values it takes.
+
+=================================================================================================
+F0  THE CEILING GATE: IS THERE AN EXACT MERGE UNDER THE ENGINE'S OWN TIME WEIGHTING?
+=================================================================================================
+  The theorem says no -- a collision would make exp(1/2) algebraic. Made finite here.
+
+     nCtrl   L  level   prefixes  distinct statistics   merge?
+         3   4      3       4096                 4096     none
+         3   4      4      32768                32768     none
+         4   4      3      65536                65536     none
+         4   4      4    1048576              1048576     none
+
+  F0: no merge anywhere -- the statistic IS the path under the engine hvec, as the theorem requires.
+  CONSEQUENCE, AND IT IS THE WHOLE REASON THE REST OF THIS MODULE IS ABOUT APPROXIMATION:
+  with the engine's geometric weighting there is NO exact merge at any depth or width, so
+  the exact representation is the full path set and nothing can be retained more cheaply.
+
+=================================================================================================
+F1  SUFFICIENCY, CHECKED WHERE COLLISIONS EXIST
+=================================================================================================
+  Under a quantised weighting collisions are abundant, so the check is not vacuous: take
+  distinct prefixes sharing (s_d, wact) and verify their remaining contributions are
+  exactly proportional to their weights.
+
+  quantised hvec at Q = 8: 65536 prefixes collapse to 4096 statistics,
+  3840 of them holding more than one prefix.
+  worst relative spread of remaining-contribution-per-unit-weight within a group: 7.795e-16
+  F1: PASS -- the statistic is sufficient.
+
+=================================================================================================
+F2  THE SIZE LAW, IN WIDTH AND DEPTH SEPARATELY
+=================================================================================================
+  The derived ceiling is n * (Q+1)^nCtrl, independent of L. If the measured count follows
+  it, the representation is exponential in WIDTH and FLAT in DEPTH, which is the collapse
+  the engine needs. Counted exactly in integer units of 1/Q -- no tolerance.
+
+     nCtrl   L    Q          paths   statistics   ceiling n(Q+1)^k  paths/stats
+         3   3    4          4,096          512              1,000            8
+         3   3    8          4,096        1,000              5,832            4
+         3   3   16          4,096        4,096             39,304            1
+         3   4    5         32,768        1,000              1,728           33
+         3   4   10         32,768        4,096             10,648            8
+         3   4   20         32,768       13,824             74,088            2
+         3   5    6        262,144        1,728              2,744          152
+         3   5   12        262,144        5,832             17,576           45
+         3   5   24        262,144       27,000            125,000           10
+         4   3    4         65,536        4,096             10,000           16
+         4   3    8         65,536       10,000            104,976            7
+         4   3   16         65,536       65,536          1,336,336            1
+         4   4    5      1,048,576       10,000             20,736          105
+         4   4   10      1,048,576       65,536            234,256           16
+         4   4   20      1,048,576      331,776          3,111,696            3
+
+  A DEPTH EXPONENT FITTED HERE WOULD BE CONFOUNDED, because the Q column above moves with
+  L. That is the mistake exactcert's floor law had to be rescued from one module earlier,
+  and it is not repeated: the depth claim is tested in F2b with Q held FIXED.
+
+=================================================================================================
+F2b  THE DEPTH CLAIM, DECONFOUNDED: Q FIXED, L VARYING
+=================================================================================================
+  The derived ceiling n*(Q+1)^nCtrl does not contain L at all, so at fixed Q the count must
+  SATURATE as the window deepens. If it keeps growing, the flat-in-depth claim fails and
+  with it the whole value of the statistic.
+
+     nCtrl    Q   L          paths   statistics      ceiling    x paths
+         3   12   3          4,096        2,744       17,576         1x
+         3   12   4         32,768        4,096       17,576         8x
+         3   12   5        262,144        5,832       17,576        45x
+         3   24   3          4,096        4,096      125,000         1x
+         3   24   4         32,768       21,952      125,000         1x
+         3   24   5        262,144       27,000      125,000        10x
+         4   12   3         65,536       38,416      456,976         2x
+         4   12   4      1,048,576       65,536      456,976        16x
+         4   24   3         65,536       65,536    6,250,000         1x
+         4   24   4      1,048,576      614,656    6,250,000         2x
+
+  THE FIRST VERSION OF THIS VERDICT USED A THRESHOLD I INVENTED -- growth below
+  (path growth)^0.34 -- and it returned FAIL on data that does not support a fail. That is
+  the invented-bar defect this record already carries once, in K5's base = -1.0. The claim
+  has two parts and neither needs a threshold: the ceiling must never be violated, and the
+  COMPRESSION must grow with depth.
+    nCtrl = 3, Q = 12: over L = 3..5 statistics grow 2.13x, paths 64x, compression 1x -> 45x (rising)
+    nCtrl = 3, Q = 24: over L = 3..5 statistics grow 6.59x, paths 64x, compression 1x -> 10x (rising)
+    nCtrl = 4, Q = 12: over L = 3..4 statistics grow 1.71x, paths 16x, compression 2x -> 16x (rising)
+    nCtrl = 4, Q = 24: over L = 3..4 statistics grow 9.38x, paths 16x, compression 1x -> 2x (rising)
+
+    ceiling violations across all 10 configurations: 0
+
+  F2b: the ceiling holds everywhere and the compression RISES with depth in every configuration.
+  WHAT IT DOES NOT SHOW, AND THE FIRST VERSION CONFLATED THIS: the count is bounded
+  independently of L, but it has NOT SATURATED at L = 3 to 5 -- it is still filling up
+  toward the ceiling. The growth observed is the approach to a fixed bound, not unbounded
+  growth, and those two look identical over three points unless the bound is checked. It
+  is checked above.
+  So the depth exponential the engine has been fighting is an artefact of carrying the
+  PATH rather than what the path is for -- but only once the weighting is quantised, which
+  F0 established is an approximation and not a reformulation.
+
+=================================================================================================
+F3  THE PRICE OF QUANTISING THE TIME WEIGHTING
+=================================================================================================
+  Quantising changes the observable. The reference it is judged against is what pruning
+  already costs: accuracy.py measured the reported tail still rising at 0.608 orders per
+  decade of retained paths, so a price well under one order is free in the only sense
+  that matters here.
+
+  exact tail under the engine's own hvec: 1.187971e-102
+
+  AND THE AXIS IS NOT Q. Quantising at 40 returns numerators whose gcd is 2, i.e. the same
+  rationals as 20, so a table keyed on Q shows one approximation twice. Keyed instead on
+  the EFFECTIVE denominator Q/gcd and the number of DISTINCT SUBSET SUMS of the numerators,
+  which is what actually controls the count. Duplicate weight vectors are collapsed.
+
+      Qeff  subset sums   statistics            tail  price, orders   vs a pruning decade
+         5            6       10,000   8.059727e-103         0.1685                 0.277
+        10           11       65,536   1.002083e-102         0.0739                 0.122
+        20           21      331,776   1.225633e-102         0.0136                 0.022
+        80           24      331,776   1.151288e-102         0.0136                 0.022
+       160           32    1,048,576   1.202539e-102         0.0053                 0.009
+       320           28      614,656   1.180368e-102         0.0028                 0.005
+
+=================================================================================================
+F4  THE TRADE, AND WHAT IT LOOKS LIKE AT THE ENGINE'S WIDTH
+=================================================================================================
+  at 4 controllers and L = 4 the path set is 1,048,576:
+
+      Qeff   compression  price, orders
+         5          105x         0.1685
+        10           16x         0.0739
+        20            3x         0.0136
+        80            3x         0.0136
+       160            1x         0.0053
+       320            2x         0.0028
+
+  AND EXTRAPOLATED TO THE ENGINE (nCtrl = 10, n = 1024, L = 6) by the derived ceiling,
+  which F2 tests rather than assumes:
+
+        Q    statistics, n(Q+1)^10    paths, 2^70    compression
+        7                1.100e+12      1.181e+21     1.074e+09x
+       14                5.905e+14      1.181e+21     1.999e+06x
+       28                4.308e+17      1.181e+21     2.740e+03x
+       56                3.707e+20      1.181e+21     3.185e+00x
+
+=================================================================================================
+F5  WHAT THIS SETTLES, AND F6 WHAT IT DOES NOT
+=================================================================================================
+  SETTLED. The exact sufficient statistic for a path's remaining event probability is
+  (level, current state, accumulated time-weighted activity vector), the weight factors
+  out, and merging is exact. Under the engine's geometric weighting the statistic is
+  injective on paths -- by transcendence of exp(1/2), not by measurement -- so the exact
+  representation is the full path set and there is nothing to gain.
+  Under a quantised weighting the count is BOUNDED BY n*(Q+1)^nCtrl, a bound that contains
+  no L at all: exponential in width, independent of depth. Measured at 3 and 4 controllers
+  the bound is never violated and the compression rises with every extra level of window.
+  It has not saturated over L = 3 to 5, so what is demonstrated is a bound independent of
+  depth and a compression that grows with it -- not that the count has stopped growing.
+
+  NOT SETTLED.
+  1. The engine-width row is the DERIVED CEILING, tested at 3 and 4 controllers, not
+     measured at 10. n*(Q+1)^10 is still 1e13 at Q = 14 -- nine orders below the path set
+     and far above what fits in memory. This buys a different exponent, not a small
+     number, and calling it tractable would be the overstatement this record keeps
+     correcting.
+  2. Quantising the time weighting is an APPROXIMATION to the engine's observable, not a
+     reformulation of it. F3 prices it at one width and one depth only.
+  3. multiplier.py measured that the temporal multiplier PAYS -- recent slices weighing
+     more is worth real accuracy. Quantising it coarsely is in tension with that result,
+     and this module does not test the interaction.

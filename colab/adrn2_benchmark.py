@@ -1,0 +1,2166 @@
+"""ADRN-2 SPEC SECTION 18 BASELINE LADDER -- eight arms on the latent-rule environment.
+
+Environment: `adrn2_env.Adrn2Env` (section 18, c1->c2->c3->c1->c4->c2, returns at phases 4 and 6).
+Model:       `adrn2.ADRN2A` (digital encoder + recurrent workspace + context manager + fast/consolidated
+             adapters). This file adds NO mechanism of its own to the model; it only drives it.
+
+=========================================================================================================
+THE GATES AND THE MDE, DECLARED HERE BEFORE ANY NUMBER IN THIS FILE EXISTS
+=========================================================================================================
+UNIT OF REPLICATION: the SEED. One seed = one independent initialisation AND one independent environment
+draw (independent input stream, independent pretraining draw, independent validation draw for step-size
+calibration). Seeds inside one draw would measure optimiser noise, not the claim. n = ADRN2_SEEDS.
+
+MDE = 3 * sd / sqrt(n) computed on the PAIRED per-seed gap between the two arms being compared, because
+every arm sees the byte-identical stream within a seed. Never the pooled sd. A gap that is not positive
+FAILS without needing an MDE; a POSITIVE gap whose paired sample sd is exactly zero has an UNESTIMABLE
+MDE and is reported UNSUPPORTED rather than passed. A zero sample sd from n seeds is n coincidences on a
+count-valued metric, not evidence of zero population variance, and this project has already shipped a
+PASS off exactly that (gap +0.1000 against MDE 0.0000).
+
+EFFECT SIZE IS THE RAW HELD-OUT VALUE. Every accuracy printed is the raw held-out accuracy of that arm.
+The reference rows (oracle, context-blind Bayes, stale-rule) and the naive-probe control establish
+SIGNIFICANCE and INTERPRETATION only. Nothing is ever reported net of a control.
+
+PRIMARY METRIC -- RETENTION. Accuracy inside the feedback-WITHHELD window that opens a RETURN phase
+(phase 4 on c1, phase 6 on c2). Chance is 0.5.
+
+PREDECLARED GATES (primary cadence F = ADRN2_PRIMARY_F unless stated):
+  G1  arm 8 (ADRN-2A inferred context) beats the BEST of arms 1-5 on RETENTION by more than the MDE.
+  G2  arm 8 beats arm 6 (ADRN-2A without context separation) on RETENTION by more than the MDE.
+      <- this is the gate that makes context separation earn its place; arm 6 is the same code with the
+         context manager switched off, so the comparison isolates it and nothing else.
+  G3  arm 8's RETENTION is above chance (0.5) by more than a one-sample MDE at ALL FOUR feedback
+      cadences F in {1, 4, 16, 64}.
+  G4  arm 7 (ORACLE context) minus arm 8 (INFERRED context) is REPORTED whatever its sign or size.
+      This gate passes iff the number is computed and printed; it can never be failed by an unfavourable
+      value, because a diagnostic you are allowed to suppress is not a diagnostic.
+  G5  CEILING AND FLOOR: the task discriminates. It FAILS if every arm sits within max(MDE, 0.02) of
+      chance (too hard to separate anything), and it FAILS if two or more arms sit at or above
+      ADRN2_CEIL with no arm falling informatively below them. A ceiling kills separation only AMONG the
+      arms that reach it: an arm falling more than its MDE BELOW a ceiling the others reach is highly
+      informative and is reported as such rather than being swallowed by the word "uninformative".
+
+THE HEADLINE DIAGNOSTIC, NOT A FOOTNOTE. arm 7 - arm 8 is the ORACLE-MINUS-INFERRED gap. If it is large,
+CONTEXT DETECTION is the bottleneck and the context manager is what needs work. If it is near zero and
+both beat arm 6, context separation is doing real work. It is printed on its own line, in every cadence.
+
+=========================================================================================================
+WHAT IS INFORMATION-THEORETICALLY AVAILABLE INSIDE THE RETENTION WINDOW -- STATED BEFORE THE NUMBERS
+=========================================================================================================
+This determines what any arm CAN score and therefore how the numbers must be read. The environment
+guarantees (its gate G9, a structural invariant of the generator: one global BIT_P, no context argument)
+that the input distribution is IDENTICAL in every context. Feedback is withheld for the whole window. So
+inside the window there is no evidence -- none -- about WHICH context is active. Retrieval by
+identification is impossible there for any non-oracle system of any size. Three references bound what is
+achievable and all three are computed on the realised windows and printed alongside the arms:
+
+    stale-rule            keep applying the immediately preceding phase's rule. The floor: what a system
+                          with no change detection and no context memory gets.  (measured ~0.45)
+    blind hedge, seen     detect that a change happened and average over the rules of the contexts SEEN
+                          SO FAR -- the policy arms 7 and 8 fall back to.        (measured ~0.69)
+    blind hedge, all 4    average over all four rules -- the policy arms 1,2,3,6 fall back to. (~0.70)
+    oracle                the context handed over. 1.0 by construction.
+
+WHAT IS AND IS NOT A CEILING HERE, because an earlier version of this file got it wrong. What the
+environment forbids inside the window is IDENTIFICATION: no non-oracle system of any size can tell which
+context returned, because p(x) is the same under all four. It does NOT follow that the accuracy of one
+particular hedge is a ceiling -- an arm may hold any prior it likes, and on these very windows the hedge
+over ALL FOUR contexts scores ABOVE the hedge over the seen ones, so labelling the smaller of the two
+"the ceiling for any non-oracle arm" while printing the larger as the policy of four such arms was
+self-contradictory. Both hedges are reported as REFERENCES, the better of the two is named, and the
+binomial se of a 2W-example window is printed beside them so a value above a reference is read against
+sampling noise rather than declared impossible. If arm 8 merely reaches a hedge the honest reading is
+"it HEDGED, it did not RETRIEVE", and that reading is written into the verdict; G1/G2 remain meaningful
+because arms 1-5 and arm 6 have no per-context store to hedge over at all.
+
+CHANGE DETECTION IS LEGITIMATELY OBSERVABLE and is given to EVERY arm identically. `feedback_available`
+is part of the environment's 6-tuple contract, and because withholding happens only inside probe windows,
+a cadence slot that delivers no label is a visible signal that a probe (hence a phase boundary) has
+begun. `ProbeDetector` derives that flag from the feedback channel alone -- it never reads `y` -- and
+every arm receives it and uses it in the strongest form available to its own architecture:
+    arms 1,2,3   fall back to their frozen pretrained CONTEXT-BLIND head
+    arm 4        falls back to a reservoir over all history instead of the recency FIFO
+    arm 5        falls back to its Polyak-averaged weights (the context-blind average)
+    arm 6        falls back to the stable decoder alone (no adapter)
+    arms 7,8     replace the sticky transition prior with a uniform prior over ALLOCATED context slots
+Giving this only to the proposal would be ADRN-1's defect 2 (a handicapped baseline manufacturing a win),
+so it is given to all eight and its liveness is asserted.
+
+=========================================================================================================
+THE FOUR DEFECTS ADRN-1 SHIPPED AND WHAT IN THIS FILE MAKES EACH IMPOSSIBLE
+=========================================================================================================
+1 THE NETWORK WAS SILENT (theta=1.0 against a soma at 0.05 -> 0.00 spikes/example; every downstream
+  mechanism a no-op while scores were still returned).
+2 THE BASELINE WAS HANDICAPPED (the point-neuron control was silent for the same reason, so repairing
+  only the proposal would have manufactured the win).
+3 THE ABLATION WAS VACUOUS (prune_every defaulted to 0, so structural=True/False changed nothing).
+4 THE LEARNING SYSTEM NEVER RAN (net(x) called with no modulatory vector, so eligibility,
+  neuromodulation, fast/slow weights, consolidation, homeostasis and pruning were ALL inert; the tell,
+  visible twice before it was read correctly, was three different ablations returning BYTE-IDENTICAL
+  accuracy, energy and spike counts).
+
+Against 1 and 4 -- `assert_liveness` runs on EVERY arm-run BEFORE its score is allowed into the table and
+raises `MechanismInert` unless, numerically:
+    * NO ARM'S STATE MOVED INSIDE A FEEDBACK-WITHHELD WINDOW. Adaptive state, encoder and update count
+      are snapshotted at each window's first step and required to be byte-identical at its last. This
+      is the one property whose failure would void the whole file, and it was previously guaranteed
+      only by an unchecked invariant: a harness deliberately made to train on every withheld step
+      passed every other assertion here in silence and raised retention from 0.6406 to 0.7188;
+    * the fast adapters CHANGED between updates (median relative ||dW_f|| > 0 and final ||W_f|| > 0);
+    * the context posterior is NON-DEGENERATE, measured ONLY on the steps where it was actually
+      INFERRED (the harness overwrites it with a uniform hedge inside withheld windows, and pooling
+      those in defeated the test: a posterior hard-forced to slot 0 on every inferred step measured a
+      healthy 0.4011 marginal entropy against a 0.25 floor), with the uniformity bound taken against
+      log of the slots allocated AT THAT STEP rather than at the end of the stream (an exactly-uniform
+      posterior passed the old bound because early in the stream only one slot exists), and with the
+      argmax required to take at least two distinct values once two slots are allocated;
+    * the change-detection fallback CHANGED a prediction rather than merely being entered (the oracle
+      arm is exempt and says so: its fallback is a no-op by construction);
+    * the CONSOLIDATED adapter exists, fired, and DIFFERS from the fast adapter by more than a copy;
+    * the workspace state moves across internal steps and halting does not simply run to the cap;
+    * every baseline arm actually updated (n_updates > 0) and its adaptive state actually moved;
+    * the encoder did NOT move for every arm claiming a frozen encoder, and DID move for arm 1;
+    * the probe detector fired and the change-detection fallback changed at least one prediction.
+Against 3 -- `flag_effect_probe` toggles context / fast / consolidate / workspace on ONE pretrained model,
+replays the SAME full stream, and raises unless the prediction trace or the logits measurably move.
+Against 4's signature -- `assert_arms_distinct` refuses to report if any two differently-configured arms
+returned byte-identical per-seed retention AND overall accuracy.
+Against 2 -- every arm is built to the same bisected parameter budget with realised counts printed; the
+digital half is pretrained by an IDENTICAL context-blind recipe for every neural arm and must pass
+`assert_digital_competence` (a per-context linear probe) or the run raises rather than reporting a null
+that could equally mean "the encoder never trained"; and every free scalar step size in arms 1-5 is
+calibrated per seed and per cadence on a SEPARATE validation environment draw over the same grid, while
+the ADRN-2A arms get NO calibrated scalar at all (their step size comes from the meta-trained plasticity
+controller). A control is never allowed to lose because nobody tuned it.
+
+A GATE THAT IS NOT READABLE IS NEITHER PASSED NOR FAILED. Two conditions make a reading unreadable: the
+cadence starved arm 8's own mechanism (below), or the paired MDE is not estimable. Both route the gate
+into `gates_unsupported`, which is printed separately and excluded from the pass tally. This matters in
+BOTH directions -- a FAIL manufactured by an unreadable condition is as wrong as a PASS, and it is the
+easier one to miss because it looks modest.
+
+PREDECLARED RULE FOR A MECHANISM THAT CANNOT ENGAGE AT A GIVEN CADENCE. The context manager needs a
+minimum number of FEEDBACK EVENTS to allocate a slot, and consolidation needs a minimum number of
+observations on a slot. At F=64 the stream delivers 64x fewer labels than at F=1, so a mechanism may be
+genuinely starved rather than broken. Declared before any number: an inert mechanism RAISES if it is
+inert at the PRIMARY cadence, and RAISES if it is inert at every cadence; at a non-primary cadence it is
+recorded as `mechanism_inert_at_F` and that cadence's arm-8 gate readings are declared UNSUPPORTED and
+excluded from the verdict's claims rather than being reported as a result.
+
+"It should work" is not evidence anywhere in this file.
+"""
+from __future__ import annotations
+
+import copy
+import json
+import math
+import os
+import sys
+import time
+from pathlib import Path
+
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+torch.set_num_threads(int(os.environ.get("ADRN2_THREADS", "1")))
+
+from adrn2_env import (BIT_P, CONTEXTS, LAG, N_BITS, SUPPORTED_FEEDBACK_EVERY, Adrn2Env,
+                       LivenessError, apply_rule)
+from adrn2_env import liveness_check as env_liveness_check
+import adrn2 as A2
+from adrn2 import ADRN2A, D_CTX, Flags, MechanismInert, _aug
+
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
+SMOKE = os.environ.get("ADRN2_SMOKE", "0") == "1"
+
+
+# =========================================================================================== config
+class BCfg:
+    """Every knob from an env var, with a SMOKE mode that shrinks the run and labels the output."""
+
+    def __init__(self):
+        # SMOKE only changes the DEFAULTS; an explicit env var always wins, so the smoke run and the
+        # full run take byte-identical code paths and differ only in size.
+        g = lambda k, d, f=int: f(os.environ.get(k, d))
+        S = SMOKE
+        self.seeds = g("ADRN2_SEEDS", 2 if S else 6)
+        self.phase_len = g("ADRN2_PHASE_LEN", 192 if S else 1024)
+        self.probe_len = g("ADRN2_W", 32 if S else 64)
+        self.relearn_feedbacks = g("ADRN2_RELEARN_FEEDBACKS", 2 if S else 4)
+        self.budget = g("ADRN2_BUDGET", 30000)
+        self.hist = g("ADRN2_HIST", 3)          # input window; >= LAG+1 so c4's t-2 term is reachable
+        self.k_slots = g("ADRN2_KSLOTS", 6)     # context slots available to the manager (4 true contexts)
+        self.max_steps = g("ADRN2_MAXSTEPS", 3)
+        # Sized from a measurement, not a guess: c1 (x2 XOR x7) is the slow rule for every encoder
+        # family here and needs ~576 minibatches to become linearly decodable. Below that the
+        # competence assertion fires -- which is the assertion working, not a nuisance, and it is why
+        # SMOKE does not cut pretraining to the bone.
+        self.pre_n = g("ADRN2_PRE_N", 6144 if S else 16384)
+        self.pre_epochs = g("ADRN2_PRE_EPOCHS", 6 if S else 10)
+        self.pre_bs = g("ADRN2_PRE_BS", 64)
+        self.pre_restarts = g("ADRN2_RESTARTS", 2)
+        self.meta_iters = g("ADRN2_META", 12 if S else 40)
+        # CALIBRATION DRAW. A separate environment draw whose schedule CONTAINS A RETURN, so a step size
+        # is chosen against both plasticity and stability. Calibrating on a return-free stream would
+        # silently reward whichever arm forgets fastest -- a handicap aimed squarely at the metric this
+        # benchmark exists to measure.
+        self.val_schedule = tuple(os.environ.get("ADRN2_VALSCHED", "c1,c2,c1").split(","))
+        self.val_phase_len = g("ADRN2_VALPHASELEN", 64 if S else 384)
+        self.competence_min = g("ADRN2_COMPMIN", 0.85, float)
+        self.ceiling = g("ADRN2_CEIL", 0.99, float)
+        self.primary_F = g("ADRN2_PRIMARY_F", 4)
+        self.cadences = tuple(int(v) for v in
+                              os.environ.get("ADRN2_CADENCES", "1,4,16,64").split(","))
+        self.chance = 0.5
+        for f in self.cadences:
+            if f not in SUPPORTED_FEEDBACK_EVERY:
+                raise ValueError(f"cadence {f} is not one of {SUPPORTED_FEEDBACK_EVERY}")
+        if self.hist < LAG + 1:
+            raise ValueError(f"hist={self.hist} cannot reach the t-{LAG} term c4 depends on")
+
+    def asdict(self):
+        return {k: (list(v) if isinstance(v, tuple) else v) for k, v in self.__dict__.items()}
+
+
+# ======================================================================== offline data (i.i.d. windows)
+def make_windows(n, rng, hist):
+    """i.i.d. input windows drawn from the SAME global BIT_P the stream uses, with per-context labels.
+
+    Rows are independent across time exactly as they are in the stream, so a window drawn here has the
+    same joint law as a window taken from the stream. Returned labels: one per context (the rule that
+    context would apply to this window) plus `y_mix`, the label under a uniformly random context.
+    """
+    X = (rng.random((n, hist, N_BITS)) < BIT_P[None, None, :]).astype(np.int8)
+    cur, lag = X[:, -1], X[:, -1 - LAG]
+    ys = np.stack([apply_rule(c, cur, lag) for c in CONTEXTS])          # (4, n)
+    pick = rng.integers(0, len(CONTEXTS), n)
+    y_mix = ys[pick, np.arange(n)]
+    return (torch.from_numpy(X.astype(np.float32)),
+            torch.from_numpy(ys.astype(np.int64)),
+            torch.from_numpy(y_mix.astype(np.int64)))
+
+
+def blind_bayes_accuracy_over(contexts, x_cur, x_lag, y):
+    """Accuracy of the Bayes rule that knows only that the context is uniform over `contexts`.
+
+    Ties (exactly half the rules firing) are broken to 0; at a tie the accuracy is 0.5 either way.
+    """
+    r = np.stack([apply_rule(c, x_cur, x_lag) for c in contexts]).mean(0)
+    return float(((r > 0.5).astype(np.int64) == y).mean())
+
+
+# ================================================================================= encoders + heads
+class TfmEncoder(nn.Module):
+    """Small transformer over the `hist`-step input window; the last token is the representation."""
+
+    def __init__(self, d, hist, heads=2):
+        super().__init__()
+        self.inp = nn.Linear(N_BITS, d)
+        self.pos = nn.Parameter(torch.zeros(hist, d))
+        layer = nn.TransformerEncoderLayer(d, heads, dim_feedforward=2 * d, batch_first=True,
+                                           dropout=0.0)
+        self.tr = nn.TransformerEncoder(layer, 1)
+        self.d = d
+
+    def forward(self, seq):
+        return self.tr(self.inp(seq) + self.pos)[:, -1]
+
+
+class GruEncoder(nn.Module):
+    def __init__(self, d, hist):
+        super().__init__()
+        self.rnn = nn.GRU(N_BITS, d, batch_first=True)
+        self.d = d
+
+    def forward(self, seq):
+        return self.rnn(seq)[0][:, -1]
+
+
+def count_params(m):
+    return int(sum(p.numel() for p in m.parameters()))
+
+
+def bisect_width(build, budget, lo=4, hi=256, step=1):
+    """Bisect a hidden width so an architecture lands on the shared parameter budget. Realised counts
+    are printed by the caller; a baseline must never lose for being smaller than the proposal."""
+    best = lo
+    while lo <= hi:
+        mid = ((lo + hi) // 2 // step) * step
+        mid = max(step, mid)
+        try:
+            n = build(mid)
+        except Exception:
+            hi = mid - step
+            continue
+        if n <= budget:
+            best, lo = mid, mid + step
+        else:
+            hi = mid - step
+    return best
+
+
+# ================================================================================ offline pretraining
+def pretrain_plain(enc, hist, cfg: BCfg, rng, seed):
+    """Train `enc` so that (a) a linear head reproduces the context-blind mixture and (b) EVERY rule is
+    linearly decodable from the representation.
+
+    The four per-context heads are a training signal only and are DISCARDED; what survives online is the
+    encoder and the context-blind head. The recipe is byte-identical for the transformer, the GRU and
+    ADRN-2A, so no arm can lose because its digital half was trained differently -- ADRN-2's own record
+    shows how easily that happens (its context embedding table had been sized by the number of adapter
+    slots, which crippled every context-blind control at 0.36 against 0.87 and would have manufactured
+    the entire result).
+    """
+    torch.manual_seed(seed)
+    blind = nn.Linear(enc.d, 2)
+    heads = nn.ModuleList([nn.Linear(enc.d, 2) for _ in CONTEXTS])
+    params = list(enc.parameters()) + list(blind.parameters()) + list(heads.parameters())
+    opt = torch.optim.Adam(params, lr=3e-3)
+    X, Y, Ym = make_windows(cfg.pre_n, rng, hist)
+    for _ in range(cfg.pre_epochs):
+        perm = torch.randperm(len(X))
+        for i in range(0, len(X), cfg.pre_bs):
+            b = perm[i:i + cfg.pre_bs]
+            h = enc(X[b])
+            loss = F.cross_entropy(blind(h), Ym[b])
+            for j in range(len(CONTEXTS)):
+                loss = loss + F.cross_entropy(heads[j](h), Y[j][b])
+            opt.zero_grad()
+            loss.backward()
+            nn.utils.clip_grad_norm_(params, 1.0)
+            opt.step()
+    return blind, heads
+
+
+def adrn_expected_feature(model: ADRN2A, seq):
+    """ACT-style expected workspace feature and ponder cost, used OFFLINE only.
+
+    Runs the workspace for the full step budget and weights each step by the halting head's probability,
+    so the halting decision the online hard rule makes is a TRAINED decision rather than a coin flip. An
+    untrained halting head would make "adaptive halting" a decoration, which is precisely the class of
+    claim this project has been burned by.
+    """
+    b = seq.shape[0]
+    h = model.encode(seq)
+    m = model.mod_vector(False, b)
+    c_in = model.ctx_emb.weight.mean(0, keepdim=True).expand(b, D_CTX)
+    w = torch.tanh(model.w0(h))
+    still = torch.ones(b, 1)
+    feat, expect = 0.0, 0.0
+    for t in range(model.cfg.max_steps):
+        u = torch.cat([w, h, m, c_in], -1)
+        z = torch.sigmoid(model.fz(u))
+        w = (1 - z) * w + z * torch.tanh(model.fn(u))
+        p = torch.sigmoid(model.halt(w))
+        wt = still * p if t < model.cfg.max_steps - 1 else still
+        feat = feat + wt * _aug(w)
+        expect = expect + wt * (t + 1)
+        still = still * (1 - p)
+    return feat, expect.mean()
+
+
+def pretrain_adrn(model: ADRN2A, hist, cfg: BCfg, rng, seed):
+    """The same recipe as `pretrain_plain`, on the ADRN-2A workspace state w_aug -- which is exactly the
+    vector its per-context adapters act on, so the adapters have something linear to fix."""
+    torch.manual_seed(seed)
+    heads = nn.ModuleList([nn.Linear(model.d_w + 1, 2) for _ in CONTEXTS])
+    params = list(model.parameters()) + list(heads.parameters())
+    opt = torch.optim.Adam(params, lr=3e-3)
+    X, Y, Ym = make_windows(cfg.pre_n, rng, hist)
+    for _ in range(cfg.pre_epochs):
+        perm = torch.randperm(len(X))
+        for i in range(0, len(X), cfg.pre_bs):
+            b = perm[i:i + cfg.pre_bs]
+            feat, ponder = adrn_expected_feature(model, X[b])
+            loss = F.cross_entropy(model.dec(feat), Ym[b]) + 0.01 * ponder
+            for j in range(len(CONTEXTS)):
+                loss = loss + F.cross_entropy(heads[j](feat), Y[j][b])
+            opt.zero_grad()
+            loss.backward()
+            nn.utils.clip_grad_norm_(params, 1.0)
+            opt.step()
+    return heads
+
+
+def meta_train_controller(model: ADRN2A, cfg: BCfg, rng, seed):
+    """Train the plasticity controller by unrolling the LOCAL delta rule and minimising post-update loss.
+
+    Only (eta, lambda) carry gradient; the workspace state is detached, so nothing here backprops into
+    the encoder. Without this the controller is a random network and "learned plasticity" would be a
+    claim about noise. This is the ONLY free step size the ADRN-2A arms have, and unlike the controls'
+    calibrated scalars it is never tuned on validation accuracy.
+    """
+    if model.controller is None:
+        return {"meta": "no controller"}
+    torch.manual_seed(seed)
+    opt = torch.optim.Adam(model.controller.parameters(), lr=5e-3)
+    hist_loss = []
+    for _ in range(cfg.meta_iters):
+        c = int(rng.integers(0, len(CONTEXTS)))
+        X, Y, _ = make_windows(10, rng, cfg.hist)
+        y = Y[c]
+        W = torch.zeros(model.C, model.d_w + 1)
+        total = 0.0
+        for t in range(len(X)):
+            with torch.no_grad():
+                h = model.encode(X[t:t + 1])
+                w, _ = model.workspace(h, model.mod_vector(False), model.ctx_input(model.p),
+                                       hard_halt=False)
+                wa = _aug(w)[0].detach()
+            logit = model.dec(wa) + W @ wa
+            loss = F.cross_entropy(logit.unsqueeze(0), y[t:t + 1])
+            total = total + loss
+            feat = torch.tensor([float(wa[:-1].mean()), float(wa[:-1].std()),
+                                 float(loss.detach()) / math.log(model.C), 0.5, 0.0, 0.5, 0.0,
+                                 t / 100.0])
+            o = model.controller(feat)
+            eta = 0.02 + 0.60 * torch.sigmoid(o[0])
+            lam = 0.93 + 0.069 * torch.sigmoid(o[1])
+            err = F.one_hot(y[t], model.C).float() - torch.softmax(logit, -1)
+            W = lam * W + (eta / (float(wa.dot(wa)) + 0.1)) * torch.outer(err, wa)
+        opt.zero_grad()
+        (total / len(X)).backward()
+        nn.utils.clip_grad_norm_(model.controller.parameters(), 1.0)
+        opt.step()
+        hist_loss.append(float(total.detach()) / len(X))
+    return {"meta_loss_first": hist_loss[0], "meta_loss_last": hist_loss[-1]}
+
+
+@torch.no_grad()
+def assert_digital_competence(tag, feat_fn, heads, blind, hist, cfg: BCfg, rng):
+    """RAISE unless the digital half is trained. Direct analogue of ADRN-1's defect 1.
+
+    (a) EVERY rule must be linearly decodable from the representation. If it is not, the online adapters
+        and heads have nothing to select between and any null they produce would be a statement about a
+        broken encoder rather than about context separation -- the unreadable null this project keeps
+        shipping.
+    (b) The context-blind head must land near the analytic context-blind Bayes rate. A blind head far
+        below it means the shared readout never trained either.
+    """
+    X, Y, Ym = make_windows(2048, rng, hist)
+    f = feat_fn(X)
+    per = {}
+    for j, c in enumerate(CONTEXTS):
+        per[c] = float((heads[j](f).argmax(-1) == Y[j]).float().mean())
+    blind_acc = float((blind(f).argmax(-1) == Ym).float().mean())
+    cur, lag = X[:, -1].numpy().astype(np.int8), X[:, -1 - LAG].numpy().astype(np.int8)
+    blind_bayes = blind_bayes_accuracy_over(CONTEXTS, cur, lag, Ym.numpy())
+    bad = []
+    for c, v in per.items():
+        if v < cfg.competence_min:
+            bad.append(f"rule {c} is NOT linearly decodable from the pretrained representation "
+                       f"({v:.4f} < {cfg.competence_min}); every adapter and head downstream would be "
+                       f"selecting between features that do not exist")
+    if blind_acc < blind_bayes - 0.08:
+        bad.append(f"the context-blind head reaches {blind_acc:.4f} against an analytic context-blind "
+                   f"Bayes rate of {blind_bayes:.4f}; the shared readout never trained")
+    if bad:
+        raise MechanismInert(f"[{tag}] DIGITAL COMPETENCE FAILED before any score was reported:\n  - "
+                             + "\n  - ".join(bad))
+    return {"per_context_probe": per, "blind_head_acc": blind_acc,
+            "blind_bayes_analytic": blind_bayes}
+
+
+# ================================================================================== probe detection
+class ProbeDetector:
+    """Infers "a feedback-withheld window has begun" from the FEEDBACK CHANNEL ALONE.
+
+    It never reads `y`. It observes only whether a label arrived at each cadence slot, which is part of
+    the environment's 6-tuple contract. Because withholding happens only inside probe windows, a cadence
+    slot that delivers nothing is evidence a phase boundary has just passed. The detection LAG is up to F
+    steps, so at F=64 with W=64 the flag can arrive after the window has ended -- that is a real property
+    of the protocol at that cadence and it is measured (`probe_flag_recall`) rather than assumed away.
+    """
+
+    def __init__(self, F):
+        self.F = F
+        self.flag = False
+        self.n_flag = 0
+
+    def observe(self, t, got_feedback):
+        if (t + 1) % self.F == 0:
+            self.flag = not got_feedback
+            if self.flag:
+                self.n_flag += 1
+
+
+# =========================================================================================== arms
+class BaseArm:
+    """Contract: predict(ob) -> 0/1, learn(ob, y) called ONLY on feedback steps.
+
+    `ob` carries the input window, the derived probe flag and (for the oracle arm alone) the true
+    context. `learn` never sees a label on a withheld step because the harness never calls it there.
+    """
+
+    uses_oracle = False
+    frozen_encoder = True
+
+    def __init__(self, name):
+        self.name = name
+        self.n_updates = 0
+
+    def predict(self, ob):
+        raise NotImplementedError
+
+    def learn(self, ob, y):
+        raise NotImplementedError
+
+    def state_sig(self):
+        """Scalar fingerprint of the ADAPTIVE state. Liveness requires it to move over a stream."""
+        return 0.0
+
+    def enc_sig(self):
+        """Scalar fingerprint of the ENCODER. Liveness requires it to be frozen unless the arm says
+        otherwise."""
+        return 0.0
+
+    def tele(self):
+        return {}
+
+
+class TorchHeadArm(BaseArm):
+    """Arms 1, 2, 3. A pretrained encoder plus an online linear head; `full` also fine-tunes the encoder.
+
+    The online head is INITIALISED FROM the pretrained context-blind head rather than from noise, so the
+    arm starts at the best context-blind predictor instead of at chance. On a detected change it falls
+    back to that frozen blind head, which is the strongest context-blind policy available to it.
+    """
+
+    def __init__(self, name, enc, blind, lr, full):
+        super().__init__(name)
+        self.enc, self.blind = enc, copy.deepcopy(blind)
+        self.head = copy.deepcopy(blind)
+        self.full = full
+        self.frozen_encoder = not full
+        for p in self.blind.parameters():
+            p.requires_grad_(False)
+        for p in self.enc.parameters():
+            p.requires_grad_(full)
+        ps = list(self.head.parameters()) + (list(self.enc.parameters()) if full else [])
+        self.ps = ps
+        self.opt = torch.optim.Adam(ps, lr=lr)
+        self.n_fallback = 0
+        self.n_fallback_changed = 0
+
+    def predict(self, ob):
+        with torch.no_grad():
+            h = self.enc(ob["seq"])
+            if ob["probe"]:
+                self.n_fallback += 1
+                p = int(self.blind(h).argmax(-1))
+                if p != int(self.head(h).argmax(-1)):
+                    self.n_fallback_changed += 1
+                return p
+            return int(self.head(h).argmax(-1))
+
+    def learn(self, ob, y):
+        if self.full:
+            h = self.enc(ob["seq"])
+        else:
+            with torch.no_grad():
+                h = self.enc(ob["seq"])
+        loss = F.cross_entropy(self.head(h), torch.tensor([y]))
+        self.opt.zero_grad()
+        loss.backward()
+        nn.utils.clip_grad_norm_(self.ps, 1.0)
+        self.opt.step()
+        self.n_updates += 1
+
+    def state_sig(self):
+        return float(sum(p.detach().abs().sum() for p in self.head.parameters()))
+
+    def enc_sig(self):
+        return float(sum(p.detach().abs().sum() for p in self.enc.parameters()))
+
+    def tele(self):
+        return {"n_fallback": self.n_fallback, "n_fallback_changed": self.n_fallback_changed}
+
+
+class LookupNNArm(BaseArm):
+    """Arm 4. Nearest-neighbour / lookup over the raw input window, budget-matched in memory cells.
+
+    Two stores, both fed by every feedback event: a RECENCY FIFO (tracks the current context) and a
+    RESERVOIR over all history (context-blind). The recency store is used normally and the reservoir on
+    a detected change, which is this arm's form of the same fallback every other arm gets.
+    """
+
+    def __init__(self, name, mem, k, dim):
+        super().__init__(name)
+        self.mem, self.k, self.dim = mem, k, dim
+        self.F_x = np.zeros((mem, dim), np.float32)
+        self.F_y = np.zeros(mem, np.int64)
+        self.f_n = self.f_ptr = 0
+        self.R_x = np.zeros((mem, dim), np.float32)
+        self.R_y = np.zeros(mem, np.int64)
+        self.r_n = 0
+        self.seen = 0
+        self.rng = np.random.default_rng(12345)
+        self.n_fallback = 0
+        self.n_fallback_changed = 0
+
+    def _vote(self, X, Y, n, q):
+        if n == 0:
+            return 0
+        d = np.abs(X[:n] - q[None, :]).sum(1)
+        k = min(self.k, n)
+        idx = np.argpartition(d, k - 1)[:k]
+        return int(Y[idx].mean() > 0.5)
+
+    def predict(self, ob):
+        q = ob["flat"]
+        if ob["probe"]:
+            self.n_fallback += 1
+            p = self._vote(self.R_x, self.R_y, self.r_n, q)
+            if p != self._vote(self.F_x, self.F_y, self.f_n, q):
+                self.n_fallback_changed += 1
+            return p
+        return self._vote(self.F_x, self.F_y, self.f_n, q)
+
+    def learn(self, ob, y):
+        q = ob["flat"]
+        self.F_x[self.f_ptr] = q
+        self.F_y[self.f_ptr] = y
+        self.f_ptr = (self.f_ptr + 1) % self.mem
+        self.f_n = min(self.f_n + 1, self.mem)
+        if self.r_n < self.mem:
+            self.R_x[self.r_n] = q
+            self.R_y[self.r_n] = y
+            self.r_n += 1
+        else:
+            j = int(self.rng.integers(0, self.seen + 1))
+            if j < self.mem:
+                self.R_x[j] = q
+                self.R_y[j] = y
+        self.seen += 1
+        self.n_updates += 1
+
+    def state_sig(self):
+        return float(self.F_x[:self.f_n].sum() + self.F_y[:self.f_n].sum() + self.f_n)
+
+    def tele(self):
+        return {"n_fallback": self.n_fallback, "n_fallback_changed": self.n_fallback_changed,
+                "fifo_filled": int(self.f_n), "reservoir_filled": int(self.r_n)}
+
+
+class LogRegArm(BaseArm):
+    """Arm 5. Online logistic regression on the raw binary window plus a bias.
+
+    On a detected change it falls back to its Polyak-averaged weights, which are the arm's own
+    context-blind average over everything it has seen. NOTE, stated rather than hidden: a linear model on
+    raw bits cannot represent XOR, so its ceiling on c1 is 0.5 by construction. That is a property of the
+    baseline the specification names, not a handicap this harness imposes -- arms 2 and 3 are the
+    capacity-matched linear-head controls on a LEARNED representation and they are the ones that make G1
+    a real gate.
+    """
+
+    def __init__(self, name, dim, lr):
+        super().__init__(name)
+        self.w = np.zeros(dim + 1, np.float64)
+        self.wbar = np.zeros(dim + 1, np.float64)
+        self.lr = lr
+        self.n_fallback = 0
+        self.n_fallback_changed = 0
+
+    def _z(self, w, q):
+        return float(w[:-1] @ q + w[-1])
+
+    def predict(self, ob):
+        q = ob["flat"].astype(np.float64)
+        if ob["probe"]:
+            self.n_fallback += 1
+            p = int(self._z(self.wbar, q) > 0)
+            if p != int(self._z(self.w, q) > 0):
+                self.n_fallback_changed += 1
+            return p
+        return int(self._z(self.w, q) > 0)
+
+    def learn(self, ob, y):
+        q = ob["flat"].astype(np.float64)
+        p = 1.0 / (1.0 + math.exp(-max(-30.0, min(30.0, self._z(self.w, q)))))
+        g = (y - p)
+        self.w[:-1] += self.lr * g * q
+        self.w[-1] += self.lr * g
+        self.n_updates += 1
+        self.wbar += (self.w - self.wbar) / self.n_updates
+
+    def state_sig(self):
+        return float(np.abs(self.w).sum())
+
+    def tele(self):
+        return {"n_fallback": self.n_fallback, "n_fallback_changed": self.n_fallback_changed,
+                "w_norm": float(np.linalg.norm(self.w))}
+
+
+class AdrnArm(BaseArm):
+    """Arms 6, 7, 8. Drives `adrn2.ADRN2A` -- no mechanism is reimplemented here.
+
+    arm 6  flags.context = False        one global adapter slot; on a detected change it falls back to
+                                        the stable decoder alone, which is its context-blind estimate.
+    arm 7  flags.oracle_context = True  the true context is handed over as a one-hot prior.
+    arm 8  flags default                the posterior is inferred; on a detected change the sticky
+                                        transition prior is replaced by a uniform prior over ALLOCATED
+                                        slots, i.e. the system hedges over the contexts it has stored.
+
+    Eligibility is switched OFF for all three and no claim is made about it: in this environment feedback
+    is SPARSE, not delayed -- the label at a feedback step refers to THAT step -- so pairing the error
+    with a decaying trace of earlier steps would credit the wrong example. Its liveness is asserted in
+    the negative (the trace must never be updated), which is the same discipline ADRN-2A applies to its
+    immediate-feedback condition.
+    """
+
+    uses_oracle = False
+
+    def __init__(self, name, model: ADRN2A, oracle: bool):
+        super().__init__(name)
+        self.model = model
+        self.oracle = oracle
+        self.uses_oracle = oracle
+        self.model.reset_online()
+        self.tel = A2.new_tel()
+        self.step = 0
+        self.n_fallback = 0
+        self.n_fallback_changed = 0
+        self.post_log = []
+        # The posterior-degeneracy assertion must be computed on the steps where the posterior was
+        # actually INFERRED. Inside a withheld window the harness OVERWRITES it with a uniform hedge
+        # (and the oracle arm overwrites it with a one-hot), and pooling those harness-injected
+        # vectors into the statistic defeats the assertion: a posterior hard-collapsed onto slot 0
+        # for every inferred step still measured a healthy marginal entropy of 0.40 (floor 0.25)
+        # because 192 injected uniform hedges pulled it up. Measured, not hypothesised -- see the
+        # mutation test in the review. So each step records whether it was inferred, and how many
+        # slots were ALLOCATED at that step, because the uniformity bound is log(slots allocated
+        # then), not log(slots allocated by the end of the stream.)
+        self.post_inferred = []
+        self.used_log = []
+        self._cache = None
+
+    def predict(self, ob):
+        m = self.model
+        with torch.no_grad():
+            h = m.encode(ob["seq"])
+            hedge = bool(ob["probe"]) and m.k > 1
+            if self.oracle and m.k > 1:
+                j = int(ob["ctx"]) % m.k
+                m.used[j] = True
+                prior = m.one_hot_slot(j)
+            elif hedge:
+                prior = m.used.float() / max(1.0, float(m.used.sum()))
+            else:
+                prior = m.transition_prior()
+            c_in = m.ctx_input(prior)
+            mod = m.mod_vector(False)
+            rec = []
+            w, _ = m.workspace(h, mod, c_in, hard_halt=True, record=rec)
+            wa = _aug(w)[0]
+            if self.oracle or hedge:
+                pre = prior            # a hedge must not be undone by the workspace-key term, which
+                                       # carries no context information here (env gate G9)
+            else:
+                pre = m.posterior_pre(prior, w[0], self.step)
+            def _mix(p):
+                return (p.unsqueeze(-1) * torch.softmax(m.logits_all(wa), -1)).sum(0)
+
+            if bool(ob["probe"]) and m.k == 1:
+                # arm 6's fallback: the stable decoder alone, with no adapter contribution.
+                self.n_fallback += 1
+                probs = torch.softmax(m.dec(wa), -1)
+                # A fallback that never CHANGES a prediction is a decoration. Counting that the
+                # branch was entered is not evidence that it did anything -- that is exactly the
+                # shape of ADRN-1's defect 3 -- so the counterfactual is computed and compared.
+                if int(probs.argmax()) != int(_mix(m.transition_prior()).argmax()):
+                    self.n_fallback_changed += 1
+            else:
+                # POSTERIOR-PREDICTIVE MIXTURE, not a mixture of logits. Predicting under a context
+                # posterior means p(y|x) = sum_k p(c=k) p(y|x,c=k); averaging the ADAPTERS instead
+                # (which is what logits_mix does, and what ADRN-2A's local rule uses internally) is a
+                # different and much worse estimator whenever the posterior is genuinely spread, which
+                # is exactly the hedged case this benchmark hinges on. When the posterior is near
+                # one-hot the two coincide, so this changes nothing where nothing should change.
+                probs = _mix(pre)
+                if hedge:
+                    self.n_fallback += 1
+                    if not self.oracle:
+                        sticky = m.transition_prior()
+                        alt = m.posterior_pre(sticky, w[0], self.step)
+                        if int(probs.argmax()) != int(_mix(alt).argmax()):
+                            self.n_fallback_changed += 1
+            pred = int(probs.argmax())
+            self.tel["steps"].append(rec[0])
+            if len(rec) > 1:
+                self.tel["wstd"].append(rec[1])
+            self.tel["mod"].append(mod[0].numpy().copy())
+            self.post_log.append(pre.numpy().copy())
+            self.post_inferred.append(not (self.oracle or hedge))
+            self.used_log.append(int(m.used.sum()))
+        self._cache = (w, wa, pre, pred)
+        self.step = ob["t"]
+        return pred
+
+    def learn(self, ob, y):
+        m = self.model
+        w, wa, pre, pred = self._cache
+        yt = torch.tensor([y])
+        with torch.no_grad():
+            ok = int(pred == y)
+            m.acc_ema = 0.98 * m.acc_ema + 0.02 * ok
+            m.err_ema = 0.98 * m.err_ema + 0.02 * float(
+                F.cross_entropy(m.logits_mix(wa, pre).unsqueeze(0), yt))
+            post, _ = m.posterior_post(pre, wa, yt, self.step)
+            if self.oracle and m.k > 1:
+                post = pre
+            eta, lam, g = m.rates(w[0], ok, A2._ent_t(post), 0.15)
+            self.tel["eta"].append(eta)
+            self.tel["lam"].append(lam)
+            self.tel["g"].append(g)
+            m.local_update(wa, yt, post, eta, lam, g, self.tel)
+            m.bookkeeping(post, w[0], ok)
+            if not self.oracle:
+                m.maybe_create(self.step, w[0], self.tel)
+        self.n_updates += 1
+
+    def state_sig(self):
+        return float(self.model.W_f.abs().sum() + self.model.W_m.abs().sum())
+
+    def enc_sig(self):
+        return float(sum(p.detach().abs().sum() for p in self.model.enc.parameters()))
+
+    def tele(self):
+        m = self.model
+        return {"n_fallback": self.n_fallback,
+                "n_fallback_changed": self.n_fallback_changed,
+                # The ORACLE arm's "fallback" is a no-op BY CONSTRUCTION: it is handed the true
+                # context inside the window exactly as it is outside, so there is nothing for a
+                # change-detection fallback to change. Declared here rather than asserted, because
+                # asserting it would be asserting a mechanism this arm does not claim.
+                "fallback_is_noop_by_construction": bool(self.oracle),
+                "contexts_used": int(m.used.sum()),
+                "contexts_created": len(self.tel["created_at"]),
+                "created_at": list(self.tel["created_at"]),
+                "n_consolidations": int(self.tel["n_consol"]),
+                "W_f_norm": float(m.W_f.norm()) if m.W_f.numel() else 0.0,
+                "W_m_norm": float(m.W_m.norm()) if m.W_m.numel() else 0.0}
+
+
+# =========================================================================================== driver
+def run_arm(arm: BaseArm, env: Adrn2Env, Wseq, seq_t, F):
+    """One pass of the stream. predict -> score -> (only if the label is delivered) learn.
+
+    Every step is scored on a NEVER-TRAINED-ON example, so every accuracy is a raw held-out value. The
+    label is taken from `y_feedback`, which the environment hard-nulls inside withheld windows; `y` is
+    read for SCORING only and never reaches the arm.
+    """
+    n = env.total_len
+    det = ProbeDetector(F)
+    correct = np.zeros(n, np.int8)
+    probe_hat = np.zeros(n, np.int8)
+    t_pred = t_learn = 0.0
+
+    # ---- THE WITHHELD-WINDOW FREEZE ASSERTION ------------------------------------------------
+    # Retention leakage is the single defect that would void this entire benchmark: if any path let
+    # a label reach an arm's adaptive state inside a withheld window, "retention" would be measuring
+    # RELEARNING and every number here would be fiction. Until now that property rested on the
+    # environment's contract plus one `if st.feedback_available:` -- correct, but UNASSERTED. A
+    # mutation test that trained on every step using the scoring label passed every existing liveness
+    # check silently and raised retention from 0.6406 to 0.7188. So it is asserted now, on every arm,
+    # on every run: an arm's adaptive state, its encoder and its update count must be BYTE-IDENTICAL
+    # at the end of a withheld window to what they were at its start.
+    win_open = {w.start: (w.phase_id, w.segment) for w in env.windows
+                if w.segment in ("naive_probe", "retention_probe") and w.stop > w.start}
+    win_close = {w.stop - 1: (w.phase_id, w.segment, w.start) for w in env.windows
+                 if w.segment in ("naive_probe", "retention_probe") and w.stop > w.start}
+    snap = None
+    frozen = {"windows_checked": 0, "segments": []}
+
+    for st in env.stream():
+        t = st.t
+        if not st.feedback_available and st.y_feedback is not None:
+            raise LivenessError(f"FEEDBACK LEAK at t={t}: the environment offered a label on a withheld "
+                                f"step; the harness would have trained on the measurement window")
+        if t in win_open:
+            snap = (arm.n_updates, arm.state_sig(), arm.enc_sig())
+        ob = {"seq": seq_t[t:t + 1], "flat": Wseq[t], "t": t, "probe": det.flag,
+              "ctx": (CONTEXTS.index(st.context_id) if arm.uses_oracle else None)}
+        probe_hat[t] = int(det.flag)
+        c0 = time.perf_counter()
+        p = arm.predict(ob)
+        t_pred += time.perf_counter() - c0
+        correct[t] = int(p == int(st.y))
+        if st.feedback_available:
+            c0 = time.perf_counter()
+            arm.learn(ob, int(st.y_feedback))
+            t_learn += time.perf_counter() - c0
+        if t in win_close and snap is not None:
+            pid, seg, start = win_close[t]
+            now = (arm.n_updates, arm.state_sig(), arm.enc_sig())
+            if now != snap:
+                raise LivenessError(
+                    f"RETENTION LEAKAGE at phase {pid} ({seg}, steps [{start},{t + 1})): arm "
+                    f"'{arm.name}' changed its adaptive state inside a FEEDBACK-WITHHELD window -- "
+                    f"updates {snap[0]}->{now[0]}, state {snap[1]:.12g}->{now[1]:.12g}, encoder "
+                    f"{snap[2]:.12g}->{now[2]:.12g}. A withheld window in which the model learns is "
+                    f"not measuring retention, it is measuring relearning, and every retention "
+                    f"number in this file would be void.")
+            frozen["windows_checked"] += 1
+            frozen["segments"].append(seg)
+            snap = None
+        det.observe(t, st.feedback_available)
+    arm.withheld_freeze = frozen
+    return correct, probe_hat, t_pred, t_learn
+
+
+def segment_metrics(env: Adrn2Env, correct):
+    """RETENTION / RELEARNING / STEADY / naive control / FORGETTING, reported separately and never
+    averaged together. Retention is THE metric; relearning is a different quantity entirely and
+    conflating them would let a fast relearner pass as a good retainer."""
+    seg = env.segment.astype(str)
+    out = {}
+    for k, s in (("retention", "retention_probe"), ("naive", "naive_probe"),
+                 ("relearn", "relearn"), ("steady", "steady")):
+        m = seg == s
+        out[k] = float(correct[m].mean()) if m.any() else float("nan")
+    out["overall"] = float(correct.mean())
+    out["per_context"] = {c: float(correct[env.context_id == c].mean()) for c in CONTEXTS}
+
+    # FORGETTING: the drop on a context between its first and its second visit. Measured twice, because
+    # the two questions are different: at the RETURN (before any new feedback) and after RELEARNING.
+    steady_by_phase, ret_by_phase = {}, {}
+    for p in range(1, env.n_phases + 1):
+        mp = (env.phase_id == p)
+        steady_by_phase[p] = float(correct[mp & (seg == "steady")].mean())
+        mr = mp & (seg == "retention_probe")
+        if mr.any():
+            ret_by_phase[p] = float(correct[mr].mean())
+    fg_probe, fg_steady, detail = [], [], {}
+    for p in range(1, env.n_phases + 1):
+        if not env.is_return[p - 1]:
+            continue
+        c = env.schedule[p - 1]
+        first = next(i + 1 for i, cc in enumerate(env.schedule) if cc == c)
+        fp = steady_by_phase[first] - ret_by_phase[p]
+        fs = steady_by_phase[first] - steady_by_phase[p]
+        fg_probe.append(fp)
+        fg_steady.append(fs)
+        detail[f"{c}:phase{first}->phase{p}"] = {"first_steady": steady_by_phase[first],
+                                                 "return_retention": ret_by_phase[p],
+                                                 "return_steady": steady_by_phase[p],
+                                                 "forgetting_at_return": fp,
+                                                 "forgetting_after_relearn": fs}
+    out["forgetting"] = float(np.mean(fg_probe)) if fg_probe else float("nan")
+    out["forgetting_after_relearn"] = float(np.mean(fg_steady)) if fg_steady else float("nan")
+    out["forgetting_detail"] = detail
+    return out
+
+
+def window_references(env: Adrn2Env):
+    """Non-arm REFERENCES on the retention windows. Analysis only; no arm is ever reported net of them.
+
+    oracle              the context handed over -- 1.0 by construction.
+    blind_bayes_seen    detect the change, then average over the rules of the contexts SEEN SO FAR. This
+                        is the CEILING for any non-oracle arm inside a withheld window, because the
+                        environment guarantees the input distribution is identical across contexts, so
+                        no evidence about WHICH context is active exists there.
+    stale_rule          keep applying the previous phase's rule. The FLOOR: no change detection, no
+                        context memory.
+    """
+    out = {"per_window": {}}
+    b, s, ba = [], [], []
+    for w in env.retention_windows():
+        sl = slice(w.start, w.stop)
+        xc, xl, y = env.x[sl], env.x_lag[sl], env.y[sl]
+        seen = list(dict.fromkeys(list(env.schedule[:w.phase_id])))
+        bb = blind_bayes_accuracy_over(seen, xc, xl, y)
+        ball = blind_bayes_accuracy_over(list(CONTEXTS), xc, xl, y)
+        prev = env.schedule[w.phase_id - 2]
+        stale = float((apply_rule(prev, xc, xl) == y).mean())
+        out["per_window"][f"phase{w.phase_id}:{w.context_id}"] = {
+            "contexts_seen": seen, "blind_bayes_seen": bb, "blind_bayes_all": ball,
+            "stale_rule": stale, "stale_context": prev, "n": int(w.stop - w.start)}
+        b.append(bb)
+        ba.append(ball)
+        s.append(stale)
+    out["blind_bayes_seen"] = float(np.mean(b))
+    out["blind_bayes_all"] = float(np.mean(ba))
+    # NOT A CEILING, and it was labelled as one. `blind_bayes_seen` is the realised accuracy of ONE
+    # particular rule -- the Bayes rule under a UNIFORM prior over the contexts seen so far. A
+    # non-oracle arm is free to hold a different prior, and on these very windows the hedge over ALL
+    # FOUR contexts scores HIGHER than the hedge over the seen ones, so the file was simultaneously
+    # reporting a "ceiling for any non-oracle arm" and a larger number reachable by four of them.
+    # What is genuinely bounded is IDENTIFICATION (the input distribution is context-free inside the
+    # window, env gate G9); the realised accuracy of a hedging arm is not. The larger of the two is
+    # reported as the reference, with the binomial se of a window of this length, so a value above it
+    # is read against sampling noise instead of being called impossible.
+    out["blind_bayes_best_hedge"] = float(max(np.mean(b), np.mean(ba)))  # per-seed; see refmean
+    n_ret = int(sum(w.stop - w.start for w in env.retention_windows()))
+    out["retention_window_n"] = n_ret
+    out["retention_window_binomial_se"] = float(math.sqrt(0.25 / max(1, n_ret)))
+    out["stale_rule"] = float(np.mean(s))
+    out["oracle"] = 1.0
+    nb = []
+    for w in env.naive_windows():
+        sl = slice(w.start, w.stop)
+        seen = list(dict.fromkeys(list(env.schedule[:w.phase_id])))
+        nb.append(blind_bayes_accuracy_over(seen, env.x[sl], env.x_lag[sl], env.y[sl]))
+    out["naive_blind_bayes_seen"] = float(np.mean(nb))
+    return out
+
+
+# ====================================================================== MECHANISM LIVENESS ASSERTIONS
+def detection_channel(env: Adrn2Env, F, probe_hat):
+    """How much of the withheld window the change-detection channel can actually cover.
+
+    The channel exists only where a CADENCE SLOT falls inside a withheld window: that is the only place
+    a missing label is observable. If W < F a probe window can contain no cadence slot at all and the
+    channel does not exist; if it contains only the last one, the flag arrives after the window has
+    closed. Both are structural properties of the protocol at that cadence, not implementation faults,
+    and both are measured here rather than assumed.
+    """
+    n = env.total_len
+    cadence = ((np.arange(n) + 1) % F) == 0
+    inprobe = env.feedback_withheld_by_probe
+    ret = env.segment.astype(str) == "retention_probe"
+    return {"cadence_slots_in_probe": int((cadence & inprobe).sum()),
+            "flag_steps": int(probe_hat.sum()),
+            "flag_steps_in_probe": int((probe_hat.astype(bool) & inprobe).sum()),
+            "probe_recall": float((probe_hat.astype(bool) & inprobe).sum() / max(1, inprobe.sum())),
+            "retention_recall": float((probe_hat.astype(bool) & ret).sum() / max(1, ret.sum()))}
+
+
+def assert_liveness(tag, arm: BaseArm, correct, probe_hat, sigs, F, cfg: BCfg, primary, chan):
+    """RAISE unless every mechanism this arm CLAIMS is numerically alive. No claim, no check -- but every
+    claim is checked, with a number, and the numbers are returned for the record.
+
+    Returns (report, starved, weak).
+
+    `bad`     -- a mechanism this arm CLAIMS is demonstrably switched off. Raises, always.
+    `starved` -- a mechanism that could not engage because the cadence delivered too few labels. Per
+                 the rule declared in the module docstring this raises at the primary cadence and is
+                 otherwise recorded, with that cadence's arm-8 gates declared UNSUPPORTED.
+    `weak`    -- a mechanism that ran but demonstrably did nothing. NOT a fault and never a raise: it
+                 is a measurement, and suppressing it would be the ADRN-1 failure in reverse -- but
+                 it withdraws the corresponding claim, which is why it is recorded and printed rather
+                 than left to be inferred from a counter that moved.
+    """
+    bad, starved, weak, rep = [], [], [], {}
+    sig0_state, sig1_state, sig0_enc, sig1_enc = sigs
+    rep["n_updates"] = int(arm.n_updates)
+    rep["updates_per_example"] = arm.n_updates / max(1, len(correct))
+    rep["state_moved"] = abs(sig1_state - sig0_state)
+    rep["encoder_moved"] = abs(sig1_enc - sig0_enc)
+    rep["probe_flag_steps"] = int(probe_hat.sum())
+    rep["withheld_freeze"] = getattr(arm, "withheld_freeze", None)
+    if not rep["withheld_freeze"] or rep["withheld_freeze"]["windows_checked"] < 1:
+        bad.append("the withheld-window FREEZE assertion did not run: retention leakage is the one "
+                   "defect that would void every number in this file and it must be checked, not "
+                   "assumed")
+
+    # -- every arm must actually have learned something online -----------------------------------
+    if arm.n_updates == 0:
+        bad.append("the arm received ZERO online updates: its 'online learning' never ran")
+    if rep["state_moved"] <= 0.0:
+        bad.append(f"the arm's adaptive state did not move over the whole stream "
+                   f"(|d state| = {rep['state_moved']:.3g}); it is a frozen model wearing an online "
+                   f"learner's name")
+
+    # -- the encoder must be frozen where the arm claims it is, and must move where it claims to move --
+    if arm.frozen_encoder and rep["encoder_moved"] > 1e-9:
+        bad.append(f"the encoder MOVED ({rep['encoder_moved']:.3g}) for an arm that claims a frozen "
+                   f"encoder")
+    if not arm.frozen_encoder and rep["encoder_moved"] <= 1e-9:
+        bad.append("this arm claims FULL-model online updates but its encoder did not move")
+
+    # -- the change-detection fallback must be live and must change predictions -------------------
+    t = arm.tele()
+    rep.update({k: v for k, v in t.items()})
+    rep["detection_channel"] = chan
+    if chan["cadence_slots_in_probe"] == 0:
+        starved.append(
+            f"the change-detection channel DOES NOT EXIST at F={F}: no cadence slot falls inside any "
+            f"{cfg.probe_len}-step withheld window, so a missing label is unobservable and no arm -- "
+            f"proposal or control -- can detect the phase boundary. Every arm therefore runs the whole "
+            f"withheld window on its stale context, and retention here measures staleness, not memory.")
+    elif chan["flag_steps"] == 0:
+        bad.append(f"cadence slots DO fall inside withheld windows at F={F} "
+                   f"({chan['cadence_slots_in_probe']} of them) but the probe detector never fired: the "
+                   f"change-detection fallback every arm is given was switched off in code")
+    elif chan["retention_recall"] <= 0.0:
+        starved.append(
+            f"change detection at F={F} arrives only AFTER the withheld window has closed (0 of the "
+            f"retention-probe steps carry the flag): the phase boundary is detectable in principle but "
+            f"too late to be used, so retention at this cadence again measures staleness.")
+    elif t.get("n_fallback", 0) == 0:
+        bad.append("the probe detector fired but this arm never took its fallback path")
+    else:
+        # Counting that the fallback BRANCH was entered is not evidence that the fallback did
+        # anything; ADRN-1 shipped four mechanisms whose counters moved while the mechanism was off.
+        # So the counterfactual is computed: how often did taking the fallback actually change the
+        # prediction? A zero here is NOT a code defect and must not abort the run -- it is a measured
+        # property of that arm at that step size (an online head that has barely moved from the
+        # frozen blind head it was initialised from agrees with it everywhere). It is recorded, it is
+        # printed, and it makes the claim "every arm was given change detection in the strongest form
+        # its architecture admits" UNSUPPORTED for that arm, which is a different statement from a
+        # broken harness and is reported as such.
+        rep["fallback_changed_frac"] = (t.get("n_fallback_changed", 0) / max(1, t["n_fallback"]))
+        if (not t.get("fallback_is_noop_by_construction", False)
+                and t.get("n_fallback_changed", 0) == 0):
+            weak.append(f"the change-detection fallback never CHANGED a prediction: taken on "
+                        f"{t['n_fallback']} steps at F={F}, it agreed with the arm's normal predictor "
+                        f"on every one. The flag was delivered and used; it simply bought this arm "
+                        f"nothing, so no credit for 'every arm got change detection' is claimed here.")
+
+    if isinstance(arm, AdrnArm):
+        m, tel = arm.model, arm.tel
+        f = m.flags
+
+        # -- 1. FAST ADAPTERS MUST ACTUALLY CHANGE BETWEEN UPDATES --------------------------------
+        if f.fast:
+            rel = np.asarray(tel["dWf_rel"], np.float64)
+            rep["fast_updates"] = int(rel.size)
+            rep["fast_dW_rel_median"] = float(np.median(rel)) if rel.size else 0.0
+            rep["fast_norm_final"] = float(m.W_f.norm())
+            if rel.size == 0:
+                bad.append("fast adapter: ZERO updates were applied over the whole stream")
+            elif rep["fast_dW_rel_median"] < 1e-6:
+                bad.append(f"fast adapter: median relative change per update is "
+                           f"{rep['fast_dW_rel_median']:.3g} -- the adapter is not moving")
+            if rep["fast_norm_final"] <= 1e-9:
+                bad.append("fast adapter: final ||W_f|| is zero -- nothing was ever written")
+
+        # -- 2. THE CONTEXT POSTERIOR MUST BE NON-DEGENERATE --------------------------------------
+        # TWO CORRECTIONS, both forced by a mutation test that the previous version passed silently.
+        #
+        # (a) MEASURE ONLY THE INFERRED STEPS. Inside a withheld window the harness OVERWRITES the
+        #     posterior with a uniform hedge, and the oracle arm overwrites it with a one-hot. Those
+        #     vectors are the harness's, not the mechanism's. Pooling them in defeated the collapse
+        #     test outright: a posterior hard-forced to slot 0 on every inferred step measured a
+        #     marginal entropy of 0.4011 against a floor of 0.25 and passed, because 192 injected
+        #     uniform hedges pulled the pooled statistic up. On the inferred steps alone the same run
+        #     measures 0.0841 and raises.
+        # (b) COMPARE AGAINST THE ENTROPY AVAILABLE AT THAT STEP. The uniformity test used
+        #     log(slots allocated by the END of the stream). A posterior forced to be exactly uniform
+        #     at every step still passed it, because early in the stream only one or two slots exist
+        #     and the achievable entropy is far below the final log k. The bound has to be per step.
+        if f.context and m.k > 1:
+            Pall = np.asarray(arm.post_log, np.float64)
+            inf = np.asarray(arm.post_inferred, bool)
+            Uall = np.asarray(arm.used_log, np.int64)
+            P = Pall[inf] if inf.any() else Pall
+            U = Uall[inf] if inf.any() else Uall
+            ku = max(2, int(m.used.sum()))
+            ent_t = np.array([A2._ent(p) for p in P])
+            h_marg = A2._ent(P.mean(0))
+            h_cond = float(ent_t.mean())
+            # headroom below the maximum entropy AVAILABLE at each step, over the steps where more
+            # than one slot existed to be uncertain between (with one slot the posterior is one-hot
+            # by arithmetic and the test does not apply).
+            multi = U >= 2
+            headroom = (float(np.mean(np.log(np.maximum(2, U[multi])) - ent_t[multi]))
+                        if multi.any() else float("nan"))
+            n_argmax = int(len(set(P.argmax(1).tolist())))
+            rep.update(posterior_marginal_entropy=h_marg, posterior_conditional_entropy=h_cond,
+                       posterior_information=h_marg - h_cond, log_k_used=math.log(ku),
+                       posterior_steps_inferred=int(inf.sum()),
+                       posterior_steps_harness_forced=int((~inf).sum()),
+                       posterior_entropy_headroom_per_step=headroom,
+                       posterior_multi_slot_steps=int(multi.sum()),
+                       posterior_distinct_argmax_slots=n_argmax,
+                       contexts_created_n=len(tel["created_at"]))
+            # A posterior over ONE allocated slot is one-hot by arithmetic, not by malfunction. So the
+            # degeneracy checks are raises only when the manager actually had more than one hypothesis
+            # to be uncertain between; when creation never fired, the collapse is the DOWNSTREAM
+            # CONSEQUENCE of a starved manager and is recorded under that heading instead. Reporting it
+            # twice as two independent failures would overstate what went wrong.
+            manager_live = f.oracle_context or len(tel["created_at"]) >= 1
+            if not manager_live:
+                starved.append(
+                    f"context CREATION never fired at F={F}: {arm.n_updates} feedback events over the "
+                    f"whole stream against a min_obs_create of {m.cfg.min_obs_create} on the active "
+                    f"slot, so the manager ran everything on one slot and the posterior is one-hot by "
+                    f"arithmetic (marginal entropy {h_marg:.4f}, information {h_marg - h_cond:.4f}). "
+                    f"The posterior-degeneracy numbers are recorded as consequences of this, not as "
+                    f"separate faults.")
+            else:
+                if h_marg < 0.25:
+                    bad.append(f"context posterior COLLAPSED: entropy of the time-averaged posterior "
+                               f"over the {int(inf.sum())} INFERRED steps is {h_marg:.4f} nats -- "
+                               f"effectively one context for the whole stream, although "
+                               f"{len(tel['created_at'])} slots were allocated")
+                if multi.any() and headroom <= 0.15:
+                    bad.append(f"context posterior is UNIFORM: over the {int(multi.sum())} inferred "
+                               f"steps at which more than one slot existed, its mean entropy sits only "
+                               f"{headroom:.4f} nats below the maximum entropy AVAILABLE at that step "
+                               f"-- it is not deciding anything. (The bound is per-step; comparing "
+                               f"against log of the FINAL slot count let an exactly-uniform posterior "
+                               f"pass, because early in the stream only one slot exists.)")
+                if h_marg - h_cond < 0.05:
+                    bad.append(f"context posterior carries no information: marginal minus conditional "
+                               f"entropy = {h_marg - h_cond:.4f} nats")
+                if int(m.used.sum()) >= 2 and n_argmax < 2:
+                    bad.append(f"context posterior never SELECTS a second context: over "
+                               f"{int(inf.sum())} inferred steps its argmax took {n_argmax} distinct "
+                               f"value(s) while {int(m.used.sum())} slots were allocated. A bank of "
+                               f"per-context adapters only one of which is ever addressed is one "
+                               f"adapter wearing a context manager's name.")
+
+        # -- 3. CONSOLIDATED ADAPTERS MUST EXIST AND DIFFER FROM THE FAST ADAPTERS ----------------
+        if f.consolidate:
+            nm, nf = float(m.W_m.norm()), float(m.W_f.norm())
+            d = float((m.W_m - m.W_f).norm()) / (nm + nf + 1e-12) if m.W_f.numel() else 1.0
+            rep.update(W_m_norm=nm, W_m_vs_W_f_rel=d, n_consolidations=int(tel["n_consol"]))
+            if tel["n_consol"] == 0:
+                starved.append(f"CONSOLIDATION never fired at F={F}: W_m is a permanently empty store "
+                               f"({arm.n_updates} feedback events over the stream)")
+            elif nm <= 1e-9:
+                bad.append("consolidation fired but the consolidated adapter norm is zero")
+            elif d < 1e-3:
+                bad.append(f"consolidated and fast adapters are indistinguishable (rel diff {d:.3g}) -- "
+                           f"consolidation is a copy, not a second timescale")
+
+        # -- 4. THE WORKSPACE MUST MOVE, AND HALTING MUST NOT SIMPLY RUN TO THE CAP ---------------
+        st = np.asarray(tel["steps"], np.float64)
+        rep.update(mean_steps=float(st.mean()), steps_sd=float(st.std()),
+                   steps_at_cap_frac=float((st >= m.cfg.max_steps).mean()))
+        if f.workspace:
+            ws = np.asarray(tel["wstd"], np.float64)
+            rep["workspace_step_sd"] = float(ws.mean()) if ws.size else 0.0
+            if ws.size and rep["workspace_step_sd"] < 1e-8:
+                bad.append("recurrent workspace is INERT: w does not change across internal steps")
+            if f.halting and rep["steps_at_cap_frac"] >= 1.0 - 1e-12:
+                bad.append(f"adaptive halting is INERT: every one of {st.size} steps ran to the cap "
+                           f"({m.cfg.max_steps}); the halting head is never used")
+
+        # -- 5. THE PLASTICITY CONTROLLER MUST NOT BE EMITTING A CONSTANT ------------------------
+        if f.controller:
+            e, l = np.asarray(tel["eta"]), np.asarray(tel["lam"])
+            rep.update(eta_mean=float(e.mean()) if e.size else 0.0,
+                       eta_sd=float(e.std()) if e.size else 0.0,
+                       lam_sd=float(l.std()) if l.size else 0.0,
+                       # A non-zero sd is not the same as a mechanism doing work. The realised
+                       # coefficient of variation is recorded so "learned plasticity" cannot be
+                       # claimed off a network whose output is constant to within a fraction of a
+                       # percent; a threshold of 1e-8 does not distinguish those two cases.
+                       eta_cv=float(e.std() / abs(e.mean())) if e.size and abs(e.mean()) > 0 else 0.0,
+                       lam_cv=float(l.std() / abs(l.mean())) if l.size and abs(l.mean()) > 0 else 0.0)
+            if e.size == 0:
+                bad.append("plasticity controller was never queried")
+            elif e.std() < 1e-8 or l.std() < 1e-8:
+                bad.append(f"plasticity controller is CONSTANT (sd eta {e.std():.3g}, sd lambda "
+                           f"{l.std():.3g}) -- a hard-coded number wearing a network")
+
+        # -- 6. THE MODULATORY VECTOR MUST NOT BE CONSTANT ---------------------------------------
+        mm = np.asarray(tel["mod"], np.float64)
+        rep["mod_sd"] = float(mm.std(0).max())
+        if rep["mod_sd"] < 1e-8:
+            bad.append("the modulatory vector m_t is constant for the whole stream")
+
+        # -- 7. ELIGIBILITY IS CLAIMED OFF AND MUST THEREFORE COST EXACTLY NOTHING ---------------
+        rep["elig_updates"] = int(tel["n_elig"])
+        if tel["n_elig"] != 0:
+            bad.append("eligibility ran although this environment has sparse, not delayed, feedback; "
+                       "the arm is paying for a mechanism it does not claim")
+
+    if bad:
+        raise MechanismInert(f"[{tag}] MECHANISM LIVENESS FAILED before any score was reported:\n  - "
+                             + "\n  - ".join(bad))
+    if starved and primary:
+        raise MechanismInert(
+            f"[{tag}] MECHANISM INERT AT THE PRIMARY CADENCE F={F}, so no score from it may be "
+            f"reported:\n  - " + "\n  - ".join(starved))
+    return rep, starved, weak
+
+
+def flag_effect_probe(proto: ADRN2A, env, Wseq, seq_t, F, cfg: BCfg):
+    """Toggle each component on ONE pretrained model, replay the SAME full stream, and require the
+    OUTPUT to move. ADRN-1's third defect was a flag wired to nothing and its fourth was three ablations
+    returning byte-identical numbers; a flag that does not move the prediction trace raises here, long
+    before any table is printed. The probe replays the FULL stream, never a truncation, because a
+    truncated replay can miss a gate (consolidation) that is live over the real workload."""
+    base = AdrnArm("probe/on", copy.deepcopy(proto), oracle=False)
+    c_on, _, _, _ = run_arm(base, env, Wseq, seq_t, F)
+    out = {}
+    for name in ("context", "fast", "consolidate", "workspace"):
+        m = copy.deepcopy(proto)
+        setattr(m.flags, name, False)
+        if name == "workspace":
+            m.flags.halting = False
+        arm = AdrnArm(f"probe/{name}=off", m, oracle=False)
+        c_off, _, _, _ = run_arm(arm, env, Wseq, seq_t, F)
+        ndiff = int((c_on != c_off).sum())
+        out[name] = {"steps_differing": ndiff, "acc_on": float(c_on.mean()),
+                     "acc_off": float(c_off.mean())}
+        if ndiff == 0:
+            raise MechanismInert(
+                f"FLAG '{name}' IS VACUOUS: switching it off produced a byte-identical prediction trace "
+                f"over {len(c_on)} steps. An ablation of a mechanism that is not running is not an "
+                f"ablation -- this is ADRN-1's defect 3 and defect 4 signature.")
+    return out
+
+
+def assert_arms_distinct(per_arm, cond):
+    """No two differently-configured arms may return identical per-seed metrics. There is no predeclared
+    exception in this benchmark: every arm differs in architecture or in a live mechanism."""
+    names = sorted(per_arm)
+    bad = []
+    for i, a in enumerate(names):
+        for b in names[i + 1:]:
+            if (np.allclose(per_arm[a]["retention"], per_arm[b]["retention"], atol=0, rtol=0) and
+                    np.allclose(per_arm[a]["overall"], per_arm[b]["overall"], atol=0, rtol=0)):
+                bad.append(f"'{a}' and '{b}' returned BYTE-IDENTICAL per-seed retention AND overall "
+                           f"accuracy in condition {cond} -- ADRN-1's defect-4 signature")
+    if bad:
+        raise MechanismInert("ARM DISTINCTNESS FAILED:\n  - " + "\n  - ".join(bad))
+
+
+# =========================================================================================== arms table
+ARM_ORDER = ["1_transformer_full", "2_transformer_frozen_head", "3_gru_head", "4_nn_lookup",
+             "5_online_logreg", "6_adrn2a_no_context", "7_adrn2a_oracle_context",
+             "8_adrn2a_inferred_context"]
+LADDER = {
+    "1_transformer_full": "Transformer, online FULL-model updates",
+    "2_transformer_frozen_head": "Transformer FROZEN, online linear head",
+    "3_gru_head": "GRU, online head",
+    "4_nn_lookup": "nearest-neighbour / lookup",
+    "5_online_logreg": "online logistic regression",
+    "6_adrn2a_no_context": "ADRN-2A WITHOUT context separation",
+    "7_adrn2a_oracle_context": "ADRN-2A with ORACLE context",
+    "8_adrn2a_inferred_context": "ADRN-2A with INFERRED context",
+}
+CONTROLS = ARM_ORDER[:5]
+GRID = {"1_transformer_full": [1e-5, 1e-4, 1e-3],
+        "2_transformer_frozen_head": [3e-3, 1e-2, 3e-2],
+        "3_gru_head": [3e-3, 1e-2, 3e-2],
+        "4_nn_lookup": [1, 5, 15],
+        "5_online_logreg": [1e-2, 3e-2, 1e-1]}
+
+
+def adrn_cfg(cfg: BCfg, F):
+    """ADRN-2A's own Cfg, with the creation/consolidation timing scaled to the FEEDBACK BUDGET.
+
+    ADRN-2A's context manager counts OBSERVATIONS, and an observation is a feedback event. At F=64 the
+    stream delivers 64x fewer of them than at F=1, so a threshold expressed in raw steps would make the
+    manager unusable at one cadence and trigger-happy at another for reasons that have nothing to do
+    with the mechanism. The thresholds below are a declared function of the labels a phase delivers, not
+    a tuned constant, and the realised counts are printed.
+    """
+    c = A2.Cfg()
+    c.d_in, c.t_win, c.n_classes = N_BITS, cfg.hist, 2
+    c.chance = 0.5
+    c.k_slots = cfg.k_slots
+    c.max_steps = cfg.max_steps
+    n_fb_phase = max(1, (cfg.phase_len - cfg.probe_len) // F)
+    c.min_obs_create = max(3, n_fb_phase // 3)
+    c.create_cooldown = max(3, n_fb_phase // 3)
+    c.persist = 2
+    c.protect_steps = max(8, 2 * F)
+    c.theta_new = 0.40
+    c._n_fb_phase = n_fb_phase
+    return c
+
+
+def build_models(cfg: BCfg, seed, rep):
+    """Pretrain the digital half once per seed and hand identical weights to every arm that shares an
+    architecture, so pretraining variance is not a confound between them."""
+    rng = np.random.default_rng(310000 + 977 * seed)
+    cfg2 = adrn_cfg(cfg, cfg.primary_F)
+
+    d_tfm = bisect_width(lambda d: count_params(TfmEncoder(d, cfg.hist)) + 2 * (d + 1),
+                         cfg.budget, 4, 256, step=2)
+    d_gru = bisect_width(lambda d: count_params(GruEncoder(d, cfg.hist)) + 2 * (d + 1),
+                         cfg.budget, 4, 256, step=1)
+    d_h = {}
+    flags = {"6_adrn2a_no_context": Flags(context=False, eligibility=False),
+             "7_adrn2a_oracle_context": Flags(oracle_context=True, eligibility=False),
+             "8_adrn2a_inferred_context": Flags(eligibility=False)}
+    for a, f in flags.items():
+        d_h[a] = A2.width_for(cfg2, f, cfg.budget, 8, 160)
+
+    counts, comp, built = {}, {}, {}
+
+    def with_restarts(tag, fn):
+        """Retry ONE family on a fresh init a bounded number of times. The criterion is the OFFLINE
+        probe, which no online mechanism under test can influence, so the retry cannot favour any arm;
+        and the retry is per-family so a marginal GRU does not silently re-roll the transformer too."""
+        for attempt in range(cfg.pre_restarts + 1):
+            try:
+                return fn(attempt)
+            except MechanismInert as e:
+                if attempt >= cfg.pre_restarts:
+                    raise
+                rep(f"      {tag}: pretraining restart {attempt + 1}/{cfg.pre_restarts} after: "
+                    f"{str(e).strip().splitlines()[-1].strip()}")
+
+    def build_tfm(attempt):
+        torch.manual_seed(9000 + seed + 100000 * attempt)
+        enc = TfmEncoder(d_tfm, cfg.hist)
+        b, h = pretrain_plain(enc, cfg.hist, cfg, rng, 9000 + seed + 100000 * attempt)
+        c = assert_digital_competence(f"transformer/seed{seed}", enc, h, b, cfg.hist, cfg,
+                                      np.random.default_rng(510000 + seed))
+        c["pretrain_restarts"] = attempt
+        return enc, b, c
+
+    def build_gru(attempt):
+        torch.manual_seed(9100 + seed + 100000 * attempt)
+        enc = GruEncoder(d_gru, cfg.hist)
+        b, h = pretrain_plain(enc, cfg.hist, cfg, rng, 9100 + seed + 100000 * attempt)
+        c = assert_digital_competence(f"gru/seed{seed}", enc, h, b, cfg.hist, cfg,
+                                      np.random.default_rng(510100 + seed))
+        c["pretrain_restarts"] = attempt
+        return enc, b, c
+
+    enc_t, bt, comp["transformer"] = with_restarts("transformer", build_tfm)
+    enc_g, bg, comp["gru"] = with_restarts("gru", build_gru)
+
+    adrn_by_width = {}
+    for a, f in flags.items():
+        key = d_h[a]
+        if key not in adrn_by_width:
+            def build_adrn(attempt, key=key, f=f):
+                torch.manual_seed(9200 + seed + 100000 * attempt)
+                proto = ADRN2A(cfg2, f, key)
+                hh = pretrain_adrn(proto, cfg.hist, cfg, rng, 9200 + seed + 100000 * attempt)
+                meta = meta_train_controller(proto, cfg, rng, 9300 + seed)
+                c = assert_digital_competence(
+                    f"adrn_d{key}/seed{seed}", lambda X: adrn_expected_feature(proto, X)[0], hh,
+                    proto.dec, cfg.hist, cfg, np.random.default_rng(510200 + seed))
+                c.update(meta)
+                c["pretrain_restarts"] = attempt
+                return proto, c
+            proto, comp[f"adrn_d{key}"] = with_restarts(f"adrn_d{key}", build_adrn)
+            adrn_by_width[key] = {k: v for k, v in proto.state_dict().items()
+                                  if not k.startswith(("W_f", "W_m", "keys"))}
+        built[a] = (adrn_by_width[key], key, f)
+
+    counts["1_transformer_full"] = count_params(enc_t) + 2 * count_params(bt)
+    counts["2_transformer_frozen_head"] = counts["1_transformer_full"]
+    counts["3_gru_head"] = count_params(enc_g) + 2 * count_params(bg)
+    dim = cfg.hist * N_BITS
+    mem = max(8, cfg.budget // dim)
+    counts["4_nn_lookup"] = 2 * mem * dim
+    counts["5_online_logreg"] = 2 * (dim + 1)
+    widths = {"1_transformer_full": d_tfm, "2_transformer_frozen_head": d_tfm, "3_gru_head": d_gru,
+              "4_nn_lookup": mem, "5_online_logreg": dim + 1}
+    for a in flags:
+        sd, key, f = built[a]
+        counts[a] = ADRN2A(cfg2, f, key).param_counts()[2]
+        widths[a] = key
+    return {"enc_t": enc_t, "blind_t": bt, "enc_g": enc_g, "blind_g": bg, "adrn": built,
+            "counts": counts, "widths": widths, "mem": mem, "dim": dim, "comp": comp,
+            "d_tfm": d_tfm, "d_gru": d_gru}
+
+
+def make_arm(name, M, cfg: BCfg, cfg2, hyper):
+    if name == "1_transformer_full":
+        return TorchHeadArm(name, copy.deepcopy(M["enc_t"]), M["blind_t"], hyper, full=True)
+    if name == "2_transformer_frozen_head":
+        return TorchHeadArm(name, copy.deepcopy(M["enc_t"]), M["blind_t"], hyper, full=False)
+    if name == "3_gru_head":
+        return TorchHeadArm(name, copy.deepcopy(M["enc_g"]), M["blind_g"], hyper, full=False)
+    if name == "4_nn_lookup":
+        return LookupNNArm(name, M["mem"], int(hyper), M["dim"])
+    if name == "5_online_logreg":
+        return LogRegArm(name, M["dim"], hyper)
+    sd, key, f = M["adrn"][name]
+    model = ADRN2A(cfg2, f, key)
+    model.load_state_dict(sd, strict=False)
+    return AdrnArm(name, model, oracle=f.oracle_context)
+
+
+def windows_for(env: Adrn2Env, hist):
+    """W[t] = [x(t-hist+1), ..., x(t-1), x(t)], so column -1-LAG is exactly the bit c4 depends on.
+
+    The lagged slots at t < hist-1 are filled from the environment's BURN-IN history rather than with
+    zeros. Zero padding put a window that the generative law never produces in front of the encoder on
+    the first steps of the stream; it happened to be harmless here (phase 1 is c1, which ignores the
+    lag) but it is a silent train/serve mismatch and the burn-in exists precisely so it is not needed.
+    """
+    X = env.x.astype(np.float32)
+    n = len(X)
+    pre = env._x_all[:LAG].astype(np.float32)          # the burn-in steps the stream never yields
+    Xp = np.concatenate([pre, X], 0)                   # index t + LAG == x(t)
+    W = np.zeros((n, hist, N_BITS), np.float32)
+    for j in range(hist):
+        lag = hist - 1 - j
+        src = LAG - lag
+        if src >= 0:
+            W[:, j] = Xp[src:src + n]
+        else:                                           # deeper than the burn-in: zero-pad, as before
+            W[lag:, j] = X[:-lag]
+    return W, torch.from_numpy(W), W.reshape(n, -1)
+
+
+# =========================================================================================== main
+def main():
+    t0 = time.time()
+    cfg = BCfg()
+    log = []
+
+    def rep(s=""):
+        print(s, flush=True)
+        log.append(s)
+
+    W = 112
+    rep("=" * W)
+    rep("ADRN-2 SECTION 18 BASELINE LADDER -- eight arms on the latent-rule environment")
+    rep("=" * W)
+    if SMOKE:
+        rep("  *** SMOKE RUN -- plumbing and liveness check, NOT a result. ***")
+    rep(f"  GATES, DECLARED BEFORE ANY NUMBER EXISTS. Primary metric is RETENTION: raw held-out accuracy")
+    rep(f"  inside the feedback-WITHHELD window that opens a RETURN phase (phase 4 on c1, phase 6 on c2).")
+    rep(f"    G1  arm 8 beats the BEST of arms 1-5 on RETENTION by more than the MDE")
+    rep(f"    G2  arm 8 beats arm 6 (no context separation) on RETENTION by more than the MDE")
+    rep(f"    G3  arm 8's RETENTION is above chance {cfg.chance:.2f} at ALL of F = "
+        f"{', '.join(str(f) for f in cfg.cadences)}")
+    rep(f"    G4  arm 7 (ORACLE context) minus arm 8 (INFERRED) is REPORTED whatever it is")
+    rep(f"    G5  ceiling/floor: the task discriminates (not all at chance, not all at ceiling)")
+    rep(f"  UNIT OF REPLICATION: the SEED -- independent init AND independent environment draw. "
+        f"n = {cfg.seeds}.")
+    rep(f"  MDE = 3*sd/sqrt(n) on the PAIRED per-seed gap. Effect size is always the RAW held-out value;")
+    rep(f"  controls and reference rows establish significance and interpretation and are never")
+    rep(f"  subtracted from a reported number.")
+    rep(f"  Parameter budget {cfg.budget:,}, bisected per architecture, realised counts printed below.")
+    rep(f"  Config: phase_len={cfg.phase_len} W={cfg.probe_len} hist={cfg.hist} "
+        f"k_slots={cfg.k_slots} max_steps={cfg.max_steps} primary F={cfg.primary_F}")
+
+    # ---------------------------------------------------- the instrument must pass its own check first
+    rep("\n  ENVIRONMENT INSTRUMENT CHECK (adrn2_env.liveness_check; raises rather than warns)")
+    envcfg = {"seeds_start": 0, "phase_len": cfg.phase_len, "probe_len": cfg.probe_len,
+              "feedback_every": cfg.primary_F, "relearn_feedbacks": cfg.relearn_feedbacks,
+              "n_fit": 4000 if SMOKE else 20000, "n_eval": 4000 if SMOKE else 20000,
+              "fit_cap": 2000 if SMOKE else 4000, "budget_cells": 8}
+    live_env = env_liveness_check(envcfg)
+    rep(f"    OK  c4 needs history: memoryless fit {live_env['L3_c4_memoryless_fit']:.4f} "
+        f"(closed form {live_env['L3_c4_analytic_memoryless']:.4f}) vs history fit "
+        f"{live_env['L3_c4_history_fit']:.4f}")
+    rep(f"    OK  fitter positive control: budgeted lookup recovers c1 XOR at "
+        f"{live_env['L8_fitter_c1_heldout']:.4f} held out")
+    rep(f"    OK  feedback never leaks: {live_env['L9_steps_checked']} steps checked, y_feedback nulled "
+        f"on every withheld step")
+
+    # ---------------------------------------------------------------------------------- experiment
+    res = {F: {a: {} for a in ARM_ORDER} for F in cfg.cadences}
+    for F in cfg.cadences:
+        for a in ARM_ORDER:
+            for k in ("retention", "naive", "relearn", "steady", "overall", "forgetting",
+                      "forgetting_after_relearn", "sec_per_example", "updates_per_example",
+                      "calibrated"):
+                res[F][a][k] = []
+    liveness, refs, starved_at, pcounts, cal_log = {}, {}, {}, {}, {}
+    weak_at = {}
+    flagfx, M0 = None, None
+    fb_counts = {}
+
+    for seed in range(cfg.seeds):
+        rep(f"\n  ── seed {seed} " + "─" * 90)
+        M = build_models(cfg, seed, rep)
+        if M0 is None:
+            M0 = M
+        pcounts = M["counts"]
+        c = M["comp"]
+        rep(f"    digital half: per-context linear probe  " +
+            "  ".join(f"{fam}=" + "/".join(f"{v:.3f}" for v in c[fam]["per_context_probe"].values())
+                       for fam in c) )
+        rep(f"    context-blind head " +
+            "  ".join(f"{fam} {c[fam]['blind_head_acc']:.4f}" for fam in c) +
+            f"   (analytic context-blind Bayes {list(c.values())[0]['blind_bayes_analytic']:.4f})")
+
+        for F in cfg.cadences:
+            cfg2 = adrn_cfg(cfg, F)
+            env = Adrn2Env(seed, phase_len=cfg.phase_len, probe_len=cfg.probe_len,
+                           feedback_every=F, relearn_feedbacks=cfg.relearn_feedbacks)
+            Wseq_np, seq_t, flat = windows_for(env, cfg.hist)
+            obs_flat = flat
+            fb_counts[F] = {"total_feedback": int(env.feedback_available.sum()),
+                            "per_phase": cfg2._n_fb_phase, "total_steps": env.total_len}
+            refs.setdefault(F, []).append(window_references(env))
+
+            # -- step-size calibration on a SEPARATE validation environment draw, same grid ---------
+            vlen = max(cfg.val_phase_len, cfg.probe_len + cfg.relearn_feedbacks * F + 2 * F)
+            venv = Adrn2Env(900000 + seed, phase_len=vlen, probe_len=cfg.probe_len,
+                            feedback_every=F, relearn_feedbacks=cfg.relearn_feedbacks,
+                            schedule=cfg.val_schedule)
+            vW, vseq, vflat = windows_for(venv, cfg.hist)
+            hyper = {}
+            for a in ARM_ORDER:
+                if a not in GRID:
+                    hyper[a] = None
+                    continue
+                best = (-1.0, GRID[a][0])
+                for v in GRID[a]:
+                    arm = make_arm(a, M, cfg, cfg2, v)
+                    cc, _, _, _ = run_arm(arm, venv, vflat, vseq, F)
+                    s = float(cc.mean())
+                    if s > best[0]:
+                        best = (s, v)
+                hyper[a] = best[1]
+            cal_log[f"F{F}/seed{seed}"] = hyper
+
+            for a in ARM_ORDER:
+                arm = make_arm(a, M, cfg, cfg2, hyper[a])
+                s0, e0 = arm.state_sig(), arm.enc_sig()
+                correct, probe_hat, tp, tl = run_arm(arm, env, obs_flat, seq_t, F)
+                s1, e1 = arm.state_sig(), arm.enc_sig()
+
+                # ---- LIVENESS RUNS HERE, BEFORE THE SCORE IS ALLOWED INTO THE TABLE ----
+                chan = detection_channel(env, F, probe_hat)
+                lv, starved, weak = assert_liveness(f"{a}/F{F}/seed{seed}", arm, correct, probe_hat,
+                                                    (s0, s1, e0, e1), F, cfg,
+                                                    primary=(F == cfg.primary_F), chan=chan)
+                liveness.setdefault(f"F{F}", {})[a] = lv
+                if starved:
+                    starved_at.setdefault(F, {}).setdefault(a, []).extend(starved)
+                if weak:
+                    weak_at.setdefault(F, {}).setdefault(a, sorted(set(weak)))
+
+                mt = segment_metrics(env, correct)
+                for k in ("retention", "naive", "relearn", "steady", "overall", "forgetting",
+                          "forgetting_after_relearn"):
+                    res[F][a][k].append(mt[k])
+                res[F][a]["sec_per_example"].append((tp + tl) / env.total_len)
+                res[F][a]["updates_per_example"].append(arm.n_updates / env.total_len)
+                res[F][a]["calibrated"].append(hyper[a])
+                liveness[f"F{F}"][a]["segment_detail"] = mt["forgetting_detail"]
+                liveness[f"F{F}"][a]["per_context"] = mt["per_context"]
+
+            if flagfx is None and F == cfg.primary_F and seed == 0:
+                rep(f"\n    FLAG-EFFECT PROBE (F={F}, seed 0, FULL stream): toggling each component on "
+                    f"one pretrained model and requiring the prediction trace to move")
+                sd, key, f8 = M["adrn"]["8_adrn2a_inferred_context"]
+                proto = ADRN2A(cfg2, f8, key)
+                proto.load_state_dict(sd, strict=False)
+                flagfx = flag_effect_probe(proto, env, obs_flat, seq_t, F, cfg)
+                for n_, v in flagfx.items():
+                    rep(f"      {n_:12s} steps differing {v['steps_differing']:>6}   "
+                        f"acc on/off {v['acc_on']:.4f}/{v['acc_off']:.4f}")
+
+    # ---------------------------------------------------------------------------------- statistics
+    def stat(v):
+        v = np.asarray(v, np.float64)
+        return float(np.nanmean(v)), (float(np.nanstd(v, ddof=1)) if v.size > 1 else 0.0)
+
+    def credited(gap, mde, n):
+        """Is a positive gap CREDITABLE, or is its MDE simply not estimable?
+
+        A paired per-seed sample standard deviation of exactly zero does not mean the population sd
+        is zero -- it means n seeds happened to land on the same difference, which is easy when the
+        metric is a count over a fixed window. That yields MDE = 0.0000, and then ANY positive gap
+        clears it. That is not a small print issue: on this project's own record it produced a PASS
+        ('immediate | G3 consolidation contributes', gap +0.1000, MDE 0.0000, n=2) that is the only
+        substantive PASS in its condition. So: a gap that is not positive FAILS as usual (no MDE is
+        needed to know that), but a positive gap whose MDE is unestimable is UNSUPPORTED, never a
+        pass. Returns 'PASS' | 'FAIL' | 'UNSUPPORTED'.
+        """
+        if not (gap > 0):
+            return "FAIL"
+        if n < 2 or not np.isfinite(mde) or mde <= 0.0:
+            return "UNSUPPORTED"
+        return "PASS" if gap > mde else "FAIL"
+
+    def paired(F, a, b, metric="retention"):
+        x = np.asarray(res[F][a][metric], np.float64)
+        y = np.asarray(res[F][b][metric], np.float64)
+        d = x - y
+        sd = float(np.nanstd(d, ddof=1)) if d.size > 1 else 0.0
+        return float(np.nanmean(d)), 3 * sd / math.sqrt(max(1, d.size)), [float(v) for v in d]
+
+    def one_sample(F, a, const, metric="retention"):
+        x = np.asarray(res[F][a][metric], np.float64) - const
+        sd = float(np.nanstd(x, ddof=1)) if x.size > 1 else 0.0
+        return float(np.nanmean(x)), 3 * sd / math.sqrt(max(1, x.size))
+
+    refmean = {F: {k: float(np.mean([r[k] for r in refs[F]]))
+                   for k in ("blind_bayes_seen", "blind_bayes_all", "blind_bayes_best_hedge",
+                             "stale_rule", "oracle", "naive_blind_bayes_seen",
+                             "retention_window_binomial_se")}
+               for F in cfg.cadences}
+    for F in cfg.cadences:
+        # the better of the two REPORTED references. Averaging a per-window maximum across seeds
+        # would print a third number larger than both of the two it claims to be the better of.
+        refmean[F]["blind_bayes_best_hedge"] = max(refmean[F]["blind_bayes_seen"],
+                                                   refmean[F]["blind_bayes_all"])
+
+    rep("\n" + "=" * W)
+    rep("  PARAMETER BUDGET (bisected per architecture; adapter banks counted as capacity)")
+    for a in ARM_ORDER:
+        note = ""
+        if a == "5_online_logreg":
+            note = "  <- BELOW budget by construction: a linear model on raw bits has no width to bisect"
+        if a == "4_nn_lookup":
+            note = f"  <- {M0['mem']} exemplars x {M0['dim']} bits x 2 stores (memory cells, not weights)"
+        rep(f"    {a:28s} width {M0['widths'][a]:>5}   params {pcounts[a]:>8,}{note}")
+
+    gates, gapinfo, cfinfo, unsupported_gates = {}, {}, {}, {}
+    for F in cfg.cadences:
+        prim = (F == cfg.primary_F)
+        rep("\n" + "=" * W)
+        rep(f"  CADENCE F = {F}  (feedback every {F} steps -> "
+            f"{fb_counts[F]['total_feedback']} labels over {fb_counts[F]['total_steps']} steps, "
+            f"{fb_counts[F]['per_phase']} per phase)" + ("   *** PRIMARY ***" if prim else ""))
+        rep("  " + "-" * (W - 2))
+        rep(f"    {'arm':28s} {'RETENTION':>17s} {'naive':>8s} {'RELEARN':>8s} {'STEADY':>8s} "
+            f"{'overall':>8s} {'FORGET':>8s} {'upd/ex':>7s} {'ms/ex':>7s}")
+        for a in ARM_ORDER:
+            m, s = stat(res[F][a]["retention"])
+            row = " ".join(f"{stat(res[F][a][k])[0]:8.4f}" for k in
+                           ("naive", "relearn", "steady", "overall", "forgetting"))
+            rep(f"    {a:28s} {m:>8.4f} ± {s:<6.4f} {row} "
+                f"{stat(res[F][a]['updates_per_example'])[0]:7.3f} "
+                f"{1000 * stat(res[F][a]['sec_per_example'])[0]:7.3f}")
+        r = refmean[F]
+        rep(f"    {'-- reference: stale rule':28s} {r['stale_rule']:>8.4f}          "
+            f"(FLOOR: keep applying the previous phase's rule -- no change detection, no context memory)")
+        rep(f"    {'-- ref: blind Bayes, all 4':28s} {r['blind_bayes_all']:>8.4f}          "
+            f"(hedge over ALL FOUR contexts -- the policy arms 1,2,3,6 fall back to)")
+        rep(f"    {'-- ref: blind Bayes, seen':28s} {r['blind_bayes_seen']:>8.4f}          "
+            f"(hedge over the contexts SEEN SO FAR -- the policy arms 7,8 fall back to)")
+        rep(f"    {'-- ref: best hedge of those':28s} {r['blind_bayes_best_hedge']:>8.4f}          "
+            f"(NOT a ceiling: a non-oracle arm may hold any prior, and the realised window carries a "
+            f"binomial se of {r['retention_window_binomial_se']:.4f})")
+        rep(f"    {'-- reference: oracle':28s} {r['oracle']:>8.4f}          "
+            f"(context handed over; 1.0 by construction)")
+        rep(f"    {'-- chance':28s} {cfg.chance:>8.4f}")
+        cv8 = liveness[f"F{F}"]["8_adrn2a_inferred_context"].get("eta_cv")
+        if cv8 is not None and cv8 < 0.01:
+            rep(f"    NOTE: the plasticity controller's realised step size varies by only "
+                f"{100 * cv8:.2f}% (cv) about a mean of "
+                f"{liveness[f'F{F}']['8_adrn2a_inferred_context']['eta_mean']:.4f}. It is not a "
+                f"constant, but it is not doing visible work either; treat 'learned plasticity' at "
+                f"this cadence as UNSUPPORTED rather than demonstrated.")
+        ch = liveness[f"F{F}"]["8_adrn2a_inferred_context"]["detection_channel"]
+        rep(f"    CHANGE-DETECTION CHANNEL at F={F}: {ch['cadence_slots_in_probe']} cadence slots fall "
+            f"inside withheld windows; the derived flag covers {ch['probe_recall']:.2f} of all withheld "
+            f"steps and {ch['retention_recall']:.2f} of the RETENTION-window steps. That is a hard "
+            f"ceiling on how much of the retention window ANY arm can even know is a new context.")
+        flat_halt = [a for a in ARM_ORDER
+                     if liveness[f"F{F}"][a].get("steps_sd", 1.0) < 1e-9
+                     and "mean_steps" in liveness[f"F{F}"][a]]
+        if flat_halt:
+            rep(f"    NOTE: adaptive halting emits a CONSTANT step count "
+                f"({liveness[f'F{F}'][flat_halt[0]]['mean_steps']:.2f} of a "
+                f"{cfg.max_steps}-step cap) for {', '.join(flat_halt)}. It is not running to the cap and "
+                f"it is not adapting either; treat 'adaptive halting' for those arms as UNSUPPORTED.")
+        rep(f"    NOTE: upd/ex is identical across arms by construction -- every arm updates on exactly "
+            f"the {fb_counts[F]['total_feedback']} feedback steps the protocol delivers. That is a "
+            f"property of the protocol, not the defect-4 signature; the distinctness assertion runs on "
+            f"retention and overall accuracy, which are not identical.")
+
+        # ------------------------------------------------ THE HEADLINE DIAGNOSTIC
+        og, om, oper = paired(F, "7_adrn2a_oracle_context", "8_adrn2a_inferred_context")
+        o7 = stat(res[F]["7_adrn2a_oracle_context"]["retention"])[0]
+        o8 = stat(res[F]["8_adrn2a_inferred_context"]["retention"])[0]
+        rep("")
+        rep(f"    >>> ORACLE MINUS INFERRED (the section-18 diagnostic, reported as a headline):")
+        rep(f"        arm 7 oracle context   RETENTION {o7:.4f}")
+        rep(f"        arm 8 inferred context RETENTION {o8:.4f}")
+        rep(f"        gap {og:+.4f}  MDE {om:.4f}  ->  " +
+            ("CONTEXT DETECTION IS THE BOTTLENECK: handing the context over is worth more than the "
+             "MDE, so the context manager, not the adapters, is what limits retention."
+             if og > om else
+             "oracle ~= inferred: handing the context over buys less than the MDE, so context "
+             "DETECTION is not the limiting factor at this cadence."))
+        gapinfo[f"F{F}|G4_oracle_minus_inferred"] = {"gap": og, "mde": om, "per_seed": oper,
+                                                     "oracle_raw": o7, "inferred_raw": o8}
+
+        # ------------------------------------------------ predeclared gates
+        # PREDECLARED RULE, from the module docstring: at a non-primary cadence where ARM 8's OWN
+        # mechanisms are starved, its gate readings are UNSUPPORTED and are "excluded from the
+        # verdict's claims rather than being reported as a result". That rule was declared but not
+        # implemented -- G1 and G2 at starved cadences were counted in the pass/fail tally and G3 was
+        # a conjunction that a starved cadence could FAIL. A gate decided by a condition predeclared
+        # as unreadable is a reported number that is not a result, in either direction, so the
+        # routing is implemented here: UNSUPPORTED readings go to their own block and are never
+        # counted. G5 stays in the tally at every cadence because it is a property of the TASK, not
+        # of arm 8's mechanism.
+        a8_supported = "8_adrn2a_inferred_context" not in starved_at.get(F, {})
+
+        def record_gate(key, status):
+            if status == "UNSUPPORTED":
+                unsupported_gates[key] = "UNSUPPORTED"
+            else:
+                gates[key] = (status == "PASS")
+
+        bc = max(CONTROLS, key=lambda a: stat(res[F][a]["retention"])[0])
+        g1, m1, p1 = paired(F, "8_adrn2a_inferred_context", bc)
+        s1 = credited(g1, m1, cfg.seeds) if a8_supported else "UNSUPPORTED"
+        record_gate(f"F{F} | G1 arm 8 beats best of arms 1-5 ({bc}) on RETENTION", s1)
+        gapinfo[f"F{F}|G1"] = {"vs": bc, "gap": g1, "mde": m1, "per_seed": p1, "status": s1,
+                               "arm8_supported": bool(a8_supported),
+                               "arm8_raw": o8, "other_raw": stat(res[F][bc]["retention"])[0]}
+        g2, m2, p2 = paired(F, "8_adrn2a_inferred_context", "6_adrn2a_no_context")
+        s2 = credited(g2, m2, cfg.seeds) if a8_supported else "UNSUPPORTED"
+        record_gate(f"F{F} | G2 arm 8 beats arm 6 (no context separation) on RETENTION", s2)
+        gapinfo[f"F{F}|G2"] = {"vs": "6_adrn2a_no_context", "gap": g2, "mde": m2, "per_seed": p2,
+                               "status": s2, "arm8_supported": bool(a8_supported),
+                               "arm8_raw": o8,
+                               "other_raw": stat(res[F]["6_adrn2a_no_context"]["retention"])[0]}
+        g3, m3 = one_sample(F, "8_adrn2a_inferred_context", cfg.chance)
+        gapinfo[f"F{F}|G3"] = {"above_chance": g3, "mde": m3, "arm8_raw": o8, "chance": cfg.chance}
+
+        # ------------------------------------------------ ceiling / floor
+        vals = {a: stat(res[F][a]["retention"])[0] for a in ARM_ORDER}
+        best_arm = max(vals, key=vals.get)
+        at_ceiling = [a for a, v in vals.items() if v >= cfg.ceiling]
+        below = []
+        if at_ceiling:
+            for a in ARM_ORDER:
+                if a in at_ceiling:
+                    continue
+                g, m, _ = paired(F, best_arm, a)
+                if g > m:
+                    below.append((a, vals[a]))
+        floor_tol = max(m1, 0.02)
+        all_floor = all(abs(v - cfg.chance) <= floor_tol for v in vals.values())
+        discriminates = (not all_floor) and (len(at_ceiling) < 2 or len(below) > 0)
+        gates[f"F{F} | G5 ceiling/floor: the task discriminates"] = bool(discriminates)
+        cfinfo[f"F{F}"] = {"per_arm_retention": vals, "best_arm": best_arm,
+                           "ceiling_hitters": at_ceiling, "ceiling": cfg.ceiling,
+                           "informative_below_ceiling": below, "all_at_floor": bool(all_floor),
+                           "floor_tolerance": floor_tol, "chance": cfg.chance,
+                           "discriminates": bool(discriminates),
+                           "blind_bayes_ceiling_for_non_oracle": r["blind_bayes_seen"]}
+        if all_floor:
+            rep(f"\n    *** FLOOR: every arm sits within {floor_tol:.4f} of chance "
+                f"({cfg.chance:.3f}). This cadence cannot separate anything and is UNINFORMATIVE. ***")
+        if at_ceiling:
+            rep(f"\n    *** CEILING: {len(at_ceiling)} arm(s) at or above {cfg.ceiling:.2f} "
+                f"({', '.join(at_ceiling)}). No separation can be read AMONG them -- but arms falling "
+                f"more than their MDE BELOW that ceiling remain highly informative: "
+                f"{', '.join(f'{a} {v:.4f}' for a, v in below) or 'none'} ***")
+
+        if F in starved_at:
+            a8_starved = "8_adrn2a_inferred_context" in starved_at[F]
+            rep(f"\n    *** MECHANISM STARVED AT F={F} (predeclared rule) -- affected arms: "
+                f"{', '.join(sorted(starved_at[F]))} ***")
+            for a, msgs in starved_at[F].items():
+                for msg in msgs:
+                    rep(f"        {a}: {msg}")
+            rep("        GATE CONSEQUENCE: " + (
+                "arm 8's OWN mechanisms are starved at this cadence, so its gate readings here are "
+                "UNSUPPORTED and are not read as a result."
+                if a8_starved else
+                "arm 8's own mechanisms are LIVE at this cadence, so its gates remain readable; the "
+                "starvation above affects only the arms named, and any comparison involving those arms "
+                "must be read with that in mind."))
+        if F in weak_at:
+            rep(f"\n    *** MECHANISM RAN BUT DID NOTHING AT F={F} (recorded, not a fault, and the "
+                f"corresponding claim is withdrawn) ***")
+            for a, msgs in sorted(weak_at[F].items()):
+                for msg in msgs:
+                    rep(f"        {a}: {msg}")
+        cfinfo[f"F{F}"]["weak_arms"] = sorted(weak_at.get(F, {}))
+        cfinfo[f"F{F}"]["starved_arms"] = sorted(starved_at.get(F, {}))
+        cfinfo[f"F{F}"]["arm8_supported"] = bool("8_adrn2a_inferred_context" not in
+                                                 starved_at.get(F, {}))
+
+        assert_arms_distinct(res[F], f"F={F}")
+
+    # G3 spans cadences. It is a conjunction over the SUPPORTED cadences only. Previously a cadence
+    # at which arm 8's own mechanism was starved -- a condition this file predeclares as unreadable --
+    # forced the whole gate to FAIL. A FAIL manufactured by an unreadable condition is as wrong as a
+    # PASS manufactured by one, and it is the direction that is easy to miss because it looks modest.
+    g3d, supported_F = {}, []
+    for F in cfg.cadences:
+        d = gapinfo[f"F{F}|G3"]
+        # "supported" is arm-8-specific: another arm's mechanism being starved does not make arm 8's
+        # own number unreadable, and pretending it does would let a real failure hide behind a caveat.
+        sup = "8_adrn2a_inferred_context" not in starved_at.get(F, {})
+        st = credited(d["above_chance"], d["mde"], cfg.seeds) if sup else "UNSUPPORTED"
+        if sup:
+            supported_F.append(F)
+        g3d[str(F)] = {"retention": d["arm8_raw"], "above_chance": d["above_chance"],
+                       "mde": d["mde"], "status": st, "passes": bool(st == "PASS"),
+                       "supported": bool(sup),
+                       "detection_recall_in_retention_window":
+                           liveness[f"F{F}"]["8_adrn2a_inferred_context"]["detection_channel"]
+                           ["retention_recall"]}
+    g3key = f"G3 arm 8 RETENTION above chance at all SUPPORTED cadences F={supported_F}"
+    if not supported_F:
+        unsupported_gates["G3 arm 8 RETENTION above chance"] = "UNSUPPORTED"
+    elif any(g3d[str(F)]["status"] == "UNSUPPORTED" for F in supported_F):
+        unsupported_gates[g3key] = "UNSUPPORTED"
+    else:
+        gates[g3key] = all(g3d[str(F)]["status"] == "PASS" for F in supported_F)
+    gapinfo["G3_by_cadence"] = g3d
+    gapinfo["G3_supported_cadences"] = supported_F
+    gapinfo["G3_unsupported_cadences"] = [F for F in cfg.cadences if F not in supported_F]
+    gates["G4 oracle minus inferred is REPORTED at every cadence"] = bool(
+        all(np.isfinite(gapinfo[f"F{F}|G4_oracle_minus_inferred"]["gap"]) for F in cfg.cadences))
+
+    rep("\n" + "=" * W)
+    rep("  COST (measured, not asserted -- ADRN-1's efficiency claim was never measured)")
+    rep(f"    {'arm':28s} " + " ".join(f"{'F=' + str(F):>18s}" for F in cfg.cadences))
+    for a in ARM_ORDER:
+        cells = " ".join(f"{1000 * stat(res[F][a]['sec_per_example'])[0]:8.3f}ms/"
+                         f"{stat(res[F][a]['updates_per_example'])[0]:5.3f}u"
+                         for F in cfg.cadences)
+        rep(f"    {a:28s} {cells}")
+
+    rep("\n  PREDECLARED GATES")
+    for k, v in gates.items():
+        rep(f"    {'PASS' if v else 'FAIL'}  {k}")
+    npass = int(sum(gates.values()))
+    if unsupported_gates:
+        rep("\n  GATES THAT ARE NOT READABLE, AND ARE THEREFORE NEITHER PASSED NOR FAILED")
+        rep("    (predeclared rule: a cadence at which arm 8's own mechanism is starved, or a paired")
+        rep("     gap whose MDE is not estimable, yields a reading that is not a result in EITHER")
+        rep("     direction. These are excluded from the tally above rather than counted as failures.)")
+        for k in unsupported_gates:
+            rep(f"    UNSUPPORTED  {k}")
+
+    # ---------------------------------------------------------------------------------- verdict
+    P = cfg.primary_F
+    rP = refmean[P]
+    g1d, g2d, g4d = gapinfo[f"F{P}|G1"], gapinfo[f"F{P}|G2"], gapinfo[f"F{P}|G4_oracle_minus_inferred"]
+    a8 = stat(res[P]["8_adrn2a_inferred_context"]["retention"])[0]
+    a8_rel = stat(res[P]["8_adrn2a_inferred_context"]["relearn"])[0]
+    a8_st = stat(res[P]["8_adrn2a_inferred_context"]["steady"])[0]
+    a8_fg = stat(res[P]["8_adrn2a_inferred_context"]["forgetting"])[0]
+    a8_ms = 1000 * stat(res[P]["8_adrn2a_inferred_context"]["sec_per_example"])[0]
+    a8_up = stat(res[P]["8_adrn2a_inferred_context"]["updates_per_example"])[0]
+    a8_se = rP["retention_window_binomial_se"]
+    hedge_note = (
+        f"at or below the better of the two context-blind hedges ({rP['blind_bayes_best_hedge']:.4f}), "
+        f"so it is best read as HEDGING over stored contexts rather than as RETRIEVING a particular one"
+        if a8 <= rP["blind_bayes_best_hedge"] + a8_se else
+        f"more than one binomial se ({a8_se:.4f}) above the better of the two context-blind hedges "
+        f"({rP['blind_bayes_best_hedge']:.4f}). That is NOT impossible -- what the environment forbids "
+        f"inside a withheld window is IDENTIFYING the context from the input, not scoring above the "
+        f"accuracy of one particular uniform-prior hedge -- but it is the one number here that would "
+        f"most repay a direct check that no label reached the adapter in the window")
+    verdict = (
+        ("SMOKE RUN -- plumbing and liveness check, NOT a result; rerun with ADRN2_SMOKE unset. "
+         if SMOKE else "") +
+        f"ADRN-2 SECTION 18 BASELINE LADDER: {npass}/{len(gates)} predeclared gates pass over "
+        f"n={cfg.seeds} seeds, where one seed is an independent initialisation AND an independent "
+        f"environment draw, and every MDE is 3*sd/sqrt(n) on the PAIRED per-seed gap. At the primary "
+        f"cadence F={P}, ADRN-2A with an INFERRED context (arm 8) reaches a raw held-out RETENTION of "
+        f"{a8:.4f} inside the feedback-withheld windows that open the two return phases, against "
+        f"{g1d['other_raw']:.4f} for the best of arms 1-5 ({g1d['vs']}) -- a paired per-seed gap of "
+        f"{g1d['gap']:+.4f} against an MDE of {g1d['mde']:.4f} -- and against "
+        f"{g2d['other_raw']:.4f} for the same system with context separation switched off (arm 6), a "
+        f"gap of {g2d['gap']:+.4f} against an MDE of {g2d['mde']:.4f}. THE SECTION-18 DIAGNOSTIC, "
+        f"reported as a headline rather than a footnote: handing the context over (arm 7) gives "
+        f"{g4d['oracle_raw']:.4f} against arm 8's {g4d['inferred_raw']:.4f}, a gap of "
+        f"{g4d['gap']:+.4f} against an MDE of {g4d['mde']:.4f}, so "
+        + ("CONTEXT DETECTION IS THE BOTTLENECK -- the adapters hold what they are told to hold and it "
+           "is the manager's identification of which context is active that limits retention."
+           if g4d["gap"] > g4d["mde"] else
+           "context detection is NOT the limiting factor at this cadence: the oracle buys less than "
+           "the MDE, so what limits retention lies in the adapters rather than in identification.") +
+        f" That gap has an information-theoretic explanation which is stated here rather than left to "
+        f"be discovered: the environment guarantees by construction that the input distribution is "
+        f"identical in every context and feedback is withheld for the entire window, so inside it there "
+        f"is NO evidence about which context is active and identification is impossible for any "
+        f"non-oracle system of any size. Three references computed on the realised windows frame what "
+        f"is achievable -- the stale-rule floor (keep applying the previous phase's rule) at "
+        f"{rP['stale_rule']:.4f}, the two context-blind hedges (over the contexts SEEN SO FAR at "
+        f"{rP['blind_bayes_seen']:.4f}, over ALL FOUR at {rP['blind_bayes_all']:.4f}), and the oracle "
+        f"at 1.0000. Those hedges are REFERENCES, not ceilings, and an earlier version of this file "
+        f"called the smaller of them 'the ceiling for any non-oracle arm' while printing the larger "
+        f"one as reachable by four of those same arms: what the environment bounds is IDENTIFICATION "
+        f"inside the window, not the realised accuracy of an arm holding some other prior, and a "
+        f"window of {int(2 * cfg.probe_len)} examples carries a binomial se of {a8_se:.4f} in any "
+        f"case. Arm 8's {a8:.4f} sits {hedge_note}. G3 is answered per cadence and "
+        f"its answer is mechanistic rather than mysterious: a withheld window can only reveal itself "
+        f"where a CADENCE SLOT falls inside it, so the derived change-detection flag covers "
+        + ", ".join(f"{g3d[str(F)]['detection_recall_in_retention_window']:.2f} of the retention window "
+                    f"at F={F}" for F in cfg.cadences) +
+        f", and arm 8's retention across those cadences is "
+        + ", ".join(f"{g3d[str(F)]['retention']:.4f} at F={F}"
+                    f"{'' if g3d[str(F)]['supported'] else ' (UNSUPPORTED: its own mechanisms are starved there)'}"
+                    for F in cfg.cadences) +
+        f". Cadence and total supervision are the same knob in this specification -- "
+        + ", ".join(f"{fb_counts[F]['total_feedback']} labels at F={F}" for F in cfg.cadences) +
+        f" over an identical stream -- so a retention drop at long cadence cannot be attributed to "
+        f"delay rather than to starvation, and that confound is printed in the table rather than "
+        f"argued away. The four metrics are reported "
+        f"separately and never averaged together: at F={P} arm 8 shows RETENTION {a8:.4f}, RELEARNING "
+        f"{a8_rel:.4f} once feedback resumes, STEADY {a8_st:.4f} late within a phase, and FORGETTING "
+        f"{a8_fg:+.4f} measured as the drop from a context's first-visit steady accuracy to its "
+        f"retention on the return; COST is measured rather than asserted at {a8_ms:.3f} ms and "
+        f"{a8_up:.3f} updates per example. Every arm was built to a budget of ~{cfg.budget:,} "
+        f"parameters by bisection with realised counts printed, with TWO named exceptions that are "
+        f"exceptions rather than roundings: arm 4 carries {pcounts['4_nn_lookup']:,} memory cells "
+        f"({pcounts['4_nn_lookup'] / cfg.budget:.1f}x the budget, because its {M0['mem']} exemplars "
+        f"are held in each of two stores) and arm 5 carries {pcounts['5_online_logreg']:,} because a "
+        f"linear model on raw bits has no width to bisect -- the first is a baseline given MORE than "
+        f"the proposal and the second a baseline the specification names, and both are printed in the "
+        f"budget table rather than folded into the word 'matched'; the digital half of every neural arm was "
+        f"pretrained by a byte-identical context-blind recipe and had to pass a per-context linear-probe "
+        f"competence assertion before any online number was taken; every free scalar step size in arms "
+        f"1-5 was calibrated per seed and per cadence on a SEPARATE validation environment draw over the "
+        f"same grid while the ADRN-2A arms received no calibrated scalar at all; and the change-detection "
+        f"signal derived from the feedback channel was offered to all eight arms in the strongest form "
+        f"each architecture admits -- with how much each arm actually GOT from it measured below "
+        f"rather than assumed -- so no baseline loses for being untuned or for being denied "
+        f"information the proposal was given. Before any number above was allowed into the table, every arm-run had to "
+        f"pass a mechanism liveness assertion proving numerically that its fast adapters changed between "
+        f"updates, that its context posterior was neither collapsed onto one context nor flat uniform, "
+        f"that its consolidated adapter existed and differed from the fast adapter by more than a copy, "
+        f"that its workspace moved across internal steps and did not simply run to the halting cap, that "
+        f"its plasticity controller emitted a varying rate, that its encoder was frozen where it claimed "
+        f"to be frozen and moved where it claimed to fine-tune, and that it "
+        f"performed online updates at all. The change-detection fallback every arm is given is "
+        f"measured by its COUNTERFACTUAL rather than by a counter -- how often taking it changed the "
+        f"prediction -- and where that count is zero the arm is named in "
+        f"`mechanism_ran_but_did_nothing` and no credit for 'every arm got change detection' is "
+        f"claimed for it"
+        + (f" (at F={P}: {', '.join(sorted(weak_at.get(P, {}))) or 'no arm'})") +
+        f". Separately, four component flags were toggled on one "
+        f"pretrained model and replayed over the SAME full stream with the prediction trace required "
+        f"to move, and no two differently-configured arms were permitted to return byte-identical "
+        f"per-seed metrics. Most importantly, every arm's adaptive state, encoder and update count "
+        f"were snapshotted at the start of each feedback-withheld window and required to be "
+        f"BYTE-IDENTICAL at its end -- {liveness[f'F{P}']['8_adrn2a_inferred_context']['withheld_freeze']['windows_checked']} "
+        f"windows per run -- because a label reaching an adapter inside the measurement window would "
+        f"turn every retention number in this file into a relearning number, and until this assertion "
+        f"existed that property rested on an unchecked invariant: a deliberately leaky harness that "
+        f"trained on every withheld step passed every other liveness check in this file and raised "
+        f"retention from 0.6406 to 0.7188.")
+    rep("\n" + "=" * W)
+    rep("  VERDICT: " + verdict)
+
+    limits = [
+        "FALSIFIER, and the most important one: inside a feedback-withheld window the environment "
+        "guarantees the input distribution is identical across contexts, so no non-oracle arm can "
+        "identify which context returned. If a future environment leaked ANY context information into x "
+        "-- different input statistics, a marker channel, a temporal signature -- the retention metric "
+        "would start measuring inference from inputs rather than retrieval from memory, every "
+        "non-oracle arm would rise, and the oracle-minus-inferred gap reported here would shrink for "
+        "reasons that have nothing to do with the context manager.",
+        "FALSIFIER: the change-detection signal is derived from the FEEDBACK MASK -- a cadence slot that "
+        "delivers no label reveals that a probe window has begun. If withholding were randomised so that "
+        "gaps in feedback carried no information about phase boundaries, every arm's fallback would stop "
+        "firing and retention should collapse to the stale-rule floor for all of them. That single "
+        "protocol property is load-bearing for every retention number in this file and it is stated, not "
+        "hidden.",
+        "FALSIFIER: the digital half is pretrained on windows from all four rules, so every rule is "
+        "linearly decodable before the stream starts. This benchmark therefore tests SELECTION and "
+        "RETRIEVAL, not representation learning. If the encoder had to discover the rules online, arms "
+        "1-3 would be far weaker and the ADRN-2A arms would have nothing linear for their adapters to "
+        "fix, and neither direction of that change is measured here.",
+        "CONFOUND, by design and not correctable within the specification: feedback cadence and total "
+        "supervision are the same knob. F=64 delivers 64x fewer labels than F=1 over an identical "
+        "stream, so a retention drop at high F cannot be attributed to delay rather than to starvation. "
+        "The realised label counts per cadence are printed so the confound is visible in the table.",
+        "the retention metric rests on exactly TWO windows per seed (phase 4 on c1, phase 6 on c2), of "
+        f"W={cfg.probe_len} examples each, so a single seed's retention carries a binomial standard "
+        f"error near {math.sqrt(0.25 / (2 * cfg.probe_len)):.3f}. The MDE is computed on the PAIRED "
+        "per-seed gap, which removes the shared stream noise, but no single seed's raw retention should "
+        "be over-read.",
+        "the environment never returns to c4, the one TEMPORAL context, so retention is measured on c1 "
+        "and c2 only -- both memoryless rules. Nothing here supports a claim about retaining a rule that "
+        "requires history.",
+        "arm 5 (online logistic regression) operates on raw bits and cannot represent XOR, so its "
+        "ceiling on c1 is 0.5 by construction. That is a property of the baseline the specification "
+        "names, not a handicap imposed here; arms 2 and 3 are the capacity-matched linear-head controls "
+        "on a learned representation and they are what makes G1 a real gate. If G1 passed only because "
+        "arm 5 was weak it would be worthless, which is why the best of arms 1-5 is named in the table.",
+        "arm 4 is matched on MEMORY CELLS rather than on trainable parameters, because a lookup arm has "
+        "no trainable parameters to match. The two budgets are not the same currency and the comparison "
+        "should be read as capacity-comparable rather than capacity-identical. It also holds TWICE the "
+        "declared cell budget: the bisection sizes one store and the arm keeps two (a recency FIFO and "
+        "a reservoir). That was left in place rather than corrected, because shrinking a baseline to "
+        "fit a budget is the one direction that can manufacture a win for the proposal; the realised "
+        "multiple is printed in the budget table and named in the verdict.",
+        "FALSIFIER for the withheld-window freeze assertion: it proves no arm's state MOVED inside the "
+        "window. It cannot prove an arm did not stash the window's examples and train on them later, "
+        "and it would not catch an arm that adapted on the UNLABELLED inputs during the window. The "
+        "first is impossible here because no label is delivered; the second is a real gap, and an arm "
+        "with a strong unsupervised objective could exploit it.",
+        "the plasticity controller's realised step size varies by well under 1% (cv) about its mean at "
+        "every cadence measured. It is not a constant -- the liveness assertion would raise -- but "
+        "'learned plasticity' is not demonstrated by a network whose output is flat to within a "
+        "fraction of a percent, and the cv is printed rather than hidden behind a non-zero sd.",
+        "the step size of arms 1-5 is calibrated on OVERALL accuracy on the validation draw, while the "
+        "primary metric here is RETENTION. Those objectives are not the same: a step size that adapts "
+        "fastest also forgets fastest. The validation schedule contains a return so the two are not "
+        "orthogonal, but a baseline tuned directly for retention could score higher than the numbers "
+        "reported here, which makes G1 conservative in the proposal's favour.",
+        "ablation arm 6 is allocated a WIDER encoder because it does not pay for a bank of per-context "
+        "adapters. That biases G2 against arm 8, so a passing G2 is conservative and a failing G2 may "
+        "partly reflect arm 6's extra capacity.",
+        "the ADRN-2A context manager's creation and consolidation thresholds are expressed as a declared "
+        "function of the labels a phase delivers rather than as raw step counts, because a raw threshold "
+        "would make the manager unusable at F=64 and trigger-happy at F=1 for reasons unrelated to the "
+        "mechanism. That scaling is a modelling choice; a different scaling would change how many "
+        "contexts get allocated, and the realised counts are reported per arm.",
+        "compute is matched only in parameters, not in wall-clock. The ADRN-2A arms run up to "
+        f"{cfg.max_steps} workspace steps per example and evaluate every context slot's head on every "
+        "step, so their measured ms/example is structurally higher; the cost table reports the realised "
+        "numbers rather than asserting efficiency.",
+        "eligibility is switched OFF for every ADRN-2A arm and no claim is made about it, because "
+        "feedback here is SPARSE rather than DELAYED -- the label at a feedback step refers to that step. "
+        "A genuinely delayed-credit variant of this environment would be needed to test that mechanism.",
+        "STAGE 2A ONLY: no dendrites, no episodic memory, no world model, no planner. Nothing in this "
+        "file supports a claim about those, and nothing in it is evidence about biology data.",
+    ]
+
+    R = {"model": "adrn2-benchmark-section18-ladder-v1",
+         "smoke": bool(SMOKE),
+         "config": cfg.asdict(),
+         "unit_of_replication": "seed (independent initialisation AND independent environment draw)",
+         "primary_metric": "retention = raw held-out accuracy inside the feedback-withheld window that "
+                           "opens a return phase",
+         "secondary_metrics": ["relearning", "steady", "forgetting", "cost"],
+         "mde_rule": "3*sd/sqrt(n) on the PAIRED per-seed gap; a positive gap whose paired sample sd "
+                     "is exactly zero has an UNESTIMABLE MDE and is reported UNSUPPORTED, never as a "
+                     "pass",
+         "ladder": LADDER,
+         "arms": {a: {"description": LADDER[a], "params": pcounts[a], "width": M0["widths"][a],
+                      "results": {f"F{F}": {k: (v if k == "calibrated" else
+                                                {"mean": stat(v)[0], "sd": stat(v)[1],
+                                                 "per_seed": [float(x) for x in v]})
+                                            for k, v in res[F][a].items()}
+                                  for F in cfg.cadences}} for a in ARM_ORDER},
+         "references": {f"F{F}": refmean[F] for F in cfg.cadences},
+         "reference_detail_seed0": {f"F{F}": refs[F][0] for F in cfg.cadences},
+         "feedback_budget": {f"F{F}": fb_counts[F] for F in cfg.cadences},
+         "mde": {k: {"gap": v.get("gap"), "mde": v.get("mde")} for k, v in gapinfo.items()
+                 if isinstance(v, dict) and "gap" in v},
+         "gaps": gapinfo,
+         "gates": gates,
+         "gates_unsupported": unsupported_gates,
+         "ceiling_floor": cfinfo,
+         "mechanism_starved": {f"F{F}": v for F, v in starved_at.items()},
+         "mechanism_ran_but_did_nothing": {f"F{F}": v for F, v in weak_at.items()},
+         "flag_effect_probe": flagfx,
+         "calibrated_step_sizes": cal_log,
+         # LAST SEED ONLY, and named as such: the liveness dict is keyed by (cadence, arm) and is
+         # overwritten each seed. The ASSERTIONS ran on every one of `liveness_runs_asserted` arm-runs
+         # and raised on failure -- that is what makes the table trustworthy -- but only the final
+         # seed's numbers survive into this record, and calling it "liveness" implied otherwise.
+         "liveness_last_seed": _jsonable(liveness),
+         "liveness_runs_asserted": int(cfg.seeds * len(cfg.cadences) * len(ARM_ORDER)),
+         "environment_instrument_check": _jsonable(live_env),
+         "verdict": verdict,
+         "limits": limits,
+         "runtime_sec": time.time() - t0,
+         "log": log}
+    OUT.mkdir(parents=True, exist_ok=True)
+    p = OUT / "adrn2_benchmark.json"
+    with open(p, "w") as fh:
+        json.dump(_jsonable(R), fh, indent=1, default=float)
+    rep(f"\n  -> {p}    ({time.time() - t0:.1f}s)")
+    return 0
+
+
+def _jsonable(o):
+    if isinstance(o, dict):
+        return {str(k): _jsonable(v) for k, v in o.items()}
+    if isinstance(o, (list, tuple)):
+        return [_jsonable(v) for v in o]
+    if isinstance(o, (np.floating, np.integer)):
+        return o.item()
+    if isinstance(o, np.ndarray):
+        return o.tolist()
+    if isinstance(o, (np.bool_,)):
+        return bool(o)
+    return o
+
+
+if __name__ == "__main__":
+    sys.exit(main())

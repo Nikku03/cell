@@ -1,0 +1,57 @@
+{
+ "n_ec_kcat": 362,
+ "n_reactions_with_ec": 5387,
+ "n_capacity": 1651,
+ "scale": 0.00032590290099741707,
+ "wt_growth": 0.02887815562957231,
+ "mu_target": 0.028881132523331052,
+ "wt_unconstrained": 20.557610706398954,
+ "n_scored": 2741,
+ "n_touching_capacity": 630,
+ "n_ratio_changed": 225,
+ "baseline": {
+  "n": 2741,
+  "n_essential": 310,
+  "n_called": 86,
+  "precision": 0.7325581395348837,
+  "recall": 0.2032258064516129,
+  "auc": 0.6755337641485649
+ },
+ "dose_capacity": {
+  "n": 2741,
+  "n_essential": 310,
+  "n_called": 86,
+  "precision": 0.7325581395348837,
+  "recall": 0.2032258064516129,
+  "auc": 0.5940128183012433
+ },
+ "shuffled": [
+  {
+   "n": 2741,
+   "n_essential": 310,
+   "n_called": 86,
+   "precision": 0.7325581395348837,
+   "recall": 0.2032258064516129,
+   "auc": 0.5896936080996802
+  },
+  {
+   "n": 2741,
+   "n_essential": 310,
+   "n_called": 86,
+   "precision": 0.7325581395348837,
+   "recall": 0.2032258064516129,
+   "auc": 0.5928039702233251
+  },
+  {
+   "n": 2741,
+   "n_essential": 310,
+   "n_called": 86,
+   "precision": 0.7325581395348837,
+   "recall": 0.2032258064516129,
+   "auc": 0.577675455474317
+  }
+ ],
+ "static_ceiling_note": "a static ceiling + cobra single_gene_deletion left the lethal set bit-identical to baseline (86 called, prec 0.733, rec 0.203) and dropped AUC 0.681 -> 0.591; that is why deletion is dose-aware here",
+ "passed": false,
+ "beats_control": false
+}

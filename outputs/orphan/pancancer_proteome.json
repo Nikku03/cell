@@ -1,0 +1,690 @@
+{
+ "source": "ProCan-DepMapSanger Protein_matrix_averaged_20221214 (Goncalves et al., Cancer Cell 2022; Sanger Cell Model Passports), DIA-MS averaged log2 intensity",
+ "procan_shape": [
+  948,
+  8457
+ ],
+ "registry_joins": {
+  "procan_uniprot": {
+   "joined": 8407,
+   "of": 8457,
+   "rate": 0.9940877379685468,
+   "via": "uniprot",
+   "label": "ProCan proteins by UniProt accession"
+  },
+  "paxdb_symbol": {
+   "joined": 6917,
+   "of": 7031,
+   "rate": 0.9837860901720951,
+   "via": "symbol",
+   "label": "PaxDb K562 symbols"
+  }
+ },
+ "agreement_with_paxdb": {
+  "n_shared": 4617,
+  "spearman": 0.6224092552739208,
+  "pearson": 0.470492370483868,
+  "n_procan_k562": 5435,
+  "n_paxdb": 6917,
+  "frac_moving_gt_quarter": 0.26705653021442494,
+  "random_line_control": {
+   "n_draws": 40,
+   "mean": 0.48829906511297877,
+   "sd": 0.04737266317090566,
+   "max": 0.5813610913088857,
+   "frac_beaten_by_k562_column": 1.0,
+   "cell_specific_margin": 0.134110190160942
+  }
+ },
+ "coverage": {
+  "n_cell_genes": 16492,
+  "paxdb": 6215,
+  "procan_k562": 4911,
+  "union": 6901,
+  "both": 4225,
+  "procan_only": 686,
+  "paxdb_only": 1990,
+  "by_generic_quintile": [
+   {
+    "q": 0,
+    "n": 3889,
+    "paxdb": 0.02211365389560298,
+    "procan": 0.029056312676780664,
+    "union": 0.04885574697865775
+   },
+   {
+    "q": 1,
+    "n": 3156,
+    "paxdb": 0.13276299112801013,
+    "procan": 0.03802281368821293,
+    "union": 0.15811153358681876
+   },
+   {
+    "q": 2,
+    "n": 3145,
+    "paxdb": 0.4178060413354531,
+    "procan": 0.18855325914149443,
+    "union": 0.4616852146263911
+   },
+   {
+    "q": 3,
+    "n": 3151,
+    "paxdb": 0.6496350364963503,
+    "procan": 0.560139638210092,
+    "union": 0.7127895906061568
+   },
+   {
+    "q": 4,
+    "n": 3151,
+    "paxdb": 0.7454776261504285,
+    "procan": 0.7362741986670898,
+    "union": 0.7978419549349413
+   }
+  ],
+  "low_two_quintiles": {
+   "n": 7045,
+   "paxdb": 0.0716820440028389,
+   "procan": 0.033073101490418734,
+   "union": 0.09779985805535842
+  },
+  "dep_frac_covered_vs_not": {
+   "paxdb": [
+    0.23638938053097341,
+    0.01682786805487983
+   ],
+   "procan": [
+    0.26697006719609045,
+    0.02858216043519558
+   ]
+  }
+ },
+ "cell_matched_test": {
+  "K562": {
+   "cell_matched": {
+    "spearman": 0.11835656419206514,
+    "p": 4.554161250576251e-15,
+    "n": 4358
+   },
+   "k562_procan": {
+    "spearman": 0.11835656419206514,
+    "p": 4.554161250576251e-15,
+    "n": 4358
+   },
+   "generic_ppm": {
+    "spearman": 0.06976667929069105,
+    "p": 4.027575429794742e-06,
+    "n": 4358
+   },
+   "paxdb_k562": {
+    "spearman": 0.15725334839321456,
+    "p": 9.330116925099834e-24,
+    "n": 4035
+   },
+   "cellspecific_panelz": {
+    "spearman": 0.11559968913085279,
+    "p": 2.442619678528714e-14,
+    "n": 4324
+   },
+   "increment_over_paxdb": {
+    "spearman": 0.08068526579607277,
+    "p": 3.087544030228949e-07,
+    "n": 4013
+   },
+   "controls_absolute": {
+    "random_line": {
+     "label": "abs: random line",
+     "n_draws": 40,
+     "matched_mean": 0.12436926687490617,
+     "control_mean": 0.07872203730709966,
+     "control_sd": 0.023992900775398965,
+     "control_min": 0.0268353951565529,
+     "control_max": 0.11898958793906983,
+     "delta_mean": 0.04564722956780655,
+     "delta_sd": 0.02942474502677841,
+     "frac_draws_matched_better": 0.925,
+     "frac_draws_control_p_lt_05": 0.95,
+     "residual_imbalance": {
+      "mean_genes_per_draw": 3617.375,
+      "genes_available_matched": 4358,
+      "mean_proteins_quantified_control": 5234.125,
+      "proteins_quantified_target": 5459,
+      "mean_abs_gap_in_proteins_quantified": 345.725,
+      "n_same_tissue_in_pool": 6
+     }
+    },
+    "detection_matched": {
+     "label": "abs: detection-matched",
+     "n_draws": 40,
+     "matched_mean": 0.1193240870715859,
+     "control_mean": 0.08437073605491799,
+     "control_sd": 0.021952885738870664,
+     "control_min": 0.033072255478739015,
+     "control_max": 0.12944120219959226,
+     "delta_mean": 0.0349533510166679,
+     "delta_sd": 0.026076831097104854,
+     "frac_draws_matched_better": 0.9,
+     "frac_draws_control_p_lt_05": 1.0,
+     "residual_imbalance": {
+      "mean_genes_per_draw": 3757.125,
+      "genes_available_matched": 4358,
+      "mean_proteins_quantified_control": 5462.025,
+      "proteins_quantified_target": 5459,
+      "mean_abs_gap_in_proteins_quantified": 31.225,
+      "n_same_tissue_in_pool": 10
+     }
+    },
+    "same_tissue": {
+     "label": "abs: same tissue",
+     "n_draws": 40,
+     "matched_mean": 0.11384638449256317,
+     "control_mean": 0.09787735586599786,
+     "control_sd": 0.017517526702413314,
+     "control_min": 0.03615464222288551,
+     "control_max": 0.1336936790318294,
+     "delta_mean": 0.015969028626565303,
+     "delta_sd": 0.01959544351275376,
+     "frac_draws_matched_better": 0.825,
+     "frac_draws_control_p_lt_05": 1.0,
+     "residual_imbalance": {
+      "mean_genes_per_draw": 3718.95,
+      "genes_available_matched": 4358,
+      "mean_proteins_quantified_control": 5206.3,
+      "proteins_quantified_target": 5459,
+      "mean_abs_gap_in_proteins_quantified": 306.35,
+      "n_same_tissue_in_pool": 40
+     }
+    }
+   },
+   "controls_cellspecific": {
+    "random_line": {
+     "label": "cellspec: random line",
+     "n_draws": 40,
+     "matched_mean": 0.12502186442763086,
+     "control_mean": 0.010579767691912942,
+     "control_sd": 0.08326817637083868,
+     "control_min": -0.19315213799386605,
+     "control_max": 0.16028421236423765,
+     "delta_mean": 0.1144420967357179,
+     "delta_sd": 0.08625047803632488,
+     "frac_draws_matched_better": 0.875,
+     "frac_draws_control_p_lt_05": 0.7,
+     "residual_imbalance": {
+      "mean_genes_per_draw": 3617.175,
+      "genes_available_matched": 4324,
+      "mean_proteins_quantified_control": 5252.375,
+      "proteins_quantified_target": 5459,
+      "mean_abs_gap_in_proteins_quantified": 381.725,
+      "n_same_tissue_in_pool": 6
+     },
+     "control_increment_mean": 0.011551502196913607,
+     "frac_draws_matched_increment_better": 0.775
+    },
+    "detection_matched": {
+     "label": "cellspec: detection-matched",
+     "n_draws": 40,
+     "matched_mean": 0.1235619732026555,
+     "control_mean": 0.02635863414685787,
+     "control_sd": 0.08406832514863605,
+     "control_min": -0.15533462893581387,
+     "control_max": 0.21732209163422958,
+     "delta_mean": 0.09720333905579763,
+     "delta_sd": 0.08587183260146238,
+     "frac_draws_matched_better": 0.9,
+     "frac_draws_control_p_lt_05": 0.75,
+     "residual_imbalance": {
+      "mean_genes_per_draw": 3735.575,
+      "genes_available_matched": 4324,
+      "mean_proteins_quantified_control": 5461.875,
+      "proteins_quantified_target": 5459,
+      "mean_abs_gap_in_proteins_quantified": 28.825,
+      "n_same_tissue_in_pool": 4
+     },
+     "control_increment_mean": 0.020231391498844908,
+     "frac_draws_matched_increment_better": 0.75
+    },
+    "same_tissue": {
+     "label": "cellspec: same tissue",
+     "n_draws": 40,
+     "matched_mean": 0.11567201704595187,
+     "control_mean": 0.037664698573744035,
+     "control_sd": 0.05211886020119172,
+     "control_min": -0.10921221431023329,
+     "control_max": 0.12762138691987,
+     "delta_mean": 0.07800731847220783,
+     "delta_sd": 0.05387954566516784,
+     "frac_draws_matched_better": 0.95,
+     "frac_draws_control_p_lt_05": 0.65,
+     "residual_imbalance": {
+      "mean_genes_per_draw": 3682.15,
+      "genes_available_matched": 4324,
+      "mean_proteins_quantified_control": 5172.325,
+      "proteins_quantified_target": 5459,
+      "mean_abs_gap_in_proteins_quantified": 332.125,
+      "n_same_tissue_in_pool": 40
+     },
+     "control_increment_mean": 0.02590825185153809,
+     "frac_draws_matched_increment_better": 0.875
+    }
+   },
+   "shuffled": {
+    "abs_mean": 0.0016426592266551704,
+    "abs_sd": 0.01542243644242791,
+    "abs_p_emp": 0.0,
+    "panelz_mean": 0.0008329608669858604,
+    "panelz_sd": 0.014808688413149406,
+    "panelz_p_emp": 0.0
+   },
+   "n_genes": 4358,
+   "procan_column": "K-562",
+   "tissue": "Haematopoietic and Lymphoid",
+   "perturbseq_source": "Replogle 2022 genome-scale CRISPRi Perturb-seq",
+   "n_proteins_quantified": 5459,
+   "perturbed_gene_join": {
+    "joined": 10419,
+    "of": 11258,
+    "rate": 0.9254752176230236,
+    "via": "symbol",
+    "label": "K562 perturbed genes"
+   }
+  },
+  "RPE1": {
+   "procan_column": null,
+   "n_perturbed_joined": 2059,
+   "perturbseq_source": "Replogle 2022 CRISPRi Perturb-seq (RPE1 arm)",
+   "note": "absent from ProCan; not substituted with another line"
+  },
+  "HCT116": {
+   "cell_matched": {
+    "spearman": 0.06276097676823116,
+    "p": 5.7372482503783326e-05,
+    "n": 4104
+   },
+   "k562_procan": {
+    "spearman": 0.07278112804776604,
+    "p": 3.051702532739061e-06,
+    "n": 4104
+   },
+   "generic_ppm": {
+    "spearman": 0.05035064540682222,
+    "p": 0.0012524825986111392,
+    "n": 4104
+   },
+   "paxdb_k562": {
+    "spearman": 0.12522720689443975,
+    "p": 2.6204480021563225e-14,
+    "n": 3672
+   },
+   "cellspecific_panelz": {
+    "spearman": 0.08892509431122629,
+    "p": 1.183002889757475e-08,
+    "n": 4098
+   },
+   "increment_over_paxdb": {
+    "spearman": 0.06825592585184324,
+    "p": 3.5060028367359175e-05,
+    "n": 3669
+   },
+   "controls_absolute": {
+    "random_line": {
+     "label": "abs: random line",
+     "n_draws": 40,
+     "matched_mean": 0.06087710429164345,
+     "control_mean": 0.04165939749408375,
+     "control_sd": 0.019925422209707434,
+     "control_min": 0.007644661871520905,
+     "control_max": 0.0842676229948575,
+     "delta_mean": 0.019217706797559703,
+     "delta_sd": 0.02266971615581298,
+     "frac_draws_matched_better": 0.75,
+     "frac_draws_control_p_lt_05": 0.65,
+     "residual_imbalance": {
+      "mean_genes_per_draw": 3565.825,
+      "genes_available_matched": 4104,
+      "mean_proteins_quantified_control": 5298.55,
+      "proteins_quantified_target": 5823,
+      "mean_abs_gap_in_proteins_quantified": 538.65,
+      "n_same_tissue_in_pool": 1
+     }
+    },
+    "detection_matched": {
+     "label": "abs: detection-matched",
+     "n_draws": 40,
+     "matched_mean": 0.05844914002426786,
+     "control_mean": 0.050634799575196454,
+     "control_sd": 0.017831646243380406,
+     "control_min": -0.002611172475232555,
+     "control_max": 0.0990743803295954,
+     "delta_mean": 0.007814340449071411,
+     "delta_sd": 0.01952893989441245,
+     "frac_draws_matched_better": 0.7,
+     "frac_draws_control_p_lt_05": 0.925,
+     "residual_imbalance": {
+      "mean_genes_per_draw": 3755.75,
+      "genes_available_matched": 4104,
+      "mean_proteins_quantified_control": 5760.25,
+      "proteins_quantified_target": 5823,
+      "mean_abs_gap_in_proteins_quantified": 107.45,
+      "n_same_tissue_in_pool": 4
+     }
+    },
+    "same_tissue": {
+     "label": "abs: same tissue",
+     "n_draws": 40,
+     "matched_mean": 0.059867316261703184,
+     "control_mean": 0.03631456733690628,
+     "control_sd": 0.01521885863122271,
+     "control_min": 0.008562449130860302,
+     "control_max": 0.069210004486893,
+     "delta_mean": 0.023552748924796908,
+     "delta_sd": 0.01718829362974086,
+     "frac_draws_matched_better": 0.875,
+     "frac_draws_control_p_lt_05": 0.575,
+     "residual_imbalance": {
+      "mean_genes_per_draw": 3548.325,
+      "genes_available_matched": 4104,
+      "mean_proteins_quantified_control": 5253.1,
+      "proteins_quantified_target": 5823,
+      "mean_abs_gap_in_proteins_quantified": 594.2,
+      "n_same_tissue_in_pool": 40
+     }
+    }
+   },
+   "controls_cellspecific": {
+    "random_line": {
+     "label": "cellspec: random line",
+     "n_draws": 40,
+     "matched_mean": 0.09374358796432584,
+     "control_mean": 0.015589008042985871,
+     "control_sd": 0.04731572107780146,
+     "control_min": -0.07714833673671405,
+     "control_max": 0.09551538681006687,
+     "delta_mean": 0.07815457992133998,
+     "delta_sd": 0.04853424949757513,
+     "frac_draws_matched_better": 0.975,
+     "frac_draws_control_p_lt_05": 0.625,
+     "residual_imbalance": {
+      "mean_genes_per_draw": 3528.725,
+      "genes_available_matched": 4098,
+      "mean_proteins_quantified_control": 5205.175,
+      "proteins_quantified_target": 5823,
+      "mean_abs_gap_in_proteins_quantified": 623.375,
+      "n_same_tissue_in_pool": 3
+     },
+     "control_increment_mean": 0.01321684134078846,
+     "frac_draws_matched_increment_better": 0.875
+    },
+    "detection_matched": {
+     "label": "cellspec: detection-matched",
+     "n_draws": 40,
+     "matched_mean": 0.08820255855232431,
+     "control_mean": 0.04676898538677598,
+     "control_sd": 0.0481157139614363,
+     "control_min": -0.05886403735563459,
+     "control_max": 0.13044795556126193,
+     "delta_mean": 0.04143357316554834,
+     "delta_sd": 0.04978493165513408,
+     "frac_draws_matched_better": 0.75,
+     "frac_draws_control_p_lt_05": 0.725,
+     "residual_imbalance": {
+      "mean_genes_per_draw": 3768.725,
+      "genes_available_matched": 4098,
+      "mean_proteins_quantified_control": 5783.325,
+      "proteins_quantified_target": 5823,
+      "mean_abs_gap_in_proteins_quantified": 105.875,
+      "n_same_tissue_in_pool": 3
+     },
+     "control_increment_mean": 0.03188169497305468,
+     "frac_draws_matched_increment_better": 0.775
+    },
+    "same_tissue": {
+     "label": "cellspec: same tissue",
+     "n_draws": 40,
+     "matched_mean": 0.09143743284144486,
+     "control_mean": -0.005246521580994077,
+     "control_sd": 0.06428070866514715,
+     "control_min": -0.1058283351309853,
+     "control_max": 0.11394689030491566,
+     "delta_mean": 0.09668395442243893,
+     "delta_sd": 0.06714006688512074,
+     "frac_draws_matched_better": 0.825,
+     "frac_draws_control_p_lt_05": 0.65,
+     "residual_imbalance": {
+      "mean_genes_per_draw": 3523.775,
+      "genes_available_matched": 4098,
+      "mean_proteins_quantified_control": 5211.3,
+      "proteins_quantified_target": 5823,
+      "mean_abs_gap_in_proteins_quantified": 642.5,
+      "n_same_tissue_in_pool": 40
+     },
+     "control_increment_mean": -0.007033409772368657,
+     "frac_draws_matched_increment_better": 0.85
+    }
+   },
+   "shuffled": {
+    "abs_mean": -0.000886405769087445,
+    "abs_sd": 0.015056284223310606,
+    "abs_p_emp": 0.0,
+    "panelz_mean": 0.00016126100220220963,
+    "panelz_sd": 0.015584450109432312,
+    "panelz_p_emp": 0.0
+   },
+   "n_genes": 4104,
+   "procan_column": "HCT-116",
+   "tissue": "Large Intestine",
+   "perturbseq_source": "Xaira X-Atlas/Orion CRISPRi Perturb-seq",
+   "n_proteins_quantified": 5823,
+   "perturbed_gene_join": {
+    "joined": 17675,
+    "of": 17768,
+    "rate": 0.994765871229176,
+    "via": "symbol",
+    "label": "HCT116 perturbed genes"
+   }
+  },
+  "Jurkat": {
+   "cell_matched": {
+    "spearman": 0.04380141889701807,
+    "p": 0.1061386229006341,
+    "n": 1362
+   },
+   "k562_procan": {
+    "spearman": 0.033035070261815805,
+    "p": 0.2230789160773835,
+    "n": 1362
+   },
+   "generic_ppm": {
+    "spearman": -0.005006339126025471,
+    "p": 0.853549150582735,
+    "n": 1362
+   },
+   "paxdb_k562": {
+    "spearman": 0.07019433442849543,
+    "p": 0.011074282294482042,
+    "n": 1309
+   },
+   "cellspecific_panelz": {
+    "spearman": 0.04439903564347839,
+    "p": 0.10182825900939046,
+    "n": 1359
+   },
+   "increment_over_paxdb": {
+    "spearman": 0.037586045688722876,
+    "p": 0.17462654602652697,
+    "n": 1306
+   },
+   "controls_absolute": {
+    "random_line": {
+     "label": "abs: random line",
+     "n_draws": 40,
+     "matched_mean": 0.04393346284473408,
+     "control_mean": 0.02048519769237611,
+     "control_sd": 0.02220740433670203,
+     "control_min": -0.04672332234403334,
+     "control_max": 0.060154591984261804,
+     "delta_mean": 0.023448265152357962,
+     "delta_sd": 0.023903317408239512,
+     "frac_draws_matched_better": 0.9,
+     "frac_draws_control_p_lt_05": 0.05,
+     "residual_imbalance": {
+      "mean_genes_per_draw": 1256.425,
+      "genes_available_matched": 1362,
+      "mean_proteins_quantified_control": 5239.375,
+      "proteins_quantified_target": 5036,
+      "mean_abs_gap_in_proteins_quantified": 387.125,
+      "n_same_tissue_in_pool": 6
+     }
+    },
+    "detection_matched": {
+     "label": "abs: detection-matched",
+     "n_draws": 40,
+     "matched_mean": 0.044277485410523475,
+     "control_mean": 0.01857401784091888,
+     "control_sd": 0.019520067266486946,
+     "control_min": -0.018405969152684686,
+     "control_max": 0.06736550816525402,
+     "delta_mean": 0.025703467569604586,
+     "delta_sd": 0.024476320897509646,
+     "frac_draws_matched_better": 0.825,
+     "frac_draws_control_p_lt_05": 0.025,
+     "residual_imbalance": {
+      "mean_genes_per_draw": 1250.25,
+      "genes_available_matched": 1362,
+      "mean_proteins_quantified_control": 5041.35,
+      "proteins_quantified_target": 5036,
+      "mean_abs_gap_in_proteins_quantified": 29.35,
+      "n_same_tissue_in_pool": 13
+     }
+    },
+    "same_tissue": {
+     "label": "abs: same tissue",
+     "n_draws": 40,
+     "matched_mean": 0.041125167916917824,
+     "control_mean": 0.03431971299867567,
+     "control_sd": 0.016795492238928428,
+     "control_min": -0.0024719098393667393,
+     "control_max": 0.0938323804324164,
+     "delta_mean": 0.006805454918242157,
+     "delta_sd": 0.015908150931118473,
+     "frac_draws_matched_better": 0.525,
+     "frac_draws_control_p_lt_05": 0.075,
+     "residual_imbalance": {
+      "mean_genes_per_draw": 1290.875,
+      "genes_available_matched": 1362,
+      "mean_proteins_quantified_control": 5130.1,
+      "proteins_quantified_target": 5036,
+      "mean_abs_gap_in_proteins_quantified": 259.75,
+      "n_same_tissue_in_pool": 40
+     }
+    }
+   },
+   "controls_cellspecific": {
+    "random_line": {
+     "label": "cellspec: random line",
+     "n_draws": 40,
+     "matched_mean": 0.052340469362192645,
+     "control_mean": 0.0133699906810324,
+     "control_sd": 0.06298561771459796,
+     "control_min": -0.1593691602010634,
+     "control_max": 0.14687209990925454,
+     "delta_mean": 0.03897047868116025,
+     "delta_sd": 0.06754944407012886,
+     "frac_draws_matched_better": 0.7,
+     "frac_draws_control_p_lt_05": 0.425,
+     "residual_imbalance": {
+      "mean_genes_per_draw": 1263.35,
+      "genes_available_matched": 1359,
+      "mean_proteins_quantified_control": 5228.375,
+      "proteins_quantified_target": 5036,
+      "mean_abs_gap_in_proteins_quantified": 362.875,
+      "n_same_tissue_in_pool": 12
+     },
+     "control_increment_mean": 0.012528969717154653,
+     "frac_draws_matched_increment_better": 0.625
+    },
+    "detection_matched": {
+     "label": "cellspec: detection-matched",
+     "n_draws": 40,
+     "matched_mean": 0.053671927496545216,
+     "control_mean": 0.005089008175310145,
+     "control_sd": 0.06490751359391693,
+     "control_min": -0.11246753687043214,
+     "control_max": 0.1178129377037078,
+     "delta_mean": 0.04858291932123506,
+     "delta_sd": 0.06753839451926551,
+     "frac_draws_matched_better": 0.75,
+     "frac_draws_control_p_lt_05": 0.475,
+     "residual_imbalance": {
+      "mean_genes_per_draw": 1242.825,
+      "genes_available_matched": 1359,
+      "mean_proteins_quantified_control": 5037.875,
+      "proteins_quantified_target": 5036,
+      "mean_abs_gap_in_proteins_quantified": 32.275,
+      "n_same_tissue_in_pool": 13
+     },
+     "control_increment_mean": 0.006204529278859179,
+     "frac_draws_matched_increment_better": 0.65
+    },
+    "same_tissue": {
+     "label": "cellspec: same tissue",
+     "n_draws": 40,
+     "matched_mean": 0.04729404512290762,
+     "control_mean": 0.044466407216952476,
+     "control_sd": 0.046177866627116176,
+     "control_min": -0.06754649255375014,
+     "control_max": 0.14025182312641157,
+     "delta_mean": 0.002827637905955153,
+     "delta_sd": 0.04738511706153417,
+     "frac_draws_matched_better": 0.5,
+     "frac_draws_control_p_lt_05": 0.4,
+     "residual_imbalance": {
+      "mean_genes_per_draw": 1286.85,
+      "genes_available_matched": 1359,
+      "mean_proteins_quantified_control": 5078.5,
+      "proteins_quantified_target": 5036,
+      "mean_abs_gap_in_proteins_quantified": 211.7,
+      "n_same_tissue_in_pool": 40
+     },
+     "control_increment_mean": 0.035819187167051146,
+     "frac_draws_matched_increment_better": 0.45
+    }
+   },
+   "shuffled": {
+    "abs_mean": 0.0020353051863726524,
+    "abs_sd": 0.028296642839792652,
+    "abs_p_emp": 0.105,
+    "panelz_mean": 0.002126341227417437,
+    "panelz_sd": 0.028767636706474493,
+    "panelz_p_emp": 0.115
+   },
+   "n_genes": 1362,
+   "procan_column": "Jurkat",
+   "tissue": "Haematopoietic and Lymphoid",
+   "perturbseq_source": "Nadig 2025 CRISPRi Perturb-seq",
+   "n_proteins_quantified": 5036,
+   "perturbed_gene_join": {
+    "joined": 2132,
+    "of": 2201,
+    "rate": 0.9686506133575647,
+    "via": "symbol",
+    "label": "Jurkat perturbed genes"
+   }
+  },
+  "HepG2": {
+   "procan_column": null,
+   "n_perturbed_joined": 1952,
+   "perturbseq_source": "Nadig 2025 CRISPRi Perturb-seq",
+   "note": "absent from ProCan; not substituted with another line"
+  }
+ },
+ "limits": [
+  "948 CANCER cell lines only: RPE1 (hTERT-immortalised, non-cancer) and HepG2 are absent, so two of the five Perturb-seq lines this project holds cannot be cell-matched at all and are reported as absent rather than substituted",
+  "39% of the matrix is not quantified and detection is abundance- and line-dependent; a missing entry is UNKNOWN, never zero",
+  "averaged log2 DIA intensity from one pipeline and one release -- the z-scored matrix shipped in the same archive is a different normalisation and is never mixed in here",
+  "a raw ProCan column is NOT an absolute abundance scale: DIA intensity depends on peptide ionisation efficiency, so it compares one protein ACROSS cell lines well and different proteins WITHIN a cell line badly. `abundance` should not be used where iBAQ or ppm would be; `cellspecific_panelz` is the field that carries the cell-matched information and it is dimensionless by construction",
+  "a static unperturbed proteome: it says nothing about how protein moves after a perturbation, which is still the arrow the chain is missing",
+  "the Perturb-seq screens come from three different laboratories (Replogle K562/RPE1, Xaira HCT116, Nadig Jurkat/HepG2), so every head-to-head is run WITHIN one cell line and absolute values are never compared across lines",
+  "protein is matched to a gene by taking the maximum over accessions mapping to it, which discards isoform structure",
+  "perturbation strength is a pseudobulk transcriptional readout, so a knockdown that changes protein or flux without changing mRNA scores as no response"
+ ],
+ "verdict": "CELL-MATCHING BUYS A SMALL, PARTLY REAL EFFECT AND THE RAW COLUMN IS THE WRONG WAY TO USE IT. ProCan-DepMapSanger downloaded and reduced: 948 cancer cell lines x 8,457 proteins, joined on UniProt ACCESSION at 99.4%. Of the five Perturb-seq lines this project holds, three are in the panel (K-562, HCT-116, Jurkat); RPE1 is non-cancer and HepG2 was not profiled, and neither was substituted. (a) The ProCan K-562 column agrees with the PaxDb/Geiger K562 iBAQ vector already in the model at Spearman 0.622 over 4,617 shared genes -- but 40 RANDOM ProCan lines agree with the same vector at 0.488 +- 0.047, so the cell-specific margin is only +0.134: protein abundance is overwhelmingly a human constant, and that ceiling governs everything below. (b) ProCan does NOT fill PaxDb's hole. Coverage of the cell object goes 37.7% (PaxDb) -> 29.8% (ProCan K-562) -> 41.8% (union), and in the two lowest generic-abundance quintiles 7.2% -> 3.3% -> 9.8%. Both sources miss the same faint proteins; ProCan-covered genes carry mean dep_frac 0.267 against 0.029 for uncovered, so absence stays UNKNOWN, never zero. (c) Raw held-out Spearman against each line's own perturbation strength: cell-matched K562 +0.118, HCT116 +0.063, Jurkat +0.044. The raw ProCan column LOSES to PaxDb iBAQ on 3/3 lines (K562 +0.157, HCT116 +0.125, Jurkat +0.070) and to the K-562 ProCan column on 1/2 non-K562 lines -- averaged DIA intensity is not built for cross-protein comparison, so that contest is a unit contest and not a matching one. With the unit confound removed by standardising each protein across the 948 lines, the purely cell-specific panel-z scores K562 +0.116 (p 2.4e-14), HCT116 +0.089 (p 1.2e-08), Jurkat +0.044 (p 0.1), positive and significant on 2/3, beating a DETECTION-MATCHED random line in K562 90%, HCT116 75%, Jurkat 75% of 40 paired draws (mean delta +0.0624), and still explaining the residual after PaxDb iBAQ is regressed out on 2/3 lines (K562 +0.081 (p 3.1e-07), HCT116 +0.068 (p 3.5e-05), Jurkat +0.038 (p 0.17)). The operational reading: carry an iBAQ-like absolute abundance for the LEVEL, and carry the pan-cancer panel-z as a SEPARATE cell-specific field -- not as a replacement column."
+}

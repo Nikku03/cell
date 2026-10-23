@@ -1,0 +1,61 @@
+{
+ "L1_overlap_rel_err": 0.0005791142213631059,
+ "L1_seam": {
+  "offset_0.0": {
+   "L": 0,
+   "n_coeff": 1
+  },
+  "offset_0.1": {
+   "L": 2,
+   "n_coeff": 9
+  },
+  "offset_0.18": {
+   "L": 6,
+   "n_coeff": 49
+  },
+  "offset_0.26": {
+   "L": 8,
+   "n_coeff": 81
+  },
+  "offset_0.34": {
+   "L": 10,
+   "n_coeff": 121
+  },
+  "two_lobe_recon_error": {
+   "6": 0.025,
+   "12": 0.0,
+   "20": 0.0
+  }
+ },
+ "L2_gamma": {
+  "0.5": {
+   "spec_exp": 2.3,
+   "corrected": 1.01
+  },
+  "2.0": {
+   "spec_exp": 29.2,
+   "corrected": 1.12
+  },
+  "5.0": {
+   "spec_exp": 4590.3,
+   "corrected": 10.5
+  },
+  "10.0": {
+   "spec_exp": 21070961.3,
+   "corrected": 20.0
+  }
+ },
+ "L3_confined_vs_leaky": {
+  "no_motif_frac_in_mito": 1.0,
+  "with_motif_frac_in_mito": 0.283
+ },
+ "L4_tf_knockout_enzyme_drop": 1.0,
+ "closed_loop_example": {
+  "perturbation": "enzyme missense L->P, \u0394\u0394G=3.94, \u03b3 1.0->3.74",
+  "ddg": 3.944,
+  "wt_enz": 20.657649881422294,
+  "mut_enz": 13.186446351697395,
+  "enzyme_drop_frac": 0.362
+ },
+ "verdict": "The four-layer engine ASSEMBLES AND RUNS end-to-end: a mutation sets a \u0394\u0394G, \u0394\u0394G sets the decay rate \u03b3, the SDF geometry + Hill-gated source drive a reaction-diffusion PDE, and the co-centred spherical-harmonic overlap reproduces the true interaction integral to <1%. Each layer computes a real quantity and they compose into a closed loop (TF knockout collapses the downstream enzyme field ~100%; a destabilising missense raises \u03b3 and drops enzyme output). BUT the tests also confirm the two problems flagged before, in numbers: (1) THE SEAM IS REAL \u2014 a co-centred compact source is 1 coefficient, but the coefficient count climbs to ~121 (L=10) once the source sits 0.34 off-centre, and moving the expansion centre at all is an O(L\u00b3) FMM translation that mixes l-channels \u2014 so Layer 1's cheap-overlap advantage holds for a STATIC co-centred descriptor but erodes for a moving/diffusing field; the honest design diffuses a scalar and keeps c_lm co-centred, not the SH object. (2) THE \u03b3 = exp(\u0394\u0394G/RT) MAPPING DIVERGES to unphysical rates; a bounded folded-fraction form is required. Most important: this is a MECHANISTIC DEMONSTRATOR, not a validated predictor \u2014 its outputs are internally consistent but the external models (ESMFold/FoldX/APBS/Enformer) are stand-ins here, and (per every measured result in this repo: transitivity ~0.009, causal reach ~chance) the whole-cell mutation->macro-phenotype map does not compose from these local fields. Build it to STUDY the mechanism and to generate hypotheses; do not trust its quantitative phenotype without checking each edge against measured data."
+}

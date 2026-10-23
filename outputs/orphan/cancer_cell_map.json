@@ -1,0 +1,1209 @@
+{
+  "A375 melanoma": {
+    "panel": [
+      [
+        "BRAF",
+        600
+      ],
+      [
+        "CDKN2A",
+        58
+      ],
+      [
+        "TTN",
+        20000
+      ]
+    ],
+    "mutation_calls": [
+      {
+        "gene": "BRAF",
+        "role": "oncogene",
+        "effect": "GOF (activated)",
+        "clamp": 1
+      },
+      {
+        "gene": "CDKN2A",
+        "role": "suppressor",
+        "effect": "LOF (lost)",
+        "clamp": -1
+      },
+      {
+        "gene": "TTN",
+        "role": "unknown",
+        "effect": "LOF? (disease-linked)",
+        "clamp": -1
+      }
+    ],
+    "n_genes_perturbed": 36,
+    "hyperactive_pathways": [
+      {
+        "pathway": "Signalling to p38 via RIT and RIN",
+        "delta": 0.331,
+        "n_perturbed": 3,
+        "score": 0.574
+      },
+      {
+        "pathway": "Negative feedback regulation of MAPK pathway",
+        "delta": 0.196,
+        "n_perturbed": 6,
+        "score": 0.479
+      },
+      {
+        "pathway": "ARMS-mediated activation",
+        "delta": 0.166,
+        "n_perturbed": 6,
+        "score": 0.406
+      },
+      {
+        "pathway": "Gain-of-function MRAS complexes activate RAF signaling",
+        "delta": 0.142,
+        "n_perturbed": 7,
+        "score": 0.375
+      },
+      {
+        "pathway": "SHOC2 M1731 mutant abolishes MRAS complex function",
+        "delta": 0.142,
+        "n_perturbed": 7,
+        "score": 0.375
+      },
+      {
+        "pathway": "Signaling by MRAS-complex mutants",
+        "delta": 0.142,
+        "n_perturbed": 7,
+        "score": 0.375
+      },
+      {
+        "pathway": "Frs2-mediated activation",
+        "delta": 0.107,
+        "n_perturbed": 11,
+        "score": 0.354
+      },
+      {
+        "pathway": "Prolonged ERK activation events",
+        "delta": 0.098,
+        "n_perturbed": 12,
+        "score": 0.339
+      },
+      {
+        "pathway": "Spry regulation of FGF signaling",
+        "delta": 0.065,
+        "n_perturbed": 16,
+        "score": 0.259
+      },
+      {
+        "pathway": "Signalling to ERKs",
+        "delta": 0.049,
+        "n_perturbed": 23,
+        "score": 0.234
+      },
+      {
+        "pathway": "Negative regulation of FGFR4 signaling",
+        "delta": 0.042,
+        "n_perturbed": 25,
+        "score": 0.208
+      },
+      {
+        "pathway": "Negative regulation of FGFR3 signaling",
+        "delta": 0.041,
+        "n_perturbed": 25,
+        "score": 0.207
+      }
+    ],
+    "lost_pathways": [
+      {
+        "pathway": "Diseases of Cellular Senescence",
+        "delta": -0.277,
+        "n_perturbed": 3,
+        "score": -0.479
+      },
+      {
+        "pathway": "Diseases of cellular response to stress",
+        "delta": -0.277,
+        "n_perturbed": 3,
+        "score": -0.479
+      },
+      {
+        "pathway": "Evasion of Oncogene Induced Senescence Due to Defective p16INK4A binding to CDK4 and CDK6",
+        "delta": -0.277,
+        "n_perturbed": 3,
+        "score": -0.479
+      },
+      {
+        "pathway": "Evasion of Oncogene Induced Senescence Due to p16INK4A Defects",
+        "delta": -0.277,
+        "n_perturbed": 3,
+        "score": -0.479
+      },
+      {
+        "pathway": "Evasion of Oxidative Stress Induced Senescence Due to Defective p16INK4A binding to CDK4 and CDK6",
+        "delta": -0.277,
+        "n_perturbed": 3,
+        "score": -0.479
+      },
+      {
+        "pathway": "Evasion of Oxidative Stress Induced Senescence Due to p16INK4A Defects",
+        "delta": -0.277,
+        "n_perturbed": 3,
+        "score": -0.479
+      },
+      {
+        "pathway": "Striated Muscle Contraction",
+        "delta": -0.108,
+        "n_perturbed": 14,
+        "score": -0.403
+      },
+      {
+        "pathway": "RUNX3 regulates p14-ARF",
+        "delta": -0.096,
+        "n_perturbed": 10,
+        "score": -0.305
+      },
+      {
+        "pathway": "Apoptotic factor-mediated response",
+        "delta": -0.06,
+        "n_perturbed": 16,
+        "score": -0.24
+      },
+      {
+        "pathway": "Defective Intrinsic Pathway for Apoptosis",
+        "delta": -0.05,
+        "n_perturbed": 21,
+        "score": -0.229
+      },
+      {
+        "pathway": "Transcriptional Regulation by VENTX",
+        "delta": -0.045,
+        "n_perturbed": 23,
+        "score": -0.215
+      },
+      {
+        "pathway": "Regulation of MITF-M-dependent genes involved in cell cycle and proliferation",
+        "delta": -0.051,
+        "n_perturbed": 17,
+        "score": -0.212
+      }
+    ],
+    "top_genes_up": [
+      [
+        0.994,
+        "BRAF"
+      ],
+      [
+        0.126,
+        "MDM2"
+      ],
+      [
+        0.124,
+        "CDK4"
+      ],
+      [
+        0.124,
+        "CDK2"
+      ],
+      [
+        0.122,
+        "NPM1"
+      ],
+      [
+        0.074,
+        "PAX3"
+      ],
+      [
+        0.07,
+        "ABL1"
+      ],
+      [
+        0.07,
+        "MAPK7"
+      ],
+      [
+        0.07,
+        "MAP2K2"
+      ],
+      [
+        0.069,
+        "MAP2K1"
+      ],
+      [
+        0.042,
+        "CDK6"
+      ],
+      [
+        0.035,
+        "NFE2L2"
+      ],
+      [
+        0.035,
+        "TGFB1"
+      ],
+      [
+        0.021,
+        "MAPK1"
+      ],
+      [
+        0.021,
+        "MAPK3"
+      ]
+    ],
+    "top_genes_down": [
+      [
+        -1.19,
+        "TTN"
+      ],
+      [
+        -0.997,
+        "CDKN2A"
+      ],
+      [
+        -0.543,
+        "OBSCN"
+      ],
+      [
+        -0.38,
+        "ANK2"
+      ],
+      [
+        -0.272,
+        "TCAP"
+      ],
+      [
+        -0.123,
+        "ATR"
+      ],
+      [
+        -0.071,
+        "SLC5A5"
+      ],
+      [
+        -0.07,
+        "EEF1A1"
+      ],
+      [
+        -0.07,
+        "NIBAN2"
+      ],
+      [
+        -0.07,
+        "EEF1A2"
+      ],
+      [
+        -0.049,
+        "HRAS"
+      ],
+      [
+        -0.047,
+        "SP1"
+      ],
+      [
+        -0.046,
+        "DMD"
+      ],
+      [
+        -0.046,
+        "CACNA1A"
+      ],
+      [
+        -0.046,
+        "CACNA1B"
+      ]
+    ],
+    "driver": "BRAF",
+    "target_note": "revert BRAF (GOF driver of the hyperactive programme) \u2014 its activation propagates to 17 genes; collapsing it should restore the map toward healthy",
+    "footprint_per_mutation": {
+      "BRAF": 17,
+      "CDKN2A": 9,
+      "TTN": 10
+    }
+  },
+  "HEL (JAK2)": {
+    "panel": [
+      [
+        "JAK2",
+        617
+      ],
+      [
+        "TP53",
+        248
+      ],
+      [
+        "TTN",
+        7000
+      ]
+    ],
+    "mutation_calls": [
+      {
+        "gene": "JAK2",
+        "role": "oncogene",
+        "effect": "GOF (activated)",
+        "clamp": 1
+      },
+      {
+        "gene": "TP53",
+        "role": "suppressor",
+        "effect": "LOF (lost)",
+        "clamp": -1
+      },
+      {
+        "gene": "TTN",
+        "role": "unknown",
+        "effect": "LOF? (disease-linked)",
+        "clamp": -1
+      }
+    ],
+    "n_genes_perturbed": 57,
+    "hyperactive_pathways": [
+      {
+        "pathway": "Erythropoietin activates STAT5",
+        "delta": 0.156,
+        "n_perturbed": 7,
+        "score": 0.413
+      },
+      {
+        "pathway": "Interleukin-23 signaling",
+        "delta": 0.152,
+        "n_perturbed": 7,
+        "score": 0.401
+      },
+      {
+        "pathway": "Erythropoietin activates Phospholipase C gamma (PLCG)",
+        "delta": 0.15,
+        "n_perturbed": 7,
+        "score": 0.398
+      },
+      {
+        "pathway": "IFNG signaling activates MAPKs",
+        "delta": 0.137,
+        "n_perturbed": 8,
+        "score": 0.388
+      },
+      {
+        "pathway": "Interleukin-27 signaling",
+        "delta": 0.135,
+        "n_perturbed": 8,
+        "score": 0.381
+      },
+      {
+        "pathway": "MAPK1 (ERK2) activation",
+        "delta": 0.133,
+        "n_perturbed": 8,
+        "score": 0.376
+      },
+      {
+        "pathway": "Interleukin-6 signaling",
+        "delta": 0.122,
+        "n_perturbed": 9,
+        "score": 0.366
+      },
+      {
+        "pathway": "Interleukin-35 Signalling",
+        "delta": 0.121,
+        "n_perturbed": 9,
+        "score": 0.362
+      },
+      {
+        "pathway": "Signaling by Leptin",
+        "delta": 0.114,
+        "n_perturbed": 10,
+        "score": 0.359
+      },
+      {
+        "pathway": "MAPK3 (ERK1) activation",
+        "delta": 0.119,
+        "n_perturbed": 9,
+        "score": 0.356
+      },
+      {
+        "pathway": "Erythropoietin activates Phosphoinositide-3-kinase (PI3K)",
+        "delta": 0.117,
+        "n_perturbed": 9,
+        "score": 0.351
+      },
+      {
+        "pathway": "Prolactin receptor signaling",
+        "delta": 0.093,
+        "n_perturbed": 12,
+        "score": 0.322
+      }
+    ],
+    "lost_pathways": [
+      {
+        "pathway": "Transcriptional  activation of  cell cycle inhibitor p21",
+        "delta": -0.334,
+        "n_perturbed": 3,
+        "score": -0.578
+      },
+      {
+        "pathway": "Transcriptional activation of p53 responsive genes",
+        "delta": -0.334,
+        "n_perturbed": 3,
+        "score": -0.578
+      },
+      {
+        "pathway": "Activation of NOXA and translocation to mitochondria",
+        "delta": -0.25,
+        "n_perturbed": 4,
+        "score": -0.501
+      },
+      {
+        "pathway": "Negative transcriptional regulation of urea cycle enzymes",
+        "delta": -0.25,
+        "n_perturbed": 4,
+        "score": -0.5
+      },
+      {
+        "pathway": "Striated Muscle Contraction",
+        "delta": -0.116,
+        "n_perturbed": 13,
+        "score": -0.418
+      },
+      {
+        "pathway": "RUNX3 regulates CDKN1A transcription",
+        "delta": -0.143,
+        "n_perturbed": 7,
+        "score": -0.378
+      },
+      {
+        "pathway": "Urea cycle",
+        "delta": -0.143,
+        "n_perturbed": 7,
+        "score": -0.378
+      },
+      {
+        "pathway": "Zygotic genome activation (ZGA)",
+        "delta": -0.142,
+        "n_perturbed": 7,
+        "score": -0.377
+      },
+      {
+        "pathway": "Activation of PUMA and translocation to mitochondria",
+        "delta": -0.126,
+        "n_perturbed": 8,
+        "score": -0.356
+      },
+      {
+        "pathway": "PI5P Regulates TP53 Acetylation",
+        "delta": -0.125,
+        "n_perturbed": 8,
+        "score": -0.354
+      },
+      {
+        "pathway": "TP53 Regulates Transcription of Caspase Activators and Caspases",
+        "delta": -0.112,
+        "n_perturbed": 9,
+        "score": -0.336
+      },
+      {
+        "pathway": "TP53 regulates transcription of several additional cell death genes whose specific roles in p53-dependent apoptosis remain uncertain",
+        "delta": -0.1,
+        "n_perturbed": 10,
+        "score": -0.317
+      }
+    ],
+    "top_genes_up": [
+      [
+        1.032,
+        "JAK2"
+      ],
+      [
+        0.023,
+        "STAT5A"
+      ],
+      [
+        0.021,
+        "STAT3"
+      ],
+      [
+        0.02,
+        "PTPN11"
+      ],
+      [
+        0.019,
+        "APOA1"
+      ],
+      [
+        0.019,
+        "GTF2I"
+      ],
+      [
+        0.018,
+        "BECN1"
+      ],
+      [
+        0.018,
+        "IFNGR1"
+      ],
+      [
+        0.018,
+        "IFNGR2"
+      ],
+      [
+        0.018,
+        "RAF1"
+      ],
+      [
+        0.018,
+        "STAT6"
+      ],
+      [
+        0.018,
+        "CSF2RA"
+      ],
+      [
+        0.018,
+        "STAT5B"
+      ],
+      [
+        0.018,
+        "EPOR"
+      ],
+      [
+        0.018,
+        "CTLA4"
+      ]
+    ],
+    "top_genes_down": [
+      [
+        -1.19,
+        "TTN"
+      ],
+      [
+        -1.0,
+        "TP53"
+      ],
+      [
+        -0.543,
+        "OBSCN"
+      ],
+      [
+        -0.38,
+        "ANK2"
+      ],
+      [
+        -0.271,
+        "TCAP"
+      ],
+      [
+        -0.046,
+        "PPP2R5A"
+      ],
+      [
+        -0.046,
+        "DCTN4"
+      ],
+      [
+        -0.046,
+        "CACNA1B"
+      ],
+      [
+        -0.046,
+        "DMD"
+      ],
+      [
+        -0.046,
+        "CACNA1A"
+      ],
+      [
+        -0.032,
+        "TGFBR1"
+      ],
+      [
+        -0.02,
+        "MAP3K5"
+      ],
+      [
+        -0.019,
+        "PDP1"
+      ],
+      [
+        -0.018,
+        "CDKN1B"
+      ],
+      [
+        -0.018,
+        "PRMT5"
+      ]
+    ],
+    "driver": "JAK2",
+    "target_note": "revert JAK2 (GOF driver of the hyperactive programme) \u2014 its activation propagates to 46 genes; collapsing it should restore the map toward healthy",
+    "footprint_per_mutation": {
+      "JAK2": 46,
+      "TP53": 1,
+      "TTN": 10
+    }
+  },
+  "H69 SCLC": {
+    "panel": [
+      [
+        "TP53",
+        175
+      ],
+      [
+        "RB1",
+        600
+      ],
+      [
+        "MYC",
+        100
+      ],
+      [
+        "TTN",
+        13000
+      ]
+    ],
+    "mutation_calls": [
+      {
+        "gene": "TP53",
+        "role": "suppressor",
+        "effect": "LOF (lost)",
+        "clamp": -1
+      },
+      {
+        "gene": "RB1",
+        "role": "suppressor",
+        "effect": "LOF (lost)",
+        "clamp": -1
+      },
+      {
+        "gene": "MYC",
+        "role": "oncogene",
+        "effect": "GOF (activated)",
+        "clamp": 1
+      },
+      {
+        "gene": "TTN",
+        "role": "unknown",
+        "effect": "LOF? (disease-linked)",
+        "clamp": -1
+      }
+    ],
+    "n_genes_perturbed": 43,
+    "hyperactive_pathways": [
+      {
+        "pathway": "Regulation of CDH1 mRNA translation by microRNAs",
+        "delta": 0.205,
+        "n_perturbed": 5,
+        "score": 0.458
+      },
+      {
+        "pathway": "TFAP2 (AP-2) family regulates transcription of cell cycle factors",
+        "delta": 0.203,
+        "n_perturbed": 5,
+        "score": 0.454
+      },
+      {
+        "pathway": "Insulin-like Growth Factor-2 mRNA Binding Proteins (IGF2BPs/IMPs/VICKZs) bind RNA",
+        "delta": 0.171,
+        "n_perturbed": 6,
+        "score": 0.42
+      },
+      {
+        "pathway": "RUNX3 regulates WNT signaling",
+        "delta": 0.147,
+        "n_perturbed": 7,
+        "score": 0.388
+      },
+      {
+        "pathway": "Binding of TCF/LEF:CTNNB1 to target gene promoters",
+        "delta": 0.146,
+        "n_perturbed": 7,
+        "score": 0.387
+      },
+      {
+        "pathway": "Regulation of NFE2L2 gene expression",
+        "delta": 0.128,
+        "n_perturbed": 8,
+        "score": 0.363
+      },
+      {
+        "pathway": "Transcription of E2F targets under negative control by DREAM complex",
+        "delta": 0.082,
+        "n_perturbed": 14,
+        "score": 0.306
+      },
+      {
+        "pathway": "Repression of WNT target genes",
+        "delta": 0.079,
+        "n_perturbed": 13,
+        "score": 0.284
+      },
+      {
+        "pathway": "G0 and Early G1",
+        "delta": 0.053,
+        "n_perturbed": 22,
+        "score": 0.249
+      },
+      {
+        "pathway": "Signaling by ALK",
+        "delta": 0.039,
+        "n_perturbed": 26,
+        "score": 0.199
+      },
+      {
+        "pathway": "Transcriptional regulation by the AP-2 (TFAP2) family of transcription factors",
+        "delta": 0.035,
+        "n_perturbed": 29,
+        "score": 0.189
+      },
+      {
+        "pathway": "SMAD2/SMAD3:SMAD4 heterotrimer regulates transcription",
+        "delta": 0.031,
+        "n_perturbed": 33,
+        "score": 0.18
+      }
+    ],
+    "lost_pathways": [
+      {
+        "pathway": "Formation of Senescence-Associated Heterochromatin Foci (SAHF)",
+        "delta": -0.169,
+        "n_perturbed": 12,
+        "score": -0.585
+      },
+      {
+        "pathway": "Transcriptional  activation of  cell cycle inhibitor p21",
+        "delta": -0.336,
+        "n_perturbed": 3,
+        "score": -0.583
+      },
+      {
+        "pathway": "Transcriptional activation of p53 responsive genes",
+        "delta": -0.336,
+        "n_perturbed": 3,
+        "score": -0.583
+      },
+      {
+        "pathway": "Negative transcriptional regulation of urea cycle enzymes",
+        "delta": -0.251,
+        "n_perturbed": 4,
+        "score": -0.502
+      },
+      {
+        "pathway": "Phosphorylation of proteins involved in G1/S transition by active Cyclin E:Cdk2 complexes",
+        "delta": -0.247,
+        "n_perturbed": 4,
+        "score": -0.494
+      },
+      {
+        "pathway": "Activation of NOXA and translocation to mitochondria",
+        "delta": -0.231,
+        "n_perturbed": 4,
+        "score": -0.462
+      },
+      {
+        "pathway": "Striated Muscle Contraction",
+        "delta": -0.126,
+        "n_perturbed": 12,
+        "score": -0.435
+      },
+      {
+        "pathway": "RUNX3 regulates CDKN1A transcription",
+        "delta": -0.144,
+        "n_perturbed": 7,
+        "score": -0.382
+      },
+      {
+        "pathway": "Urea cycle",
+        "delta": -0.143,
+        "n_perturbed": 7,
+        "score": -0.379
+      },
+      {
+        "pathway": "Zygotic genome activation (ZGA)",
+        "delta": -0.143,
+        "n_perturbed": 7,
+        "score": -0.378
+      },
+      {
+        "pathway": "Oncogene Induced Senescence",
+        "delta": -0.074,
+        "n_perturbed": 25,
+        "score": -0.371
+      },
+      {
+        "pathway": "PI5P Regulates TP53 Acetylation",
+        "delta": -0.126,
+        "n_perturbed": 8,
+        "score": -0.356
+      }
+    ],
+    "top_genes_up": [
+      [
+        1.021,
+        "MYC"
+      ],
+      [
+        0.06,
+        "E2F1"
+      ],
+      [
+        0.057,
+        "E2F2"
+      ],
+      [
+        0.041,
+        "UBTF"
+      ],
+      [
+        0.038,
+        "ANP32A"
+      ],
+      [
+        0.038,
+        "TRIP11"
+      ],
+      [
+        0.022,
+        "BRCA1"
+      ],
+      [
+        0.022,
+        "FOS"
+      ],
+      [
+        0.021,
+        "E2F3"
+      ],
+      [
+        0.021,
+        "DHFR"
+      ],
+      [
+        0.021,
+        "DNMT3A"
+      ],
+      [
+        0.02,
+        "TFDP1"
+      ],
+      [
+        0.02,
+        "PCNA"
+      ],
+      [
+        0.02,
+        "ABL1"
+      ],
+      [
+        0.019,
+        "FGFR1"
+      ]
+    ],
+    "top_genes_down": [
+      [
+        -1.19,
+        "TTN"
+      ],
+      [
+        -1.004,
+        "TP53"
+      ],
+      [
+        -1.0,
+        "RB1"
+      ],
+      [
+        -0.543,
+        "OBSCN"
+      ],
+      [
+        -0.38,
+        "ANK2"
+      ],
+      [
+        -0.272,
+        "TCAP"
+      ],
+      [
+        -0.046,
+        "DMD"
+      ],
+      [
+        -0.046,
+        "DCTN4"
+      ],
+      [
+        -0.046,
+        "CACNA1B"
+      ],
+      [
+        -0.046,
+        "PPP2R5A"
+      ],
+      [
+        -0.046,
+        "CACNA1A"
+      ],
+      [
+        -0.038,
+        "MYOD1"
+      ],
+      [
+        -0.038,
+        "ITGA10"
+      ],
+      [
+        -0.032,
+        "TGFBR1"
+      ],
+      [
+        -0.02,
+        "MAP3K5"
+      ]
+    ],
+    "driver": "MYC",
+    "target_note": "revert MYC (GOF driver of the hyperactive programme) \u2014 its activation propagates to 1 genes; collapsing it should restore the map toward healthy",
+    "footprint_per_mutation": {
+      "TP53": 1,
+      "RB1": 32,
+      "MYC": 1,
+      "TTN": 10
+    }
+  },
+  "K562 CML": {
+    "panel": [
+      [
+        "ABL1",
+        315
+      ],
+      [
+        "TP53",
+        234
+      ],
+      [
+        "TTN",
+        10000
+      ]
+    ],
+    "mutation_calls": [
+      {
+        "gene": "ABL1",
+        "role": "oncogene",
+        "effect": "GOF (activated)",
+        "clamp": 1
+      },
+      {
+        "gene": "TP53",
+        "role": "suppressor",
+        "effect": "LOF (lost)",
+        "clamp": -1
+      },
+      {
+        "gene": "TTN",
+        "role": "unknown",
+        "effect": "LOF? (disease-linked)",
+        "clamp": -1
+      }
+    ],
+    "n_genes_perturbed": 13,
+    "hyperactive_pathways": [
+      {
+        "pathway": "Role of ABL in ROBO-SLIT signaling",
+        "delta": 0.145,
+        "n_perturbed": 7,
+        "score": 0.383
+      },
+      {
+        "pathway": "RUNX2 regulates osteoblast differentiation",
+        "delta": 0.044,
+        "n_perturbed": 23,
+        "score": 0.211
+      },
+      {
+        "pathway": "RHO GTPases Activate WASPs and WAVEs",
+        "delta": 0.04,
+        "n_perturbed": 26,
+        "score": 0.203
+      },
+      {
+        "pathway": "Turbulent (oscillatory, disturbed) flow shear stress activates signaling by PIEZO1 and integrins in endothelial cells",
+        "delta": 0.039,
+        "n_perturbed": 26,
+        "score": 0.2
+      },
+      {
+        "pathway": "Myogenesis",
+        "delta": 0.037,
+        "n_perturbed": 27,
+        "score": 0.191
+      },
+      {
+        "pathway": "RUNX2 regulates bone development",
+        "delta": 0.035,
+        "n_perturbed": 29,
+        "score": 0.188
+      },
+      {
+        "pathway": "HDR through Single Strand Annealing (SSA)",
+        "delta": 0.033,
+        "n_perturbed": 31,
+        "score": 0.184
+      },
+      {
+        "pathway": "Cyclin D associated events in G1",
+        "delta": 0.027,
+        "n_perturbed": 37,
+        "score": 0.165
+      },
+      {
+        "pathway": "G1 Phase",
+        "delta": 0.027,
+        "n_perturbed": 37,
+        "score": 0.165
+      },
+      {
+        "pathway": "RUNX1 regulates transcription of genes involved in differentiation of HSCs",
+        "delta": 0.027,
+        "n_perturbed": 38,
+        "score": 0.164
+      },
+      {
+        "pathway": "FCGR3A-mediated phagocytosis",
+        "delta": 0.023,
+        "n_perturbed": 45,
+        "score": 0.155
+      },
+      {
+        "pathway": "Parasite infection",
+        "delta": 0.023,
+        "n_perturbed": 45,
+        "score": 0.155
+      }
+    ],
+    "lost_pathways": [
+      {
+        "pathway": "Transcriptional  activation of  cell cycle inhibitor p21",
+        "delta": -0.331,
+        "n_perturbed": 3,
+        "score": -0.574
+      },
+      {
+        "pathway": "Transcriptional activation of p53 responsive genes",
+        "delta": -0.331,
+        "n_perturbed": 3,
+        "score": -0.574
+      },
+      {
+        "pathway": "Activation of NOXA and translocation to mitochondria",
+        "delta": -0.251,
+        "n_perturbed": 4,
+        "score": -0.501
+      },
+      {
+        "pathway": "Negative transcriptional regulation of urea cycle enzymes",
+        "delta": -0.249,
+        "n_perturbed": 4,
+        "score": -0.498
+      },
+      {
+        "pathway": "Urea cycle",
+        "delta": -0.166,
+        "n_perturbed": 6,
+        "score": -0.407
+      },
+      {
+        "pathway": "Striated Muscle Contraction",
+        "delta": -0.108,
+        "n_perturbed": 14,
+        "score": -0.403
+      },
+      {
+        "pathway": "RUNX3 regulates CDKN1A transcription",
+        "delta": -0.142,
+        "n_perturbed": 7,
+        "score": -0.376
+      },
+      {
+        "pathway": "Zygotic genome activation (ZGA)",
+        "delta": -0.141,
+        "n_perturbed": 7,
+        "score": -0.374
+      },
+      {
+        "pathway": "PI5P Regulates TP53 Acetylation",
+        "delta": -0.125,
+        "n_perturbed": 8,
+        "score": -0.353
+      },
+      {
+        "pathway": "Activation of PUMA and translocation to mitochondria",
+        "delta": -0.124,
+        "n_perturbed": 8,
+        "score": -0.352
+      },
+      {
+        "pathway": "TP53 regulates transcription of additional cell cycle genes whose exact role in the p53 pathway remain uncertain",
+        "delta": -0.111,
+        "n_perturbed": 9,
+        "score": -0.332
+      },
+      {
+        "pathway": "TP53 Regulates Transcription of Caspase Activators and Caspases",
+        "delta": -0.11,
+        "n_perturbed": 9,
+        "score": -0.331
+      }
+    ],
+    "top_genes_up": [
+      [
+        1.0,
+        "ABL1"
+      ],
+      [
+        0.011,
+        "ERCC6"
+      ]
+    ],
+    "top_genes_down": [
+      [
+        -1.19,
+        "TTN"
+      ],
+      [
+        -0.996,
+        "TP53"
+      ],
+      [
+        -0.543,
+        "OBSCN"
+      ],
+      [
+        -0.38,
+        "ANK2"
+      ],
+      [
+        -0.271,
+        "TCAP"
+      ],
+      [
+        -0.046,
+        "PPP2R5A"
+      ],
+      [
+        -0.046,
+        "DMD"
+      ],
+      [
+        -0.046,
+        "DCTN4"
+      ],
+      [
+        -0.046,
+        "CACNA1B"
+      ],
+      [
+        -0.046,
+        "CACNA1A"
+      ],
+      [
+        -0.032,
+        "TGFBR1"
+      ]
+    ],
+    "driver": "ABL1",
+    "target_note": "revert ABL1 (GOF driver of the hyperactive programme) \u2014 its activation propagates to 2 genes; collapsing it should restore the map toward healthy",
+    "footprint_per_mutation": {
+      "ABL1": 2,
+      "TP53": 1,
+      "TTN": 10
+    }
+  }
+}

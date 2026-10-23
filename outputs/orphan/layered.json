@@ -1,0 +1,63 @@
+{
+ "n_perturbations": 5120,
+ "n_metabolic": 845,
+ "n_scorable": 97,
+ "n_solved": 845,
+ "n_flux_changed": 845,
+ "n_A_nonzero": 845,
+ "n_ordering_violations": 0,
+ "n_test": 45,
+ "n_test_zero_A": 0,
+ "arms": {
+  "layered  F -> A -> mRNA": {
+   "recall": 0.19302743089855212,
+   "precision": 0.05155555555555555,
+   "delta_vs_frequency": -0.11904228832538824,
+   "ci": [
+    -0.2360816560274504,
+    0.003132319819763977
+   ]
+  },
+  "shuffled A (control)": {
+   "recall": 0.12485114632744233,
+   "precision": 0.036444444444444446,
+   "delta_vs_frequency": -0.18721857289649801,
+   "ci": [
+    -0.2699038448536624,
+    -0.10286106191962041
+   ]
+  },
+  "gene annotation, no flux": {
+   "recall": 0.1664815327088799,
+   "precision": 0.04577777777777778,
+   "delta_vs_frequency": -0.14558818651506045,
+   "ci": [
+    -0.2442028892985076,
+    -0.05033977187829759
+   ]
+  },
+  "frequency": {
+   "recall": 0.31206971922394033,
+   "precision": 0.10266666666666666,
+   "delta_vs_frequency": 0.0,
+   "ci": [
+    0.0,
+    0.0
+   ]
+  },
+  "random": {
+   "recall": 0.013656516141810262,
+   "precision": 0.004,
+   "delta_vs_frequency": -0.2984132030821301,
+   "ci": [
+    -0.36782378230535273,
+    -0.22816842136534513
+   ]
+  }
+ },
+ "ordering_holds": true,
+ "beats_frequency": false,
+ "beats_shuffled": true,
+ "beats_gene_annotation": true,
+ "verdict": "FAIL"
+}

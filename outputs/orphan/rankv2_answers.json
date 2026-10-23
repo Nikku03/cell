@@ -1,0 +1,10809 @@
+{
+ "50": {
+  "samples": [
+   [
+    "RIC1",
+    "RGP1",
+    "TRAPPC9",
+    "MADD",
+    "TRAPPC1",
+    "TRAPPC3",
+    "TRAPPC4",
+    "RAB3IL1",
+    "TRAPPC2",
+    "TRAPPC2L"
+   ]
+  ],
+  "tournament": [
+   "RIC1",
+   "RGP1",
+   "MADD",
+   "RAB3IL1",
+   "TRAPPC9",
+   "TRAPPC1",
+   "TRAPPC2",
+   "TRAPPC2L",
+   "TRAPPC3",
+   "TRAPPC4"
+  ],
+  "confident": [
+   "RIC1",
+   "RGP1",
+   "MADD",
+   "RAB3IL1",
+   "TRAPPC9",
+   "TRAPPC1",
+   "TRAPPC2",
+   "TRAPPC2L",
+   "TRAPPC3",
+   "TRAPPC4"
+  ],
+  "confidence": 0.5,
+  "doubt": "The RAB6 GEF is the obligate RIC1:RGP1 heterodimer, so the record may credit RGP1 (or a TRAPP subunit) rather than RIC1."
+ },
+ "51": {
+  "samples": [
+   [
+    "MTOR",
+    "RPTOR",
+    "MLST8",
+    "AKT1S1",
+    "RHEB",
+    "DEPTOR",
+    "RPS6KB1",
+    "CSNK2A1",
+    "CSNK2A2",
+    "CSNK2B"
+   ]
+  ],
+  "tournament": [
+   "MTOR",
+   "RPTOR",
+   "MLST8",
+   "AKT1S1",
+   "DEPTOR",
+   "RHEB",
+   "RPS6KB1",
+   "CSNK2A1",
+   "CSNK2A2",
+   "CSNK2B"
+  ],
+  "confident": [
+   "MTOR",
+   "RPTOR",
+   "MLST8",
+   "AKT1S1",
+   "DEPTOR",
+   "RHEB",
+   "RPS6KB1",
+   "CSNK2A1",
+   "CSNK2A2",
+   "CSNK2B"
+  ],
+  "confidence": 0.6,
+  "doubt": "MAF1 S60/S68/S75 are the documented mTORC1 sites, but the catalyst may be recorded as the raptor-defined complex or, if this is the CK2 arm of MAF1 control, as CSNK2A1."
+ },
+ "52": {
+  "samples": [
+   [
+    "FZR1",
+    "ANAPC11",
+    "ANAPC2",
+    "ANAPC1",
+    "CDC27",
+    "ANAPC4",
+    "ANAPC5",
+    "ANAPC7",
+    "ANAPC10",
+    "ANAPC13"
+   ]
+  ],
+  "tournament": [
+   "FZR1",
+   "ANAPC11",
+   "ANAPC2",
+   "ANAPC1",
+   "CDC27",
+   "ANAPC4",
+   "ANAPC5",
+   "ANAPC7",
+   "ANAPC10",
+   "ANAPC13"
+  ],
+  "confident": [
+   "FZR1",
+   "ANAPC11",
+   "ANAPC2",
+   "ANAPC1",
+   "CDC27",
+   "ANAPC4",
+   "ANAPC5",
+   "ANAPC7",
+   "ANAPC10",
+   "ANAPC13"
+  ],
+  "confidence": 0.45,
+  "doubt": "If the annotation names only the catalytic core rather than the whole APC/C:Cdh1 holoenzyme, the RING subunit ANAPC11 would displace the substrate-adaptor FZR1."
+ },
+ "53": {
+  "samples": [
+   [
+    "PTGS2",
+    "PTGS1",
+    "ALOX15",
+    "ALOX5",
+    "ALOX15B",
+    "ALOX12",
+    "ALOX12B",
+    "ALOXE3",
+    "CYP2C8",
+    "ALOX5AP"
+   ]
+  ],
+  "tournament": [
+   "PTGS2",
+   "PTGS1",
+   "ALOX15",
+   "ALOX15B",
+   "ALOX12",
+   "ALOX5",
+   "ALOX12B",
+   "ALOXE3",
+   "ALOX5AP",
+   "CYP2C8"
+  ],
+  "confident": [
+   "PTGS2",
+   "PTGS1",
+   "ALOX15",
+   "ALOX15B",
+   "ALOX12",
+   "ALOX5",
+   "ALOX12B",
+   "ALOXE3",
+   "ALOX5AP",
+   "CYP2C8"
+  ],
+  "confidence": 0.7,
+  "doubt": "The R-configuration at C13 points to acetylated COX-2, but if the 13-HDPA here is assigned to the 12/15-LOX branch instead, ALOX15 wins."
+ },
+ "54": {
+  "samples": [
+   [
+    "ALOX15",
+    "ALOX5",
+    "ALOX15B",
+    "ALOX12",
+    "ALOX12B",
+    "ALOXE3",
+    "PTGS2",
+    "PTGS1",
+    "ALOX5AP",
+    "EPHX1"
+   ]
+  ],
+  "tournament": [
+   "ALOX15",
+   "ALOX5",
+   "ALOX15B",
+   "ALOX12",
+   "ALOX12B",
+   "ALOXE3",
+   "ALOX5AP",
+   "PTGS1",
+   "PTGS2",
+   "EPHX1"
+  ],
+  "confident": [
+   "ALOX15",
+   "ALOX5",
+   "ALOX15B",
+   "ALOX12",
+   "ALOX12B",
+   "ALOXE3",
+   "ALOX5AP",
+   "PTGS1",
+   "PTGS2",
+   "EPHX1"
+  ],
+  "confidence": 0.8,
+  "doubt": "Only wrong if the 16,17-epoxide from the 17S-hydroperoxide is assigned to ALOX15B rather than ALOX15, contrary to the exactly parallel DHA reaction."
+ },
+ "55": {
+  "samples": [
+   [
+    "PTGS2",
+    "PTGS1",
+    "TBCB",
+    "ALOX5",
+    "ALOX15",
+    "ALOX12",
+    "ALOX15B",
+    "ALOX12B",
+    "ALOXE3",
+    "ALOX5AP"
+   ]
+  ],
+  "tournament": [
+   "PTGS2",
+   "PTGS1",
+   "TBCB",
+   "ALOX15",
+   "ALOX5",
+   "ALOX12",
+   "ALOX15B",
+   "ALOX12B",
+   "ALOXE3",
+   "ALOX5AP"
+  ],
+  "confident": [
+   "PTGS2",
+   "PTGS1",
+   "TBCB",
+   "ALOX15",
+   "ALOX5",
+   "ALOX12",
+   "ALOX15B",
+   "ALOX12B",
+   "ALOXE3",
+   "ALOX5AP"
+  ],
+  "confidence": 0.65,
+  "doubt": "PGH3 formation is cyclooxygenase chemistry, but the near-identical solved reaction lists PTGS1 first (and even TBCB), so the credited gene may be PTGS1."
+ },
+ "56": {
+  "samples": [
+   [
+    "ATR",
+    "ATRIP",
+    "ATM",
+    "PRKDC",
+    "BRCA1",
+    "TOPBP1",
+    "RAD17",
+    "RAD9A",
+    "RAD1",
+    "HUS1"
+   ]
+  ],
+  "tournament": [
+   "ATR",
+   "ATRIP",
+   "BRCA1",
+   "ATM",
+   "PRKDC",
+   "RAD1",
+   "RAD9A",
+   "RAD17",
+   "HUS1",
+   "TOPBP1"
+  ],
+  "confident": [
+   "ATR",
+   "ATRIP",
+   "BRCA1",
+   "ATM",
+   "PRKDC",
+   "RAD1",
+   "RAD9A",
+   "RAD17",
+   "HUS1",
+   "TOPBP1"
+  ],
+  "confidence": 0.55,
+  "doubt": "Meiotic silencing gamma-H2AX on unsynapsed axes is ATR-driven, but the curated catalyst could be the BRCA1:ATR:ATRIP complex or ATM instead."
+ },
+ "57": {
+  "samples": [
+   [
+    "CAMK2A",
+    "PRKCA",
+    "CAMK2B",
+    "CAMK2G",
+    "CAMK2D",
+    "PRKCG",
+    "PRKCB",
+    "PRKACA",
+    "PRKACB",
+    "PRKACG"
+   ]
+  ],
+  "tournament": [
+   "CAMK2A",
+   "PRKCA",
+   "PRKCG",
+   "PRKCB",
+   "CAMK2B",
+   "PRKACA",
+   "CAMK2D",
+   "CAMK2G",
+   "PRKACB",
+   "PRKACG"
+  ],
+  "confident": [
+   "CAMK2A",
+   "PRKCA",
+   "PRKCG",
+   "PRKCB",
+   "CAMK2B",
+   "PRKACA",
+   "CAMK2D",
+   "CAMK2G",
+   "PRKACB",
+   "PRKACG"
+  ],
+  "confidence": 0.35,
+  "doubt": "S849 in precursor numbering is mature S831, phosphorylated by both CaMKII and PKC, so if the curator assigned S831 to PKC (reserving S818/S836 for something else) PRKCA/PRKCG is correct."
+ },
+ "58": {
+  "samples": [
+   [
+    "SPHK1",
+    "SPHK2",
+    "CERK",
+    "ACER3",
+    "SGPP1",
+    "SGPP2",
+    "SGPL1",
+    "PLPP1",
+    "PLPP2",
+    "PLPP3"
+   ]
+  ],
+  "tournament": [
+   "SPHK1",
+   "SPHK2",
+   "CERK",
+   "ACER3",
+   "SGPP1",
+   "SGPP2",
+   "SGPL1",
+   "PLPP1",
+   "PLPP2",
+   "PLPP3"
+  ],
+  "confident": [
+   "SPHK1",
+   "SPHK2",
+   "CERK",
+   "ACER3",
+   "SGPP1",
+   "SGPP2",
+   "SGPL1",
+   "PLPP1",
+   "PLPP2",
+   "PLPP3"
+  ],
+  "confidence": 0.7,
+  "doubt": "Plasma-membrane sphingosine phosphorylation is SPHK1's signature, but a nuclear/ER-flavoured annotation would make it SPHK2."
+ },
+ "59": {
+  "samples": [
+   [
+    "PRCP",
+    "HSP90AA1",
+    "HSP90AB1",
+    "KLKB1",
+    "F12",
+    "HGFAC",
+    "PLG",
+    "PLAT",
+    "PLAU",
+    "F11"
+   ]
+  ],
+  "tournament": [
+   "PRCP",
+   "HSP90AA1",
+   "HSP90AB1",
+   "KLKB1",
+   "F12",
+   "HGFAC",
+   "PLG",
+   "PLAT",
+   "PLAU",
+   "F11"
+  ],
+  "confident": [
+   "PRCP",
+   "HSP90AA1",
+   "HSP90AB1",
+   "KLKB1",
+   "F12",
+   "HGFAC",
+   "PLG",
+   "PLAT",
+   "PLAU",
+   "F11"
+  ],
+  "confidence": 0.45,
+  "doubt": "This is the FXII-independent prekallikrein activation on the receptor complex, which is attributed to both PRCP and HSP90, so HSP90AA1 could be the credited catalyst."
+ },
+ "60": {
+  "samples": [
+   [
+    "PDGFRA",
+    "PDGFRB",
+    "KIT",
+    "CSF1R",
+    "FLT3",
+    "KDR",
+    "FLT1",
+    "FLT4",
+    "EGFR",
+    "ERBB2"
+   ]
+  ],
+  "tournament": [
+   "PDGFRA",
+   "PDGFRB",
+   "KIT",
+   "CSF1R",
+   "FLT3",
+   "KDR",
+   "FLT1",
+   "FLT4",
+   "EGFR",
+   "ERBB2"
+  ],
+  "confident": [
+   "PDGFRA",
+   "PDGFRB",
+   "KIT",
+   "CSF1R",
+   "FLT3",
+   "KDR",
+   "FLT1",
+   "FLT4",
+   "EGFR",
+   "ERBB2"
+  ],
+  "confidence": 0.6,
+  "doubt": "Autophosphorylation of a 'PDGFR mutant dimers' SET may be annotated to PDGFRB (or to both A and B), not PDGFRA alone."
+ },
+ "61": {
+  "samples": [
+   [
+    "SOS1",
+    "GRB2",
+    "SOS2",
+    "SHC1",
+    "RASGRF1",
+    "RASGRF2",
+    "RASGRP1",
+    "RASGRP2",
+    "RASGRP3",
+    "RASGRP4"
+   ]
+  ],
+  "tournament": [
+   "SOS1",
+   "GRB2",
+   "SOS2",
+   "SHC1",
+   "RASGRF1",
+   "RASGRF2",
+   "RASGRP1",
+   "RASGRP2",
+   "RASGRP3",
+   "RASGRP4"
+  ],
+  "confident": [
+   "SOS1",
+   "GRB2",
+   "SOS2",
+   "SHC1",
+   "RASGRF1",
+   "RASGRF2",
+   "RASGRP1",
+   "RASGRP2",
+   "RASGRP3",
+   "RASGRP4"
+  ],
+  "confidence": 0.7,
+  "doubt": "If this particular RAS-loading event is the calcium/neuronal one, the catalyst set would be RASGRF1/RASGRF2 rather than SOS1."
+ },
+ "62": {
+  "samples": [
+   [
+    "CTSL",
+    "CTSB",
+    "FURIN",
+    "TMPRSS2",
+    "CTSS",
+    "CTSK",
+    "CTSV",
+    "CTSF",
+    "CTSH",
+    "CTSZ"
+   ]
+  ],
+  "tournament": [
+   "CTSL",
+   "CTSB",
+   "CTSS",
+   "FURIN",
+   "TMPRSS2",
+   "CTSK",
+   "CTSV",
+   "CTSF",
+   "CTSH",
+   "CTSZ"
+  ],
+  "confident": [
+   "CTSL",
+   "CTSB",
+   "CTSS",
+   "FURIN",
+   "TMPRSS2",
+   "CTSK",
+   "CTSV",
+   "CTSF",
+   "CTSH",
+   "CTSZ"
+  ],
+  "confidence": 0.8,
+  "doubt": "Endosomal spike priming could be credited to CTSB alongside/instead of CTSL in this curation."
+ },
+ "63": {
+  "samples": [
+   [
+    "CANX",
+    "CALR",
+    "PDIA3",
+    "HSPA5",
+    "P4HB",
+    "PDIA6",
+    "PDIA4",
+    "PDIA2",
+    "PDIA5",
+    "ERP44"
+   ]
+  ],
+  "tournament": [
+   "CANX",
+   "CALR",
+   "PDIA3",
+   "HSPA5",
+   "P4HB",
+   "PDIA6",
+   "PDIA4",
+   "PDIA2",
+   "PDIA5",
+   "ERP44"
+  ],
+  "confident": [
+   "CANX",
+   "CALR",
+   "PDIA3",
+   "HSPA5",
+   "P4HB",
+   "PDIA6",
+   "PDIA4",
+   "PDIA2",
+   "PDIA5",
+   "ERP44"
+  ],
+  "confidence": 0.45,
+  "doubt": "Spike is a membrane glycoprotein so calnexin fits, but the entity is placed in the ER lumen, which would favour the soluble lectin CALR (or HSPA5)."
+ },
+ "64": {
+  "samples": [
+   [
+    "SRD5A2",
+    "SRD5A1",
+    "SRD5A3",
+    "AKR1D1",
+    "HSD17B3",
+    "HSD17B6",
+    "HSD17B2",
+    "HSD17B1",
+    "HSD17B4",
+    "HSD17B7"
+   ]
+  ],
+  "tournament": [
+   "SRD5A2",
+   "SRD5A1",
+   "SRD5A3",
+   "AKR1D1",
+   "HSD17B3",
+   "HSD17B1",
+   "HSD17B2",
+   "HSD17B4",
+   "HSD17B6",
+   "HSD17B7"
+  ],
+  "confident": [
+   "SRD5A2",
+   "SRD5A1",
+   "SRD5A3",
+   "AKR1D1",
+   "HSD17B3",
+   "HSD17B1",
+   "HSD17B2",
+   "HSD17B4",
+   "HSD17B6",
+   "HSD17B7"
+  ],
+  "confidence": 0.55,
+  "doubt": "Both 5-alpha reductases catalyse TEST to DHT, so a GPR that names only the ubiquitous SRD5A1 would beat SRD5A2."
+ },
+ "65": {
+  "samples": [
+   [
+    "PRKCA",
+    "PRKCZ",
+    "PRKCI",
+    "PRKCB",
+    "PRKCE",
+    "PRKCG",
+    "PRKCH",
+    "PRKCQ",
+    "PRKAA1",
+    "PRKAA2"
+   ]
+  ],
+  "tournament": [
+   "PRKCA",
+   "PRKCZ",
+   "PRKCI",
+   "PRKCB",
+   "PRKCE",
+   "PRKAA1",
+   "PRKAA2",
+   "PRKCH",
+   "PRKCQ",
+   "PRKCG"
+  ],
+  "confident": [
+   "PRKCA",
+   "PRKCZ",
+   "PRKCI",
+   "PRKCB",
+   "PRKCE",
+   "PRKAA1",
+   "PRKAA2",
+   "PRKCH",
+   "PRKCQ",
+   "PRKCG"
+  ],
+  "confidence": 0.22,
+  "doubt": "PRKCD already owns the canonical S40 reaction, so this duplicate is some other kinase entirely and could as easily be an atypical PKC or AMPK subunit."
+ },
+ "66": {
+  "samples": [
+   [
+    "CARM1",
+    "PRMT1",
+    "PRMT6",
+    "PRMT8",
+    "PRMT5",
+    "PRMT2",
+    "PRMT3",
+    "PRMT7",
+    "PRMT9",
+    "WDR77"
+   ]
+  ],
+  "tournament": [
+   "CARM1",
+   "PRMT1",
+   "PRMT6",
+   "PRMT8",
+   "PRMT5",
+   "PRMT2",
+   "PRMT3",
+   "PRMT7",
+   "PRMT9",
+   "WDR77"
+  ],
+  "confident": [
+   "CARM1",
+   "PRMT1",
+   "PRMT6",
+   "PRMT8",
+   "PRMT5",
+   "PRMT2",
+   "PRMT3",
+   "PRMT7",
+   "PRMT9",
+   "WDR77"
+  ],
+  "confidence": 0.85,
+  "doubt": "Only wrong if H3R17me2a were mis-assigned to PRMT1, since CARM1/PRMT4 is the definitive H3R17 asymmetric dimethyltransferase."
+ },
+ "67": {
+  "samples": [
+   [
+    "CAPN2",
+    "CAPN1",
+    "CAPNS1",
+    "CAPN3",
+    "CASP3",
+    "CAPN5",
+    "CAPN6",
+    "CAPN7",
+    "CAPN8",
+    "CAPN9"
+   ]
+  ],
+  "tournament": [
+   "CAPN2",
+   "CAPN1",
+   "CAPNS1",
+   "CAPN3",
+   "CASP3",
+   "CAPN5",
+   "CAPN6",
+   "CAPN7",
+   "CAPN8",
+   "CAPN9"
+  ],
+  "confident": [
+   "CAPN2",
+   "CAPN1",
+   "CAPNS1",
+   "CAPN3",
+   "CASP3",
+   "CAPN5",
+   "CAPN6",
+   "CAPN7",
+   "CAPN8",
+   "CAPN9"
+  ],
+  "confidence": 0.65,
+  "doubt": "Talin head/rod cleavage at Q433 is calpain-2's hallmark, but the annotation may name the heterodimer's small subunit CAPNS1 or calpain-1."
+ },
+ "68": {
+  "samples": [
+   [
+    "PTPN1",
+    "PTPN11",
+    "PTPN2",
+    "PTPN6",
+    "PTPRA",
+    "PTPN12",
+    "PTPN13",
+    "PTPN14",
+    "PTPN18",
+    "PTPN22"
+   ]
+  ],
+  "tournament": [
+   "PTPN1",
+   "PTPN11",
+   "PTPN2",
+   "PTPN6",
+   "PTPRA",
+   "PTPN12",
+   "PTPN13",
+   "PTPN14",
+   "PTPN18",
+   "PTPN22"
+  ],
+  "confident": [
+   "PTPN1",
+   "PTPN11",
+   "PTPN2",
+   "PTPN6",
+   "PTPRA",
+   "PTPN12",
+   "PTPN13",
+   "PTPN14",
+   "PTPN18",
+   "PTPN22"
+  ],
+  "confidence": 0.2,
+  "doubt": "I have no specific evidence linking any listed PTP to ANXA2 pTyr24, so this is essentially a prior on PTP1B's broad cytosolic substrate range."
+ },
+ "69": {
+  "samples": [
+   [
+    "HDAC3",
+    "HDAC1",
+    "HDAC2",
+    "NCOR1",
+    "NCOR2",
+    "TBL1XR1",
+    "TBL1X",
+    "GPS2",
+    "HDAC4",
+    "HDAC5"
+   ]
+  ],
+  "tournament": [
+   "HDAC3",
+   "NCOR1",
+   "NCOR2",
+   "HDAC1",
+   "HDAC2",
+   "TBL1X",
+   "TBL1XR1",
+   "GPS2",
+   "HDAC4",
+   "HDAC5"
+  ],
+  "confident": [
+   "HDAC3",
+   "NCOR1",
+   "NCOR2",
+   "HDAC1",
+   "HDAC2",
+   "TBL1X",
+   "TBL1XR1",
+   "GPS2",
+   "HDAC4",
+   "HDAC5"
+  ],
+  "confidence": 0.45,
+  "doubt": "If this generic chromatin deacetylation is the Sin3/NuRD event rather than the NCoR-SMRT one, HDAC1/HDAC2 are the credited enzymes."
+ },
+ "70": {
+  "samples": [
+   [
+    "ALDH9A1",
+    "ALDH2",
+    "ALDH7A1",
+    "ALDH1B1",
+    "ALDH3A2",
+    "ALDH1A1",
+    "ALDH1A2",
+    "ALDH1A3",
+    "ALDH1L1",
+    "ALDH1L2"
+   ]
+  ],
+  "tournament": [
+   "ALDH9A1",
+   "ALDH2",
+   "ALDH7A1",
+   "ALDH3A2",
+   "ALDH1B1",
+   "ALDH1A1",
+   "ALDH1A2",
+   "ALDH1A3",
+   "ALDH1L1",
+   "ALDH1L2"
+  ],
+  "confident": [
+   "ALDH9A1",
+   "ALDH2",
+   "ALDH7A1",
+   "ALDH3A2",
+   "ALDH1B1",
+   "ALDH1A1",
+   "ALDH1A2",
+   "ALDH1A3",
+   "ALDH1L1",
+   "ALDH1L2"
+  ],
+  "confidence": 0.45,
+  "doubt": "ALDH9A1 is the aminoaldehyde dehydrogenase but is cytosolic, so a mitochondrial-compartment GPR may instead name ALDH2 or ALDH7A1."
+ },
+ "71": {
+  "samples": [
+   [
+    "ACSM1",
+    "ACSM2B",
+    "ACSM2A",
+    "ACSM3",
+    "ACSM5",
+    "ACSM4",
+    "ACSM6",
+    "ACSS2",
+    "ACSS1",
+    "ACSS3"
+   ]
+  ],
+  "tournament": [
+   "ACSM1",
+   "ACSM2B",
+   "ACSM2A",
+   "ACSM3",
+   "ACSM5",
+   "ACSM4",
+   "ACSM6",
+   "ACSS1",
+   "ACSS2",
+   "ACSS3"
+  ],
+  "confident": [
+   "ACSM1",
+   "ACSM2B",
+   "ACSM2A",
+   "ACSM3",
+   "ACSM5",
+   "ACSM4",
+   "ACSM6",
+   "ACSS1",
+   "ACSS2",
+   "ACSS3"
+  ],
+  "confidence": 0.4,
+  "doubt": "Hexanoate is a medium-chain substrate but the ACSM enzymes are mitochondrial, so a cytosolic assignment could fall to ACSS2/ACSS3 or a different ACSM member."
+ },
+ "72": {
+  "samples": [
+   [
+    "ACOT1",
+    "ACOT7",
+    "ACOT13",
+    "BAAT",
+    "THEM4",
+    "ACOT2",
+    "ACOT4",
+    "ACOT6",
+    "ACOT8",
+    "ACOT9"
+   ]
+  ],
+  "tournament": [
+   "ACOT1",
+   "ACOT7",
+   "ACOT13",
+   "BAAT",
+   "THEM4",
+   "ACOT2",
+   "ACOT4",
+   "ACOT6",
+   "ACOT8",
+   "ACOT9"
+  ],
+  "confident": [
+   "ACOT1",
+   "ACOT7",
+   "ACOT13",
+   "BAAT",
+   "THEM4",
+   "ACOT2",
+   "ACOT4",
+   "ACOT6",
+   "ACOT8",
+   "ACOT9"
+  ],
+  "confidence": 0.7,
+  "doubt": "Wrong only if the trans-18:1 (elaidoyl) thioester is given the very-long-chain set ACOT6/BAAT rather than the cytosolic ACOT1/7/13 set used for oleoyl-CoA."
+ },
+ "73": {
+  "samples": [
+   [
+    "CD36",
+    "FABP1",
+    "FABP2",
+    "FABP3",
+    "FABP4",
+    "FABP5",
+    "FABP6",
+    "FABP7",
+    "FABP9",
+    "FABP12"
+   ]
+  ],
+  "tournament": [
+   "CD36",
+   "FABP1",
+   "FABP2",
+   "FABP3",
+   "FABP4",
+   "FABP5",
+   "FABP6",
+   "FABP7",
+   "FABP9",
+   "FABP12"
+  ],
+  "confident": [
+   "CD36",
+   "FABP1",
+   "FABP2",
+   "FABP3",
+   "FABP4",
+   "FABP5",
+   "FABP6",
+   "FABP7",
+   "FABP9",
+   "FABP12"
+  ],
+  "confidence": 0.6,
+  "doubt": "The uptake set for C20:0 may be the SLC27 transporters only, in which case no FABP/CD36 member is credited."
+ },
+ "74": {
+  "samples": [
+   [
+    "CD36",
+    "FABP1",
+    "FABP2",
+    "FABP3",
+    "FABP4",
+    "FABP5",
+    "FABP6",
+    "FABP7",
+    "FABP9",
+    "FABP12"
+   ]
+  ],
+  "tournament": [
+   "CD36",
+   "FABP1",
+   "FABP2",
+   "FABP3",
+   "FABP4",
+   "FABP5",
+   "FABP6",
+   "FABP7",
+   "FABP9",
+   "FABP12"
+  ],
+  "confident": [
+   "CD36",
+   "FABP1",
+   "FABP2",
+   "FABP3",
+   "FABP4",
+   "FABP5",
+   "FABP6",
+   "FABP7",
+   "FABP9",
+   "FABP12"
+  ],
+  "confidence": 0.6,
+  "doubt": "Both solved analogues for gondoic acid used SLC27 transporters, so this passive-looking uptake may be credited to SLC27 rather than CD36/FABP."
+ },
+ "75": {
+  "samples": [
+   [
+    "ACSL1",
+    "ACSL3",
+    "ACSL4",
+    "ACSL5",
+    "ACSL6",
+    "ACSBG1",
+    "ACSBG2",
+    "SLC27A2",
+    "SLC27A5",
+    "SLC27A1"
+   ]
+  ],
+  "tournament": [
+   "ACSL1",
+   "ACSL3",
+   "ACSL4",
+   "ACSL5",
+   "ACSL6",
+   "ACSBG1",
+   "ACSBG2",
+   "SLC27A2",
+   "SLC27A5",
+   "SLC27A1"
+  ],
+  "confident": [
+   "ACSL1",
+   "ACSL3",
+   "ACSL4",
+   "ACSL5",
+   "ACSL6",
+   "ACSBG1",
+   "ACSBG2",
+   "SLC27A2",
+   "SLC27A5",
+   "SLC27A1"
+  ],
+  "confidence": 0.7,
+  "doubt": "C21:0 is on the long/very-long boundary, so the GPR could be restricted to ACSBG1/SLC27A2 instead of the ACSL set."
+ },
+ "76": {
+  "samples": [
+   [
+    "CD36",
+    "FABP1",
+    "FABP2",
+    "FABP3",
+    "FABP4",
+    "FABP5",
+    "FABP6",
+    "FABP7",
+    "FABP9",
+    "FABP12"
+   ]
+  ],
+  "tournament": [
+   "CD36",
+   "FABP1",
+   "FABP2",
+   "FABP3",
+   "FABP4",
+   "FABP5",
+   "FABP6",
+   "FABP7",
+   "FABP9",
+   "FABP12"
+  ],
+  "confident": [
+   "CD36",
+   "FABP1",
+   "FABP2",
+   "FABP3",
+   "FABP4",
+   "FABP5",
+   "FABP6",
+   "FABP7",
+   "FABP9",
+   "FABP12"
+  ],
+  "confidence": 0.6,
+  "doubt": "EPA uptake may be assigned solely to the SLC27 transporters, leaving no listed candidate correct."
+ },
+ "77": {
+  "samples": [
+   [
+    "ACSL1",
+    "ACSL3",
+    "ACSL4",
+    "SLC27A2",
+    "ACSL5",
+    "ACSL6",
+    "ACSBG1",
+    "ACSBG2",
+    "SLC27A1",
+    "SLC27A3"
+   ]
+  ],
+  "tournament": [
+   "ACSL1",
+   "ACSL3",
+   "ACSL4",
+   "SLC27A2",
+   "ACSL5",
+   "ACSL6",
+   "ACSBG1",
+   "ACSBG2",
+   "SLC27A1",
+   "SLC27A3"
+  ],
+  "confident": [
+   "ACSL1",
+   "ACSL3",
+   "ACSL4",
+   "SLC27A2",
+   "ACSL5",
+   "ACSL6",
+   "ACSBG1",
+   "ACSBG2",
+   "SLC27A1",
+   "SLC27A3"
+  ],
+  "confidence": 0.6,
+  "doubt": "C24:5 is very-long-chain, so the activating enzyme may be restricted to SLC27A2/ACSBG rather than ACSL1."
+ },
+ "78": {
+  "samples": [
+   [
+    "ENPP1",
+    "ENPP3",
+    "ENPP2",
+    "GDE1",
+    "GPCPD1",
+    "GDPD1",
+    "GDPD2",
+    "GDPD3",
+    "GDPD4",
+    "GDPD5"
+   ]
+  ],
+  "tournament": [
+   "ENPP1",
+   "ENPP3",
+   "ENPP2",
+   "GDE1",
+   "GPCPD1",
+   "GDPD1",
+   "GDPD2",
+   "GDPD3",
+   "GDPD4",
+   "GDPD5"
+  ],
+  "confident": [
+   "ENPP1",
+   "ENPP3",
+   "ENPP2",
+   "GDE1",
+   "GPCPD1",
+   "GDPD1",
+   "GDPD2",
+   "GDPD3",
+   "GDPD4",
+   "GDPD5"
+  ],
+  "confidence": 0.35,
+  "doubt": "Cleaving CDP-glycerol to CMP + glycerol-3-P is pyrophosphatase chemistry (ENPP), but a curator treating CDP-glycerol as a glycerophosphodiester would assign GDE1/GPCPD1."
+ },
+ "79": {
+  "samples": [
+   [
+    "GPAM",
+    "GPAT2",
+    "GPAT3",
+    "GPAT4",
+    "AGPAT1",
+    "AGPAT2",
+    "AGPAT3",
+    "AGPAT4",
+    "AGPAT5",
+    "LCLAT1"
+   ]
+  ],
+  "tournament": [
+   "GPAM",
+   "GPAT2",
+   "GPAT3",
+   "GPAT4",
+   "AGPAT1",
+   "AGPAT2",
+   "AGPAT3",
+   "AGPAT4",
+   "AGPAT5",
+   "LCLAT1"
+  ],
+  "confident": [
+   "GPAM",
+   "GPAT2",
+   "GPAT3",
+   "GPAT4",
+   "AGPAT1",
+   "AGPAT2",
+   "AGPAT3",
+   "AGPAT4",
+   "AGPAT5",
+   "LCLAT1"
+  ],
+  "confidence": 0.55,
+  "doubt": "The monounsaturated C14 substrate matched the GPAT3/GPAT4-only solved case once, so GPAM may not be in the credited set."
+ },
+ "80": {
+  "samples": [
+   [
+    "GPAM",
+    "GPAT2",
+    "GPAT3",
+    "GPAT4",
+    "AGPAT1",
+    "AGPAT2",
+    "AGPAT3",
+    "AGPAT4",
+    "AGPAT5",
+    "LCLAT1"
+   ]
+  ],
+  "tournament": [
+   "GPAM",
+   "GPAT2",
+   "GPAT3",
+   "GPAT4",
+   "AGPAT1",
+   "AGPAT2",
+   "AGPAT3",
+   "AGPAT4",
+   "AGPAT5",
+   "LCLAT1"
+  ],
+  "confident": [
+   "GPAM",
+   "GPAT2",
+   "GPAT3",
+   "GPAT4",
+   "AGPAT1",
+   "AGPAT2",
+   "AGPAT3",
+   "AGPAT4",
+   "AGPAT5",
+   "LCLAT1"
+  ],
+  "confidence": 0.55,
+  "doubt": "A polyunsaturated C22:5 acyl donor might be restricted to the ER GPAT3/GPAT4 pair rather than the mitochondrial GPAM."
+ },
+ "81": {
+  "samples": [
+   [
+    "GPAM",
+    "GPAT2",
+    "GPAT3",
+    "GPAT4",
+    "AGPAT5",
+    "AGPAT1",
+    "AGPAT2",
+    "AGPAT3",
+    "AGPAT4",
+    "LCLAT1"
+   ]
+  ],
+  "tournament": [
+   "GPAM",
+   "GPAT2",
+   "GPAT3",
+   "GPAT4",
+   "AGPAT5",
+   "AGPAT1",
+   "AGPAT2",
+   "AGPAT3",
+   "AGPAT4",
+   "LCLAT1"
+  ],
+  "confident": [
+   "GPAM",
+   "GPAT2",
+   "GPAT3",
+   "GPAT4",
+   "AGPAT5",
+   "AGPAT1",
+   "AGPAT2",
+   "AGPAT3",
+   "AGPAT4",
+   "LCLAT1"
+  ],
+  "confidence": 0.65,
+  "doubt": "GPAM is the mitochondrial GPAT1, but the pooled mitochondrial reaction could be credited to GPAT2 which is also outer-membrane localized."
+ },
+ "82": {
+  "samples": [
+   [
+    "GNPAT",
+    "AGPS",
+    "GPAM",
+    "GPAT2",
+    "GPAT3",
+    "GPAT4",
+    "AGPAT1",
+    "AGPAT2",
+    "AGPAT3",
+    "AGPAT4"
+   ]
+  ],
+  "tournament": [
+   "GNPAT",
+   "AGPS",
+   "GPAM",
+   "GPAT2",
+   "GPAT3",
+   "GPAT4",
+   "AGPAT1",
+   "AGPAT2",
+   "AGPAT3",
+   "AGPAT4"
+  ],
+  "confident": [
+   "GNPAT",
+   "AGPS",
+   "GPAM",
+   "GPAT2",
+   "GPAT3",
+   "GPAT4",
+   "AGPAT1",
+   "AGPAT2",
+   "AGPAT3",
+   "AGPAT4"
+  ],
+  "confidence": 0.85,
+  "doubt": "Only wrong if the peroxisomal DHAP acyltransferase step is annotated to the GNPAT:AGPS complex with AGPS listed as the catalyst."
+ },
+ "83": {
+  "samples": [
+   [
+    "FASN",
+    "OLAH",
+    "MCAT",
+    "AASDHPPT",
+    "ACOT7",
+    "ACOT1",
+    "ACOT2",
+    "ACOT4",
+    "ACOT6",
+    "ACOT8"
+   ]
+  ],
+  "tournament": [
+   "FASN",
+   "OLAH",
+   "MCAT",
+   "AASDHPPT",
+   "ACOT7",
+   "ACOT1",
+   "ACOT2",
+   "ACOT4",
+   "ACOT6",
+   "ACOT8"
+  ],
+  "confident": [
+   "FASN",
+   "OLAH",
+   "MCAT",
+   "AASDHPPT",
+   "ACOT7",
+   "ACOT1",
+   "ACOT2",
+   "ACOT4",
+   "ACOT6",
+   "ACOT8"
+  ],
+  "confidence": 0.7,
+  "doubt": "Every solved acyl-ACP hydrolysis used FASN+OLAH, but an unsaturated C14:1-ACP might instead be given to OLAH alone."
+ },
+ "84": {
+  "samples": [
+   [
+    "FASN",
+    "OLAH",
+    "MCAT",
+    "AASDHPPT",
+    "ACOT7",
+    "ACOT1",
+    "ACOT2",
+    "ACOT4",
+    "ACOT6",
+    "ACOT8"
+   ]
+  ],
+  "tournament": [
+   "FASN",
+   "OLAH",
+   "MCAT",
+   "AASDHPPT",
+   "ACOT7",
+   "ACOT1",
+   "ACOT2",
+   "ACOT4",
+   "ACOT6",
+   "ACOT8"
+  ],
+  "confident": [
+   "FASN",
+   "OLAH",
+   "MCAT",
+   "AASDHPPT",
+   "ACOT7",
+   "ACOT1",
+   "ACOT2",
+   "ACOT4",
+   "ACOT6",
+   "ACOT8"
+  ],
+  "confidence": 0.7,
+  "doubt": "If the unsaturated C16:1-ACP thioesterase step is assigned to OLAH alone, FASN is wrong."
+ },
+ "85": {
+  "samples": [
+   [
+    "FASN",
+    "OLAH",
+    "MCAT",
+    "AASDHPPT",
+    "ACOT7",
+    "ACOT1",
+    "ACOT2",
+    "ACOT4",
+    "ACOT6",
+    "ACOT8"
+   ]
+  ],
+  "tournament": [
+   "FASN",
+   "OLAH",
+   "MCAT",
+   "AASDHPPT",
+   "ACOT7",
+   "ACOT1",
+   "ACOT2",
+   "ACOT4",
+   "ACOT6",
+   "ACOT8"
+  ],
+  "confident": [
+   "FASN",
+   "OLAH",
+   "MCAT",
+   "AASDHPPT",
+   "ACOT7",
+   "ACOT1",
+   "ACOT2",
+   "ACOT4",
+   "ACOT6",
+   "ACOT8"
+  ],
+  "confidence": 0.75,
+  "doubt": "Only wrong if C18:0-ACP release is credited to OLAH alone rather than the FASN thioesterase domain."
+ },
+ "86": {
+  "samples": [
+   [
+    "FASN",
+    "OLAH",
+    "MCAT",
+    "AASDHPPT",
+    "ACOT7",
+    "ACOT1",
+    "ACOT2",
+    "ACOT4",
+    "ACOT6",
+    "ACOT8"
+   ]
+  ],
+  "tournament": [
+   "FASN",
+   "OLAH",
+   "MCAT",
+   "AASDHPPT",
+   "ACOT7",
+   "ACOT1",
+   "ACOT2",
+   "ACOT4",
+   "ACOT6",
+   "ACOT8"
+  ],
+  "confident": [
+   "FASN",
+   "OLAH",
+   "MCAT",
+   "AASDHPPT",
+   "ACOT7",
+   "ACOT1",
+   "ACOT2",
+   "ACOT4",
+   "ACOT6",
+   "ACOT8"
+  ],
+  "confidence": 0.7,
+  "doubt": "An unsaturated C18:1-ACP could be assigned to OLAH alone instead of the FASN/OLAH pair."
+ },
+ "87": {
+  "samples": [
+   [
+    "FASN",
+    "OLAH",
+    "MCAT",
+    "AASDHPPT",
+    "ACOT7",
+    "ACOT1",
+    "ACOT2",
+    "ACOT4",
+    "ACOT6",
+    "ACOT8"
+   ]
+  ],
+  "tournament": [
+   "FASN",
+   "OLAH",
+   "MCAT",
+   "AASDHPPT",
+   "ACOT7",
+   "ACOT1",
+   "ACOT2",
+   "ACOT4",
+   "ACOT6",
+   "ACOT8"
+  ],
+  "confident": [
+   "FASN",
+   "OLAH",
+   "MCAT",
+   "AASDHPPT",
+   "ACOT7",
+   "ACOT1",
+   "ACOT2",
+   "ACOT4",
+   "ACOT6",
+   "ACOT8"
+  ],
+  "confidence": 0.7,
+  "doubt": "Wrong if this C18:2-ACP hydrolysis is credited to OLAH alone rather than FASN's thioesterase activity."
+ },
+ "88": {
+  "samples": [
+   [
+    "ELOVL5",
+    "ELOVL2",
+    "ELOVL1",
+    "ELOVL3",
+    "ELOVL4",
+    "ELOVL6",
+    "ELOVL7",
+    "HACD1",
+    "HACD2",
+    "HACD3"
+   ]
+  ],
+  "tournament": [
+   "ELOVL5",
+   "ELOVL2",
+   "ELOVL1",
+   "ELOVL3",
+   "ELOVL4",
+   "ELOVL6",
+   "ELOVL7",
+   "HACD1",
+   "HACD2",
+   "HACD3"
+  ],
+  "confident": [
+   "ELOVL5",
+   "ELOVL2",
+   "ELOVL1",
+   "ELOVL3",
+   "ELOVL4",
+   "ELOVL6",
+   "ELOVL7",
+   "HACD1",
+   "HACD2",
+   "HACD3"
+  ],
+  "confidence": 0.45,
+  "doubt": "This lumped elongation may carry the same all-ELOVL GPR as the solved condensation steps, in which case the leading member could be ELOVL1 or ELOVL2 rather than ELOVL5."
+ },
+ "89": {
+  "samples": [
+   [
+    "SPHK1",
+    "SPHK2",
+    "CERK",
+    "SGPP1",
+    "SGPP2",
+    "SGPL1",
+    "PLPP1",
+    "PLPP2",
+    "PLPP3",
+    "LPIN1"
+   ]
+  ],
+  "tournament": [
+   "SPHK1",
+   "SPHK2",
+   "CERK",
+   "SGPP1",
+   "SGPP2",
+   "SGPL1",
+   "PLPP1",
+   "PLPP2",
+   "PLPP3",
+   "LPIN1"
+  ],
+  "confident": [
+   "SPHK1",
+   "SPHK2",
+   "CERK",
+   "SGPP1",
+   "SGPP2",
+   "SGPL1",
+   "PLPP1",
+   "PLPP2",
+   "PLPP3",
+   "LPIN1"
+  ],
+  "confidence": 0.7,
+  "doubt": "Cytosolic sphingosine kinase activity is shared, so a GPR naming SPHK2 (or both) would demote SPHK1."
+ },
+ "90": {
+  "samples": [
+   [
+    "ST8SIA5",
+    "ST8SIA1",
+    "ST8SIA3",
+    "ST8SIA2",
+    "ST8SIA4",
+    "ST8SIA6",
+    "ST3GAL1",
+    "ST3GAL2",
+    "ST3GAL3",
+    "ST3GAL4"
+   ]
+  ],
+  "tournament": [
+   "ST8SIA5",
+   "ST8SIA1",
+   "ST8SIA3",
+   "ST8SIA2",
+   "ST8SIA4",
+   "ST8SIA6",
+   "ST3GAL1",
+   "ST3GAL2",
+   "ST3GAL3",
+   "ST3GAL4"
+  ],
+  "confident": [
+   "ST8SIA5",
+   "ST8SIA1",
+   "ST8SIA3",
+   "ST8SIA2",
+   "ST8SIA4",
+   "ST8SIA6",
+   "ST3GAL1",
+   "ST3GAL2",
+   "ST3GAL3",
+   "ST3GAL4"
+  ],
+  "confidence": 0.5,
+  "doubt": "GD1c needs alpha2,8-sialylation of the OUTER sialic acid, which is ST8SIA5's specialty, but this database used ST8SIA1 for every other alpha2,8 ganglioside step."
+ },
+ "91": {
+  "samples": [
+   [
+    "ST8SIA5",
+    "ST8SIA1",
+    "ST8SIA3",
+    "ST8SIA2",
+    "ST8SIA4",
+    "ST8SIA6",
+    "ST3GAL1",
+    "ST3GAL2",
+    "ST3GAL3",
+    "ST3GAL4"
+   ]
+  ],
+  "tournament": [
+   "ST8SIA5",
+   "ST8SIA1",
+   "ST8SIA3",
+   "ST8SIA2",
+   "ST8SIA4",
+   "ST8SIA6",
+   "ST3GAL1",
+   "ST3GAL2",
+   "ST3GAL3",
+   "ST3GAL4"
+  ],
+  "confident": [
+   "ST8SIA5",
+   "ST8SIA1",
+   "ST8SIA3",
+   "ST8SIA2",
+   "ST8SIA4",
+   "ST8SIA6",
+   "ST3GAL1",
+   "ST3GAL2",
+   "ST3GAL3",
+   "ST3GAL4"
+  ],
+  "confidence": 0.55,
+  "doubt": "GD1a to GT1a is outer-branch alpha2,8 addition (ST8SIA5), but the curation repeatedly credits ST8SIA1 for alpha2,8 steps including GD1a to GT1b."
+ },
+ "92": {
+  "samples": [
+   [
+    "ST6GALNAC6",
+    "ST6GALNAC5",
+    "ST6GALNAC3",
+    "ST6GALNAC4",
+    "ST6GALNAC2",
+    "ST6GALNAC1",
+    "ST8SIA1",
+    "ST8SIA5",
+    "ST8SIA3",
+    "ST8SIA2"
+   ]
+  ],
+  "tournament": [
+   "ST6GALNAC6",
+   "ST6GALNAC5",
+   "ST6GALNAC3",
+   "ST6GALNAC4",
+   "ST6GALNAC2",
+   "ST6GALNAC1",
+   "ST8SIA1",
+   "ST8SIA5",
+   "ST8SIA3",
+   "ST8SIA2"
+  ],
+  "confident": [
+   "ST6GALNAC6",
+   "ST6GALNAC5",
+   "ST6GALNAC3",
+   "ST6GALNAC4",
+   "ST6GALNAC2",
+   "ST6GALNAC1",
+   "ST8SIA1",
+   "ST8SIA5",
+   "ST8SIA3",
+   "ST8SIA2"
+  ],
+  "confidence": 0.5,
+  "doubt": "The alpha-series GalNAc alpha2,6-sialylation is shared by ST6GALNAC3/4/5/6, so the credited member may be ST6GALNAC5 or the whole set led by ST6GALNAC3."
+ },
+ "93": {
+  "samples": [
+   [
+    "ST8SIA5",
+    "ST8SIA1",
+    "ST8SIA3",
+    "ST8SIA2",
+    "ST8SIA4",
+    "ST8SIA6",
+    "ST3GAL1",
+    "ST3GAL2",
+    "ST3GAL3",
+    "ST3GAL4"
+   ]
+  ],
+  "tournament": [
+   "ST8SIA5",
+   "ST8SIA1",
+   "ST8SIA3",
+   "ST8SIA2",
+   "ST8SIA4",
+   "ST8SIA6",
+   "ST3GAL1",
+   "ST3GAL2",
+   "ST3GAL3",
+   "ST3GAL4"
+  ],
+  "confident": [
+   "ST8SIA5",
+   "ST8SIA1",
+   "ST8SIA3",
+   "ST8SIA2",
+   "ST8SIA4",
+   "ST8SIA6",
+   "ST3GAL1",
+   "ST3GAL2",
+   "ST3GAL3",
+   "ST3GAL4"
+  ],
+  "confidence": 0.45,
+  "doubt": "GT1b to GQ1b is outer-branch alpha2,8 (ST8SIA5), but the solved GT1a to GQ1b reaction in this same dataset was assigned ST8SIA1, which may also cover this route."
+ },
+ "94": {
+  "samples": [
+   [
+    "ST6GALNAC6",
+    "ST6GALNAC5",
+    "ST6GALNAC3",
+    "ST6GALNAC4",
+    "ST6GALNAC2",
+    "ST6GALNAC1",
+    "ST8SIA1",
+    "ST8SIA5",
+    "ST8SIA3",
+    "ST8SIA2"
+   ]
+  ],
+  "tournament": [
+   "ST6GALNAC6",
+   "ST6GALNAC5",
+   "ST6GALNAC3",
+   "ST6GALNAC4",
+   "ST6GALNAC2",
+   "ST6GALNAC1",
+   "ST8SIA1",
+   "ST8SIA5",
+   "ST8SIA3",
+   "ST8SIA2"
+  ],
+  "confident": [
+   "ST6GALNAC6",
+   "ST6GALNAC5",
+   "ST6GALNAC3",
+   "ST6GALNAC4",
+   "ST6GALNAC2",
+   "ST6GALNAC1",
+   "ST8SIA1",
+   "ST8SIA5",
+   "ST8SIA3",
+   "ST8SIA2"
+  ],
+  "confidence": 0.5,
+  "doubt": "GQ1b-alpha synthesis is ST6GalNAc-VI chemistry, but the annotation may list the ST6GALNAC3/4/5/6 set headed by ST6GALNAC3 or ST6GALNAC5."
+ },
+ "95": {
+  "samples": [
+   [
+    "ST8SIA1",
+    "ST8SIA5",
+    "ST8SIA3",
+    "ST8SIA2",
+    "ST8SIA4",
+    "ST8SIA6",
+    "ST3GAL1",
+    "ST3GAL2",
+    "ST3GAL3",
+    "ST3GAL4"
+   ]
+  ],
+  "tournament": [
+   "ST8SIA1",
+   "ST8SIA5",
+   "ST8SIA3",
+   "ST8SIA2",
+   "ST8SIA4",
+   "ST8SIA6",
+   "ST3GAL1",
+   "ST3GAL2",
+   "ST3GAL3",
+   "ST3GAL4"
+  ],
+  "confident": [
+   "ST8SIA1",
+   "ST8SIA5",
+   "ST8SIA3",
+   "ST8SIA2",
+   "ST8SIA4",
+   "ST8SIA6",
+   "ST3GAL1",
+   "ST3GAL2",
+   "ST3GAL3",
+   "ST3GAL4"
+  ],
+  "confidence": 0.7,
+  "doubt": "GM2 to GD2 is inner-sialic-acid alpha2,8 addition (GD3-synthase-type), so only an unusual ST8SIA5 assignment would make this wrong."
+ },
+ "96": {
+  "samples": [
+   [
+    "B3GNT5",
+    "B3GNT2",
+    "B3GNT3",
+    "B3GNT4",
+    "B4GAT1",
+    "B3GNT6",
+    "B3GNT7",
+    "B3GNT8",
+    "B3GNT9",
+    "B3GNTL1"
+   ]
+  ],
+  "tournament": [
+   "B3GNT5",
+   "B3GNT2",
+   "B3GNT3",
+   "B3GNT4",
+   "B4GAT1",
+   "B3GNT6",
+   "B3GNT7",
+   "B3GNT8",
+   "B3GNT9",
+   "B3GNTL1"
+  ],
+  "confident": [
+   "B3GNT5",
+   "B3GNT2",
+   "B3GNT3",
+   "B3GNT4",
+   "B4GAT1",
+   "B3GNT6",
+   "B3GNT7",
+   "B3GNT8",
+   "B3GNT9",
+   "B3GNTL1"
+  ],
+  "confidence": 0.75,
+  "doubt": "B3GNT5 is the dedicated lactotriaosylceramide synthase, so this is wrong only if the GPR lumps in the B3GNT2/3/4 elongation set used for the later steps."
+ },
+ "97": {
+  "samples": [
+   [
+    "FUT3",
+    "FUT5",
+    "FUT6",
+    "FUT4",
+    "FUT9",
+    "FUT1",
+    "FUT2",
+    "FUT7",
+    "FUT10",
+    "FUT11"
+   ]
+  ],
+  "tournament": [
+   "FUT3",
+   "FUT4",
+   "FUT5",
+   "FUT6",
+   "FUT9",
+   "FUT1",
+   "FUT2",
+   "FUT7",
+   "FUT10",
+   "FUT11"
+  ],
+  "confident": [
+   "FUT3",
+   "FUT4",
+   "FUT5",
+   "FUT6",
+   "FUT9",
+   "FUT1",
+   "FUT2",
+   "FUT7",
+   "FUT10",
+   "FUT11"
+  ],
+  "confidence": 0.5,
+  "doubt": "If this step is a second alpha1,2 fucosylation of the neolacto core rather than an alpha1,3 addition, the catalysts are FUT1/FUT2."
+ },
+ "98": {
+  "samples": [
+   [
+    "EPHX1",
+    "EPHX2",
+    "LTA4H",
+    "EPHX3",
+    "EPHX4",
+    "ALOX5",
+    "ALOX12",
+    "ALOX15",
+    "ALOX15B",
+    "ALOX5AP"
+   ]
+  ],
+  "tournament": [
+   "EPHX1",
+   "EPHX2",
+   "LTA4H",
+   "EPHX3",
+   "EPHX4",
+   "ALOX5",
+   "ALOX12",
+   "ALOX15",
+   "ALOX15B",
+   "ALOX5AP"
+  ],
+  "confident": [
+   "EPHX1",
+   "EPHX2",
+   "LTA4H",
+   "EPHX3",
+   "EPHX4",
+   "ALOX5",
+   "ALOX12",
+   "ALOX15",
+   "ALOX15B",
+   "ALOX5AP"
+  ],
+  "confidence": 0.6,
+  "doubt": "LXB4 (unlike LXA4) is classically made by an LXB4 synthase activity, so the 14-hydroxyl route could be credited to LTA4H rather than the epoxide hydrolases."
+ },
+ "99": {
+  "samples": [
+   [
+    "ALOX12",
+    "ALOXE3",
+    "ALOX15",
+    "ALOX12B",
+    "ALOX15B",
+    "ALOX5",
+    "ALOX5AP",
+    "EPHX1",
+    "EPHX2",
+    "EPHX3"
+   ]
+  ],
+  "tournament": [
+   "ALOX12",
+   "ALOXE3",
+   "ALOX15",
+   "ALOX12B",
+   "ALOX15B",
+   "ALOX5",
+   "ALOX5AP",
+   "EPHX1",
+   "EPHX2",
+   "EPHX3"
+  ],
+  "confident": [
+   "ALOX12",
+   "ALOXE3",
+   "ALOX15",
+   "ALOX12B",
+   "ALOX15B",
+   "ALOX5",
+   "ALOX5AP",
+   "EPHX1",
+   "EPHX2",
+   "EPHX3"
+  ],
+  "confidence": 0.55,
+  "doubt": "Hepoxilin synthase activity is also intrinsic to ALOXE3 (eLOX3), which would be credited if the curator separated the hepoxilin step from the 12-LOX oxygenation."
+ },
+ "0": {
+  "samples": [
+   [
+    "JAK1",
+    "JAK2",
+    "TYK2",
+    "IL6ST",
+    "IL6R",
+    "IL6",
+    "PTPN11",
+    "JAK3",
+    "SRC",
+    "FYN"
+   ]
+  ],
+  "tournament": [
+   "JAK1",
+   "JAK2",
+   "TYK2",
+   "IL6ST",
+   "IL6R",
+   "IL6",
+   "PTPN11",
+   "JAK3",
+   "SRC",
+   "FYN"
+  ],
+  "confident": [
+   "JAK1",
+   "JAK2",
+   "TYK2",
+   "IL6ST",
+   "IL6R",
+   "IL6",
+   "PTPN11",
+   "JAK3",
+   "SRC",
+   "FYN"
+  ],
+  "confidence": 0.55,
+  "doubt": "If Reactome credits only JAK2 (or names the whole hexamer complex with JAK1 absent from the gp130-associated set), JAK1 is wrong."
+ },
+ "1": {
+  "samples": [
+   [
+    "HERC5",
+    "TRIM25",
+    "ARIH1",
+    "HERC6",
+    "UBE2L6",
+    "UBA7",
+    "ISG15",
+    "USP18",
+    "ARIH2",
+    "TRIM6"
+   ]
+  ],
+  "tournament": [
+   "HERC5",
+   "TRIM25",
+   "ARIH1",
+   "UBE2L6",
+   "HERC6",
+   "UBA7",
+   "ISG15",
+   "USP18",
+   "ARIH2",
+   "TRIM6"
+  ],
+  "confident": [
+   "HERC5",
+   "TRIM25",
+   "ARIH1",
+   "UBE2L6",
+   "HERC6",
+   "UBA7",
+   "ISG15",
+   "USP18",
+   "ARIH2",
+   "TRIM6"
+  ],
+  "confidence": 0.8,
+  "doubt": "If this generic-target reaction is curated with HERC6 or UBE2L6 alone rather than the ARIH1/HERC5/TRIM25 E3 set used in every analogous solved reaction."
+ },
+ "2": {
+  "samples": [
+   [
+    "SOS1",
+    "GRB2",
+    "SOS2",
+    "RASGRF1",
+    "RASGRF2",
+    "SHC1",
+    "RASGRP1",
+    "RASGRP2",
+    "RASGRP3",
+    "RASGRP4"
+   ]
+  ],
+  "tournament": [
+   "SOS1",
+   "GRB2",
+   "SHC1",
+   "SOS2",
+   "RASGRF1",
+   "RASGRF2",
+   "RASGRP1",
+   "RASGRP2",
+   "RASGRP3",
+   "RASGRP4"
+  ],
+  "confident": [
+   "SOS1",
+   "GRB2",
+   "SHC1",
+   "SOS2",
+   "RASGRF1",
+   "RASGRF2",
+   "RASGRP1",
+   "RASGRP2",
+   "RASGRP3",
+   "RASGRP4"
+  ],
+  "confidence": 0.6,
+  "doubt": "A bare RAS exchange with no complex context could equally be the Ca2+/DAG-driven RASGRF or RASGRP instance rather than the SOS1/GRB2 receptor route."
+ },
+ "3": {
+  "samples": [
+   [
+    "PDGFRB",
+    "PDGFRA",
+    "PDGFB",
+    "PDGFA",
+    "PDGFC",
+    "PDGFD",
+    "PLCG1",
+    "PLCG2",
+    "SRC",
+    "FYN"
+   ]
+  ],
+  "tournament": [
+   "PDGFRB",
+   "PDGFRA",
+   "PDGFB",
+   "PDGFA",
+   "PDGFC",
+   "PDGFD",
+   "PLCG1",
+   "PLCG2",
+   "SRC",
+   "FYN"
+  ],
+  "confident": [
+   "PDGFRB",
+   "PDGFRA",
+   "PDGFB",
+   "PDGFA",
+   "PDGFC",
+   "PDGFD",
+   "PLCG1",
+   "PLCG2",
+   "SRC",
+   "FYN"
+  ],
+  "confidence": 0.5,
+  "doubt": "The catalyst is the whole PDGF:receptor-dimer complex, so if the curated dimer is alpha-only the gene called out would be PDGFRA, not PDGFRB."
+ },
+ "4": {
+  "samples": [
+   [
+    "BAAT",
+    "SLC27A5",
+    "GLYAT",
+    "ACOT8",
+    "GLYATL1",
+    "GLYATL2",
+    "GLYATL3",
+    "NAT8",
+    "NAT8B",
+    "ACSM1"
+   ]
+  ],
+  "tournament": [
+   "BAAT",
+   "SLC27A5",
+   "ACOT8",
+   "GLYAT",
+   "GLYATL1",
+   "GLYATL2",
+   "GLYATL3",
+   "NAT8",
+   "NAT8B",
+   "ACSM1"
+  ],
+  "confident": [
+   "BAAT",
+   "SLC27A5",
+   "ACOT8",
+   "GLYAT",
+   "GLYATL1",
+   "GLYATL2",
+   "GLYATL3",
+   "NAT8",
+   "NAT8B",
+   "ACSM1"
+  ],
+  "confidence": 0.85,
+  "doubt": "Only wrong if the cytosolic conjugation step is attributed to the bile acid-CoA ligase SLC27A5 rather than the amino acid N-acyltransferase BAAT."
+ },
+ "5": {
+  "samples": [
+   [
+    "FURIN",
+    "PCSK5",
+    "PCSK6",
+    "PCSK7",
+    "PCSK4",
+    "PCSK1",
+    "PCSK2",
+    "PCSK9",
+    "MBTPS1",
+    "MBTPS2"
+   ]
+  ],
+  "tournament": [
+   "FURIN",
+   "PCSK5",
+   "PCSK6",
+   "PCSK7",
+   "PCSK4",
+   "PCSK1",
+   "PCSK2",
+   "PCSK9",
+   "MBTPS1",
+   "MBTPS2"
+  ],
+  "confident": [
+   "FURIN",
+   "PCSK5",
+   "PCSK6",
+   "PCSK7",
+   "PCSK4",
+   "PCSK1",
+   "PCSK2",
+   "PCSK9",
+   "MBTPS1",
+   "MBTPS2"
+  ],
+  "confidence": 0.75,
+  "doubt": "PACE4/PCSK5 also cleaves the vitamin-K-dependent factor propeptides, so the curated catalyst could be PCSK5/PCSK6 instead of FURIN."
+ },
+ "6": {
+  "samples": [
+   [
+    "UCP1",
+    "UCP2",
+    "UCP3",
+    "SLC25A27",
+    "SLC25A14",
+    "SLC25A30",
+    "SLC25A4",
+    "SLC25A5",
+    "SLC25A6",
+    "SLC25A31"
+   ]
+  ],
+  "tournament": [
+   "UCP1",
+   "UCP2",
+   "UCP3",
+   "SLC25A27",
+   "SLC25A14",
+   "SLC25A30",
+   "SLC25A4",
+   "SLC25A5",
+   "SLC25A6",
+   "SLC25A31"
+  ],
+  "confident": [
+   "UCP1",
+   "UCP2",
+   "UCP3",
+   "SLC25A27",
+   "SLC25A14",
+   "SLC25A30",
+   "SLC25A4",
+   "SLC25A5",
+   "SLC25A6",
+   "SLC25A31"
+  ],
+  "confidence": 0.5,
+  "doubt": "If the 'UCP dimer' entity is a generic set curated on UCP2/UCP3 rather than the brown-fat UCP1."
+ },
+ "7": {
+  "samples": [
+   [
+    "GNAI1",
+    "GNAI2",
+    "GNAI3",
+    "GNAO1",
+    "GNAS",
+    "GNAZ",
+    "GNAQ",
+    "GNA11",
+    "GNA12",
+    "GNA13"
+   ]
+  ],
+  "tournament": [
+   "GNAI1",
+   "GNAI2",
+   "GNAI3",
+   "GNAO1",
+   "GNAS",
+   "GNAQ",
+   "GNA11",
+   "GNA12",
+   "GNA13",
+   "GNAZ"
+  ],
+  "confident": [
+   "GNAI1",
+   "GNAI2",
+   "GNAI3",
+   "GNAO1",
+   "GNAS",
+   "GNAQ",
+   "GNA11",
+   "GNA12",
+   "GNA13",
+   "GNAZ"
+  ],
+  "confidence": 0.2,
+  "doubt": "The reaction is a generic GTP-for-GDP swap with no subtype named, so it could belong to any Galpha family (Gs, Gq, G12/13) rather than Gi."
+ },
+ "8": {
+  "samples": [
+   [
+    "RASGRP2",
+    "RAPGEF1",
+    "RAPGEF3",
+    "RAPGEF2",
+    "RAPGEF4",
+    "RAPGEF5",
+    "RAPGEF6",
+    "RASGRP1",
+    "RASGRP3",
+    "RASGRP4"
+   ]
+  ],
+  "tournament": [
+   "RASGRP2",
+   "RAPGEF3",
+   "RAPGEF4",
+   "RAPGEF1",
+   "RAPGEF2",
+   "RAPGEF5",
+   "RAPGEF6",
+   "RASGRP1",
+   "RASGRP3",
+   "RASGRP4"
+  ],
+  "confident": [
+   "RASGRP2",
+   "RAPGEF3",
+   "RAPGEF4",
+   "RAPGEF1",
+   "RAPGEF2",
+   "RAPGEF5",
+   "RAPGEF6",
+   "RASGRP1",
+   "RASGRP3",
+   "RASGRP4"
+  ],
+  "confidence": 0.3,
+  "doubt": "If this Rap1 exchange sits in a cAMP/EPAC or integrin-CRK-C3G context rather than the platelet CalDAG-GEFI reaction, RAPGEF3/4 or RAPGEF1 wins."
+ },
+ "9": {
+  "samples": [
+   [
+    "PIK3CA",
+    "PIK3R1",
+    "PIK3CB",
+    "PIK3R2",
+    "PIK3CD",
+    "PIK3CG",
+    "PIK3R3",
+    "PIK3R5",
+    "PIK3R6",
+    "GAB1"
+   ]
+  ],
+  "tournament": [
+   "PIK3CA",
+   "PIK3R1",
+   "PIK3CB",
+   "PIK3R2",
+   "PIK3CD",
+   "PIK3CG",
+   "PIK3R3",
+   "PIK3R5",
+   "PIK3R6",
+   "GAB1"
+  ],
+  "confident": [
+   "PIK3CA",
+   "PIK3R1",
+   "PIK3CB",
+   "PIK3R2",
+   "PIK3CD",
+   "PIK3CG",
+   "PIK3R3",
+   "PIK3R5",
+   "PIK3R6",
+   "GAB1"
+  ],
+  "confidence": 0.7,
+  "doubt": "A leukocyte- or GPCR-driven instance would be curated on PIK3CD or PIK3CG/PIK3R5 instead of the ubiquitous PIK3CA:PIK3R1 pair."
+ },
+ "10": {
+  "samples": [
+   [
+    "ITPK1",
+    "IPMK",
+    "IPPK",
+    "MINPP1",
+    "ITPKA",
+    "ITPKB",
+    "ITPKC",
+    "IP6K1",
+    "IP6K2",
+    "INPP5A"
+   ]
+  ],
+  "tournament": [
+   "ITPK1",
+   "IPMK",
+   "IPPK",
+   "ITPKB",
+   "ITPKA",
+   "ITPKC",
+   "MINPP1",
+   "INPP5A",
+   "IP6K1",
+   "IP6K2"
+  ],
+  "confident": [
+   "ITPK1",
+   "IPMK",
+   "IPPK",
+   "ITPKB",
+   "ITPKA",
+   "ITPKC",
+   "MINPP1",
+   "INPP5A",
+   "IP6K1",
+   "IP6K2"
+  ],
+  "confidence": 0.15,
+  "doubt": "This is a compartment translocation, not a chemical step, so the annotated 'catalyst' may be the nuclear consumer IPMK (or nothing at all) rather than the cytosolic producer ITPK1."
+ },
+ "11": {
+  "samples": [
+   [
+    "FGFR2",
+    "FGF1",
+    "FGF2",
+    "FGF4",
+    "FGF6",
+    "FGF9",
+    "FGF17",
+    "FGF18",
+    "FGF8",
+    "FGF16"
+   ]
+  ],
+  "tournament": [
+   "FGFR2",
+   "FGF1",
+   "FGF2",
+   "FGF4",
+   "FGF6",
+   "FGF9",
+   "FGF17",
+   "FGF18",
+   "FGF8",
+   "FGF16"
+  ],
+  "confident": [
+   "FGFR2",
+   "FGF1",
+   "FGF2",
+   "FGF4",
+   "FGF6",
+   "FGF9",
+   "FGF17",
+   "FGF18",
+   "FGF8",
+   "FGF16"
+  ],
+  "confidence": 0.7,
+  "doubt": "The catalyst entity is the ligand-bound dimer, so if the gene key lists only the FGF ligand set the receptor FGFR2 would not be the recorded answer."
+ },
+ "12": {
+  "samples": [
+   [
+    "FGFR1",
+    "FGF1",
+    "FGF10",
+    "FGF7",
+    "FGF2",
+    "FGF4",
+    "FGF5",
+    "FGF6",
+    "FGF3",
+    "FGF8"
+   ]
+  ],
+  "tournament": [
+   "FGFR1",
+   "FGF1",
+   "FGF10",
+   "FGF7",
+   "FGF2",
+   "FGF4",
+   "FGF5",
+   "FGF6",
+   "FGF3",
+   "FGF8"
+  ],
+  "confident": [
+   "FGFR1",
+   "FGF1",
+   "FGF10",
+   "FGF7",
+   "FGF2",
+   "FGF4",
+   "FGF5",
+   "FGF6",
+   "FGF3",
+   "FGF8"
+  ],
+  "confidence": 0.7,
+  "doubt": "Same risk: the trans-autophosphorylation catalyst may be recorded as the bound FGF ligand set rather than FGFR1 itself."
+ },
+ "13": {
+  "samples": [
+   [
+    "MAPK1",
+    "MAPK3",
+    "PDPK1",
+    "MAPK7",
+    "RPS6KA1",
+    "RPS6KA2",
+    "RPS6KA3",
+    "RPS6KA6",
+    "RPS6KA4",
+    "RPS6KA5"
+   ]
+  ],
+  "tournament": [
+   "MAPK1",
+   "MAPK3",
+   "PDPK1",
+   "MAPK7",
+   "RPS6KA1",
+   "RPS6KA2",
+   "RPS6KA3",
+   "RPS6KA6",
+   "RPS6KA4",
+   "RPS6KA5"
+  ],
+  "confident": [
+   "MAPK1",
+   "MAPK3",
+   "PDPK1",
+   "MAPK7",
+   "RPS6KA1",
+   "RPS6KA2",
+   "RPS6KA3",
+   "RPS6KA6",
+   "RPS6KA4",
+   "RPS6KA5"
+  ],
+  "confidence": 0.5,
+  "doubt": "If the nucleoplasmic RSK activation step curated here is the PDPK1 hydrophobic/turn-motif step or an RSK autophosphorylation rather than the ERK1/2 step."
+ },
+ "14": {
+  "samples": [
+   [
+    "CSK",
+    "MATK",
+    "PAG1",
+    "LCK",
+    "FYN",
+    "SRC",
+    "YES1",
+    "LYN",
+    "HCK",
+    "FGR"
+   ]
+  ],
+  "tournament": [
+   "CSK",
+   "MATK",
+   "PAG1",
+   "LCK",
+   "FYN",
+   "SRC",
+   "YES1",
+   "LYN",
+   "HCK",
+   "FGR"
+  ],
+  "confident": [
+   "CSK",
+   "MATK",
+   "PAG1",
+   "LCK",
+   "FYN",
+   "SRC",
+   "YES1",
+   "LYN",
+   "HCK",
+   "FGR"
+  ],
+  "confidence": 0.85,
+  "doubt": "Only wrong if the inhibitory Y505 phosphorylation in this T-cell complex is attributed to the CSK homolog MATK/CHK."
+ },
+ "15": {
+  "samples": [
+   [
+    "FGFR1",
+    "FGF1",
+    "FGF2",
+    "FGF4",
+    "FGF6",
+    "FGF8",
+    "FGF9",
+    "FGF17",
+    "FGF18",
+    "FGF20"
+   ]
+  ],
+  "tournament": [
+   "FGFR1",
+   "FGF1",
+   "FGF2",
+   "FGF4",
+   "FGF6",
+   "FGF8",
+   "FGF9",
+   "FGF17",
+   "FGF18",
+   "FGF20"
+  ],
+  "confident": [
+   "FGFR1",
+   "FGF1",
+   "FGF2",
+   "FGF4",
+   "FGF6",
+   "FGF8",
+   "FGF9",
+   "FGF17",
+   "FGF18",
+   "FGF20"
+  ],
+  "confidence": 0.7,
+  "doubt": "The P252X mutant dimer's catalyst may be recorded as the FGF ligand set rather than the receptor gene FGFR1."
+ },
+ "16": {
+  "samples": [
+   [
+    "MAPK1",
+    "MAPK3",
+    "RPS6KA1",
+    "RPS6KA3",
+    "RPS6KA2",
+    "RPS6KA6",
+    "AKT1",
+    "AKT2",
+    "AKT3",
+    "PRKACA"
+   ]
+  ],
+  "tournament": [
+   "MAPK1",
+   "MAPK3",
+   "RPS6KA1",
+   "PRKACA",
+   "RPS6KA2",
+   "RPS6KA3",
+   "RPS6KA6",
+   "AKT1",
+   "AKT2",
+   "AKT3"
+  ],
+  "confident": [
+   "MAPK1",
+   "MAPK3",
+   "RPS6KA1",
+   "PRKACA",
+   "RPS6KA2",
+   "RPS6KA3",
+   "RPS6KA6",
+   "AKT1",
+   "AKT2",
+   "AKT3"
+  ],
+  "confidence": 0.35,
+  "doubt": "BAD Ser91 is a PKA-annotated site in UniProt, so if the curator followed that assignment (rather than bundling it with the ERK-specific BIM Ser69 site) the catalyst is PRKACA or an RSK."
+ },
+ "17": {
+  "samples": [
+   [
+    "GZMB",
+    "CASP8",
+    "CASP9",
+    "CASP10",
+    "CASP3",
+    "CASP2",
+    "CASP7",
+    "CASP6",
+    "CASP1",
+    "CASP4"
+   ]
+  ],
+  "tournament": [
+   "GZMB",
+   "CASP8",
+   "CASP9",
+   "CASP3",
+   "CASP10",
+   "CASP2",
+   "CASP7",
+   "CASP6",
+   "CASP1",
+   "CASP4"
+  ],
+  "confident": [
+   "GZMB",
+   "CASP8",
+   "CASP9",
+   "CASP3",
+   "CASP10",
+   "CASP2",
+   "CASP7",
+   "CASP6",
+   "CASP1",
+   "CASP4"
+  ],
+  "confidence": 0.5,
+  "doubt": "If procaspase-2 and -3 are activated here by an upstream apical caspase (CASP8/CASP9) in a death-receptor or apoptosome context rather than by granzyme B."
+ },
+ "18": {
+  "samples": [
+   [
+    "CASP3",
+    "CASP7",
+    "CASP6",
+    "CASP8",
+    "CASP9",
+    "CASP2",
+    "CASP10",
+    "GZMB",
+    "CASP1",
+    "CASP4"
+   ]
+  ],
+  "tournament": [
+   "CASP3",
+   "CASP7",
+   "CASP6",
+   "CASP8",
+   "CASP9",
+   "CASP2",
+   "CASP10",
+   "CASP1",
+   "GZMB",
+   "CASP4"
+  ],
+  "confident": [
+   "CASP3",
+   "CASP7",
+   "CASP6",
+   "CASP8",
+   "CASP9",
+   "CASP2",
+   "CASP10",
+   "CASP1",
+   "GZMB",
+   "CASP4"
+  ],
+  "confidence": 0.85,
+  "doubt": "PAK2 D212 is the canonical caspase-3 site; only a curation crediting caspase-7 or granzyme B for the same cut would make this wrong."
+ },
+ "19": {
+  "samples": [
+   [
+    "FURIN",
+    "PCSK5",
+    "PCSK6",
+    "PCSK7",
+    "ADAM10",
+    "ADAM17",
+    "ADAM9",
+    "PCSK1",
+    "PCSK2",
+    "PCSK4"
+   ]
+  ],
+  "tournament": [
+   "FURIN",
+   "PCSK5",
+   "PCSK6",
+   "PCSK7",
+   "PCSK1",
+   "PCSK2",
+   "PCSK4",
+   "ADAM10",
+   "ADAM17",
+   "ADAM9"
+  ],
+  "confident": [
+   "FURIN",
+   "PCSK5",
+   "PCSK6",
+   "PCSK7",
+   "PCSK1",
+   "PCSK2",
+   "PCSK4",
+   "ADAM10",
+   "ADAM17",
+   "ADAM9"
+  ],
+  "confidence": 0.6,
+  "doubt": "If Reactome curated the collagen XXIII ectodomain shedding as an ADAM10/ADAM17 event rather than the furin-mediated shedding shown for the transmembrane collagens."
+ },
+ "20": {
+  "samples": [
+   [
+    "MMP2",
+    "MMP9",
+    "MMP3",
+    "MMP14",
+    "MMP13",
+    "MMP1",
+    "MMP8",
+    "BMP1",
+    "TLL1",
+    "TLL2"
+   ]
+  ],
+  "tournament": [
+   "MMP2",
+   "MMP3",
+   "MMP9",
+   "MMP14",
+   "MMP13",
+   "MMP1",
+   "MMP8",
+   "BMP1",
+   "TLL1",
+   "TLL2"
+  ],
+  "confident": [
+   "MMP2",
+   "MMP3",
+   "MMP9",
+   "MMP14",
+   "MMP13",
+   "MMP1",
+   "MMP8",
+   "BMP1",
+   "TLL1",
+   "TLL2"
+  ],
+  "confidence": 0.22,
+  "doubt": "Collagen XVI is a FACIT collagen not on the classic gelatinase substrate list, so MMP3 (which handles the FACIT collagen IX) or a BMP1/TLL procollagen-processing step is quite plausible."
+ },
+ "21": {
+  "samples": [
+   [
+    "MTOR",
+    "RICTOR",
+    "MAPKAP1",
+    "MLST8",
+    "PRR5",
+    "PRR5L",
+    "PRKDC",
+    "ILK",
+    "PDPK1",
+    "AKT1"
+   ]
+  ],
+  "tournament": [
+   "MTOR",
+   "RICTOR",
+   "MAPKAP1",
+   "MLST8",
+   "PRR5",
+   "PRR5L",
+   "PRKDC",
+   "ILK",
+   "PDPK1",
+   "AKT1"
+  ],
+  "confident": [
+   "MTOR",
+   "RICTOR",
+   "MAPKAP1",
+   "MLST8",
+   "PRR5",
+   "PRR5L",
+   "PRKDC",
+   "ILK",
+   "PDPK1",
+   "AKT1"
+  ],
+  "confidence": 0.7,
+  "doubt": "If the S473 kinase in this curation is DNA-PK (PRKDC) or ILK rather than mTORC2, MTOR loses."
+ },
+ "22": {
+  "samples": [
+   [
+    "AKT1",
+    "AKT2",
+    "AKT3",
+    "SGK1",
+    "SGK2",
+    "SGK3",
+    "RPS6KA1",
+    "RPS6KA2",
+    "RPS6KA3",
+    "RPS6KA6"
+   ]
+  ],
+  "tournament": [
+   "AKT1",
+   "AKT2",
+   "AKT3",
+   "RPS6KA1",
+   "RPS6KA2",
+   "RPS6KA3",
+   "RPS6KA6",
+   "SGK1",
+   "SGK2",
+   "SGK3"
+  ],
+  "confident": [
+   "AKT1",
+   "AKT2",
+   "AKT3",
+   "RPS6KA1",
+   "RPS6KA2",
+   "RPS6KA3",
+   "RPS6KA6",
+   "SGK1",
+   "SGK2",
+   "SGK3"
+  ],
+  "confidence": 0.85,
+  "doubt": "An identical solved reaction gives AKT1/2/3; only a duplicate row curated on RSK or SGK for the same S351 site would break it."
+ },
+ "23": {
+  "samples": [
+   [
+    "TRPC1",
+    "TRPC6",
+    "TRPC3",
+    "TRPC4",
+    "TRPC5",
+    "TRPC7",
+    "TRPV1",
+    "TRPV2",
+    "TRPV3",
+    "TRPV5"
+   ]
+  ],
+  "tournament": [
+   "TRPV1",
+   "TRPC3",
+   "TRPC6",
+   "TRPV2",
+   "TRPV3",
+   "TRPV5",
+   "TRPC4",
+   "TRPC5",
+   "TRPC1",
+   "TRPC7"
+  ],
+  "confident": [
+   "TRPV1",
+   "TRPC3",
+   "TRPC6",
+   "TRPV2",
+   "TRPV3",
+   "TRPV5",
+   "TRPC4",
+   "TRPC5",
+   "TRPC1",
+   "TRPC7"
+  ],
+  "confidence": 0.15,
+  "doubt": "The reaction string is completely generic Ca2+ influx, so any TRP family member (including a second TRPC1 row) is equally consistent with it."
+ },
+ "24": {
+  "samples": [
+   [
+    "TBK1",
+    "IKBKE",
+    "ULK1",
+    "IKBKB",
+    "CHUK",
+    "IKBKG",
+    "ULK2",
+    "TBKBP1",
+    "TANK",
+    "AZI2"
+   ]
+  ],
+  "tournament": [
+   "TBK1",
+   "IKBKE",
+   "IKBKB",
+   "CHUK",
+   "IKBKG",
+   "ULK1",
+   "ULK2",
+   "TBKBP1",
+   "TANK",
+   "AZI2"
+  ],
+  "confident": [
+   "TBK1",
+   "IKBKE",
+   "IKBKB",
+   "CHUK",
+   "IKBKG",
+   "ULK1",
+   "ULK2",
+   "TBKBP1",
+   "TANK",
+   "AZI2"
+  ],
+  "confidence": 0.85,
+  "doubt": "OPTN S177 is the canonical TBK1 site; only an IKBKE-curated duplicate would displace it."
+ },
+ "25": {
+  "samples": [
+   [
+    "VAV1",
+    "VAV2",
+    "VAV3",
+    "DOCK2",
+    "TIAM1",
+    "DOCK1",
+    "TRIO",
+    "PREX1",
+    "PREX2",
+    "ARHGEF6"
+   ]
+  ],
+  "tournament": [
+   "VAV1",
+   "VAV2",
+   "VAV3",
+   "DOCK2",
+   "DOCK1",
+   "TIAM1",
+   "TRIO",
+   "PREX1",
+   "PREX2",
+   "ARHGEF6"
+  ],
+  "confident": [
+   "VAV1",
+   "VAV2",
+   "VAV3",
+   "DOCK2",
+   "DOCK1",
+   "TIAM1",
+   "TRIO",
+   "PREX1",
+   "PREX2",
+   "ARHGEF6"
+  ],
+  "confidence": 0.8,
+  "doubt": "The complex already contains p-VAV generically, so if that entity resolves to VAV2/VAV3 or the T-cell GEF is curated as DOCK2, VAV1 is wrong."
+ },
+ "26": {
+  "samples": [
+   [
+    "MMP9",
+    "MMP2",
+    "MMP14",
+    "MMP3",
+    "MMP7",
+    "CASP3",
+    "CAPN1",
+    "CAPN2",
+    "ADAM10",
+    "ADAM17"
+   ]
+  ],
+  "tournament": [
+   "MMP9",
+   "MMP2",
+   "MMP14",
+   "MMP3",
+   "MMP7",
+   "CASP3",
+   "CAPN1",
+   "CAPN2",
+   "ADAM10",
+   "ADAM17"
+  ],
+  "confident": [
+   "MMP9",
+   "MMP2",
+   "MMP14",
+   "MMP3",
+   "MMP7",
+   "CASP3",
+   "CAPN1",
+   "CAPN2",
+   "ADAM10",
+   "ADAM17"
+  ],
+  "confidence": 0.35,
+  "doubt": "ZO-1 is a cytoplasmic plaque protein, so the curated cleaver could be caspase-3 or a calpain rather than the extracellular gelatinase MMP9."
+ },
+ "27": {
+  "samples": [
+   [
+    "MMP3",
+    "MMP7",
+    "MMP19",
+    "MMP9",
+    "MMP2",
+    "MMP14",
+    "MMP13",
+    "MMP1",
+    "ELANE",
+    "CTSG"
+   ]
+  ],
+  "tournament": [
+   "MMP3",
+   "MMP19",
+   "MMP9",
+   "MMP2",
+   "MMP7",
+   "MMP13",
+   "MMP14",
+   "MMP1",
+   "ELANE",
+   "CTSG"
+  ],
+  "confident": [
+   "MMP3",
+   "MMP19",
+   "MMP9",
+   "MMP2",
+   "MMP7",
+   "MMP13",
+   "MMP14",
+   "MMP1",
+   "ELANE",
+   "CTSG"
+  ],
+  "confidence": 0.3,
+  "doubt": "Nidogen-1 is the signature MMP-19 substrate, so this row may well be curated on MMP19 rather than stromelysin MMP3."
+ },
+ "28": {
+  "samples": [
+   [
+    "PLK1",
+    "NEK2",
+    "AURKA",
+    "CDK1",
+    "CCNB1",
+    "PLK4",
+    "PLK2",
+    "PLK3",
+    "NINL",
+    "CEP250"
+   ]
+  ],
+  "tournament": [
+   "PLK1",
+   "NEK2",
+   "AURKA",
+   "CDK1",
+   "CCNB1",
+   "PLK4",
+   "PLK2",
+   "PLK3",
+   "NINL",
+   "CEP250"
+  ],
+  "confident": [
+   "PLK1",
+   "NEK2",
+   "AURKA",
+   "CDK1",
+   "CCNB1",
+   "PLK4",
+   "PLK2",
+   "PLK3",
+   "NINL",
+   "CEP250"
+  ],
+  "confidence": 0.7,
+  "doubt": "Nlp is also a NEK2 substrate at the centrosome, so a NEK2-curated displacement reaction would beat PLK1."
+ },
+ "29": {
+  "samples": [
+   [
+    "PRKAA1",
+    "PRKAA2",
+    "PRKAB1",
+    "PRKAB2",
+    "PRKAG1",
+    "PRKAG2",
+    "PRKAG3",
+    "STK11",
+    "CAMKK2",
+    "CAMKK1"
+   ]
+  ],
+  "tournament": [
+   "PRKAA1",
+   "PRKAA2",
+   "PRKAB1",
+   "PRKAB2",
+   "PRKAG1",
+   "PRKAG2",
+   "PRKAG3",
+   "STK11",
+   "CAMKK2",
+   "CAMKK1"
+  ],
+  "confident": [
+   "PRKAA1",
+   "PRKAA2",
+   "PRKAB1",
+   "PRKAB2",
+   "PRKAG1",
+   "PRKAG2",
+   "PRKAG3",
+   "STK11",
+   "CAMKK2",
+   "CAMKK1"
+  ],
+  "confidence": 0.6,
+  "doubt": "If the catalyst is recorded as the upstream kinase STK11/LKB1 or as the alpha-2 containing heterotrimer, PRKAA1 is not the gene returned."
+ },
+ "30": {
+  "samples": [
+   [
+    "IKBKB",
+    "CHUK",
+    "IKBKG",
+    "IKBKE",
+    "TBK1",
+    "MAP3K8",
+    "MAP3K7",
+    "AKT1",
+    "AKT2",
+    "AKT3"
+   ]
+  ],
+  "tournament": [
+   "IKBKB",
+   "CHUK",
+   "IKBKG",
+   "IKBKE",
+   "TBK1",
+   "MAP3K8",
+   "AKT1",
+   "AKT2",
+   "AKT3",
+   "MAP3K7"
+  ],
+  "confident": [
+   "IKBKB",
+   "CHUK",
+   "IKBKG",
+   "IKBKE",
+   "TBK1",
+   "MAP3K8",
+   "AKT1",
+   "AKT2",
+   "AKT3",
+   "MAP3K7"
+  ],
+  "confidence": 0.6,
+  "doubt": "Tpl2 Ser400 is also reported as an AKT site, so an AKT-curated version would displace IKBKB."
+ },
+ "31": {
+  "samples": [
+   [
+    "PIK3CA",
+    "PIK3CB",
+    "PIK3R1",
+    "PIK3R2",
+    "PIK3CD",
+    "PIK3CG",
+    "PIK3R3",
+    "PIK3R5",
+    "PIK3R6",
+    "GAB1"
+   ]
+  ],
+  "tournament": [
+   "PIK3CA",
+   "PIK3R1",
+   "PIK3CB",
+   "PIK3R2",
+   "PIK3CD",
+   "PIK3CG",
+   "PIK3R3",
+   "PIK3R5",
+   "PIK3R6",
+   "GAB1"
+  ],
+  "confident": [
+   "PIK3CA",
+   "PIK3R1",
+   "PIK3CB",
+   "PIK3R2",
+   "PIK3CD",
+   "PIK3CG",
+   "PIK3R3",
+   "PIK3R5",
+   "PIK3R6",
+   "GAB1"
+  ],
+  "confidence": 0.7,
+  "doubt": "A GPCR- or immune-cell-specific instance would be curated on PIK3CG/PIK3CD rather than the class IA PIK3CA:PIK3R1 pair."
+ },
+ "32": {
+  "samples": [
+   [
+    "MAP3K14",
+    "CHUK",
+    "IKBKB",
+    "IKBKE",
+    "TBK1",
+    "IKBKG",
+    "MAP3K7",
+    "TAB1",
+    "TAB2",
+    "TAB3"
+   ]
+  ],
+  "tournament": [
+   "MAP3K14",
+   "CHUK",
+   "IKBKB",
+   "IKBKE",
+   "TBK1",
+   "IKBKG",
+   "MAP3K7",
+   "TAB1",
+   "TAB2",
+   "TAB3"
+  ],
+  "confident": [
+   "MAP3K14",
+   "CHUK",
+   "IKBKB",
+   "IKBKE",
+   "TBK1",
+   "IKBKG",
+   "MAP3K7",
+   "TAB1",
+   "TAB2",
+   "TAB3"
+  ],
+  "confidence": 0.7,
+  "doubt": "If this generic p-NIK step is the IKKalpha (CHUK) negative-feedback phosphorylation rather than NIK autophosphorylation."
+ },
+ "33": {
+  "samples": [
+   [
+    "LIMK1",
+    "LIMK2",
+    "TESK1",
+    "ROCK1",
+    "ROCK2",
+    "TESK2",
+    "PAK1",
+    "PAK2",
+    "PAK3",
+    "PAK4"
+   ]
+  ],
+  "tournament": [
+   "LIMK1",
+   "LIMK2",
+   "TESK1",
+   "TESK2",
+   "ROCK1",
+   "ROCK2",
+   "PAK1",
+   "PAK2",
+   "PAK3",
+   "PAK4"
+  ],
+  "confident": [
+   "LIMK1",
+   "LIMK2",
+   "TESK1",
+   "TESK2",
+   "ROCK1",
+   "ROCK2",
+   "PAK1",
+   "PAK2",
+   "PAK3",
+   "PAK4"
+  ],
+  "confidence": 0.45,
+  "doubt": "The LIMK1 version of this reaction is already solved as a complex-bound form, so this bare CFL1 Ser3 row is plausibly the LIMK2 or TESK1 reaction."
+ },
+ "34": {
+  "samples": [
+   [
+    "EPHB2",
+    "EFNB1",
+    "EFNB2",
+    "EFNB3",
+    "EPHB1",
+    "EPHB3",
+    "EPHB4",
+    "SRC",
+    "FYN",
+    "EPHB6"
+   ]
+  ],
+  "tournament": [
+   "EPHB2",
+   "EFNB1",
+   "EFNB2",
+   "EFNB3",
+   "SRC",
+   "FYN",
+   "EPHB1",
+   "EPHB3",
+   "EPHB4",
+   "EPHB6"
+  ],
+  "confident": [
+   "EPHB2",
+   "EFNB1",
+   "EFNB2",
+   "EFNB3",
+   "SRC",
+   "FYN",
+   "EPHB1",
+   "EPHB3",
+   "EPHB4",
+   "EPHB6"
+  ],
+  "confidence": 0.7,
+  "doubt": "If the curated catalyst is the ephrin-B:EphB complex as a whole or a Src-family kinase acting downstream of EphB2."
+ },
+ "35": {
+  "samples": [
+   [
+    "PRKG1",
+    "PRKG2",
+    "PRKACA",
+    "PRKACB",
+    "PRKACG",
+    "IRAG1",
+    "ITPR1",
+    "PRKAR1A",
+    "PRKAR1B",
+    "PRKAR2A"
+   ]
+  ],
+  "tournament": [
+   "PRKG1",
+   "PRKG2",
+   "PRKACA",
+   "PRKACB",
+   "PRKACG",
+   "IRAG1",
+   "ITPR1",
+   "PRKAR1A",
+   "PRKAR1B",
+   "PRKAR2A"
+  ],
+  "confident": [
+   "PRKG1",
+   "PRKG2",
+   "PRKACA",
+   "PRKACB",
+   "PRKACG",
+   "IRAG1",
+   "ITPR1",
+   "PRKAR1A",
+   "PRKAR1B",
+   "PRKAR2A"
+  ],
+  "confidence": 0.75,
+  "doubt": "IRAG is also a PKA substrate in platelets, so a cAMP-branch curation would make PRKACA the answer."
+ },
+ "36": {
+  "samples": [
+   [
+    "ZAP70",
+    "SYK",
+    "LCK",
+    "FYN",
+    "ITK",
+    "SRC",
+    "LYN",
+    "HCK",
+    "FGR",
+    "BLK"
+   ]
+  ],
+  "tournament": [
+   "ZAP70",
+   "SYK",
+   "LCK",
+   "FYN",
+   "ITK",
+   "SRC",
+   "LYN",
+   "HCK",
+   "FGR",
+   "BLK"
+  ],
+  "confident": [
+   "ZAP70",
+   "SYK",
+   "LCK",
+   "FYN",
+   "ITK",
+   "SRC",
+   "LYN",
+   "HCK",
+   "FGR",
+   "BLK"
+  ],
+  "confidence": 0.8,
+  "doubt": "SLP-76 Y113/128/145 is the canonical ZAP70 site, but a B-cell/FcR version of the same reaction would be curated on SYK."
+ },
+ "37": {
+  "samples": [
+   [
+    "MYLK",
+    "MYLK2",
+    "MYLK3",
+    "MYLK4",
+    "ROCK1",
+    "ROCK2",
+    "DAPK3",
+    "CIT",
+    "PRKCA",
+    "PRKCB"
+   ]
+  ],
+  "tournament": [
+   "MYLK",
+   "MYLK2",
+   "MYLK3",
+   "MYLK4",
+   "ROCK1",
+   "ROCK2",
+   "DAPK3",
+   "CIT",
+   "PRKCA",
+   "PRKCB"
+  ],
+  "confident": [
+   "MYLK",
+   "MYLK2",
+   "MYLK3",
+   "MYLK4",
+   "ROCK1",
+   "ROCK2",
+   "DAPK3",
+   "CIT",
+   "PRKCA",
+   "PRKCB"
+  ],
+  "confidence": 0.75,
+  "doubt": "Smooth-muscle MLC is also directly phosphorylated by ROCK and ZIPK/DAPK3, so a Rho-branch curation would displace MYLK."
+ },
+ "38": {
+  "samples": [
+   [
+    "MAP2K3",
+    "MAP2K6",
+    "MAP2K4",
+    "MAPK14",
+    "MAPK11",
+    "MAPK12",
+    "MAPK13",
+    "MAP3K7",
+    "TAB1",
+    "TAB2"
+   ]
+  ],
+  "tournament": [
+   "MAP2K3",
+   "MAP2K6",
+   "MAP2K4",
+   "MAPK14",
+   "MAPK11",
+   "MAPK12",
+   "MAPK13",
+   "MAP3K7",
+   "TAB1",
+   "TAB2"
+  ],
+  "confident": [
+   "MAP2K3",
+   "MAP2K6",
+   "MAP2K4",
+   "MAPK14",
+   "MAPK11",
+   "MAPK12",
+   "MAPK13",
+   "MAP3K7",
+   "TAB1",
+   "TAB2"
+  ],
+  "confidence": 0.5,
+  "doubt": "If the curated activation loop step here is MAP2K6-only, or is the TAB1-driven p38 autophosphorylation, MAP2K3 is not first."
+ },
+ "39": {
+  "samples": [
+   [
+    "PIAS4",
+    "PIAS1",
+    "PIAS2",
+    "PIAS3",
+    "UBE2I",
+    "CBX4",
+    "RANBP2",
+    "ZNF451",
+    "TOPORS",
+    "NSMCE2"
+   ]
+  ],
+  "tournament": [
+   "PIAS4",
+   "PIAS1",
+   "PIAS2",
+   "PIAS3",
+   "UBE2I",
+   "CBX4",
+   "RANBP2",
+   "TOPORS",
+   "ZNF451",
+   "NSMCE2"
+  ],
+  "confident": [
+   "PIAS4",
+   "PIAS1",
+   "PIAS2",
+   "PIAS3",
+   "UBE2I",
+   "CBX4",
+   "RANBP2",
+   "TOPORS",
+   "ZNF451",
+   "NSMCE2"
+  ],
+  "confidence": 0.65,
+  "doubt": "PARP1 poly-SUMO2/3 could be curated as UBE2I-only (as several analogous rows are) or credited to ZNF451 as the SUMO2/3 chain elongase."
+ },
+ "40": {
+  "samples": [
+   [
+    "UBE2I",
+    "PIAS4",
+    "RANBP2",
+    "ZNF451",
+    "PIAS1",
+    "PIAS2",
+    "PIAS3",
+    "CBX4",
+    "TOPORS",
+    "NSMCE2"
+   ]
+  ],
+  "tournament": [
+   "UBE2I",
+   "PIAS4",
+   "RANBP2",
+   "ZNF451",
+   "PIAS1",
+   "PIAS2",
+   "PIAS3",
+   "CBX4",
+   "TOPORS",
+   "NSMCE2"
+  ],
+  "confident": [
+   "UBE2I",
+   "PIAS4",
+   "RANBP2",
+   "ZNF451",
+   "PIAS1",
+   "PIAS2",
+   "PIAS3",
+   "CBX4",
+   "TOPORS",
+   "NSMCE2"
+  ],
+  "confidence": 0.9,
+  "doubt": "An identical solved row gives UBE2I; only a near-duplicate TOP2A row curated on PIAS4/RANBP2 would be wrong."
+ },
+ "41": {
+  "samples": [
+   [
+    "IKBKB",
+    "CHUK",
+    "IKBKG",
+    "IKBKE",
+    "TBK1",
+    "MAP3K7",
+    "NFKBIA",
+    "NFKB1",
+    "RELA",
+    "TAB1"
+   ]
+  ],
+  "tournament": [
+   "IKBKB",
+   "CHUK",
+   "IKBKG",
+   "IKBKE",
+   "TBK1",
+   "NFKBIA",
+   "NFKB1",
+   "RELA",
+   "MAP3K7",
+   "TAB1"
+  ],
+  "confident": [
+   "IKBKB",
+   "CHUK",
+   "IKBKG",
+   "IKBKE",
+   "TBK1",
+   "NFKBIA",
+   "NFKB1",
+   "RELA",
+   "MAP3K7",
+   "TAB1"
+  ],
+  "confidence": 0.55,
+  "doubt": "If the catalyst is recorded as the whole IKK complex keyed on CHUK/IKBKG rather than the beta subunit IKBKB."
+ },
+ "42": {
+  "samples": [
+   [
+    "CSNK1A1",
+    "CSNK1D",
+    "CSNK1E",
+    "CSNK1G1",
+    "CSNK1G2",
+    "CSNK1G3",
+    "CSNK1A1L",
+    "GSK3B",
+    "GSK3A",
+    "PRKACA"
+   ]
+  ],
+  "tournament": [
+   "CSNK1A1",
+   "CSNK1D",
+   "CSNK1E",
+   "CSNK1G2",
+   "CSNK1G1",
+   "CSNK1G3",
+   "CSNK1A1L",
+   "GSK3B",
+   "GSK3A",
+   "PRKACA"
+  ],
+  "confident": [
+   "CSNK1A1",
+   "CSNK1D",
+   "CSNK1E",
+   "CSNK1G2",
+   "CSNK1G1",
+   "CSNK1G3",
+   "CSNK1A1L",
+   "GSK3B",
+   "GSK3A",
+   "PRKACA"
+  ],
+  "confidence": 0.5,
+  "doubt": "The CK1 step between the PKA-primed p4S and the GSK3-extended p11S forms may be curated on CSNK1G2 or CSNK1D/E rather than CSNK1A1."
+ },
+ "43": {
+  "samples": [
+   [
+    "RTEL1",
+    "BLM",
+    "TOP3A",
+    "RMI1",
+    "RMI2",
+    "WRN",
+    "RECQL5",
+    "RECQL",
+    "RECQL4",
+    "HELQ"
+   ]
+  ],
+  "tournament": [
+   "RTEL1",
+   "BLM",
+   "TOP3A",
+   "RMI1",
+   "RMI2",
+   "WRN",
+   "RECQL",
+   "RECQL4",
+   "RECQL5",
+   "HELQ"
+  ],
+  "confident": [
+   "RTEL1",
+   "BLM",
+   "TOP3A",
+   "RMI1",
+   "RMI2",
+   "WRN",
+   "RECQL",
+   "RECQL4",
+   "RECQL5",
+   "HELQ"
+  ],
+  "confidence": 0.5,
+  "doubt": "If this extended-D-loop disassembly is curated as a BLM/TOP3A/RMI dissolution event (as the analogous Holliday-junction row is) rather than the SDSA anti-recombinase RTEL1."
+ },
+ "44": {
+  "samples": [
+   [
+    "PIK3C3",
+    "PIK3R4",
+    "BECN1",
+    "ATG14",
+    "UVRAG",
+    "NRBF2",
+    "AMBRA1",
+    "PIK3C2A",
+    "PIK3C2B",
+    "PIK3C2G"
+   ]
+  ],
+  "tournament": [
+   "PIK3C3",
+   "PIK3R4",
+   "BECN1",
+   "UVRAG",
+   "ATG14",
+   "NRBF2",
+   "AMBRA1",
+   "PIK3C2A",
+   "PIK3C2B",
+   "PIK3C2G"
+  ],
+  "confident": [
+   "PIK3C3",
+   "PIK3R4",
+   "BECN1",
+   "UVRAG",
+   "ATG14",
+   "NRBF2",
+   "AMBRA1",
+   "PIK3C2A",
+   "PIK3C2B",
+   "PIK3C2G"
+  ],
+  "confidence": 0.65,
+  "doubt": "A class II enzyme (PIK3C2A/B) also makes PI3P, and the curated catalyst may be the whole PI3KC3 complex keyed on BECN1/PIK3R4."
+ },
+ "45": {
+  "samples": [
+   [
+    "NUDT19",
+    "NUDT7",
+    "NUDT8",
+    "NUDT12",
+    "NUDT13",
+    "NUDT2",
+    "NUDT3",
+    "NUDT4",
+    "NUDT5",
+    "NUDT9"
+   ]
+  ],
+  "tournament": [
+   "NUDT7",
+   "NUDT19",
+   "NUDT8",
+   "NUDT12",
+   "NUDT13",
+   "NUDT2",
+   "NUDT3",
+   "NUDT4",
+   "NUDT5",
+   "NUDT9"
+  ],
+  "confident": [
+   "NUDT7",
+   "NUDT19",
+   "NUDT8",
+   "NUDT12",
+   "NUDT13",
+   "NUDT2",
+   "NUDT3",
+   "NUDT4",
+   "NUDT5",
+   "NUDT9"
+  ],
+  "confidence": 0.5,
+  "doubt": "NUDT19 already covers the acyl-CoA row, but if the curator used NUDT19 for free CoA-SH as well then splitting the pair toward NUDT7 is wrong."
+ },
+ "46": {
+  "samples": [
+   [
+    "CHEK2",
+    "CHEK1",
+    "MAPKAPK2",
+    "PLK3",
+    "CDK5",
+    "MAPK11",
+    "MAPK14",
+    "GSK3B",
+    "GSK3A",
+    "CSNK1A1"
+   ]
+  ],
+  "tournament": [
+   "CHEK2",
+   "CHEK1",
+   "MAPKAPK2",
+   "PLK3",
+   "CDK5",
+   "MAPK11",
+   "MAPK14",
+   "GSK3B",
+   "GSK3A",
+   "CSNK1A1"
+  ],
+  "confident": [
+   "CHEK2",
+   "CHEK1",
+   "MAPKAPK2",
+   "PLK3",
+   "CDK5",
+   "MAPK11",
+   "MAPK14",
+   "GSK3B",
+   "GSK3A",
+   "CSNK1A1"
+  ],
+  "confidence": 0.6,
+  "doubt": "CHEK1 is credited with both the 5-site product and its extension from this 3-site form, so the 3-site species could also be a CHEK1 (or MAPKAPK2) product."
+ },
+ "47": {
+  "samples": [
+   [
+    "PDE5A",
+    "PDE9A",
+    "PDE1A",
+    "PDE1B",
+    "PDE1C",
+    "PDE2A",
+    "PDE3A",
+    "PDE3B",
+    "PDE10A",
+    "PDE11A"
+   ]
+  ],
+  "tournament": [
+   "PDE5A",
+   "PDE9A",
+   "PDE1A",
+   "PDE1B",
+   "PDE1C",
+   "PDE2A",
+   "PDE3A",
+   "PDE3B",
+   "PDE10A",
+   "PDE11A"
+  ],
+  "confident": [
+   "PDE5A",
+   "PDE9A",
+   "PDE1A",
+   "PDE1B",
+   "PDE1C",
+   "PDE2A",
+   "PDE3A",
+   "PDE3B",
+   "PDE10A",
+   "PDE11A"
+  ],
+  "confidence": 0.45,
+  "doubt": "Many PDEs hydrolyze cGMP in the cytosol; a PDE9A, PDE2A or PDE1 row would look identical to this one."
+ },
+ "48": {
+  "samples": [
+   [
+    "INSR",
+    "IGF1R",
+    "INSRR",
+    "INS",
+    "IRS1",
+    "IRS2",
+    "IRS4",
+    "SHC1",
+    "GRB2",
+    "GRB10"
+   ]
+  ],
+  "tournament": [
+   "INSR",
+   "INS",
+   "IGF1R",
+   "INSRR",
+   "IRS1",
+   "IRS2",
+   "IRS4",
+   "SHC1",
+   "GRB2",
+   "GRB10"
+  ],
+  "confident": [
+   "INSR",
+   "INS",
+   "IGF1R",
+   "INSRR",
+   "IRS1",
+   "IRS2",
+   "IRS4",
+   "SHC1",
+   "GRB2",
+   "GRB10"
+  ],
+  "confidence": 0.8,
+  "doubt": "The catalyst is the insulin:receptor complex, so the recorded gene could be INS if only the ligand is keyed."
+ },
+ "49": {
+  "samples": [
+   [
+    "JAK1",
+    "JAK2",
+    "IFNGR1",
+    "IFNGR2",
+    "IFNG",
+    "TYK2",
+    "JAK3",
+    "STAT1",
+    "STAT2",
+    "SRC"
+   ]
+  ],
+  "tournament": [
+   "JAK1",
+   "JAK2",
+   "IFNGR1",
+   "IFNGR2",
+   "IFNG",
+   "TYK2",
+   "JAK3",
+   "STAT1",
+   "STAT2",
+   "SRC"
+  ],
+  "confident": [
+   "JAK1",
+   "JAK2",
+   "IFNGR1",
+   "IFNGR2",
+   "IFNG",
+   "TYK2",
+   "JAK3",
+   "STAT1",
+   "STAT2",
+   "SRC"
+  ],
+  "confidence": 0.45,
+  "doubt": "STAT1 Y701 phosphorylation in the IFN-gamma receptor complex is commonly credited specifically to JAK2 rather than JAK1."
+ },
+ "100": {
+  "samples": [
+   [
+    "FAAH",
+    "MGLL",
+    "FAAH2",
+    "DAGLA",
+    "DAGLB",
+    "ABHD6",
+    "ABHD12",
+    "ABHD4",
+    "ABHD2",
+    "ABHD16A"
+   ]
+  ],
+  "tournament": [
+   "FAAH",
+   "MGLL",
+   "FAAH2",
+   "DAGLA",
+   "DAGLB",
+   "ABHD6",
+   "ABHD12",
+   "ABHD4",
+   "ABHD2",
+   "ABHD16A"
+  ],
+  "confident": [
+   "FAAH",
+   "MGLL",
+   "FAAH2",
+   "DAGLA",
+   "DAGLB",
+   "ABHD6",
+   "ABHD12",
+   "ABHD4",
+   "ABHD2",
+   "ABHD16A"
+  ],
+  "confidence": 0.4,
+  "doubt": "Noladin ether is an ether, not an ester, so the model may have given this condensation to MGLL (the canonical 2-AG hydrolase) rather than reusing the FAAH GPR it used for 2-AG hydrolysis."
+ },
+ "101": {
+  "samples": [
+   [
+    "SLCO1B1",
+    "SLCO2A1",
+    "SLCO1B3",
+    "SLCO1A2",
+    "ABCC1",
+    "ABCC4",
+    "ABCC2",
+    "ABCC3",
+    "ABCC5",
+    "ABCC11"
+   ]
+  ],
+  "tournament": [
+   "SLCO1B1",
+   "SLCO2A1",
+   "SLCO1B3",
+   "SLCO1A2",
+   "ABCC1",
+   "ABCC4",
+   "ABCC2",
+   "ABCC3",
+   "ABCC5",
+   "ABCC11"
+  ],
+  "confident": [
+   "SLCO1B1",
+   "SLCO2A1",
+   "SLCO1B3",
+   "SLCO1A2",
+   "ABCC1",
+   "ABCC4",
+   "ABCC2",
+   "ABCC3",
+   "ABCC5",
+   "ABCC11"
+  ],
+  "confidence": 0.3,
+  "doubt": "Every SLCO reaction in this model is written as an anion exchange, so a bare uncoupled LTE4 efflux may instead be an ABCC pump written without its ATP terms."
+ },
+ "102": {
+  "samples": [
+   [
+    "DHRS4",
+    "PTGR1",
+    "CBR1",
+    "CBR3",
+    "PTGR2",
+    "PTGR3",
+    "DHRS4L2",
+    "CBR4",
+    "DHRS3",
+    "DHRS7"
+   ]
+  ],
+  "tournament": [
+   "DHRS4",
+   "PTGR1",
+   "CBR1",
+   "CBR3",
+   "PTGR2",
+   "PTGR3",
+   "CBR4",
+   "DHRS4L2",
+   "DHRS3",
+   "DHRS7"
+  ],
+  "confident": [
+   "DHRS4",
+   "PTGR1",
+   "CBR1",
+   "CBR3",
+   "PTGR2",
+   "PTGR3",
+   "CBR4",
+   "DHRS4L2",
+   "DHRS3",
+   "DHRS7"
+  ],
+  "confidence": 0.55,
+  "doubt": "PTGR1 is the real 10,11-enone reductase of LTB4, so the cytosolic copy of this reaction could carry PTGR1 even though the mitochondrial copy carries DHRS4."
+ },
+ "103": {
+  "samples": [
+   [
+    "DHRS4",
+    "CBR1",
+    "CBR3",
+    "PTGR1",
+    "PTGR2",
+    "PTGR3",
+    "DHRS4L2",
+    "CBR4",
+    "DHRS3",
+    "DHRS7"
+   ]
+  ],
+  "tournament": [
+   "DHRS4",
+   "PTGR1",
+   "CBR1",
+   "CBR3",
+   "PTGR2",
+   "PTGR3",
+   "CBR4",
+   "DHRS4L2",
+   "DHRS3",
+   "DHRS7"
+  ],
+  "confident": [
+   "DHRS4",
+   "PTGR1",
+   "CBR1",
+   "CBR3",
+   "PTGR2",
+   "PTGR3",
+   "CBR4",
+   "DHRS4L2",
+   "DHRS3",
+   "DHRS7"
+  ],
+  "confidence": 0.42,
+  "doubt": "This is a C=C (enone) reduction rather than the C=O reduction that {CBR1,CBR3,DHRS4} was given, which is exactly the chemistry PTGR1 owns."
+ },
+ "104": {
+  "samples": [
+   [
+    "CYP4F2",
+    "CYP4F3",
+    "CYP4F11",
+    "CYP4F22",
+    "CYP4F8",
+    "CYP4F12",
+    "CYP4A11",
+    "CYP4B1",
+    "CYP4A22",
+    "CYP4V2"
+   ]
+  ],
+  "tournament": [
+   "CYP4F2",
+   "CYP4F3",
+   "CYP4F11",
+   "CYP4F8",
+   "CYP4F22",
+   "CYP4F12",
+   "CYP4A11",
+   "CYP4A22",
+   "CYP4B1",
+   "CYP4V2"
+  ],
+  "confident": [
+   "CYP4F2",
+   "CYP4F3",
+   "CYP4F11",
+   "CYP4F8",
+   "CYP4F22",
+   "CYP4F12",
+   "CYP4A11",
+   "CYP4A22",
+   "CYP4B1",
+   "CYP4V2"
+  ],
+  "confidence": 0.65,
+  "doubt": "The flanking steps carry the whole set {CYP4F2,3,8,11,22}; if scoring demands the exact first-listed member it would be CYP4F11, not CYP4F2."
+ },
+ "105": {
+  "samples": [
+   [
+    "ECHS1",
+    "HADHA",
+    "EHHADH",
+    "HSD17B4",
+    "ECH1",
+    "ECI1",
+    "ECI2",
+    "ECHDC1",
+    "ECHDC2",
+    "ECHDC3"
+   ]
+  ],
+  "tournament": [
+   "ECHS1",
+   "HADHA",
+   "EHHADH",
+   "HSD17B4",
+   "ECHDC1",
+   "ECHDC2",
+   "ECHDC3",
+   "ECI1",
+   "ECI2",
+   "ECH1"
+  ],
+  "confident": [
+   "ECHS1",
+   "HADHA",
+   "EHHADH",
+   "HSD17B4",
+   "ECHDC1",
+   "ECHDC2",
+   "ECHDC3",
+   "ECI1",
+   "ECI2",
+   "ECH1"
+  ],
+  "confidence": 0.5,
+  "doubt": "The LTB4-CoA substrate is C20, so the model may have used HADHA (long-chain trifunctional protein) alone rather than the short-chain crotonase ECHS1."
+ },
+ "106": {
+  "samples": [
+   [
+    "SLC32A1",
+    "SLC6A1",
+    "SLC6A11",
+    "SLC6A12",
+    "SLC6A13",
+    "SLC36A1",
+    "SLC36A2",
+    "SLC36A4",
+    "SLC38A1",
+    "SLC38A2"
+   ]
+  ],
+  "tournament": [
+   "SLC32A1",
+   "SLC6A1",
+   "SLC6A11",
+   "SLC6A12",
+   "SLC6A13",
+   "SLC36A1",
+   "SLC36A2",
+   "SLC36A4",
+   "SLC38A1",
+   "SLC38A2"
+  ],
+  "confident": [
+   "SLC32A1",
+   "SLC6A1",
+   "SLC6A11",
+   "SLC6A12",
+   "SLC6A13",
+   "SLC36A1",
+   "SLC36A2",
+   "SLC36A4",
+   "SLC38A1",
+   "SLC38A2"
+  ],
+  "confidence": 0.85,
+  "doubt": "Only wrong if this duplicate of the identically-written solved SLC32A1 reaction was given a different GPR."
+ },
+ "107": {
+  "samples": [
+   [
+    "GSTA1",
+    "GSTA2",
+    "GSTA3",
+    "GSTA4",
+    "GSTA5",
+    "GSTM1",
+    "GSTM2",
+    "GSTM3",
+    "GSTM4",
+    "GSTM5"
+   ]
+  ],
+  "tournament": [
+   "GSTA1",
+   "GSTA2",
+   "GSTA3",
+   "GSTA4",
+   "GSTA5",
+   "GSTM1",
+   "GSTM2",
+   "GSTM3",
+   "GSTM4",
+   "GSTM5"
+  ],
+  "confident": [
+   "GSTA1",
+   "GSTA2",
+   "GSTA3",
+   "GSTA4",
+   "GSTA5",
+   "GSTM1",
+   "GSTM2",
+   "GSTM3",
+   "GSTM4",
+   "GSTM5"
+  ],
+  "confidence": 0.75,
+  "doubt": "PGJ2 conjugation could have been narrowed to a single GST (e.g. GSTM2, which the model used alone for one indoline quinone) instead of the broad PGA2-style set."
+ },
+ "108": {
+  "samples": [
+   [
+    "PIGZ",
+    "PIGB",
+    "PIGV",
+    "PIGM",
+    "PIGX",
+    "PIGO",
+    "PIGN",
+    "PIGF",
+    "PIGG",
+    "PIGA"
+   ]
+  ],
+  "tournament": [
+   "PIGZ",
+   "PIGB",
+   "PIGV",
+   "PIGM",
+   "PIGX",
+   "PIGN",
+   "PIGO",
+   "PIGF",
+   "PIGG",
+   "PIGA"
+  ],
+  "confident": [
+   "PIGZ",
+   "PIGB",
+   "PIGV",
+   "PIGM",
+   "PIGX",
+   "PIGN",
+   "PIGO",
+   "PIGF",
+   "PIGG",
+   "PIGA"
+  ],
+  "confidence": 0.78,
+  "doubt": "If the M4A product is actually built by a repeat of the Man-III step rather than the fourth mannose, PIGB would be the catalyst."
+ },
+ "109": {
+  "samples": [
+   [
+    "PIGZ",
+    "PIGB",
+    "PIGV",
+    "PIGM",
+    "PIGX",
+    "PIGO",
+    "PIGN",
+    "PIGF",
+    "PIGG",
+    "PIGA"
+   ]
+  ],
+  "tournament": [
+   "PIGZ",
+   "PIGB",
+   "PIGV",
+   "PIGM",
+   "PIGX",
+   "PIGN",
+   "PIGO",
+   "PIGF",
+   "PIGG",
+   "PIGA"
+  ],
+  "confident": [
+   "PIGZ",
+   "PIGB",
+   "PIGV",
+   "PIGM",
+   "PIGX",
+   "PIGN",
+   "PIGO",
+   "PIGF",
+   "PIGG",
+   "PIGA"
+  ],
+  "confidence": 0.78,
+  "doubt": "Same as #108 \u2014 if this is a Man-III repeat rather than the fourth mannose addition, PIGB wins."
+ },
+ "110": {
+  "samples": [
+   [
+    "CYP27A1",
+    "CYP7A1",
+    "CYP8B1",
+    "CYP7B1",
+    "CYP46A1",
+    "CYP39A1",
+    "CYP11A1",
+    "CYP11B1",
+    "CYP11B2",
+    "CYP24A1"
+   ]
+  ],
+  "tournament": [
+   "CYP27A1",
+   "CYP7A1",
+   "CYP7B1",
+   "CYP8B1",
+   "CYP46A1",
+   "CYP39A1",
+   "CYP11A1",
+   "CYP11B1",
+   "CYP11B2",
+   "CYP24A1"
+  ],
+  "confident": [
+   "CYP27A1",
+   "CYP7A1",
+   "CYP7B1",
+   "CYP8B1",
+   "CYP46A1",
+   "CYP39A1",
+   "CYP11A1",
+   "CYP11B1",
+   "CYP11B2",
+   "CYP24A1"
+  ],
+  "confidence": 0.85,
+  "doubt": "Only wrong if the NADPH variant of this sterol-26-al oxidation was assigned to an aldehyde dehydrogenase family absent from the candidate list."
+ },
+ "111": {
+  "samples": [
+   [
+    "AMACR",
+    "ACOX2",
+    "SCP2",
+    "HSD17B4",
+    "ACOX1",
+    "ACOX3",
+    "SLC27A2",
+    "SLC27A5",
+    "CROT",
+    "ACAA1"
+   ]
+  ],
+  "tournament": [
+   "AMACR",
+   "ACOX2",
+   "SCP2",
+   "HSD17B4",
+   "ACOX1",
+   "ACOX3",
+   "SLC27A2",
+   "SLC27A5",
+   "CROT",
+   "ACAA1"
+  ],
+  "confident": [
+   "AMACR",
+   "ACOX2",
+   "SCP2",
+   "HSD17B4",
+   "ACOX1",
+   "ACOX3",
+   "SLC27A2",
+   "SLC27A5",
+   "CROT",
+   "ACAA1"
+  ],
+  "confidence": 0.9,
+  "doubt": "Only wrong if the model attached the 25R/25S racemisation to the peroxisomal bile-acid oxidase complex rather than to AMACR itself."
+ },
+ "112": {
+  "samples": [
+   [
+    "ATP8A1",
+    "ATP10A",
+    "ATP8A2",
+    "ATP8B1",
+    "ATP8B2",
+    "ATP8B3",
+    "ATP8B4",
+    "ATP9A",
+    "ATP9B",
+    "ATP10B"
+   ]
+  ],
+  "tournament": [
+   "ATP8A1",
+   "ATP8B1",
+   "ATP8A2",
+   "ATP10A",
+   "ATP8B2",
+   "ATP8B3",
+   "ATP8B4",
+   "ATP9A",
+   "ATP9B",
+   "ATP10B"
+  ],
+  "confident": [
+   "ATP8A1",
+   "ATP8B1",
+   "ATP8A2",
+   "ATP10A",
+   "ATP8B2",
+   "ATP8B3",
+   "ATP8B4",
+   "ATP9A",
+   "ATP9B",
+   "ATP10B"
+  ],
+  "confidence": 0.28,
+  "doubt": "No P4-ATPase actually sits on the mitochondrial membrane, so the model's choice here is arbitrary and could easily be ATP8B1 or ATP9A/B instead."
+ },
+ "113": {
+  "samples": [
+   [
+    "ADH1A",
+    "ADH1B",
+    "ADH1C",
+    "ADH4",
+    "ADH5",
+    "CYP27A1",
+    "ADH6",
+    "ADH7",
+    "AKR1C4",
+    "AKR1C1"
+   ]
+  ],
+  "tournament": [
+   "CYP27A1",
+   "ADH1A",
+   "ADH1B",
+   "ADH1C",
+   "ADH4",
+   "ADH5",
+   "ADH6",
+   "ADH7",
+   "AKR1C4",
+   "AKR1C1"
+  ],
+  "confident": [
+   "CYP27A1",
+   "ADH1A",
+   "ADH1B",
+   "ADH1C",
+   "ADH4",
+   "ADH5",
+   "ADH6",
+   "ADH7",
+   "AKR1C4",
+   "AKR1C1"
+  ],
+  "confidence": 0.45,
+  "doubt": "This NADH-linked aldehyde reduction is classic alcohol-dehydrogenase chemistry, so the model may have used the ADH1 cluster rather than reusing CYP27A1 as it did for the NADP+ version."
+ },
+ "114": {
+  "samples": [
+   [
+    "AKR1D1",
+    "AKR1C4",
+    "AKR1C1",
+    "AKR1C2",
+    "AKR1C3",
+    "SRD5A1",
+    "SRD5A2",
+    "SRD5A3",
+    "AKR1A1",
+    "AKR1B1"
+   ]
+  ],
+  "tournament": [
+   "AKR1D1",
+   "AKR1C4",
+   "AKR1C1",
+   "AKR1C2",
+   "AKR1C3",
+   "SRD5A1",
+   "SRD5A2",
+   "SRD5A3",
+   "AKR1A1",
+   "AKR1B1"
+  ],
+  "confident": [
+   "AKR1D1",
+   "AKR1C4",
+   "AKR1C1",
+   "AKR1C2",
+   "AKR1C3",
+   "SRD5A1",
+   "SRD5A2",
+   "SRD5A3",
+   "AKR1A1",
+   "AKR1B1"
+  ],
+  "confidence": 0.85,
+  "doubt": "Only wrong if the model routed this \u03944-3-oxosteroid 5\u03b2-reduction through SRD5A instead of AKR1D1."
+ },
+ "115": {
+  "samples": [
+   [
+    "AKR1C4",
+    "AKR1C1",
+    "AKR1C2",
+    "AKR1C3",
+    "AKR1D1",
+    "HSD3B7",
+    "AKR1A1",
+    "AKR1B1",
+    "AKR1B10",
+    "AKR1B15"
+   ]
+  ],
+  "tournament": [
+   "AKR1C4",
+   "AKR1D1",
+   "AKR1C1",
+   "AKR1C2",
+   "AKR1C3",
+   "HSD3B7",
+   "AKR1A1",
+   "AKR1B1",
+   "AKR1B10",
+   "AKR1B15"
+  ],
+  "confident": [
+   "AKR1C4",
+   "AKR1D1",
+   "AKR1C1",
+   "AKR1C2",
+   "AKR1C3",
+   "HSD3B7",
+   "AKR1A1",
+   "AKR1B1",
+   "AKR1B10",
+   "AKR1B15"
+  ],
+  "confidence": 0.85,
+  "doubt": "Only wrong if this 3-oxo\u21923\u03b1-ol step were spread across AKR1C1-C3 rather than given to AKR1C4 as in the parallel solved reaction."
+ },
+ "116": {
+  "samples": [
+   [
+    "CYP27A1",
+    "CYP7A1",
+    "CYP8B1",
+    "CYP7B1",
+    "CYP46A1",
+    "CYP39A1",
+    "CYP11A1",
+    "CYP11B1",
+    "CYP11B2",
+    "CYP24A1"
+   ]
+  ],
+  "tournament": [
+   "CYP27A1",
+   "CYP7A1",
+   "CYP7B1",
+   "CYP8B1",
+   "CYP46A1",
+   "CYP39A1",
+   "CYP11A1",
+   "CYP11B1",
+   "CYP11B2",
+   "CYP24A1"
+  ],
+  "confident": [
+   "CYP27A1",
+   "CYP7A1",
+   "CYP7B1",
+   "CYP8B1",
+   "CYP46A1",
+   "CYP39A1",
+   "CYP11A1",
+   "CYP11B1",
+   "CYP11B2",
+   "CYP24A1"
+  ],
+  "confidence": 0.88,
+  "doubt": "Only wrong if C27 hydroxylation of this 24S-hydroxylated intermediate were given to a different mitochondrial CYP than the one doing the very next step."
+ },
+ "117": {
+  "samples": [
+   [
+    "SLCO1B3",
+    "SLCO1A2",
+    "SLCO1B1",
+    "SLCO4A1",
+    "SLCO2A1",
+    "SLCO2B1",
+    "SLCO3A1",
+    "SLCO4C1",
+    "SLCO1C1",
+    "SLCO5A1"
+   ]
+  ],
+  "tournament": [
+   "SLCO1B3",
+   "SLCO1A2",
+   "SLCO1B1",
+   "SLCO4A1",
+   "SLCO2A1",
+   "SLCO2B1",
+   "SLCO3A1",
+   "SLCO4C1",
+   "SLCO1C1",
+   "SLCO5A1"
+  ],
+  "confident": [
+   "SLCO1B3",
+   "SLCO1A2",
+   "SLCO1B1",
+   "SLCO4A1",
+   "SLCO2A1",
+   "SLCO2B1",
+   "SLCO3A1",
+   "SLCO4C1",
+   "SLCO1C1",
+   "SLCO5A1"
+  ],
+  "confidence": 0.7,
+  "doubt": "The GSH-exchanging variants of bile-salt uptake were {SLCO1A2,SLCO1B3}, but if the taurocholate/GSH pair instead followed the HCO3- set then SLCO1B1 or SLCO4A1 could be included and SLCO1B3 could be absent."
+ },
+ "118": {
+  "samples": [
+   [
+    "ABCC2",
+    "ABCC1",
+    "ABCC3",
+    "ABCC4",
+    "ABCC5",
+    "ABCC6",
+    "ABCC10",
+    "ABCC11",
+    "ABCC12",
+    "ABCG2"
+   ]
+  ],
+  "tournament": [
+   "ABCC2",
+   "ABCC1",
+   "ABCC3",
+   "ABCC4",
+   "ABCC5",
+   "ABCC6",
+   "ABCC10",
+   "ABCC11",
+   "ABCC12",
+   "ABCG2"
+  ],
+  "confident": [
+   "ABCC2",
+   "ABCC1",
+   "ABCC3",
+   "ABCC4",
+   "ABCC5",
+   "ABCC6",
+   "ABCC10",
+   "ABCC11",
+   "ABCC12",
+   "ABCG2"
+  ],
+  "confidence": 0.6,
+  "doubt": "The cytosolic export may be a single-gene canalicular reaction (ABCC2) or may instead reuse the {ABCC1,ABCC2,ABCC3} set; if it were narrowed to basolateral efflux it would be ABCC3."
+ },
+ "119": {
+  "samples": [
+   [
+    "ABCC2",
+    "ABCC1",
+    "ABCC3",
+    "ABCC4",
+    "ABCC5",
+    "ABCC6",
+    "ABCC10",
+    "ABCC11",
+    "ABCC12",
+    "ABCG2"
+   ]
+  ],
+  "tournament": [
+   "ABCC2",
+   "ABCC1",
+   "ABCC3",
+   "ABCC4",
+   "ABCC5",
+   "ABCC6",
+   "ABCC10",
+   "ABCC11",
+   "ABCC12",
+   "ABCG2"
+  ],
+  "confident": [
+   "ABCC2",
+   "ABCC1",
+   "ABCC3",
+   "ABCC4",
+   "ABCC5",
+   "ABCC6",
+   "ABCC10",
+   "ABCC11",
+   "ABCC12",
+   "ABCG2"
+  ],
+  "confidence": 0.65,
+  "doubt": "Only wrong if the mono-glucuronide export was restricted to ABCC1 or ABCC3 while the bis-glucuronide kept the full three-gene set."
+ },
+ "120": {
+  "samples": [
+   [
+    "CYP2E1",
+    "CYP4V2",
+    "COQ6",
+    "CYP24A1",
+    "CYP27A1",
+    "CYP27B1",
+    "CYP2R1",
+    "CYP3A4",
+    "CYP3A5",
+    "CYP3A7"
+   ]
+  ],
+  "tournament": [
+   "CYP2E1",
+   "CYP4V2",
+   "COQ6",
+   "CYP24A1",
+   "CYP27A1",
+   "CYP27B1",
+   "CYP2R1",
+   "CYP3A4",
+   "CYP3A5",
+   "CYP3A7"
+  ],
+  "confident": [
+   "CYP2E1",
+   "CYP4V2",
+   "COQ6",
+   "CYP24A1",
+   "CYP27A1",
+   "CYP27B1",
+   "CYP2R1",
+   "CYP3A4",
+   "CYP3A5",
+   "CYP3A7"
+  ],
+  "confidence": 0.68,
+  "doubt": "The NADH-linked variant could have been narrowed to CYP24A1 (the true vitamin D 24/23-oxidase) instead of reusing the odd {COQ6,CYP2E1,CYP4V2} set."
+ },
+ "121": {
+  "samples": [
+   [
+    "FDFT1",
+    "SQLE",
+    "LSS",
+    "FDPS",
+    "GGPS1",
+    "IDI1",
+    "IDI2",
+    "DHDDS",
+    "NUS1",
+    "PDSS1"
+   ]
+  ],
+  "tournament": [
+   "FDFT1",
+   "SQLE",
+   "LSS",
+   "FDPS",
+   "GGPS1",
+   "IDI1",
+   "IDI2",
+   "DHDDS",
+   "NUS1",
+   "PDSS1"
+  ],
+  "confident": [
+   "FDFT1",
+   "SQLE",
+   "LSS",
+   "FDPS",
+   "GGPS1",
+   "IDI1",
+   "IDI2",
+   "DHDDS",
+   "NUS1",
+   "PDSS1"
+  ],
+  "confidence": 0.9,
+  "doubt": "Only wrong if the second half-reaction of squalene synthase were given a separate GPR from the first, which the solved lumped reaction argues against."
+ },
+ "122": {
+  "samples": [
+   [
+    "FASN",
+    "OLAH",
+    "HACD1",
+    "HACD2",
+    "HACD3",
+    "HACD4",
+    "HSD17B12",
+    "TECR",
+    "MECR",
+    "HSD17B8"
+   ]
+  ],
+  "tournament": [
+   "FASN",
+   "OLAH",
+   "HACD1",
+   "HACD2",
+   "HACD3",
+   "HACD4",
+   "HSD17B12",
+   "TECR",
+   "MECR",
+   "HSD17B8"
+  ],
+  "confident": [
+   "FASN",
+   "OLAH",
+   "HACD1",
+   "HACD2",
+   "HACD3",
+   "HACD4",
+   "HSD17B12",
+   "TECR",
+   "MECR",
+   "HSD17B8"
+  ],
+  "confidence": 0.85,
+  "doubt": "Only wrong if the cytosolic ACP dehydratase step were assigned to the HACD family rather than to the multifunctional FASN that carries the flanking KR and ER steps."
+ },
+ "123": {
+  "samples": [
+   [
+    "SCD",
+    "SCD5",
+    "FADS1",
+    "FADS2",
+    "FADS3",
+    "FADS6",
+    "TECR",
+    "TECRL",
+    "ELOVL1",
+    "ELOVL2"
+   ]
+  ],
+  "tournament": [
+   "SCD",
+   "SCD5",
+   "FADS1",
+   "FADS2",
+   "FADS3",
+   "FADS6",
+   "TECR",
+   "TECRL",
+   "ELOVL1",
+   "ELOVL2"
+  ],
+  "confident": [
+   "SCD",
+   "SCD5",
+   "FADS1",
+   "FADS2",
+   "FADS3",
+   "FADS6",
+   "TECR",
+   "TECRL",
+   "ELOVL1",
+   "ELOVL2"
+  ],
+  "confidence": 0.7,
+  "doubt": "A \u039413 desaturation is not SCD chemistry, so the model could have used FADS2/FADS3 here even though it used SCD/SCD5 for the \u03949 and \u039411 NADPH variants."
+ },
+ "124": {
+  "samples": [
+   [
+    "HSD17B12",
+    "HSD17B8",
+    "CBR4",
+    "HACD1",
+    "HACD2",
+    "HACD3",
+    "HACD4",
+    "TECR",
+    "TECRL",
+    "ELOVL1"
+   ]
+  ],
+  "tournament": [
+   "HSD17B12",
+   "HSD17B8",
+   "CBR4",
+   "HACD1",
+   "HACD2",
+   "HACD3",
+   "HACD4",
+   "TECR",
+   "TECRL",
+   "ELOVL1"
+  ],
+  "confident": [
+   "HSD17B12",
+   "HSD17B8",
+   "CBR4",
+   "HACD1",
+   "HACD2",
+   "HACD3",
+   "HACD4",
+   "TECR",
+   "TECRL",
+   "ELOVL1"
+  ],
+  "confidence": 0.78,
+  "doubt": "The 3-ketoacyl-CoA reductase GPR is sometimes written as the CBR4/HSD17B8 heterodimer instead of HSD17B12."
+ },
+ "125": {
+  "samples": [
+   [
+    "FASN",
+    "OLAH",
+    "ACOT1",
+    "ACOT2",
+    "ACOT7",
+    "ACOT13",
+    "ACOT8",
+    "ACOT9",
+    "ACOT11",
+    "ACOT12"
+   ]
+  ],
+  "tournament": [
+   "FASN",
+   "OLAH",
+   "ACOT1",
+   "ACOT2",
+   "ACOT7",
+   "ACOT13",
+   "ACOT8",
+   "ACOT9",
+   "ACOT11",
+   "ACOT12"
+  ],
+  "confident": [
+   "FASN",
+   "OLAH",
+   "ACOT1",
+   "ACOT2",
+   "ACOT7",
+   "ACOT13",
+   "ACOT8",
+   "ACOT9",
+   "ACOT11",
+   "ACOT12"
+  ],
+  "confidence": 0.75,
+  "doubt": "C18 is past FASN's usual release length, so the stearoyl-ACP thioesterase could have been given to OLAH alone."
+ },
+ "126": {
+  "samples": [
+   [
+    "TECR",
+    "TECRL",
+    "HACD1",
+    "HACD2",
+    "HACD3",
+    "HACD4",
+    "HSD17B12",
+    "HSD17B8",
+    "CBR4",
+    "MECR"
+   ]
+  ],
+  "tournament": [
+   "TECR",
+   "TECRL",
+   "HACD1",
+   "HACD2",
+   "HACD3",
+   "HACD4",
+   "HSD17B12",
+   "HSD17B8",
+   "CBR4",
+   "MECR"
+  ],
+  "confident": [
+   "TECR",
+   "TECRL",
+   "HACD1",
+   "HACD2",
+   "HACD3",
+   "HACD4",
+   "HSD17B12",
+   "HSD17B8",
+   "CBR4",
+   "MECR"
+  ],
+  "confidence": 0.85,
+  "doubt": "Only wrong if this trans-2-enoyl-CoA reduction were assigned to TECRL alone rather than the TECR/TECRL pair used for every analogous step."
+ },
+ "127": {
+  "samples": [
+   [
+    "SLCO2A1",
+    "SLCO1B1",
+    "SLCO1B3",
+    "SLCO1A2",
+    "SLCO2B1",
+    "SLCO3A1",
+    "SLCO4A1",
+    "SLCO4C1",
+    "SLCO1C1",
+    "SLCO5A1"
+   ]
+  ],
+  "tournament": [
+   "SLCO2A1",
+   "SLCO1B1",
+   "SLCO1B3",
+   "SLCO1A2",
+   "SLCO2B1",
+   "SLCO3A1",
+   "SLCO4A1",
+   "SLCO4C1",
+   "SLCO1C1",
+   "SLCO5A1"
+  ],
+  "confident": [
+   "SLCO2A1",
+   "SLCO1B1",
+   "SLCO1B3",
+   "SLCO1A2",
+   "SLCO2B1",
+   "SLCO3A1",
+   "SLCO4A1",
+   "SLCO4C1",
+   "SLCO1C1",
+   "SLCO5A1"
+  ],
+  "confidence": 0.35,
+  "doubt": "An uncoupled uniport does not match how this model writes SLCOs (always as exchangers), so the bare 10-HETE uptake may carry SLCO1B1 or a fatty-acid carrier not on the list."
+ },
+ "128": {
+  "samples": [
+   [
+    "HACD1",
+    "HACD2",
+    "HACD3",
+    "HACD4",
+    "HIGD2A",
+    "TECR",
+    "TECRL",
+    "HSD17B12",
+    "HSD17B8",
+    "CBR4"
+   ]
+  ],
+  "tournament": [
+   "HACD1",
+   "HACD2",
+   "HACD3",
+   "HACD4",
+   "HIGD2A",
+   "TECR",
+   "TECRL",
+   "HSD17B12",
+   "HSD17B8",
+   "CBR4"
+  ],
+  "confident": [
+   "HACD1",
+   "HACD2",
+   "HACD3",
+   "HACD4",
+   "HIGD2A",
+   "TECR",
+   "TECRL",
+   "HSD17B12",
+   "HSD17B8",
+   "CBR4"
+  ],
+  "confidence": 0.8,
+  "doubt": "Only wrong if this particular dehydratase step were narrowed to a single HACD paralog other than HACD1."
+ },
+ "129": {
+  "samples": [
+   [
+    "HSD17B12",
+    "HSD17B8",
+    "CBR4",
+    "HACD1",
+    "HACD2",
+    "HACD3",
+    "HACD4",
+    "TECR",
+    "TECRL",
+    "ELOVL1"
+   ]
+  ],
+  "tournament": [
+   "HSD17B12",
+   "HSD17B8",
+   "CBR4",
+   "HACD1",
+   "HACD2",
+   "HACD3",
+   "HACD4",
+   "TECR",
+   "TECRL",
+   "ELOVL1"
+  ],
+  "confident": [
+   "HSD17B12",
+   "HSD17B8",
+   "CBR4",
+   "HACD1",
+   "HACD2",
+   "HACD3",
+   "HACD4",
+   "TECR",
+   "TECRL",
+   "ELOVL1"
+  ],
+  "confidence": 0.78,
+  "doubt": "The KR step could be written as the CBR4/HSD17B8 pair rather than HSD17B12."
+ },
+ "130": {
+  "samples": [
+   [
+    "PEMT",
+    "COQ3",
+    "COQ5",
+    "CHKA",
+    "CHKB",
+    "PCYT1A",
+    "PCYT1B",
+    "PCYT2",
+    "CHPT1",
+    "CEPT1"
+   ]
+  ],
+  "tournament": [
+   "PEMT",
+   "COQ3",
+   "COQ5",
+   "CHKA",
+   "CHKB",
+   "PCYT1A",
+   "PCYT1B",
+   "PCYT2",
+   "CHPT1",
+   "CEPT1"
+  ],
+  "confident": [
+   "PEMT",
+   "COQ3",
+   "COQ5",
+   "CHKA",
+   "CHKB",
+   "PCYT1A",
+   "PCYT1B",
+   "PCYT2",
+   "CHPT1",
+   "CEPT1"
+  ],
+  "confidence": 0.9,
+  "doubt": "Only wrong if the second of the three PE\u2192PC methylations were split off to a different methyltransferase than the first and third, which PEMT's solved reactions argue against."
+ },
+ "131": {
+  "samples": [
+   [
+    "TECR",
+    "TECRL",
+    "HACD1",
+    "HACD2",
+    "HACD3",
+    "HACD4",
+    "HSD17B12",
+    "HSD17B8",
+    "CBR4",
+    "MECR"
+   ]
+  ],
+  "tournament": [
+   "TECR",
+   "TECRL",
+   "HACD1",
+   "HACD2",
+   "HACD3",
+   "HACD4",
+   "HSD17B12",
+   "HSD17B8",
+   "CBR4",
+   "MECR"
+  ],
+  "confident": [
+   "TECR",
+   "TECRL",
+   "HACD1",
+   "HACD2",
+   "HACD3",
+   "HACD4",
+   "HSD17B12",
+   "HSD17B8",
+   "CBR4",
+   "MECR"
+  ],
+  "confidence": 0.85,
+  "doubt": "Only wrong if this C24 enoyl reduction were assigned to TECRL alone or to a peroxisomal reductase."
+ },
+ "132": {
+  "samples": [
+   [
+    "CPT1A",
+    "CPT1B",
+    "CPT1C",
+    "CRAT",
+    "CROT",
+    "CPT2",
+    "SLC25A20",
+    "SLC22A5",
+    "SLC22A4",
+    "SLC22A1"
+   ]
+  ],
+  "tournament": [
+   "CPT1A",
+   "CPT1B",
+   "CPT1C",
+   "CRAT",
+   "CROT",
+   "CPT2",
+   "SLC25A20",
+   "SLC22A5",
+   "SLC22A4",
+   "SLC22A1"
+  ],
+  "confident": [
+   "CPT1A",
+   "CPT1B",
+   "CPT1C",
+   "CRAT",
+   "CROT",
+   "CPT2",
+   "SLC25A20",
+   "SLC22A5",
+   "SLC22A4",
+   "SLC22A1"
+  ],
+  "confidence": 0.6,
+  "doubt": "C13 is in CRAT's medium-chain range, so the cytosolic reverse transferase could be CRAT rather than the CPT1 trio the model uses for the forward direction."
+ },
+ "133": {
+  "samples": [
+   [
+    "NLN",
+    "THOP1",
+    "MME",
+    "ECE1",
+    "ECE2",
+    "PREP",
+    "DPP4",
+    "ACE",
+    "ACE2",
+    "ANPEP"
+   ]
+  ],
+  "tournament": [
+   "NLN",
+   "THOP1",
+   "MME",
+   "ECE1",
+   "ECE2",
+   "PREP",
+   "DPP4",
+   "ACE",
+   "ACE2",
+   "ANPEP"
+  ],
+  "confident": [
+   "NLN",
+   "THOP1",
+   "MME",
+   "ECE1",
+   "ECE2",
+   "PREP",
+   "DPP4",
+   "ACE",
+   "ACE2",
+   "ANPEP"
+  ],
+  "confidence": 0.72,
+  "doubt": "THOP1 also cleaves neurotensin and is closely paralogous, so if the model placed the Pro10-Tyr11 cut with thimet oligopeptidase (or paired both) THOP1 would lead."
+ },
+ "134": {
+  "samples": [
+   [
+    "CPT1A",
+    "CPT1B",
+    "CPT1C",
+    "CRAT",
+    "CROT",
+    "CPT2",
+    "SLC25A20",
+    "SLC22A5",
+    "SLC22A4",
+    "SLC22A1"
+   ]
+  ],
+  "tournament": [
+   "CPT1A",
+   "CPT1B",
+   "CPT1C",
+   "CRAT",
+   "CROT",
+   "CPT2",
+   "SLC25A20",
+   "SLC22A5",
+   "SLC22A4",
+   "SLC22A1"
+  ],
+  "confident": [
+   "CPT1A",
+   "CPT1B",
+   "CPT1C",
+   "CRAT",
+   "CROT",
+   "CPT2",
+   "SLC25A20",
+   "SLC22A5",
+   "SLC22A4",
+   "SLC22A1"
+  ],
+  "confidence": 0.7,
+  "doubt": "Only wrong if this C22 polyunsaturated acyl-carnitine formation were routed through CRAT/CROT instead of the CPT1 set the model used for the analogous C24 and C18:1 cases."
+ },
+ "135": {
+  "samples": [
+   [
+    "ADH1A",
+    "ADH1C",
+    "ADH4",
+    "ADH5",
+    "ADH6",
+    "AKR1A1",
+    "AKR1B1",
+    "AKR1B10",
+    "ADH1B",
+    "ADH7"
+   ]
+  ],
+  "tournament": [
+   "ADH1A",
+   "ADH1C",
+   "ADH4",
+   "ADH5",
+   "ADH6",
+   "ADH1B",
+   "ADH7",
+   "AKR1A1",
+   "AKR1B1",
+   "AKR1B10"
+  ],
+  "confident": [
+   "ADH1A",
+   "ADH1C",
+   "ADH4",
+   "ADH5",
+   "ADH6",
+   "ADH1B",
+   "ADH7",
+   "AKR1A1",
+   "AKR1B1",
+   "AKR1B10"
+  ],
+  "confidence": 0.4,
+  "doubt": "With NADP+ as cofactor the model may have assigned this alcohol/aldehyde interconversion to the aldo-keto reductases (AKR1A1/AKR1B1) rather than to the class I ADHs."
+ },
+ "136": {
+  "samples": [
+   [
+    "CRAT",
+    "CROT",
+    "CPT1A",
+    "CPT1B",
+    "CPT1C",
+    "CPT2",
+    "SLC22A5",
+    "SLC25A20",
+    "SLC22A4",
+    "SLC22A1"
+   ]
+  ],
+  "tournament": [
+   "CRAT",
+   "CROT",
+   "CPT1A",
+   "CPT1B",
+   "CPT1C",
+   "CPT2",
+   "SLC22A5",
+   "SLC25A20",
+   "SLC22A4",
+   "SLC22A1"
+  ],
+  "confident": [
+   "CRAT",
+   "CROT",
+   "CPT1A",
+   "CPT1B",
+   "CPT1C",
+   "CPT2",
+   "SLC22A5",
+   "SLC25A20",
+   "SLC22A4",
+   "SLC22A1"
+  ],
+  "confidence": 0.85,
+  "doubt": "Only wrong if the odd-chain C23 substrate were routed to CROT while the even-chain analogues kept CRAT."
+ },
+ "137": {
+  "samples": [
+   [
+    "ACSL1",
+    "ACSL3",
+    "ACSL4",
+    "ACSL5",
+    "ACSL6",
+    "ACSBG1",
+    "ACSBG2",
+    "SLC27A2",
+    "SLC27A1",
+    "SLC27A3"
+   ]
+  ],
+  "tournament": [
+   "ACSL1",
+   "ACSL3",
+   "ACSL4",
+   "ACSL5",
+   "ACSL6",
+   "ACSBG1",
+   "ACSBG2",
+   "SLC27A2",
+   "SLC27A1",
+   "SLC27A3"
+  ],
+  "confident": [
+   "ACSL1",
+   "ACSL3",
+   "ACSL4",
+   "ACSL5",
+   "ACSL6",
+   "ACSBG1",
+   "ACSBG2",
+   "SLC27A2",
+   "SLC27A1",
+   "SLC27A3"
+  ],
+  "confidence": 0.75,
+  "doubt": "Only wrong if the C20:1 substrate narrowed the ER acyl-CoA synthetase set to SLC27A2 or ACSL4 alone."
+ },
+ "138": {
+  "samples": [
+   [
+    "ABCD1",
+    "ABCD2",
+    "ABCD3",
+    "ABCD4",
+    "PEX5",
+    "PEX7",
+    "PEX2",
+    "PEX10",
+    "PEX12",
+    "PEX13"
+   ]
+  ],
+  "tournament": [
+   "ABCD1",
+   "ABCD2",
+   "ABCD3",
+   "ABCD4",
+   "PEX5",
+   "PEX7",
+   "PEX2",
+   "PEX10",
+   "PEX12",
+   "PEX13"
+  ],
+  "confident": [
+   "ABCD1",
+   "ABCD2",
+   "ABCD3",
+   "ABCD4",
+   "PEX5",
+   "PEX7",
+   "PEX2",
+   "PEX10",
+   "PEX12",
+   "PEX13"
+  ],
+  "confidence": 0.78,
+  "doubt": "Only wrong if the polyunsaturated C24 CoA were given to ABCD2/ABCD3 rather than the ABCD1 used for the closely analogous tetracosatetraenoyl-CoA import."
+ },
+ "139": {
+  "samples": [
+   [
+    "HADH",
+    "HSD17B10",
+    "HADHA",
+    "EHHADH",
+    "HSD17B4",
+    "HADHB",
+    "ECHS1",
+    "BDH1",
+    "BDH2",
+    "ACAT1"
+   ]
+  ],
+  "tournament": [
+   "HADH",
+   "HSD17B10",
+   "HADHA",
+   "EHHADH",
+   "HSD17B4",
+   "HADHB",
+   "ECHS1",
+   "BDH1",
+   "BDH2",
+   "ACAT1"
+  ],
+  "confident": [
+   "HADH",
+   "HSD17B10",
+   "HADHA",
+   "EHHADH",
+   "HSD17B4",
+   "HADHB",
+   "ECHS1",
+   "BDH1",
+   "BDH2",
+   "ACAT1"
+  ],
+  "confidence": 0.6,
+  "doubt": "The C4 3-hydroxyacyl-CoA dehydrogenase could be written as HSD17B10 (or the HADH/HADHA/HSD17B10 set) rather than HADH alone."
+ },
+ "140": {
+  "samples": [
+   [
+    "ACADVL",
+    "ACADL",
+    "ACADM",
+    "ACAD9",
+    "ACADS",
+    "ACADSB",
+    "ACAD8",
+    "ACAD10",
+    "ACAD11",
+    "ETFA"
+   ]
+  ],
+  "tournament": [
+   "ACADVL",
+   "ACADL",
+   "ACADM",
+   "ACAD9",
+   "ACADS",
+   "ACADSB",
+   "ACAD8",
+   "ACAD10",
+   "ACAD11",
+   "ETFA"
+  ],
+  "confident": [
+   "ACADVL",
+   "ACADL",
+   "ACADM",
+   "ACAD9",
+   "ACADS",
+   "ACADSB",
+   "ACAD8",
+   "ACAD10",
+   "ACAD11",
+   "ETFA"
+  ],
+  "confidence": 0.72,
+  "doubt": "Only wrong if this C22 substrate were restricted to ACADVL's absence, i.e. assigned to ACADL alone, or if the model used a different set than the {ACAD9,ACADL,ACADM,ACADVL} it applied to C18-C20 substrates."
+ },
+ "141": {
+  "samples": [
+   [
+    "ACSL1",
+    "ACSL3",
+    "ACSL4",
+    "ACSL5",
+    "ACSL6",
+    "SLC27A2",
+    "ACSBG1",
+    "ACSBG2",
+    "SLC27A5",
+    "SLC27A1"
+   ]
+  ],
+  "tournament": [
+   "ACSL1",
+   "ACSL3",
+   "ACSL4",
+   "ACSL5",
+   "ACSL6",
+   "ACSBG1",
+   "ACSBG2",
+   "SLC27A2",
+   "SLC27A5",
+   "SLC27A1"
+  ],
+  "confident": [
+   "ACSL1",
+   "ACSL3",
+   "ACSL4",
+   "ACSL5",
+   "ACSL6",
+   "ACSBG1",
+   "ACSBG2",
+   "SLC27A2",
+   "SLC27A5",
+   "SLC27A1"
+  ],
+  "confidence": 0.72,
+  "doubt": "Several peroxisomal activations in this model are SLC27A2-only (pristanic, phytanic), so palmitolate could fall in that narrow set instead of the ACSL group."
+ },
+ "142": {
+  "samples": [
+   [
+    "ECI1",
+    "ECI2",
+    "ECH1",
+    "ECHS1",
+    "HADHA",
+    "EHHADH",
+    "HSD17B4",
+    "DECR1",
+    "DECR2",
+    "ECHDC1"
+   ]
+  ],
+  "tournament": [
+   "ECI1",
+   "ECI2",
+   "ECH1",
+   "ECHS1",
+   "HADHA",
+   "EHHADH",
+   "HSD17B4",
+   "DECR1",
+   "DECR2",
+   "ECHDC1"
+  ],
+  "confident": [
+   "ECI1",
+   "ECI2",
+   "ECH1",
+   "ECHS1",
+   "HADHA",
+   "EHHADH",
+   "HSD17B4",
+   "DECR1",
+   "DECR2",
+   "ECHDC1"
+  ],
+  "confidence": 0.7,
+  "doubt": "ECH1 is also annotated as a \u03943,5-\u03942,4 isomerase and could have been used here, or the model may pair ECI1 with ECI2 and score only the first-listed."
+ },
+ "143": {
+  "samples": [
+   [
+    "ACAA1",
+    "MYO5B",
+    "SCP2",
+    "ACAA2",
+    "ACAT1",
+    "ACAT2",
+    "HSD17B4",
+    "EHHADH",
+    "ACOX1",
+    "ACOX2"
+   ]
+  ],
+  "tournament": [
+   "ACAA1",
+   "MYO5B",
+   "SCP2",
+   "ACAA2",
+   "ACAT1",
+   "ACAT2",
+   "HSD17B4",
+   "EHHADH",
+   "ACOX1",
+   "ACOX2"
+  ],
+  "confident": [
+   "ACAA1",
+   "MYO5B",
+   "SCP2",
+   "ACAA2",
+   "ACAT1",
+   "ACAT2",
+   "HSD17B4",
+   "EHHADH",
+   "ACOX1",
+   "ACOX2"
+  ],
+  "confidence": 0.8,
+  "doubt": "SCP2 (SCPx thiolase) handles branched and very-long-chain peroxisomal thiolysis and could have been used for this C26:1 substrate instead of ACAA1."
+ },
+ "144": {
+  "samples": [
+   [
+    "EHHADH",
+    "HSD17B4",
+    "ECHS1",
+    "ECH1",
+    "HADHA",
+    "ECHDC1",
+    "ECHDC2",
+    "ECHDC3",
+    "ECI1",
+    "ECI2"
+   ]
+  ],
+  "tournament": [
+   "EHHADH",
+   "HSD17B4",
+   "ECHS1",
+   "ECH1",
+   "HADHA",
+   "ECHDC1",
+   "ECHDC2",
+   "ECHDC3",
+   "ECI1",
+   "ECI2"
+  ],
+  "confident": [
+   "EHHADH",
+   "HSD17B4",
+   "ECHS1",
+   "ECH1",
+   "HADHA",
+   "ECHDC1",
+   "ECHDC2",
+   "ECHDC3",
+   "ECI1",
+   "ECI2"
+  ],
+  "confidence": 0.6,
+  "doubt": "The (3S)-hydroxy stereochemistry is MFP1/EHHADH-like, but if the model treated this as the MFP2 route the answer would be HSD17B4."
+ },
+ "145": {
+  "samples": [
+   [
+    "HADH",
+    "HSD17B10",
+    "HADHA",
+    "EHHADH",
+    "HSD17B4",
+    "HADHB",
+    "ECHS1",
+    "ACAA2",
+    "ACAA1",
+    "ACAT1"
+   ]
+  ],
+  "tournament": [
+   "HADH",
+   "HSD17B10",
+   "HADHA",
+   "EHHADH",
+   "HSD17B4",
+   "HADHB",
+   "ECHS1",
+   "ACAA2",
+   "ACAA1",
+   "ACAT1"
+  ],
+  "confident": [
+   "HADH",
+   "HSD17B10",
+   "HADHA",
+   "EHHADH",
+   "HSD17B4",
+   "HADHB",
+   "ECHS1",
+   "ACAA2",
+   "ACAA1",
+   "ACAT1"
+  ],
+  "confidence": 0.5,
+  "doubt": "Branched-chain 3-hydroxyacyl-CoA dehydrogenation is HSD17B10's specialty, so a 4-methyl substrate may well carry HSD17B10 rather than HADH."
+ },
+ "146": {
+  "samples": [
+   [
+    "LIPA",
+    "CEL",
+    "CES1",
+    "CES2",
+    "CES3",
+    "CES5A",
+    "NCEH1",
+    "SOAT1",
+    "SOAT2",
+    "LCAT"
+   ]
+  ],
+  "tournament": [
+   "LIPA",
+   "CEL",
+   "CES1",
+   "CES2",
+   "CES3",
+   "CES5A",
+   "NCEH1",
+   "SOAT1",
+   "SOAT2",
+   "LCAT"
+  ],
+  "confident": [
+   "LIPA",
+   "CEL",
+   "CES1",
+   "CES2",
+   "CES3",
+   "CES5A",
+   "NCEH1",
+   "SOAT1",
+   "SOAT2",
+   "LCAT"
+  ],
+  "confidence": 0.75,
+  "doubt": "Only wrong if this particular C22:1 ester broke the {CEL,LIPA} pattern used for every other lysosomal cholesteryl ester."
+ },
+ "147": {
+  "samples": [
+   [
+    "STS",
+    "SULT2A1",
+    "SULT2B1",
+    "SULT1E1",
+    "SULT1A1",
+    "SULT1A2",
+    "SULT1A3",
+    "SULT1A4",
+    "SULT1B1",
+    "SULT1C2"
+   ]
+  ],
+  "tournament": [
+   "STS",
+   "SULT2A1",
+   "SULT2B1",
+   "SULT1E1",
+   "SULT1A1",
+   "SULT1A2",
+   "SULT1A3",
+   "SULT1A4",
+   "SULT1B1",
+   "SULT1C2"
+  ],
+  "confident": [
+   "STS",
+   "SULT2A1",
+   "SULT2B1",
+   "SULT1E1",
+   "SULT1A1",
+   "SULT1A2",
+   "SULT1A3",
+   "SULT1A4",
+   "SULT1B1",
+   "SULT1C2"
+  ],
+  "confidence": 0.78,
+  "doubt": "If the model wrote a genuine PAPS-independent sulfation for DHT rather than the reversed-sulfatase form it used for androsterone, SULT2A1/SULT2B1 would take it."
+ },
+ "148": {
+  "samples": [
+   [
+    "ELOVL1",
+    "HSD17B12",
+    "CBR4",
+    "HSD17B8",
+    "ELOVL2",
+    "ELOVL3",
+    "ELOVL4",
+    "ELOVL5",
+    "ELOVL6",
+    "ELOVL7"
+   ]
+  ],
+  "tournament": [
+   "ELOVL1",
+   "HSD17B12",
+   "CBR4",
+   "HSD17B8",
+   "ELOVL2",
+   "ELOVL3",
+   "ELOVL4",
+   "ELOVL5",
+   "ELOVL6",
+   "ELOVL7"
+  ],
+  "confident": [
+   "ELOVL1",
+   "HSD17B12",
+   "CBR4",
+   "HSD17B8",
+   "ELOVL2",
+   "ELOVL3",
+   "ELOVL4",
+   "ELOVL5",
+   "ELOVL6",
+   "ELOVL7"
+  ],
+  "confidence": 0.4,
+  "doubt": "HSD17B12 is the genuine ER 3-ketoacyl-CoA reductase, and the ELOVL1-only dehydratase may be an isolated annotation quirk rather than a whole-pathway ELOVL1 assignment."
+ },
+ "149": {
+  "samples": [
+   [
+    "CES1",
+    "NCEH1",
+    "CEL",
+    "LIPA",
+    "CES2",
+    "CES3",
+    "CES5A",
+    "LIPE",
+    "SOAT1",
+    "SOAT2"
+   ]
+  ],
+  "tournament": [
+   "CES1",
+   "NCEH1",
+   "CEL",
+   "LIPA",
+   "CES2",
+   "CES3",
+   "CES5A",
+   "LIPE",
+   "SOAT1",
+   "SOAT2"
+  ],
+  "confident": [
+   "CES1",
+   "NCEH1",
+   "CEL",
+   "LIPA",
+   "CES2",
+   "CES3",
+   "CES5A",
+   "LIPE",
+   "SOAT1",
+   "SOAT2"
+  ],
+  "confidence": 0.38,
+  "doubt": "The ER cholesteryl ester hydrolase could equally be NCEH1 (the ER-resident neutral CE hydrolase) or simply the {CEL,LIPA} pair carried over from the lysosomal reactions."
+ },
+ "150": {
+  "samples": [
+   [
+    "CES1",
+    "NCEH1",
+    "CEL",
+    "LIPE",
+    "LIPA",
+    "CES2",
+    "CES3",
+    "CES5A",
+    "CES4A",
+    "LIPF"
+   ]
+  ],
+  "tournament": [
+   "CES1",
+   "NCEH1",
+   "CEL",
+   "LIPE",
+   "LIPA",
+   "CES2",
+   "CES3",
+   "CES4A",
+   "CES5A",
+   "LIPF"
+  ],
+  "confident": [
+   "CES1",
+   "NCEH1",
+   "CEL",
+   "LIPE",
+   "LIPA",
+   "CES2",
+   "CES3",
+   "CES4A",
+   "CES5A",
+   "LIPF"
+  ],
+  "confidence": 0.4,
+  "doubt": "If the model assigns ER-lumen cholesteryl-ester hydrolysis to the ER-anchored neutral cholesterol ester hydrolase NCEH1 (or to bile-salt-stimulated CEL) rather than to carboxylesterase CES1, my first pick is wrong."
+ },
+ "151": {
+  "samples": [
+   [
+    "BCKDHA",
+    "BCKDHB",
+    "DBT",
+    "PDHA1",
+    "PDHB",
+    "PDHA2",
+    "DLAT",
+    "DLD",
+    "PDHX",
+    "OGDH"
+   ]
+  ],
+  "tournament": [
+   "BCKDHA",
+   "BCKDHB",
+   "DBT",
+   "PDHA1",
+   "PDHB",
+   "PDHA2",
+   "DLAT",
+   "DLD",
+   "PDHX",
+   "OGDH"
+  ],
+  "confident": [
+   "BCKDHA",
+   "BCKDHB",
+   "DBT",
+   "PDHA1",
+   "PDHB",
+   "PDHA2",
+   "DLAT",
+   "DLD",
+   "PDHX",
+   "OGDH"
+  ],
+  "confidence": 0.85,
+  "doubt": "If the model routes 2-oxobutyrate decarboxylation through the pyruvate dehydrogenase E1 (PDHA1/PDHB) instead of the branched-chain E1, BCKDHA is wrong."
+ },
+ "152": {
+  "samples": [
+   [
+    "CPS1",
+    "CAD",
+    "CA5A",
+    "CA5B",
+    "NAGS",
+    "PC",
+    "PCCA",
+    "PCCB",
+    "MCCC1",
+    "OTC"
+   ]
+  ],
+  "tournament": [
+   "CPS1",
+   "CAD",
+   "NAGS",
+   "CA5A",
+   "CA5B",
+   "OTC",
+   "PC",
+   "PCCA",
+   "PCCB",
+   "MCCC1"
+  ],
+  "confident": [
+   "CPS1",
+   "CAD",
+   "NAGS",
+   "CA5A",
+   "CA5B",
+   "OTC",
+   "PC",
+   "PCCA",
+   "PCCB",
+   "MCCC1"
+  ],
+  "confidence": 0.9,
+  "doubt": "Only wrong if the CO2-form variant is deliberately assigned to a carbonic-anhydrase-coupled lumped GPR (CA5A/CA5B) rather than CPS1 itself."
+ },
+ "153": {
+  "samples": [
+   [
+    "ASNS",
+    "ASNSD1",
+    "NADSYN1",
+    "GMPS",
+    "CTPS1",
+    "CTPS2",
+    "PFAS",
+    "PPAT",
+    "GFPT1",
+    "GFPT2"
+   ]
+  ],
+  "tournament": [
+   "ASNS",
+   "ASNSD1",
+   "NADSYN1",
+   "GMPS",
+   "CTPS1",
+   "CTPS2",
+   "PFAS",
+   "PPAT",
+   "GFPT1",
+   "GFPT2"
+  ],
+  "confident": [
+   "ASNS",
+   "ASNSD1",
+   "NADSYN1",
+   "GMPS",
+   "CTPS1",
+   "CTPS2",
+   "PFAS",
+   "PPAT",
+   "GFPT1",
+   "GFPT2"
+  ],
+  "confidence": 0.93,
+  "doubt": "Wrong only if the model credits the paralogue ASNSD1 for glutamine-dependent asparagine synthesis."
+ },
+ "154": {
+  "samples": [
+   [
+    "EPHX1",
+    "EPHX3",
+    "EPHX2",
+    "EPHX4",
+    "CYP1A1",
+    "CYP1B1",
+    "CYP1A2",
+    "CYP3A4",
+    "CYP3A5",
+    "CYP2C9"
+   ]
+  ],
+  "tournament": [
+   "EPHX1",
+   "EPHX2",
+   "EPHX3",
+   "EPHX4",
+   "CYP1A1",
+   "CYP1A2",
+   "CYP1B1",
+   "CYP3A4",
+   "CYP3A5",
+   "CYP2C9"
+  ],
+  "confident": [
+   "EPHX1",
+   "EPHX2",
+   "EPHX3",
+   "EPHX4",
+   "CYP1A1",
+   "CYP1A2",
+   "CYP1B1",
+   "CYP3A4",
+   "CYP3A5",
+   "CYP2C9"
+  ],
+  "confidence": 0.85,
+  "doubt": "Wrong if the model uses the soluble epoxide hydrolase EPHX2 for this arene oxide despite the microsomal (r) compartment."
+ },
+ "155": {
+  "samples": [
+   [
+    "CMPK2",
+    "CMPK1",
+    "NME4",
+    "NME1",
+    "NME2",
+    "NME3",
+    "NME6",
+    "NME7",
+    "NME5",
+    "NME8"
+   ]
+  ],
+  "tournament": [
+   "CMPK2",
+   "CMPK1",
+   "NME4",
+   "NME1",
+   "NME2",
+   "NME3",
+   "NME6",
+   "NME7",
+   "NME5",
+   "NME8"
+  ],
+  "confident": [
+   "CMPK2",
+   "CMPK1",
+   "NME4",
+   "NME1",
+   "NME2",
+   "NME3",
+   "NME6",
+   "NME7",
+   "NME5",
+   "NME8"
+  ],
+  "confidence": 0.6,
+  "doubt": "Wrong if the model simply reuses the cytosolic UMP-CMP kinase CMPK1 inside mitochondria, or treats ADP+CDP as NDP-kinase chemistry (NME4)."
+ },
+ "156": {
+  "samples": [
+   [
+    "GALT",
+    "GALE",
+    "UGP2",
+    "GALK1",
+    "GALK2",
+    "PGM1",
+    "PGM2",
+    "PGM2L1",
+    "PGM3",
+    "PGM5"
+   ]
+  ],
+  "tournament": [
+   "GALT",
+   "GALE",
+   "GALK1",
+   "GALK2",
+   "UGP2",
+   "PGM1",
+   "PGM2",
+   "PGM2L1",
+   "PGM3",
+   "PGM5"
+  ],
+  "confident": [
+   "GALT",
+   "GALE",
+   "GALK1",
+   "GALK2",
+   "UGP2",
+   "PGM1",
+   "PGM2",
+   "PGM2L1",
+   "PGM3",
+   "PGM5"
+  ],
+  "confidence": 0.9,
+  "doubt": "Wrong only if the model splits the alpha-anomer-specific direction onto a different uridylyltransferase entry than GALT."
+ },
+ "157": {
+  "samples": [
+   [
+    "AFMID",
+    "KYNU",
+    "KMO",
+    "IDO1",
+    "IDO2",
+    "TDO2",
+    "HAAO",
+    "ACMSD",
+    "KYAT1",
+    "KYAT3"
+   ]
+  ],
+  "tournament": [
+   "AFMID",
+   "KYNU",
+   "KMO",
+   "IDO1",
+   "IDO2",
+   "TDO2",
+   "HAAO",
+   "ACMSD",
+   "KYAT1",
+   "KYAT3"
+  ],
+  "confident": [
+   "AFMID",
+   "KYNU",
+   "KMO",
+   "IDO1",
+   "IDO2",
+   "TDO2",
+   "HAAO",
+   "ACMSD",
+   "KYAT1",
+   "KYAT3"
+  ],
+  "confidence": 0.9,
+  "doubt": "Wrong only if formamidase activity is annotated to a nonspecific amidohydrolase rather than AFMID."
+ },
+ "158": {
+  "samples": [
+   [
+    "AFMID",
+    "KYNU",
+    "NIT2",
+    "NIT1",
+    "ESD",
+    "ACY1",
+    "ACY3",
+    "ASPA",
+    "CNDP2",
+    "CNDP1"
+   ]
+  ],
+  "tournament": [
+   "AFMID",
+   "KYNU",
+   "ESD",
+   "NIT1",
+   "NIT2",
+   "ACY1",
+   "ACY3",
+   "ASPA",
+   "CNDP1",
+   "CNDP2"
+  ],
+  "confident": [
+   "AFMID",
+   "KYNU",
+   "ESD",
+   "NIT1",
+   "NIT2",
+   "ACY1",
+   "ACY3",
+   "ASPA",
+   "CNDP1",
+   "CNDP2"
+  ],
+  "confidence": 0.72,
+  "doubt": "Wrong if the model treats formylanthranilate deformylation as a generic esterase/amidase (ESD, NIT1/2) instead of extending arylformamidase AFMID to this substrate."
+ },
+ "159": {
+  "samples": [
+   [
+    "ETNPPL",
+    "AGXT2",
+    "SGPL1",
+    "PHOSPHO1",
+    "PHOSPHO2",
+    "ALPL",
+    "ALPP",
+    "ALPG",
+    "ALPI",
+    "ACP1"
+   ]
+  ],
+  "tournament": [
+   "ETNPPL",
+   "AGXT2",
+   "SGPL1",
+   "PHOSPHO1",
+   "PHOSPHO2",
+   "ALPL",
+   "ALPP",
+   "ALPG",
+   "ALPI",
+   "ACP1"
+  ],
+  "confident": [
+   "ETNPPL",
+   "AGXT2",
+   "SGPL1",
+   "PHOSPHO1",
+   "PHOSPHO2",
+   "ALPL",
+   "ALPP",
+   "ALPG",
+   "ALPI",
+   "ACP1"
+  ],
+  "confidence": 0.85,
+  "doubt": "Wrong if the model assigns the phosphoethanolamine phospho-lyase step to the related aminotransferase AGXT2 family member rather than ETNPPL."
+ },
+ "160": {
+  "samples": [
+   [
+    "RBKS",
+    "PRPS1",
+    "PRPS2",
+    "PRPS1L1",
+    "ADK",
+    "KHK",
+    "PGM2",
+    "ADPGK",
+    "NAGK",
+    "GALK1"
+   ]
+  ],
+  "tournament": [
+   "RBKS",
+   "PRPS1",
+   "PRPS2",
+   "PRPS1L1",
+   "PGM2",
+   "ADK",
+   "KHK",
+   "ADPGK",
+   "NAGK",
+   "GALK1"
+  ],
+  "confident": [
+   "RBKS",
+   "PRPS1",
+   "PRPS2",
+   "PRPS1L1",
+   "PGM2",
+   "ADK",
+   "KHK",
+   "ADPGK",
+   "NAGK",
+   "GALK1"
+  ],
+  "confidence": 0.8,
+  "doubt": "Wrong if this back-reaction is attached to a different sugar kinase entry (e.g. ADPGK-style ADP-dependent kinase) rather than ribokinase run in reverse."
+ },
+ "161": {
+  "samples": [
+   [
+    "FPGT",
+    "GMPPA",
+    "GMPPB",
+    "GFUS",
+    "FCSK",
+    "UGP2",
+    "UAP1",
+    "UAP1L1",
+    "GALT",
+    "GALE"
+   ]
+  ],
+  "tournament": [
+   "FPGT",
+   "GMPPA",
+   "GMPPB",
+   "GFUS",
+   "FCSK",
+   "UGP2",
+   "UAP1",
+   "UAP1L1",
+   "GALT",
+   "GALE"
+  ],
+  "confident": [
+   "FPGT",
+   "GMPPA",
+   "GMPPB",
+   "GFUS",
+   "FCSK",
+   "UGP2",
+   "UAP1",
+   "UAP1L1",
+   "GALT",
+   "GALE"
+  ],
+  "confidence": 0.9,
+  "doubt": "Wrong only if the salvage guanylyltransferase step is folded into the bifunctional FCSK entry instead of FPGT."
+ },
+ "162": {
+  "samples": [
+   [
+    "CARNS1",
+    "CNDP2",
+    "CNDP1",
+    "RIMKLA",
+    "RIMKLB",
+    "GSS",
+    "NAT8L",
+    "GLUL",
+    "ASNS",
+    "GCLC"
+   ]
+  ],
+  "tournament": [
+   "CARNS1",
+   "CNDP1",
+   "CNDP2",
+   "RIMKLA",
+   "RIMKLB",
+   "NAT8L",
+   "GLUL",
+   "ASNS",
+   "GSS",
+   "GCLC"
+  ],
+  "confident": [
+   "CARNS1",
+   "CNDP1",
+   "CNDP2",
+   "RIMKLA",
+   "RIMKLB",
+   "NAT8L",
+   "GLUL",
+   "ASNS",
+   "GSS",
+   "GCLC"
+  ],
+  "confidence": 0.92,
+  "doubt": "Wrong only if the model runs carnosine synthesis as reverse CNDP dipeptidase rather than the ATP-grasp ligase CARNS1."
+ },
+ "163": {
+  "samples": [
+   [
+    "HYI",
+    "GRHPR",
+    "GLYCTK",
+    "AGXT",
+    "AGXT2",
+    "HAO1",
+    "HAO2",
+    "LDHA",
+    "LDHB",
+    "LDHC"
+   ]
+  ],
+  "tournament": [
+   "HYI",
+   "GRHPR",
+   "GLYCTK",
+   "AGXT",
+   "AGXT2",
+   "HAO1",
+   "HAO2",
+   "LDHA",
+   "LDHB",
+   "LDHC"
+  ],
+  "confident": [
+   "HYI",
+   "GRHPR",
+   "GLYCTK",
+   "AGXT",
+   "AGXT2",
+   "HAO1",
+   "HAO2",
+   "LDHA",
+   "LDHB",
+   "LDHC"
+  ],
+  "confidence": 0.8,
+  "doubt": "Wrong if the hydroxypyruvate/tartronate-semialdehyde isomerization is annotated to a glyoxylate-pathway enzyme other than hydroxypyruvate isomerase HYI."
+ },
+ "164": {
+  "samples": [
+   [
+    "IDNK",
+    "PGD",
+    "PGLS",
+    "RGN",
+    "G6PD",
+    "H6PD",
+    "RBKS",
+    "KHK",
+    "ADPGK",
+    "NAGK"
+   ]
+  ],
+  "tournament": [
+   "IDNK",
+   "PGD",
+   "PGLS",
+   "G6PD",
+   "H6PD",
+   "RGN",
+   "RBKS",
+   "KHK",
+   "ADPGK",
+   "NAGK"
+  ],
+  "confident": [
+   "IDNK",
+   "PGD",
+   "PGLS",
+   "G6PD",
+   "H6PD",
+   "RGN",
+   "RBKS",
+   "KHK",
+   "ADPGK",
+   "NAGK"
+  ],
+  "confidence": 0.8,
+  "doubt": "Wrong if the model treats 6-phosphogluconate dephosphorylation as a phosphatase step rather than reverse gluconokinase IDNK."
+ },
+ "165": {
+  "samples": [
+   [
+    "PNP",
+    "UPP1",
+    "UPP2",
+    "TYMP",
+    "PGM2",
+    "ADA",
+    "ADA2",
+    "HPRT1",
+    "APRT",
+    "XDH"
+   ]
+  ],
+  "tournament": [
+   "PNP",
+   "UPP1",
+   "UPP2",
+   "TYMP",
+   "PGM2",
+   "ADA",
+   "ADA2",
+   "HPRT1",
+   "APRT",
+   "XDH"
+  ],
+  "confident": [
+   "PNP",
+   "UPP1",
+   "UPP2",
+   "TYMP",
+   "PGM2",
+   "ADA",
+   "ADA2",
+   "HPRT1",
+   "APRT",
+   "XDH"
+  ],
+  "confidence": 0.92,
+  "doubt": "Wrong only if inosine phosphorolysis were assigned to a pyrimidine phosphorylase, which would be chemically inconsistent."
+ },
+ "166": {
+  "samples": [
+   [
+    "DCXR",
+    "H6PD",
+    "CRYL1",
+    "G6PD",
+    "RGN",
+    "SORD",
+    "AKR1A1",
+    "AKR1B1",
+    "AKR1B10",
+    "AKR1B15"
+   ]
+  ],
+  "tournament": [
+   "H6PD",
+   "DCXR",
+   "G6PD",
+   "CRYL1",
+   "SORD",
+   "AKR1B1",
+   "AKR1A1",
+   "AKR1B10",
+   "AKR1B15",
+   "RGN"
+  ],
+  "confident": [
+   "H6PD",
+   "DCXR",
+   "G6PD",
+   "CRYL1",
+   "SORD",
+   "AKR1B1",
+   "AKR1A1",
+   "AKR1B10",
+   "AKR1B15",
+   "RGN"
+  ],
+  "confidence": 0.3,
+  "doubt": "H6PD is the right chemistry (NADP+ aldose-to-lactone, broad hexose/pentose specificity) but is ER-resident, so a cytosolic assignment such as DCXR or an AKR could be what the model actually used."
+ },
+ "167": {
+  "samples": [
+   [
+    "CARNS1",
+    "CNDP2",
+    "CNDP1",
+    "RIMKLA",
+    "RIMKLB",
+    "GSS",
+    "NAT8L",
+    "GLUL",
+    "ASNS",
+    "GCLC"
+   ]
+  ],
+  "tournament": [
+   "CARNS1",
+   "CNDP1",
+   "CNDP2",
+   "RIMKLA",
+   "RIMKLB",
+   "NAT8L",
+   "GLUL",
+   "ASNS",
+   "GSS",
+   "GCLC"
+  ],
+  "confident": [
+   "CARNS1",
+   "CNDP1",
+   "CNDP2",
+   "RIMKLA",
+   "RIMKLB",
+   "NAT8L",
+   "GLUL",
+   "ASNS",
+   "GSS",
+   "GCLC"
+  ],
+  "confidence": 0.9,
+  "doubt": "Wrong only if homocarnosine synthesis is given a separate ligase from carnosine synthase CARNS1."
+ },
+ "168": {
+  "samples": [
+   [
+    "SLC22A5",
+    "SLC25A17",
+    "SLC22A16",
+    "SLC22A4",
+    "SLC25A20",
+    "SLC25A29",
+    "ABCD3",
+    "ABCD1",
+    "ABCD2",
+    "ABCD4"
+   ]
+  ],
+  "tournament": [
+   "SLC25A17",
+   "SLC22A5",
+   "SLC25A20",
+   "SLC22A4",
+   "SLC22A16",
+   "SLC25A29",
+   "ABCD3",
+   "ABCD1",
+   "ABCD2",
+   "ABCD4"
+  ],
+  "confident": [
+   "SLC25A17",
+   "SLC22A5",
+   "SLC25A20",
+   "SLC22A4",
+   "SLC22A16",
+   "SLC25A29",
+   "ABCD3",
+   "ABCD1",
+   "ABCD2",
+   "ABCD4"
+  ],
+  "confidence": 0.33,
+  "doubt": "The model already uses SLC22A5 for ER acylcarnitine exchange and SLC25A20 for mitochondrial, so it may reuse SLC22A5 at the peroxisome instead of the peroxisomal carrier SLC25A17."
+ },
+ "169": {
+  "samples": [
+   [
+    "DHFR",
+    "DHFR2",
+    "MTHFD1",
+    "TYMS",
+    "MTHFD2",
+    "MTHFD2L",
+    "MTHFD1L",
+    "MTHFR",
+    "FPGS",
+    "GGH"
+   ]
+  ],
+  "tournament": [
+   "DHFR",
+   "DHFR2",
+   "MTHFD1",
+   "MTHFD2",
+   "MTHFD2L",
+   "MTHFD1L",
+   "MTHFR",
+   "TYMS",
+   "FPGS",
+   "GGH"
+  ],
+  "confident": [
+   "DHFR",
+   "DHFR2",
+   "MTHFD1",
+   "MTHFD2",
+   "MTHFD2L",
+   "MTHFD1L",
+   "MTHFR",
+   "TYMS",
+   "FPGS",
+   "GGH"
+  ],
+  "confidence": 0.88,
+  "doubt": "Wrong only if the NADPH-specific folate reduction is credited solely to the paralogue DHFR2."
+ },
+ "170": {
+  "samples": [
+   [
+    "AMDHD1",
+    "UROC1",
+    "FTCD",
+    "HAL",
+    "AMDHD2",
+    "DPYS",
+    "UPB1",
+    "ALLC",
+    "ADA",
+    "ADA2"
+   ]
+  ],
+  "tournament": [
+   "AMDHD1",
+   "UROC1",
+   "FTCD",
+   "HAL",
+   "AMDHD2",
+   "DPYS",
+   "UPB1",
+   "ALLC",
+   "ADA",
+   "ADA2"
+  ],
+  "confident": [
+   "AMDHD1",
+   "UROC1",
+   "FTCD",
+   "HAL",
+   "AMDHD2",
+   "DPYS",
+   "UPB1",
+   "ALLC",
+   "ADA",
+   "ADA2"
+  ],
+  "confidence": 0.9,
+  "doubt": "Wrong only if imidazolonepropionase activity were folded into the bifunctional FTCD entry."
+ },
+ "171": {
+  "samples": [
+   [
+    "UROC1",
+    "HAL",
+    "AMDHD1",
+    "FTCD",
+    "AMDHD2",
+    "FH",
+    "ECHS1",
+    "ACO1",
+    "ACO2",
+    "IREB2"
+   ]
+  ],
+  "tournament": [
+   "UROC1",
+   "HAL",
+   "AMDHD1",
+   "FTCD",
+   "AMDHD2",
+   "FH",
+   "ACO1",
+   "ACO2",
+   "IREB2",
+   "ECHS1"
+  ],
+  "confident": [
+   "UROC1",
+   "HAL",
+   "AMDHD1",
+   "FTCD",
+   "AMDHD2",
+   "FH",
+   "ACO1",
+   "ACO2",
+   "IREB2",
+   "ECHS1"
+  ],
+  "confidence": 0.9,
+  "doubt": "Wrong only if the model lumps urocanate hydration with the preceding histidase step under HAL."
+ },
+ "172": {
+  "samples": [
+   [
+    "PPCDC",
+    "PPCS",
+    "COASY",
+    "PANK1",
+    "PANK2",
+    "PANK3",
+    "PANK4",
+    "ENPP1",
+    "ENPP3",
+    "VNN1"
+   ]
+  ],
+  "tournament": [
+   "PPCDC",
+   "PPCS",
+   "COASY",
+   "PANK1",
+   "PANK2",
+   "PANK3",
+   "PANK4",
+   "ENPP1",
+   "ENPP3",
+   "VNN1"
+  ],
+  "confident": [
+   "PPCDC",
+   "PPCS",
+   "COASY",
+   "PANK1",
+   "PANK2",
+   "PANK3",
+   "PANK4",
+   "ENPP1",
+   "ENPP3",
+   "VNN1"
+  ],
+  "confidence": 0.9,
+  "doubt": "Wrong only if the decarboxylation is lumped with the synthetase step under PPCS."
+ },
+ "173": {
+  "samples": [
+   [
+    "SLC22A5",
+    "SLC25A17",
+    "SLC22A16",
+    "SLC22A4",
+    "SLC25A20",
+    "SLC25A29",
+    "ABCD3",
+    "ABCD1",
+    "ABCD2",
+    "ABCD4"
+   ]
+  ],
+  "tournament": [
+   "SLC25A17",
+   "SLC22A5",
+   "SLC25A20",
+   "ABCD3",
+   "SLC22A4",
+   "SLC22A16",
+   "SLC25A29",
+   "ABCD1",
+   "ABCD2",
+   "ABCD4"
+  ],
+  "confident": [
+   "SLC25A17",
+   "SLC22A5",
+   "SLC25A20",
+   "ABCD3",
+   "SLC22A4",
+   "SLC22A16",
+   "SLC25A29",
+   "ABCD1",
+   "ABCD2",
+   "ABCD4"
+  ],
+  "confidence": 0.35,
+  "doubt": "If the model reuses the carnitine transporter SLC22A5 (as it does for the ER) or routes peroxisomal acyl export through ABCD3, SLC25A17 is wrong."
+ },
+ "174": {
+  "samples": [
+   [
+    "GGT1",
+    "GGT5",
+    "GGT7",
+    "GGT6",
+    "GGTLC1",
+    "GGTLC2",
+    "DPEP1",
+    "DPEP2",
+    "DPEP3",
+    "LTC4S"
+   ]
+  ],
+  "tournament": [
+   "GGT1",
+   "GGT5",
+   "GGT6",
+   "GGT7",
+   "GGTLC1",
+   "GGTLC2",
+   "DPEP1",
+   "DPEP2",
+   "DPEP3",
+   "LTC4S"
+  ],
+  "confident": [
+   "GGT1",
+   "GGT5",
+   "GGT6",
+   "GGT7",
+   "GGTLC1",
+   "GGTLC2",
+   "DPEP1",
+   "DPEP2",
+   "DPEP3",
+   "LTC4S"
+  ],
+  "confidence": 0.5,
+  "doubt": "GGT5 is literally gamma-glutamyl leukotrienase, so if the model picked the specific member rather than the generic GGT1 my first choice is wrong."
+ },
+ "175": {
+  "samples": [
+   [
+    "SLC2A2",
+    "SLC2A1",
+    "SLC2A3",
+    "SLC2A5",
+    "SLC2A4",
+    "SLC2A8",
+    "SLC2A9",
+    "SLC2A6",
+    "SLC2A7",
+    "SLC2A10"
+   ]
+  ],
+  "tournament": [
+   "SLC2A2",
+   "SLC2A1",
+   "SLC2A3",
+   "SLC2A5",
+   "SLC2A4",
+   "SLC2A6",
+   "SLC2A7",
+   "SLC2A8",
+   "SLC2A9",
+   "SLC2A10"
+  ],
+  "confident": [
+   "SLC2A2",
+   "SLC2A1",
+   "SLC2A3",
+   "SLC2A5",
+   "SLC2A4",
+   "SLC2A6",
+   "SLC2A7",
+   "SLC2A8",
+   "SLC2A9",
+   "SLC2A10"
+  ],
+  "confidence": 0.5,
+  "doubt": "Wrong if the model gives galactose efflux the same broad GLUT set it gives mannose (SLC2A1/2A3) with a different member listed first."
+ },
+ "176": {
+  "samples": [
+   [
+    "SLC35A3",
+    "SLC35D2",
+    "SLC35B4",
+    "SLC35A2",
+    "SLC35D1",
+    "SLC35A1",
+    "SLC35A4",
+    "SLC35A5",
+    "SLC35B1",
+    "SLC35B2"
+   ]
+  ],
+  "tournament": [
+   "SLC35A3",
+   "SLC35D2",
+   "SLC35B4",
+   "SLC35A2",
+   "SLC35D1",
+   "SLC35A1",
+   "SLC35A4",
+   "SLC35A5",
+   "SLC35B1",
+   "SLC35B2"
+  ],
+  "confident": [
+   "SLC35A3",
+   "SLC35D2",
+   "SLC35B4",
+   "SLC35A2",
+   "SLC35D1",
+   "SLC35A1",
+   "SLC35A4",
+   "SLC35A5",
+   "SLC35B1",
+   "SLC35B2"
+  ],
+  "confidence": 0.55,
+  "doubt": "Wrong if the model uses the ER-resident SLC35D2 or SLC35B4 for UDP-GlcNAc import into the r compartment rather than the Golgi transporter SLC35A3."
+ },
+ "177": {
+  "samples": [
+   [
+    "SLC5A9",
+    "SLC5A10",
+    "SLC5A1",
+    "SLC5A4",
+    "SLC5A11",
+    "SLC5A2",
+    "SLC5A3",
+    "SLC2A1",
+    "SLC2A2",
+    "SLC2A3"
+   ]
+  ],
+  "tournament": [
+   "SLC5A9",
+   "SLC5A1",
+   "SLC5A10",
+   "SLC5A4",
+   "SLC5A2",
+   "SLC5A11",
+   "SLC5A3",
+   "SLC2A1",
+   "SLC2A2",
+   "SLC2A3"
+  ],
+  "confident": [
+   "SLC5A9",
+   "SLC5A1",
+   "SLC5A10",
+   "SLC5A4",
+   "SLC5A2",
+   "SLC5A11",
+   "SLC5A3",
+   "SLC2A1",
+   "SLC2A2",
+   "SLC2A3"
+  ],
+  "confidence": 0.4,
+  "doubt": "SGLT4/SLC5A9 is the documented Na+-mannose carrier, but the model may have generically assigned Na+-sugar uptake to SGLT1 (SLC5A1) or to SGLT5 (SLC5A10)."
+ },
+ "178": {
+  "samples": [
+   [
+    "SLC6A6",
+    "SLC36A1",
+    "SLC25A17",
+    "ABCD3",
+    "SLC6A12",
+    "PXMP2",
+    "PXMP4",
+    "ABCD1",
+    "ABCD2",
+    "ABCD4"
+   ]
+  ],
+  "tournament": [
+   "SLC6A6",
+   "SLC25A17",
+   "SLC36A1",
+   "ABCD3",
+   "ABCD1",
+   "ABCD2",
+   "ABCD4",
+   "PXMP2",
+   "PXMP4",
+   "SLC6A12"
+  ],
+  "confident": [
+   "SLC6A6",
+   "SLC25A17",
+   "SLC36A1",
+   "ABCD3",
+   "ABCD1",
+   "ABCD2",
+   "ABCD4",
+   "PXMP2",
+   "PXMP4",
+   "SLC6A12"
+  ],
+  "confidence": 0.45,
+  "doubt": "Since the Na+-coupled c-to-x taurine reaction already carries SLC6A6, this uncoupled duplicate may instead be given a peroxisomal carrier/pore (SLC25A17, PXMP2)."
+ },
+ "179": {
+  "samples": [
+   [
+    "ACAA1",
+    "ACOX1",
+    "EHHADH",
+    "HSD17B4",
+    "ACOX3",
+    "ACOX2",
+    "SCP2",
+    "ACAA2",
+    "HADHA",
+    "HADHB"
+   ]
+  ],
+  "tournament": [
+   "ACOX1",
+   "ACAA1",
+   "EHHADH",
+   "HSD17B4",
+   "ACOX2",
+   "ACOX3",
+   "SCP2",
+   "ACAA2",
+   "HADHA",
+   "HADHB"
+  ],
+  "confident": [
+   "ACOX1",
+   "ACAA1",
+   "EHHADH",
+   "HSD17B4",
+   "ACOX2",
+   "ACOX3",
+   "SCP2",
+   "ACAA2",
+   "HADHA",
+   "HADHB"
+  ],
+  "confidence": 0.8,
+  "doubt": "Wrong only if dicarboxylyl-CoA beta-oxidation is routed through ACOX2/ACOX3 instead of the ACOX1-containing set used for the neighbouring chain lengths."
+ },
+ "180": {
+  "samples": [
+   [
+    "TARS1",
+    "TARS3",
+    "TARS2",
+    "SARS1",
+    "AARS1",
+    "VARS1",
+    "IARS1",
+    "SARS2",
+    "AARS2",
+    "VARS2"
+   ]
+  ],
+  "tournament": [
+   "TARS1",
+   "TARS3",
+   "TARS2",
+   "SARS1",
+   "SARS2",
+   "AARS1",
+   "AARS2",
+   "VARS1",
+   "VARS2",
+   "IARS1"
+  ],
+  "confident": [
+   "TARS1",
+   "TARS3",
+   "TARS2",
+   "SARS1",
+   "SARS2",
+   "AARS1",
+   "AARS2",
+   "VARS1",
+   "VARS2",
+   "IARS1"
+  ],
+  "confidence": 0.88,
+  "doubt": "Wrong only if the cytosolic charging reaction is annotated to the paralogue TARS3 rather than TARS1."
+ },
+ "181": {
+  "samples": [
+   [
+    "ACADVL",
+    "HADHA",
+    "HADHB",
+    "ACADM",
+    "ACADL",
+    "ACAD9",
+    "HADH",
+    "ECHS1",
+    "ACAA2",
+    "ACADS"
+   ]
+  ],
+  "tournament": [
+   "ACADVL",
+   "HADHA",
+   "HADHB",
+   "ACADM",
+   "ACADS",
+   "ACADL",
+   "ACAD9",
+   "HADH",
+   "ECHS1",
+   "ACAA2"
+  ],
+  "confident": [
+   "ACADVL",
+   "HADHA",
+   "HADHB",
+   "ACADM",
+   "ACADS",
+   "ACADL",
+   "ACAD9",
+   "HADH",
+   "ECHS1",
+   "ACAA2"
+  ],
+  "confidence": 0.8,
+  "doubt": "Wrong if this C15 cycle is assigned to the medium/short-chain set (ACADM/ACADS) as the model did for one other pentadecanoyl reaction."
+ },
+ "182": {
+  "samples": [
+   [
+    "ECI1",
+    "ECI2",
+    "ECH1",
+    "DECR1",
+    "HADHA",
+    "HADHB",
+    "ECHS1",
+    "DECR2",
+    "HSD17B4",
+    "EHHADH"
+   ]
+  ],
+  "tournament": [
+   "ECI1",
+   "ECI2",
+   "ECH1",
+   "HADHA",
+   "HADHB",
+   "ECHS1",
+   "DECR1",
+   "DECR2",
+   "HSD17B4",
+   "EHHADH"
+  ],
+  "confident": [
+   "ECI1",
+   "ECI2",
+   "ECH1",
+   "HADHA",
+   "HADHB",
+   "ECHS1",
+   "DECR1",
+   "DECR2",
+   "HSD17B4",
+   "EHHADH"
+  ],
+  "confidence": 0.65,
+  "doubt": "Wrong if the model puts the mitochondrial delta-3,delta-2 isomerization on ECH1 or on the trifunctional protein rather than ECI1."
+ },
+ "183": {
+  "samples": [
+   [
+    "ACADVL",
+    "HADHA",
+    "ACADL",
+    "ECHS1",
+    "ACADM",
+    "ACAD9",
+    "HADHB",
+    "HADH",
+    "ECH1",
+    "ACADS"
+   ]
+  ],
+  "tournament": [
+   "ACADVL",
+   "HADHA",
+   "HADHB",
+   "ACADL",
+   "ACADM",
+   "ACAD9",
+   "ECHS1",
+   "ECH1",
+   "HADH",
+   "ACADS"
+  ],
+  "confident": [
+   "ACADVL",
+   "HADHA",
+   "HADHB",
+   "ACADL",
+   "ACADM",
+   "ACAD9",
+   "ECHS1",
+   "ECH1",
+   "HADH",
+   "ACADS"
+  ],
+  "confidence": 0.5,
+  "doubt": "This lumps dehydrogenation plus hydration, so the GPR may lead with the hydratase (HADHA) or with ACADL rather than ACADVL."
+ },
+ "184": {
+  "samples": [
+   [
+    "SLC1A5",
+    "SLC1A4",
+    "SLC38A1",
+    "SLC38A2",
+    "SLC38A4",
+    "SLC38A3",
+    "SLC38A5",
+    "SLC7A5",
+    "SLC3A2",
+    "SLC7A8"
+   ]
+  ],
+  "tournament": [
+   "SLC1A5",
+   "SLC1A4",
+   "SLC38A1",
+   "SLC38A2",
+   "SLC38A4",
+   "SLC38A3",
+   "SLC38A5",
+   "SLC7A5",
+   "SLC3A2",
+   "SLC7A8"
+  ],
+  "confident": [
+   "SLC1A5",
+   "SLC1A4",
+   "SLC38A1",
+   "SLC38A2",
+   "SLC38A4",
+   "SLC38A3",
+   "SLC38A5",
+   "SLC7A5",
+   "SLC3A2",
+   "SLC7A8"
+  ],
+  "confidence": 0.7,
+  "doubt": "Wrong if this direction of the Na+-dependent Ala/Asn antiport is given to ASCT1 (SLC1A4) alone rather than ASCT2."
+ },
+ "185": {
+  "samples": [
+   [
+    "SLC7A6",
+    "SLC7A7",
+    "SLC3A2",
+    "SLC7A9",
+    "SLC3A1",
+    "SLC1A5",
+    "SLC1A4",
+    "SLC38A1",
+    "SLC38A2",
+    "SLC38A3"
+   ]
+  ],
+  "tournament": [
+   "SLC7A6",
+   "SLC7A7",
+   "SLC3A2",
+   "SLC7A9",
+   "SLC3A1",
+   "SLC1A5",
+   "SLC1A4",
+   "SLC38A1",
+   "SLC38A2",
+   "SLC38A3"
+  ],
+  "confident": [
+   "SLC7A6",
+   "SLC7A7",
+   "SLC3A2",
+   "SLC7A9",
+   "SLC3A1",
+   "SLC1A5",
+   "SLC1A4",
+   "SLC38A1",
+   "SLC38A2",
+   "SLC38A3"
+  ],
+  "confidence": 0.65,
+  "doubt": "Wrong if the model assigns this y+L-type cationic-out/neutral+Na-in exchange to y+LAT1 (SLC7A7) or includes SLC3A2 as the leading subunit instead of SLC7A6."
+ },
+ "186": {
+  "samples": [
+   [
+    "SLC7A6",
+    "SLC3A2",
+    "SLC7A7",
+    "SLC7A9",
+    "SLC3A1",
+    "SLC7A5",
+    "SLC7A8",
+    "SLC43A1",
+    "SLC43A2",
+    "SLC38A1"
+   ]
+  ],
+  "tournament": [
+   "SLC7A6",
+   "SLC3A2",
+   "SLC7A7",
+   "SLC7A9",
+   "SLC3A1",
+   "SLC7A5",
+   "SLC7A8",
+   "SLC43A1",
+   "SLC43A2",
+   "SLC38A1"
+  ],
+  "confident": [
+   "SLC7A6",
+   "SLC3A2",
+   "SLC7A7",
+   "SLC7A9",
+   "SLC3A1",
+   "SLC7A5",
+   "SLC7A8",
+   "SLC43A1",
+   "SLC43A2",
+   "SLC38A1"
+  ],
+  "confidence": 0.7,
+  "doubt": "Wrong if the heavy chain SLC3A2 heads the GPR or if SLC7A7 is used for this particular His/homoserine pair."
+ },
+ "187": {
+  "samples": [
+   [
+    "SLC7A6",
+    "SLC7A9",
+    "SLC3A1",
+    "SLC7A5",
+    "SLC3A2",
+    "SLC7A7",
+    "SLC7A8",
+    "SLC7A10",
+    "SLC43A1",
+    "SLC43A2"
+   ]
+  ],
+  "tournament": [
+   "SLC7A5",
+   "SLC7A6",
+   "SLC3A2",
+   "SLC7A8",
+   "SLC7A7",
+   "SLC7A9",
+   "SLC3A1",
+   "SLC43A1",
+   "SLC43A2",
+   "SLC7A10"
+  ],
+  "confident": [
+   "SLC7A5",
+   "SLC7A6",
+   "SLC3A2",
+   "SLC7A8",
+   "SLC7A7",
+   "SLC7A9",
+   "SLC3A1",
+   "SLC43A1",
+   "SLC43A2",
+   "SLC7A10"
+  ],
+  "confidence": 0.5,
+  "doubt": "Na+-independent cationic-in/neutral-out is textbook b0,+ (SLC3A1/SLC7A9), which the model used for the arginine/asparagine analogue, so SLC7A5 could be wrong."
+ },
+ "188": {
+  "samples": [
+   [
+    "SLC7A6",
+    "SLC7A9",
+    "SLC3A1",
+    "SLC7A5",
+    "SLC3A2",
+    "SLC7A7",
+    "SLC7A8",
+    "SLC43A1",
+    "SLC43A2",
+    "SLC7A10"
+   ]
+  ],
+  "tournament": [
+   "SLC7A5",
+   "SLC3A2",
+   "SLC7A8",
+   "SLC7A6",
+   "SLC7A7",
+   "SLC7A9",
+   "SLC3A1",
+   "SLC43A1",
+   "SLC43A2",
+   "SLC7A10"
+  ],
+  "confident": [
+   "SLC7A5",
+   "SLC3A2",
+   "SLC7A8",
+   "SLC7A6",
+   "SLC7A7",
+   "SLC7A9",
+   "SLC3A1",
+   "SLC43A1",
+   "SLC43A2",
+   "SLC7A10"
+  ],
+  "confidence": 0.6,
+  "doubt": "Wrong if the model heads this LAT-type exchange with the heavy chain SLC3A2 or uses SLC7A8 for the His/Asn pair."
+ },
+ "189": {
+  "samples": [
+   [
+    "ECHS1",
+    "AUH",
+    "ECH1",
+    "EHHADH",
+    "HADHA",
+    "HADHB",
+    "HADH",
+    "ECI1",
+    "ECI2",
+    "HSD17B4"
+   ]
+  ],
+  "tournament": [
+   "ECHS1",
+   "AUH",
+   "ECH1",
+   "EHHADH",
+   "HADHA",
+   "HADHB",
+   "HADH",
+   "ECI1",
+   "ECI2",
+   "HSD17B4"
+  ],
+  "confident": [
+   "ECHS1",
+   "AUH",
+   "ECH1",
+   "EHHADH",
+   "HADHA",
+   "HADHB",
+   "HADH",
+   "ECI1",
+   "ECI2",
+   "HSD17B4"
+  ],
+  "confidence": 0.55,
+  "doubt": "Wrong if the model assigns any methyl-branched enoyl-CoA hydration to AUH by name-similarity rather than to crotonase ECHS1."
+ },
+ "190": {
+  "samples": [
+   [
+    "SLCO1B3",
+    "SLCO1A2",
+    "SLCO1B1",
+    "SLCO1C1",
+    "SLCO2B1",
+    "SLCO3A1",
+    "SLCO4A1",
+    "SLCO4C1",
+    "SLCO5A1",
+    "SLCO6A1"
+   ]
+  ],
+  "tournament": [
+   "SLCO1B1",
+   "SLCO1C1",
+   "SLCO1B3",
+   "SLCO1A2",
+   "SLCO2B1",
+   "SLCO3A1",
+   "SLCO4A1",
+   "SLCO4C1",
+   "SLCO5A1",
+   "SLCO6A1"
+  ],
+  "confident": [
+   "SLCO1B1",
+   "SLCO1C1",
+   "SLCO1B3",
+   "SLCO1A2",
+   "SLCO2B1",
+   "SLCO3A1",
+   "SLCO4A1",
+   "SLCO4C1",
+   "SLCO5A1",
+   "SLCO6A1"
+  ],
+  "confidence": 0.4,
+  "doubt": "SLCO1C1 is the thyroxine-specific OATP, so if the model reserved the plain bicarbonate-exchange uptake for it rather than the generic SLCO1B1, my first pick is wrong."
+ },
+ "191": {
+  "samples": [
+   [
+    "SLCO2A1",
+    "SLCO1B1",
+    "SLCO1B3",
+    "SLCO1A2",
+    "SLCO2B1",
+    "SLCO3A1",
+    "SLCO4A1",
+    "SLCO4C1",
+    "SLCO1C1",
+    "SLCO5A1"
+   ]
+  ],
+  "tournament": [
+   "SLCO2A1",
+   "SLCO1B1",
+   "SLCO1B3",
+   "SLCO1A2",
+   "SLCO2B1",
+   "SLCO3A1",
+   "SLCO4A1",
+   "SLCO4C1",
+   "SLCO1C1",
+   "SLCO5A1"
+  ],
+  "confident": [
+   "SLCO2A1",
+   "SLCO1B1",
+   "SLCO1B3",
+   "SLCO1A2",
+   "SLCO2B1",
+   "SLCO3A1",
+   "SLCO4A1",
+   "SLCO4C1",
+   "SLCO1C1",
+   "SLCO5A1"
+  ],
+  "confidence": 0.55,
+  "doubt": "Wrong if the uncoupled PGF2alpha uptake is given to the hepatic uptake carrier SLCO1B1, which dominates this metabolite's other transport entries."
+ },
+ "192": {
+  "samples": [
+   [
+    "ABCC2",
+    "ABCC3",
+    "ABCC1",
+    "ABCG2",
+    "ABCC4",
+    "ABCB11",
+    "ABCB1",
+    "ABCB4",
+    "ABCC5",
+    "ABCC6"
+   ]
+  ],
+  "tournament": [
+   "ABCC2",
+   "ABCC3",
+   "ABCC1",
+   "ABCC4",
+   "ABCC5",
+   "ABCC6",
+   "ABCG2",
+   "ABCB1",
+   "ABCB4",
+   "ABCB11"
+  ],
+  "confident": [
+   "ABCC2",
+   "ABCC3",
+   "ABCC1",
+   "ABCC4",
+   "ABCC5",
+   "ABCC6",
+   "ABCG2",
+   "ABCB1",
+   "ABCB4",
+   "ABCB11"
+  ],
+  "confidence": 0.4,
+  "doubt": "The ATP-coupled version already carries ABCC1/2/3, so this ATP-free efflux may be assigned to the basolateral pump ABCC3 alone rather than canalicular ABCC2."
+ },
+ "193": {
+  "samples": [
+   [
+    "SLCO2A1",
+    "ABCC4",
+    "SLCO1B1",
+    "SLCO1B3",
+    "SLCO1A2",
+    "SLCO2B1",
+    "SLCO3A1",
+    "SLCO4A1",
+    "SLCO4C1",
+    "SLCO1C1"
+   ]
+  ],
+  "tournament": [
+   "SLCO2A1",
+   "ABCC4",
+   "SLCO1B1",
+   "SLCO1B3",
+   "SLCO1A2",
+   "SLCO2B1",
+   "SLCO3A1",
+   "SLCO4A1",
+   "SLCO4C1",
+   "SLCO1C1"
+  ],
+  "confident": [
+   "SLCO2A1",
+   "ABCC4",
+   "SLCO1B1",
+   "SLCO1B3",
+   "SLCO1A2",
+   "SLCO2B1",
+   "SLCO3A1",
+   "SLCO4A1",
+   "SLCO4C1",
+   "SLCO1C1"
+  ],
+  "confidence": 0.45,
+  "doubt": "SLCO2A1 never appears in this model's thromboxane B2 reactions (only SLCO1B1 does), so ABCC4 or SLCO1B1 may be the real efflux gene."
+ },
+ "194": {
+  "samples": [
+   [
+    "SLCO2A1",
+    "ABCC1",
+    "ABCC4",
+    "SLCO1B1",
+    "SLCO1B3",
+    "SLCO1A2",
+    "SLCO2B1",
+    "SLCO3A1",
+    "SLCO4A1",
+    "SLCO4C1"
+   ]
+  ],
+  "tournament": [
+   "SLCO2A1",
+   "ABCC1",
+   "ABCC4",
+   "SLCO1B1",
+   "SLCO1B3",
+   "SLCO1A2",
+   "SLCO2B1",
+   "SLCO3A1",
+   "SLCO4A1",
+   "SLCO4C1"
+  ],
+  "confident": [
+   "SLCO2A1",
+   "ABCC1",
+   "ABCC4",
+   "SLCO1B1",
+   "SLCO1B3",
+   "SLCO1A2",
+   "SLCO2B1",
+   "SLCO3A1",
+   "SLCO4A1",
+   "SLCO4C1"
+  ],
+  "confidence": 0.42,
+  "doubt": "The model gives plain leukotriene C4 efflux to ABCC1, so LTA4 efflux may be an ABC pump rather than the prostaglandin transporter SLCO2A1."
+ },
+ "195": {
+  "samples": [
+   [
+    "SLCO2A1",
+    "ABCC4",
+    "ABCC1",
+    "SLCO1B1",
+    "SLCO1B3",
+    "SLCO1A2",
+    "SLCO2B1",
+    "SLCO3A1",
+    "SLCO4A1",
+    "SLCO4C1"
+   ]
+  ],
+  "tournament": [
+   "SLCO2A1",
+   "ABCC4",
+   "ABCC1",
+   "SLCO1B1",
+   "SLCO1B3",
+   "SLCO1A2",
+   "SLCO2B1",
+   "SLCO3A1",
+   "SLCO4A1",
+   "SLCO4C1"
+  ],
+  "confident": [
+   "SLCO2A1",
+   "ABCC4",
+   "ABCC1",
+   "SLCO1B1",
+   "SLCO1B3",
+   "SLCO1A2",
+   "SLCO2B1",
+   "SLCO3A1",
+   "SLCO4A1",
+   "SLCO4C1"
+  ],
+  "confidence": 0.42,
+  "doubt": "LTB4 export is commonly attributed to MRP4 (ABCC4), so if the model followed that literature rather than reusing SLCO2A1 my first pick is wrong."
+ },
+ "196": {
+  "samples": [
+   [
+    "ABCC1",
+    "SLCO1B1",
+    "SLCO2A1",
+    "SLCO1B3",
+    "ABCC4",
+    "SLCO1A2",
+    "SLCO2B1",
+    "SLCO3A1",
+    "SLCO4A1",
+    "SLCO4C1"
+   ]
+  ],
+  "tournament": [
+   "ABCC1",
+   "SLCO2A1",
+   "SLCO1B1",
+   "SLCO1B3",
+   "ABCC4",
+   "SLCO1A2",
+   "SLCO2B1",
+   "SLCO3A1",
+   "SLCO4A1",
+   "SLCO4C1"
+  ],
+  "confident": [
+   "ABCC1",
+   "SLCO2A1",
+   "SLCO1B1",
+   "SLCO1B3",
+   "ABCC4",
+   "SLCO1A2",
+   "SLCO2B1",
+   "SLCO3A1",
+   "SLCO4A1",
+   "SLCO4C1"
+  ],
+  "confidence": 0.33,
+  "doubt": "Every LTF4 reaction shown in the model carries SLCO1B1, so the efflux may simply be another SLCO1B1 entry rather than the cysteinyl-leukotriene pump ABCC1."
+ },
+ "197": {
+  "samples": [
+   [
+    "ABCC2",
+    "ABCC3",
+    "ABCC1",
+    "SLCO1B1",
+    "SLCO1B3",
+    "ABCC4",
+    "ABCG2",
+    "ABCC5",
+    "ABCC6",
+    "ABCB1"
+   ]
+  ],
+  "tournament": [
+   "ABCC2",
+   "ABCC3",
+   "ABCC1",
+   "SLCO1B1",
+   "SLCO1B3",
+   "ABCC4",
+   "ABCC5",
+   "ABCC6",
+   "ABCG2",
+   "ABCB1"
+  ],
+  "confident": [
+   "ABCC2",
+   "ABCC3",
+   "ABCC1",
+   "SLCO1B1",
+   "SLCO1B3",
+   "ABCC4",
+   "ABCC5",
+   "ABCC6",
+   "ABCG2",
+   "ABCB1"
+  ],
+  "confidence": 0.4,
+  "doubt": "The ATP-coupled monoglucuronide efflux is already ABCC1, so this ATP-free duplicate may be ABCC3 (or ABCC1 again) rather than ABCC2."
+ },
+ "198": {
+  "samples": [
+   [
+    "SLCO2A1",
+    "SLCO1B1",
+    "ABCC4",
+    "SLCO1B3",
+    "SLCO1A2",
+    "SLCO2B1",
+    "SLCO3A1",
+    "SLCO4A1",
+    "SLCO4C1",
+    "SLCO1C1"
+   ]
+  ],
+  "tournament": [
+   "SLCO2A1",
+   "SLCO1B1",
+   "ABCC4",
+   "SLCO1B3",
+   "SLCO1A2",
+   "SLCO2B1",
+   "SLCO3A1",
+   "SLCO4A1",
+   "SLCO4C1",
+   "SLCO1C1"
+  ],
+  "confident": [
+   "SLCO2A1",
+   "SLCO1B1",
+   "ABCC4",
+   "SLCO1B3",
+   "SLCO1A2",
+   "SLCO2B1",
+   "SLCO3A1",
+   "SLCO4A1",
+   "SLCO4C1",
+   "SLCO1C1"
+  ],
+  "confidence": 0.5,
+  "doubt": "Wrong if the model routes PGA1 efflux through the ATP pump ABCC4 or through SLCO1B1, which covers its other transport entries."
+ },
+ "199": {
+  "samples": [
+   [
+    "SLCO2A1",
+    "SLCO1B1",
+    "ABCC4",
+    "SLCO1B3",
+    "SLCO1A2",
+    "SLCO2B1",
+    "SLCO3A1",
+    "SLCO4A1",
+    "SLCO4C1",
+    "SLCO1C1"
+   ]
+  ],
+  "tournament": [
+   "SLCO2A1",
+   "SLCO1B1",
+   "ABCC4",
+   "SLCO1B3",
+   "SLCO1A2",
+   "SLCO2B1",
+   "SLCO3A1",
+   "SLCO4A1",
+   "SLCO4C1",
+   "SLCO1C1"
+  ],
+  "confident": [
+   "SLCO2A1",
+   "SLCO1B1",
+   "ABCC4",
+   "SLCO1B3",
+   "SLCO1A2",
+   "SLCO2B1",
+   "SLCO3A1",
+   "SLCO4A1",
+   "SLCO4C1",
+   "SLCO1C1"
+  ],
+  "confidence": 0.5,
+  "doubt": "Wrong if the model routes PGB1 efflux through ABCC4 or SLCO1B1 rather than the prostaglandin transporter SLCO2A1."
+ },
+ "250": {
+  "samples": [],
+  "tournament": [
+   "SLC15A1",
+   "SLC15A2",
+   "SLC15A4",
+   "SLC15A3",
+   "SLC36A1",
+   "SLC15A5",
+   "SLC36A2",
+   "SLC36A4",
+   "SLC36A3",
+   "SLC46A1"
+  ],
+  "confident": [
+   "SLC15A1",
+   "SLC15A2",
+   "SLC15A4",
+   "SLC15A3",
+   "SLC36A1",
+   "SLC15A5",
+   "SLC36A2",
+   "SLC36A4",
+   "SLC36A3",
+   "SLC46A1"
+  ],
+  "confidence": 0.62,
+  "doubt": "If the model curated apical tripeptide uptake to the high-affinity renal/neuronal carrier instead of the intestinal one, PEPT2 (SLC15A2) would be first."
+ },
+ "251": {
+  "samples": [],
+  "tournament": [
+   "SLC15A1",
+   "SLC15A2",
+   "SLC15A4",
+   "SLC15A3",
+   "SLC36A1",
+   "SLC15A5",
+   "SLC36A2",
+   "SLC36A4",
+   "SLC36A3",
+   "SLC46A1"
+  ],
+  "confident": [
+   "SLC15A1",
+   "SLC15A2",
+   "SLC15A4",
+   "SLC15A3",
+   "SLC36A1",
+   "SLC15A5",
+   "SLC36A2",
+   "SLC36A4",
+   "SLC36A3",
+   "SLC46A1"
+  ],
+  "confidence": 0.62,
+  "doubt": "PEPT2 (SLC15A2) is an equally valid H+-coupled plasma-membrane tri-peptide carrier and could be the curated gene."
+ },
+ "252": {
+  "samples": [],
+  "tournament": [
+   "SLC15A1",
+   "SLC15A2",
+   "SLC15A4",
+   "SLC15A3",
+   "SLC36A1",
+   "SLC15A5",
+   "SLC36A2",
+   "SLC36A4",
+   "SLC36A3",
+   "SLC46A1"
+  ],
+  "confident": [
+   "SLC15A1",
+   "SLC15A2",
+   "SLC15A4",
+   "SLC15A3",
+   "SLC36A1",
+   "SLC15A5",
+   "SLC36A2",
+   "SLC36A4",
+   "SLC36A3",
+   "SLC46A1"
+  ],
+  "confidence": 0.62,
+  "doubt": "A His/Lys-containing peptide might have been assigned to the histidine/peptide transporters PHT1/PHT2 (SLC15A4/A3) despite their endolysosomal localisation."
+ },
+ "253": {
+  "samples": [],
+  "tournament": [
+   "SLC15A1",
+   "SLC15A2",
+   "SLC15A4",
+   "SLC15A3",
+   "SLC36A1",
+   "SLC15A5",
+   "SLC36A2",
+   "SLC36A4",
+   "SLC36A3",
+   "SLC46A1"
+  ],
+  "confident": [
+   "SLC15A1",
+   "SLC15A2",
+   "SLC15A4",
+   "SLC15A3",
+   "SLC36A1",
+   "SLC15A5",
+   "SLC36A2",
+   "SLC36A4",
+   "SLC36A3",
+   "SLC46A1"
+  ],
+  "confidence": 0.62,
+  "doubt": "PEPT2 (SLC15A2) handles bulky hydrophobic tripeptides with higher affinity and may be the curated catalyst."
+ },
+ "254": {
+  "samples": [],
+  "tournament": [
+   "SLC15A1",
+   "SLC15A2",
+   "SLC15A4",
+   "SLC15A3",
+   "SLC36A1",
+   "SLC15A5",
+   "SLC36A2",
+   "SLC36A4",
+   "SLC36A3",
+   "SLC46A1"
+  ],
+  "confident": [
+   "SLC15A1",
+   "SLC15A2",
+   "SLC15A4",
+   "SLC15A3",
+   "SLC36A1",
+   "SLC15A5",
+   "SLC36A2",
+   "SLC36A4",
+   "SLC36A3",
+   "SLC46A1"
+  ],
+  "confidence": 0.62,
+  "doubt": "The reaction may carry a two-gene GPR headed by SLC15A2 rather than SLC15A1."
+ },
+ "255": {
+  "samples": [],
+  "tournament": [
+   "SLC15A1",
+   "SLC15A2",
+   "SLC15A4",
+   "SLC15A3",
+   "SLC36A1",
+   "SLC15A5",
+   "SLC36A2",
+   "SLC36A4",
+   "SLC36A3",
+   "SLC46A1"
+  ],
+  "confident": [
+   "SLC15A1",
+   "SLC15A2",
+   "SLC15A4",
+   "SLC15A3",
+   "SLC36A1",
+   "SLC15A5",
+   "SLC36A2",
+   "SLC36A4",
+   "SLC36A3",
+   "SLC46A1"
+  ],
+  "confidence": 0.62,
+  "doubt": "PEPT2 (SLC15A2) is the alternative proton-coupled tripeptide symporter and could be the recorded answer."
+ },
+ "256": {
+  "samples": [],
+  "tournament": [
+   "SLC15A1",
+   "SLC15A2",
+   "SLC15A4",
+   "SLC15A3",
+   "SLC36A1",
+   "SLC15A5",
+   "SLC36A2",
+   "SLC36A4",
+   "SLC36A3",
+   "SLC46A1"
+  ],
+  "confident": [
+   "SLC15A1",
+   "SLC15A2",
+   "SLC15A4",
+   "SLC15A3",
+   "SLC36A1",
+   "SLC15A5",
+   "SLC36A2",
+   "SLC36A4",
+   "SLC36A3",
+   "SLC46A1"
+  ],
+  "confidence": 0.62,
+  "doubt": "An anionic (Glu-containing) tripeptide is a poor PEPT1 substrate, which could push the curation to SLC15A2."
+ },
+ "257": {
+  "samples": [],
+  "tournament": [
+   "SLC15A1",
+   "SLC15A2",
+   "SLC15A4",
+   "SLC15A3",
+   "SLC36A1",
+   "SLC15A5",
+   "SLC36A2",
+   "SLC36A4",
+   "SLC36A3",
+   "SLC46A1"
+  ],
+  "confident": [
+   "SLC15A1",
+   "SLC15A2",
+   "SLC15A4",
+   "SLC15A3",
+   "SLC36A1",
+   "SLC15A5",
+   "SLC36A2",
+   "SLC36A4",
+   "SLC36A3",
+   "SLC46A1"
+  ],
+  "confidence": 0.62,
+  "doubt": "PEPT2 (SLC15A2) prefers bulky aromatic/anionic tripeptides and may be the curated gene."
+ },
+ "258": {
+  "samples": [],
+  "tournament": [
+   "SLC15A1",
+   "SLC15A2",
+   "SLC15A4",
+   "SLC15A3",
+   "SLC36A1",
+   "SLC15A5",
+   "SLC36A2",
+   "SLC36A4",
+   "SLC36A3",
+   "SLC46A1"
+  ],
+  "confident": [
+   "SLC15A1",
+   "SLC15A2",
+   "SLC15A4",
+   "SLC15A3",
+   "SLC36A1",
+   "SLC15A5",
+   "SLC36A2",
+   "SLC36A4",
+   "SLC36A3",
+   "SLC46A1"
+  ],
+  "confidence": 0.62,
+  "doubt": "The GPR may be headed by PEPT2 (SLC15A2) rather than the intestinal PEPT1."
+ },
+ "259": {
+  "samples": [],
+  "tournament": [
+   "SLC15A1",
+   "SLC15A2",
+   "SLC15A4",
+   "SLC15A3",
+   "SLC36A1",
+   "SLC15A5",
+   "SLC36A2",
+   "SLC36A4",
+   "SLC36A3",
+   "SLC46A1"
+  ],
+  "confident": [
+   "SLC15A1",
+   "SLC15A2",
+   "SLC15A4",
+   "SLC15A3",
+   "SLC36A1",
+   "SLC15A5",
+   "SLC36A2",
+   "SLC36A4",
+   "SLC36A3",
+   "SLC46A1"
+  ],
+  "confidence": 0.6,
+  "doubt": "A Cys-Gly-containing peptide could have been routed through PEPT2 (SLC15A2), the carrier classically studied for Cys-Gly uptake in kidney."
+ },
+ "260": {
+  "samples": [],
+  "tournament": [
+   "SLC15A1",
+   "SLC15A2",
+   "SLC15A4",
+   "SLC15A3",
+   "SLC36A1",
+   "SLC15A5",
+   "SLC36A2",
+   "SLC36A4",
+   "SLC36A3",
+   "SLC46A1"
+  ],
+  "confident": [
+   "SLC15A1",
+   "SLC15A2",
+   "SLC15A4",
+   "SLC15A3",
+   "SLC36A1",
+   "SLC15A5",
+   "SLC36A2",
+   "SLC36A4",
+   "SLC36A3",
+   "SLC46A1"
+  ],
+  "confidence": 0.62,
+  "doubt": "PEPT2 (SLC15A2) is the higher-affinity carrier for bulky aromatic tripeptides and may be the recorded catalyst."
+ },
+ "261": {
+  "samples": [],
+  "tournament": [
+   "SLC15A1",
+   "SLC15A2",
+   "SLC36A1",
+   "SLC15A4",
+   "SLC15A3",
+   "SLC15A5",
+   "SLC36A2",
+   "SLC36A4",
+   "SLC36A3",
+   "SLC46A1"
+  ],
+  "confident": [
+   "SLC15A1",
+   "SLC15A2",
+   "SLC36A1",
+   "SLC15A4",
+   "SLC15A3",
+   "SLC15A5",
+   "SLC36A2",
+   "SLC36A4",
+   "SLC36A3",
+   "SLC46A1"
+  ],
+  "confidence": 0.55,
+  "doubt": "The efflux direction is already recorded as SLC15A1, so this separately curated influx reaction may deliberately carry a different carrier such as PEPT2 or the amino-acid symporter PAT1 (SLC36A1), which is documented for 5-ALA uptake."
+ },
+ "262": {
+  "samples": [],
+  "tournament": [
+   "SLC16A1",
+   "SLC16A4",
+   "SLC16A5",
+   "SLC16A7",
+   "SLC16A3",
+   "SLC16A8",
+   "SLC16A6",
+   "SLC16A2",
+   "SLC16A9",
+   "SLC16A10"
+  ],
+  "confident": [
+   "SLC16A1",
+   "SLC16A4",
+   "SLC16A5",
+   "SLC16A7",
+   "SLC16A3",
+   "SLC16A8",
+   "SLC16A6",
+   "SLC16A2",
+   "SLC16A9",
+   "SLC16A10"
+  ],
+  "confidence": 0.68,
+  "doubt": "The butyrate solved set is dominated by SLC16A4/SLC16A5, so the proton-symport reaction may be headed by SLC16A4 rather than the canonical MCT1."
+ },
+ "263": {
+  "samples": [],
+  "tournament": [
+   "ABCA1",
+   "ABCA7",
+   "ABCG1",
+   "ABCB4",
+   "ABCB1",
+   "ABCA3",
+   "ABCA2",
+   "ABCA12",
+   "ABCC1",
+   "ABCG4"
+  ],
+  "confident": [
+   "ABCA1",
+   "ABCA7",
+   "ABCG1",
+   "ABCB4",
+   "ABCB1",
+   "ABCA3",
+   "ABCA2",
+   "ABCA12",
+   "ABCC1",
+   "ABCG4"
+  ],
+  "confidence": 0.5,
+  "doubt": "If the curators treated lysophosphatidylcholine as a phosphatidylcholine-type floppase substrate, ABCB4 (MDR3) would displace ABCA1."
+ },
+ "264": {
+  "samples": [],
+  "tournament": [
+   "ABCA1",
+   "ABCA7",
+   "ABCG1",
+   "ABCB4",
+   "ABCB1",
+   "ABCA3",
+   "ABCA2",
+   "ABCA12",
+   "ABCC1",
+   "ABCG4"
+  ],
+  "confident": [
+   "ABCA1",
+   "ABCA7",
+   "ABCG1",
+   "ABCB4",
+   "ABCB1",
+   "ABCA3",
+   "ABCA2",
+   "ABCA12",
+   "ABCC1",
+   "ABCG4"
+  ],
+  "confidence": 0.5,
+  "doubt": "A very-long-chain (24:0) lyso-PC might have been assigned to a lamellar-body/surfactant lipid exporter such as ABCA3 or to ABCB4 instead of ABCA1."
+ },
+ "265": {
+  "samples": [],
+  "tournament": [
+   "ABCA1",
+   "ABCA7",
+   "ABCG1",
+   "ABCB4",
+   "ABCB1",
+   "ABCA3",
+   "ABCA2",
+   "ABCA12",
+   "ABCC1",
+   "ABCG4"
+  ],
+  "confident": [
+   "ABCA1",
+   "ABCA7",
+   "ABCG1",
+   "ABCB4",
+   "ABCB1",
+   "ABCA3",
+   "ABCA2",
+   "ABCA12",
+   "ABCC1",
+   "ABCG4"
+  ],
+  "confidence": 0.5,
+  "doubt": "Lyso-PE efflux could have been curated to ABCA7 or ABCG1 rather than ABCA1."
+ },
+ "266": {
+  "samples": [],
+  "tournament": [
+   "ABCA1",
+   "ABCC1",
+   "ABCA2",
+   "ABCA3",
+   "ABCB1",
+   "ABCB4",
+   "ABCA7",
+   "ABCG1",
+   "ABCA8",
+   "ABCA12"
+  ],
+  "confident": [
+   "ABCA1",
+   "ABCC1",
+   "ABCA2",
+   "ABCA3",
+   "ABCB1",
+   "ABCB4",
+   "ABCA7",
+   "ABCG1",
+   "ABCA8",
+   "ABCA12"
+  ],
+  "confidence": 0.33,
+  "doubt": "A sulfated (anionic) glycosphingolipid is a classic organic-anion pump substrate, so ABCC1 (MRP1) \u2014 or the sphingolipid-linked ABCA2 \u2014 could well be the true catalyst."
+ },
+ "267": {
+  "samples": [],
+  "tournament": [
+   "ABCA1",
+   "ABCA7",
+   "ABCC1",
+   "ABCB1",
+   "ABCA12",
+   "ABCB4",
+   "ABCA3",
+   "ABCG1",
+   "ABCA2",
+   "ABCG2"
+  ],
+  "confident": [
+   "ABCA1",
+   "ABCA7",
+   "ABCC1",
+   "ABCB1",
+   "ABCA12",
+   "ABCB4",
+   "ABCA3",
+   "ABCG1",
+   "ABCA2",
+   "ABCG2"
+  ],
+  "confidence": 0.45,
+  "doubt": "Sphingomyelin flopping is also attributed to ABCB1/ABCB4 and to ABCA7, any of which could head the GPR instead of ABCA1."
+ },
+ "268": {
+  "samples": [],
+  "tournament": [
+   "ABCA1",
+   "ABCA7",
+   "ABCC1",
+   "ABCB1",
+   "ABCA12",
+   "ABCB4",
+   "ABCA3",
+   "ABCG1",
+   "ABCA2",
+   "ABCG2"
+  ],
+  "confident": [
+   "ABCA1",
+   "ABCA7",
+   "ABCC1",
+   "ABCB1",
+   "ABCA12",
+   "ABCB4",
+   "ABCA3",
+   "ABCG1",
+   "ABCA2",
+   "ABCG2"
+  ],
+  "confidence": 0.45,
+  "doubt": "If the sphingomyelin export set was curated from floppase literature rather than apoA-I lipidation, ABCB1 or ABCA7 would come first."
+ },
+ "269": {
+  "samples": [],
+  "tournament": [
+   "ABCA1",
+   "ABCA7",
+   "ABCC1",
+   "ABCB1",
+   "ABCA12",
+   "ABCB4",
+   "ABCA3",
+   "ABCG1",
+   "ABCA2",
+   "ABCG2"
+  ],
+  "confident": [
+   "ABCA1",
+   "ABCA7",
+   "ABCC1",
+   "ABCB1",
+   "ABCA12",
+   "ABCB4",
+   "ABCA3",
+   "ABCG1",
+   "ABCA2",
+   "ABCG2"
+  ],
+  "confidence": 0.45,
+  "doubt": "ABCA7 and ABCC1 both have documented sphingomyelin efflux activity and could head the GPR instead of ABCA1."
+ },
+ "270": {
+  "samples": [],
+  "tournament": [
+   "ABCA1",
+   "ABCA7",
+   "ABCC1",
+   "ABCB1",
+   "ABCA12",
+   "ABCB4",
+   "ABCA3",
+   "ABCG1",
+   "ABCA2",
+   "ABCG2"
+  ],
+  "confident": [
+   "ABCA1",
+   "ABCA7",
+   "ABCC1",
+   "ABCB1",
+   "ABCA12",
+   "ABCB4",
+   "ABCA3",
+   "ABCG1",
+   "ABCA2",
+   "ABCG2"
+  ],
+  "confidence": 0.45,
+  "doubt": "The sphingomyelin efflux reactions may carry a multi-gene GPR whose lead gene is ABCA7 or ABCC1 rather than ABCA1."
+ },
+ "271": {
+  "samples": [],
+  "tournament": [
+   "ABCC1",
+   "ABCC4",
+   "ABCC3",
+   "ABCG2",
+   "ABCC2",
+   "ABCB1",
+   "ABCC5",
+   "ABCC11",
+   "ABCC6",
+   "ABCB11"
+  ],
+  "confident": [
+   "ABCC1",
+   "ABCC4",
+   "ABCC3",
+   "ABCG2",
+   "ABCC2",
+   "ABCB1",
+   "ABCC5",
+   "ABCC11",
+   "ABCC6",
+   "ABCB11"
+  ],
+  "confidence": 0.3,
+  "doubt": "16alpha-hydroxy-DHEA is an unconjugated neutral steroid, so a hydrophobic-substrate pump (ABCB1) or the DHEA-handling ABCC4/ABCC11 is at least as plausible as MRP1."
+ },
+ "272": {
+  "samples": [],
+  "tournament": [
+   "DEGS1",
+   "DEGS2",
+   "FA2H",
+   "KDSR",
+   "CERS2",
+   "CERS1",
+   "CERS3",
+   "CERS4",
+   "CERS5",
+   "CERS6"
+  ],
+  "confident": [
+   "DEGS1",
+   "DEGS2",
+   "FA2H",
+   "KDSR",
+   "CERS2",
+   "CERS1",
+   "CERS3",
+   "CERS4",
+   "CERS5",
+   "CERS6"
+  ],
+  "confidence": 0.62,
+  "doubt": "DEGS2 is the true bifunctional C4-hydroxylase, so a chemistry-aware curation of phytoceramide formation would name DEGS2 alone."
+ },
+ "273": {
+  "samples": [],
+  "tournament": [
+   "ABCC2",
+   "ABCC3",
+   "ABCC4",
+   "ABCB11",
+   "ABCG2",
+   "ABCC1",
+   "ABCB1",
+   "ABCC5",
+   "ABCC6",
+   "ABCB4"
+  ],
+  "confident": [
+   "ABCC2",
+   "ABCC3",
+   "ABCC4",
+   "ABCB11",
+   "ABCG2",
+   "ABCC1",
+   "ABCB1",
+   "ABCC5",
+   "ABCC6",
+   "ABCB4"
+  ],
+  "confidence": 0.5,
+  "doubt": "Bile-acid glucuronides are the signature basolateral MRP3 substrates, so ABCC3 could be the recorded catalyst instead of the canalicular ABCC2."
+ },
+ "274": {
+  "samples": [],
+  "tournament": [
+   "UGT1A3",
+   "UGT2B7",
+   "UGT1A1",
+   "UGT1A4",
+   "UGT2B4",
+   "UGT2A1",
+   "UGT2A3",
+   "UGT1A8",
+   "UGT1A9",
+   "UGT1A10"
+  ],
+  "confident": [
+   "UGT1A3",
+   "UGT2B7",
+   "UGT1A1",
+   "UGT1A4",
+   "UGT2B4",
+   "UGT2A1",
+   "UGT2A3",
+   "UGT1A8",
+   "UGT1A9",
+   "UGT1A10"
+  ],
+  "confidence": 0.68,
+  "doubt": "If the curators reused the 3-O-glucuronide GPR (UGT2A1/UGT2A3/UGT2B7) for this C-24 acyl glucuronide, UGT1A3's specific bile-acid acyl-glucuronidation role would be missed."
+ },
+ "275": {
+  "samples": [],
+  "tournament": [
+   "UGT1A3",
+   "UGT1A4",
+   "UGT1A9",
+   "UGT1A1",
+   "UGT1A8",
+   "UGT2B7",
+   "UGT1A10",
+   "UGT1A7",
+   "UGT1A6",
+   "UGT1A5"
+  ],
+  "confident": [
+   "UGT1A3",
+   "UGT1A4",
+   "UGT1A9",
+   "UGT1A1",
+   "UGT1A8",
+   "UGT2B7",
+   "UGT1A10",
+   "UGT1A7",
+   "UGT1A6",
+   "UGT1A5"
+  ],
+  "confidence": 0.7,
+  "doubt": "The lactone ether-glucuronide may have been assigned only to UGT1A9 or UGT1A4 rather than sharing the UGT1A3-led set of the acid ether-glucuronide."
+ },
+ "276": {
+  "samples": [],
+  "tournament": [
+   "ABCB1",
+   "ABCC2",
+   "ABCG2",
+   "ABCC1",
+   "ABCC3",
+   "ABCC4",
+   "ABCB11",
+   "ABCC5",
+   "ABCC6",
+   "ABCC10"
+  ],
+  "confident": [
+   "ABCB1",
+   "ABCC2",
+   "ABCG2",
+   "ABCC1",
+   "ABCC3",
+   "ABCC4",
+   "ABCB11",
+   "ABCC5",
+   "ABCC6",
+   "ABCC10"
+  ],
+  "confidence": 0.4,
+  "doubt": "If cerivastatin-M23 was treated as an anionic statin metabolite destined for biliary excretion, ABCC2 would be the curated exporter."
+ },
+ "277": {
+  "samples": [],
+  "tournament": [
+   "CYP2C9",
+   "CYP2C8",
+   "CYP3A4",
+   "CYP2C19",
+   "CYP2C18",
+   "ADH1B",
+   "ADH1A",
+   "ADH1C",
+   "ALDH1A1",
+   "ALDH2"
+  ],
+  "confident": [
+   "CYP2C9",
+   "CYP2C8",
+   "CYP3A4",
+   "CYP2C19",
+   "CYP2C18",
+   "ADH1B",
+   "ADH1A",
+   "ADH1C",
+   "ALDH1A1",
+   "ALDH2"
+  ],
+  "confidence": 0.55,
+  "doubt": "The alcohol-to-acid step of ibuprofen oxidation is often attributed to ADH/ALDH rather than a P450, which would put ADH1B or ALDH1A1 first."
+ },
+ "278": {
+  "samples": [],
+  "tournament": [
+   "SLC25A3",
+   "SLC25A23",
+   "SLC25A24",
+   "SLC25A25",
+   "SLC25A41",
+   "SLC20A1",
+   "SLC20A2",
+   "SLC34A1",
+   "SLC34A2",
+   "SLC34A3"
+  ],
+  "confident": [
+   "SLC25A3",
+   "SLC25A23",
+   "SLC25A24",
+   "SLC25A25",
+   "SLC25A41",
+   "SLC20A1",
+   "SLC20A2",
+   "SLC34A1",
+   "SLC34A2",
+   "SLC34A3"
+  ],
+  "confidence": 0.85,
+  "doubt": "Only if this duplicate of the phosphate-carrier reaction was deliberately given a different mitochondrial carrier than SLC25A3."
+ },
+ "279": {
+  "samples": [],
+  "tournament": [
+   "ADHFE1",
+   "BDH1",
+   "BDH2",
+   "D2HGDH",
+   "L2HGDH",
+   "IDH1",
+   "IDH2",
+   "IDH3A",
+   "IDH3B",
+   "IDH3G"
+  ],
+  "confident": [
+   "ADHFE1",
+   "BDH1",
+   "BDH2",
+   "D2HGDH",
+   "L2HGDH",
+   "IDH1",
+   "IDH2",
+   "IDH3A",
+   "IDH3B",
+   "IDH3G"
+  ],
+  "confidence": 0.85,
+  "doubt": "Only if the model attributed this AKG-coupled transhydrogenation to a D-2-hydroxyglutarate dehydrogenase running in reverse rather than to hydroxyacid-oxoacid transhydrogenase."
+ },
+ "280": {
+  "samples": [],
+  "tournament": [
+   "GALM",
+   "GALK1",
+   "GALE",
+   "GALT",
+   "GALK2",
+   "GLB1",
+   "GLA",
+   "GLB1L",
+   "GLB1L2",
+   "GLB1L3"
+  ],
+  "confident": [
+   "GALM",
+   "GALK1",
+   "GALE",
+   "GALT",
+   "GALK2",
+   "GLB1",
+   "GLA",
+   "GLB1L",
+   "GLB1L2",
+   "GLB1L3"
+  ],
+  "confidence": 0.85,
+  "doubt": "Only if the nuclear anomerisation was left spontaneous and assigned to some other galactose-pathway gene such as GALE."
+ },
+ "281": {
+  "samples": [],
+  "tournament": [
+   "GGACT",
+   "GGCT",
+   "CHAC1",
+   "CHAC2",
+   "OPLAH",
+   "GGT1",
+   "GGT5",
+   "GGT6",
+   "GGT7",
+   "GGTLC1"
+  ],
+  "confident": [
+   "GGACT",
+   "GGCT",
+   "CHAC1",
+   "CHAC2",
+   "OPLAH",
+   "GGT1",
+   "GGT5",
+   "GGT6",
+   "GGT7",
+   "GGTLC1"
+  ],
+  "confidence": 0.75,
+  "doubt": "If the curators treated the isopeptide like any gamma-glutamyl compound, the generic gamma-glutamylcyclotransferase GGCT would head the GPR instead of the gamma-glutamylamine-specific GGACT."
+ },
+ "282": {
+  "samples": [],
+  "tournament": [
+   "GGACT",
+   "GGCT",
+   "CHAC1",
+   "CHAC2",
+   "OPLAH",
+   "GGT1",
+   "GGT5",
+   "GGT6",
+   "GGT7",
+   "GGTLC1"
+  ],
+  "confident": [
+   "GGACT",
+   "GGCT",
+   "CHAC1",
+   "CHAC2",
+   "OPLAH",
+   "GGT1",
+   "GGT5",
+   "GGT6",
+   "GGT7",
+   "GGTLC1"
+  ],
+  "confidence": 0.72,
+  "doubt": "The nuclear copy of this reaction may have been given the broader GGCT annotation rather than GGACT."
+ },
+ "200": {
+  "samples": [],
+  "tournament": [
+   "SLCO2A1",
+   "ABCC4",
+   "SLCO1B1",
+   "SLCO2B1",
+   "SLCO1B3",
+   "SLCO1A2",
+   "SLCO1C1",
+   "SLCO3A1",
+   "SLCO4A1",
+   "ABCC1"
+  ],
+  "confident": [
+   "SLCO2A1",
+   "ABCC4",
+   "SLCO1B1",
+   "SLCO2B1",
+   "SLCO1B3",
+   "SLCO1A2",
+   "SLCO1C1",
+   "SLCO3A1",
+   "SLCO4A1",
+   "ABCC1"
+  ],
+  "confidence": 0.45,
+  "doubt": "The model writes ABC-transporter efflux with ATP (cf. ABCA1 oleate reaction), which argues against ABCC4 here, but if this uncoupled c->e reaction is nonetheless the MRP4 prostaglandin efflux pump then ABCC4 wins."
+ },
+ "201": {
+  "samples": [],
+  "tournament": [
+   "SLCO2A1",
+   "ABCC4",
+   "SLCO1B1",
+   "SLCO2B1",
+   "SLCO1B3",
+   "SLCO1A2",
+   "SLCO1C1",
+   "SLCO3A1",
+   "SLCO4A1",
+   "ABCC1"
+  ],
+  "confident": [
+   "SLCO2A1",
+   "ABCC4",
+   "SLCO1B1",
+   "SLCO2B1",
+   "SLCO1B3",
+   "SLCO1A2",
+   "SLCO1C1",
+   "SLCO3A1",
+   "SLCO4A1",
+   "ABCC1"
+  ],
+  "confidence": 0.45,
+  "doubt": "SLCO2A1 is modeled elsewhere as an HCO3- exchanger for uptake, so a bare c->e efflux may instead belong to ABCC4 written without ATP."
+ },
+ "202": {
+  "samples": [],
+  "tournament": [
+   "SLCO2A1",
+   "ABCC4",
+   "SLCO1B1",
+   "SLCO2B1",
+   "SLCO1B3",
+   "SLCO1A2",
+   "SLCO1C1",
+   "SLCO3A1",
+   "SLCO4A1",
+   "ABCC1"
+  ],
+  "confident": [
+   "SLCO2A1",
+   "ABCC4",
+   "SLCO1B1",
+   "SLCO2B1",
+   "SLCO1B3",
+   "SLCO1A2",
+   "SLCO1C1",
+   "SLCO3A1",
+   "SLCO4A1",
+   "ABCC1"
+  ],
+  "confidence": 0.45,
+  "doubt": "If uncoupled efflux reactions in this model are reserved for MRP-family pumps, ABCC4 rather than the PGT/OATP family is the catalyst."
+ },
+ "203": {
+  "samples": [],
+  "tournament": [
+   "SLCO2A1",
+   "ABCC4",
+   "SLCO1B1",
+   "SLCO2B1",
+   "SLCO1B3",
+   "SLCO1A2",
+   "SLCO1C1",
+   "SLCO3A1",
+   "SLCO4A1",
+   "ABCC1"
+  ],
+  "confident": [
+   "SLCO2A1",
+   "ABCC4",
+   "SLCO1B1",
+   "SLCO2B1",
+   "SLCO1B3",
+   "SLCO1A2",
+   "SLCO1C1",
+   "SLCO3A1",
+   "SLCO4A1",
+   "ABCC1"
+  ],
+  "confidence": 0.45,
+  "doubt": "PGD1 efflux without a counter-ion could be assigned to ABCC4 (the canonical prostaglandin efflux pump) rather than the bidirectional prostaglandin transporter SLCO2A1."
+ },
+ "204": {
+  "samples": [],
+  "tournament": [
+   "SLCO2A1",
+   "ABCC4",
+   "SLCO1B1",
+   "SLCO2B1",
+   "SLCO1B3",
+   "SLCO1A2",
+   "SLCO1C1",
+   "SLCO3A1",
+   "SLCO4A1",
+   "ABCC1"
+  ],
+  "confident": [
+   "SLCO2A1",
+   "ABCC4",
+   "SLCO1B1",
+   "SLCO2B1",
+   "SLCO1B3",
+   "SLCO1A2",
+   "SLCO1C1",
+   "SLCO3A1",
+   "SLCO4A1",
+   "ABCC1"
+  ],
+  "confidence": 0.45,
+  "doubt": "Direction (cytosol to extracellular) favors MRP4/ABCC4 biologically; only the absence of ATP in the equation keeps SLCO2A1 on top."
+ },
+ "205": {
+  "samples": [],
+  "tournament": [
+   "SLCO2A1",
+   "ABCC4",
+   "SLCO1B1",
+   "SLCO2B1",
+   "SLCO1B3",
+   "SLCO1A2",
+   "SLCO1C1",
+   "SLCO3A1",
+   "SLCO4A1",
+   "ABCC1"
+  ],
+  "confident": [
+   "SLCO2A1",
+   "ABCC4",
+   "SLCO1B1",
+   "SLCO2B1",
+   "SLCO1B3",
+   "SLCO1A2",
+   "SLCO1C1",
+   "SLCO3A1",
+   "SLCO4A1",
+   "ABCC1"
+  ],
+  "confidence": 0.45,
+  "doubt": "PGF1alpha is a well-documented MRP4 substrate, so ABCC4 would beat SLCO2A1 if the model omits ATP from its ABC efflux reactions."
+ },
+ "206": {
+  "samples": [],
+  "tournament": [
+   "SLCO2A1",
+   "ABCC4",
+   "SLCO1B1",
+   "SLCO2B1",
+   "SLCO1B3",
+   "SLCO1A2",
+   "SLCO1C1",
+   "SLCO3A1",
+   "SLCO4A1",
+   "ABCC1"
+  ],
+  "confident": [
+   "SLCO2A1",
+   "ABCC4",
+   "SLCO1B1",
+   "SLCO2B1",
+   "SLCO1B3",
+   "SLCO1A2",
+   "SLCO1C1",
+   "SLCO3A1",
+   "SLCO4A1",
+   "ABCC1"
+  ],
+  "confidence": 0.45,
+  "doubt": "An uncoupled efflux might be assigned to ABCC4 instead, since every SLCO reaction shown in the solved set is an HCO3- exchange."
+ },
+ "207": {
+  "samples": [],
+  "tournament": [
+   "SLCO2A1",
+   "ABCC4",
+   "SLCO1B1",
+   "SLCO2B1",
+   "SLCO1B3",
+   "SLCO1A2",
+   "SLCO1C1",
+   "SLCO3A1",
+   "SLCO4A1",
+   "ABCC1"
+  ],
+  "confident": [
+   "SLCO2A1",
+   "ABCC4",
+   "SLCO1B1",
+   "SLCO2B1",
+   "SLCO1B3",
+   "SLCO1A2",
+   "SLCO1C1",
+   "SLCO3A1",
+   "SLCO4A1",
+   "ABCC1"
+  ],
+  "confidence": 0.42,
+  "doubt": "PGG2 is an unstable endoperoxide and a poor PGT substrate, so this efflux may be assigned to ABCC4 or to a different OATP member."
+ },
+ "208": {
+  "samples": [],
+  "tournament": [
+   "SLCO2A1",
+   "ABCC4",
+   "SLCO1B1",
+   "SLCO2B1",
+   "SLCO1B3",
+   "SLCO1A2",
+   "SLCO1C1",
+   "SLCO3A1",
+   "SLCO4A1",
+   "ABCC1"
+  ],
+  "confident": [
+   "SLCO2A1",
+   "ABCC4",
+   "SLCO1B1",
+   "SLCO2B1",
+   "SLCO1B3",
+   "SLCO1A2",
+   "SLCO1C1",
+   "SLCO3A1",
+   "SLCO4A1",
+   "ABCC1"
+  ],
+  "confidence": 0.45,
+  "doubt": "SLCO2A1 already has two distinct uptake reactions for PGH2 in this model, so the plain efflux may deliberately have been given to a different gene such as ABCC4."
+ },
+ "209": {
+  "samples": [],
+  "tournament": [
+   "SLCO2A1",
+   "ABCC4",
+   "SLCO1B1",
+   "SLCO2B1",
+   "SLCO1B3",
+   "SLCO1A2",
+   "SLCO1C1",
+   "SLCO3A1",
+   "SLCO4A1",
+   "ABCC1"
+  ],
+  "confident": [
+   "SLCO2A1",
+   "ABCC4",
+   "SLCO1B1",
+   "SLCO2B1",
+   "SLCO1B3",
+   "SLCO1A2",
+   "SLCO1C1",
+   "SLCO3A1",
+   "SLCO4A1",
+   "ABCC1"
+  ],
+  "confidence": 0.45,
+  "doubt": "Prostacyclin export from the cell is classically MRP4-mediated, so ABCC4 wins if the model does not require ATP in its efflux equations."
+ },
+ "210": {
+  "samples": [],
+  "tournament": [
+   "SLC29A1",
+   "SLC29A2",
+   "SLC29A3",
+   "SLC29A4",
+   "ABCC4",
+   "ABCC5",
+   "ABCC11",
+   "SLC28A1",
+   "SLC28A2",
+   "SLC28A3"
+  ],
+  "confident": [
+   "SLC29A1",
+   "SLC29A2",
+   "SLC29A3",
+   "SLC29A4",
+   "ABCC4",
+   "ABCC5",
+   "ABCC11",
+   "SLC28A1",
+   "SLC28A2",
+   "SLC28A3"
+  ],
+  "confidence": 0.6,
+  "doubt": "Efflux without Na+ must be equilibrative, so only if the model assigns nucleoside efflux to ENT2 (SLC29A2) alone rather than ENT1 would SLC29A1 be wrong."
+ },
+ "211": {
+  "samples": [],
+  "tournament": [
+   "DBT",
+   "BCKDHA",
+   "BCKDHB",
+   "DLAT",
+   "DLST",
+   "PDHX",
+   "DLD",
+   "PDHA1",
+   "PDHA2",
+   "PDHB"
+  ],
+  "confident": [
+   "DBT",
+   "BCKDHA",
+   "BCKDHB",
+   "DLAT",
+   "DLST",
+   "PDHX",
+   "DLD",
+   "PDHA1",
+   "PDHA2",
+   "PDHB"
+  ],
+  "confidence": 0.92,
+  "doubt": "Only if the model lumps the whole BCKDH complex (BCKDHA/BCKDHB/DBT) onto the E2 transacylase step, as it did for the preceding decarboxylation, would the first gene listed differ."
+ },
+ "212": {
+  "samples": [],
+  "tournament": [
+   "SLC12A1",
+   "SLC12A2",
+   "SLC12A3",
+   "SLC12A4",
+   "SLC12A6",
+   "SLC12A7",
+   "SLC12A5",
+   "SLC12A8",
+   "SLC12A9",
+   "RHAG"
+  ],
+  "confident": [
+   "SLC12A1",
+   "SLC12A2",
+   "SLC12A3",
+   "SLC12A4",
+   "SLC12A6",
+   "SLC12A7",
+   "SLC12A5",
+   "SLC12A8",
+   "SLC12A9",
+   "RHAG"
+  ],
+  "confidence": 0.45,
+  "doubt": "Both NKCC isoforms carry NH4+ in place of K+, so if the model chose only the ubiquitous NKCC1 (SLC12A2) rather than the renal NKCC2, the first choice is wrong."
+ },
+ "213": {
+  "samples": [],
+  "tournament": [
+   "MTM1",
+   "MTMR1",
+   "MTMR2",
+   "MTMR6",
+   "MTMR8",
+   "MTMR14",
+   "MTMR7",
+   "SACM1L",
+   "MTMR3",
+   "MTMR4"
+  ],
+  "confident": [
+   "MTM1",
+   "MTMR1",
+   "MTMR2",
+   "MTMR6",
+   "MTMR8",
+   "MTMR14",
+   "MTMR7",
+   "SACM1L",
+   "MTMR3",
+   "MTMR4"
+  ],
+  "confidence": 0.5,
+  "doubt": "MTM1 is absent from both promiscuous phosphatase GPRs shown in the solved set, hinting the model's PI3P 3-phosphatase list may be built from the same MTMR1/2/6/8/SACM1L annotation pool without MTM1."
+ },
+ "214": {
+  "samples": [],
+  "tournament": [
+   "ALLC",
+   "URAD",
+   "URAH",
+   "ARG1",
+   "ARG2",
+   "AGMAT",
+   "NIT1",
+   "NIT2",
+   "AMDHD1",
+   "AMDHD2"
+  ],
+  "confident": [
+   "ALLC",
+   "URAD",
+   "URAH",
+   "ARG1",
+   "ARG2",
+   "AGMAT",
+   "NIT1",
+   "NIT2",
+   "AMDHD1",
+   "AMDHD2"
+  ],
+  "confidence": 0.85,
+  "doubt": "Human ALLC is a degenerate pseudo-enzyme, so the model might have assigned allantoate hydrolysis to a broader amidinohydrolase such as ARG1 or left it to URAD/URAH of the same urate pathway."
+ },
+ "215": {
+  "samples": [],
+  "tournament": [
+   "AFMID",
+   "KYNU",
+   "IDO1",
+   "IDO2",
+   "TDO2",
+   "KMO",
+   "HAAO",
+   "ACMSD",
+   "KYAT1",
+   "KYAT3"
+  ],
+  "confident": [
+   "AFMID",
+   "KYNU",
+   "IDO1",
+   "IDO2",
+   "TDO2",
+   "KMO",
+   "HAAO",
+   "ACMSD",
+   "KYAT1",
+   "KYAT3"
+  ],
+  "confidence": 0.88,
+  "doubt": "Only if the model folded formamidase activity into the upstream IDO1/IDO2 GPR of the serotonin-branch kynurenine pathway would AFMID be wrong."
+ },
+ "216": {
+  "samples": [],
+  "tournament": [
+   "KYAT1",
+   "KYAT3",
+   "AADAT",
+   "GOT2",
+   "GOT1",
+   "GOT1L1",
+   "GPT",
+   "GPT2",
+   "TAT",
+   "BCAT1"
+  ],
+  "confident": [
+   "KYAT1",
+   "KYAT3",
+   "AADAT",
+   "GOT2",
+   "GOT1",
+   "GOT1L1",
+   "GPT",
+   "GPT2",
+   "TAT",
+   "BCAT1"
+  ],
+  "confidence": 0.65,
+  "doubt": "The glucoside is a bulky substrate; if the model restricted it to the single kynurenine aminotransferase AADAT rather than the KYAT1/KYAT3/AADAT trio used for free 3-hydroxykynurenine, KYAT1 would miss."
+ },
+ "217": {
+  "samples": [],
+  "tournament": [
+   "PNMT",
+   "COMT",
+   "LRTOMT",
+   "INMT",
+   "NNMT",
+   "TPMT",
+   "HNMT",
+   "ASMT",
+   "AS3MT",
+   "GNMT"
+  ],
+  "confident": [
+   "PNMT",
+   "COMT",
+   "LRTOMT",
+   "INMT",
+   "NNMT",
+   "TPMT",
+   "HNMT",
+   "ASMT",
+   "AS3MT",
+   "GNMT"
+  ],
+  "confidence": 0.95,
+  "doubt": "Essentially nothing except a model error would displace phenylethanolamine N-methyltransferase from noradrenaline-to-adrenaline conversion."
+ },
+ "218": {
+  "samples": [],
+  "tournament": [
+   "DIO1",
+   "DIO2",
+   "DIO3",
+   "TPO",
+   "IYD",
+   "GPX1",
+   "GPX2",
+   "GPX3",
+   "GPX4",
+   "TXNRD1"
+  ],
+  "confident": [
+   "DIO1",
+   "DIO2",
+   "DIO3",
+   "TPO",
+   "IYD",
+   "GPX1",
+   "GPX2",
+   "GPX3",
+   "GPX4",
+   "TXNRD1"
+  ],
+  "confidence": 0.8,
+  "doubt": "This is the reverse of outer-ring deiodination, so if the model attached the inner-ring enzyme DIO3 to the 3,5-T2 reaction the first choice would be wrong."
+ },
+ "219": {
+  "samples": [],
+  "tournament": [
+   "DIO1",
+   "DIO2",
+   "DIO3",
+   "TPO",
+   "IYD",
+   "GPX1",
+   "GPX2",
+   "GPX3",
+   "GPX4",
+   "TXNRD1"
+  ],
+  "confident": [
+   "DIO1",
+   "DIO2",
+   "DIO3",
+   "TPO",
+   "IYD",
+   "GPX1",
+   "GPX2",
+   "GPX3",
+   "GPX4",
+   "TXNRD1"
+  ],
+  "confidence": 0.85,
+  "doubt": "Only if the cytosolic T3-to-T4 reaction carries a different GPR from its ER twin (which the solved set gives as DIO1, DIO2) would DIO1 be wrong."
+ },
+ "220": {
+  "samples": [],
+  "tournament": [
+   "CD320",
+   "TCN2",
+   "LRP2",
+   "CUBN",
+   "AMN",
+   "ABCD4",
+   "LMBRD1",
+   "TCN1",
+   "GIF",
+   "MMACHC"
+  ],
+  "confident": [
+   "CD320",
+   "TCN2",
+   "LRP2",
+   "CUBN",
+   "AMN",
+   "ABCD4",
+   "LMBRD1",
+   "TCN1",
+   "GIF",
+   "MMACHC"
+  ],
+  "confidence": 0.3,
+  "doubt": "The model may encode cellular B12 entry through the carrier protein TCN2, or through the megalin/cubilin/amnionless endocytic set, rather than through the TCII receptor CD320."
+ },
+ "221": {
+  "samples": [],
+  "tournament": [
+   "DHPS",
+   "SRM",
+   "SMS",
+   "SAT1",
+   "SAT2",
+   "SMOX",
+   "PAOX",
+   "AOC1",
+   "AOC2",
+   "AOC3"
+  ],
+  "confident": [
+   "DHPS",
+   "SRM",
+   "SMS",
+   "SAT1",
+   "SAT2",
+   "SMOX",
+   "PAOX",
+   "AOC1",
+   "AOC2",
+   "AOC3"
+  ],
+  "confidence": 0.8,
+  "doubt": "If the model treated dehydrospermidine formation as a spermidine-synthase-type condensation, SRM would take the place of deoxyhypusine synthase."
+ },
+ "222": {
+  "samples": [],
+  "tournament": [
+   "UGT2B7",
+   "UGT1A6",
+   "UGT1A9",
+   "UGT1A1",
+   "UGT2B15",
+   "UGT1A3",
+   "UGT1A4",
+   "UGT1A5",
+   "UGT1A7",
+   "UGT1A8"
+  ],
+  "confident": [
+   "UGT2B7",
+   "UGT1A6",
+   "UGT1A9",
+   "UGT1A1",
+   "UGT2B15",
+   "UGT1A3",
+   "UGT1A4",
+   "UGT1A5",
+   "UGT1A7",
+   "UGT1A8"
+  ],
+  "confidence": 0.5,
+  "doubt": "Every UGT reaction in the solved set carries the full 20-gene UGT GPR, so if this one is instead isoform-specific it may be UGT1A6 or UGT1A9 rather than UGT2B7."
+ },
+ "223": {
+  "samples": [],
+  "tournament": [
+   "FMO3",
+   "FMO1",
+   "FMO2",
+   "FMO4",
+   "FMO5",
+   "CYP2E1",
+   "CYP1A2",
+   "CYP2A6",
+   "CYP2B6",
+   "CYP2C8"
+  ],
+  "confident": [
+   "FMO3",
+   "FMO1",
+   "FMO2",
+   "FMO4",
+   "FMO5",
+   "CYP2E1",
+   "CYP1A2",
+   "CYP2A6",
+   "CYP2B6",
+   "CYP2C8"
+  ],
+  "confidence": 0.45,
+  "doubt": "The model already uses FMO1 for hypotaurine oxygenation, so selenomethionine Se-oxidation may likewise have been assigned to FMO1 rather than the hepatic thioether-preferring FMO3."
+ },
+ "224": {
+  "samples": [],
+  "tournament": [
+   "SLC27A2",
+   "SLC27A4",
+   "SLC27A1",
+   "SLC27A3",
+   "SLC27A5",
+   "SLC27A6",
+   "FABP1",
+   "FABP2",
+   "FABP3",
+   "FABP4"
+  ],
+  "confident": [
+   "SLC27A2",
+   "SLC27A4",
+   "SLC27A1",
+   "SLC27A3",
+   "SLC27A5",
+   "SLC27A6",
+   "FABP1",
+   "FABP2",
+   "FABP3",
+   "FABP4"
+  ],
+  "confidence": 0.4,
+  "doubt": "SLC27A4 is the classically ER-resident FATP, so if the model picked localization over the SLC27A2 precedent seen in its ER acyl-CoA synthetase reactions, SLC27A4 would be the catalyst."
+ },
+ "225": {
+  "samples": [],
+  "tournament": [
+   "B3GNT6",
+   "GCNT3",
+   "B3GNT3",
+   "B3GNT2",
+   "B3GNT4",
+   "B3GNT5",
+   "GCNT1",
+   "GCNT4",
+   "GCNT2",
+   "GCNT7"
+  ],
+  "confident": [
+   "B3GNT6",
+   "GCNT3",
+   "B3GNT3",
+   "B3GNT2",
+   "B3GNT4",
+   "B3GNT5",
+   "GCNT1",
+   "GCNT4",
+   "GCNT2",
+   "GCNT7"
+  ],
+  "confidence": 0.85,
+  "doubt": "Only if the model reused the core-4 GPR (B3GNT6 plus GCNT3) or the core-2 GCNT set for core-3 synthesis would B3GNT6 not head the list."
+ },
+ "226": {
+  "samples": [],
+  "tournament": [
+   "IDUA",
+   "IDS",
+   "GUSB",
+   "GLB1",
+   "NAGLU",
+   "SGSH",
+   "HGSNAT",
+   "GNS",
+   "GALNS",
+   "ARSB"
+  ],
+  "confident": [
+   "IDUA",
+   "IDS",
+   "GUSB",
+   "GLB1",
+   "NAGLU",
+   "SGSH",
+   "HGSNAT",
+   "GNS",
+   "GALNS",
+   "ARSB"
+  ],
+  "confidence": 0.92,
+  "doubt": "Release of terminal L-iduronic acid is by definition alpha-L-iduronidase, so only a mislabeled degradation intermediate could make IDUA wrong."
+ },
+ "227": {
+  "samples": [],
+  "tournament": [
+   "PLPP6",
+   "DOLPP1",
+   "SACM1L",
+   "PLPP1",
+   "PLPP2",
+   "PLPP3",
+   "PLPP4",
+   "PLPP5",
+   "PLPP7",
+   "PLPPR1"
+  ],
+  "confident": [
+   "PLPP6",
+   "DOLPP1",
+   "SACM1L",
+   "PLPP1",
+   "PLPP2",
+   "PLPP3",
+   "PLPP4",
+   "PLPP5",
+   "PLPP7",
+   "PLPPR1"
+  ],
+  "confidence": 0.32,
+  "doubt": "The model may simply reuse DOLPP1 (which it already assigns to dolichyl-diphosphate hydrolysis) for the monophosphate step, or route it through the promiscuous SACM1L phosphatase."
+ },
+ "228": {
+  "samples": [],
+  "tournament": [
+   "MAN1A1",
+   "MAN1A2",
+   "MAN1C1",
+   "MAN1B1",
+   "MAN2A1",
+   "MAN2A2",
+   "MAN2B1",
+   "MAN2B2",
+   "MAN2C1",
+   "MANBA"
+  ],
+  "confident": [
+   "MAN1A1",
+   "MAN1A2",
+   "MAN1C1",
+   "MAN1B1",
+   "MAN2A1",
+   "MAN2A2",
+   "MAN2B1",
+   "MAN2B2",
+   "MAN2C1",
+   "MANBA"
+  ],
+  "confidence": 0.82,
+  "doubt": "Every neighboring alpha-1,2-mannosidase step carries the MAN1A1/MAN1A2/MAN1B1/MAN1C1 set, so only an idiosyncratic single-gene assignment for this isomer would break it."
+ },
+ "229": {
+  "samples": [],
+  "tournament": [
+   "HEXA",
+   "HEXB",
+   "HEXD",
+   "ENGASE",
+   "NAGLU",
+   "GUSB",
+   "GLB1",
+   "GNS",
+   "GALNS",
+   "NAGA"
+  ],
+  "confident": [
+   "HEXA",
+   "HEXB",
+   "HEXD",
+   "ENGASE",
+   "NAGLU",
+   "GUSB",
+   "GLB1",
+   "GNS",
+   "GALNS",
+   "NAGA"
+  ],
+  "confidence": 0.6,
+  "doubt": "If degradation product 41 is cleaved at the chitobiose core rather than at a terminal GlcNAc, ENGASE would be the catalyst instead of the hexosaminidases."
+ },
+ "230": {
+  "samples": [],
+  "tournament": [
+   "SLC35A3",
+   "SLC35D2",
+   "SLC35B4",
+   "SLC35A2",
+   "SLC35D1",
+   "SLC35A1",
+   "SLC35A4",
+   "SLC35A5",
+   "SLC35B1",
+   "SLC35B2"
+  ],
+  "confident": [
+   "SLC35A3",
+   "SLC35D2",
+   "SLC35B4",
+   "SLC35A2",
+   "SLC35D1",
+   "SLC35A1",
+   "SLC35A4",
+   "SLC35A5",
+   "SLC35B1",
+   "SLC35B2"
+  ],
+  "confidence": 0.65,
+  "doubt": "SLC35D2 and SLC35B4 also carry UDP-GlcNAc, so a model that assigned this antiport to one of them rather than the canonical Golgi UDP-GlcNAc transporter would beat SLC35A3."
+ },
+ "231": {
+  "samples": [],
+  "tournament": [
+   "HEXA",
+   "HEXB",
+   "HEXD",
+   "GNS",
+   "GALNS",
+   "ARSB",
+   "SGSH",
+   "IDS",
+   "GLB1",
+   "NAGLU"
+  ],
+  "confident": [
+   "HEXA",
+   "HEXB",
+   "HEXD",
+   "GNS",
+   "GALNS",
+   "ARSB",
+   "SGSH",
+   "IDS",
+   "GLB1",
+   "NAGLU"
+  ],
+  "confidence": 0.72,
+  "doubt": "The equation also releases sulfate, so if the model split the credit toward the 6-sulfatase GNS rather than lumping desulfation into the hexosaminidase step, HEXA is wrong."
+ },
+ "232": {
+  "samples": [],
+  "tournament": [
+   "CSGALNACT1",
+   "CSGALNACT2",
+   "CHSY1",
+   "CHSY3",
+   "CHPF",
+   "CHPF2",
+   "EXTL2",
+   "EXTL1",
+   "EXTL3",
+   "EXT1"
+  ],
+  "confident": [
+   "CSGALNACT1",
+   "CSGALNACT2",
+   "CHSY1",
+   "CHSY3",
+   "CHPF",
+   "CHPF2",
+   "EXTL2",
+   "EXTL1",
+   "EXTL3",
+   "EXT1"
+  ],
+  "confidence": 0.35,
+  "doubt": "The donor is UDP-GlcNAc, not UDP-GalNAc, so this may actually be the linkage-region GlcNAc transfer catalyzed by EXTL2/EXTL3 rather than a chondroitin GalNAc-transferase."
+ },
+ "233": {
+  "samples": [],
+  "tournament": [
+   "AGA",
+   "ENGASE",
+   "NGLY1",
+   "ASRGL1",
+   "FUCA1",
+   "FUCA2",
+   "HEXA",
+   "HEXB",
+   "HEXD",
+   "MAN2B1"
+  ],
+  "confident": [
+   "AGA",
+   "ENGASE",
+   "NGLY1",
+   "ASRGL1",
+   "FUCA1",
+   "FUCA2",
+   "HEXA",
+   "HEXB",
+   "HEXD",
+   "MAN2B1"
+  ],
+  "confidence": 0.88,
+  "doubt": "Release of the asparagine from the glycan in the lysosome is glycosylasparaginase work; only if the model routed it through the cytosolic NGLY1 or ENGASE would AGA be wrong."
+ },
+ "234": {
+  "samples": [],
+  "tournament": [
+   "GDE1",
+   "ENPP6",
+   "GDPD1",
+   "GDPD3",
+   "GDPD2",
+   "GDPD5",
+   "GDPD4",
+   "GPCPD1",
+   "ENPP2",
+   "ENPP1"
+  ],
+  "confident": [
+   "GDE1",
+   "ENPP6",
+   "GDPD1",
+   "GDPD3",
+   "GDPD2",
+   "GDPD5",
+   "GDPD4",
+   "GPCPD1",
+   "ENPP2",
+   "ENPP1"
+  ],
+  "confidence": 0.3,
+  "doubt": "The phosphate leaves with ethanolamine, which is lysophospholipase-C chemistry (ENPP6-like) rather than the glycerophosphodiesterase chemistry of GDE1, so ENPP6 may well be the true catalyst."
+ },
+ "235": {
+  "samples": [],
+  "tournament": [
+   "ADPRH",
+   "ADPRHL1",
+   "ADPRS",
+   "MACROD1",
+   "MACROD2",
+   "OARD1",
+   "PARG",
+   "NUDT16",
+   "NUDT9",
+   "NUDT5"
+  ],
+  "confident": [
+   "ADPRH",
+   "ADPRHL1",
+   "ADPRS",
+   "MACROD1",
+   "MACROD2",
+   "OARD1",
+   "PARG",
+   "NUDT16",
+   "NUDT9",
+   "NUDT5"
+  ],
+  "confidence": 0.85,
+  "doubt": "Only if the model used the broader ADP-ribosylhydrolase ADPRS/ARH3 or a macrodomain enzyme for protein de-ADP-ribosylation would ADPRH be displaced."
+ },
+ "236": {
+  "samples": [],
+  "tournament": [
+   "ADPRH",
+   "ADPRHL1",
+   "ADPRS",
+   "MACROD1",
+   "MACROD2",
+   "OARD1",
+   "PARG",
+   "NUDT16",
+   "NUDT9",
+   "NUDT5"
+  ],
+  "confident": [
+   "ADPRH",
+   "ADPRHL1",
+   "ADPRS",
+   "MACROD1",
+   "MACROD2",
+   "OARD1",
+   "PARG",
+   "NUDT16",
+   "NUDT9",
+   "NUDT5"
+  ],
+  "confidence": 0.85,
+  "doubt": "ADPRH is the dedicated ADP-ribosylarginine hydrolase; a model assigning free-amino-acid de-ADP-ribosylation to ADPRS instead would be the failure mode."
+ },
+ "237": {
+  "samples": [],
+  "tournament": [
+   "SLC19A1",
+   "SLC19A2",
+   "SLC19A3",
+   "SLC25A19",
+   "SLC46A1",
+   "SLC44A4",
+   "SLC35F3",
+   "SLC35F4",
+   "SLC22A11",
+   "SLC26A6"
+  ],
+  "confident": [
+   "SLC19A1",
+   "SLC19A2",
+   "SLC19A3",
+   "SLC25A19",
+   "SLC46A1",
+   "SLC44A4",
+   "SLC35F3",
+   "SLC35F4",
+   "SLC22A11",
+   "SLC26A6"
+  ],
+  "confidence": 0.85,
+  "doubt": "Only if the model routed thiamine monophosphate uptake through a thiamine-specific carrier (SLC19A2/SLC19A3) rather than the anion-exchanging reduced folate carrier would SLC19A1 be wrong."
+ },
+ "238": {
+  "samples": [],
+  "tournament": [
+   "HSD17B4",
+   "ECHS1",
+   "EHHADH",
+   "HADHA",
+   "AUH",
+   "ECHDC1",
+   "ECHDC2",
+   "ECHDC3",
+   "ECI1",
+   "ECI2"
+  ],
+  "confident": [
+   "HSD17B4",
+   "ECHS1",
+   "EHHADH",
+   "HADHA",
+   "AUH",
+   "ECHDC1",
+   "ECHDC2",
+   "ECHDC3",
+   "ECI1",
+   "ECI2"
+  ],
+  "confidence": 0.35,
+  "doubt": "HSD17B4 is the only R-specific hydratase available but it is peroxisomal, so a mitochondrial reaction may simply have been given the promiscuous crotonase ECHS1."
+ },
+ "239": {
+  "samples": [],
+  "tournament": [
+   "FAAH",
+   "FAAH2",
+   "NAAA",
+   "NIT2",
+   "NIT1",
+   "AADAC",
+   "AADACL2",
+   "AADACL3",
+   "AADACL4",
+   "AMDHD1"
+  ],
+  "confident": [
+   "FAAH",
+   "FAAH2",
+   "NAAA",
+   "NIT2",
+   "NIT1",
+   "AADAC",
+   "AADACL2",
+   "AADACL3",
+   "AADACL4",
+   "AMDHD1"
+  ],
+  "confidence": 0.4,
+  "doubt": "Phenylacetamide is a small aryl amide rather than a fatty acid amide, so an omega-amidase (NIT2) or arylacetamide deacetylase (AADAC) annotation would beat FAAH."
+ },
+ "240": {
+  "samples": [],
+  "tournament": [
+   "CMPK2",
+   "CMPK1",
+   "AK9",
+   "NME4",
+   "NME1",
+   "NME2",
+   "NME3",
+   "NME6",
+   "NME7",
+   "NME5"
+  ],
+  "confident": [
+   "CMPK2",
+   "CMPK1",
+   "AK9",
+   "NME4",
+   "NME1",
+   "NME2",
+   "NME3",
+   "NME6",
+   "NME7",
+   "NME5"
+  ],
+  "confidence": 0.55,
+  "doubt": "CMPK1 is cytosolic and CMPK2 mitochondrial, but CMPK2 is nucleotide-specific for dNMPs, so the model may have placed CMPK1 or an NME isoform in the mitochondrion instead."
+ },
+ "241": {
+  "samples": [],
+  "tournament": [
+   "HSD3B1",
+   "HSD3B2",
+   "HSD3B7",
+   "AKR1C1",
+   "AKR1C2",
+   "AKR1C3",
+   "AKR1C4",
+   "SRD5A1",
+   "SRD5A2",
+   "SRD5A3"
+  ],
+  "confident": [
+   "HSD3B1",
+   "HSD3B2",
+   "HSD3B7",
+   "AKR1C1",
+   "AKR1C2",
+   "AKR1C3",
+   "AKR1C4",
+   "SRD5A1",
+   "SRD5A2",
+   "SRD5A3"
+  ],
+  "confidence": 0.7,
+  "doubt": "The NADH twin of this reaction is HSD3B1/HSD3B2, but the NADPH version combines dehydrogenation with 5alpha-reduction and could carry an SRD5A or AKR1C GPR instead."
+ },
+ "242": {
+  "samples": [],
+  "tournament": [
+   "CYP24A1",
+   "CYP27B1",
+   "CYP27A1",
+   "CYP2R1",
+   "CYP3A4",
+   "CYP3A5",
+   "CYP11A1",
+   "CYP11B1",
+   "CYP11B2",
+   "CYP1B1"
+  ],
+  "confident": [
+   "CYP24A1",
+   "CYP27B1",
+   "CYP27A1",
+   "CYP2R1",
+   "CYP3A4",
+   "CYP3A5",
+   "CYP11A1",
+   "CYP11B1",
+   "CYP11B2",
+   "CYP1B1"
+  ],
+  "confidence": 0.85,
+  "doubt": "CYP3A4 also 24-hydroxylates 25-OH-vitamin D2, so if the model ignored the mitochondrial compartment and used the microsomal route, CYP24A1 would be wrong."
+ },
+ "243": {
+  "samples": [],
+  "tournament": [
+   "CYP2A6",
+   "CYP2A13",
+   "CYP2A7",
+   "CYP1A2",
+   "CYP2E1",
+   "CYP3A4",
+   "CYP2B6",
+   "CYP2C9",
+   "CYP2C19",
+   "CYP2C8"
+  ],
+  "confident": [
+   "CYP2A6",
+   "CYP2A13",
+   "CYP2A7",
+   "CYP1A2",
+   "CYP2E1",
+   "CYP3A4",
+   "CYP2B6",
+   "CYP2C9",
+   "CYP2C19",
+   "CYP2C8"
+  ],
+  "confidence": 0.9,
+  "doubt": "Coumarin 7-hydroxylation is the textbook CYP2A6 probe reaction; only a GPR lumping CYP2A6 with CYP2A13 in a different order would change the head of the list."
+ },
+ "244": {
+  "samples": [],
+  "tournament": [
+   "CYP2C8",
+   "CYP3A4",
+   "CYP3A5",
+   "CYP3A7",
+   "CYP3A43",
+   "CYP2C9",
+   "CYP2C19",
+   "CYP2C18",
+   "CYP2D6",
+   "CYP2B6"
+  ],
+  "confident": [
+   "CYP2C8",
+   "CYP3A4",
+   "CYP3A5",
+   "CYP3A7",
+   "CYP3A43",
+   "CYP2C9",
+   "CYP2C19",
+   "CYP2C18",
+   "CYP2D6",
+   "CYP2B6"
+  ],
+  "confidence": 0.9,
+  "doubt": "6-alpha-hydroxypaclitaxel is the classic CYP2C8 marker; only if the model conflated it with the CYP3A4 3'-p-hydroxylation route would CYP2C8 lose."
+ },
+ "245": {
+  "samples": [],
+  "tournament": [
+   "CYP3A4",
+   "CYP3A5",
+   "CYP3A7",
+   "CYP3A43",
+   "CYP2C9",
+   "CYP2C19",
+   "CYP2C8",
+   "CYP2D6",
+   "CYP2B6",
+   "CYP1A2"
+  ],
+  "confident": [
+   "CYP3A4",
+   "CYP3A5",
+   "CYP3A7",
+   "CYP3A43",
+   "CYP2C9",
+   "CYP2C19",
+   "CYP2C8",
+   "CYP2D6",
+   "CYP2B6",
+   "CYP1A2"
+  ],
+  "confidence": 0.9,
+  "doubt": "Nifedipine oxidation is the canonical CYP3A4 probe; only a GPR listing CYP3A5 first would displace it."
+ },
+ "246": {
+  "samples": [],
+  "tournament": [
+   "CSAD",
+   "GADL1",
+   "GAD1",
+   "GAD2",
+   "DDC",
+   "HDC",
+   "ADO",
+   "CDO1",
+   "FMO1",
+   "FMO3"
+  ],
+  "confident": [
+   "CSAD",
+   "GADL1",
+   "GAD1",
+   "GAD2",
+   "DDC",
+   "HDC",
+   "ADO",
+   "CDO1",
+   "FMO1",
+   "FMO3"
+  ],
+  "confidence": 0.65,
+  "doubt": "L-cysteate is also a substrate of GADL1 (and of GAD), so a model annotating the cysteate-specific decarboxylation to GADL1 rather than to cysteine sulfinate decarboxylase would beat CSAD."
+ },
+ "247": {
+  "samples": [],
+  "tournament": [
+   "RBKS",
+   "KHK",
+   "HK1",
+   "HK2",
+   "ADPGK",
+   "PGM2",
+   "PGM2L1",
+   "PGM1",
+   "PGM3",
+   "DERA"
+  ],
+  "confident": [
+   "RBKS",
+   "KHK",
+   "HK1",
+   "HK2",
+   "ADPGK",
+   "PGM2",
+   "PGM2L1",
+   "PGM1",
+   "PGM3",
+   "DERA"
+  ],
+  "confidence": 0.4,
+  "doubt": "Humans have no well-established deoxyribokinase, so the model may have parked this activity on a hexokinase or on PGM2 rather than on ribokinase."
+ },
+ "248": {
+  "samples": [],
+  "tournament": [
+   "ST8SIA5",
+   "ST8SIA1",
+   "ST8SIA3",
+   "ST8SIA2",
+   "ST8SIA4",
+   "ST8SIA6",
+   "ST6GALNAC5",
+   "ST6GALNAC6",
+   "ST6GALNAC3",
+   "ST6GALNAC2"
+  ],
+  "confident": [
+   "ST8SIA5",
+   "ST8SIA1",
+   "ST8SIA3",
+   "ST8SIA2",
+   "ST8SIA4",
+   "ST8SIA6",
+   "ST6GALNAC5",
+   "ST6GALNAC6",
+   "ST6GALNAC3",
+   "ST6GALNAC2"
+  ],
+  "confidence": 0.65,
+  "doubt": "GD1c formation is an alpha-2,8-sialylation best attributed to ST8Sia V, but a model using the broader ganglioside GPR could list ST8SIA1 or ST8SIA3 instead."
+ },
+ "249": {
+  "samples": [],
+  "tournament": [
+   "ST6GALNAC6",
+   "ST6GALNAC5",
+   "ST6GALNAC4",
+   "ST6GALNAC3",
+   "ST6GALNAC2",
+   "ST6GALNAC1",
+   "ST8SIA1",
+   "ST8SIA5",
+   "ST8SIA3",
+   "ST8SIA2"
+  ],
+  "confident": [
+   "ST6GALNAC6",
+   "ST6GALNAC5",
+   "ST6GALNAC4",
+   "ST6GALNAC3",
+   "ST6GALNAC2",
+   "ST6GALNAC1",
+   "ST8SIA1",
+   "ST8SIA5",
+   "ST8SIA3",
+   "ST8SIA2"
+  ],
+  "confidence": 0.55,
+  "doubt": "The solved set assigns the GD1alpha-to-GT1aalpha step to ST6GALNAC2 alone, so this GD1a-derived route may carry the same single-gene GPR rather than the ST6GalNAc-VI alpha-2,6 set."
+ }
+}

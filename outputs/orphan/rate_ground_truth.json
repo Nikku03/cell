@@ -1,0 +1,40 @@
+{
+ "n_shared": 7462,
+ "r_agreement": 0.36055946235014674,
+ "spearman": 0.34699068010258566,
+ "loglog_slope": 0.31694257214153787,
+ "cross_cell_line": {
+  "K562": 0.3606,
+  "MCF7": 0.0765,
+  "HEK293T": 0.3717,
+  "Calu3": 0.1762,
+  "MDAMB": 0.2507
+ },
+ "cell_specific": false,
+ "r_partial_out_rpkm": 0.2941356324635763,
+ "r_rpkm_only": 0.2252036379966559,
+ "kdeg_helps": true,
+ "reliability_estimate": 0.36055946235014674,
+ "refit": {
+  "derived  RPKM*k_deg": {
+   "r": 0.4286,
+   "r2": 0.1837,
+   "sd": 0.0197
+  },
+  "measured TT-seq": {
+   "r": 0.4141,
+   "r2": 0.1715,
+   "sd": 0.0124
+  },
+  "consensus of both": {
+   "r": 0.4178,
+   "r2": 0.1745,
+   "sd": 0.0182
+  }
+ },
+ "consensus_beats_singles": false,
+ "n_features": 24,
+ "n_genes_refit": 6605,
+ "verdict": "RATE GROUND TRUTH. The transcription rate this project models has always been DERIVED (k_syn = RPKM * k_deg) and never checked. Wachutka et al. 2019 measured it directly by TT-seq in K562, so on 7462 shared genes there are now two independent estimates of one physical quantity. THEY BARELY AGREE: r = 0.361 (Spearman 0.347), meaning the two estimates share only 13% of their variance. It is INDISTINGUISHABLE from the cross-cell-line controls: derived HEK293T against measured K562 scores 0.372, and the paired difference is -0.018 [95% CI -0.035, +0.001] -- a tie, not a loss, and the earlier reading of it as a loss rested on a 0.01 gap smaller than its own error bar. Either way the control DOES discriminate, because the derived rates themselves differ substantially between lines (derived K562 vs other lines: r = 0.57-0.73). So matching the right cell line buys nothing here: the shared signal is whatever structure the two kinds of rate estimate carry in common, not K562-specific transcription. The agreement survives partialling log abundance out of both estimates at r = 0.294. Multiplying abundance by k_deg helps: RPKM alone agrees with the direct measurement at 0.225 versus 0.361 for the full derived rate. The two spreads are near-identical (SD ratio 0.88); the OLS slope of 0.32 is r-attenuation, not a compressed dynamic range, and reading it as one would be a mistake. THE IMPLIED CEILING. If both estimates are truth plus independent error, their correlation is sqrt(rel_derived * rel_measured); under equal reliabilities that puts each estimate's reliability at 0.36, meaning a model that predicted the TRUE rate perfectly would still score only R2 = 0.36 against either. On that reading the existing fits are not the failure they looked like -- nexus_txn's K562 R2 = 0.200 would be 55% of what is achievable -- and refitting the identical feature stack here gives R2 = 0.184 on the derived target and 0.172 on the measured one. BUT THE CEILING MODEL DOES NOT SURVIVE ITS OWN PREDICTION, so that number should not be quoted as a ceiling. Averaging the two z-scored estimates must raise reliability to 2*rel/(1+rel) = 0.53, which requires the same features to score R2 = 0.261 against the consensus. They score 0.174 -- 33% off. Averaging bought nothing, which is not what truth-plus-independent-noise predicts. The likelier reading is that the two datasets are not two noisy views of one quantity at all: TT-seq synthesis is nascent output attributed to a major isoform, while RPKM*k_deg is a steady-state whole-gene balance, and features that predict one need not predict the other. WHAT THIS DOES NOT SHOW. The reliability estimate assumes independent errors; both pipelines quantify against the same genome annotation and share mappability and multi-isoform problems, and shared error INFLATES apparent agreement, so 0.36 is an upper bound on reliability -- the true ceiling is lower, not higher. Wachutka's synthesis is reported per SALMON MAJOR ISOFORM while the derived rate is whole-gene, which attenuates the comparison by an unmeasured amount. And the comparison is log-scale only: the datasets report different units (RPKM/hour versus molecules/cell/min), so no absolute fold-error comparison between them is meaningful. THE ONE THING THAT IS UNAMBIGUOUS is the headline: the target this project has been fitting for two modules agrees with a direct measurement of the same quantity at r = 0.361. Whatever the right ceiling is, an R2 of 0.90 against the derived rate would not mean the true transcription rate had been predicted. Deterministic.",
+ "note": "RATE GROUND TRUTH. The transcription rate this project models has always been DERIVED (k_syn = RPKM * k_deg) and never checked. Wachutka et al. 2019 measured it directly by TT-seq in K562, so on 7462 shared genes there are now two independent estimates of one physical quantity. THEY BARELY AGREE: r = 0.361 (Spearman 0.347), meaning the two estimates share only 13% of their variance. It is INDISTINGUISHABLE from the cross-cell-line controls: derived HEK293T against measured K562 scores 0.372, and the paired difference is -0.018 [95% CI -0.035, +0.001] -- a tie, not a loss, and the earlier reading of it as a loss rested on a 0.01 gap smaller than its own error bar. Either way the control DOES discriminate, because the derived rates themselves differ substantially between lines (derived K562 vs other lines: r = 0.57-0.73). So matching the right cell line buys nothing here: the shared signal is whatever structure the two kinds of rate estimate carry in common, not K562-specific transcription. The agreement survives partialling log abundance out of both estimates at r = 0.294. Multiplying abundance by k_deg helps: RPKM alone agrees with the direct measurement at 0.225 versus 0.361 for the full derived rate. The two spreads are near-identical (SD ratio 0.88); the OLS slope of 0.32 is r-attenuation, not a compressed dynamic range, and reading it as one would be a mistake. THE IMPLIED CEILING. If both estimates are truth plus independent error, their correlation is sqrt(rel_derived * rel_measured); under equal reliabilities that puts each estimate's reliability at 0.36, meaning a model that predicted the TRUE rate perfectly would still score only R2 = 0.36 against either. On that reading the existing fits are not the failure they looked like -- nexus_txn's K562 R2 = 0.200 would be 55% of what is achievable -- and refitting the identical feature stack here gives R2 = 0.184 on the derived target and 0.172 on the measured one. BUT THE CEILING MODEL DOES NOT SURVIVE ITS OWN PREDICTION, so that number should not be quoted as a ceiling. Averaging the two z-scored estimates must raise reliability to 2*rel/(1+rel) = 0.53, which requires the same features to score R2 = 0.261 against the consensus. They score 0.174 -- 33% off. Averaging bought nothing, which is not what truth-plus-independent-noise predicts. The likelier reading is that the two datasets are not two noisy views of one quantity at all: TT-seq synthesis is nascent output attributed to a major isoform, while RPKM*k_deg is a steady-state whole-gene balance, and features that predict one need not predict the other. WHAT THIS DOES NOT SHOW. The reliability estimate assumes independent errors; both pipelines quantify against the same genome annotation and share mappability and multi-isoform problems, and shared error INFLATES apparent agreement, so 0.36 is an upper bound on reliability -- the true ceiling is lower, not higher. Wachutka's synthesis is reported per SALMON MAJOR ISOFORM while the derived rate is whole-gene, which attenuates the comparison by an unmeasured amount. And the comparison is log-scale only: the datasets report different units (RPKM/hour versus molecules/cell/min), so no absolute fold-error comparison between them is meaningful. THE ONE THING THAT IS UNAMBIGUOUS is the headline: the target this project has been fitting for two modules agrees with a direct measurement of the same quantity at r = 0.361. Whatever the right ceiling is, an R2 of 0.90 against the derived rate would not mean the true transcription rate had been predicted. Deterministic."
+}

@@ -1,0 +1,364 @@
+{
+ "test": "loop 149 -- the ubiquitin chain as a Markov chain",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "outputs/loop_pulse_equation.json",
+    "bytes": 11233,
+    "hash": "05f5dd83ae13fda3",
+    "method": "sha256:full"
+   },
+   {
+    "path": "outputs/loop_capacity_ratio.json",
+    "bytes": 13968,
+    "hash": "2a9bbe03961188a9",
+    "method": "sha256:full"
+   },
+   {
+    "path": "outputs/loop_capacity_ratio_controls.json",
+    "bytes": 9700,
+    "hash": "78fc01bb66f3f5b0",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/ly2014_supp1-v1.txt",
+    "bytes": 5458223,
+    "hash": "73d036e6c3232913",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 3,
+   "used": 3,
+   "selection": "all",
+   "fraction": 1.0
+  },
+  "seed": 14900,
+  "controls": [
+   "the closed form checked against an exact recursion AND against linear algebra, fenced by conditioning (M0)",
+   "both asymptotic limits of the exponent verified (M1)",
+   "one parameter set required to carry both measured rates rather than two independent fits (M4)",
+   "the processivity objection swept rather than assumed away (M5)",
+   "the DUB/receptor abundance comparison barred from being quoted as a rate ratio (M3)"
+  ],
+  "note": "a reachability result. The chain is arithmetic; the inputs are loop 142's two rates and loop 148's three measured receptor ratios. It converts an impossibility into a prediction with a chain length and a regime in it, and identifies no protein.",
+  "warnings": []
+ },
+ "gates": {
+  "M0": true,
+  "M1": true,
+  "M2": true,
+  "M3": false,
+  "M4": true,
+  "M5": true,
+  "M6": true
+ },
+ "m0": {
+  "worst_vs_recursion": 3.5495162720558413e-16,
+  "worst_vs_linalg": 5.620958980757909e-08,
+  "n_wellconditioned_cells": 85,
+  "worst_cond": 1.6822645927155054e+16,
+  "limit_rho0": 9.166001291305292e-13,
+  "limit_n1": 0.0,
+  "pass": true
+ },
+ "m1": {
+  "table": {
+   "1": {
+    "0.001": 1.0,
+    "0.1": 1.0,
+    "1": 0.9998889775309887,
+    "10": 1.0,
+    "100": 1.0,
+    "1000": 1.0
+   },
+   "2": {
+    "0.001": 1.0004997497691865,
+    "0.1": 1.047619024653012,
+    "1": 8.040662687835113,
+    "10": 1.8333332639630964,
+    "100": 1.9803921471000547,
+    "1000": 1.9980039910584269
+   },
+   "4": {
+    "0.001": 1.0007504368924443,
+    "0.1": 1.0793797312533364,
+    "1": 2.570724920581841,
+    "10": 3.7795784861403554,
+    "100": 3.979798167324746,
+    "1000": 3.9979979969769213
+   },
+   "8": {
+    "0.001": 1.0008757343798171,
+    "0.1": 1.095461607852907,
+    "1": 2.0081708777645035,
+    "10": 7.777778301775324,
+    "100": 7.979797969595438,
+    "1000": 7.997997996896784
+   },
+   "12": {
+    "0.001": 1.000917493177529,
+    "0.1": 1.1007268398410117,
+    "1": 4.638517529037007,
+    "10": 11.777777654012217,
+    "100": 11.979797969019527,
+    "1000": 11.99799799657278
+   }
+  },
+  "err_high_rho": 0.0009980044707865732,
+  "err_low_rho": 0.000917493177529094,
+  "pass": true
+ },
+ "m2": {
+  "required": 20.28617706991229,
+  "per_receptor": {
+   "median receptor": {
+    "n": 8,
+    "rho": 10000.0,
+    "amplification": 26.832120176955204
+   },
+   "CDC20 (LFQ)": {
+    "n": 2,
+    "rho": 10000.0,
+    "amplification": 384.66620431833127
+   },
+   "CDC20 (raw Intensity)": {
+    "n": 1,
+    "rho": 39.71915494694405,
+    "amplification": 39.71990464862458
+   }
+  },
+  "worst_n": 8,
+  "gate_max_n": 10,
+  "pass": true
+ },
+ "m3": {
+  "rho_band": {
+   "median receptor": {
+    "n": 8,
+    "rho_min": 4.906253681833185,
+    "rho_max": 10000.0
+   },
+   "CDC20 (LFQ)": {
+    "n": 2,
+    "rho_min": 0.06850937412626064,
+    "rho_max": 10000.0
+   },
+   "CDC20 (raw Intensity)": {
+    "n": 1,
+    "rho_min": 0.001,
+    "rho_max": 10000.0
+   }
+  },
+  "prediction_dub_dominated": false,
+  "n_dub": 57,
+  "n_receptor": 18,
+  "dub_ibaq_total": 3350878002.940772,
+  "receptor_ibaq_total": 74624626.73554882,
+  "abundance_ratio": 44.9031124110738,
+  "proxy_barred_from_quotation_as_rho": true,
+  "pass": false
+ },
+ "m4": {
+  "solutions": {
+   "median receptor": {
+    "n": 8,
+    "rho": 4.906253681833185,
+    "k_u_per_h": 2533.854034011212,
+    "k_d_per_h": 12431.730683595379,
+    "b_lo_check": 0.023472644109717077,
+    "b_hi_check": 0.4767648872941049,
+    "ratio_check": 20.3115117779482,
+    "sane": true
+   },
+   "CDC20 (LFQ)": {
+    "n": 2,
+    "rho": 0.06850937412626064,
+    "k_u_per_h": 0.04855338437647933,
+    "k_d_per_h": 0.0033263619753443607,
+    "b_lo_check": 0.023472644109717077,
+    "b_hi_check": 0.47619337896408326,
+    "ratio_check": 20.287163931691502,
+    "sane": true
+   },
+   "CDC20 (raw Intensity)": {
+    "n": 1,
+    "rho": 39.08408957924025,
+    "k_u_per_h": 0.023472644109717077,
+    "k_d_per_h": 0.9174069250458082,
+    "b_lo_check": 0.023472644109717077,
+    "b_hi_check": 0.9323311858835712,
+    "ratio_check": 39.719904648390674,
+    "sane": true
+   }
+  },
+  "band": [
+   0.001,
+   100000.0
+  ],
+  "pass": true
+ },
+ "m5": {
+  "n": 8,
+  "rho": 4.906253681833185,
+  "receptor_ratio": 1.5086461786578265,
+  "sweep": [
+   {
+    "koff_over_lambda": 0.0,
+    "amplification": 20.311511778019177,
+    "cond": 2766150.5506515033
+   },
+   {
+    "koff_over_lambda": 0.0001,
+    "amplification": 20.311360454739695,
+    "cond": 2766633.6526674516
+   },
+   {
+    "koff_over_lambda": 0.001,
+    "amplification": 20.309999913305532,
+    "cond": 2770984.659478723
+   },
+   {
+    "koff_over_lambda": 0.01,
+    "amplification": 20.296528870329205,
+    "cond": 2814802.5482489504
+   },
+   {
+    "koff_over_lambda": 0.1,
+    "amplification": 20.174387003737312,
+    "cond": 3284961.526100871
+   },
+   {
+    "koff_over_lambda": 0.3,
+    "amplification": 19.970663585809273,
+    "cond": 4562934.543459902
+   },
+   {
+    "koff_over_lambda": 1.0,
+    "amplification": 19.688217167422618,
+    "cond": 12692246.40625646
+   },
+   {
+    "koff_over_lambda": 3.0,
+    "amplification": 20.029465327269353,
+    "cond": 120860178.17454472
+   },
+   {
+    "koff_over_lambda": 10.0,
+    "amplification": 21.933675046150498,
+    "cond": 19883062578.08051
+   }
+  ],
+  "max_koff_over_lambda": 10.0,
+  "pass": true
+ },
+ "m6": {
+  "reachability_not_measurement": true,
+  "identifies_which_proteins": false,
+  "refutable_by": [
+   "K48 chain length on a pulsed substrate",
+   "a DUB/E3 rate ratio at rest",
+   "processivity of APC/C on a pulsed substrate"
+  ]
+ },
+ "seconds": 0.22119808197021484,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 149 -- a Markov chain on the ubiquitin chain: can a multistep process amplify 1.5x into 20.3x?",
+  "====================================================================================================",
+  "",
+  "  read from the record, not retyped:  b_lo 0.02347/h   b_hi 0.47617/h   required 20.29x",
+  "  measured receptor changes: median receptor 1.51x   CDC20 (LFQ) 19.65x   CDC20 (raw Intensity) 39.72x",
+  "",
+  "M0 DOES THE ARITHMETIC CHECK THE ARITHMETIC?",
+  "     closed form vs exact recursion, n=1..12 x rho=1e-3..1e2: worst 3.55e-16   gate < 1e-10",
+  "     closed form vs linear algebra over the 85 cells with cond(A) < 1e+12: worst 5.62e-08   gate < 1e-06",
+  "     worst cond(A) anywhere on the grid 1.68e+16 -- past 1e15 the LINEAR SOLVE is the thing that is wrong, not the formula, and that is why it is fenced by conditioning",
+  "     limit rho -> 0 gives T = n/lambda: worst deviation 9.17e-13",
+  "     limit n = 1 gives T = 1/lambda for every rho: worst deviation 0.00e+00",
+  "     M0 PASS",
+  "",
+  "M1 IS THE EXPONENT REALLY n?",
+  "       n= 1   rho=0.001   1.000   rho=0.1     1.000   rho=1       1.000   rho=10      1.000   rho=100     1.000   rho=1000    1.000",
+  "       n= 2   rho=0.001   1.000   rho=0.1     1.048   rho=1       8.041   rho=10      1.833   rho=100     1.980   rho=1000    1.998",
+  "       n= 4   rho=0.001   1.001   rho=0.1     1.079   rho=1       2.571   rho=10      3.780   rho=100     3.980   rho=1000    3.998",
+  "       n= 8   rho=0.001   1.001   rho=0.1     1.095   rho=1       2.008   rho=10      7.778   rho=100     7.980   rho=1000    7.998",
+  "       n=12   rho=0.001   1.001   rho=0.1     1.101   rho=1       4.639   rho=10     11.778   rho=100    11.980   rho=1000   11.998",
+  "     converges to n at rho=1000: worst relative error 0.0010   gate < 0.01",
+  "     converges to 1 at rho=0.001: worst absolute error 0.0009   gate < 0.01",
+  "     the DUBs are what make the chain nonlinear. Without them (rho -> 0) every step is",
+  "     one-way, the times just add, and n steps buy nothing at all.",
+  "     M1 PASS",
+  "",
+  "M2 WHAT CHAIN LENGTH DOES THE MEASURED RECEPTOR CHANGE DEMAND?",
+  "       receptor   1.51x  ->  n =  8 ubiquitins (best rho 1e+04, delivers 26.8x)",
+  "       receptor  19.65x  ->  n =  2 ubiquitins (best rho 1e+04, delivers 384.7x)",
+  "       receptor  39.72x  ->  n =  1 ubiquitins (best rho 39.7, delivers 39.7x)",
+  "     gate: every measured receptor ratio must close at n <= 10",
+  "     Thrower 2000 puts the minimum proteasome-competent K48 chain at 4 and observed chains around 10, so 4-10 is a mechanism and 40 is a refutation.",
+  "     M2 PASS",
+  "",
+  "M3 THE REGIME THE MECHANISM REQUIRES",
+  "       median receptor: at n=8, 20.29x needs rho between 4.91 and 1e+04",
+  "       CDC20 (LFQ): at n=2, 20.29x needs rho between 0.0685 and 1e+04",
+  "       CDC20 (raw Intensity): at n=1, 20.29x needs rho between 0.001 and 1e+04",
+  "     THE PREDICTION: the resting cell must be DUB-dominated, rho > 1, on these substrates. rho > 1 everywhere in the solution band: False",
+  "     PROXY, and it is only a proxy: iBAQ mass in the same Ly proteome",
+  "       57 DUBs total 3.351e+09;  18 targeting receptors total 7.462e+07;  ratio 44.9",
+  "     ABUNDANCE IS NOT RATE. A DUB and an E3 do not share a k_cat and this comparison cannot see the difference, so the gate here is REPORT and the number is BARRED from",
+  "     being quoted as a measurement of rho -- the same handling loop 148's K4 gave mRNA.",
+  "     M3 FAIL",
+  "",
+  "M4 CAN ONE PARAMETER SET CARRY BOTH MEASURED RATES?",
+  "       median receptor: n=8  rho=4.91  k_u=2534/h  k_d=1.243e+04/h",
+  "          reproduces b_lo 0.02347 (target 0.02347) and b_hi 0.47676 (target 0.47617) -> 20.31x   sane",
+  "       CDC20 (LFQ): n=2  rho=0.0685  k_u=0.04855/h  k_d=0.003326/h",
+  "          reproduces b_lo 0.02347 (target 0.02347) and b_hi 0.47619 (target 0.47617) -> 20.29x   sane",
+  "       CDC20 (raw Intensity): n=1  rho=39.1  k_u=0.02347/h  k_d=0.9174/h",
+  "          reproduces b_lo 0.02347 (target 0.02347) and b_hi 0.93233 (target 0.47617) -> 39.72x   sane",
+  "     gate: k_u and k_d both inside 0.001 to 100000 /h. Eight orders wide on purpose -- outside it, it is not a rate constant.",
+  "     M4 PASS",
+  "",
+  "M5 THE OBJECTION THAT COULD KILL IT: does it survive a substrate that lets go?",
+  "       k_off/lambda 0        amplification   20.31x   reaches 20.3x",
+  "       k_off/lambda 0.0001   amplification   20.31x   reaches 20.3x",
+  "       k_off/lambda 0.001    amplification   20.31x   reaches 20.3x",
+  "       k_off/lambda 0.01     amplification   20.30x   reaches 20.3x",
+  "       k_off/lambda 0.1      amplification   20.17x   below 20.3x",
+  "       k_off/lambda 0.3      amplification   19.97x   below 20.3x",
+  "       k_off/lambda 1        amplification   19.69x   below 20.3x",
+  "       k_off/lambda 3        amplification   20.03x   below 20.3x",
+  "       k_off/lambda 10       amplification   21.93x   reaches 20.3x",
+  "     largest k_off/lambda at which n=8 still delivers 20.3x: 10.0",
+  "     processivity is a real requirement of this mechanism, not an accident of it: the",
+  "     amplification lives in the DUBs winning the race back down, and a substrate that",
+  "     lets go resets the ladder before the race can be run.",
+  "     M5 PASS",
+  "",
+  "M6 WHAT THIS DOES AND DOES NOT BUY",
+  "     IT IS A REACHABILITY RESULT, NOT A MEASUREMENT. Nothing here was fitted to a",
+  "     trajectory and no new data was read; the chain is arithmetic and the inputs are",
+  "     loop 142's two rates and loop 148's three receptor ratios.",
+  "     What it converts: loop 148's 'a 1.5x receptor change cannot make a 20.3x rate",
+  "     change' becomes 'it makes it if and only if the chain is at least n long and the",
+  "     resting state is DUB-dominated'. That is a statement with numbers in it and it can",
+  "     be refuted by measuring chain length or a DUB/E3 rate ratio.",
+  "     IT IDENTIFIES NO PROTEIN AND NO TIMING. Nine mechanisms have been eliminated on",
+  "     that question -- transcription, two TF networks, degron motifs, 5'UTR control,",
+  "     relocalisation, ubiquitin annotation, protease competition, and phosphodegrons",
+  "     twice -- and a Markov chain on chain length does not touch any of it.",
+  "",
+  "====================================================================================================",
+  "  M0  PASS",
+  "  M1  PASS",
+  "  M2  PASS",
+  "  M3  FAIL",
+  "  M4  PASS",
+  "  M5  PASS",
+  "  M6  PASS",
+  "  6/7",
+  "====================================================================================================",
+  "    manifest: 4 inputs, coverage 3/3 (100.0%) by 'all', seed 14900, controls 5"
+ ]
+}

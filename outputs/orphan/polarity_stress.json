@@ -1,0 +1,199 @@
+{
+ "n": 820,
+ "n_repressive": 159,
+ "base_rate": 0.19390243902439025,
+ "descriptive": {
+  "|EffectSize|": {
+   "repressive_median": 0.0940849203868679,
+   "activating_median": 0.123782483000557,
+   "mwu_p": 0.001175300947101577
+  },
+  "distance (bp)": {
+   "repressive_median": 331723.0,
+   "activating_median": 32075.0,
+   "mwu_p": 7.678342605207416e-38
+  },
+  "power@ES25": {
+   "repressive_median": 0.999988792874,
+   "activating_median": 0.95,
+   "mwu_p": 0.010527993413043168
+  },
+  "log10 distance": {
+   "repressive_median": 5.5207755843527355,
+   "activating_median": 4.506166665046966,
+   "mwu_p": 7.678342605207416e-38
+  }
+ },
+ "repressive_frac_by_cell": {
+  "GM12878": 0.23809523809523808,
+  "HCT116": 0.15,
+  "Jurkat": 0.0,
+  "K562": 0.17852161785216178,
+  "WTC11": 0.5714285714285714
+ },
+ "clusters": {
+  "elements": {
+   "distinct": 726,
+   "distinct_repressive": 145
+  },
+  "genes (x cell)": {
+   "distinct": 512,
+   "distinct_repressive": 123
+  },
+  "1-Mb loci": {
+   "distinct": 361,
+   "distinct_repressive": 99
+  }
+ },
+ "arms": {
+  "power only": {
+   "chromosome": {
+    "auprc": 0.2302083145505029,
+    "auroc": 0.5777305207471052
+   },
+   "element-held-out": {
+    "auprc": 0.23539697355581354,
+    "auroc": 0.5838247747362011
+   },
+   "gene-held-out": {
+    "auprc": 0.2282991316309269,
+    "auroc": 0.581838076480271
+   },
+   "1-Mb locus-held-out": {
+    "auprc": 0.2265598208852962,
+    "auroc": 0.5765078640139297
+   }
+  },
+  "distance only": {
+   "chromosome": {
+    "auprc": 0.5152132270091524,
+    "auroc": 0.8037945175501193
+   },
+   "element-held-out": {
+    "auprc": 0.5323013050082342,
+    "auroc": 0.8209992483277672
+   },
+   "gene-held-out": {
+    "auprc": 0.5106374978167743,
+    "auroc": 0.80518178098745
+   },
+   "1-Mb locus-held-out": {
+    "auprc": 0.5066015329760027,
+    "auroc": 0.8036061237499881
+   }
+  },
+  "distance + power": {
+   "chromosome": {
+    "auprc": 0.5107291671710216,
+    "auroc": 0.8033292419528255
+   },
+   "element-held-out": {
+    "auprc": 0.5457904104309025,
+    "auroc": 0.8177565914042949
+   },
+   "gene-held-out": {
+    "auprc": 0.5027985155191456,
+    "auroc": 0.8006926802348262
+   },
+   "1-Mb locus-held-out": {
+    "auprc": 0.5179558799093587,
+    "auroc": 0.8044443810121885
+   }
+  },
+  "full biology": {
+   "chromosome": {
+    "auprc": 0.6274039508853969,
+    "auroc": 0.8547636038401889
+   },
+   "element-held-out": {
+    "auprc": 0.6684041078676785,
+    "auroc": 0.8740692109344523
+   },
+   "gene-held-out": {
+    "auprc": 0.642070293845793,
+    "auroc": 0.868090086489881
+   },
+   "1-Mb locus-held-out": {
+    "auprc": 0.6326581370979352,
+    "auroc": 0.854181295730692
+   }
+  },
+  "full + power": {
+   "chromosome": {
+    "auprc": 0.6357998752314878,
+    "auroc": 0.8563811263665688
+   },
+   "element-held-out": {
+    "auprc": 0.6737734334047849,
+    "auroc": 0.8740254426778563
+   },
+   "gene-held-out": {
+    "auprc": 0.6515578616989166,
+    "auroc": 0.8696885793394799
+   },
+   "1-Mb locus-held-out": {
+    "auprc": 0.6437968137544129,
+    "auroc": 0.8557712252257396
+   }
+  }
+ },
+ "cluster_permutation": {
+  "real_auprc": 0.633817812488909,
+  "unrestricted (as before)": {
+   "mean": 0.19355729615776038,
+   "sd": 0.015719936502711175,
+   "z": 28.00650729442947
+  },
+  "within gene": {
+   "mean": 0.5453413632954859,
+   "sd": 0.016957081061237948,
+   "z": 5.217669767214283
+  },
+  "within cell x distance decile": {
+   "mean": 0.46690012875297926,
+   "sd": 0.04509339850699538,
+   "z": 3.701599109014497
+  },
+  "within power decile": {
+   "mean": 0.20951315485329566,
+   "sd": 0.023575841194470534,
+   "z": 17.99743449812215
+  }
+ },
+ "matched": {
+  "n": 276,
+  "base_rate": 0.5,
+  "distance only": {
+   "auprc": 0.48971191038150313,
+   "auroc": 0.4722484772106701,
+   "lift": 0.9794238207630063
+  },
+  "full biology": {
+   "auprc": 0.6621631039566086,
+   "auroc": 0.6497146957922005,
+   "lift": 1.3243262079132172
+  },
+  "auroc_perm": {
+   "observed": 0.6497146957922005,
+   "null_mean": 0.49983809423790526,
+   "null_sd": 0.05473917902030886,
+   "z": 2.7380133249475547,
+   "p": 0.03225806451612903
+  }
+ },
+ "k562_only": {
+  "n": 717,
+  "base_rate": 0.17852161785216178,
+  "distance only": {
+   "auprc": 0.5154732812131871,
+   "auroc": 0.8133621604414261,
+   "lift": 2.8874558017957437
+  },
+  "full biology": {
+   "auprc": 0.6021905869269053,
+   "auroc": 0.8597066001697793,
+   "lift": 3.373208209582743
+  }
+ },
+ "verdict": "distance alone supplies 82% of the headline AUPRC (0.5152 of 0.6274), so most of the discrimination is GEOMETRY. power alone is not a predictor (AUPRC 0.2302 vs base 0.1939). the biology survives the strictest split at AUPRC 0.6274. within-gene cluster permutation z +5.22 (survives). after matching on power, |effect| and distance the lift falls to 1.32x (AUPRC 0.6622, AUROC 0.6497, permutation p 0.0323), and DISTANCE-ONLY collapses to chance on that matched set (AUROC 0.4722). within K562 alone under gene-held-out folds it holds at 3.37x (AUROC 0.8597), so cell type is not the explanation."
+}

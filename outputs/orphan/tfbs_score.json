@@ -1,0 +1,5 @@
+{
+ "n_tf": 743,
+ "source": "JASPAR2024 CORE vertebrates (tf_motifs.json)",
+ "note": "PWM log-odds variant-effect scorer for TF binding sites. Neighbour-aware (motif window). Predicts INTRINSIC in-vitro preference (validated by construction; literature AUC ~0.85-0.9), NOT in-vivo binding/regulation (chromatin/cofactor/concentration = the context wall). DNA-shape ('rotation') and dinucleotide dependencies are the documented Rohs add-on. This is the honest protein-DNA analogue of NEXUS's binding node \u2014 a NEW motif/shape engine, not a retrofit of the amino-acid physics."
+}

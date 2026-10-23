@@ -1,0 +1,282 @@
+{
+ "test": "loop 155 -- transcription rate, decomposed",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/larsson_S8.xlsx",
+    "bytes": 188460,
+    "hash": "db98b72f830bac93",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/_chromatin_features.json",
+    "bytes": 2054208,
+    "hash": "be9640f50f380a49",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/_schwan2011.json",
+    "bytes": 469617,
+    "hash": "7aae9e39013f859d",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+    "bytes": 38524393,
+    "hash": "b857a72939e09be8",
+    "method": "sha256:full"
+   },
+   {
+    "path": "outputs/loop_rates.json",
+    "bytes": 265943,
+    "hash": "2d467471743f9f25",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 1609,
+   "used": 1419,
+   "selection": "filtered",
+   "fraction": 0.8819142324425109
+  },
+  "seed": 15500,
+  "controls": [
+   "loop 91's k_sm and R5 utilisation reproduced before either is corrected (Q0a)",
+   "the decomposition must first be shown NOT to be abundance relabelled, or Q3/Q4 are not read (Q1)",
+   "each of R5's three arithmetic choices varied separately so the load-bearing one is identified rather than asserted (Q2)",
+   "every chromatin correlation partialled on abundance and checked for fame (Q3)",
+   "conclusions emitted through gate_guard.verdict"
+  ],
+  "note": "Larsson 2019 (doi 10.1038/s41586-018-0836-1) factorises transcription rate into burst frequency and burst size and reports enhancers controlling frequency. loop 91's k_sm is 93% abundance, so loops 95, 96 and loop_tf_rate were all predicting abundance; the factorised target is not degenerate and makes a directional prediction this repo can test.",
+  "warnings": []
+ },
+ "gates": {
+  "Q0": true,
+  "Q1": true,
+  "Q2": false,
+  "Q3": false,
+  "Q4": false,
+  "Q5": true,
+  "Q6": true
+ },
+ "citations": [
+  {
+   "ref": "Larsson AJM et al. Nature 2019;565:251-254",
+   "doi": "10.1038/s41586-018-0836-1",
+   "pmid": "30602787"
+  },
+  {
+   "ref": "Min IM et al. Genes Dev 2011;25:742-754",
+   "doi": "10.1101/gad.2005511",
+   "pmid": "21460038"
+  },
+  {
+   "ref": "Fuchs G et al. Nat Protoc 2015;10:605-618",
+   "doi": "10.1038/nprot.2015.035",
+   "pmid": "25811895"
+  }
+ ],
+ "q0": {
+  "ksm_median": 1.800849918507184,
+  "ksm_recorded": 1.800849918507184,
+  "util": 1.4257925640382525,
+  "util_recorded": 1.4257925640382505,
+  "n_larsson_in_model": 1420,
+  "n_chrom": 16216,
+  "n_joint": 1419,
+  "pass": true
+ },
+ "q1": {
+  "n": 709,
+  "rho_ksm_abundance_recorded": 0.9333,
+  "rho_frequency_abundance": 0.2775385652422181,
+  "rho_size_abundance": 0.1801825050812528,
+  "rho_rate_abundance": 0.3879840552162204,
+  "rho_frequency_size": -0.2654737489987377,
+  "pass": true
+ },
+ "q2": {
+  "median_kb": 31.0315,
+  "rate_weighted_kb": 44.00227398353233,
+  "scale_by_count": 3.9360381861575178,
+  "scale_by_mass": 1.2849743665581048,
+  "abundance_mass_fraction": 0.7782256409352126,
+  "paused_fraction": 0.4,
+  "variants": {
+   "R5 as recorded": 1.4257925640382525,
+   "(i) per-gene lengths": 2.0217557980276166,
+   "(ii) scale by mass": 0.4654697973362065,
+   "(iii) proteome 1e10": 0.2851585128076505,
+   "(iv) 40% paused": 2.376320940063754,
+   "(i)+(ii) together": 0.6600302774099523,
+   "all four": 0.22001009246998413
+  },
+  "dominant": "(iii) proteome 1e10",
+  "dominance_ratio": 1.4377222462382604,
+  "closes_with_all_corrections": true,
+  "pass": false
+ },
+ "q3": {
+  "n": 635,
+  "features": {
+   "A/B compartment PC1": {
+    "rho_frequency": 0.012366343892612151,
+    "rho_size": 0.0025936543845806754,
+    "rho_freq_given_abundance": -0.0291089864690836,
+    "rho_pubs": 0.000255155994755122,
+    "n": 635,
+    "fame_ok": true
+   },
+   "TSS insulation": {
+    "rho_frequency": 0.04812296651581329,
+    "rho_size": -0.13720998015238328,
+    "rho_freq_given_abundance": 0.034332568767887546,
+    "rho_pubs": 0.09923894077485003,
+    "n": 633,
+    "fame_ok": true
+   },
+   "local contact density": {
+    "rho_frequency": -0.016645757632941672,
+    "rho_size": -0.06407842222166363,
+    "rho_freq_given_abundance": -0.051810588691623465,
+    "rho_pubs": 0.09322428962856208,
+    "n": 635,
+    "fame_ok": true
+   }
+  },
+  "pass": false
+ },
+ "q4": {
+  "n": 635,
+  "rho_count_frequency": 0.10323709298352696,
+  "rho_count_size": -0.11728299312574728,
+  "rho_freq_given_abundance": 0.09689445164205453,
+  "rho_pubs": 0.22739729545900472,
+  "perm_p": 0.014925373134328358,
+  "pass": false
+ },
+ "q5": {
+  "n": 635,
+  "rho_raw": -0.08331963859385302,
+  "rho_given_abundance": -0.14123205986350293,
+  "perm_p": 0.004975124378109453,
+  "pass": true
+ },
+ "q6": {
+  "cell_types": [
+   "Larsson human ortholog panel",
+   "GM12878 Hi-C",
+   "Schwanhausser mouse NIH3T3"
+  ],
+  "supports_directional_claim": true,
+  "supports_quantitative_rate_for_one_cell": false
+ },
+ "seconds": 2.5049092769622803,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 155 -- transcription rate from chromatin, polymerase and TF, decomposed into burst frequency and burst size",
+  "====================================================================================================",
+  "",
+  "Q0 CAPABILITY AND REGRESSION",
+  "     (a) k_sm median 1.8008 vs recorded 1.8008; R5 utilisation 1.4258 vs recorded 1.4258   ok",
+  "     (b) Larsson human genes in the model: 1,420  gate >= 1,000   ok",
+  "     (c) chromatin features cached: 16,216  gate >= 3,000   ok",
+  "     (d) genes with BOTH burst kinetics and chromatin: 1,419  gate >= 300   ok",
+  "     Q0 PASS",
+  "",
+  "Q1 IS THE BURST DECOMPOSITION A NEW TARGET, OR ABUNDANCE RELABELLED?",
+  "     709 genes with burst kinetics and an mRNA abundance",
+  "       loop 91's k_sm vs abundance (recorded)   rho +0.9333   <- the degeneracy",
+  "       burst FREQUENCY vs abundance             rho +0.2775",
+  "       burst SIZE      vs abundance             rho +0.1802",
+  "       Larsson mean rate vs abundance           rho +0.3880",
+  "       frequency vs size (are the factors independent?) rho -0.2655",
+  "     both factors are far less abundance-degenerate than k_sm (+0.933) and are nearly independent of each other, so each is a target abundance does not already predict. Q3 and Q4 are licensed.",
+  "     Q1 PASS",
+  "",
+  "Q2 THE POLYMERASE BUDGET, AUDITED",
+  "     (i)  median gene length 31.0 kb; rate-WEIGHTED mean length 44.0 kb  -> factor 1.418",
+  "     (ii) R5 scaled 4,190 measured genes to 16,492 by COUNT = 3.94x, while its own manifest records those genes carrying 77.8% of abundance mass",
+  "          scaling by MASS instead = 1.28x  -> factor 0.326",
+  "     (iii) Pol II census: POLR2A 5.29 ppm x proteome, swept 2e+09-1e+10",
+  "     (iv) Min 2011: pause release rate-limiting for ~40% of genes, so that share of Pol II is parked and NOT available to elongate -- cuts capacity",
+  "       R5 as recorded           utilisation   142.6%   SATURATED",
+  "       (i) per-gene lengths     utilisation   202.2%   SATURATED",
+  "       (ii) scale by mass       utilisation    46.5%",
+  "       (iii) proteome 1e10      utilisation    28.5%",
+  "       (iv) 40% paused          utilisation   237.6%   SATURATED",
+  "       (i)+(ii) together        utilisation    66.0%",
+  "       all four                 utilisation    22.0%",
+  "     largest single mover: (iii) proteome 1e10 (1.44x the next largest)   gate: dominance > 2.0",
+  "     no single correction dominates (1.44x against a 2.0x gate): R5's 142.6% is the product of several comparable arithmetic choices rather than one identifiable error, and the FAIL cannot be attributed to any of them alone.",
+  "     with all four corrections applied the budget CLOSES at 22.0%, so loop 91's R5 FAIL was an artifact of its arithmetic choices rather than a physical impossibility.",
+  "     Q2 FAIL",
+  "",
+  "Q3 DOES CHROMATIN PREDICT BURST FREQUENCY RATHER THAN SIZE?",
+  "     635 genes with burst kinetics, a chromatin feature and an abundance",
+  "       A/B compartment PC1      freq +0.0124   size +0.0026   freq|abundance -0.0291   pubs +0.0003",
+  "       TSS insulation           freq +0.0481   size -0.1372   freq|abundance +0.0343   pubs +0.0992",
+  "       local contact density    freq -0.0166   size -0.0641   freq|abundance -0.0518   pubs +0.0932",
+  "     contact density does NOT show the predicted asymmetry (frequency -0.017 vs size -0.064, freq|abundance -0.052), so the enhancer-frequency prediction does not transfer to this contact map and the decomposition does not rescue the chromatin layer.",
+  "     Q3 FAIL",
+  "",
+  "Q4 DOES TF REGULATION PREDICT FREQUENCY OR SIZE?",
+  "     635 genes with a regulator count",
+  "       regulator count vs frequency +0.1032   vs size -0.1173   freq|abundance +0.0969   pubs +0.2274",
+  "       label permutation on regulator count vs frequency: rho +0.1032, p 0.0149",
+  "     the TF layer adds nothing here: regulator count vs frequency +0.103 (p 0.015), given abundance +0.097, pubs +0.227. Loop 130 already found regulator count beating the signed network, and the count itself does not survive here either.",
+  "     Q4 FAIL",
+  "",
+  "Q5 THE COMBINED PREDICTION -- does it ADD OVER ABUNDANCE?",
+  "     contact density vs Larsson mean rate: raw -0.0833, given abundance -0.1412, permutation p 0.0050   (n 635)",
+  "     chromatin adds over abundance on the measured rate, clearing loop 94's standing rule that a predictor of abundance has predicted nothing new.",
+  "     Q5 PASS",
+  "",
+  "Q6 WHAT THIS CANNOT SETTLE",
+  "     THREE CELL TYPES ARE BEING JOINED and no amount of statistics repairs that:",
+  "       burst kinetics   Larsson 2019, human ortholog panel (1,609 genes)",
+  "       chromatin        GM12878 lymphoblastoid, in situ Hi-C, hg19, 25 kb",
+  "       abundance        Schwanhausser 2011, MOUSE NIH3T3 fibroblasts",
+  "     A correlation across those three is a correlation across three biologies. It can support a DIRECTIONAL claim -- frequency versus size -- because both factors come from",
+  "     the same table and are compared against the same chromatin vector. It cannot support a quantitative rate prediction for any one cell.",
+  "     Also untested here: elongation SPEED per gene (Fuchs 2015's other axis), tRNA and ribosome supply, and whether the 40% pausing figure from mouse ESC/MEF transfers.",
+  "",
+  "====================================================================================================",
+  "  Q0  PASS",
+  "  Q1  PASS",
+  "  Q2  FAIL",
+  "  Q3  FAIL",
+  "  Q4  FAIL",
+  "  Q5  PASS",
+  "  Q6  PASS",
+  "  4/7",
+  "====================================================================================================",
+  "    manifest: 5 inputs, coverage 1419/1609 (88.2%) by 'filtered', seed 15500, controls 5"
+ ],
+ "corrections": [
+  {
+   "gate": "Q5",
+   "what_the_gate_said": "partial Spearman given abundance, non-zero at p < 0.01",
+   "what_it_should_have_said": "POSITIVE partial Spearman given abundance at p < 0.01",
+   "why": "the chromatin hypothesis predicts that more contact density means MORE transcription. The observed partial is -0.1412 (p=0.0050): more contact density associates with LOWER measured rate. A two-sided gate on a directional hypothesis let a wrong-signed effect register as a PASS.",
+   "effect": "Q5's PASS is WITHDRAWN as evidence for the chromatin layer. The number stands; the interpretation does not. This is the same class of error as loop 150's R3 -- the gate ran correctly and measured the wrong thing.",
+   "note": "the partial (-0.1412) is LARGER in magnitude than the raw (-0.0833), which is a suppression pattern and a further reason not to read it as a mechanistic result at n=635 across three cell types."
+  },
+  {
+   "gate": "Q2",
+   "what_was_missing": "the loop printed 'all four corrections' at the OPTIMISTIC proteome (1e10) and reported the budget closing at 22.0%, without printing the conservative-proteome combination that R5 actually gated on.",
+   "computed_after": "(i)+(ii) at 2e9 = 66.0%; (i)+(ii)+(iv) at 2e9 = 110.0%; (i)+(ii)+(iv) at 5e9 = 44.0%",
+   "honest_statement": "fixing the two arithmetic errors alone brings R5 from 142.6% to 66.0% at the SAME conservative proteome it gated on, so the recorded FAIL was substantially an arithmetic artifact. But adding the Min-2011 pausing correction returns it to 110.0% at that proteome. The budget closes only if the proteome is at or above ~5e9 molecules. R5's verdict is therefore NOT settled either way -- it is hostage to the proteome census, exactly as its own sweep implied."
+  }
+ ],
+ "q3_restated": {
+  "finding": "the predicted asymmetry does not appear, and where an asymmetry exists it runs the OTHER way",
+  "per_feature": {
+   "A/B compartment PC1": "freq +0.0124 vs size +0.0026 -- both at noise",
+   "TSS insulation": "freq +0.0481 vs size -0.1372 -- tracks SIZE, 2.9x stronger than frequency",
+   "local contact density": "freq -0.0166 vs size -0.0641 -- tracks SIZE"
+  },
+  "reading": "Larsson 2019 reports enhancers controlling burst FREQUENCY and core promoters controlling SIZE. On this contact map the only feature with any signal, TSS insulation, tracks burst SIZE. Either the Hi-C contact features are not measuring enhancer-promoter communication, or the prediction does not transfer across the three-cell-type join. Both are live and this loop cannot separate them."
+ }
+}

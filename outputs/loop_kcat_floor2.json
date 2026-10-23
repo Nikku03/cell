@@ -1,0 +1,193 @@
+{
+ "test": "loop_kcat_floor2",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/dlkcat.json",
+    "bytes": 11671479,
+    "hash": "7dd69e66772febcf",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/uniprot_kinetics_human.tsv",
+    "bytes": 3402310,
+    "hash": "23921e8cc3968e29",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/kinetics_bundle.json.gz",
+    "bytes": 193597,
+    "hash": "b00f3fdb8642fa3f",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/ec_kcat_medians.json.gz",
+    "bytes": 32040,
+    "hash": "5241443b6f6ae98e",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/human_proteome.fasta.gz",
+    "bytes": 7507899,
+    "hash": "b12dcc9f8f5f588e",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 342,
+   "used": 9,
+   "selection": "filtered",
+   "fraction": 0.02631578947368421
+  },
+  "seed": 12950,
+  "controls": [
+   "two independent compilations cross-checked before either is used",
+   "Bonferroni applied inside the selector gate, not after it",
+   "loop 127's shipped threshold applied UNCHANGED, no re-tuning",
+   "the constant 1.85/s scored on the same genes as every subset",
+   "publication count of accepted against rejected",
+   "the true replicate floor of 1.15x rather than the within-EC 2.85x"
+  ],
+  "note": "the sequence-mapping move that makes this possible: DLKcat has no UniProt id but does carry the protein sequence",
+  "warnings": []
+ },
+ "gates": {
+  "P1": true,
+  "P2": false,
+  "P3": false,
+  "P4": false,
+  "P5": false,
+  "P6": false
+ },
+ "true_floor": 1.15,
+ "n_val_heldout": 9,
+ "n_val_contaminated": 169,
+ "median_fold_heldout": 4.269770355594387,
+ "median_fold_contaminated": 3.0586249999999997,
+ "n_val_loop124": 66,
+ "p1": {
+  "n": 79,
+  "spearman": 0.6296981499513145,
+  "median_fold": 2.2052241833043045
+ },
+ "p2": {
+  "EC self-consistency": {
+   "rho": NaN,
+   "p": NaN,
+   "p_bonferroni": 1.0,
+   "n": 4
+  },
+  "genes sharing the EC": {
+   "rho": -0.5833333333333334,
+   "p": 0.117,
+   "p_bonferroni": 0.35100000000000003,
+   "n": 9
+  },
+  "replicate count": {
+   "rho": NaN,
+   "p": NaN,
+   "p_bonferroni": 1.0,
+   "n": 4
+  }
+ },
+ "p3": {
+  "n_accept": 9,
+  "log10_diff": NaN,
+  "p": NaN,
+  "accept_fold": 4.269770355594387,
+  "reject_fold": null
+ },
+ "p4": {
+  "1.15": {
+   "n_accept": 0,
+   "reactions": 92,
+   "tier1_kept": 0.05080066261733849
+  },
+  "2.0": {
+   "n_accept": 1,
+   "reactions": 231,
+   "tier1_kept": 0.12755383765875208
+  },
+  "4.0": {
+   "n_accept": 2,
+   "reactions": 704,
+   "tier1_kept": 0.3887355052457206
+  }
+ },
+ "p5": {
+  "beats_constant": null
+ },
+ "p6": {
+  "pubs_p": NaN,
+  "log10_diff": NaN
+ },
+ "seconds": 3.721402406692505,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 129 -- the kinetics filter at the TRUE floor, with four times the power",
+  "====================================================================================================",
+  "",
+  "  DLKcat: 2,439 human records -> 342 genes by exact sequence match",
+  "  UniProt: 239 genes with a curated kcat",
+  "",
+  "P1 THE TWO MEASURED SOURCES AGREE",
+  "     79 genes with both a DLKcat and a UniProt kcat",
+  "     Spearman +0.6297   gate >= 0.5",
+  "     median fold between them 2.21x   gate <= 4.0x",
+  "     for scale: the TRUE experimental floor is 1.15x, so two independent",
+  "     compilations of the same literature should not be far above it",
+  "     P1 PASS",
+  "",
+  "  candidate genes: 169",
+  "  EXCLUDED as already tier 'measured' in the bundle: 160 -- ec_kcat_medians was built FROM DLKcat, so these are a lookup",
+  "  genuinely held out: 9   (loop 124 had 66 on the same rule)",
+  "  tiers of the held-out set: catpred+ECprior 4, catpred(calibrated) 3, EC-class 2",
+  "  fold-error on the held-out 9: median 4.27x",
+  "  fold-error on the contaminated 169: median 3.06x -- the difference IS the circularity",
+  "",
+  "P2 THE SELECTOR, RETESTED WITH POWER",
+  "     EC self-consistency      rho +nan   n=  4   p nan   p*3 1.0000   no",
+  "     genes sharing the EC     rho -0.5833   n=  9   p 0.1170   p*3 0.3510   no",
+  "     replicate count          rho +nan   n=  4   p nan   p*3 1.0000   no",
+  "     Bonferroni applied inside the gate this time, not noted afterwards",
+  "     P2 FAIL",
+  "",
+  "P3 THE SHIPPED FILTER VALIDATES OUT OF SAMPLE",
+  "     loop 127 shipped 'EC shared by <= 3 genes', chosen by sweeping four",
+  "     thresholds on 70 genes. Applied UNCHANGED to 9 -- no re-tuning:",
+  "     one side too small to test",
+  "     P3 FAIL -- the post-hoc threshold DOES NOT hold; it was overfitting and the artefact must be withdrawn",
+  "",
+  "P4 THE THRESHOLD AT THE TRUE FLOOR",
+  "     self-consistency <= 1.15x: accept   0/9 genes,    92 tier-1 reactions (5.1% of tier 1)",
+  "     self-consistency <= 2.00x: accept   1/9 genes,   231 tier-1 reactions (12.8% of tier 1)",
+  "     self-consistency <= 4.00x: accept   2/9 genes,   704 tier-1 reactions (38.9% of tier 1)",
+  "     tightest threshold keeping >5% of tier 1: None",
+  "     P4 FAIL",
+  "",
+  "P5 THE CONSTANT REMAINS THE THING TO BEAT",
+  "     whole validation set: bundle 4.27x   constant 1.85/s 1.62x",
+  "     breadth <= 3                 n=  9   subset 4.27x   constant on the same genes 1.62x   p 0.1654",
+  "     P5 FAIL -- NO filtered subset beats a constant 1.85/s on its own genes",
+  "",
+  "P6 COVERAGE AND FAME",
+  "     accepted median 61 publications, rejected nan, p = nan",
+  "     THREE DENOMINATORS at breadth <= 3: 8,184 reactions tiered, 1,130 measured = 8.7% of 12,931; tier 1 is 1,811",
+  "     validation n: 66 -> 9 genuinely held out (169 before the tier exclusion)",
+  "     THE CLAIMED 4x EXPANSION WAS ILLUSORY. DLKcat cannot serve as held-out truth for a",
+  "     bundle built from DLKcat, and after the exclusion the usable set is SMALLER than loop 124's.",
+  "     P6 FAIL",
+  "",
+  "====================================================================================================",
+  "  P1  PASS",
+  "  P2  FAIL",
+  "  P3  FAIL",
+  "  P4  FAIL",
+  "  P5  FAIL",
+  "  P6  FAIL",
+  "  1/6",
+  "====================================================================================================",
+  "    manifest: 5 inputs, coverage 9/342 (2.6%) by 'filtered', seed 12950, controls 6"
+ ]
+}

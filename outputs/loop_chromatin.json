@@ -1,0 +1,91 @@
+{
+  "test": "loop_chromatin",
+  "manifest": {
+    "manifest_version": 1,
+    "inputs": [
+      {
+        "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+        "bytes": 38524393,
+        "hash": "b857a72939e09be8",
+        "method": "sha256:full"
+      }
+    ],
+    "coverage": {
+      "available": 61213,
+      "used": 61213,
+      "selection": "all",
+      "fraction": 1.0
+    },
+    "seed": 1904,
+    "controls": [
+      "random gene pairs",
+      "200 distance-matched 1D resamples",
+      "trans subset as independent replication",
+      "dependency-fraction comparison for the phenotype axis"
+    ],
+    "note": "distance-matched 1D pairs are the decisive control; random pairs pass trivially and prove nothing",
+    "warnings": []
+  },
+  "gates": {
+    "C1 sanity": true,
+    "C2 beats 1D proximity": true,
+    "C3 reaches a cell outcome": true,
+    "C4 trans replication": true
+  },
+  "coexpr_3d": 0.014621077222158692,
+  "coexpr_random": 0.0016501650165016502,
+  "coexpr_3d_cis": 0.11419006881160498,
+  "matched_1d": {
+    "mean": 0.019019970799469703,
+    "sd": 0.002315095114382954,
+    "p95": 0.023385663900841205
+  },
+  "coess_3d_cis": 0.021449243586932693,
+  "coess_matched": {
+    "mean": 0.10474823437961614,
+    "p5": 0.09799830401543826
+  },
+  "trans": {
+    "mean": 0.005032595458127373,
+    "n": 55836,
+    "random_p95": 0.0015421816227834497
+  },
+  "n_pairs_cis": 5377,
+  "n_pairs_trans": 55836,
+  "log": [
+    "====================================================================================================",
+    "THE DEAD LINK -- does 3D structure carry anything the linear genome does not?",
+    "====================================================================================================",
+    "  Two instruments independently measured zero connections from the chromatin line to any cell",
+    "  outcome. This asks whether a connection is DESERVED, and the comparator is the whole test:",
+    "  distance-matched 1D pairs, not random pairs. Random pairs would pass trivially.",
+    "\n  16,492 genes; 16,460 with genome coordinates; 7,700 with 3D neighbours; 16,374 with a co-expression list",
+    "  3D neighbour pairs: 5,377 same-chromosome, 55,836 different-chromosome",
+    "\n  C1 SANITY -- 3D neighbours vs random pairs FROM THE SAME GENE UNIVERSE",
+    "    3D pairs      top-partner hit rate 0.0146  (n=61,213 pairs)",
+    "    random pairs  top-partner hit rate 0.0017  (n=19,998 pairs)",
+    "    C1 PASS",
+    "\n  C2 BEATS 1D -- the real gate: distance-matched same-chromosome pairs",
+    "    3D cis pairs            0.1142  (n=5,377)",
+    "    distance-matched 1D     0.0190 +/- 0.0023, 95th pct 0.0234  (200 resamples)",
+    "    C2 PASS",
+    "\n  C3 REACHES A CELL OUTCOME -- |difference in dependency fraction|, smaller is more alike",
+    "    3D cis pairs            0.0214  (n=4,561)",
+    "    distance-matched 1D     0.1047 +/- 0.0043, 5th pct 0.0980",
+    "    C3 PASS",
+    "\n  C4 TRANS -- different chromosomes, where no 1D distance and no shared domain can explain it",
+    "    trans 3D pairs   0.0050  (n=55,836)",
+    "    random           0.0013 +/- 0.0002, 95th pct 0.0015",
+    "    C4 PASS",
+    "\n====================================================================================================",
+    "  C1 sanity                         PASS",
+    "  C2 beats 1D proximity             PASS",
+    "  C3 reaches a cell outcome         PASS",
+    "  C4 trans replication              PASS",
+    "  THE LINK IS DESERVED. 3D neighbourhood carries information linear proximity does not,",
+    "  and it reaches a cell-level outcome. Building the connection is now justified by",
+    "  measurement rather than by the fact that both subsystems exist.",
+    "====================================================================================================",
+    "    manifest: 1 inputs, coverage 61213/61213 (100.0%) by 'all', seed 1904, controls 4"
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "passed": true,
+  "summary": {
+    "alphamissense_auc_ourset": 0.678,
+    "chain_auc_baseline": 0.521,
+    "reliability_gain": 0.157,
+    "alphamissense_published_auc": "~0.9 (standard ClinVar)",
+    "sickle_cell_alphamissense": 0.227,
+    "sickle_cell_caught_by_reasoning": true
+  },
+  "known_variants": [
+    {
+      "variant": "PAH R408W",
+      "note": "classic PKU pathogenic",
+      "call": "likely damaging",
+      "alphamissense": 0.918,
+      "ml_blind_spot": null,
+      "mechanisms": [
+        "function-altering (mechanism not localized)"
+      ],
+      "caught": true
+    },
+    {
+      "variant": "HBB E7V",
+      "note": "sickle cell \u2014 GOF/aggregation (AM blind spot)",
+      "call": "uncertain \u2014 possible ML blind spot",
+      "alphamissense": 0.227,
+      "ml_blind_spot": true,
+      "mechanisms": [
+        "disrupts a functional residue",
+        "possible gain-of-function/aggregation"
+      ],
+      "caught": true
+    },
+    {
+      "variant": "G6PD S188N",
+      "note": "G6PD-deficiency class variant",
+      "call": "uncertain",
+      "alphamissense": null,
+      "ml_blind_spot": null,
+      "mechanisms": [
+        "no strong signal"
+      ],
+      "caught": false
+    }
+  ],
+  "bar": "AlphaMissense beats the stability chain by >=0.1 AUC AND the sickle-cell GOF blind spot is caught (not trusted benign)",
+  "honest_note": "reliability improved a lot over the coin-flip chain, but 'being sure' is not achievable: sickle cell (the archetypal function-modifying disease) is scored benign by AlphaMissense because gain-of-function/aggregation is invisible to per-residue predictors. The predictor handles this by refusing false certainty and flagging for a functional assay."
+}

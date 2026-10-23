@@ -1,0 +1,204 @@
+{
+ "test": "loop 147 -- circuit architecture",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/proteinatlas.tsv",
+    "bytes": 43055808,
+    "hash": "5c546331ec5dda4b",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 7836,
+   "used": 7836,
+   "selection": "all",
+   "fraction": 1.0
+  },
+  "seed": 14700,
+  "controls": [
+   "the architecture question decided by SIMULATION against loop 142's measured 20.3x, before any network is touched",
+   "a degree-preserving rewiring null, the control that killed loops 120 and 130",
+   "N6 gated on N4, so structure is only analysed for circuits that survive their null",
+   "two distinct hypotheses for the 362 -- in the circuit, or downstream of it"
+  ],
+  "note": "the first question in this arc that is about a CIRCUIT rather than a property of a protein.",
+  "warnings": []
+ },
+ "gates": {
+  "N1": false,
+  "N2": true,
+  "N3": true,
+  "N4": true,
+  "N5": true,
+  "N6": true
+ },
+ "n1": {
+  "linear-negative": 1.0,
+  "hill-negative": 1.0,
+  "relaxation": 1.0
+ },
+ "n2": {
+  "sweep": {
+   "1": 1.0,
+   "2": 1.0,
+   "3": 1.0,
+   "4": 1.0,
+   "6": 1.0,
+   "8": 1.0,
+   "12": 1.0,
+   "16": 1.0
+  },
+  "min_hill_negative_only": null
+ },
+ "n3": {
+  "n_cycles": 200000,
+  "n_negative": 91139,
+  "n_positive": 108861,
+  "n_neg_nodes": 727,
+  "n_pos_nodes": 743,
+  "n_coupled": 694
+ },
+ "n4": {
+  "real": 694,
+  "null_mean": 601.25,
+  "null_sd": 6.820618251546801,
+  "z": 13.598474006218698,
+  "n_null": 12
+ },
+ "n5": {
+  "both": {
+   "n": 88,
+   "in_circuit": 2,
+   "downstream": 64,
+   "frac_in": 0.022727272727272728,
+   "frac_down": 0.7272727272727273
+  },
+  "protein only": {
+   "n": 362,
+   "in_circuit": 21,
+   "downstream": 132,
+   "frac_in": 0.058011049723756904,
+   "frac_down": 0.36464088397790057
+  },
+  "transcript only": {
+   "n": 38,
+   "in_circuit": 2,
+   "downstream": 24,
+   "frac_in": 0.05263157894736842,
+   "frac_down": 0.631578947368421
+  },
+  "neither": {
+   "n": 642,
+   "in_circuit": 28,
+   "downstream": 259,
+   "frac_in": 0.04361370716510903,
+   "frac_down": 0.40342679127725856
+  }
+ },
+ "n6": {
+  "run": true,
+  "top_nodes": [
+   "ESR1",
+   "AR",
+   "TP53",
+   "MYC",
+   "EGR1",
+   "CEBPA",
+   "JUN",
+   "SP1",
+   "FOS",
+   "NFKB1",
+   "STAT3",
+   "E2F1",
+   "RELA",
+   "CTNNB1",
+   "PPARG"
+  ]
+ },
+ "seconds": 71.15722918510437,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 147 -- what circuit could produce this?",
+  "====================================================================================================",
+  "",
+  "N1 WHICH ARCHITECTURES CAN PRODUCE THE MEASURED PULSE?",
+  "     loop 142 requires b_hi/b_lo = 20.3x sustained over a 10% duty in 24 h",
+  "     linear-negative    achieves       1.00x   falls short",
+  "     hill-negative      achieves       1.00x   falls short",
+  "     relaxation         achieves       1.00x   falls short",
+  "     N1 FAIL -- the simulation is UNCONSTRAINED and cannot select an architecture",
+  "",
+  "N2 WHAT COOPERATIVITY DOES IT TAKE?",
+  "     Hill n =  1   negative feedback alone reaches       1.00x",
+  "     Hill n =  2   negative feedback alone reaches       1.00x",
+  "     Hill n =  3   negative feedback alone reaches       1.00x",
+  "     Hill n =  4   negative feedback alone reaches       1.00x",
+  "     Hill n =  6   negative feedback alone reaches       1.00x",
+  "     Hill n =  8   negative feedback alone reaches       1.00x",
+  "     Hill n = 12   negative feedback alone reaches       1.00x",
+  "     Hill n = 16   negative feedback alone reaches       1.00x",
+  "     minimum n for negative feedback ALONE: not reached by n=16",
+  "     for scale, a Hill coefficient above about 8 is not achievable by cooperative",
+  "     binding alone in most real systems, so a requirement that high makes the POSITIVE",
+  "     loop structurally necessary rather than merely helpful.",
+  "     N2 PASS -- reported",
+  "",
+  "N3 DO SUCH CIRCUITS EXIST IN THE NETWORK WE HAVE?",
+  "     signed directed edges: 54,128",
+  "     nodes: 7,836",
+  "     directed cycles of length 2-4: 200,000   negative 91,139   positive 108,861",
+  "     nodes on a NEGATIVE loop: 727",
+  "     nodes on a POSITIVE loop: 743",
+  "     nodes on BOTH -- the relaxation architecture N1 identifies: 694",
+  "     N3 PASS",
+  "",
+  "N4 THE DEGREE-PRESERVING NULL",
+  "     cycle membership rises with degree and degree rises with study. This network's",
+  "     612,133 edges encode which genes were looked at together, and that confound killed",
+  "     loops 120 and 130. The null preserves every node's in- and out-degree.",
+  "       null 1: coupled nodes 606",
+  "       null 2: coupled nodes 604",
+  "       null 3: coupled nodes 595",
+  "     real coupled nodes 694   null 601.2 +/- 6.8   z = 13.60",
+  "     N4 PASS -- the coupled architecture exceeds what a graph of this shape contains by chance",
+  "",
+  "N5 ARE THE 362 IN THE CIRCUIT, OR DOWNSTREAM OF IT?",
+  "     coupled nodes 694; reachable within 3 steps 7,366",
+  "     both             n   88   in circuit   2 (2.3%)   reachable   64 (72.7%)",
+  "     protein only     n  362   in circuit  21 (5.8%)   reachable  132 (36.5%)",
+  "     transcript only  n   38   in circuit   2 (5.3%)   reachable   24 (63.2%)",
+  "     neither          n  642   in circuit  28 (4.4%)   reachable  259 (40.3%)",
+  "     N5 PASS -- the 362 sit closer to the circuit than the non-oscillators",
+  "",
+  "N6 THE ENTRY AND EXIT PROTEINS, AND THEIR SITES",
+  "     the 15 nodes on the most coupled loops:",
+  "       ESR1       neg loops 16295  pos loops 19043   -                act:",
+  "       AR         neg loops 14683  pos loops 16223   -                act:ACT_SITE 154; /note=\"Proton ",
+  "       TP53       neg loops 13362  pos loops 14201   protein only     act:ACT_SITE 11; /note=\"Tele-pho",
+  "       MYC        neg loops 10772  pos loops 13151   -                act:",
+  "       EGR1       neg loops 10627  pos loops 12646   neither          act:",
+  "       CEBPA      neg loops 11211  pos loops 11759   -                act:",
+  "       JUN        neg loops 7655  pos loops 11039   protein only     act:",
+  "       SP1        neg loops 7266  pos loops 9291   -                act:ACT_SITE 656; /note=\"Charge ",
+  "       FOS        neg loops 6800  pos loops 9142   protein only     act:",
+  "       NFKB1      neg loops 7188  pos loops 8052   -                act:",
+  "       STAT3      neg loops 6566  pos loops 7929   -                act:",
+  "       E2F1       neg loops 6764  pos loops 7636   -                act:",
+  "       RELA       neg loops 6237  pos loops 7492   -                act:",
+  "       CTNNB1     neg loops 5388  pos loops 6447   -                act:",
+  "       PPARG      neg loops 5612  pos loops 5498   -                act:",
+  "",
+  "====================================================================================================",
+  "  N1  FAIL",
+  "  N2  PASS",
+  "  N3  PASS",
+  "  N4  PASS",
+  "  N5  PASS",
+  "  N6  PASS",
+  "  5/6",
+  "====================================================================================================",
+  "    manifest: 1 inputs, coverage 7836/7836 (100.0%) by 'all', seed 14700, controls 4"
+ ]
+}

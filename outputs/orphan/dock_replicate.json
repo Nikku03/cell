@@ -1,0 +1,166 @@
+{
+  "test": "dock_replicate",
+  "prespecified": "elec_frac_fav",
+  "n_rot": 2400,
+  "near_A": 5.0,
+  "far_A": 10.0,
+  "auc_close_median": 0.6404936974789915,
+  "auc_close_per_complex": [
+    0.6470588235294117,
+    0.7238095238095238,
+    0.6339285714285714,
+    0.7775735294117647,
+    0.7317073170731707,
+    0.625,
+    0.6282051282051282,
+    0.5729166666666667,
+    0.6590909090909091,
+    0.42857142857142855
+  ],
+  "auc_far_median": 0.81375,
+  "p_value": 0.0035,
+  "null_median": 0.49600621498599434,
+  "null_p95": 0.581886482420019,
+  "n_complexes": 10,
+  "context_arms_exploratory": {
+    "vdw_frac_fav": 0.5769345238095238,
+    "desolv_frac_fav": 0.6179271708683474,
+    "induc_frac_fav": 0.653125,
+    "elec_sum": 0.6643437862950058,
+    "vdw_median_nz": 0.6238095238095238
+  },
+  "complexes": [
+    {
+      "pdb": "1CHO",
+      "n_poses": 9600,
+      "n_near": 1,
+      "n_close": 0,
+      "skipped": "no positive or no close class"
+    },
+    {
+      "pdb": "1CSE",
+      "n_poses": 9600,
+      "n_near": 4,
+      "n_close": 17,
+      "n_scored": 421,
+      "secs": 103.32824945449829
+    },
+    {
+      "pdb": "1CSO",
+      "n_poses": 9600,
+      "n_near": 7,
+      "n_close": 30,
+      "n_scored": 437,
+      "secs": 97.03145694732666
+    },
+    {
+      "pdb": "1CT0",
+      "n_poses": 9600,
+      "n_near": 7,
+      "n_close": 32,
+      "n_scored": 439,
+      "secs": 100.01164364814758
+    },
+    {
+      "pdb": "1CT2",
+      "n_poses": 9600,
+      "n_near": 8,
+      "n_close": 34,
+      "n_scored": 442,
+      "secs": 97.48643755912781
+    },
+    {
+      "pdb": "1CT4",
+      "n_poses": 9600,
+      "n_near": 7,
+      "n_close": 41,
+      "n_scored": 448,
+      "secs": 91.00977492332458
+    },
+    {
+      "pdb": "1DVF",
+      "n_poses": 9600,
+      "n_near": 4,
+      "n_close": 14,
+      "n_scored": 418,
+      "secs": 100.68922638893127
+    },
+    {
+      "pdb": "1E50",
+      "n_poses": 9600,
+      "n_near": 3,
+      "n_close": 13,
+      "n_scored": 416,
+      "secs": 113.43503665924072
+    },
+    {
+      "pdb": "1E96",
+      "n_poses": 9600,
+      "n_near": 2,
+      "n_close": 0,
+      "skipped": "no positive or no close class"
+    },
+    {
+      "pdb": "1EAW",
+      "n_poses": 9600,
+      "n_near": 4,
+      "n_close": 12,
+      "n_scored": 416,
+      "secs": 91.29779577255249
+    },
+    {
+      "pdb": "1EFN",
+      "n_poses": 9600,
+      "n_near": 4,
+      "n_close": 11,
+      "n_scored": 415,
+      "secs": 91.5957498550415
+    },
+    {
+      "pdb": "1EMV",
+      "n_poses": 9600,
+      "n_near": 3,
+      "n_close": 7,
+      "n_scored": 410,
+      "secs": 99.63236260414124
+    }
+  ],
+  "log": [
+    "====================================================================================================",
+    "CONFIRMATORY: does elec_frac_fav survive at proper sampling, as ONE pre-specified arm?",
+    "====================================================================================================",
+    "  PRE-SPECIFIED, fixed before the run: elec_frac_fav. Everything else is context and cannot be",
+    "  promoted to the headline. One pre-registered hypothesis needs no multiple-comparison correction.",
+    "  Sampling 2400 rotations (coverage-validated) vs the 600 that left the answer absent from half",
+    "  the test set. PREDECLARED: AUC_close >= 0.70 with p < 0.05 => CONFIRMED. 0.55-0.70 => weakened.",
+    "  ~0.5 => the 0.811 was best-of-19 selection noise and did not replicate.",
+    "    1CHO: 9600 poses, near 1, close 0 -- SKIPPED",
+    "    1CSE: 9600 poses -> 421 scored in 103s | near 4  close 17",
+    "    1CSO: 9600 poses -> 437 scored in 97s | near 7  close 30",
+    "    1CT0: 9600 poses -> 439 scored in 100s | near 7  close 32",
+    "    1CT2: 9600 poses -> 442 scored in 97s | near 8  close 34",
+    "    1CT4: 9600 poses -> 448 scored in 91s | near 7  close 41",
+    "    1DVF: 9600 poses -> 418 scored in 101s | near 4  close 14",
+    "    1E50: 9600 poses -> 416 scored in 113s | near 3  close 13",
+    "    1E96: 9600 poses, near 2, close 0 -- SKIPPED",
+    "    1EAW: 9600 poses -> 416 scored in 91s | near 4  close 12",
+    "    1EFN: 9600 poses -> 415 scored in 92s | near 4  close 11",
+    "    1EMV: 9600 poses -> 410 scored in 100s | near 3  close 7",
+    "\n  10 complexes with both classes | positives per complex: [4, 7, 7, 8, 7, 4, 3, 4, 4, 3]",
+    "\n  PRE-SPECIFIED ARM: elec_frac_fav",
+    "    AUC_close median 0.640   per complex [0.429, 0.573, 0.625, 0.628, 0.634, 0.647, 0.659, 0.724, 0.732, 0.778]",
+    "    AUC_far   median 0.814",
+    "    correct-signed (>0.5) in 9/10 complexes",
+    "    PERMUTATION (2000 shuffles, single arm, no max): null median 0.496, 95th 0.582",
+    "    p = 0.0035",
+    "\n  CONTEXT ARMS (exploratory, cannot be promoted -- no correction applied to these)",
+    "    vdw_frac_fav           0.577",
+    "    desolv_frac_fav        0.618",
+    "    induc_frac_fav         0.653",
+    "    elec_sum               0.664",
+    "    vdw_median_nz          0.624",
+    "\n  READING",
+    "  WEAKENED. AUC_close 0.640 (p=0.0035) -- the direction survives but the effect is",
+    "  smaller than the exploratory 0.811 and does not clear the predeclared bar. Real, not usable."
+  ]
+}

@@ -1,0 +1,2271 @@
+{
+  "test": "dock_cluster",
+  "n_rot": 2400,
+  "n_top": 1000,
+  "radius": 9.0,
+  "prespecified": {
+    "pop": {
+      "1": 1,
+      "3": 1,
+      "10": 2
+    },
+    "best": {
+      "1": 2,
+      "3": 2,
+      "10": 3
+    },
+    "rand_pop": {
+      "1": 0,
+      "3": 0,
+      "10": 0
+    },
+    "pose": {
+      "1": 2,
+      "3": 2,
+      "10": 2
+    }
+  },
+  "sweep_exploratory": {
+    "1000x12": {
+      "pop1": 0,
+      "pop3": 1,
+      "best1": 2,
+      "n": 12
+    },
+    "1000x6": {
+      "pop1": 0,
+      "pop3": 0,
+      "best1": 2,
+      "n": 12
+    },
+    "1000x9": {
+      "pop1": 1,
+      "pop3": 1,
+      "best1": 2,
+      "n": 12
+    },
+    "3000x12": {
+      "pop1": 0,
+      "pop3": 1,
+      "best1": 2,
+      "n": 12
+    },
+    "3000x6": {
+      "pop1": 0,
+      "pop3": 0,
+      "best1": 2,
+      "n": 12
+    },
+    "3000x9": {
+      "pop1": 0,
+      "pop3": 0,
+      "best1": 2,
+      "n": 12
+    },
+    "300x12": {
+      "pop1": 1,
+      "pop3": 1,
+      "best1": 2,
+      "n": 12
+    },
+    "300x6": {
+      "pop1": 0,
+      "pop3": 1,
+      "best1": 2,
+      "n": 12
+    },
+    "300x9": {
+      "pop1": 0,
+      "pop3": 0,
+      "best1": 2,
+      "n": 12
+    }
+  },
+  "complexes": [
+    {
+      "pdb": "1CHO",
+      "n_poses": 9600,
+      "n_near": 1,
+      "main": {
+        "n_clusters": 679,
+        "pop": {
+          "1": false,
+          "3": false,
+          "10": false
+        },
+        "best": {
+          "1": true,
+          "3": true,
+          "10": true
+        },
+        "top_cluster_size": 9,
+        "n_near_in_sel": 1
+      },
+      "random_subset": {
+        "n_clusters": 819,
+        "pop": {
+          "1": false,
+          "3": false,
+          "10": false
+        },
+        "best": {
+          "1": false,
+          "3": false,
+          "10": false
+        },
+        "top_cluster_size": 5,
+        "n_near_in_sel": 0
+      },
+      "sweep": {
+        "300x6": {
+          "n_clusters": 278,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": true,
+            "3": true,
+            "10": true
+          },
+          "top_cluster_size": 3,
+          "n_near_in_sel": 1
+        },
+        "300x9": {
+          "n_clusters": 244,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": true,
+            "3": true,
+            "10": true
+          },
+          "top_cluster_size": 5,
+          "n_near_in_sel": 1
+        },
+        "300x12": {
+          "n_clusters": 205,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": true,
+            "3": true,
+            "10": true
+          },
+          "top_cluster_size": 7,
+          "n_near_in_sel": 1
+        },
+        "1000x6": {
+          "n_clusters": 857,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": true,
+            "3": true,
+            "10": true
+          },
+          "top_cluster_size": 5,
+          "n_near_in_sel": 1
+        },
+        "1000x9": {
+          "n_clusters": 679,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": true,
+            "3": true,
+            "10": true
+          },
+          "top_cluster_size": 9,
+          "n_near_in_sel": 1
+        },
+        "1000x12": {
+          "n_clusters": 477,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": true,
+            "3": true,
+            "10": true
+          },
+          "top_cluster_size": 16,
+          "n_near_in_sel": 1
+        },
+        "3000x6": {
+          "n_clusters": 2339,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": true,
+            "3": true,
+            "10": true
+          },
+          "top_cluster_size": 6,
+          "n_near_in_sel": 1
+        },
+        "3000x9": {
+          "n_clusters": 1577,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": true,
+            "3": true,
+            "10": true
+          },
+          "top_cluster_size": 13,
+          "n_near_in_sel": 1
+        },
+        "3000x12": {
+          "n_clusters": 948,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": true,
+            "3": true,
+            "10": true
+          },
+          "top_cluster_size": 24,
+          "n_near_in_sel": 1
+        }
+      },
+      "pose_baseline": {
+        "1": true,
+        "3": true,
+        "10": true
+      },
+      "secs": 95.11902070045471
+    },
+    {
+      "pdb": "1CSE",
+      "n_poses": 9600,
+      "n_near": 4,
+      "main": {
+        "n_clusters": 543,
+        "pop": {
+          "1": false,
+          "3": false,
+          "10": false
+        },
+        "best": {
+          "1": false,
+          "3": false,
+          "10": false
+        },
+        "top_cluster_size": 9,
+        "n_near_in_sel": 1
+      },
+      "random_subset": {
+        "n_clusters": 675,
+        "pop": {
+          "1": false,
+          "3": false,
+          "10": false
+        },
+        "best": {
+          "1": false,
+          "3": false,
+          "10": false
+        },
+        "top_cluster_size": 5,
+        "n_near_in_sel": 0
+      },
+      "sweep": {
+        "300x6": {
+          "n_clusters": 265,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 3,
+          "n_near_in_sel": 0
+        },
+        "300x9": {
+          "n_clusters": 222,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 6,
+          "n_near_in_sel": 0
+        },
+        "300x12": {
+          "n_clusters": 163,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 8,
+          "n_near_in_sel": 0
+        },
+        "1000x6": {
+          "n_clusters": 784,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 5,
+          "n_near_in_sel": 1
+        },
+        "1000x9": {
+          "n_clusters": 543,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 9,
+          "n_near_in_sel": 1
+        },
+        "1000x12": {
+          "n_clusters": 319,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": true
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 18,
+          "n_near_in_sel": 1
+        },
+        "3000x6": {
+          "n_clusters": 1977,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 7,
+          "n_near_in_sel": 2
+        },
+        "3000x9": {
+          "n_clusters": 1122,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 15,
+          "n_near_in_sel": 2
+        },
+        "3000x12": {
+          "n_clusters": 549,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 33,
+          "n_near_in_sel": 2
+        }
+      },
+      "pose_baseline": {
+        "1": false,
+        "3": false,
+        "10": false
+      },
+      "secs": 89.54455900192261
+    },
+    {
+      "pdb": "1CSO",
+      "n_poses": 9600,
+      "n_near": 7,
+      "main": {
+        "n_clusters": 497,
+        "pop": {
+          "1": false,
+          "3": false,
+          "10": false
+        },
+        "best": {
+          "1": false,
+          "3": false,
+          "10": false
+        },
+        "top_cluster_size": 10,
+        "n_near_in_sel": 3
+      },
+      "random_subset": {
+        "n_clusters": 630,
+        "pop": {
+          "1": false,
+          "3": false,
+          "10": false
+        },
+        "best": {
+          "1": false,
+          "3": true,
+          "10": true
+        },
+        "top_cluster_size": 7,
+        "n_near_in_sel": 1
+      },
+      "sweep": {
+        "300x6": {
+          "n_clusters": 253,
+          "pop": {
+            "1": false,
+            "3": true,
+            "10": true
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 6,
+          "n_near_in_sel": 2
+        },
+        "300x9": {
+          "n_clusters": 203,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": true
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 7,
+          "n_near_in_sel": 2
+        },
+        "300x12": {
+          "n_clusters": 139,
+          "pop": {
+            "1": true,
+            "3": true,
+            "10": true
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 10,
+          "n_near_in_sel": 2
+        },
+        "1000x6": {
+          "n_clusters": 712,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": true
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 7,
+          "n_near_in_sel": 3
+        },
+        "1000x9": {
+          "n_clusters": 497,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 10,
+          "n_near_in_sel": 3
+        },
+        "1000x12": {
+          "n_clusters": 286,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": true
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 19,
+          "n_near_in_sel": 3
+        },
+        "3000x6": {
+          "n_clusters": 1790,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": true
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 10,
+          "n_near_in_sel": 5
+        },
+        "3000x9": {
+          "n_clusters": 976,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": true
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 20,
+          "n_near_in_sel": 5
+        },
+        "3000x12": {
+          "n_clusters": 432,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": true
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 46,
+          "n_near_in_sel": 5
+        }
+      },
+      "pose_baseline": {
+        "1": false,
+        "3": false,
+        "10": false
+      },
+      "secs": 92.3052990436554
+    },
+    {
+      "pdb": "1CT0",
+      "n_poses": 9600,
+      "n_near": 7,
+      "main": {
+        "n_clusters": 468,
+        "pop": {
+          "1": false,
+          "3": false,
+          "10": false
+        },
+        "best": {
+          "1": false,
+          "3": false,
+          "10": false
+        },
+        "top_cluster_size": 16,
+        "n_near_in_sel": 1
+      },
+      "random_subset": {
+        "n_clusters": 612,
+        "pop": {
+          "1": false,
+          "3": false,
+          "10": false
+        },
+        "best": {
+          "1": false,
+          "3": false,
+          "10": true
+        },
+        "top_cluster_size": 11,
+        "n_near_in_sel": 2
+      },
+      "sweep": {
+        "300x6": {
+          "n_clusters": 244,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 5,
+          "n_near_in_sel": 1
+        },
+        "300x9": {
+          "n_clusters": 187,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 7,
+          "n_near_in_sel": 1
+        },
+        "300x12": {
+          "n_clusters": 123,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 16,
+          "n_near_in_sel": 1
+        },
+        "1000x6": {
+          "n_clusters": 698,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 6,
+          "n_near_in_sel": 1
+        },
+        "1000x9": {
+          "n_clusters": 468,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 16,
+          "n_near_in_sel": 1
+        },
+        "1000x12": {
+          "n_clusters": 258,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 34,
+          "n_near_in_sel": 1
+        },
+        "3000x6": {
+          "n_clusters": 1748,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 10,
+          "n_near_in_sel": 4
+        },
+        "3000x9": {
+          "n_clusters": 948,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 26,
+          "n_near_in_sel": 4
+        },
+        "3000x12": {
+          "n_clusters": 419,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": true
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 77,
+          "n_near_in_sel": 4
+        }
+      },
+      "pose_baseline": {
+        "1": false,
+        "3": false,
+        "10": false
+      },
+      "secs": 96.29257106781006
+    },
+    {
+      "pdb": "1CT2",
+      "n_poses": 9600,
+      "n_near": 8,
+      "main": {
+        "n_clusters": 464,
+        "pop": {
+          "1": false,
+          "3": false,
+          "10": true
+        },
+        "best": {
+          "1": false,
+          "3": false,
+          "10": false
+        },
+        "top_cluster_size": 17,
+        "n_near_in_sel": 2
+      },
+      "random_subset": {
+        "n_clusters": 620,
+        "pop": {
+          "1": false,
+          "3": false,
+          "10": false
+        },
+        "best": {
+          "1": false,
+          "3": false,
+          "10": false
+        },
+        "top_cluster_size": 7,
+        "n_near_in_sel": 1
+      },
+      "sweep": {
+        "300x6": {
+          "n_clusters": 250,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 6,
+          "n_near_in_sel": 1
+        },
+        "300x9": {
+          "n_clusters": 190,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 7,
+          "n_near_in_sel": 1
+        },
+        "300x12": {
+          "n_clusters": 130,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 15,
+          "n_near_in_sel": 1
+        },
+        "1000x6": {
+          "n_clusters": 707,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 9,
+          "n_near_in_sel": 2
+        },
+        "1000x9": {
+          "n_clusters": 464,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": true
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 17,
+          "n_near_in_sel": 2
+        },
+        "1000x12": {
+          "n_clusters": 263,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 31,
+          "n_near_in_sel": 2
+        },
+        "3000x6": {
+          "n_clusters": 1730,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 15,
+          "n_near_in_sel": 4
+        },
+        "3000x9": {
+          "n_clusters": 928,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 30,
+          "n_near_in_sel": 4
+        },
+        "3000x12": {
+          "n_clusters": 411,
+          "pop": {
+            "1": false,
+            "3": true,
+            "10": true
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": true
+          },
+          "top_cluster_size": 72,
+          "n_near_in_sel": 4
+        }
+      },
+      "pose_baseline": {
+        "1": false,
+        "3": false,
+        "10": false
+      },
+      "secs": 91.23347210884094
+    },
+    {
+      "pdb": "1CT4",
+      "n_poses": 9600,
+      "n_near": 7,
+      "main": {
+        "n_clusters": 473,
+        "pop": {
+          "1": false,
+          "3": false,
+          "10": false
+        },
+        "best": {
+          "1": false,
+          "3": false,
+          "10": false
+        },
+        "top_cluster_size": 14,
+        "n_near_in_sel": 1
+      },
+      "random_subset": {
+        "n_clusters": 643,
+        "pop": {
+          "1": false,
+          "3": false,
+          "10": false
+        },
+        "best": {
+          "1": false,
+          "3": false,
+          "10": false
+        },
+        "top_cluster_size": 6,
+        "n_near_in_sel": 1
+      },
+      "sweep": {
+        "300x6": {
+          "n_clusters": 251,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 4,
+          "n_near_in_sel": 0
+        },
+        "300x9": {
+          "n_clusters": 187,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 8,
+          "n_near_in_sel": 0
+        },
+        "300x12": {
+          "n_clusters": 128,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 16,
+          "n_near_in_sel": 0
+        },
+        "1000x6": {
+          "n_clusters": 715,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 7,
+          "n_near_in_sel": 1
+        },
+        "1000x9": {
+          "n_clusters": 473,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 14,
+          "n_near_in_sel": 1
+        },
+        "1000x12": {
+          "n_clusters": 264,
+          "pop": {
+            "1": false,
+            "3": true,
+            "10": true
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 34,
+          "n_near_in_sel": 1
+        },
+        "3000x6": {
+          "n_clusters": 1801,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 12,
+          "n_near_in_sel": 4
+        },
+        "3000x9": {
+          "n_clusters": 962,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 25,
+          "n_near_in_sel": 4
+        },
+        "3000x12": {
+          "n_clusters": 432,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": true
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 71,
+          "n_near_in_sel": 4
+        }
+      },
+      "pose_baseline": {
+        "1": false,
+        "3": false,
+        "10": false
+      },
+      "secs": 89.10725235939026
+    },
+    {
+      "pdb": "1DVF",
+      "n_poses": 9600,
+      "n_near": 4,
+      "main": {
+        "n_clusters": 618,
+        "pop": {
+          "1": true,
+          "3": true,
+          "10": true
+        },
+        "best": {
+          "1": false,
+          "3": false,
+          "10": true
+        },
+        "top_cluster_size": 8,
+        "n_near_in_sel": 2
+      },
+      "random_subset": {
+        "n_clusters": 780,
+        "pop": {
+          "1": false,
+          "3": false,
+          "10": false
+        },
+        "best": {
+          "1": false,
+          "3": false,
+          "10": false
+        },
+        "top_cluster_size": 8,
+        "n_near_in_sel": 1
+      },
+      "sweep": {
+        "300x6": {
+          "n_clusters": 267,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 4,
+          "n_near_in_sel": 1
+        },
+        "300x9": {
+          "n_clusters": 229,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 5,
+          "n_near_in_sel": 1
+        },
+        "300x12": {
+          "n_clusters": 178,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": true
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": true
+          },
+          "top_cluster_size": 9,
+          "n_near_in_sel": 1
+        },
+        "1000x6": {
+          "n_clusters": 817,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 6,
+          "n_near_in_sel": 2
+        },
+        "1000x9": {
+          "n_clusters": 618,
+          "pop": {
+            "1": true,
+            "3": true,
+            "10": true
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": true
+          },
+          "top_cluster_size": 8,
+          "n_near_in_sel": 2
+        },
+        "1000x12": {
+          "n_clusters": 421,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": true
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": true
+          },
+          "top_cluster_size": 15,
+          "n_near_in_sel": 2
+        },
+        "3000x6": {
+          "n_clusters": 2242,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 7,
+          "n_near_in_sel": 3
+        },
+        "3000x9": {
+          "n_clusters": 1444,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": true
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": true
+          },
+          "top_cluster_size": 14,
+          "n_near_in_sel": 3
+        },
+        "3000x12": {
+          "n_clusters": 861,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": true
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": true
+          },
+          "top_cluster_size": 26,
+          "n_near_in_sel": 3
+        }
+      },
+      "pose_baseline": {
+        "1": false,
+        "3": false,
+        "10": false
+      },
+      "secs": 88.65458703041077
+    },
+    {
+      "pdb": "1E50",
+      "n_poses": 9600,
+      "n_near": 3,
+      "main": {
+        "n_clusters": 694,
+        "pop": {
+          "1": false,
+          "3": false,
+          "10": false
+        },
+        "best": {
+          "1": true,
+          "3": true,
+          "10": true
+        },
+        "top_cluster_size": 8,
+        "n_near_in_sel": 2
+      },
+      "random_subset": {
+        "n_clusters": 812,
+        "pop": {
+          "1": false,
+          "3": false,
+          "10": false
+        },
+        "best": {
+          "1": false,
+          "3": false,
+          "10": false
+        },
+        "top_cluster_size": 5,
+        "n_near_in_sel": 0
+      },
+      "sweep": {
+        "300x6": {
+          "n_clusters": 270,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": true,
+            "3": true,
+            "10": true
+          },
+          "top_cluster_size": 4,
+          "n_near_in_sel": 1
+        },
+        "300x9": {
+          "n_clusters": 236,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": true,
+            "3": true,
+            "10": true
+          },
+          "top_cluster_size": 4,
+          "n_near_in_sel": 1
+        },
+        "300x12": {
+          "n_clusters": 198,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": true,
+            "3": true,
+            "10": true
+          },
+          "top_cluster_size": 7,
+          "n_near_in_sel": 1
+        },
+        "1000x6": {
+          "n_clusters": 869,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": true,
+            "3": true,
+            "10": true
+          },
+          "top_cluster_size": 6,
+          "n_near_in_sel": 2
+        },
+        "1000x9": {
+          "n_clusters": 694,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": true,
+            "3": true,
+            "10": true
+          },
+          "top_cluster_size": 8,
+          "n_near_in_sel": 2
+        },
+        "1000x12": {
+          "n_clusters": 490,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": true,
+            "3": true,
+            "10": true
+          },
+          "top_cluster_size": 11,
+          "n_near_in_sel": 2
+        },
+        "3000x6": {
+          "n_clusters": 2373,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": true,
+            "3": true,
+            "10": true
+          },
+          "top_cluster_size": 7,
+          "n_near_in_sel": 2
+        },
+        "3000x9": {
+          "n_clusters": 1689,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": true,
+            "3": true,
+            "10": true
+          },
+          "top_cluster_size": 11,
+          "n_near_in_sel": 2
+        },
+        "3000x12": {
+          "n_clusters": 1016,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": true,
+            "3": true,
+            "10": true
+          },
+          "top_cluster_size": 17,
+          "n_near_in_sel": 2
+        }
+      },
+      "pose_baseline": {
+        "1": true,
+        "3": true,
+        "10": true
+      },
+      "secs": 93.13498330116272
+    },
+    {
+      "pdb": "1E96",
+      "n_poses": 9600,
+      "n_near": 2,
+      "main": {
+        "n_clusters": 816,
+        "pop": {
+          "1": false,
+          "3": false,
+          "10": false
+        },
+        "best": {
+          "1": false,
+          "3": false,
+          "10": false
+        },
+        "top_cluster_size": 5,
+        "n_near_in_sel": 1
+      },
+      "random_subset": {
+        "n_clusters": 900,
+        "pop": {
+          "1": false,
+          "3": false,
+          "10": false
+        },
+        "best": {
+          "1": false,
+          "3": false,
+          "10": false
+        },
+        "top_cluster_size": 3,
+        "n_near_in_sel": 0
+      },
+      "sweep": {
+        "300x6": {
+          "n_clusters": 290,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 3,
+          "n_near_in_sel": 0
+        },
+        "300x9": {
+          "n_clusters": 275,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 3,
+          "n_near_in_sel": 0
+        },
+        "300x12": {
+          "n_clusters": 250,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 4,
+          "n_near_in_sel": 0
+        },
+        "1000x6": {
+          "n_clusters": 932,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 5,
+          "n_near_in_sel": 1
+        },
+        "1000x9": {
+          "n_clusters": 816,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 5,
+          "n_near_in_sel": 1
+        },
+        "1000x12": {
+          "n_clusters": 658,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 6,
+          "n_near_in_sel": 1
+        },
+        "3000x6": {
+          "n_clusters": 2630,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 5,
+          "n_near_in_sel": 2
+        },
+        "3000x9": {
+          "n_clusters": 2059,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 7,
+          "n_near_in_sel": 2
+        },
+        "3000x12": {
+          "n_clusters": 1416,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 11,
+          "n_near_in_sel": 2
+        }
+      },
+      "pose_baseline": {
+        "1": false,
+        "3": false,
+        "10": false
+      },
+      "secs": 114.19378423690796
+    },
+    {
+      "pdb": "1EAW",
+      "n_poses": 9600,
+      "n_near": 4,
+      "main": {
+        "n_clusters": 511,
+        "pop": {
+          "1": false,
+          "3": false,
+          "10": false
+        },
+        "best": {
+          "1": false,
+          "3": false,
+          "10": false
+        },
+        "top_cluster_size": 13,
+        "n_near_in_sel": 2
+      },
+      "random_subset": {
+        "n_clusters": 657,
+        "pop": {
+          "1": false,
+          "3": false,
+          "10": false
+        },
+        "best": {
+          "1": false,
+          "3": false,
+          "10": false
+        },
+        "top_cluster_size": 6,
+        "n_near_in_sel": 0
+      },
+      "sweep": {
+        "300x6": {
+          "n_clusters": 253,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 3,
+          "n_near_in_sel": 2
+        },
+        "300x9": {
+          "n_clusters": 217,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": true
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 5,
+          "n_near_in_sel": 2
+        },
+        "300x12": {
+          "n_clusters": 157,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 10,
+          "n_near_in_sel": 2
+        },
+        "1000x6": {
+          "n_clusters": 749,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 7,
+          "n_near_in_sel": 2
+        },
+        "1000x9": {
+          "n_clusters": 511,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 13,
+          "n_near_in_sel": 2
+        },
+        "1000x12": {
+          "n_clusters": 301,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 25,
+          "n_near_in_sel": 2
+        },
+        "3000x6": {
+          "n_clusters": 1896,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 10,
+          "n_near_in_sel": 2
+        },
+        "3000x9": {
+          "n_clusters": 1063,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 18,
+          "n_near_in_sel": 2
+        },
+        "3000x12": {
+          "n_clusters": 512,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 37,
+          "n_near_in_sel": 2
+        }
+      },
+      "pose_baseline": {
+        "1": false,
+        "3": false,
+        "10": false
+      },
+      "secs": 91.0044846534729
+    },
+    {
+      "pdb": "1EFN",
+      "n_poses": 9600,
+      "n_near": 4,
+      "main": {
+        "n_clusters": 622,
+        "pop": {
+          "1": false,
+          "3": false,
+          "10": false
+        },
+        "best": {
+          "1": false,
+          "3": false,
+          "10": false
+        },
+        "top_cluster_size": 8,
+        "n_near_in_sel": 2
+      },
+      "random_subset": {
+        "n_clusters": 741,
+        "pop": {
+          "1": false,
+          "3": false,
+          "10": false
+        },
+        "best": {
+          "1": false,
+          "3": false,
+          "10": false
+        },
+        "top_cluster_size": 5,
+        "n_near_in_sel": 0
+      },
+      "sweep": {
+        "300x6": {
+          "n_clusters": 274,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 3,
+          "n_near_in_sel": 0
+        },
+        "300x9": {
+          "n_clusters": 244,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 4,
+          "n_near_in_sel": 0
+        },
+        "300x12": {
+          "n_clusters": 194,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 6,
+          "n_near_in_sel": 0
+        },
+        "1000x6": {
+          "n_clusters": 799,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 5,
+          "n_near_in_sel": 2
+        },
+        "1000x9": {
+          "n_clusters": 622,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 8,
+          "n_near_in_sel": 2
+        },
+        "1000x12": {
+          "n_clusters": 404,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 11,
+          "n_near_in_sel": 2
+        },
+        "3000x6": {
+          "n_clusters": 2113,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 7,
+          "n_near_in_sel": 4
+        },
+        "3000x9": {
+          "n_clusters": 1355,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 14,
+          "n_near_in_sel": 4
+        },
+        "3000x12": {
+          "n_clusters": 697,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": true
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 23,
+          "n_near_in_sel": 4
+        }
+      },
+      "pose_baseline": {
+        "1": false,
+        "3": false,
+        "10": false
+      },
+      "secs": 95.87901473045349
+    },
+    {
+      "pdb": "1EMV",
+      "n_poses": 9600,
+      "n_near": 3,
+      "main": {
+        "n_clusters": 701,
+        "pop": {
+          "1": false,
+          "3": false,
+          "10": false
+        },
+        "best": {
+          "1": false,
+          "3": false,
+          "10": false
+        },
+        "top_cluster_size": 8,
+        "n_near_in_sel": 2
+      },
+      "random_subset": {
+        "n_clusters": 798,
+        "pop": {
+          "1": false,
+          "3": false,
+          "10": false
+        },
+        "best": {
+          "1": false,
+          "3": false,
+          "10": false
+        },
+        "top_cluster_size": 5,
+        "n_near_in_sel": 0
+      },
+      "sweep": {
+        "300x6": {
+          "n_clusters": 274,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 3,
+          "n_near_in_sel": 2
+        },
+        "300x9": {
+          "n_clusters": 247,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 4,
+          "n_near_in_sel": 2
+        },
+        "300x12": {
+          "n_clusters": 197,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 6,
+          "n_near_in_sel": 2
+        },
+        "1000x6": {
+          "n_clusters": 855,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 4,
+          "n_near_in_sel": 2
+        },
+        "1000x9": {
+          "n_clusters": 701,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 8,
+          "n_near_in_sel": 2
+        },
+        "1000x12": {
+          "n_clusters": 484,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 14,
+          "n_near_in_sel": 2
+        },
+        "3000x6": {
+          "n_clusters": 2337,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 8,
+          "n_near_in_sel": 3
+        },
+        "3000x9": {
+          "n_clusters": 1613,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 11,
+          "n_near_in_sel": 3
+        },
+        "3000x12": {
+          "n_clusters": 930,
+          "pop": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "best": {
+            "1": false,
+            "3": false,
+            "10": false
+          },
+          "top_cluster_size": 22,
+          "n_near_in_sel": 3
+        }
+      },
+      "pose_baseline": {
+        "1": false,
+        "3": false,
+        "10": false
+      },
+      "secs": 96.11859440803528
+    }
+  ],
+  "n_usable": 12,
+  "log": [
+    "====================================================================================================",
+    "CLUSTER, DON'T SCORE -- rank regions of pose space by POPULATION",
+    "====================================================================================================",
+    "  Six per-pose scores have failed to rank these poses. ClusPro never ranks poses: it clusters them",
+    "  and ranks clusters by MEMBER COUNT, because the native basin is an attractor and a spurious",
+    "  high-scoring pose is usually alone. Population is information no per-pose score contains.",
+    "  PRE-SPECIFIED: top 1000 poses, 9 A radius, 2400 rotations. A parameter sweep",
+    "  follows and is EXPLORATORY -- a better setting there is a hypothesis, not this run's result.",
+    "  PREDECLARED: population beats bestscore AND lands near-native in top-1/top-3 for a majority",
+    "  => clustering works where scoring does not. population ~ bestscore => population adds nothing.",
+    "    1CHO: 9600 poses, 1 near-native, 679 clusters (top has 9) in 95s | pop top1 False  top3 False  | best top1 True",
+    "    1CSE: 9600 poses, 4 near-native, 543 clusters (top has 9) in 90s | pop top1 False  top3 False  | best top1 False",
+    "    1CSO: 9600 poses, 7 near-native, 497 clusters (top has 10) in 92s | pop top1 False  top3 False  | best top1 False",
+    "    1CT0: 9600 poses, 7 near-native, 468 clusters (top has 16) in 96s | pop top1 False  top3 False  | best top1 False",
+    "    1CT2: 9600 poses, 8 near-native, 464 clusters (top has 17) in 91s | pop top1 False  top3 False  | best top1 False",
+    "    1CT4: 9600 poses, 7 near-native, 473 clusters (top has 14) in 89s | pop top1 False  top3 False  | best top1 False",
+    "    1DVF: 9600 poses, 4 near-native, 618 clusters (top has 8) in 89s | pop top1 True  top3 True  | best top1 False",
+    "    1E50: 9600 poses, 3 near-native, 694 clusters (top has 8) in 93s | pop top1 False  top3 False  | best top1 True",
+    "    1E96: 9600 poses, 2 near-native, 816 clusters (top has 5) in 114s | pop top1 False  top3 False  | best top1 False",
+    "    1EAW: 9600 poses, 4 near-native, 511 clusters (top has 13) in 91s | pop top1 False  top3 False  | best top1 False",
+    "    1EFN: 9600 poses, 4 near-native, 622 clusters (top has 8) in 96s | pop top1 False  top3 False  | best top1 False",
+    "    1EMV: 9600 poses, 3 near-native, 701 clusters (top has 8) in 96s | pop top1 False  top3 False  | best top1 False",
+    "\n  12 complexes with a near-native pose and enough poses to cluster",
+    "  median clusters 580 | median top-cluster size 9 | median near-native inside the clustered top-1000: 2",
+    "\n  PRE-SPECIFIED CONFIG (top 1000, 9 A)",
+    "    arm                           top-1    top-3   top-10",
+    "    cluster by POPULATION          1/12     1/12     2/12",
+    "    cluster by best score          2/12     2/12     3/12",
+    "    random subset, by pop          0/12     0/12     0/12",
+    "    POSE by score (baseline)       2/12     2/12     2/12",
+    "\n  SWEEP (EXPLORATORY -- a better setting here is a hypothesis, not this run's result)",
+    "    config        pop top-1  pop top-3  best top-1",
+    "    1000x12            0/12       1/12        2/12",
+    "    1000x6             0/12       0/12        2/12",
+    "    1000x9             1/12       1/12        2/12",
+    "    3000x12            0/12       1/12        2/12",
+    "    3000x6             0/12       0/12        2/12",
+    "    3000x9             0/12       0/12        2/12",
+    "    300x12             1/12       1/12        2/12",
+    "    300x6              0/12       1/12        2/12",
+    "    300x9              0/12       0/12        2/12",
+    "\n  READING",
+    "  CLUSTERING DOES NOT HELP. population 1/12 top-1 vs best-score 2/12 vs pose baseline",
+    "  2/12. The native basin does not stand out by member count at 2400",
+    "  rotations -- with 4-16 members against clusters built from the top 1,000 poses, the true",
+    "  region is not the most populated one."
+  ]
+}

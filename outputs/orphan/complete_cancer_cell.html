@@ -1,0 +1,58 @@
+<!doctype html><html><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cancerous Cell Map</title>
+<style>
+  :root { color-scheme: dark; }
+  body { margin:0; background:#0c0f14; color:#e7edf5; font:14px/1.5 -apple-system,Segoe UI,Roboto,sans-serif; }
+  header { padding:22px 26px; border-bottom:1px solid #1e2530; }
+  h1 { margin:0; font-size:20px; }
+  .sub { color:#8b97a7; margin-top:6px; max-width:820px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(430px,1fr)); gap:16px; padding:20px; }
+  .card { background:#121722; border:1px solid #1e2530; border-radius:12px; padding:16px; }
+  .tumor { font-size:16px; font-weight:700; }
+  .muts { margin:10px 0; }
+  .chip { display:inline-block; padding:3px 9px; margin:2px 3px 2px 0; border-radius:20px; font-size:12px; }
+  .meta { color:#7f8b9c; font-size:12px; margin-bottom:8px; }
+  .cols { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .hd { font-size:11px; letter-spacing:.5px; text-transform:uppercase; margin-bottom:6px; font-weight:700; }
+  .hd.up { color:#f0865f; } .hd.dn { color:#6aa6f5; }
+  .row { display:grid; grid-template-columns:1fr 62px 42px; align-items:center; gap:6px; margin:3px 0; }
+  .pw { font-size:11px; color:#c3ccd8; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .track { height:7px; background:#1c2430; border-radius:4px; overflow:hidden; }
+  .fill { height:100%; border-radius:4px; }
+  .val { font-size:11px; color:#9aa6b6; text-align:right; font-variant-numeric:tabular-nums; }
+  .empty { color:#5a6473; font-size:12px; }
+  .driver { margin-top:12px; padding-top:10px; border-top:1px solid #1e2530; font-size:12.5px; }
+  .dnote { color:#8b97a7; }
+  code { color:#9fe0b0; }
+</style></head><body>
+<header>
+  <h1>Cancerous Cell Map — the whole perturbed cell, read from its genome</h1>
+  <div class="sub">Each mutation is called <b>GOF↑</b> (oncogene, set ON) or <b>LOF↓</b> (suppressor, set OFF)
+  by biological role, then propagated through the signed causal + signalling network. Red = programme driven
+  hyperactive; blue = programme lost. The target is just the node driving the red programme — and an activating
+  mutation far from any active site (JAK2 V617F) is visible here as its <i>downstream</i> pathway state, not its
+  location.</div>
+</header>
+<div class="grid">
+        <div class="card">
+          <div class="tumor">A375 melanoma</div>
+          <div class="muts"><span class="chip" style="background:#0b6b3a;color:#eaffea">BRAF <b style="opacity:.8">GOF↑</b></span> <span class="chip" style="background:#7a1020;color:#ffe9ec">CDKN2A <b style="opacity:.8">LOF↓</b></span> <span class="chip" style="background:#7a1020;color:#ffe9ec">TTN <b style="opacity:.8">LOF↓</b></span></div>
+          <div class="meta">36 genes changed state across the cell</div>
+          <div class="cols">
+            <div class="col"><div class="hd up">HYPERACTIVE programme ↑</div><div class="row"><div class="pw" title="Signalling to p38 via RIT and RIN">Signalling to p38 via RIT and RIN</div><div class="track"><div class="fill" style="width:100%;background:#e0522d"></div></div><div class="val">+0.33</div></div><div class="row"><div class="pw" title="Negative feedback regulation of MAPK pathway">Negative feedback regulation of MAPK pathway</div><div class="track"><div class="fill" style="width:59%;background:#e0522d"></div></div><div class="val">+0.20</div></div><div class="row"><div class="pw" title="ARMS-mediated activation">ARMS-mediated activation</div><div class="track"><div class="fill" style="width:50%;background:#e0522d"></div></div><div class="val">+0.17</div></div><div class="row"><div class="pw" title="Gain-of-function MRAS complexes activate RAF signaling">Gain-of-function MRAS complexes activate RAF signaling</div><div class="track"><div class="fill" style="width:42%;background:#e0522d"></div></div><div class="val">+0.14</div></div><div class="row"><div class="pw" title="SHOC2 M1731 mutant abolishes MRAS complex function">SHOC2 M1731 mutant abolishes MRAS complex function</div><div class="track"><div class="fill" style="width:42%;background:#e0522d"></div></div><div class="val">+0.14</div></div><div class="row"><div class="pw" title="Signaling by MRAS-complex mutants">Signaling by MRAS-complex mutants</div><div class="track"><div class="fill" style="width:42%;background:#e0522d"></div></div><div class="val">+0.14</div></div></div>
+            <div class="col"><div class="hd dn">LOST programme ↓</div><div class="row"><div class="pw" title="Diseases of Cellular Senescence">Diseases of Cellular Senescence</div><div class="track"><div class="fill" style="width:100%;background:#2d7fe0"></div></div><div class="val">-0.28</div></div><div class="row"><div class="pw" title="Diseases of cellular response to stress">Diseases of cellular response to stress</div><div class="track"><div class="fill" style="width:100%;background:#2d7fe0"></div></div><div class="val">-0.28</div></div><div class="row"><div class="pw" title="Evasion of Oncogene Induced Senescence Due to Defective p16INK4A binding to CDK4 and CDK6">Evasion of Oncogene Induced Senescence Due to Defective p16INK4A binding to CDK4 and CDK6</div><div class="track"><div class="fill" style="width:100%;background:#2d7fe0"></div></div><div class="val">-0.28</div></div><div class="row"><div class="pw" title="Evasion of Oncogene Induced Senescence Due to p16INK4A Defects">Evasion of Oncogene Induced Senescence Due to p16INK4A Defects</div><div class="track"><div class="fill" style="width:100%;background:#2d7fe0"></div></div><div class="val">-0.28</div></div><div class="row"><div class="pw" title="Evasion of Oxidative Stress Induced Senescence Due to Defective p16INK4A binding to CDK4 and CDK6">Evasion of Oxidative Stress Induced Senescence Due to Defective p16INK4A binding to CDK4 and CDK6</div><div class="track"><div class="fill" style="width:100%;background:#2d7fe0"></div></div><div class="val">-0.28</div></div><div class="row"><div class="pw" title="Evasion of Oxidative Stress Induced Senescence Due to p16INK4A Defects">Evasion of Oxidative Stress Induced Senescence Due to p16INK4A Defects</div><div class="track"><div class="fill" style="width:100%;background:#2d7fe0"></div></div><div class="val">-0.28</div></div></div>
+          </div>
+          <div class="driver"><b>driver / reversal:</b> BRAF <span class="dnote">— full-stack: ddg, emask, cellgraph, depmap layers active</span></div>
+        </div>
+        <div class="card">
+          <div class="tumor">MSI-H colorectal</div>
+          <div class="muts"><span class="chip" style="background:#7a1020;color:#ffe9ec">MLH1 <b style="opacity:.8">LOF↓</b></span> <span class="chip" style="background:#7a1020;color:#ffe9ec">MSH6 <b style="opacity:.8">LOF↓</b></span> <span class="chip" style="background:#7a1020;color:#ffe9ec">PMS2 <b style="opacity:.8">LOF↓</b></span> <span class="chip" style="background:#7a1020;color:#ffe9ec">TGFBR2 <b style="opacity:.8">LOF↓</b></span> <span class="chip" style="background:#7a1020;color:#ffe9ec">ACVR2A <b style="opacity:.8">LOF↓</b></span> <span class="chip" style="background:#7a1020;color:#ffe9ec">RNF43 <b style="opacity:.8">LOF↓</b></span> <span class="chip" style="background:#7a1020;color:#ffe9ec">BAX <b style="opacity:.8">LOF↓</b></span> <span class="chip" style="background:#0b6b3a;color:#eaffea">BRAF <b style="opacity:.8">GOF↑</b></span> <span class="chip" style="background:#333a44;color:#cfd6df">B2M <b style="opacity:.8">passenger</b></span> <span class="chip" style="background:#0b6b3a;color:#eaffea">JAK1 <b style="opacity:.8">GOF↑</b></span> <span class="chip" style="background:#333a44;color:#cfd6df">WRN <b style="opacity:.8">passenger</b></span></div>
+          <div class="meta">96 genes changed state across the cell</div>
+          <div class="cols">
+            <div class="col"><div class="hd up">HYPERACTIVE programme ↑</div><div class="row"><div class="pw" title="Signalling to p38 via RIT and RIN">Signalling to p38 via RIT and RIN</div><div class="track"><div class="fill" style="width:100%;background:#e0522d"></div></div><div class="val">+0.25</div></div><div class="row"><div class="pw" title="Negative feedback regulation of MAPK pathway">Negative feedback regulation of MAPK pathway</div><div class="track"><div class="fill" style="width:76%;background:#e0522d"></div></div><div class="val">+0.19</div></div><div class="row"><div class="pw" title="MAPK1 (ERK2) activation">MAPK1 (ERK2) activation</div><div class="track"><div class="fill" style="width:63%;background:#e0522d"></div></div><div class="val">+0.16</div></div><div class="row"><div class="pw" title="IFNG signaling activates MAPKs">IFNG signaling activates MAPKs</div><div class="track"><div class="fill" style="width:63%;background:#e0522d"></div></div><div class="val">+0.16</div></div><div class="row"><div class="pw" title="Interleukin-27 signaling">Interleukin-27 signaling</div><div class="track"><div class="fill" style="width:61%;background:#e0522d"></div></div><div class="val">+0.15</div></div><div class="row"><div class="pw" title="Interleukin-6 signaling">Interleukin-6 signaling</div><div class="track"><div class="fill" style="width:57%;background:#e0522d"></div></div><div class="val">+0.14</div></div></div>
+            <div class="col"><div class="hd dn">LOST programme ↓</div><div class="row"><div class="pw" title="Diseases of Mismatch Repair (MMR)">Diseases of Mismatch Repair (MMR)</div><div class="track"><div class="fill" style="width:100%;background:#2d7fe0"></div></div><div class="val">-0.75</div></div><div class="row"><div class="pw" title="Mismatch Repair">Mismatch Repair</div><div class="track"><div class="fill" style="width:30%;background:#2d7fe0"></div></div><div class="val">-0.23</div></div><div class="row"><div class="pw" title="Mismatch repair (MMR) directed by MSH2:MSH6 (MutSalpha)">Mismatch repair (MMR) directed by MSH2:MSH6 (MutSalpha)</div><div class="track"><div class="fill" style="width:30%;background:#2d7fe0"></div></div><div class="val">-0.23</div></div><div class="row"><div class="pw" title="SMAD2/3 Phosphorylation Motif Mutants in Cancer">SMAD2/3 Phosphorylation Motif Mutants in Cancer</div><div class="track"><div class="fill" style="width:38%;background:#2d7fe0"></div></div><div class="val">-0.29</div></div><div class="row"><div class="pw" title="TGFBR1 KD Mutants in Cancer">TGFBR1 KD Mutants in Cancer</div><div class="track"><div class="fill" style="width:38%;background:#2d7fe0"></div></div><div class="val">-0.29</div></div><div class="row"><div class="pw" title="Somatic hypermutation of immunoglobulin genes by error-prone mismatch repair (MMR)">Somatic hypermutation of immunoglobulin genes by error-prone mismatch repair (MMR)</div><div class="track"><div class="fill" style="width:22%;background:#2d7fe0"></div></div><div class="val">-0.17</div></div></div>
+          </div>
+          <div class="driver"><b>driver / reversal:</b> JAK1 <span class="dnote">— full-stack: ddg, emask, cellgraph, depmap layers active</span></div>
+        </div></div>
+</body></html>

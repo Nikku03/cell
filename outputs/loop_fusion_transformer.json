@@ -1,0 +1,670 @@
+{
+ "test": "loop_fusion_transformer",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+    "bytes": 38524393,
+    "hash": "b857a72939e09be8",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/HumanGEM.xml",
+    "bytes": 43115559,
+    "hash": "cc5a4383c6116b0c",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 15913,
+   "used": 6111,
+   "selection": "filtered",
+   "fraction": 0.38402563941431533
+  },
+  "seed": 4242,
+  "controls": [
+   "A1 reaction-only and A2 graph-only, the two single-graph arms",
+   "B1 FAME log1p(pubs), the recurring killer, given first refusal",
+   "B2 DEGREE in the combined graph",
+   "a mean-aggregation ablation with identical tokens, folds, optimiser and epochs",
+   "2 degree-preserving rewirings, each checked with gate_guard.null_can_move BEFORE its verdict was read",
+   "the untrained spectral-embedding + ridge floor, all three arms",
+   "the fraction of walks that actually traverse a catalyses edge, reported first"
+  ],
+  "note": "transformer arm of a three-model-class comparison on one fixed protocol; folds from default_rng(11100); target = dep_frac finite and non-zero (n=6111); epoch cap 10 and 2 nulls are declared compute reductions (D3); the single-fold prototype peek is disclosed as D4",
+  "warnings": []
+ },
+ "gates": {
+  "E1 the intermediate is used as built and its bridge is reported": true,
+  "E2 combined beats A1 and A2 by more than the fold sd": false,
+  "E3 combined beats the FAME baseline": true,
+  "E4 combined beats the DEGREE baseline": true,
+  "E5 a degree-preserving rewiring destroys the effect": true,
+  "E6 the learned model beats the untrained spectral floor": true
+ },
+ "protocol": {
+  "fold_seed": 11100,
+  "n_fold": 5,
+  "binary_at": 0.5,
+  "n_genes": 6111,
+  "n_pos": 1483,
+  "fold_sizes": [
+   1218,
+   1197,
+   1247,
+   1253,
+   1196
+  ]
+ },
+ "model": {
+  "n_walk": 8,
+  "walk_len": 12,
+  "d_model": 64,
+  "n_head": 4,
+  "n_layer": 2,
+  "d_ff": 128,
+  "max_epochs": 10,
+  "lr": 0.002,
+  "weight_decay": 0.0001,
+  "batch": 256,
+  "inner_val": 0.15,
+  "seed": 4242
+ },
+ "e1": {
+  "summary": {
+   "nodes": 37884,
+   "genes": 16492,
+   "reactions": 12931,
+   "metabolites": 8461,
+   "undirected_edges": 333003,
+   "by_channel": {
+    "catalyses": 23225,
+    "consumes": 27582,
+    "produces": 27616,
+    "ppi": 191447,
+    "signal": 17432,
+    "regulate": 55716,
+    "complex": 34918
+   },
+   "isolated_nodes": 1548,
+   "median_degree_gene": 17.0,
+   "genes_bridging_to_gem": 23225
+  },
+  "catalyses_edges": 23225,
+  "genes_with_gem_reaction": 2568,
+  "matches_declared": true,
+  "scored_genes_with_gem_reaction": 1008
+ },
+ "walk_stats": {
+  "A1 reaction-only": {
+   "walks": 48888,
+   "frac_walk_traverses_catalyses": 0.16494845360824742,
+   "frac_walk_reaches_reaction": 0.16494845360824742,
+   "frac_walk_reaches_metabolite": 0.13136147929962363,
+   "frac_gene_any_catalyses_walk": 0.16494845360824742,
+   "frac_tokens_reaction": 0.08247422680412371,
+   "frac_tokens_metabolite": 0.03616429389625266,
+   "frac_tokens_gene": 0.8813614792996236,
+   "frac_steps_stuck": 0.8350515463917526,
+   "frac_start_genes_isolated": 0.8350515463917526
+  },
+  "A2 graph-only": {
+   "walks": 48888,
+   "frac_walk_traverses_catalyses": 0.0,
+   "frac_walk_reaches_reaction": 0.0,
+   "frac_walk_reaches_metabolite": 0.0,
+   "frac_gene_any_catalyses_walk": 0.0,
+   "frac_tokens_reaction": 0.0,
+   "frac_tokens_metabolite": 0.0,
+   "frac_tokens_gene": 1.0,
+   "frac_steps_stuck": 0.048928162330224186,
+   "frac_start_genes_isolated": 0.048928162330224186
+  },
+  "A3 combined": {
+   "walks": 48888,
+   "frac_walk_traverses_catalyses": 0.15367779414171168,
+   "frac_walk_reaches_reaction": 0.15367779414171168,
+   "frac_walk_reaches_metabolite": 0.09022664048437244,
+   "frac_gene_any_catalyses_walk": 0.6378661430207822,
+   "frac_tokens_reaction": 0.03521143566246659,
+   "frac_tokens_metabolite": 0.018711135657011945,
+   "frac_tokens_gene": 0.9460774286805215,
+   "frac_steps_stuck": 0.045655375552282766,
+   "frac_start_genes_isolated": 0.045655375552282766
+  }
+ },
+ "results": {
+  "A1 reaction-only": {
+   "tag": "A1 reaction-only",
+   "rho": [
+    0.12266850866536946,
+    0.051144610082755386,
+    0.059686867641683294,
+    0.06666323399689235,
+    0.09341388571917707
+   ],
+   "auc": [
+    0.5818848289273435,
+    0.5567278998566059,
+    0.5499781157675895,
+    0.5587158466022484,
+    0.5632899026337024
+   ],
+   "stop_epoch": [
+    6,
+    7,
+    8,
+    5,
+    3
+   ],
+   "rho_mean": 0.07871542122117552,
+   "rho_sd": 0.0261358353588447,
+   "auc_mean": 0.562119318757498,
+   "auc_sd": 0.010771309014266702,
+   "seconds": 190.95227766036987
+  },
+  "A2 graph-only": {
+   "tag": "A2 graph-only",
+   "rho": [
+    0.38409876244776836,
+    0.3953664316730056,
+    0.4896782674000199,
+    0.46137402570119407,
+    0.43634637039779195
+   ],
+   "auc": [
+    0.7384976889690547,
+    0.7561446343448435,
+    0.8208191997665683,
+    0.8057366222056311,
+    0.7732244490355635
+   ],
+   "stop_epoch": [
+    9,
+    5,
+    5,
+    5,
+    8
+   ],
+   "rho_mean": 0.433372771523956,
+   "rho_sd": 0.039586945401019216,
+   "auc_mean": 0.7788845188643322,
+   "auc_sd": 0.030527979571666593,
+   "seconds": 194.00005173683167
+  },
+  "A3 combined": {
+   "tag": "A3 combined",
+   "rho": [
+    0.3792452300407804,
+    0.39452707067627346,
+    0.4527832101570306,
+    0.4431831576058027,
+    0.46105479419481826
+   ],
+   "auc": [
+    0.7380960768840539,
+    0.759436887183661,
+    0.8069336543020753,
+    0.7861706557165213,
+    0.7882762438535489
+   ],
+   "stop_epoch": [
+    9,
+    5,
+    5,
+    5,
+    9
+   ],
+   "rho_mean": 0.4261586925349411,
+   "rho_sd": 0.0329176783057833,
+   "auc_mean": 0.7757827035879721,
+   "auc_sd": 0.024173735228255624,
+   "seconds": 189.1063871383667
+  },
+  "B1 FAME log1p(pubs)": {
+   "rho": [
+    0.3480257429633223,
+    0.33404172368100127,
+    0.2927264343208449,
+    0.3037881839907,
+    0.30908089124522775
+   ],
+   "auc": [
+    0.6756383518403698,
+    0.6892628764097198,
+    0.6812251522777838,
+    0.6799702795445737,
+    0.6847390720713223
+   ],
+   "rho_mean": 0.31753259524021926,
+   "rho_sd": 0.020386609038827344,
+   "auc_mean": 0.6821671464287539,
+   "auc_sd": 0.004589181219744174,
+   "tag": "B1 FAME log1p(pubs)"
+  },
+  "B2 DEGREE combined": {
+   "rho": [
+    0.35795990861458626,
+    0.3269133131140288,
+    0.3492731125522926,
+    0.3262253166124534,
+    0.3621135050991315
+   ],
+   "auc": [
+    0.6938095372301449,
+    0.6947661124675426,
+    0.718328044643834,
+    0.6899883702565722,
+    0.7240926409025288
+   ],
+   "rho_mean": 0.3444970311984985,
+   "rho_sd": 0.015214748566429532,
+   "auc_mean": 0.7041969411001245,
+   "auc_sd": 0.014101412207732011,
+   "tag": "B2 DEGREE combined"
+  },
+  "A3 combined MEAN-AGG": {
+   "tag": "A3 combined MEAN-AGG",
+   "rho": [
+    0.4224787476575879,
+    0.3812881918208585,
+    0.4367706956709947,
+    0.4281486274629998,
+    0.46063128081924254
+   ],
+   "auc": [
+    0.7574192548334366,
+    0.7543037631283184,
+    0.7807564649669914,
+    0.7839882841103246,
+    0.7816331921021495
+   ],
+   "stop_epoch": [
+    1,
+    1,
+    2,
+    1,
+    2
+   ],
+   "rho_mean": 0.4258635086863366,
+   "rho_sd": 0.025812407697488965,
+   "auc_mean": 0.7716201918282442,
+   "auc_sd": 0.012947792726941434,
+   "seconds": 9.38078236579895
+  },
+  "FLOOR A1 reaction-only": {
+   "rho": [
+    0.05437970431943953,
+    0.02107791150224823,
+    -0.008220904165763817,
+    0.04354309291064628,
+    0.06264666300138788
+   ],
+   "auc": [
+    0.5340278169212558,
+    0.5298182381893578,
+    0.5250337381916328,
+    0.524370414507028,
+    0.5487681770322637
+   ],
+   "rho_mean": 0.03468529351359162,
+   "rho_sd": 0.025590120184491444,
+   "auc_mean": 0.5324036769683076,
+   "auc_sd": 0.008899084109653264,
+   "tag": "FLOOR A1 reaction-only"
+  },
+  "FLOOR A2 graph-only": {
+   "rho": [
+    0.5609418974188042,
+    0.5167004642889402,
+    0.5574694509667096,
+    0.5588450414839576,
+    0.5934581593810377
+   ],
+   "auc": [
+    0.8229683360577194,
+    0.832529163275588,
+    0.8568752963489805,
+    0.8393300693477292,
+    0.8483531672087967
+   ],
+   "rho_mean": 0.5574830027078899,
+   "rho_sd": 0.02437722963525196,
+   "auc_mean": 0.8400112064477628,
+   "auc_sd": 0.011839680624460546,
+   "tag": "FLOOR A2 graph-only"
+  },
+  "FLOOR A3 combined": {
+   "rho": [
+    0.41765501111274467,
+    0.36222068828064924,
+    0.3968908786622851,
+    0.36808410467106917,
+    0.4117998395802417
+   ],
+   "auc": [
+    0.7350839862465475,
+    0.7222958570708833,
+    0.7520771783929678,
+    0.7197895877902052,
+    0.7627714117208616
+   ],
+   "rho_mean": 0.391330104461398,
+   "rho_sd": 0.022497411372809077,
+   "auc_mean": 0.7384036042442931,
+   "auc_sd": 0.016719555391342907,
+   "tag": "FLOOR A3 combined"
+  }
+ },
+ "attention_vs_mean": {
+  "delta_rho": 0.00029518384860449665,
+  "pooled_sd": 0.04183125549376237,
+  "attention_wins": false,
+  "attn_on_catalyses_walks": 0.1251613825559616,
+  "attn_on_other_walks": 0.12497021704912185,
+  "attn_spread_within_gene": 0.0010678915656171738,
+  "uniform": 0.125
+ },
+ "e2": {
+  "A1 reaction-only": {
+   "delta": 0.34744327131376557,
+   "threshold": 0.0329176783057833,
+   "pass": true
+  },
+  "A2 graph-only": {
+   "delta": -0.007214078989014883,
+   "threshold": 0.039586945401019216,
+   "pass": false
+  }
+ },
+ "e3": {
+  "delta": 0.10862609729472184,
+  "fame": {
+   "rho": [
+    0.3480257429633223,
+    0.33404172368100127,
+    0.2927264343208449,
+    0.3037881839907,
+    0.30908089124522775
+   ],
+   "auc": [
+    0.6756383518403698,
+    0.6892628764097198,
+    0.6812251522777838,
+    0.6799702795445737,
+    0.6847390720713223
+   ],
+   "rho_mean": 0.31753259524021926,
+   "rho_sd": 0.020386609038827344,
+   "auc_mean": 0.6821671464287539,
+   "auc_sd": 0.004589181219744174,
+   "tag": "B1 FAME log1p(pubs)"
+  }
+ },
+ "e4": {
+  "delta": 0.08166166133644259,
+  "degree": {
+   "rho": [
+    0.35795990861458626,
+    0.3269133131140288,
+    0.3492731125522926,
+    0.3262253166124534,
+    0.3621135050991315
+   ],
+   "auc": [
+    0.6938095372301449,
+    0.6947661124675426,
+    0.718328044643834,
+    0.6899883702565722,
+    0.7240926409025288
+   ],
+   "rho_mean": 0.3444970311984985,
+   "rho_sd": 0.015214748566429532,
+   "auc_mean": 0.7041969411001245,
+   "auc_sd": 0.014101412207732011,
+   "tag": "B2 DEGREE combined"
+  },
+  "rho_pred_vs_degree": 0.32743577184544176
+ },
+ "e5": {
+  "nulls": [
+   {
+    "seed": 5100,
+    "swaps_ok": 1546665,
+    "swaps_tried": 1665015,
+    "degree_preserved_exactly": true,
+    "edges_changed_in_walk_tokens": 0.8742141902580047,
+    "edges_changed_beyond_start": 0.9536882075541869,
+    "capable": true,
+    "frac_walk_traverses_catalyses": 0.16488708885616102,
+    "rho_mean": 0.11755064668891713,
+    "rho_sd": 0.057745961364533874,
+    "auc_mean": 0.5800646685301392
+   },
+   {
+    "seed": 5101,
+    "swaps_ok": 1546550,
+    "swaps_tried": 1665015,
+    "degree_preserved_exactly": true,
+    "edges_changed_in_walk_tokens": 0.8741971444935362,
+    "edges_changed_beyond_start": 0.9536696121747669,
+    "capable": true,
+    "frac_walk_traverses_catalyses": 0.16672803141875306,
+    "rho_mean": 0.14184651501506979,
+    "rho_sd": 0.04543192895158206,
+    "auc_mean": 0.5810944777927523
+   }
+  ],
+  "capable": true,
+  "survival": {
+   "real": 0.4261586925349411,
+   "n_null": 2,
+   "null_mean": 0.12969858085199346,
+   "null_sd": 0.01214793416307633,
+   "z": 24.404158575705715,
+   "defined": true,
+   "fraction": 0.3043433892677418,
+   "reason": "effect is distinguishable from the null and exceeds it"
+  },
+  "raw_ratio_null_over_real": 0.3043433892677418,
+  "criterion": "D5: capable AND gate_guard-defined AND fraction < 0.5"
+ },
+ "e6": {
+  "floor": {
+   "A1 reaction-only": {
+    "rho": [
+     0.05437970431943953,
+     0.02107791150224823,
+     -0.008220904165763817,
+     0.04354309291064628,
+     0.06264666300138788
+    ],
+    "auc": [
+     0.5340278169212558,
+     0.5298182381893578,
+     0.5250337381916328,
+     0.524370414507028,
+     0.5487681770322637
+    ],
+    "rho_mean": 0.03468529351359162,
+    "rho_sd": 0.025590120184491444,
+    "auc_mean": 0.5324036769683076,
+    "auc_sd": 0.008899084109653264,
+    "tag": "FLOOR A1 reaction-only"
+   },
+   "A2 graph-only": {
+    "rho": [
+     0.5609418974188042,
+     0.5167004642889402,
+     0.5574694509667096,
+     0.5588450414839576,
+     0.5934581593810377
+    ],
+    "auc": [
+     0.8229683360577194,
+     0.832529163275588,
+     0.8568752963489805,
+     0.8393300693477292,
+     0.8483531672087967
+    ],
+    "rho_mean": 0.5574830027078899,
+    "rho_sd": 0.02437722963525196,
+    "auc_mean": 0.8400112064477628,
+    "auc_sd": 0.011839680624460546,
+    "tag": "FLOOR A2 graph-only"
+   },
+   "A3 combined": {
+    "rho": [
+     0.41765501111274467,
+     0.36222068828064924,
+     0.3968908786622851,
+     0.36808410467106917,
+     0.4117998395802417
+    ],
+    "auc": [
+     0.7350839862465475,
+     0.7222958570708833,
+     0.7520771783929678,
+     0.7197895877902052,
+     0.7627714117208616
+    ],
+    "rho_mean": 0.391330104461398,
+    "rho_sd": 0.022497411372809077,
+    "auc_mean": 0.7384036042442931,
+    "auc_sd": 0.016719555391342907,
+    "tag": "FLOOR A3 combined"
+   }
+  },
+  "delta": 0.03482858807354311,
+  "cg_spectral_embed_measured_seconds": 699.6
+ },
+ "seconds": 994.8984279632568,
+ "log": [
+  "========================================================================================================",
+  "  LOOP FUSION -- TRANSFORMER ARM: attention over random walks through the fused graph",
+  "========================================================================================================",
+  "",
+  "  GATES PREDECLARED IN THE DOCSTRING, BEFORE ANY NUMBER: E1 bridge reported; E2 combined",
+  "  beats A1 and A2 by more than the fold sd; E3 combined beats FAME; E4 combined beats",
+  "  DEGREE; E5 a degree-preserving rewiring destroys it, with the null checked for the",
+  "  ability to move FIRST; E6 the learned model against spectral_embed + ridge.",
+  "",
+  "E1 THE INTERMEDIATE IS USED AS BUILT, AND ITS BRIDGE IS REPORTED",
+  "     37,884 nodes = 16,492 genes + 12,931 reactions + 8,461 metabolites",
+  "     333,003 undirected edges over 7 channels: catalyses 23,225, consumes 27,582, produces 27,616, ppi 191,447, signal 17,432, regulate 55,716, complex 34,918",
+  "     THE BRIDGE: 23,225 catalyses edges; only 2,568 of 16,492 genes (15.6%) carry a GEM reaction",
+  "     matches the declared bridge (23,225 catalyses / 2,568 genes): True",
+  "     1,548 nodes are isolated in the combined graph",
+  "",
+  "THE TARGET AND THE SPLIT (D1)",
+  "     dep_frac finite: 15,913 genes, of which 9,802 are exactly 0.0",
+  "     used: 6,111 genes (present, finite, non-zero) -- this is the protocol's '~6,111'",
+  "     positives at dep_frac >= 0.5: 1,483 (24.3%)   median 0.040",
+  "     folds from default_rng(11100).integers(0,5,size=6111): 1218, 1197, 1247, 1253, 1196",
+  "     of the 6,111 scored genes only 1,008 (16.5%) carry a GEM reaction; the reaction arm is structurally blind to the other 5,103",
+  "",
+  "THE WALKS -- AND THE PRECONDITION FOR THE WHOLE ATTENTION QUESTION",
+  "     8 walks of length 12 per gene, uniform, seed 7; a degree-0 node stays put rather than inventing an edge",
+  "     A1 reaction-only     walks traversing a CATALYSES edge  16.5%   reaching a reaction node  16.5%   a metabolite  13.1%",
+  "                          tokens: gene 88.1% / reaction  8.2% / metabolite  3.6%   steps that go nowhere (degree 0) 83.5%   start genes isolated 83.5%",
+  "     A2 graph-only        walks traversing a CATALYSES edge   0.0%   reaching a reaction node   0.0%   a metabolite   0.0%",
+  "                          tokens: gene 100.0% / reaction  0.0% / metabolite  0.0%   steps that go nowhere (degree 0)  4.9%   start genes isolated  4.9%",
+  "     A3 combined          walks traversing a CATALYSES edge  15.4%   reaching a reaction node  15.4%   a metabolite   9.0%",
+  "                          tokens: gene 94.6% / reaction  3.5% / metabolite  1.9%   steps that go nowhere (degree 0)  4.6%   start genes isolated  4.6%",
+  "     READ THIS BEFORE ANY ACCURACY BELOW. In the COMBINED arm 15.4% of sampled walks traverse a catalyses edge and",
+  "     5.4% of all tokens are chemistry. Whatever the combined arm scores, that is the ceiling on how",
+  "     much of it the metabolic subgraph could possibly have supplied.",
+  "",
+  "A1 / A2 / A3 -- THE THREE GRAPHS, SAME MODEL, SAME FOLDS, SAME SEED",
+  "     TransformerEncoder 2 layers / 4 heads / d_model 64 / ff 128, pre-norm; Adam lr 0.002, wd 0.0001, <= 10 epochs, stop",
+  "     chosen on inner-validation SPEARMAN over a 15% split of the TRAINING folds only",
+  "     node, type and position embeddings all initialised N(0, 0.05) -- ONE scale.",
+  "     D4: with the node table at N(0,0.05) and the type table at torch's default N(0,1)",
+  "     the type vector was ~20x the node vector, the encoder's LayerNorm normalised node",
+  "     identity away, and inner-validation Spearman sat at 0.20 from epoch 0 while the",
+  "     mean-agg control reached 0.48. That would have been reported as 'attention loses",
+  "     to the mean'. It was an initialisation artefact. All three at N(0,1) was worse",
+  "     still (~0.11 both). Equal AND small is what works; measured on fold 0, disclosed.",
+  "     A1 reaction-only     rho +0.0787 +/- 0.0261    AUC 0.5621 +/- 0.0108   [stop epochs [6, 7, 8, 5, 3], 191s]",
+  "     A2 graph-only        rho +0.4334 +/- 0.0396    AUC 0.7789 +/- 0.0305   [stop epochs [9, 5, 5, 5, 8], 194s]",
+  "     A3 combined          rho +0.4262 +/- 0.0329    AUC 0.7758 +/- 0.0242   [stop epochs [9, 5, 5, 5, 9], 189s]",
+  "",
+  "B1 / B2 -- THE TWO BASELINES, SAME FOLDS",
+  "  feature sanity: 2/2 columns vary and are populated",
+  "     B1 FAME log1p(pubs)  rho +0.3175 +/- 0.0204    AUC 0.6822 +/- 0.0046",
+  "     B2 DEGREE combined   rho +0.3445 +/- 0.0152    AUC 0.7042 +/- 0.0141",
+  "",
+  "DOES ATTENTION BEAT MEAN AGGREGATION? -- the question this architecture exists to ask",
+  "     A3 combined ATTENTION      rho +0.4262 +/- 0.0329    AUC 0.7758 +/- 0.0242",
+  "     A3 combined MEAN-AGG       rho +0.4259 +/- 0.0258    AUC 0.7716 +/- 0.0129",
+  "     difference +0.0003; combined across-fold sd 0.0418 -- attention DOES NOT BEAT mean aggregation by more than the fold sd",
+  "     attention weight on walks that DO traverse a catalyses edge 0.1252 vs 0.1250 on walks that do not",
+  "     (uniform would be 0.1250; ratio 1.002)",
+  "     spread of the pooling weights within a gene, sd across its 8 walks: 0.0011",
+  "     THAT SPREAD IS ESSENTIALLY ZERO. The pooling attention collapsed to a mean, so",
+  "     any difference from the mean-agg control comes from the ENCODER's self-attention",
+  "     within a walk, not from selecting between walks. Said before it is read the",
+  "     other way round.",
+  "",
+  "E2 GATE -- THE COMBINED ARM MUST BEAT BOTH A1 AND A2 BY MORE THAN THE FOLD SD",
+  "     combined - A1 reaction-only     +0.3474   must exceed sd 0.0329   PASS",
+  "     combined - A2 graph-only        -0.0072   must exceed sd 0.0396   FAIL",
+  "     E2 FAIL -- fusion does NOT buy a separable gain over the better single graph",
+  "",
+  "E3 GATE -- THE COMBINED ARM MUST BEAT THE FAME BASELINE",
+  "     combined +0.4262 vs FAME log1p(pubs) +0.3175   delta +0.1086   E3 PASS",
+  "     margin against the fold sd: exceeds the across-fold sd (0.0329)",
+  "",
+  "E4 GATE -- THE COMBINED ARM MUST BEAT THE DEGREE BASELINE",
+  "     combined +0.4262 vs DEGREE +0.3445   delta +0.0817   E4 PASS",
+  "     margin against the fold sd: exceeds the across-fold sd (0.0329)",
+  "     Spearman(combined predictions, combined degree) = +0.3274 -- how much of",
+  "     what the transformer outputs is simply degree, restated",
+  "",
+  "E5 GATE -- A DEGREE-PRESERVING REWIRING MUST DESTROY THE EFFECT",
+  "     2 rewired replicates (D3), double-edge swap within node-type signature,",
+  "     5 passes, seeds 5100..5101",
+  "     null 0: 1,546,665 accepted swaps of 1,665,015 tried; degree preserved EXACTLY: True",
+  "             CAPABILITY CHECK first: 87.4% of walk tokens change (95.4% beyond the fixed start node) -- capable True",
+  "             rewired rho +0.1176 +/- 0.0577   AUC 0.5801",
+  "     null 1: 1,546,550 accepted swaps of 1,665,015 tried; degree preserved EXACTLY: True",
+  "             CAPABILITY CHECK first: 87.4% of walk tokens change (95.4% beyond the fixed start node) -- capable True",
+  "             rewired rho +0.1418 +/- 0.0454   AUC 0.5811",
+  "     the null is CAPABLE; its verdict is usable",
+  "     combined-arm held-out Spearman under a degree-preserving rewiring: real +0.4262  null +0.1297 +/- 0.0121  z +24.4  survives 30%",
+  "     raw ratio null/real = +0.304, printed as a RATIO and never as a survival",
+  "     percentage, because gate_guard is the only thing entitled to call it one",
+  "     E5 PASS -- the rewiring destroys the effect (D5: capable, defined, below half)",
+  "",
+  "E6 -- DOES THE LEARNED MODEL BEAT CG.spectral_embed + RIDGE, THE UNTRAINED FLOOR?",
+  "     D2: matvec Lanczos for the same eigenvectors; k=64. CG.spectral_embed's own",
+  "     shift-invert solver was timed on this machine in this session at 700 s for ONE arm at",
+  "     k=64 (sharing 4 threads with other work, so an upper bound); three arms do not",
+  "     fit the budget, and the substituted solver returns the same subspace.",
+  "     floor A1 reaction-only     rho +0.0347 +/- 0.0256    AUC 0.5324 +/- 0.0089   [7s]",
+  "     floor A2 graph-only        rho +0.5575 +/- 0.0244    AUC 0.8400 +/- 0.0118   [2s]",
+  "     floor A3 combined          rho +0.3913 +/- 0.0225    AUC 0.7384 +/- 0.0167   [8s]",
+  "     transformer combined +0.4262 vs untrained floor combined +0.3913   delta +0.0348",
+  "     against the BEST floor arm (FLOOR A2 graph-only) +0.5575: delta -0.1313",
+  "     E6 the learned model BEATS the untrained floor",
+  "",
+  "========================================================================================================",
+  "  PASS  E1 the intermediate is used as built and its bridge is reported",
+  "  FAIL  E2 combined beats A1 and A2 by more than the fold sd",
+  "  PASS  E3 combined beats the FAME baseline",
+  "  PASS  E4 combined beats the DEGREE baseline",
+  "  PASS  E5 a degree-preserving rewiring destroys the effect",
+  "  PASS  E6 the learned model beats the untrained spectral floor",
+  "========================================================================================================",
+  "",
+  "WHAT THIS ARM ACTUALLY FOUND",
+  "     the walks reach the chemistry 15.4% of the time, so the metabolic",
+  "     subgraph is a minority of what the attention ever sees, by construction of the E1",
+  "     bridge and not by any choice made here.",
+  "     attention vs mean aggregation: +0.0003 Spearman, inside the fold noise.",
+  "     rewiring with degree held fixed leaves a raw null/real ratio of +0.304 (30% certified survival).",
+  "",
+  "    manifest: 2 inputs, coverage 6111/15913 (38.4%) by 'filtered', seed 4242, controls 7"
+ ]
+}

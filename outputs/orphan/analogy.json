@@ -1,0 +1,17 @@
+{
+ "n_kos": 1160,
+ "K_neighbors": 15,
+ "tide_top": 100,
+ "top10_precision_ANALOGY": 0.307,
+ "top10_precision_RANDOM_neighbors": 0.103,
+ "top10_precision_PRIOR_tide": 0.168,
+ "specific_mover_recall50_ANALOGY": 0.288,
+ "specific_mover_recall50_RANDOM": 0.044,
+ "specific_mover_recall50_PRIOR": 0.0,
+ "n_kos_with_specific_movers": 913,
+ "median_specific_movers_per_ko": 6,
+ "cross_ko_prediction_overlap_top50": 0.232,
+ "median_nonzero_neighbors": 15,
+ "verdict": "THE COMBINATION WORKS -- and it SURVIVES the control. Analogy/transfer reads KO-SPECIFIC far-field that the graph and the generic prior miss. On the decisive test -- recovering the SPECIFIC movers OUTSIDE the global tide (top-100), which the climatology prior cannot get by construction -- functional-neighbour transfer gets recall@50 0.288, vs prior 0.0 and vs the RANDOM-neighbour control 0.044 (so the gain is from FUNCTIONAL similarity, +0.244 over random averaging, not just from averaging strong profiles). It also lifts top-10 precision to 0.307 (random 0.103, prior 0.168), and its predictions are genuinely KO-specific (cross-KO overlap 0.232 vs the old forecast's 0.779). So the reproducible-but-unpredicted far field IS partly readable -- the right lens was ANALOGY to functionally-similar knockouts, not the protein graph. This is a real, buildable gain (a genuine partial breach of the far-field wall) worth wiring in as a forecast component; the honest caveat is the absolute specific-recall (~29%) is still modest and the movers are a functional-neighbourhood signal, not per-gene mechanism.",
+ "note": "THE COMBINATION WORKS -- and it SURVIVES the control. Analogy/transfer reads KO-SPECIFIC far-field that the graph and the generic prior miss. On the decisive test -- recovering the SPECIFIC movers OUTSIDE the global tide (top-100), which the climatology prior cannot get by construction -- functional-neighbour transfer gets recall@50 0.288, vs prior 0.0 and vs the RANDOM-neighbour control 0.044 (so the gain is from FUNCTIONAL similarity, +0.244 over random averaging, not just from averaging strong profiles). It also lifts top-10 precision to 0.307 (random 0.103, prior 0.168), and its predictions are genuinely KO-specific (cross-KO overlap 0.232 vs the old forecast's 0.779). So the reproducible-but-unpredicted far field IS partly readable -- the right lens was ANALOGY to functionally-similar knockouts, not the protein graph. This is a real, buildable gain (a genuine partial breach of the far-field wall) worth wiring in as a forecast component; the honest caveat is the absolute specific-recall (~29%) is still modest and the movers are a functional-neighbourhood signal, not per-gene mechanism."
+}

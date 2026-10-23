@@ -1,0 +1,59 @@
+{
+ "n_cd4_kos": 20,
+ "n_shared_genes": 4881,
+ "Q1_tide_conservation_spearman_CD4_vs_K562": -0.065,
+ "top50_usual_suspect_overlap": 0,
+ "expected_by_chance": 0.5,
+ "Q2_magnitude_nmovers_vs_essentiality_spearman": 0.286,
+ "Q2_magnitude_nmovers_vs_ppi_degree_spearman": 0.4,
+ "cd4_top_movers": [
+  "MEX3B",
+  "CPXM1",
+  "RTEL1",
+  "EPS15",
+  "ZNF638",
+  "ELF2",
+  "CYSTM1",
+  "THOC3",
+  "SORBS3",
+  "HSPA5",
+  "DNM1",
+  "GALNT4"
+ ],
+ "example_cd4_kos_by_response": [
+  [
+   "CD3D",
+   8370
+  ],
+  [
+   "LCP2",
+   8321
+  ],
+  [
+   "ARID1A",
+   7526
+  ],
+  [
+   "RASA2",
+   7191
+  ],
+  [
+   "STAT6",
+   7150
+  ],
+  [
+   "CDKN1B",
+   6939
+  ],
+  [
+   "TCEB2",
+   6352
+  ],
+  [
+   "LAG3",
+   6337
+  ]
+ ],
+ "verdict": "THE GENERIC TIDE IS LARGELY CELL-TYPE-SPECIFIC even at the program level (leukemia vs primary CD4 T cell) -- honest. The 'usual suspect' mover program correlates at only Spearman -0.065 between K562 and primary CD4 T cells (0/50 top-usual-suspect overlap vs 0.5 by chance), so even the GENERIC stress response -- the part that transfers between cancer lines (K562<->RPE1<->HCT116) -- does not simply carry over to a primary immune cell. Two honest reasons: the CD4 screen perturbs T-cell-signalling genes (activation programs) very different from the ribosome/proteostasis stress of essential-gene knockdowns, and primary T cells have a distinct baseline transcriptome. Magnitude intuition partly carries (n_movers vs essentiality Spearman 0.286). NET: transfer to a primary, functionally-distinct cell type is weak -- consistent with the cross-cell-line finding that the response is strongly cell-type-conditioned, and stronger here because the cell type AND the perturbation biology both differ. The model's generic tide is a cancer-cell-stress program, not a universal one. (0 shared KOs -> specific far-field untestable here; the 22M-cell CD4 screen would give more KOs but is impractical to stream in this sandbox.)",
+ "note": "THE GENERIC TIDE IS LARGELY CELL-TYPE-SPECIFIC even at the program level (leukemia vs primary CD4 T cell) -- honest. The 'usual suspect' mover program correlates at only Spearman -0.065 between K562 and primary CD4 T cells (0/50 top-usual-suspect overlap vs 0.5 by chance), so even the GENERIC stress response -- the part that transfers between cancer lines (K562<->RPE1<->HCT116) -- does not simply carry over to a primary immune cell. Two honest reasons: the CD4 screen perturbs T-cell-signalling genes (activation programs) very different from the ribosome/proteostasis stress of essential-gene knockdowns, and primary T cells have a distinct baseline transcriptome. Magnitude intuition partly carries (n_movers vs essentiality Spearman 0.286). NET: transfer to a primary, functionally-distinct cell type is weak -- consistent with the cross-cell-line finding that the response is strongly cell-type-conditioned, and stronger here because the cell type AND the perturbation biology both differ. The model's generic tide is a cancer-cell-stress program, not a universal one. (0 shared KOs -> specific far-field untestable here; the 22M-cell CD4 screen would give more KOs but is impractical to stream in this sandbox.)"
+}

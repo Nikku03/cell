@@ -1,0 +1,259 @@
+{
+ "screens": {
+  "pilot": [
+   "GATA1",
+   "GATA2",
+   "NT"
+  ],
+  "large": [
+   "ARID2",
+   "ARID3A",
+   "ATF1",
+   "ATF3",
+   "BCLAF1",
+   "BRF2",
+   "CAD",
+   "CDC5L",
+   "CEBPB",
+   "CEBPZ",
+   "CTCF",
+   "CUX1",
+   "ELF1",
+   "FOSL1",
+   "GABPA",
+   "GATA1",
+   "GTF2B",
+   "HINFP",
+   "HSPA5",
+   "KLF1",
+   "KLF16",
+   "MAX",
+   "MYC",
+   "NFE2",
+   "NFYB",
+   "NRF1",
+   "NT",
+   "PBX2",
+   "POLR1D",
+   "REST",
+   "RPL9",
+   "SETDB1",
+   "TBP",
+   "TFDP1",
+   "THAP1",
+   "TRIM28",
+   "YY1",
+   "ZBTB11",
+   "ZNF280A",
+   "ZNF407",
+   "ZZZ3"
+  ]
+ },
+ "testA_self_drop": {
+  "ARID3A": 0.099,
+  "ATF1": 0.081,
+  "ATF3": -0.275,
+  "CEBPB": -0.14,
+  "CTCF": 0.05,
+  "CUX1": 0.054,
+  "ELF1": 0.039,
+  "FOSL1": -0.844,
+  "GABPA": 0.1,
+  "GATA1": -2.346,
+  "GATA2": -0.114,
+  "HINFP": -0.02,
+  "KLF1": -0.891,
+  "KLF16": 0.01,
+  "MAX": 0.113,
+  "MYC": 0.103,
+  "NFE2": -1.131,
+  "NFYB": -0.195,
+  "NRF1": -0.152,
+  "PBX2": 0.043,
+  "REST": -0.017,
+  "TBP": 0.061,
+  "TFDP1": -0.04,
+  "THAP1": -0.033,
+  "YY1": 0.023
+ },
+ "testA_n_dropped": 4,
+ "testA_n": 25,
+ "testB_n_both": 227,
+ "testB_chromatin_active": 70,
+ "testB_active_and_mrna_silent": 67,
+ "testB_active_and_mrna_moved": 3,
+ "testB_top_active_silent": [
+  [
+   "GATA2",
+   -2.394,
+   -15.2,
+   0.0
+  ],
+  [
+   "GATA1",
+   -2.346,
+   -15.5,
+   0.0
+  ],
+  [
+   "TAL1",
+   -2.346,
+   -15.5,
+   0.0
+  ],
+  [
+   "RUNX1",
+   1.109,
+   14.8,
+   0.0
+  ],
+  [
+   "ETV4",
+   1.053,
+   12.9,
+   0.0
+  ],
+  [
+   "CTCF",
+   1.006,
+   10.4,
+   0.0
+  ],
+  [
+   "FOXM1",
+   0.942,
+   14.9,
+   0.0
+  ],
+  [
+   "ETV6",
+   0.885,
+   12.1,
+   0.0
+  ],
+  [
+   "ELF1",
+   0.865,
+   11.5,
+   0.0
+  ],
+  [
+   "RUNX2",
+   0.836,
+   13.7,
+   0.0
+  ],
+  [
+   "MECOM",
+   -0.83,
+   -13.1,
+   0.0
+  ],
+  [
+   "ELF2",
+   0.828,
+   10.9,
+   0.0
+  ],
+  [
+   "CTCFL",
+   0.813,
+   10.5,
+   0.0
+  ],
+  [
+   "FOXG1",
+   0.791,
+   12.9,
+   0.0
+  ],
+  [
+   "FOXK1",
+   0.791,
+   12.9,
+   0.0
+  ]
+ ],
+ "myc_mrna_z": 0.0,
+ "myc_chromatin_delta": -0.252,
+ "myc_chromatin_t": -5.1,
+ "testC_intermediates": [
+  [
+   "BACH1",
+   0.0,
+   0.296
+  ],
+  [
+   "GATA1",
+   0.0,
+   -2.346
+  ],
+  [
+   "GATA2",
+   0.0,
+   -2.394
+  ],
+  [
+   "GFI1B",
+   0.0,
+   0.652
+  ],
+  [
+   "HOXB2",
+   2.012,
+   0.173
+  ],
+  [
+   "KLF1",
+   0.0,
+   -0.428
+  ],
+  [
+   "MYB",
+   0.0,
+   -0.075
+  ],
+  [
+   "MYC",
+   0.0,
+   -0.252
+  ],
+  [
+   "NFE2",
+   0.0,
+   0.459
+  ],
+  [
+   "NFIL3",
+   0.0,
+   0.191
+  ],
+  [
+   "RUNX1",
+   0.0,
+   1.109
+  ],
+  [
+   "SPI1",
+   1.845,
+   1.908
+  ],
+  [
+   "STAT1",
+   0.0,
+   0.595
+  ],
+  [
+   "TAL1",
+   0.0,
+   -2.346
+  ],
+  [
+   "WT1",
+   0.0,
+   0.32
+  ]
+ ],
+ "verdict": "PERTURB-ATAC (perturb_atac.py): the user asked to MEASURE ACTIVITY, not abundance -- so we brought in Spear-ATAC (GSE168851, K562 CRISPRi + scATAC) and used chromVAR motif activity (openness of a TF's binding sites) as a direct activity readout, comparing it to our Perturb-seq mRNA of the same knockdowns. TEST A (validation): knocking a TF down drops its OWN motif activity for 4/25 tested TFs -- and the ones that work are exactly the SEQUENCE-SPECIFIC lineage TFs whose activity IS chromatin accessibility (FOSL1, GATA1, KLF1, NFE2; GATA1 -2.35 z), while general/basal factors (TBP, POLR1D, MYC/MAX, CTCF) show little. So chromatin-activity is a real but SELECTIVE readout -- it sees the factors that shape accessibility, not the whole proteome. TEST B (the payoff): in the GATA1 knockdown, of 227 TFs measured in both layers, 67 are chromatin-ACTIVE while mRNA-SILENT -- their regulatory activity changed even though their mRNA level never moved, which is exactly the buffering the user predicted and the reason hop_accountability's mRNA-only audit called those hops 'broken'. MYC is the poster child: mRNA z=+0.00 (flat) but MYC-motif chromatin activity \u0394=-0.25z -- the 'silent' intermediate was active after all. CONCLUSION: the activity layer (chromatin) sees regulatory changes that mRNA abundance misses, confirming that 'silent in mRNA' does NOT mean 'not involved' -- it often means buffered abundance with changed activity. This is the readout that would let us trace what the mRNA-only ceiling cannot. Honest caveat: chromVAR motifs are FAMILY-level (a motif is shared by related TFs), so this is activity of the TF's binding-site family, not proof of the single protein; and Spear-ATAC covers ~36 K562 TFs, not the genome. Still, it is direct experimental evidence that the missing signal lives in activity, not abundance. Deterministic.",
+ "note": "PERTURB-ATAC (perturb_atac.py): the user asked to MEASURE ACTIVITY, not abundance -- so we brought in Spear-ATAC (GSE168851, K562 CRISPRi + scATAC) and used chromVAR motif activity (openness of a TF's binding sites) as a direct activity readout, comparing it to our Perturb-seq mRNA of the same knockdowns. TEST A (validation): knocking a TF down drops its OWN motif activity for 4/25 tested TFs -- and the ones that work are exactly the SEQUENCE-SPECIFIC lineage TFs whose activity IS chromatin accessibility (FOSL1, GATA1, KLF1, NFE2; GATA1 -2.35 z), while general/basal factors (TBP, POLR1D, MYC/MAX, CTCF) show little. So chromatin-activity is a real but SELECTIVE readout -- it sees the factors that shape accessibility, not the whole proteome. TEST B (the payoff): in the GATA1 knockdown, of 227 TFs measured in both layers, 67 are chromatin-ACTIVE while mRNA-SILENT -- their regulatory activity changed even though their mRNA level never moved, which is exactly the buffering the user predicted and the reason hop_accountability's mRNA-only audit called those hops 'broken'. MYC is the poster child: mRNA z=+0.00 (flat) but MYC-motif chromatin activity \u0394=-0.25z -- the 'silent' intermediate was active after all. CONCLUSION: the activity layer (chromatin) sees regulatory changes that mRNA abundance misses, confirming that 'silent in mRNA' does NOT mean 'not involved' -- it often means buffered abundance with changed activity. This is the readout that would let us trace what the mRNA-only ceiling cannot. Honest caveat: chromVAR motifs are FAMILY-level (a motif is shared by related TFs), so this is activity of the TF's binding-site family, not proof of the single protein; and Spear-ATAC covers ~36 K562 TFs, not the genome. Still, it is direct experimental evidence that the missing signal lives in activity, not abundance. Deterministic."
+}

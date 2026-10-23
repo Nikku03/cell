@@ -1,0 +1,154 @@
+{
+ "test": "scaling_ceiling",
+ "post_hoc": true,
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/clinvar.vcf.gz",
+    "bytes": 193118277,
+    "hash": "a31a293e659799bc",
+    "method": "sha256:ends8M"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/_pubs_by_symbol.json",
+    "bytes": 2934870,
+    "hash": "fef34573f067e4d3",
+    "method": "sha256:full"
+   },
+   {
+    "path": "outputs/loop_pocket.json",
+    "bytes": 7405,
+    "hash": "03143f0761ce6b51",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 81,
+   "used": 81,
+   "selection": "filtered",
+   "fraction": 1.0
+  },
+  "seed": 0,
+  "controls": [
+   "protein length partialled out",
+   "number of annotated sites partialled out",
+   "both partialled out together"
+  ],
+  "note": "POST-HOC on loop 60. Not a gate. UniProt counts are a recorded remote census, not re-fetched per run",
+  "warnings": []
+ },
+ "uniprot": {
+  "reviewed human proteins": 20431,
+  "with a binding-site annotation": 4808,
+  "with an active-site annotation": 2321,
+  "with any experimental 3D structure": 8844,
+  "with an AlphaFold model": 20431
+ },
+ "clinvar_tiers": {
+  "1": 4448,
+  "10": 1276,
+  "30": 497,
+  "50": 296,
+  "100": 139,
+  "200": 45
+ },
+ "fame": {
+  "AUC ~ papers": {
+   "rho": -0.34611953615052304,
+   "p": 0.0015503039790956737
+  },
+  "AUC ~ length": {
+   "rho": 0.2122088099594408,
+   "p": 0.05718198138556327
+  },
+  "AUC ~ n annotated sites": {
+   "rho": -0.4200687863061285,
+   "p": 9.458124662813418e-05
+  },
+  "AUC ~ papers | length": {
+   "rho": -0.3366531165311653,
+   "p": 0.002119063293656984
+  },
+  "AUC ~ papers | n sites": {
+   "rho": -0.27335140018066845,
+   "p": 0.013543601005068406
+  },
+  "AUC ~ papers | length + n sites": {
+   "rho": -0.28683378500451673,
+   "p": 0.009426726359150817
+  }
+ },
+ "quartiles": [
+  {
+   "q": 1,
+   "n": 21,
+   "lo": 82.0,
+   "hi": 230.00000000000009,
+   "mean_auc": 0.8116340272587805
+  },
+  {
+   "q": 2,
+   "n": 21,
+   "lo": 230.00000000000009,
+   "hi": 411.99999999999994,
+   "mean_auc": 0.833783994160444
+  },
+  {
+   "q": 3,
+   "n": 21,
+   "lo": 411.99999999999994,
+   "hi": 832.0000000000001,
+   "mean_auc": 0.7614972793507889
+  },
+  {
+   "q": 4,
+   "n": 21,
+   "lo": 832.0000000000001,
+   "hi": 20402.000000000007,
+   "mean_auc": 0.6608536746147794
+  }
+ ],
+ "log": [
+  "====================================================================================================",
+  "  WHOLE-PROTEOME STRUCTURE -- what is actually gated by it, and what is not",
+  "  the fame correlation below is POST-HOC on loop 60 and is not one of its gates",
+  "====================================================================================================",
+  "",
+  "  THE ANNOTATION CEILING (reviewed human proteome)",
+  "      20,431  reviewed human proteins   (100.0%)",
+  "       4,808  with a binding-site annotation   (23.5%)",
+  "       2,321  with an active-site annotation   (11.4%)",
+  "       8,844  with any experimental 3D structure   (43.3%)",
+  "      20,431  with an AlphaFold model   (100.0%)",
+  "",
+  "  THE CLINVAR LABEL CEILING -- genes by pathogenic missense count",
+  "     >=    1 pathogenic missense:  4,448 genes",
+  "     >=   10 pathogenic missense:  1,276 genes",
+  "     >=   30 pathogenic missense:    497 genes",
+  "     >=   50 pathogenic missense:    296 genes",
+  "     >=  100 pathogenic missense:    139 genes",
+  "     >=  200 pathogenic missense:     45 genes",
+  "     this project uses 141 genes; 139 genes in all of ClinVar reach 100.",
+  "     the pathogenicity model is therefore AT its label ceiling, not below it",
+  "",
+  "  DOES THE POCKET FINDER NEED THE PROTEIN TO BE WELL STUDIED?   n=81",
+  "     AUC ~ papers                       rho -0.3461   p 0.0016",
+  "     AUC ~ length                       rho +0.2122   p 0.0572",
+  "     AUC ~ n annotated sites            rho -0.4201   p 0.0001",
+  "     AUC ~ papers | length              rho -0.3367   p 0.0021",
+  "     AUC ~ papers | n sites             rho -0.2734   p 0.0135",
+  "     AUC ~ papers | length + n sites    rho -0.2868   p 0.0094",
+  "",
+  "     quartile 1 by papers: n= 21      82-   230 papers   mean AUC 0.8116",
+  "     quartile 2 by papers: n= 21     230-   412 papers   mean AUC 0.8338",
+  "     quartile 3 by papers: n= 21     412-   832 papers   mean AUC 0.7615",
+  "     quartile 4 by papers: n= 21     832- 20402 papers   mean AUC 0.6609",
+  "",
+  "     the sign is NEGATIVE and survives every control. In this repository publication count",
+  "     predicts cancer drivers at 0.8259 and was the best drug feature at 0.7913; here it",
+  "     runs the other way. The untested alternative is that famous proteins accumulate",
+  "     marginal site annotations a pocket detector should be expected to miss.",
+  "    manifest: 3 inputs, coverage 81/81 (100.0%) by 'filtered', seed 0, controls 3"
+ ]
+}

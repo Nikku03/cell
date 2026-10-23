@@ -1,0 +1,75 @@
+{
+  "feedback": [
+    {
+      "round": 1,
+      "added": 500,
+      "true": 222,
+      "precision": 0.444,
+      "mean_shared_nb": 10.850000381469727,
+      "cum_true": 222,
+      "auc_remaining": 0.9594849856959026
+    },
+    {
+      "round": 2,
+      "added": 500,
+      "true": 148,
+      "precision": 0.296,
+      "mean_shared_nb": 14.496000289916992,
+      "cum_true": 370,
+      "auc_remaining": 0.9575227394049726
+    },
+    {
+      "round": 3,
+      "added": 500,
+      "true": 154,
+      "precision": 0.308,
+      "mean_shared_nb": 18.847999572753906,
+      "cum_true": 524,
+      "auc_remaining": 0.9556852344190592
+    },
+    {
+      "round": 4,
+      "added": 500,
+      "true": 223,
+      "precision": 0.446,
+      "mean_shared_nb": 32.52199935913086,
+      "cum_true": 747,
+      "auc_remaining": 0.9518582644842988
+    },
+    {
+      "round": 5,
+      "added": 500,
+      "true": 174,
+      "precision": 0.348,
+      "mean_shared_nb": 28.038000106811523,
+      "cum_true": 921,
+      "auc_remaining": 0.9490525237736746
+    },
+    {
+      "round": 6,
+      "added": 500,
+      "true": 153,
+      "precision": 0.306,
+      "mean_shared_nb": 26.687999725341797,
+      "cum_true": 1074,
+      "auc_remaining": 0.946491934279987
+    }
+  ],
+  "one_shot": [
+    {
+      "round": 1,
+      "added": 3000,
+      "true": 1187,
+      "precision": 0.39566666666666667,
+      "mean_shared_nb": 22.714000701904297,
+      "cum_true": 1187,
+      "auc_remaining": 0.9440177390129475
+    }
+  ],
+  "held": 3444,
+  "feedback_true": 1074,
+  "one_shot_true": 1187,
+  "feedback_helps": false,
+  "precision_decays": true,
+  "verdict": "CAN THE NETWORK COMPLETE ITSELF? Feeding the 2-step K562 chain's own predictions back into the graph and re-running it for 6 rounds of 500 edges adds 3000 edges, of which 1074 (35.8%) are genuinely held-out true edges -- recovering 31.2% of the 3444 hidden edges. BUT THE FEEDBACK LOOP IS NOT WHAT DOES IT. Ranking ONCE on the original graph and taking the same 3000 pairs in a single shot recovers 1187 (39.6%), which is no worse. Recomputing the chain on the augmented graph buys -113 edges, so the loop is re-reading structure it already had. AND PRECISION DECAYS AS IT GOES: round 1 is 0.444 and round 6 is 0.306. THE SELF-CONFIRMATION TELL is where the additions land: the mean shared-neighbour count of the edges added goes 10.9 -> 26.7 from the first round to the last. It RISES, which is the collapse-inward signature -- each round adds edges in denser territory than the last, because the previous round's additions manufactured the shared neighbours that justify them. The graph is getting more confident about the part it already knew. WHAT THIS CANNOT SAY. An addition is scored TRUE only if it is one of the 3444 held-out edges; the premise of completion is that the database is incomplete, so some additions scored false may be real undiscovered edges. Every precision here is therefore a LOWER BOUND, valid for comparing rounds and arms -- which is all it is used for -- and NOT a discovery rate. The universe is knockout-knockout pairs only."
+}

@@ -1,0 +1,36 @@
+{
+ "node": {
+  "test": 439,
+  "ko_in_readout": 419,
+  "ko_has_edge": 381,
+  "movers": 3510,
+  "movers_in_graph": 2896
+ },
+ "edge": {
+  "median_degree": 71.0,
+  "coverage_mean": 0.04786423547548193,
+  "precision_mean": 0.01632787086269651,
+  "zero_cov_frac": 0.6666666666666666,
+  "ceiling_recall": 0.04783539292695434,
+  "by_channel": {
+   "reaction": 0.0003527227080804623,
+   "complex": 0.0004110780303318768,
+   "PPI": 0.04372920638254974,
+   "coexpr": 0.005308385713640676,
+   "signed-reg": 0.0019166769175977612
+  }
+ },
+ "split": {
+  "actual": 0.02835836044516147,
+  "ceiling": 0.04783539292695434,
+  "lost_ranking": 0.019477032481792868,
+  "lost_reach": 0.9521646070730456
+ },
+ "spec": {
+  "target": 0.3502,
+  "median_movers": 15.0,
+  "observed_precision": 0.01632787086269651,
+  "precision_needed_at_50_edges": 0.10506,
+  "fold_precision_gap": 6.434396798178105
+ }
+}

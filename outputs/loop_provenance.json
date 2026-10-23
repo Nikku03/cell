@@ -1,0 +1,98 @@
+{
+  "test": "loop_provenance",
+  "manifest": {
+    "manifest_version": 1,
+    "inputs": [
+      {
+        "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+        "bytes": 38524393,
+        "hash": "b857a72939e09be8",
+        "method": "sha256:full"
+      }
+    ],
+    "coverage": {
+      "available": 7700,
+      "used": 7700,
+      "selection": "all",
+      "fraction": 1.0
+    },
+    "seed": 1904,
+    "controls": [
+      "exact floating-point reconstruction rather than approximate",
+      "repository-wide grep for the emitting module",
+      "random_at10 as the producer's own built-in random baseline"
+    ],
+    "note": "recovers what can be recovered without the producer, from the artefact",
+    "warnings": []
+  },
+  "gates": {
+    "W1 arithmetic reconstructs": true,
+    "W2 stored as top-k": true,
+    "W3 producer absent": true,
+    "W4 lists are reliable": false
+  },
+  "meta": {
+    "lift": 8.719008189262967,
+    "n_train": 8792,
+    "pc_r2": -0.0503350952547124,
+    "random_at10": 0.0011375270162666364,
+    "recall_at10": 0.00991810737033667
+  },
+  "candidates": 8791,
+  "k_stored": 8,
+  "producer_files": [],
+  "recall_at10": 0.00991810737033667,
+  "lift": 8.719008189262967,
+  "conf_distribution": {
+    "low": 4286,
+    "high": 2546,
+    "medium": 868
+  },
+  "log": [
+    "====================================================================================================",
+    "WHAT MADE model4 -- reconstructed from the artefact, because the producer is gone",
+    "====================================================================================================",
+    "  40 of 42 blocks have no known producer. model4 tops that backlog because two loops depend on",
+    "  it. Its metadata is five floats nobody had looked at, and they are enough.",
+    "\n  model4_meta as stored:",
+    "    lift           8.719008189262967",
+    "    n_train        8792",
+    "    pc_r2          -0.0503350952547124",
+    "    random_at10    0.0011375270162666364",
+    "    recall_at10    0.00991810737033667",
+    "\n  W1 THE ARITHMETIC RECONSTRUCTS",
+    "    10 / random_at10          = 8791.000000  ->  8,791 candidates",
+    "    10 / 8791 reproduces random_at10 exactly : True",
+    "    n_train - 1               = 8,791   MATCHES",
+    "    recall/random = 8.719008189262967 vs stored lift 8.719008189262967 : True",
+    "    W1 PASS",
+    "    So: a learned RETRIEVAL model. For each of 8,792 genes, rank the other 8,791 and keep",
+    "    the top few. `neighbors` is a ranking's output. It is not a measurement of anything.",
+    "\n  W2 STORED AS TOP-K -- neighbour list lengths: {8: 7700}",
+    "    every one of 7,700 genes carries exactly 8 neighbours   W2 PASS",
+    "    A fixed list length is what top-k retrieval emits. A contact map or an interaction",
+    "    assay emits a VARIABLE number, because different loci have different numbers of",
+    "    partners. Note the mismatch worth recording: evaluated at k=10, stored at k=8.",
+    "\n  W3 THE PRODUCER IS ABSENT -- python files emitting ['recall_at10', 'random_at10', 'pc_r2', 'model4_meta']: NONE",
+    "    W3 PASS",
+    "\n  W4 THE LISTS ARE RELIABLE -- recall@10 0.009918 = 0.99%, random 0.11%, lift 8.72x",
+    "    gate >= 5%   W4 FAIL",
+    "    The model that produced these neighbour lists finds 0.99% of its own targets in",
+    "    its top ten. It beats random by 8.7x, which is real, and it is still under one",
+    "    in a hundred. And pc_r2 is -0.0503 -- NEGATIVE, meaning that component",
+    "    predicted worse than a constant. Every result built on these lists inherits that",
+    "    ceiling, including loops 6 and 7.",
+    "\n====================================================================================================",
+    "  W1 arithmetic reconstructs        PASS",
+    "  W2 stored as top-k                PASS",
+    "  W3 producer absent                PASS",
+    "  W4 lists are reliable             FAIL",
+    "  PROVENANCE PARTLY RECOVERED, AND IT LOWERS THE VALUE OF TWO EARLIER LOOPS.",
+    "  model4 is a learned retrieval model's top-8 output over 8,791 candidates, with a recorded",
+    "  recall@10 of 0.99% and a negative pc_r2. The producer is still not in this repository, so",
+    "  the backlog is not shorter -- but the entry is no longer blank. Loops 6 and 7 measured",
+    "  real effects on those lists; what this says is what the lists themselves are worth.",
+    "====================================================================================================",
+    "    manifest: 1 inputs, coverage 7700/7700 (100.0%) by 'all', seed 1904, controls 3"
+  ]
+}
