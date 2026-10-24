@@ -5542,3 +5542,30 @@ NOTEBOOK SECTION 13 -- THE NAMELESS-DOCUMENTS TEST: VERDICT UNRESOLVED (THE GAIN
   principle also let the model recall a complex's published results; this test cannot separate that from
   biology. Section 12's F4 BETTER stands as recorded, with this caveat attached. One fine-tuning seed per
   arm: the N3 miss (0.0098 vs 0.0100) is well inside seed-to-seed variation, which was not measured.
+
+=================================================================================================
+NOTEBOOK SECTION 14 -- THE SELFISH-GENE AIM: IT HELPS NOTHING, BECAUSE THE MODELS ALREADY KNOW IT
+=================================================================================================
+  Gates G1-G5 and the verdict rule predeclared in the notebook (pushed before the run). Run by the user
+  on a Colab A100; numbers from the printed output. The aim = threat to growth (K562's own DepMap effect,
+  TRAIN answers only), grow-vs-protect (score on the top TRAIN response pattern: translation-elongation
+  genes on one side, lysosome / autophagy / ROS / receptor-recycling genes on the other) and shake size.
+        median / mean r on TEST: ENGINE 0.226 / 0.228 | AIM-ENGINE 0.227 / 0.220 | RIDGE 0.181 / 0.170 |
+        RIDGE + predicted aim 0.188 / 0.178 | LLM-FT 0.194 / 0.205 | LLM-FT-AIM 0.190 / 0.191 |
+        ensembles 0.205 (named) / 0.204 (aim) | upper bound 0.315
+  G1 aim helps the engine: -0.0010 -> NO DIFFERENCE.   G3 aim helps ridge: +0.0020 -> NO DIFFERENCE.
+  G4 aim helps the LLM: -0.0085 (1,030 / 1,495) -> NO DIFFERENCE (if anything, slightly worse).
+  G2 aim engine vs ridge: +0.0268 (1,823 / 702, p 7e-114) -> BETTER -- carried by the engine, not the aim (G1).
+  G5 aim ensemble vs ridge: +0.0100 -> BETTER, at the bar; the same as section 12's ensemble without the aim.
+  VERDICT by the predeclared rule: THE AIM HELPS NOTHING.
+  DESCRIPTIVE: the aim itself is predictable for unseen genes -- threat to growth rho 0.87 / essential AUROC
+  0.97 (engine and ridge, from other cell lines' DepMap); the LLM from the gene's TEXT alone reaches rho 0.64
+  / AUROC 0.88; grow-vs-protect r 0.62-0.64 for all three. Reading: the selfish-gene balance IS the biggest
+  pattern in the data, so every model already learns it; stating it explicitly adds no information.
+  THE LLM'S EXPLANATIONS (base model, adapters off, 4 random TEST genes) were fluent but uniform: all four
+  said the cell shifts toward protection with autophagy up, while all four measured grow-vs-protect scores
+  sat on the translation side (+0.1 to +0.6). The principle made the narratives generic. Also: labelling
+  the translation side 'growth' is my interpretation of a data pattern, not a measurement of growth.
+  NEW AND UNEXPLAINED: the plain ENGINE (section 9) scores 0.226 vs ridge 0.181 in this run -- the largest
+  gap so far (72% of the upper bound). Which part carries it (the LLM vectors, memory + snapped steps, or
+  the Pearson-loss training that the MLP also has) is answered by section 10's E1-E5, not yet reported here.
