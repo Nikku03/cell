@@ -32,6 +32,7 @@ What it does, step by step:
 6. **LLM action.** For a few random TEST genes, the LLM reads the engine's predicted pathway changes and writes a mechanism and an experiment to test it. Its output is labelled as a hypothesis.
 7. **Fine-tuning the LLM on documents → results (QLoRA).** The LLM is taught, on TRAIN genes only, to read a gene's Atlas document and predict what was actually measured when that gene was knocked down. It then predicts TEST genes it never saw. Only small adapter layers (LoRA) and a prediction head are trained.
 9. **The aim (section 14).** The selfish-gene view, given to the models as an objective: a cell like K562 is organised around growing and dividing; losing a gene shifts it between GROWTH and PROTECTION. The engine and the LLM both learn to predict that aim first, and the LLM also reads it as a guiding principle.
+10. **A bigger engine (section 15).** The same engine at four sizes (wider, deeper trees, more reasoning steps, more memories read per step), each beside a plain neural net with the same number of parameters.
 8. **The nameless-documents test.** The LLM was pretrained on public text that may include these screens' papers. If it does well only because it recognises the gene's *name* and recalls published results, that is memory, not reasoning. Section 13 fine-tunes again, from scratch and with identical settings, on documents with the gene's name, aliases and full name removed. A second version also replaces the interaction partners' names with a count.
 
 **Runtime.** About 45–90 min on an A100 for sections 1–11, plus about 30 min per fine-tuning run: one in section 12, two in section 13 (set `RUN_STRICT = False` to skip the second), and one in section 14. Most of that is downloading the model weights (≈61 GB) and the data, plus the LLM pass over ~5,000 genes. On a 40 GB A100 the LLM loads in 4-bit; on 80 GB, in bf16.
@@ -105,6 +106,30 @@ Reported, not tested: how well each model predicts the aim itself on TEST genes 
 - **THE AIM HELPS THE LLM** if G4 is BETTER.
 - If G3 is also BETTER, the gain is from the extra K562 survival data, not the principle.
 - **THE AIM HELPS NOTHING** if G1, G3 and G4 are all not BETTER.
+
+**The size tests (section 15), same rule.**
+
+| Size | Units | Tree depth | Steps | Memories per step |
+|---|---|---|---|---|
+| S (as in section 9) | 96 | 2 | 3 | 16 |
+| M | 192 | 2 | 4 | 24 |
+| L | 256 | 3 | 6 | 32 |
+| XL | 384 | 3 | 8 | 48 |
+
+The best size is chosen by held-out TRAIN r only; TEST decides nothing.
+
+| Test | Comparison | Question |
+|---|---|---|
+| **Z1** | CHOSEN vs S | Does bigger help? **Primary.** |
+| **Z2** | CHOSEN vs a plain net of the same parameter count | Does size help the engine's design, or any network? |
+| **Z3** | CHOSEN vs RIDGE | For reference. |
+
+**Verdicts, fixed now.**
+- **BIGGER HELPS** if Z1 is BETTER.
+- **…AND THE ENGINE'S DESIGN MATTERS** if Z2 is also BETTER.
+- **SIZE DOES NOT HELP** if S is chosen or Z1 is not BETTER.
+
+Expectation, written before the run: with ~2,300 training genes and an upper bound of 0.315, gains will be small, and the largest sizes may memorise.
 
 **Caveats, stated now.**
 - The LLM was trained on public text that may include papers describing these very knockdowns. A gain from the LLM could partly be remembered results, not reasoning.
@@ -1129,11 +1154,94 @@ if DO_FT and llm is not None:
 """)
 
 code(r"""
-# ---- 15. save everything ----------------------------------------------------------------------------
+# ---- 15. a bigger engine: four sizes, each beside a plain net with the same number of parameters -----------
+SIZES = {"S": dict(units=96, levels=2, steps=3, k=16), "M": dict(units=192, levels=2, steps=4, k=24),
+         "L": dict(units=256, levels=3, steps=6, k=32), "XL": dict(units=384, levels=3, steps=8, k=48)}
+if SMOKE:
+    SIZES = {k: SIZES[k] for k in ("S", "M")}
+SIZERES = {}
+
+class EngineN(Engine):
+    def __init__(self, d_x, d_y, units, levels, steps, k, d_key=64):
+        super().__init__(d_x, d_y, units=units, steps=steps, k=k, d_key=d_key)
+        self.tree = BumpTree(d_x + 2 * units, units, levels=levels)
+
+def n_params(m):
+    return sum(q.numel() for q in m.parameters())
+
+def mlp_for(d_x, d_y, P_target):
+    b = d_x + d_y + 3
+    return MLP(d_x, d_y, int((-b + math.sqrt(b * b + 4 * P_target)) / 2))
+
+def train_eval_model(make, X, seed, is_engine):
+    # the recipe of section 9 (90/10 split of TRAIN, Pearson loss, AdamW, early stopping), any model
+    torch.manual_seed(seed)
+    n = len(rtr); perm = torch.randperm(n, generator=torch.Generator().manual_seed(100 + seed)).to(DEV)
+    va_, fi_ = perm[: n // 10], perm[n // 10:]
+    Xtr, Xte = X[rtr.to(DEV)], X[rte.to(DEV)]
+    m = make().to(DEV)
+    opt = torch.optim.AdamW(m.parameters(), lr=2e-3, weight_decay=1e-4)
+    mx, my = Xtr[fi_], Ztr[fi_]
+    slot = torch.full((n,), -1, dtype=torch.long, device=DEV); slot[fi_] = torch.arange(len(fi_), device=DEV)
+    best, state = -2.0, None
+    for ep in range(EPOCHS):
+        m.train()
+        for b in fi_[torch.randperm(len(fi_), device=DEV)].split(256):
+            pz = m(Xtr[b], mx, my, self_idx=slot[b] if is_engine else None)
+            loss = 1 - pearson_rows(pz @ Vy.T, Y_tr[b]).mean()
+            opt.zero_grad(); loss.backward(); nn.utils.clip_grad_norm_(m.parameters(), 1.0); opt.step()
+        if ep % 5 == 4 or ep == EPOCHS - 1:
+            m.eval()
+            with torch.no_grad():
+                r = float(pearson_rows(m(Xtr[va_], mx, my) @ Vy.T, Y_tr[va_]).median())
+            if r > best:
+                best, state = r, {k: v.detach().clone() for k, v in m.state_dict().items()}
+    m.load_state_dict(state); m.eval()
+    with torch.no_grad():
+        return m(Xte, Xtr, Ztr) @ Vy.T, best
+
+d_x, d_y = X_full.shape[1], Ztr.shape[1]
+print(f"{'size':5s} {'engine params':>14s} {'held-out r':>11s} {'TEST median':>12s}   {'plain net params':>16s} {'held-out r':>11s} {'TEST median':>12s}")
+for nm, cfg in SIZES.items():
+    t1 = time.time()
+    P_eng = n_params(EngineN(d_x, d_y, **cfg))
+    eo = [train_eval_model(lambda: EngineN(d_x, d_y, **cfg), X_full, s_, True) for s_ in SEEDS]
+    mo = [train_eval_model(lambda: mlp_for(d_x, d_y, P_eng), X_full, s_, False) for s_ in SEEDS]
+    PRED[f"ENGINE-{nm}"] = torch.stack([o[0] for o in eo]).mean(0)
+    PRED[f"MLP-{nm}"] = torch.stack([o[0] for o in mo]).mean(0)
+    for k_ in (f"ENGINE-{nm}", f"MLP-{nm}"):
+        R[k_] = torch.nan_to_num(pearson_rows(PRED[k_], A_te)).cpu().numpy()
+    SIZERES[nm] = dict(params=P_eng, engine_val=float(np.mean([o[1] for o in eo])), mlp_val=float(np.mean([o[1] for o in mo])),
+                       engine_test=float(np.median(R[f"ENGINE-{nm}"])), mlp_test=float(np.median(R[f"MLP-{nm}"])))
+    d_ = SIZERES[nm]
+    print(f"{nm:5s} {P_eng:>14,} {d_['engine_val']:>+11.3f} {d_['engine_test']:>+12.3f}   {n_params(mlp_for(d_x, d_y, P_eng)):>16,} "
+          f"{d_['mlp_val']:>+11.3f} {d_['mlp_test']:>+12.3f}   ({time.time() - t1:.0f}s)")
+
+chosen = max(SIZES, key=lambda nm: SIZERES[nm]["engine_val"])            # chosen on held-out TRAIN only
+print(f"\nchosen by held-out TRAIN r: {chosen}")
+tests = [("Z1 bigger helps (chosen vs S)", f"ENGINE-{chosen}", "ENGINE-S"),
+         ("Z2 engine design vs same-size plain net", f"ENGINE-{chosen}", f"MLP-{chosen}"),
+         ("Z3 chosen engine vs plain learner", f"ENGINE-{chosen}", "RIDGE")]
+for tag, a, b in tests:
+    if a == b:
+        print(f"{tag:42s} -> NOT TESTED (S was chosen)"); continue
+    GATES[tag] = verdict(a, b); g_ = GATES[tag]
+    print(f"{tag:42s} better {g_['better']:,} / worse {g_['worse']:,}  median diff {g_['median_diff']:+.4f}  p {g_['p']:.2g} -> {g_['verdict']}")
+v = lambda t: GATES.get(t, {}).get("verdict")
+if chosen != "S" and v(tests[0][0]) == "BETTER":
+    final = "BIGGER HELPS" + (" AND THE ENGINE'S DESIGN MATTERS" if v(tests[1][0]) == "BETTER" else "")
+else:
+    final = "SIZE DOES NOT HELP"
+SIZERES["chosen"], SIZERES["verdict"] = chosen, final
+print("\nVERDICT:", final)
+""")
+
+code(r"""
+# ---- 16. save everything ----------------------------------------------------------------------------
 res = dict(model=USED_MODEL, smoke=SMOKE, device=DEV, n_train=len(TR), n_test=len(TE), hpa_coverage=cov,
            scores={n: dict(median=float(np.median(v)), mean=float(np.mean(v))) for n, v in R.items()},
            upper_bound=dict(median=float(np.median(ceil)), mean=float(np.mean(ceil)), n=len(ceil)),
-           H0=bool(h0), gates=GATES, info=INFO, explanations=REPORTS, fine_tuning=FT, nameless=NAMELESS, aim=AIMRES)
+           H0=bool(h0), gates=GATES, info=INFO, explanations=REPORTS, fine_tuning=FT, nameless=NAMELESS, aim=AIMRES, sizes=SIZERES)
 with open(os.path.join(OUTD, "results.json"), "w") as fh:
     json.dump(res, fh, indent=1, default=str)
 print("saved", os.path.join(OUTD, "results.json"))
