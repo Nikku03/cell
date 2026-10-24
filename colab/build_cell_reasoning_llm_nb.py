@@ -163,6 +163,11 @@ MODEL_ID = "Qwen/Qwen3-30B-A3B-Instruct-2507"         # 30.5B parameters (MoE, 3
 FALLBACK_MODEL_ID = "Qwen/Qwen3-32B"                  # dense 32.8B, used only if the MoE cannot load on this GPU
 EMB_LAYER_FRAC = 0.66                                  # which layer gives the context vector (fixed in advance)
 N_EXPLAIN, MIN_GAIN = 6, 0.01
+# ---- what to run (each fine-tuning run takes ~30 min on an A100) ----
+RUN_FINETUNE = True    # section 12: fine-tune the LLM on gene documents
+RUN_NAMELESS = True    # section 13: nameless-documents test (2 more fine-tuning runs)
+RUN_AIM = True         # section 14: the selfish-gene aim (1 more fine-tuning run)
+RUN_SIZES = True       # section 15: engine size ladder (minutes, no LLM needed)
 SEEDS = (0,) if SMOKE else (0, 1, 2)
 EPOCHS = 3 if SMOKE else 150
 DEV = "cuda" if torch.cuda.is_available() else "cpu"
@@ -698,12 +703,12 @@ def tiny_llm_for_smoke_test():
 
 if SMOKE and llm is None and os.environ.get("CELL_TINY_LLM") == "1":
     tok, llm = tiny_llm_for_smoke_test(); USED_MODEL = "tiny smoke-test model"
-if llm is None and not SMOKE:
+if RUN_FINETUNE and llm is None and not SMOKE:
     print("Loading the LLM for fine-tuning (the context vectors above came from the cache).")
     get_llm()
-DO_FT = llm is not None
+DO_FT = RUN_FINETUNE and llm is not None
 if not DO_FT:
-    print("Fine-tuning skipped: no LLM in this smoke test.")
+    print("Section 12 skipped (RUN_FINETUNE = False, or no LLM in this smoke test).")
 else:
     from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
     FT_EPOCHS = 1 if SMOKE else (2 if USED_MODEL == MODEL_ID else 1)
@@ -871,8 +876,8 @@ def finetune_on(texts, label):
     te_rows = rte.tolist()
     return predict(te_rows), predict([te_rows[i] for i in sh]), best
 
-if not DO_FT:
-    print("Nameless test skipped: no fine-tuning in this run.")
+if not (DO_FT and RUN_NAMELESS):
+    print("Section 13 skipped (RUN_NAMELESS = False, or no fine-tuning in this run).")
 else:
     runs = [("nameless", True)] + ([("nameless, no partner names", False)] if RUN_STRICT else [])
     unit_ = lambda M: (M - M.mean(1, keepdim=True)) / (M - M.mean(1, keepdim=True)).norm(dim=1, keepdim=True).clamp(min=1e-12)
@@ -928,229 +933,232 @@ AIM_TEXT = ("Guiding principle (the selfish-gene view): a cell's machinery exist
 import re
 from scipy.stats import spearmanr, rankdata
 AIMRES = {}
-# --- the aim, measured. TRAIN values are training answers; TEST values are used only to score, never to train ---
-k562_eff = {}
-with open(P["CRISPRGeneEffect.csv"]) as fh:
-    hdr = next(fh).rstrip("\n").split(",")
-    for line in fh:
-        if line.startswith("ACH-000551,"):                      # K562's own row (excluded from every input)
-            for c, v in zip(hdr[1:], line.rstrip("\n").split(",")[1:]):
-                if v not in ("", "NA"):
-                    k562_eff[c.split(" (")[0]] = float(v)
-            break
-
-def k562_fitness(sym, e):
-    if sym in k562_eff:
-        return k562_eff[sym]
-    alt = HPA.get(e, {}).get("sym")
-    return k562_eff.get(alt, float("nan"))
-
-fit_all = torch.tensor([k562_fitness(s_, e_) for s_, e_ in zip(KN, KE)], dtype=torch.float32)
-v1 = Vy[:, 0].clone()                                           # top pattern of TRAIN responses (gene space)
-ribo = [j for j, g in enumerate(A["genes"]) if re.match(r"RP[LS]\d", g)]
-if float(v1[ribo].mean()) < 0:
-    v1 = -v1                                                    # orient: ribosomal-protein genes up = GROWTH
-if "Mp" in globals():
-    lo = (v1 @ Mp) / Mp.sum(0)
-    print("grow-vs-protect pattern, growth side:", "; ".join(names[i] for i in lo.argsort(descending=True)[:4].tolist()))
-    print("                         protection side:", "; ".join(names[i] for i in lo.argsort()[:4].tolist()))
-A_te0 = torch.nan_to_num(A_te)
-aim_tr_raw = torch.stack([fit_all[rtr].to(DEV), Y_tr @ v1, Y_tr.norm(dim=1)], 1)
-aim_te_raw = torch.stack([fit_all[rte].to(DEV), A_te0 @ v1, A_te0.norm(dim=1)], 1)
-am_mu = torch.stack([torch.nanmean(aim_tr_raw[:, c]) for c in range(3)])
-am_sd = torch.stack([aim_tr_raw[:, c][torch.isfinite(aim_tr_raw[:, c])].std() for c in range(3)]) + 1e-6
-AIM_tr, AIM_te = (aim_tr_raw - am_mu) / am_sd, (aim_te_raw - am_mu) / am_sd
-print(f"aim measured for TRAIN genes: threat-to-growth {int(torch.isfinite(AIM_tr[:, 0]).sum()):,} of {len(rtr):,} (K562 DepMap); "
-      f"grow-vs-protect and shake-size for all")
-
-def aim_loss(pred, tgt):
-    ok = torch.isfinite(tgt)
-    return ((pred - torch.nan_to_num(tgt)) ** 2 * ok).sum() / ok.sum().clamp(min=1)
-
-def aim_scores(pred_te):
-    # how well the aim itself is predicted on TEST genes (descriptive)
-    pt, tt = pred_te.detach().cpu().numpy(), AIM_te.cpu().numpy()
-    ok = np.isfinite(tt[:, 0])
-    rho_fit = spearmanr(pt[ok, 0], tt[ok, 0])[0]
-    ess = tt[ok, 0] < (-0.5 - am_mu[0].item()) / am_sd[0].item()     # DepMap effect < -0.5 = essential
-    r_ = rankdata(-pt[ok, 0]); npos = int(ess.sum()); nneg = int((~ess).sum())
-    auc = (r_[ess].sum() - npos * (npos + 1) / 2) / max(npos * nneg, 1)
-    return dict(threat_rho=float(rho_fit), essential_auroc=float(auc),
-                grow_protect_r=float(np.corrcoef(pt[:, 1], tt[:, 1])[0, 1]), shake_rho=float(spearmanr(pt[:, 2], tt[:, 2])[0]))
-
-# --- the engine with the aim: it predicts the aim first, then reasons with it ------------------------------
-class AimEngine(nn.Module):
-    def __init__(self, d_x, d_y, n_aim=3, units=96):
-        super().__init__()
-        self.aim = nn.Sequential(nn.Linear(d_x, units), nn.Tanh(), nn.Linear(units, n_aim))
-        self.core = Engine(d_x + n_aim, d_y, units)
-        self.last_aim = None
-
-    def forward(self, x, mx, my, self_idx=None):
-        a, am = self.aim(x), self.aim(mx)
-        self.last_aim = a
-        return self.core(torch.cat([x, a], 1), torch.cat([mx, am], 1), my, self_idx)
-
-def train_eval_aim(X, seed, lam=0.5):
-    # identical to train_eval (section 9) plus the aim loss; the epoch is still chosen on response r only
-    torch.manual_seed(seed)
-    n = len(rtr); perm = torch.randperm(n, generator=torch.Generator().manual_seed(100 + seed)).to(DEV)
-    va, fi_ = perm[: n // 10], perm[n // 10:]
-    Xtr, Xte = X[rtr.to(DEV)], X[rte.to(DEV)]
-    m = AimEngine(X.shape[1], Ztr.shape[1]).to(DEV)
-    opt = torch.optim.AdamW(m.parameters(), lr=2e-3, weight_decay=1e-4)
-    mx, my = Xtr[fi_], Ztr[fi_]
-    slot = torch.full((n,), -1, dtype=torch.long, device=DEV); slot[fi_] = torch.arange(len(fi_), device=DEV)
-    best, state = -2.0, None
-    for ep in range(EPOCHS):
-        m.train()
-        for b in fi_[torch.randperm(len(fi_), device=DEV)].split(256):
-            pz = m(Xtr[b], mx, my, self_idx=slot[b])
-            loss = 1 - pearson_rows(pz @ Vy.T, Y_tr[b]).mean() + lam * aim_loss(m.last_aim, AIM_tr[b])
-            opt.zero_grad(); loss.backward(); nn.utils.clip_grad_norm_(m.parameters(), 1.0); opt.step()
-        if ep % 5 == 4 or ep == EPOCHS - 1:
-            m.eval()
-            with torch.no_grad():
-                r = float(pearson_rows(m(Xtr[va], mx, my) @ Vy.T, Y_tr[va]).median())
-            if r > best:
-                best, state = r, {k: v.detach().clone() for k, v in m.state_dict().items()}
-    m.load_state_dict(state); m.eval()
-    with torch.no_grad():
-        out = m(Xte, Xtr, Ztr) @ Vy.T
-        return out, m.last_aim.clone(), best
-
-t1 = time.time(); outs = [train_eval_aim(X_full, s_) for s_ in SEEDS]
-PRED["AIM-ENGINE"] = torch.stack([o[0] for o in outs]).mean(0)
-AIMRES["AIM-ENGINE aim"] = aim_scores(torch.stack([o[1] for o in outs]).mean(0))
-print(f"AIM-ENGINE seeds {len(SEEDS)}  validation r {[round(o[2], 3) for o in outs]}  {time.time() - t1:.0f}s")
-
-# --- the plain learner given the same aim: stage 1 predicts the aim (out-of-fold for TRAIN), stage 2 uses it ---
-Xtr_, Xte_ = X_full[rtr.to(DEV)], X_full[rte.to(DEV)]
-folds = torch.randperm(len(rtr), generator=torch.Generator().manual_seed(4)).to(DEV).chunk(5)
-oof = torch.zeros(len(rtr), 3, device=DEV); te_aim = torch.zeros(len(rte), 3, device=DEV)
-for c in range(3):
-    y = AIM_tr[:, c]; ok = torch.isfinite(y); err = collections.defaultdict(float)
-    for f in folds:
-        keep = torch.ones(len(rtr), dtype=torch.bool, device=DEV); keep[f] = False
-        for l, Pm in ridge_fit_predict(Xtr_[keep & ok], y[keep & ok][:, None], Xtr_[f], LAMS).items():
-            mm = ok[f]; err[l] += float(((Pm[:, 0][mm] - y[f][mm]) ** 2).sum())
-    lam_c = min(err, key=err.get)
-    for f in folds:
-        keep = torch.ones(len(rtr), dtype=torch.bool, device=DEV); keep[f] = False
-        oof[f, c] = ridge_fit_predict(Xtr_[keep & ok], y[keep & ok][:, None], Xtr_[f], [lam_c])[lam_c][:, 0]
-    te_aim[:, c] = ridge_fit_predict(Xtr_[ok], y[ok][:, None], Xte_, [lam_c])[lam_c][:, 0]
-AIMRES["RIDGE stage-1 aim"] = aim_scores(te_aim)
-ah = torch.zeros(NPH, 3); ah[rtr] = oof.cpu(); ah[rte] = te_aim.cpu(); B["aim_hat"] = ah
-PRED["RIDGE + predicted aim"], _ = ridge(design(BASE + ["llm", "aim_hat"]), Y_tr)
-
-# --- the LLM with the aim: reads the principle, learns to predict the aim and the response ----------------------
-def finetune_general(chat, label, n_aim=0, lam=0.5):
-    torch.manual_seed(0)
-    for mod in pm.modules():
-        if hasattr(mod, "reset_lora_parameters") and "default" in getattr(mod, "lora_A", {}):
-            mod.reset_lora_parameters("default", True)
-    hd = nn.Sequential(nn.LayerNorm(llm.config.hidden_size), nn.Linear(llm.config.hidden_size, Ztr.shape[1] + n_aim)).to(DEV)
-
-    def pool(ix):
-        enc = tok([chat[i] for i in ix], return_tensors="pt", padding=True, truncation=True, max_length=FT_MAXLEN)
-        enc = {k: v.to(dev0) for k, v in enc.items()}
-        h = dec(input_ids=enc["input_ids"], attention_mask=enc["attention_mask"]).last_hidden_state.float()
-        m = enc["attention_mask"].unsqueeze(-1).float()
-        return ((h * m).sum(1) / m.sum(1)).to(DEV)
-
-    def predict(rows, bs=16):
-        pm.eval(); hd.eval(); out = []
+if not RUN_AIM:
+    print("Section 14 skipped (RUN_AIM = False).")
+else:
+    # --- the aim, measured. TRAIN values are training answers; TEST values are used only to score, never to train ---
+    k562_eff = {}
+    with open(P["CRISPRGeneEffect.csv"]) as fh:
+        hdr = next(fh).rstrip("\n").split(",")
+        for line in fh:
+            if line.startswith("ACH-000551,"):                      # K562's own row (excluded from every input)
+                for c, v in zip(hdr[1:], line.rstrip("\n").split(",")[1:]):
+                    if v not in ("", "NA"):
+                        k562_eff[c.split(" (")[0]] = float(v)
+                break
+    
+    def k562_fitness(sym, e):
+        if sym in k562_eff:
+            return k562_eff[sym]
+        alt = HPA.get(e, {}).get("sym")
+        return k562_eff.get(alt, float("nan"))
+    
+    fit_all = torch.tensor([k562_fitness(s_, e_) for s_, e_ in zip(KN, KE)], dtype=torch.float32)
+    v1 = Vy[:, 0].clone()                                           # top pattern of TRAIN responses (gene space)
+    ribo = [j for j, g in enumerate(A["genes"]) if re.match(r"RP[LS]\d", g)]
+    if float(v1[ribo].mean()) < 0:
+        v1 = -v1                                                    # orient: ribosomal-protein genes up = GROWTH
+    if "Mp" in globals():
+        lo = (v1 @ Mp) / Mp.sum(0)
+        print("grow-vs-protect pattern, growth side:", "; ".join(names[i] for i in lo.argsort(descending=True)[:4].tolist()))
+        print("                         protection side:", "; ".join(names[i] for i in lo.argsort()[:4].tolist()))
+    A_te0 = torch.nan_to_num(A_te)
+    aim_tr_raw = torch.stack([fit_all[rtr].to(DEV), Y_tr @ v1, Y_tr.norm(dim=1)], 1)
+    aim_te_raw = torch.stack([fit_all[rte].to(DEV), A_te0 @ v1, A_te0.norm(dim=1)], 1)
+    am_mu = torch.stack([torch.nanmean(aim_tr_raw[:, c]) for c in range(3)])
+    am_sd = torch.stack([aim_tr_raw[:, c][torch.isfinite(aim_tr_raw[:, c])].std() for c in range(3)]) + 1e-6
+    AIM_tr, AIM_te = (aim_tr_raw - am_mu) / am_sd, (aim_te_raw - am_mu) / am_sd
+    print(f"aim measured for TRAIN genes: threat-to-growth {int(torch.isfinite(AIM_tr[:, 0]).sum()):,} of {len(rtr):,} (K562 DepMap); "
+          f"grow-vs-protect and shake-size for all")
+    
+    def aim_loss(pred, tgt):
+        ok = torch.isfinite(tgt)
+        return ((pred - torch.nan_to_num(tgt)) ** 2 * ok).sum() / ok.sum().clamp(min=1)
+    
+    def aim_scores(pred_te):
+        # how well the aim itself is predicted on TEST genes (descriptive)
+        pt, tt = pred_te.detach().cpu().numpy(), AIM_te.cpu().numpy()
+        ok = np.isfinite(tt[:, 0])
+        rho_fit = spearmanr(pt[ok, 0], tt[ok, 0])[0]
+        ess = tt[ok, 0] < (-0.5 - am_mu[0].item()) / am_sd[0].item()     # DepMap effect < -0.5 = essential
+        r_ = rankdata(-pt[ok, 0]); npos = int(ess.sum()); nneg = int((~ess).sum())
+        auc = (r_[ess].sum() - npos * (npos + 1) / 2) / max(npos * nneg, 1)
+        return dict(threat_rho=float(rho_fit), essential_auroc=float(auc),
+                    grow_protect_r=float(np.corrcoef(pt[:, 1], tt[:, 1])[0, 1]), shake_rho=float(spearmanr(pt[:, 2], tt[:, 2])[0]))
+    
+    # --- the engine with the aim: it predicts the aim first, then reasons with it ------------------------------
+    class AimEngine(nn.Module):
+        def __init__(self, d_x, d_y, n_aim=3, units=96):
+            super().__init__()
+            self.aim = nn.Sequential(nn.Linear(d_x, units), nn.Tanh(), nn.Linear(units, n_aim))
+            self.core = Engine(d_x + n_aim, d_y, units)
+            self.last_aim = None
+    
+        def forward(self, x, mx, my, self_idx=None):
+            a, am = self.aim(x), self.aim(mx)
+            self.last_aim = a
+            return self.core(torch.cat([x, a], 1), torch.cat([mx, am], 1), my, self_idx)
+    
+    def train_eval_aim(X, seed, lam=0.5):
+        # identical to train_eval (section 9) plus the aim loss; the epoch is still chosen on response r only
+        torch.manual_seed(seed)
+        n = len(rtr); perm = torch.randperm(n, generator=torch.Generator().manual_seed(100 + seed)).to(DEV)
+        va, fi_ = perm[: n // 10], perm[n // 10:]
+        Xtr, Xte = X[rtr.to(DEV)], X[rte.to(DEV)]
+        m = AimEngine(X.shape[1], Ztr.shape[1]).to(DEV)
+        opt = torch.optim.AdamW(m.parameters(), lr=2e-3, weight_decay=1e-4)
+        mx, my = Xtr[fi_], Ztr[fi_]
+        slot = torch.full((n,), -1, dtype=torch.long, device=DEV); slot[fi_] = torch.arange(len(fi_), device=DEV)
+        best, state = -2.0, None
+        for ep in range(EPOCHS):
+            m.train()
+            for b in fi_[torch.randperm(len(fi_), device=DEV)].split(256):
+                pz = m(Xtr[b], mx, my, self_idx=slot[b])
+                loss = 1 - pearson_rows(pz @ Vy.T, Y_tr[b]).mean() + lam * aim_loss(m.last_aim, AIM_tr[b])
+                opt.zero_grad(); loss.backward(); nn.utils.clip_grad_norm_(m.parameters(), 1.0); opt.step()
+            if ep % 5 == 4 or ep == EPOCHS - 1:
+                m.eval()
+                with torch.no_grad():
+                    r = float(pearson_rows(m(Xtr[va], mx, my) @ Vy.T, Y_tr[va]).median())
+                if r > best:
+                    best, state = r, {k: v.detach().clone() for k, v in m.state_dict().items()}
+        m.load_state_dict(state); m.eval()
         with torch.no_grad():
-            for k in range(0, len(rows), bs):
-                out.append(hd(pool(rows[k:k + bs])))
-        o = torch.cat(out)
-        return o[:, :Ztr.shape[1]] @ Vy.T, o[:, Ztr.shape[1]:]
-
-    lora = [q for q in pm.parameters() if q.requires_grad]
-    opt = torch.optim.AdamW([{"params": lora, "lr": 1e-4}, {"params": hd.parameters(), "lr": 1e-3}])
-    best, state, t1 = -2.0, None, time.time()
-    for ep in range(FT_EPOCHS):
-        pm.train(); hd.train(); opt.zero_grad()
-        for k, b in enumerate(fi[torch.randperm(len(fi))].split(FT_BATCH)):
-            o = hd(pool([rtr_l[j] for j in b.tolist()]))
-            loss = 1 - pearson_rows(o[:, :Ztr.shape[1]] @ Vy.T, Y_tr[b.to(DEV)]).mean()
-            if n_aim:
-                loss = loss + lam * aim_loss(o[:, Ztr.shape[1]:], AIM_tr[b.to(DEV)])
-            (loss / FT_ACCUM).backward()
-            if (k + 1) % FT_ACCUM == 0:
-                nn.utils.clip_grad_norm_(lora + list(hd.parameters()), 1.0); opt.step(); opt.zero_grad()
-        r_va = float(pearson_rows(predict([rtr_l[j] for j in va.tolist()])[0], Y_tr[va.to(DEV)]).median())
-        print(f"  [{label}] epoch {ep + 1}: held-out TRAIN median r {r_va:+.3f}  ({time.time() - t1:.0f}s)")
-        if r_va > best:
-            best = r_va
-            state = ({nm: q.detach().clone() for nm, q in pm.named_parameters() if q.requires_grad},
-                     {kk: v.detach().clone() for kk, v in hd.state_dict().items()})
-    with torch.no_grad():
-        for nm, q in pm.named_parameters():
-            if nm in state[0]:
-                q.copy_(state[0][nm])
-    hd.load_state_dict(state[1])
-    return predict(rte.tolist())
-
-if DO_FT:
-    chat_aim = [tok.apply_chat_template([{"role": "system", "content": AIM_TEXT}, {"role": "user", "content": q}],
-                                        tokenize=False, add_generation_prompt=True) for q in PROMPTS]
-    p_resp, p_aim = finetune_general(chat_aim, "aim", n_aim=3)
-    PRED["LLM-FT-AIM"] = p_resp
-    unit_ = lambda M: (M - M.mean(1, keepdim=True)) / (M - M.mean(1, keepdim=True)).norm(dim=1, keepdim=True).clamp(min=1e-12)
-    PRED["ENSEMBLE-AIM (LLM-FT-AIM + RIDGE)"] = (unit_(p_resp) + unit_(PRED["RIDGE"])) / 2
-    AIMRES["LLM-FT-AIM aim"] = aim_scores(p_aim)
-
-for nm in [n for n in ("AIM-ENGINE", "RIDGE + predicted aim", "LLM-FT-AIM", "ENSEMBLE-AIM (LLM-FT-AIM + RIDGE)") if n in PRED]:
-    R[nm] = torch.nan_to_num(pearson_rows(PRED[nm], A_te)).cpu().numpy()
-print("\nTEST knockdowns, median / mean r:")
-for nm in ("ENGINE", "AIM-ENGINE", "RIDGE", "RIDGE + predicted aim", "LLM-FT", "LLM-FT-AIM", "ENSEMBLE (LLM-FT + RIDGE)", "ENSEMBLE-AIM (LLM-FT-AIM + RIDGE)"):
-    if nm in R:
-        print(f"  {nm:40s} {np.median(R[nm]):+.3f} / {np.mean(R[nm]):+.3f}")
-print("\nHow well the aim itself is predicted on TEST genes (descriptive):")
-for nm, d_ in AIMRES.items():
-    print(f"  {nm:22s} threat-to-growth rho {d_['threat_rho']:+.2f}, essential AUROC {d_['essential_auroc']:.2f}, "
-          f"grow-vs-protect r {d_['grow_protect_r']:+.2f}, shake-size rho {d_['shake_rho']:+.2f}")
-tests = [("G1 aim helps the engine", "AIM-ENGINE", "ENGINE"), ("G2 aim engine vs plain learner", "AIM-ENGINE", "RIDGE"),
-         ("G3 aim helps the plain learner", "RIDGE + predicted aim", "RIDGE")]
-if "LLM-FT-AIM" in R and "LLM-FT" in R:
-    tests += [("G4 aim helps the LLM", "LLM-FT-AIM", "LLM-FT"),
-              ("G5 aim ensemble vs plain learner", "ENSEMBLE-AIM (LLM-FT-AIM + RIDGE)", "RIDGE")]
-print()
-for tag, a, b in tests:
-    GATES[tag] = verdict(a, b); g_ = GATES[tag]
-    print(f"{tag:36s} better {g_['better']:,} / worse {g_['worse']:,}  median diff {g_['median_diff']:+.4f}  p {g_['p']:.2g} -> {g_['verdict']}")
-v = lambda t: GATES.get(t, {}).get("verdict")
-final = []
-if v("G1 aim helps the engine") == "BETTER":
-    final.append("THE AIM HELPS THE ENGINE")
-if v("G4 aim helps the LLM") == "BETTER":
-    final.append("THE AIM HELPS THE LLM")
-if final and v("G3 aim helps the plain learner") == "BETTER":
-    final.append("(the plain learner gains too: the gain is from the extra K562 survival data, not the principle)")
-if not final and v("G3 aim helps the plain learner") != "BETTER":
-    final = ["THE AIM HELPS NOTHING"]
-AIMRES["verdict"] = " ".join(final) if final else "MIXED (see the lines above)"
-print("\nVERDICT:", AIMRES["verdict"])
-
-# --- what the LLM says through the selfish-gene lens, for 4 random TEST genes --------------------------------
-if DO_FT and llm is not None:
-    pick2 = np.random.default_rng(9).choice(len(rte), size=min(4, len(rte)), replace=False)
-    qs = [prompt_for(KN[rte[t]], KE[rte[t]]).rsplit("Question:", 1)[0] +
-          "Using the guiding principle, explain in 4 sentences how losing this gene shifts the cell between growth and "
-          "protection, and which processes change most. This is a hypothesis." for t in pick2]
-    chat_q = [tok.apply_chat_template([{"role": "system", "content": AIM_TEXT}, {"role": "user", "content": q}],
-                                      tokenize=False, add_generation_prompt=True) for q in qs]
-    tok.padding_side = "left"
-    enc = tok(chat_q, return_tensors="pt", padding=True).to(dev0)
-    with torch.no_grad(), pm.disable_adapter():
-        gen = pm.generate(**enc, max_new_tokens=300, do_sample=False, use_cache=True)
-    tok.padding_side = "right"
-    pa_ = p_aim.cpu().numpy(); ta_ = AIM_te.cpu().numpy()
-    for t, o in zip(pick2, gen):
-        print(f"\n=== {KN[rte[t]]}: predicted threat {pa_[t, 0]:+.1f} (measured {ta_[t, 0]:+.1f}); "
-              f"grow-vs-protect predicted {pa_[t, 1]:+.1f} (measured {ta_[t, 1]:+.1f})  [standardised units] ===")
-        print(tok.decode(o[enc["input_ids"].shape[1]:], skip_special_tokens=True).strip())
+            out = m(Xte, Xtr, Ztr) @ Vy.T
+            return out, m.last_aim.clone(), best
+    
+    t1 = time.time(); outs = [train_eval_aim(X_full, s_) for s_ in SEEDS]
+    PRED["AIM-ENGINE"] = torch.stack([o[0] for o in outs]).mean(0)
+    AIMRES["AIM-ENGINE aim"] = aim_scores(torch.stack([o[1] for o in outs]).mean(0))
+    print(f"AIM-ENGINE seeds {len(SEEDS)}  validation r {[round(o[2], 3) for o in outs]}  {time.time() - t1:.0f}s")
+    
+    # --- the plain learner given the same aim: stage 1 predicts the aim (out-of-fold for TRAIN), stage 2 uses it ---
+    Xtr_, Xte_ = X_full[rtr.to(DEV)], X_full[rte.to(DEV)]
+    folds = torch.randperm(len(rtr), generator=torch.Generator().manual_seed(4)).to(DEV).chunk(5)
+    oof = torch.zeros(len(rtr), 3, device=DEV); te_aim = torch.zeros(len(rte), 3, device=DEV)
+    for c in range(3):
+        y = AIM_tr[:, c]; ok = torch.isfinite(y); err = collections.defaultdict(float)
+        for f in folds:
+            keep = torch.ones(len(rtr), dtype=torch.bool, device=DEV); keep[f] = False
+            for l, Pm in ridge_fit_predict(Xtr_[keep & ok], y[keep & ok][:, None], Xtr_[f], LAMS).items():
+                mm = ok[f]; err[l] += float(((Pm[:, 0][mm] - y[f][mm]) ** 2).sum())
+        lam_c = min(err, key=err.get)
+        for f in folds:
+            keep = torch.ones(len(rtr), dtype=torch.bool, device=DEV); keep[f] = False
+            oof[f, c] = ridge_fit_predict(Xtr_[keep & ok], y[keep & ok][:, None], Xtr_[f], [lam_c])[lam_c][:, 0]
+        te_aim[:, c] = ridge_fit_predict(Xtr_[ok], y[ok][:, None], Xte_, [lam_c])[lam_c][:, 0]
+    AIMRES["RIDGE stage-1 aim"] = aim_scores(te_aim)
+    ah = torch.zeros(NPH, 3); ah[rtr] = oof.cpu(); ah[rte] = te_aim.cpu(); B["aim_hat"] = ah
+    PRED["RIDGE + predicted aim"], _ = ridge(design(BASE + ["llm", "aim_hat"]), Y_tr)
+    
+    # --- the LLM with the aim: reads the principle, learns to predict the aim and the response ----------------------
+    def finetune_general(chat, label, n_aim=0, lam=0.5):
+        torch.manual_seed(0)
+        for mod in pm.modules():
+            if hasattr(mod, "reset_lora_parameters") and "default" in getattr(mod, "lora_A", {}):
+                mod.reset_lora_parameters("default", True)
+        hd = nn.Sequential(nn.LayerNorm(llm.config.hidden_size), nn.Linear(llm.config.hidden_size, Ztr.shape[1] + n_aim)).to(DEV)
+    
+        def pool(ix):
+            enc = tok([chat[i] for i in ix], return_tensors="pt", padding=True, truncation=True, max_length=FT_MAXLEN)
+            enc = {k: v.to(dev0) for k, v in enc.items()}
+            h = dec(input_ids=enc["input_ids"], attention_mask=enc["attention_mask"]).last_hidden_state.float()
+            m = enc["attention_mask"].unsqueeze(-1).float()
+            return ((h * m).sum(1) / m.sum(1)).to(DEV)
+    
+        def predict(rows, bs=16):
+            pm.eval(); hd.eval(); out = []
+            with torch.no_grad():
+                for k in range(0, len(rows), bs):
+                    out.append(hd(pool(rows[k:k + bs])))
+            o = torch.cat(out)
+            return o[:, :Ztr.shape[1]] @ Vy.T, o[:, Ztr.shape[1]:]
+    
+        lora = [q for q in pm.parameters() if q.requires_grad]
+        opt = torch.optim.AdamW([{"params": lora, "lr": 1e-4}, {"params": hd.parameters(), "lr": 1e-3}])
+        best, state, t1 = -2.0, None, time.time()
+        for ep in range(FT_EPOCHS):
+            pm.train(); hd.train(); opt.zero_grad()
+            for k, b in enumerate(fi[torch.randperm(len(fi))].split(FT_BATCH)):
+                o = hd(pool([rtr_l[j] for j in b.tolist()]))
+                loss = 1 - pearson_rows(o[:, :Ztr.shape[1]] @ Vy.T, Y_tr[b.to(DEV)]).mean()
+                if n_aim:
+                    loss = loss + lam * aim_loss(o[:, Ztr.shape[1]:], AIM_tr[b.to(DEV)])
+                (loss / FT_ACCUM).backward()
+                if (k + 1) % FT_ACCUM == 0:
+                    nn.utils.clip_grad_norm_(lora + list(hd.parameters()), 1.0); opt.step(); opt.zero_grad()
+            r_va = float(pearson_rows(predict([rtr_l[j] for j in va.tolist()])[0], Y_tr[va.to(DEV)]).median())
+            print(f"  [{label}] epoch {ep + 1}: held-out TRAIN median r {r_va:+.3f}  ({time.time() - t1:.0f}s)")
+            if r_va > best:
+                best = r_va
+                state = ({nm: q.detach().clone() for nm, q in pm.named_parameters() if q.requires_grad},
+                         {kk: v.detach().clone() for kk, v in hd.state_dict().items()})
+        with torch.no_grad():
+            for nm, q in pm.named_parameters():
+                if nm in state[0]:
+                    q.copy_(state[0][nm])
+        hd.load_state_dict(state[1])
+        return predict(rte.tolist())
+    
+    if DO_FT:
+        chat_aim = [tok.apply_chat_template([{"role": "system", "content": AIM_TEXT}, {"role": "user", "content": q}],
+                                            tokenize=False, add_generation_prompt=True) for q in PROMPTS]
+        p_resp, p_aim = finetune_general(chat_aim, "aim", n_aim=3)
+        PRED["LLM-FT-AIM"] = p_resp
+        unit_ = lambda M: (M - M.mean(1, keepdim=True)) / (M - M.mean(1, keepdim=True)).norm(dim=1, keepdim=True).clamp(min=1e-12)
+        PRED["ENSEMBLE-AIM (LLM-FT-AIM + RIDGE)"] = (unit_(p_resp) + unit_(PRED["RIDGE"])) / 2
+        AIMRES["LLM-FT-AIM aim"] = aim_scores(p_aim)
+    
+    for nm in [n for n in ("AIM-ENGINE", "RIDGE + predicted aim", "LLM-FT-AIM", "ENSEMBLE-AIM (LLM-FT-AIM + RIDGE)") if n in PRED]:
+        R[nm] = torch.nan_to_num(pearson_rows(PRED[nm], A_te)).cpu().numpy()
+    print("\nTEST knockdowns, median / mean r:")
+    for nm in ("ENGINE", "AIM-ENGINE", "RIDGE", "RIDGE + predicted aim", "LLM-FT", "LLM-FT-AIM", "ENSEMBLE (LLM-FT + RIDGE)", "ENSEMBLE-AIM (LLM-FT-AIM + RIDGE)"):
+        if nm in R:
+            print(f"  {nm:40s} {np.median(R[nm]):+.3f} / {np.mean(R[nm]):+.3f}")
+    print("\nHow well the aim itself is predicted on TEST genes (descriptive):")
+    for nm, d_ in AIMRES.items():
+        print(f"  {nm:22s} threat-to-growth rho {d_['threat_rho']:+.2f}, essential AUROC {d_['essential_auroc']:.2f}, "
+              f"grow-vs-protect r {d_['grow_protect_r']:+.2f}, shake-size rho {d_['shake_rho']:+.2f}")
+    tests = [("G1 aim helps the engine", "AIM-ENGINE", "ENGINE"), ("G2 aim engine vs plain learner", "AIM-ENGINE", "RIDGE"),
+             ("G3 aim helps the plain learner", "RIDGE + predicted aim", "RIDGE")]
+    if "LLM-FT-AIM" in R and "LLM-FT" in R:
+        tests += [("G4 aim helps the LLM", "LLM-FT-AIM", "LLM-FT"),
+                  ("G5 aim ensemble vs plain learner", "ENSEMBLE-AIM (LLM-FT-AIM + RIDGE)", "RIDGE")]
+    print()
+    for tag, a, b in tests:
+        GATES[tag] = verdict(a, b); g_ = GATES[tag]
+        print(f"{tag:36s} better {g_['better']:,} / worse {g_['worse']:,}  median diff {g_['median_diff']:+.4f}  p {g_['p']:.2g} -> {g_['verdict']}")
+    v = lambda t: GATES.get(t, {}).get("verdict")
+    final = []
+    if v("G1 aim helps the engine") == "BETTER":
+        final.append("THE AIM HELPS THE ENGINE")
+    if v("G4 aim helps the LLM") == "BETTER":
+        final.append("THE AIM HELPS THE LLM")
+    if final and v("G3 aim helps the plain learner") == "BETTER":
+        final.append("(the plain learner gains too: the gain is from the extra K562 survival data, not the principle)")
+    if not final and v("G3 aim helps the plain learner") != "BETTER":
+        final = ["THE AIM HELPS NOTHING"]
+    AIMRES["verdict"] = " ".join(final) if final else "MIXED (see the lines above)"
+    print("\nVERDICT:", AIMRES["verdict"])
+    
+    # --- what the LLM says through the selfish-gene lens, for 4 random TEST genes --------------------------------
+    if DO_FT and llm is not None:
+        pick2 = np.random.default_rng(9).choice(len(rte), size=min(4, len(rte)), replace=False)
+        qs = [prompt_for(KN[rte[t]], KE[rte[t]]).rsplit("Question:", 1)[0] +
+              "Using the guiding principle, explain in 4 sentences how losing this gene shifts the cell between growth and "
+              "protection, and which processes change most. This is a hypothesis." for t in pick2]
+        chat_q = [tok.apply_chat_template([{"role": "system", "content": AIM_TEXT}, {"role": "user", "content": q}],
+                                          tokenize=False, add_generation_prompt=True) for q in qs]
+        tok.padding_side = "left"
+        enc = tok(chat_q, return_tensors="pt", padding=True).to(dev0)
+        with torch.no_grad(), pm.disable_adapter():
+            gen = pm.generate(**enc, max_new_tokens=300, do_sample=False, use_cache=True)
+        tok.padding_side = "right"
+        pa_ = p_aim.cpu().numpy(); ta_ = AIM_te.cpu().numpy()
+        for t, o in zip(pick2, gen):
+            print(f"\n=== {KN[rte[t]]}: predicted threat {pa_[t, 0]:+.1f} (measured {ta_[t, 0]:+.1f}); "
+                  f"grow-vs-protect predicted {pa_[t, 1]:+.1f} (measured {ta_[t, 1]:+.1f})  [standardised units] ===")
+            print(tok.decode(o[enc["input_ids"].shape[1]:], skip_special_tokens=True).strip())
 """)
 
 code(r"""
@@ -1160,80 +1168,83 @@ SIZES = {"S": dict(units=96, levels=2, steps=3, k=16), "M": dict(units=192, leve
 if SMOKE:
     SIZES = {k: SIZES[k] for k in ("S", "M")}
 SIZERES = {}
-
-class EngineN(Engine):
-    def __init__(self, d_x, d_y, units, levels, steps, k, d_key=64):
-        super().__init__(d_x, d_y, units=units, steps=steps, k=k, d_key=d_key)
-        self.tree = BumpTree(d_x + 2 * units, units, levels=levels)
-
-def n_params(m):
-    return sum(q.numel() for q in m.parameters())
-
-def mlp_for(d_x, d_y, P_target):
-    b = d_x + d_y + 3
-    return MLP(d_x, d_y, int((-b + math.sqrt(b * b + 4 * P_target)) / 2))
-
-def train_eval_model(make, X, seed, is_engine):
-    # the recipe of section 9 (90/10 split of TRAIN, Pearson loss, AdamW, early stopping), any model
-    torch.manual_seed(seed)
-    n = len(rtr); perm = torch.randperm(n, generator=torch.Generator().manual_seed(100 + seed)).to(DEV)
-    va_, fi_ = perm[: n // 10], perm[n // 10:]
-    Xtr, Xte = X[rtr.to(DEV)], X[rte.to(DEV)]
-    m = make().to(DEV)
-    opt = torch.optim.AdamW(m.parameters(), lr=2e-3, weight_decay=1e-4)
-    mx, my = Xtr[fi_], Ztr[fi_]
-    slot = torch.full((n,), -1, dtype=torch.long, device=DEV); slot[fi_] = torch.arange(len(fi_), device=DEV)
-    best, state = -2.0, None
-    for ep in range(EPOCHS):
-        m.train()
-        for b in fi_[torch.randperm(len(fi_), device=DEV)].split(256):
-            pz = m(Xtr[b], mx, my, self_idx=slot[b] if is_engine else None)
-            loss = 1 - pearson_rows(pz @ Vy.T, Y_tr[b]).mean()
-            opt.zero_grad(); loss.backward(); nn.utils.clip_grad_norm_(m.parameters(), 1.0); opt.step()
-        if ep % 5 == 4 or ep == EPOCHS - 1:
-            m.eval()
-            with torch.no_grad():
-                r = float(pearson_rows(m(Xtr[va_], mx, my) @ Vy.T, Y_tr[va_]).median())
-            if r > best:
-                best, state = r, {k: v.detach().clone() for k, v in m.state_dict().items()}
-    m.load_state_dict(state); m.eval()
-    with torch.no_grad():
-        return m(Xte, Xtr, Ztr) @ Vy.T, best
-
-d_x, d_y = X_full.shape[1], Ztr.shape[1]
-print(f"{'size':5s} {'engine params':>14s} {'held-out r':>11s} {'TEST median':>12s}   {'plain net params':>16s} {'held-out r':>11s} {'TEST median':>12s}")
-for nm, cfg in SIZES.items():
-    t1 = time.time()
-    P_eng = n_params(EngineN(d_x, d_y, **cfg))
-    eo = [train_eval_model(lambda: EngineN(d_x, d_y, **cfg), X_full, s_, True) for s_ in SEEDS]
-    mo = [train_eval_model(lambda: mlp_for(d_x, d_y, P_eng), X_full, s_, False) for s_ in SEEDS]
-    PRED[f"ENGINE-{nm}"] = torch.stack([o[0] for o in eo]).mean(0)
-    PRED[f"MLP-{nm}"] = torch.stack([o[0] for o in mo]).mean(0)
-    for k_ in (f"ENGINE-{nm}", f"MLP-{nm}"):
-        R[k_] = torch.nan_to_num(pearson_rows(PRED[k_], A_te)).cpu().numpy()
-    SIZERES[nm] = dict(params=P_eng, engine_val=float(np.mean([o[1] for o in eo])), mlp_val=float(np.mean([o[1] for o in mo])),
-                       engine_test=float(np.median(R[f"ENGINE-{nm}"])), mlp_test=float(np.median(R[f"MLP-{nm}"])))
-    d_ = SIZERES[nm]
-    print(f"{nm:5s} {P_eng:>14,} {d_['engine_val']:>+11.3f} {d_['engine_test']:>+12.3f}   {n_params(mlp_for(d_x, d_y, P_eng)):>16,} "
-          f"{d_['mlp_val']:>+11.3f} {d_['mlp_test']:>+12.3f}   ({time.time() - t1:.0f}s)")
-
-chosen = max(SIZES, key=lambda nm: SIZERES[nm]["engine_val"])            # chosen on held-out TRAIN only
-print(f"\nchosen by held-out TRAIN r: {chosen}")
-tests = [("Z1 bigger helps (chosen vs S)", f"ENGINE-{chosen}", "ENGINE-S"),
-         ("Z2 engine design vs same-size plain net", f"ENGINE-{chosen}", f"MLP-{chosen}"),
-         ("Z3 chosen engine vs plain learner", f"ENGINE-{chosen}", "RIDGE")]
-for tag, a, b in tests:
-    if a == b:
-        print(f"{tag:42s} -> NOT TESTED (S was chosen)"); continue
-    GATES[tag] = verdict(a, b); g_ = GATES[tag]
-    print(f"{tag:42s} better {g_['better']:,} / worse {g_['worse']:,}  median diff {g_['median_diff']:+.4f}  p {g_['p']:.2g} -> {g_['verdict']}")
-v = lambda t: GATES.get(t, {}).get("verdict")
-if chosen != "S" and v(tests[0][0]) == "BETTER":
-    final = "BIGGER HELPS" + (" AND THE ENGINE'S DESIGN MATTERS" if v(tests[1][0]) == "BETTER" else "")
+if not RUN_SIZES:
+    print("Section 15 skipped (RUN_SIZES = False).")
 else:
-    final = "SIZE DOES NOT HELP"
-SIZERES["chosen"], SIZERES["verdict"] = chosen, final
-print("\nVERDICT:", final)
+    
+    class EngineN(Engine):
+        def __init__(self, d_x, d_y, units, levels, steps, k, d_key=64):
+            super().__init__(d_x, d_y, units=units, steps=steps, k=k, d_key=d_key)
+            self.tree = BumpTree(d_x + 2 * units, units, levels=levels)
+    
+    def n_params(m):
+        return sum(q.numel() for q in m.parameters())
+    
+    def mlp_for(d_x, d_y, P_target):
+        b = d_x + d_y + 3
+        return MLP(d_x, d_y, int((-b + math.sqrt(b * b + 4 * P_target)) / 2))
+    
+    def train_eval_model(make, X, seed, is_engine):
+        # the recipe of section 9 (90/10 split of TRAIN, Pearson loss, AdamW, early stopping), any model
+        torch.manual_seed(seed)
+        n = len(rtr); perm = torch.randperm(n, generator=torch.Generator().manual_seed(100 + seed)).to(DEV)
+        va_, fi_ = perm[: n // 10], perm[n // 10:]
+        Xtr, Xte = X[rtr.to(DEV)], X[rte.to(DEV)]
+        m = make().to(DEV)
+        opt = torch.optim.AdamW(m.parameters(), lr=2e-3, weight_decay=1e-4)
+        mx, my = Xtr[fi_], Ztr[fi_]
+        slot = torch.full((n,), -1, dtype=torch.long, device=DEV); slot[fi_] = torch.arange(len(fi_), device=DEV)
+        best, state = -2.0, None
+        for ep in range(EPOCHS):
+            m.train()
+            for b in fi_[torch.randperm(len(fi_), device=DEV)].split(256):
+                pz = m(Xtr[b], mx, my, self_idx=slot[b] if is_engine else None)
+                loss = 1 - pearson_rows(pz @ Vy.T, Y_tr[b]).mean()
+                opt.zero_grad(); loss.backward(); nn.utils.clip_grad_norm_(m.parameters(), 1.0); opt.step()
+            if ep % 5 == 4 or ep == EPOCHS - 1:
+                m.eval()
+                with torch.no_grad():
+                    r = float(pearson_rows(m(Xtr[va_], mx, my) @ Vy.T, Y_tr[va_]).median())
+                if r > best:
+                    best, state = r, {k: v.detach().clone() for k, v in m.state_dict().items()}
+        m.load_state_dict(state); m.eval()
+        with torch.no_grad():
+            return m(Xte, Xtr, Ztr) @ Vy.T, best
+    
+    d_x, d_y = X_full.shape[1], Ztr.shape[1]
+    print(f"{'size':5s} {'engine params':>14s} {'held-out r':>11s} {'TEST median':>12s}   {'plain net params':>16s} {'held-out r':>11s} {'TEST median':>12s}")
+    for nm, cfg in SIZES.items():
+        t1 = time.time()
+        P_eng = n_params(EngineN(d_x, d_y, **cfg))
+        eo = [train_eval_model(lambda: EngineN(d_x, d_y, **cfg), X_full, s_, True) for s_ in SEEDS]
+        mo = [train_eval_model(lambda: mlp_for(d_x, d_y, P_eng), X_full, s_, False) for s_ in SEEDS]
+        PRED[f"ENGINE-{nm}"] = torch.stack([o[0] for o in eo]).mean(0)
+        PRED[f"MLP-{nm}"] = torch.stack([o[0] for o in mo]).mean(0)
+        for k_ in (f"ENGINE-{nm}", f"MLP-{nm}"):
+            R[k_] = torch.nan_to_num(pearson_rows(PRED[k_], A_te)).cpu().numpy()
+        SIZERES[nm] = dict(params=P_eng, engine_val=float(np.mean([o[1] for o in eo])), mlp_val=float(np.mean([o[1] for o in mo])),
+                           engine_test=float(np.median(R[f"ENGINE-{nm}"])), mlp_test=float(np.median(R[f"MLP-{nm}"])))
+        d_ = SIZERES[nm]
+        print(f"{nm:5s} {P_eng:>14,} {d_['engine_val']:>+11.3f} {d_['engine_test']:>+12.3f}   {n_params(mlp_for(d_x, d_y, P_eng)):>16,} "
+              f"{d_['mlp_val']:>+11.3f} {d_['mlp_test']:>+12.3f}   ({time.time() - t1:.0f}s)")
+    
+    chosen = max(SIZES, key=lambda nm: SIZERES[nm]["engine_val"])            # chosen on held-out TRAIN only
+    print(f"\nchosen by held-out TRAIN r: {chosen}")
+    tests = [("Z1 bigger helps (chosen vs S)", f"ENGINE-{chosen}", "ENGINE-S"),
+             ("Z2 engine design vs same-size plain net", f"ENGINE-{chosen}", f"MLP-{chosen}"),
+             ("Z3 chosen engine vs plain learner", f"ENGINE-{chosen}", "RIDGE")]
+    for tag, a, b in tests:
+        if a == b:
+            print(f"{tag:42s} -> NOT TESTED (S was chosen)"); continue
+        GATES[tag] = verdict(a, b); g_ = GATES[tag]
+        print(f"{tag:42s} better {g_['better']:,} / worse {g_['worse']:,}  median diff {g_['median_diff']:+.4f}  p {g_['p']:.2g} -> {g_['verdict']}")
+    v = lambda t: GATES.get(t, {}).get("verdict")
+    if chosen != "S" and v(tests[0][0]) == "BETTER":
+        final = "BIGGER HELPS" + (" AND THE ENGINE'S DESIGN MATTERS" if v(tests[1][0]) == "BETTER" else "")
+    else:
+        final = "SIZE DOES NOT HELP"
+    SIZERES["chosen"], SIZERES["verdict"] = chosen, final
+    print("\nVERDICT:", final)
 """)
 
 code(r"""
