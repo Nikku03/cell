@@ -5569,3 +5569,26 @@ NOTEBOOK SECTION 14 -- THE SELFISH-GENE AIM: IT HELPS NOTHING, BECAUSE THE MODEL
   NEW AND UNEXPLAINED: the plain ENGINE (section 9) scores 0.226 vs ridge 0.181 in this run -- the largest
   gap so far (72% of the upper bound). Which part carries it (the LLM vectors, memory + snapped steps, or
   the Pearson-loss training that the MLP also has) is answered by section 10's E1-E5, not yet reported here.
+
+=================================================================================================
+NOTEBOOK SECTION 15 -- ENGINE SIZE LADDER: SIZE DOES NOT HELP, AND THE ENGINE'S DESIGN DOES NOT EITHER
+=================================================================================================
+  Gates Z1-Z3, the verdict rule and the expectation predeclared in the notebook (pushed before the run).
+  Run by the user on a Colab A100; numbers from the printed output. Same inputs, recipe and seeds for every
+  arm; each engine size beside an MLP with the same parameter count.
+        size  engine params  held-out r  TEST median | plain net params  held-out r  TEST median
+        S        3.1M          0.228       0.226     |    3.1M             0.223       0.227
+        M        6.7M          0.226       0.226     |    6.7M             0.226       0.225
+        L       35.9M          0.227       0.223     |   35.9M             0.224       0.223
+        XL      60.1M          0.213       0.218     |   60.1M             0.227       0.223
+  Chosen on held-out TRAIN r: S. Z1 not tested (S chosen). VERDICT: SIZE DOES NOT HELP; the largest engine
+  starts to lose (0.218), as expected with ~2,300 training genes.
+  Z2 engine vs the same-size plain net: +0.0004 (1,285 / 1,240, p 0.38) -> NO DIFFERENCE.
+  Z3 engine vs ridge: +0.0246 (1,737 / 788, p 3e-81) -> BETTER.
+  CORRECTION TO SECTION 14's NOTE ("the plain ENGINE scores 0.226 vs ridge 0.181 -- new and unexplained"):
+  now explained, and not by the engine. A plain two-layer network on the same inputs, trained the same way
+  (Pearson loss on 128 response components, AdamW, early stopping), scores the same at every size. The win
+  over ridge comes from the nonlinear network and its training objective; the reasoning engine's own
+  parts (bump-node tree, memory of experiments, snapped steps) add nothing measurable here. The same was
+  found without the LLM inputs (expmem.py: memory ties ridge). Best single model: 0.226-0.227 = 72% of the
+  0.315 upper bound; the limit remains the information in the inputs, not model size or design.
