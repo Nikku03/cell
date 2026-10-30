@@ -5642,3 +5642,22 @@ CLIQUENET -- BRAIN-LIKE HIGHER-DIMENSIONAL CLIQUES: THEY RESCUE DEPTH, BUT THE S
   (short gradient paths); this design cannot separate 'dimension' from 'skip connections'. The engine's
   shallow, wide tree avoids the deep-sequence problem altogether and remains the best update function
   tested. Not modelled: overlapping cliques, cavities, recurrence inside the circuit.
+
+=================================================================================================
+CLIQUETREE -- CLIQUE-WIRED SIBLINGS INSIDE THE ENGINE'S TREE: NO GAIN; HURTS ON ONE TASK
+=================================================================================================
+  cliquetree.py (committed before running, 8a944e2; a 20-step check on non-evaluation seed 999 disclosed).
+  The engine's tree (24 units x 16 leaves, groups of 4 summed then bumped) vs the same tree where each
+  sibling also reads every earlier sibling in its group before the bump (clique per group; lateral weights
+  start at 0, +1,920 params = 2.5% on H1S, 7.3% on P1N). Same tasks, seeds, data and training as cliquenet.
+  Harness PASS.
+        long-chain accuracy (deepest test)   TREE    CLIQUETREE
+        H1S 12 items, snap, k=16             0.902   0.847      learnt 10/10 both
+        P1N 6 items, no snap, k=32           0.849   0.800      learnt 10/10 both
+  C1 PRIMARY: H1S CLIQUETREE lower on 9/10 seeds (mean -0.047) -> HURTS.
+              P1N lower on 6/10, higher on 4/10 (mean -0.036) -> NO DIFFERENCE.
+  C2: no arm exact.
+  WHAT IT MEANS. Cliques help a network that computes in a deep sequence (cliquenet), but the engine's tree
+  is shallow and wide, so it has nothing for them to fix; the extra lateral wiring made it slightly worse
+  at reasoning over longer chains than it was trained on. The tree stays as it is. One placement of
+  cliques tested (inside sibling groups).
