@@ -5592,3 +5592,26 @@ NOTEBOOK SECTION 15 -- ENGINE SIZE LADDER: SIZE DOES NOT HELP, AND THE ENGINE'S 
   parts (bump-node tree, memory of experiments, snapped steps) add nothing measurable here. The same was
   found without the LLM inputs (expmem.py: memory ties ridge). Best single model: 0.226-0.227 = 72% of the
   0.315 upper bound; the limit remains the information in the inputs, not model size or design.
+
+=================================================================================================
+CELLPUZZLE -- THE JIGSAW AND THE MAZE: THE POSITIVE CONTROL FAILS, SO NOTHING WAS RUN ON REAL DATA
+=================================================================================================
+  cellpuzzle.py (committed c0a4af3 before running). One direct map W from all TRAIN knockdowns at once
+  (ridge of each gene on all others, exact self-exclusion; the Modular Response Analysis idea,
+  Kholodenko 2002), then held-out knockdowns run through it step by step (W + W^2 + ...). P0, a fake cell
+  with a known map (600 genes, 300 noisy knockdowns, 3 inputs per gene), must pass before real data.
+  RUN 1: P0 FAILED. (a) direct edges AUROC 0.806 and (c) direction 71.9% passed; (b) W vs total effects
+     failed -- but (b) compared W with NOISE-FREE total effects of ALL genes, which no experiment has. A
+     defect in the control; amended (cb995a1), recorded in the docstring, run kept in history (4719327).
+  RUN 2 (fair control): P0 FAILED on the property the maze needs. Direct links FROM GENES NEVER KNOCKED
+     DOWN: AUROC 0.657 (bar 0.70). The maze check printed nan (a bug in the check: genes that push nothing
+     have no response); fixed and re-run only to report it -- verdict unchanged:
+        maze for never-knocked-down genes, median r with their true responses: 0.087
+        on knocked-down sources: direct map AUROC 0.987 vs noisy total effects 0.996 (no gain from unpicking)
+  WHAT IT MEANS. Overlapping all knockdowns pins down the direct pushes OF GENES THAT WERE KNOCKED DOWN
+  (0.987), but in this fake cell the raw total effects already find them (0.996). For genes never knocked
+  down, how they rise and fall in other experiments barely reveals what they push (0.657), and running the
+  maze from them predicts almost nothing (0.087) -- in an idealised cell with no hidden players. Those
+  pieces cannot be inferred from these data alone: they are the jigsaw's missing pieces, and must come from
+  another source (documents read by the LLM, interaction partners, or new experiments). Real data not run,
+  as predeclared.
