@@ -5661,3 +5661,22 @@ CLIQUETREE -- CLIQUE-WIRED SIBLINGS INSIDE THE ENGINE'S TREE: NO GAIN; HURTS ON 
   is shallow and wide, so it has nothing for them to fix; the extra lateral wiring made it slightly worse
   at reasoning over longer chains than it was trained on. The tree stays as it is. One placement of
   cliques tested (inside sibling groups).
+
+=================================================================================================
+NOTEBOOK SECTION 16 -- THE LLM WORKING WITH THE REASONING ENGINE AND THE MEMORY BANK (PREDECLARED, NOT RUN)
+=================================================================================================
+  colab/cell_reasoning_llm_a100.ipynb, section 16 (gates written in the notebook before any number).
+  MEMORY BANK: every TRAIN knockdown stored as a measured fact (top 3 pathways up / down, top 4 genes up /
+  down; pathways with < 15 measured genes or about viruses / disease left out). TEST genes are never in it;
+  a TRAIN gene never recalls its own experiment. RECALL: the reasoning engine's snapping step picks the 3
+  most relevant experiments; the memory adds up to 2 measured interaction partners. The LLM reads them
+  with the gene's Atlas document and is fine-tuned (section 12 settings, fresh adapters) -> LLM-FT+MEMORY.
+  M1 LLM-FT+MEMORY vs LLM-FT | M2 vs ENGINE | M3 PRIMARY ENGINE + LLM-FT+MEMORY vs ENGINE |
+  M4 own memory vs another gene's recalled memory (must be BETTER for M1/M3 to count) |
+  M5 ENGINE + LLM-FT+MEMORY vs ENGINE + LLM-FT. Rule: paired sign test p < 0.05 and |median| >= +0.01.
+  PROPOSAL LOOP: on 100 random TEST genes the base LLM picks up to 4 pathways UP and 4 DOWN from a 20-item
+  menu (combined prediction + recalled facts). Each pick is written to the memory bank as a hypothesis
+  with its sources and checked against the held-out measurement: confirmed if in the top / bottom 10%.
+  L1 precision vs the same picks scored on another TEST gene (one-sided permutation p < 0.05).
+  L2 precision vs the engine's own top-4 / bottom-4 from the same menu (paired sign test p < 0.05).
+  CPU smoke test with a tiny stand-in model passed end to end (its numbers carry no meaning).

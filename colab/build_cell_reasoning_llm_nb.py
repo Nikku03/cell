@@ -33,9 +33,10 @@ What it does, step by step:
 7. **Fine-tuning the LLM on documents → results (QLoRA).** The LLM is taught, on TRAIN genes only, to read a gene's Atlas document and predict what was actually measured when that gene was knocked down. It then predicts TEST genes it never saw. Only small adapter layers (LoRA) and a prediction head are trained.
 9. **The aim (section 14).** The selfish-gene view, given to the models as an objective: a cell like K562 is organised around growing and dividing; losing a gene shifts it between GROWTH and PROTECTION. The engine and the LLM both learn to predict that aim first, and the LLM also reads it as a guiding principle.
 10. **A bigger engine (section 15).** The same engine at four sizes (wider, deeper trees, more reasoning steps, more memories read per step), each beside a plain neural net with the same number of parameters.
+11. **The LLM working with the reasoning engine and the memory bank (section 16).** The memory bank holds every TRAIN knockdown as a measured fact. The engine's snapping step recalls the most relevant ones for each gene, and the memory adds the gene's measured interaction partners. The LLM reads them with the gene's document and is fine-tuned to predict the response; the engine and the LLM are then combined. Finally the LLM proposes missing pieces (pathways up and down) for 100 random TEST genes. Each proposal is written to the memory bank as a hypothesis, checked against the held-out measurement, and marked confirmed or refuted.
 8. **The nameless-documents test.** The LLM was pretrained on public text that may include these screens' papers. If it does well only because it recognises the gene's *name* and recalls published results, that is memory, not reasoning. Section 13 fine-tunes again, from scratch and with identical settings, on documents with the gene's name, aliases and full name removed. A second version also replaces the interaction partners' names with a count.
 
-**Runtime.** About 45–90 min on an A100 for sections 1–11, plus about 30 min per fine-tuning run: one in section 12, two in section 13 (set `RUN_STRICT = False` to skip the second), and one in section 14. Most of that is downloading the model weights (≈61 GB) and the data, plus the LLM pass over ~5,000 genes. On a 40 GB A100 the LLM loads in 4-bit; on 80 GB, in bf16.
+**Runtime.** Section 16 adds about 80–100 minutes (a fine-tuning run on prompts twice as long, plus 100 proposals). Sections 1–11 take about 45–90 min on an A100, plus about 30 min per fine-tuning run: one in section 12, two in section 13 (set `RUN_STRICT = False` to skip the second), and one in section 14. Most of that is downloading the model weights (≈61 GB) and the data, plus the LLM pass over ~5,000 genes. On a 40 GB A100 the LLM loads in 4-bit; on 80 GB, in bf16.
 
 **Runtime → Change runtime type → A100 GPU** before running. Then *Runtime → Run all*.
 """)
@@ -131,6 +132,20 @@ The best size is chosen by held-out TRAIN r only; TEST decides nothing.
 
 Expectation, written before the run: with ~2,300 training genes and an upper bound of 0.315, gains will be small, and the largest sizes may memorise.
 
+**The LLM + engine + memory tests (section 16), same rule.** The memory holds TRAIN knockdowns only. A TRAIN gene never recalls its own experiment. Pathway names about viruses or diseases are left out of memory text, because the LLM misread them literally before; so are pathways with fewer than 15 measured genes, whose averages are mostly noise. The engine that recalls memories is the section 9 engine retrained once (seed 0) with all TRAIN in memory.
+
+| Test | Comparison | Question |
+|---|---|---|
+| **M1** | LLM-FT+MEMORY vs LLM-FT (section 12) | Does reading the memory bank help the LLM? |
+| **M2** | LLM-FT+MEMORY vs ENGINE | |
+| **M3** | ENGINE + LLM-FT+MEMORY (rescaled average) vs ENGINE | Does the LLM add to the engine? **Primary.** |
+| **M4** | LLM-FT+MEMORY vs the same model given another gene's recalled memory | Must be BETTER for M1/M3 to count. |
+| **M5** | ENGINE + LLM-FT+MEMORY vs ENGINE + LLM-FT | Does memory add inside the combination? |
+
+**The proposal loop.** On 100 random TEST genes, the base LLM picks up to 4 pathways UP and 4 DOWN from a 20-item menu built from the combined prediction and the recalled memory. A pick is **confirmed** if, in that gene's measured response, the pathway ranks in the top 10% (UP) or bottom 10% (DOWN) of the pathways kept. Two tests:
+- **L1:** the LLM's precision vs the same picks checked against another TEST gene's measurement. BETTER if one-sided permutation p < 0.05.
+- **L2:** the LLM's precision vs the engine's own top-4 / bottom-4 from the same menu, paired per gene. Sign test, p < 0.05.
+
 **Caveats, stated now.**
 - The LLM was trained on public text that may include papers describing these very knockdowns. A gain from the LLM could partly be remembered results, not reasoning.
 - One cell line (K562), steady state.
@@ -168,6 +183,7 @@ RUN_FINETUNE = True    # section 12: fine-tune the LLM on gene documents
 RUN_NAMELESS = True    # section 13: nameless-documents test (2 more fine-tuning runs)
 RUN_AIM = True         # section 14: the selfish-gene aim (1 more fine-tuning run)
 RUN_SIZES = True       # section 15: engine size ladder (minutes, no LLM needed)
+RUN_LOOP = True        # section 16: LLM + reasoning engine + memory bank (needs RUN_FINETUNE; ~90 min)
 SEEDS = (0,) if SMOKE else (0, 1, 2)
 EPOCHS = 3 if SMOKE else 150
 DEV = "cuda" if torch.cuda.is_available() else "cpu"
@@ -1248,11 +1264,265 @@ else:
 """)
 
 code(r"""
-# ---- 16. save everything ----------------------------------------------------------------------------
+# ---- 16. the LLM working with the reasoning engine and the memory bank ------------------------------------
+import re
+LOOPRES = {}
+if not (globals().get("RUN_LOOP", True) and DO_FT and "LLM-FT" in PRED):
+    print("Section 16 skipped (needs RUN_LOOP and the section 12 fine-tuning in this session).")
+else:
+    BAD = re.compile(r"virus|viral|SARS|HIV|influenza|infect|disease|cancer|amyloid|parasit|bacteri|hepatitis|"
+                     r"defective|mutant|syndrome|tumou?r|leishmania|tubercul|covid|_\d{5,}", re.I)
+    okp = torch.tensor([not BAD.search(nm) for nm in names], device=DEV) & (Mp.sum(0) >= 15)   # >= 15 measured genes
+    print(f"pathways used in memory facts and proposals: {int(okp.sum()):,} of {len(names):,}")
+    pw_ok = lambda v: torch.where(okp, pw(v), torch.tensor(float("nan"), device=DEV))
+
+    # --- 16a. the memory bank: every TRAIN knockdown as a measured fact (TEST genes are never in it) ---
+    def fact_of(v, own_gene):
+        sc_ = torch.nan_to_num(pw_ok(v), nan=0.0); vv = torch.nan_to_num(v.clone())
+        if own_gene in gidx:
+            vv[gidx[own_gene]] = 0.0
+        up = [names[i] for i in sc_.argsort(descending=True)[:3].tolist()]
+        dn = [names[i] for i in sc_.argsort()[:3].tolist()]
+        gu = [A["genes"][i] for i in vv.argsort(descending=True)[:4].tolist()]
+        gd = [A["genes"][i] for i in vv.argsort()[:4].tolist()]
+        return dict(up=up, down=dn, genes_up=gu, genes_down=gd)
+
+    MEM = []
+    for j in range(len(rtr)):
+        g = KN[rtr[j]]
+        MEM.append(dict(id=f"M-{g}", gene=g, type="measured", source="Replogle 2022 K562 genome-wide CRISPRi, TRAIN knockdown",
+                        **fact_of(Y_tr[j], g)))
+    with open(os.path.join(OUTD, "memory_bank_measured.jsonl"), "w") as fh:
+        for m_ in MEM:
+            fh.write(json.dumps(m_) + "\n")
+    fact_txt = lambda m_, why: (f"- {m_['gene']} knockdown ({why}): raised {'; '.join(m_['up'])}. Lowered {'; '.join(m_['down'])}. "
+                                f"Most raised genes {', '.join(m_['genes_up'])}; most lowered {', '.join(m_['genes_down'])}.")
+    print(f"memory bank: {len(MEM):,} measured TRAIN knockdowns written to {OUTD}/memory_bank_measured.jsonl")
+
+    # --- 16b. the reasoning engine recalls the most relevant experiments (its snapping step) ---
+    class EngineR(Engine):
+        def forward(self, x, mx, my, self_idx=None):
+            h = self.enc(x); K = self.key(mx); V = self.val(my); self.tops = []
+            for _ in range(self.steps):
+                S = self.q(h) @ K.T / math.sqrt(K.shape[1])
+                if self_idx is not None:
+                    S = S.masked_fill(F.one_hot(self_idx, S.shape[1]).bool(), float("-inf"))
+                top = S.topk(self.k, dim=1); self.tops.append(top.indices)
+                w = torch.softmax(top.values, 1).unsqueeze(-1)
+                r_y = (w * my[top.indices]).sum(1); r_h = (w * V[top.indices]).sum(1)
+                h = torch.tanh(self.tree(torch.cat([x, r_h, h], 1)))
+            g = torch.sigmoid(self.mix(h))
+            return g * r_y + (1 - g) * self.out(h)
+
+    torch.manual_seed(0)
+    Xtr_, Xte_ = X_full[rtr.to(DEV)], X_full[rte.to(DEV)]
+    eng = EngineR(X_full.shape[1], Ztr.shape[1]).to(DEV)
+    opt_ = torch.optim.AdamW(eng.parameters(), lr=2e-3, weight_decay=1e-4)
+    n_ = len(rtr); slot_all = torch.arange(n_, device=DEV)
+    for ep in range(EPOCHS):                       # the section 9 recipe, all TRAIN in memory, self masked
+        eng.train()
+        for b in torch.randperm(n_, device=DEV).split(256):
+            loss = 1 - pearson_rows(eng(Xtr_[b], Xtr_, Ztr, self_idx=slot_all[b]) @ Vy.T, Y_tr[b]).mean()
+            opt_.zero_grad(); loss.backward(); nn.utils.clip_grad_norm_(eng.parameters(), 1.0); opt_.step()
+    eng.eval()
+    with torch.no_grad():
+        eng(Xtr_, Xtr_, Ztr, self_idx=slot_all); rec_tr = eng.tops[-1][:, :3].cpu().numpy()
+        eng(Xte_, Xtr_, Ztr); rec_te = eng.tops[-1][:, :3].cpu().numpy()
+    tr_of_ens = {KE[rtr[j]]: j for j in range(n_) if KE[rtr[j]]}
+    norm_tr = Y_tr.norm(dim=1).cpu().numpy()
+
+    def memory_block(sym, e, recalled, self_j=None):
+        lines = ["Measured experiments recalled from the memory bank (K562 CRISPRi knockdowns of OTHER genes):"]
+        used = set()
+        for j in recalled:
+            if j != self_j and j not in used:
+                used.add(j); lines.append(fact_txt(MEM[j], "recalled by the reasoning engine"))
+        parts = sorted([tr_of_ens[q] for q in PPI.get(e, ()) if q in tr_of_ens and tr_of_ens[q] != self_j],
+                       key=lambda j: -norm_tr[j])[:2]
+        for j in parts:
+            if j not in used:
+                used.add(j); lines.append(fact_txt(MEM[j], "interaction partner"))
+        return "\n".join(lines), sorted(used)
+
+    def mem_prompt(sym, e, block):
+        doc = prompt_for(sym, e).rsplit("Question:", 1)[0]
+        return (doc + block + f"\nQuestion: in K562 erythroleukemia cells, what happens to the cell when {sym} is knocked down "
+                "by CRISPRi? Which cellular processes and pathways go up, and which go down?")
+
+    MP = [None] * NPH; USED = [None] * NPH
+    for j in range(n_):
+        blk, used = memory_block(KN[rtr[j]], KE[rtr[j]], rec_tr[j], self_j=j)
+        MP[rtr[j]] = mem_prompt(KN[rtr[j]], KE[rtr[j]], blk); USED[rtr[j]] = used
+    for t in range(len(rte)):
+        blk, used = memory_block(KN[rte[t]], KE[rte[t]], rec_te[t])
+        MP[rte[t]] = mem_prompt(KN[rte[t]], KE[rte[t]], blk); USED[rte[t]] = used
+    shm = np.random.default_rng(12).permutation(len(rte))
+    while (shm == np.arange(len(rte))).any():
+        shm = np.random.default_rng(int(shm[0]) + 13).permutation(len(rte))
+    MP_shuf = [mem_prompt(KN[rte[t]], KE[rte[t]], memory_block(KN[rte[shm[t]]], KE[rte[shm[t]]], rec_te[shm[t]])[0]) for t in range(len(rte))]
+    print("example memory-augmented prompt:\n" + MP[rte[0]][:1500])
+
+    # --- 16c. fine-tune the LLM on memory-augmented prompts (section 12 settings, longer prompts) ---
+    def ft_memory(max_len=1024, bs=FT_BATCH // 2, accum=FT_ACCUM * 2):   # prompts twice as long: half batch, same effective batch
+        torch.manual_seed(0)
+        for mod in pm.modules():
+            if hasattr(mod, "reset_lora_parameters") and "default" in getattr(mod, "lora_A", {}):
+                mod.reset_lora_parameters("default", True)
+        hd = nn.Sequential(nn.LayerNorm(llm.config.hidden_size), nn.Linear(llm.config.hidden_size, Ztr.shape[1])).to(DEV)
+        chat = lambda q: tok.apply_chat_template([{"role": "user", "content": q}], tokenize=False, add_generation_prompt=True)
+
+        def pool(texts):
+            enc = tok([chat(q) for q in texts], return_tensors="pt", padding=True, truncation=True, max_length=max_len)
+            enc = {k: v.to(dev0) for k, v in enc.items()}
+            h = dec(input_ids=enc["input_ids"], attention_mask=enc["attention_mask"]).last_hidden_state.float()
+            m = enc["attention_mask"].unsqueeze(-1).float()
+            return ((h * m).sum(1) / m.sum(1)).to(DEV)
+
+        def predict(texts, bs=8):
+            pm.eval(); hd.eval(); out = []
+            with torch.no_grad():
+                for k in range(0, len(texts), bs):
+                    out.append(hd(pool(texts[k:k + bs])) @ Vy.T)
+            return torch.cat(out)
+
+        lora = [q for q in pm.parameters() if q.requires_grad]
+        opt = torch.optim.AdamW([{"params": lora, "lr": 1e-4}, {"params": hd.parameters(), "lr": 1e-3}])
+        best, state, t1 = -2.0, None, time.time()
+        for ep in range(FT_EPOCHS):
+            pm.train(); hd.train(); opt.zero_grad()
+            for k, b in enumerate(fi[torch.randperm(len(fi))].split(bs)):
+                z = hd(pool([MP[rtr_l[j]] for j in b.tolist()]))
+                loss = (1 - pearson_rows(z @ Vy.T, Y_tr[b.to(DEV)]).mean()) / accum
+                loss.backward()
+                if (k + 1) % accum == 0:
+                    nn.utils.clip_grad_norm_(lora + list(hd.parameters()), 1.0); opt.step(); opt.zero_grad()
+            r_va = float(pearson_rows(predict([MP[rtr_l[j]] for j in va.tolist()]), Y_tr[va.to(DEV)]).median())
+            print(f"  [memory] epoch {ep + 1}: held-out TRAIN median r {r_va:+.3f}  ({time.time() - t1:.0f}s)")
+            if r_va > best:
+                best = r_va
+                state = ({nm: q.detach().clone() for nm, q in pm.named_parameters() if q.requires_grad},
+                         {kk: v.detach().clone() for kk, v in hd.state_dict().items()})
+        with torch.no_grad():
+            for nm, q in pm.named_parameters():
+                if nm in state[0]:
+                    q.copy_(state[0][nm])
+        hd.load_state_dict(state[1])
+        return predict([MP[i] for i in rte.tolist()]), predict(MP_shuf), best
+
+    p_mem, p_shuf, best_mem = ft_memory()
+    unit_ = lambda M: (M - M.mean(1, keepdim=True)) / (M - M.mean(1, keepdim=True)).norm(dim=1, keepdim=True).clamp(min=1e-12)
+    PRED["LLM-FT+MEMORY"] = p_mem
+    PRED["LLM-FT+MEMORY, another gene's memory"] = p_shuf
+    PRED["ENGINE + LLM-FT+MEMORY"] = (unit_(PRED["ENGINE"]) + unit_(p_mem)) / 2
+    PRED["ENGINE + LLM-FT"] = (unit_(PRED["ENGINE"]) + unit_(PRED["LLM-FT"])) / 2
+    for nm in ("LLM-FT+MEMORY", "LLM-FT+MEMORY, another gene's memory", "ENGINE + LLM-FT+MEMORY", "ENGINE + LLM-FT"):
+        R[nm] = torch.nan_to_num(pearson_rows(PRED[nm], A_te)).cpu().numpy()
+    print("\nTEST knockdowns, median / mean r:")
+    for nm in ("ENGINE", "LLM-FT", "LLM-FT+MEMORY", "LLM-FT+MEMORY, another gene's memory", "ENGINE + LLM-FT", "ENGINE + LLM-FT+MEMORY", "RIDGE"):
+        print(f"  {nm:40s} {np.median(R[nm]):+.3f} / {np.mean(R[nm]):+.3f}")
+    tests = [("M1 memory helps the LLM", "LLM-FT+MEMORY", "LLM-FT"), ("M2 LLM+memory vs engine", "LLM-FT+MEMORY", "ENGINE"),
+             ("M3 LLM+memory adds to the engine (PRIMARY)", "ENGINE + LLM-FT+MEMORY", "ENGINE"),
+             ("M4 reads its own memory (vs another gene's)", "LLM-FT+MEMORY", "LLM-FT+MEMORY, another gene's memory"),
+             ("M5 memory adds inside the combination", "ENGINE + LLM-FT+MEMORY", "ENGINE + LLM-FT")]
+    for tag, a, b in tests:
+        GATES[tag] = verdict(a, b); g_ = GATES[tag]
+        print(f"{tag:46s} better {g_['better']:,} / worse {g_['worse']:,}  median diff {g_['median_diff']:+.4f}  p {g_['p']:.2g} -> {g_['verdict']}")
+    if GATES[tests[3][0]]["verdict"] != "BETTER":
+        print("NOTE: M4 failed -- the memory's content does not drive the predictions; M1 and M3 do not count.")
+    LOOPRES.update(heldout_r=best_mem)
+
+    # --- 16d. the jigsaw loop: the LLM proposes missing pieces; each is checked and written to the memory bank ---
+    N_PROPOSE = 12 if SMOKE else 100
+    pickp = np.random.default_rng(21).choice(len(rte), size=min(N_PROPOSE, len(rte)), replace=False)
+    comb = PRED["ENGINE + LLM-FT+MEMORY"]
+    HYP, prec_llm, prec_null, prec_eng = [], [], [], []
+    meas_rank = {}
+
+    def ranks(v):
+        sc_ = pw_ok(v); ok_ = torch.isfinite(sc_)
+        order = torch.argsort(torch.where(ok_, sc_, torch.tensor(-1e9, device=DEV)), descending=True)
+        rk = torch.empty_like(order); rk[order] = torch.arange(len(order), device=DEV)
+        return rk.cpu().numpy(), int(ok_.sum())
+
+    der_p = np.roll(pickp, 1)
+    jobs_ = []
+    for t in pickp:
+        sym, e = KN[rte[t]], KE[rte[t]]
+        sc_ = torch.nan_to_num(pw_ok(comb[t]), nan=0.0)
+        cand = sc_.argsort(descending=True)[:8].tolist() + sc_.argsort()[:8].tolist()
+        for j in USED[rte[t]]:
+            for nm in MEM[j]["up"][:1] + MEM[j]["down"][:1]:
+                ix = names.index(nm)
+                if ix not in cand:
+                    cand.append(ix)
+        cand = cand[:20]
+        menu = "\n".join(f"{k + 1}. {names[ix]}" for k, ix in enumerate(cand))
+        q = (MP[rte[t]].rsplit("Question:", 1)[0] +
+             f"The reasoning engine predicts the strongest rises in: {'; '.join(names[i] for i in sc_.argsort(descending=True)[:3].tolist())}; "
+             f"and the strongest falls in: {'; '.join(names[i] for i in sc_.argsort()[:3].tolist())}.\n"
+             f"Menu of pathways:\n{menu}\n"
+             f"Using the gene's biology and the recalled experiments, choose up to 4 menu items that go UP and up to 4 that go DOWN "
+             f"when {sym} is knocked down. Reply with JSON only, like {{\"up\": [1, 5], \"down\": [3], \"why\": \"one sentence\"}}.")
+        jobs_.append((t, sym, cand, q, sc_))
+    tok.padding_side = "left"; outs_txt = []
+    for k in range(0, len(jobs_), 8):
+        chat_q = [tok.apply_chat_template([{"role": "user", "content": j_[3]}], tokenize=False, add_generation_prompt=True) for j_ in jobs_[k:k + 8]]
+        enc = tok(chat_q, return_tensors="pt", padding=True).to(dev0)
+        with torch.no_grad(), pm.disable_adapter():
+            gen = pm.generate(**enc, max_new_tokens=160, do_sample=False, use_cache=True)
+        outs_txt += [tok.decode(o[enc["input_ids"].shape[1]:], skip_special_tokens=True).strip() for o in gen]
+    tok.padding_side = "right"
+    for (t, sym, cand, q, sc_), txt, t_null in zip(jobs_, outs_txt, der_p):
+        m_ = re.search(r"\{.*\}", txt, re.S)
+        try:
+            ans = json.loads(m_.group(0)) if m_ else {}
+        except Exception:
+            ans = {}
+        if SMOKE and not ans.get("up"):                       # the tiny smoke-test model cannot write JSON
+            ans = {"up": [1, 2], "down": [len(cand)], "why": "smoke test"}
+        pick = {d: [cand[int(i) - 1] for i in ans.get(d, []) if str(i).isdigit() and 1 <= int(i) <= len(cand)][:4] for d in ("up", "down")}
+        rk, n_ok = ranks(A_te[t]); rk_null, _ = ranks(A_te[t_null]); cut = max(1, int(0.10 * n_ok))
+        hit = lambda ix, d, rk_: (rk_[ix] < cut) if d == "up" else (rk_[ix] >= n_ok - cut)
+        picks = [(ix, d) for d in ("up", "down") for ix in pick[d] if bool(okp[ix])]
+        if not picks:
+            continue
+        conf = [hit(ix, d, rk) for ix, d in picks]
+        prec_llm.append(np.mean(conf)); prec_null.append(np.mean([hit(ix, d, rk_null) for ix, d in picks]))
+        eng_picks = [(ix, "up") for ix in sorted(cand, key=lambda i: -float(sc_[i]))[:4]] + [(ix, "down") for ix in sorted(cand, key=lambda i: float(sc_[i]))[:4]]
+        prec_eng.append(np.mean([hit(ix, d, rk) for ix, d in eng_picks]))
+        for (ix, d), c in zip(picks, conf):
+            HYP.append(dict(id=f"H-{sym}-{d}-{ix}", gene=sym, type="hypothesis", claim=f"knocking down {sym} {'raises' if d == 'up' else 'lowers'} {names[ix]}",
+                            source=f"LLM proposal ({USED_MODEL}, base, adapters off) from memory facts {[MEM[j]['id'] for j in USED[rte[t]]]} and the engine's prediction",
+                            why=ans.get("why", ""), status="confirmed" if c else "refuted",
+                            checked_against="the held-out measured TEST response (top/bottom 10% of pathways)"))
+    with open(os.path.join(OUTD, "memory_bank_hypotheses.jsonl"), "w") as fh:
+        for h_ in HYP:
+            fh.write(json.dumps(h_) + "\n")
+    if prec_llm:
+        pl, pn, pe_ = np.array(prec_llm), np.array(prec_null), np.array(prec_eng)
+        rng_ = np.random.default_rng(3); diffs = pl - pn
+        perm_p = float(np.mean([np.mean(diffs * rng_.choice([-1, 1], len(diffs))) >= diffs.mean() for _ in range(5000)]))
+        w_, l_ = int((pl > pe_).sum()), int((pl < pe_).sum())
+        p2 = binomtest(w_, w_ + l_, 0.5).pvalue if w_ + l_ else 1.0
+        print(f"\nproposal loop: {len(prec_llm)} genes answered, {len(HYP)} hypotheses written to {OUTD}/memory_bank_hypotheses.jsonl")
+        print(f"  confirmed share: LLM {pl.mean():.1%} | same picks on another gene's measurement {pn.mean():.1%} | engine's own top picks {pe_.mean():.1%}")
+        print(f"  L1 LLM vs null: permutation p {perm_p:.2g} -> {'BETTER' if perm_p < 0.05 else 'NO DIFFERENCE'}")
+        print(f"  L2 LLM vs engine picks: better on {w_} genes, worse on {l_}, p {p2:.2g} -> "
+              f"{'BETTER' if p2 < 0.05 and w_ > l_ else 'WORSE' if p2 < 0.05 else 'NO DIFFERENCE'}")
+        LOOPRES.update(n_answered=len(prec_llm), n_hypotheses=len(HYP), precision_llm=float(pl.mean()), precision_null=float(pn.mean()),
+                       precision_engine=float(pe_.mean()), L1_p=perm_p, L2=dict(better=w_, worse=l_, p=float(p2)))
+        for h_ in HYP[:6]:
+            print(f"  [{h_['status']}] {h_['claim']}  -- {h_['why'][:140]}")
+    else:
+        print("proposal loop: no parsable proposals")
+""")
+
+code(r"""
+# ---- 17. save everything ----------------------------------------------------------------------------
 res = dict(model=USED_MODEL, smoke=SMOKE, device=DEV, n_train=len(TR), n_test=len(TE), hpa_coverage=cov,
            scores={n: dict(median=float(np.median(v)), mean=float(np.mean(v))) for n, v in R.items()},
            upper_bound=dict(median=float(np.median(ceil)), mean=float(np.mean(ceil)), n=len(ceil)),
-           H0=bool(h0), gates=GATES, info=INFO, explanations=REPORTS, fine_tuning=FT, nameless=NAMELESS, aim=AIMRES, sizes=SIZERES)
+           H0=bool(h0), gates=GATES, info=INFO, explanations=REPORTS, fine_tuning=FT, nameless=NAMELESS, aim=AIMRES, sizes=SIZERES, loop=LOOPRES)
 with open(os.path.join(OUTD, "results.json"), "w") as fh:
     json.dump(res, fh, indent=1, default=str)
 print("saved", os.path.join(OUTD, "results.json"))
