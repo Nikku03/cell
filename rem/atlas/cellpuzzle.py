@@ -50,6 +50,9 @@ P0 POSITIVE CONTROL (blocking). A fake cell: 600 genes, a random sparse signed d
          their true (noise-free) responses >= 0.5.
    Reported, no longer blocking: (b) on knocked-down sources only, |W| vs the NOISY observed total
    effects, same pairs. Nothing else changes.
+   SECOND RUN (commit after cb995a1): P0 FAILED on (a2), 0.657 < 0.70; the maze check printed nan because
+   genes that push nothing have no response to correlate (a bug in the check, fixed: such genes are
+   skipped). The verdict does not change; the fixed check is re-run only to report its number.
 P1 THE MAZE vs THE PLAIN LEARNER. TEST knockdowns whose gene is measured: MAP (lambda, K from validation)
    vs RIDGE (askdata's feature blocks, lambda by its inner CV) on the same knockdowns; paired two-sided
    sign test; BETTER needs p < 0.05 and median r gain >= +0.01 (WORSE the mirror; else NO DIFFERENCE).
@@ -185,8 +188,9 @@ def positive_control(rng):
     dirn = float(np.mean(np.abs(W[ii, jj]) > np.abs(W[jj, ii])))
     unseen = np.where(~seen)[0]
     pred = run_maze(W, unseen, 3)[2]
-    r = [np.corrcoef(np.delete(pred[:, t], j), np.delete(-T[:, j], j))[0, 1] for t, j in enumerate(unseen)]
-    maze_r = float(np.median(r))
+    r = [np.corrcoef(np.delete(pred[:, t], j), np.delete(-T[:, j], j))[0, 1] for t, j in enumerate(unseen)
+         if np.delete(T[:, j], j).std() > 0]                 # genes that push nothing have no response to match
+    maze_r = float(np.nanmedian(r))
     ok = a_all >= 0.75 and a_unseen >= 0.70 and dirn > 0.6 and maze_r >= 0.5
     return dict(auroc_all=float(a_all), auroc_never_knocked_down=float(a_unseen), direction=dirn, maze_r_unseen=maze_r,
                 reported_seen_sources=dict(auroc_direct_map=float(a_w_seen), auroc_noisy_total=float(a_t_seen)),
