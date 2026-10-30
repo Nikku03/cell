@@ -1,0 +1,168 @@
+{
+  "test": "cell_orphan_ties_nn",
+  "n_eval": 458,
+  "n_train": 850,
+  "ks": [
+    1,
+    5,
+    20
+  ],
+  "recall": {
+    "random": {
+      "1": 0.314410480349345,
+      "5": 0.4912663755458515,
+      "20": 0.6222707423580786
+    },
+    "freq": {
+      "1": 0.36681222707423583,
+      "5": 0.5131004366812227,
+      "20": 0.6266375545851528
+    },
+    "logistic": {
+      "1": 0.37336244541484714,
+      "5": 0.517467248908297,
+      "20": 0.6266375545851528
+    },
+    "set_transformer": {
+      "1": 0.3537117903930131,
+      "5": 0.5109170305676856,
+      "20": 0.6179039301310044
+    },
+    "set_transformer_untrained": {
+      "1": 0.29694323144104806,
+      "5": 0.4759825327510917,
+      "20": 0.6244541484716157
+    },
+    "oracle": {
+      "1": 0.4978165938864629,
+      "5": 0.5611353711790393,
+      "20": 0.6331877729257642
+    }
+  },
+  "tie_median": 3.0,
+  "params": 8929,
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "seed_recall1": {
+    "set_transformer": [
+      0.3537117903930131,
+      0.36681222707423583,
+      0.3471615720524017,
+      0.3777292576419214,
+      0.3799126637554585
+    ],
+    "set_transformer_untrained": [
+      0.29694323144104806,
+      0.3318777292576419,
+      0.34497816593886466,
+      0.2663755458515284,
+      0.33624454148471616
+    ]
+  },
+  "mcnemar": {
+    "set_transformer_vs_freq": {
+      "wins_mean": 10.2,
+      "losses_mean": 11.0,
+      "p_worst": 1.0,
+      "p_best": 0.10775214433670044,
+      "n_tests": 5
+    },
+    "set_transformer_vs_logistic": {
+      "wins_mean": 9.8,
+      "losses_mean": 13.6,
+      "p_worst": 0.803619384765625,
+      "p_best": 0.06524533522315325,
+      "n_tests": 5
+    },
+    "set_transformer_vs_set_transformer_untrained": {
+      "wins_mean": 33.92,
+      "losses_mean": 11.12,
+      "p_worst": 1.0,
+      "p_best": 5.321301366667703e-10,
+      "n_tests": 25
+    },
+    "freq_vs_random": {
+      "wins_mean": 34.0,
+      "losses_mean": 10.0,
+      "p_worst": 0.00038813090293388086,
+      "p_best": 0.00038813090293388086,
+      "n_tests": 1
+    },
+    "logistic_vs_random": {
+      "wins_mean": 38.0,
+      "losses_mean": 11.0,
+      "p_worst": 0.00014197068519905542,
+      "p_best": 0.00014197068519905542,
+      "n_tests": 1
+    }
+  },
+  "p_seed_trained_vs_untrained": 0.003968253968253968,
+  "loss_first": 16.629102332149728,
+  "loss_last": [
+    2.4657163181000303,
+    3.1298958248559337,
+    2.2302501312323977,
+    2.465450462497889,
+    2.026919220884641
+  ],
+  "n_fit_groups": 315,
+  "geoconv_excluded": "needs a surface point cloud per entity; 311 structures vs 5,282 catalysts",
+  "log": [
+    "====================================================================================================",
+    "A LEARNED TIE-BREAKER -- does set attention beat counting?",
+    "====================================================================================================",
+    "  Headroom: truth is in the top tie group 48.8% of the time; hand-built tie-breakers claimed 31%",
+    "  of it and the winner was raw frequency. 69% unclaimed.",
+    "  GeoConv is NOT included: it needs a surface point cloud per entity, and a tie group is gene",
+    "  names -- 311 structures against 5,282 catalysts, 5.9% coverage at best. Category error.",
+    "  The transformer IS applicable: every hand-built tie-breaker scores candidates INDEPENDENTLY and",
+    "  cannot condition on who else is in the group. Attention can. That is the mechanism under test.",
+    "  PREDECLARED: beats freq AND its untrained control => set context is real. ~ logistic => a fitted",
+    "  combination is what helps. ~ untrained => capacity does not, which a median group of 3 predicts.",
+    "\n  1,308 reactions with candidates | tie median 3 mean 8.3 p90 21 | truth in tie group 0.488",
+    "  split by REACTION: train 850 | eval 458 (disjoint)",
+    "\n  training: 315 usable groups (truth present, >1 candidate) | 5 seeds | listwise loss 16.629 -> 2.466/3.130/2.230/2.465/2.027",
+    "\n  RECALL@k on 458 held-out reactions, differing ONLY in tie-group order",
+    "    arm                                @1       @5      @20",
+    "    random                          0.314    0.491    0.622   <- floor",
+    "    freq                            0.367    0.513    0.627",
+    "    logistic                        0.373    0.517    0.627",
+    "    set_transformer                 0.354    0.511    0.618",
+    "    set_transformer_untrained       0.297    0.476    0.624",
+    "    oracle                          0.498    0.561    0.633   <- ceiling",
+    "    set transformer parameters: 8,929",
+    "\n  ACROSS 5 SEEDS, recall@1 (the transformer arms only -- the rest are deterministic)",
+    "    set_transformer             mean 0.365  sd 0.013  range 0.347-0.380",
+    "    set_transformer_untrained   mean 0.315  sd 0.029  range 0.266-0.345",
+    "\n  PAIRED McNEMAR (n=458; 1 reaction = 0.002 recall). Transformer arms are tested on",
+    "  all 5 seeds and judged by the WORST p -- a gain that needs a lucky init is not a gain.",
+    "    set_transformer              vs freq                        10.2 win  11.0 lose   worst p=1.000",
+    "    set_transformer              vs logistic                     9.8 win  13.6 lose   worst p=0.804",
+    "    set_transformer              vs set_transformer_untrained   33.9 win  11.1 lose   worst p=1.000",
+    "    freq                         vs random                      34.0 win  10.0 lose   worst p=0.000  SIGNIFICANT",
+    "    logistic                     vs random                      38.0 win  11.0 lose   worst p=0.000  SIGNIFICANT",
+    "    (transformer-vs-untrained is a 5x5 cross product, so its worst p asks whether EVERY trained",
+    "     init beats EVERY random init reaction-for-reaction -- too harsh for 'did training help'.)",
+    "\n  DID TRAINING HELP? seed-level rank test, 5 trained vs 5 random inits",
+    "    trained 0.365+-0.013  untrained 0.315+-0.029  | 25/25 seed pairs favour trained | p=0.0040",
+    "\n  READING",
+    "  TRAINING DOES SOMETHING: 0.365 vs its random-init control 0.315 over 5 seeds",
+    "  (p=0.0040). The listwise objective is learnable and the architecture is not inert.",
+    "  BUT IT BUYS NOTHING OVER COUNTING. freq is 0.367 with ZERO parameters and logistic is",
+    "  0.373 with ten; the 8,929-parameter transformer is 0.365, and the paired test cannot",
+    "  separate it from freq (worst p=1.000) or logistic (worst p=0.804).",
+    "  So attention learns a real function of these features, but everything it learns was already",
+    "  reachable by a linear fit on the same five numbers. The set context is not the missing piece.",
+    "  Likeliest reason: the median tie group is 3. There is almost nothing to",
+    "  attend over, and only 315 groups are usable for training at all.",
+    "\n  Headroom claimed at @1: freq 29% | logistic 32% | transformer 28% | untrained 0%",
+    "  NOTE the untrained control sits at 0.315, well above the 0.314 random floor. A random",
+    "  projection of features that already correlate with the answer is not a random ordering, which is",
+    "  why 'better than random' was never the bar and the untrained arm is the one that matters."
+  ]
+}

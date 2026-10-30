@@ -1,0 +1,32 @@
+{
+ "n_eval": 226,
+ "median_specific_movers": 20.0,
+ "precision": {
+  "@10": 0.4668,
+  "@50": 0.27,
+  "@100": 0.1857
+ },
+ "recall": {
+  "@10": 0.2146,
+  "@50": 0.4887,
+  "@100": 0.6007
+ },
+ "tide_r50": 0.2525,
+ "oracle_r50": 0.6249,
+ "best_single_neighbour_r50": 0.6296,
+ "selective": {
+  "25%": 0.6209,
+  "50%": 0.5392,
+  "75%": 0.5258,
+  "100%": 0.4887
+ },
+ "consensus_precision": {
+  ">=0.0": 0.27,
+  ">=0.2": 0.5275,
+  ">=0.3": 0.6705,
+  ">=0.5": 0.6828,
+  ">=0.7": 0.7917
+ },
+ "verdict": "CAPABILITY CARD (capability_card.py): what the knockout far-field model actually does. INPUT a gene never seen in training, OUTPUT a ranked list of genes predicted to change. Held-out K562, 226 KO-evaluations. AT FULL COVERAGE it names 50 genes of which ~14 are genuinely knockout-SPECIFIC movers (precision@50 27%), catching 49% of the specific response (vs tide-null 25%, oracle 62%); at k=10 precision is 47%. THE HONEST CAPABILITY IS NOT ONE NUMBER: allowed to ABSTAIN, the model is far better where it answers -- on the top-25% best-supported knockouts recall@50 is 62%, and gene-level predictions with neighbour-consensus >=0.7 run at 79% precision. So it is a CALIBRATED TRIAGE ENGINE (a shortlist worth validating) rather than a mechanism predictor. TWO STRUCTURAL LIMITS: (1) it scores MAGNITUDE only -- it does not predict whether a gene goes UP or DOWN, and hop_accountability showed curated direction is unreliable in this context, so direction is an unsolved dimension, not a tuning gap; (2) IDIOSYNCRASY -- copying the single most-similar real knockout of 1400 recovers only 63% of the specific response, so ~37% is shared with NO other knockout measured. That is a property of the biology (and of measurement noise), not of the architecture. Deterministic; 2 seeds.",
+ "note": "CAPABILITY CARD (capability_card.py): what the knockout far-field model actually does. INPUT a gene never seen in training, OUTPUT a ranked list of genes predicted to change. Held-out K562, 226 KO-evaluations. AT FULL COVERAGE it names 50 genes of which ~14 are genuinely knockout-SPECIFIC movers (precision@50 27%), catching 49% of the specific response (vs tide-null 25%, oracle 62%); at k=10 precision is 47%. THE HONEST CAPABILITY IS NOT ONE NUMBER: allowed to ABSTAIN, the model is far better where it answers -- on the top-25% best-supported knockouts recall@50 is 62%, and gene-level predictions with neighbour-consensus >=0.7 run at 79% precision. So it is a CALIBRATED TRIAGE ENGINE (a shortlist worth validating) rather than a mechanism predictor. TWO STRUCTURAL LIMITS: (1) it scores MAGNITUDE only -- it does not predict whether a gene goes UP or DOWN, and hop_accountability showed curated direction is unreliable in this context, so direction is an unsolved dimension, not a tuning gap; (2) IDIOSYNCRASY -- copying the single most-similar real knockout of 1400 recovers only 63% of the specific response, so ~37% is shared with NO other knockout measured. That is a property of the biology (and of measurement noise), not of the architecture. Deterministic; 2 seeds."
+}

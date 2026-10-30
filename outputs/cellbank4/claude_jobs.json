@@ -1,0 +1,1849 @@
+{
+ "jobs": [
+  {
+   "n": 1,
+   "t": 2045,
+   "gene": "STK32C",
+   "sources": [
+    [
+     "S0",
+     "the reasoning engine's prediction (all bank inputs)",
+     null
+    ],
+    [
+     "S1",
+     "YWHAE knockdown, K562 genome-wide screen (recalled by the engine)",
+     4787
+    ],
+    [
+     "S2",
+     "DECR1 knockdown, K562 genome-wide screen (recalled by the engine)",
+     973
+    ],
+    [
+     "S3",
+     "YWHAZ knockdown, K562 genome-wide screen (recalled by the engine)",
+     4789
+    ],
+    [
+     "S4",
+     "SYNGR3 knockdown, K562 genome-wide screen (most co-essential gene in DepMap, r = 0.27)",
+     4108
+    ]
+   ]
+  },
+  {
+   "n": 2,
+   "t": 1174,
+   "gene": "MOK",
+   "sources": [
+    [
+     "S0",
+     "the reasoning engine's prediction (all bank inputs)",
+     null
+    ],
+    [
+     "S1",
+     "YWHAE knockdown, K562 genome-wide screen (recalled by the engine)",
+     4787
+    ],
+    [
+     "S2",
+     "DECR1 knockdown, K562 genome-wide screen (recalled by the engine)",
+     973
+    ],
+    [
+     "S3",
+     "PTEN knockdown, RPE1 screen (another cell type) (recalled by the engine)",
+     7858
+    ],
+    [
+     "S4",
+     "RAB4A knockdown, K562 genome-wide screen (most co-essential gene in DepMap, r = 0.26)",
+     3299
+    ]
+   ]
+  },
+  {
+   "n": 3,
+   "t": 879,
+   "gene": "HHEX",
+   "sources": [
+    [
+     "S0",
+     "the reasoning engine's prediction (all bank inputs)",
+     null
+    ],
+    [
+     "S1",
+     "YWHAE knockdown, K562 genome-wide screen (recalled by the engine)",
+     4787
+    ],
+    [
+     "S2",
+     "DECR1 knockdown, K562 genome-wide screen (recalled by the engine)",
+     973
+    ],
+    [
+     "S3",
+     "PTEN knockdown, RPE1 screen (another cell type) (recalled by the engine)",
+     7858
+    ],
+    [
+     "S4",
+     "LMO2 knockdown, K562 genome-wide screen (most co-essential gene in DepMap, r = 0.23)",
+     2092
+    ]
+   ]
+  },
+  {
+   "n": 4,
+   "t": 2117,
+   "gene": "TCTEX1D2",
+   "sources": [
+    [
+     "S0",
+     "the reasoning engine's prediction (all bank inputs)",
+     null
+    ],
+    [
+     "S1",
+     "YWHAE knockdown, K562 genome-wide screen (recalled by the engine)",
+     4787
+    ],
+    [
+     "S2",
+     "DECR1 knockdown, K562 genome-wide screen (recalled by the engine)",
+     973
+    ],
+    [
+     "S3",
+     "YWHAZ knockdown, K562 genome-wide screen (recalled by the engine)",
+     4789
+    ],
+    [
+     "S4",
+     "DYNLL2 knockdown, K562 genome-wide screen (interaction partner)",
+     1121
+    ],
+    [
+     "S5",
+     "DYNLL1 knockdown, K562 essential screen (interaction partner)",
+     5363
+    ],
+    [
+     "S6",
+     "ZNF57 knockdown, K562 genome-wide screen (most co-essential gene in DepMap, r = 0.18)",
+     4964
+    ]
+   ]
+  },
+  {
+   "n": 5,
+   "t": 1303,
+   "gene": "NDUFB8",
+   "sources": [
+    [
+     "S0",
+     "the reasoning engine's prediction (all bank inputs)",
+     null
+    ],
+    [
+     "S1",
+     "RAN knockdown, RPE1 screen (another cell type) (recalled by the engine)",
+     7888
+    ],
+    [
+     "S2",
+     "RAN knockdown, K562 essential screen (recalled by the engine)",
+     6062
+    ],
+    [
+     "S3",
+     "YWHAE knockdown, K562 genome-wide screen (recalled by the engine)",
+     4787
+    ],
+    [
+     "S4",
+     "DNAJC30 knockdown, K562 genome-wide screen (interaction partner)",
+     1058
+    ],
+    [
+     "S5",
+     "NDUFS5 knockdown, K562 essential screen (most co-essential gene in DepMap, r = 0.79)",
+     5802
+    ],
+    [
+     "S6",
+     "NDUFB8 itself knocked down in RPE1 cells (another cell type)",
+     7568
+    ]
+   ]
+  },
+  {
+   "n": 6,
+   "t": 1368,
+   "gene": "NSMCE4A",
+   "sources": [
+    [
+     "S0",
+     "the reasoning engine's prediction (all bank inputs)",
+     null
+    ],
+    [
+     "S1",
+     "YWHAE knockdown, K562 genome-wide screen (recalled by the engine)",
+     4787
+    ],
+    [
+     "S2",
+     "RAN knockdown, RPE1 screen (another cell type) (recalled by the engine)",
+     7888
+    ],
+    [
+     "S3",
+     "RAN knockdown, K562 essential screen (recalled by the engine)",
+     6062
+    ],
+    [
+     "S4",
+     "NSMCE1 knockdown, K562 genome-wide screen (interaction partner)",
+     2715
+    ],
+    [
+     "S5",
+     "SMC6 knockdown, K562 genome-wide screen (most co-essential gene in DepMap, r = 0.51)",
+     3874
+    ]
+   ]
+  },
+  {
+   "n": 7,
+   "t": 1900,
+   "gene": "SH3BGR",
+   "sources": [
+    [
+     "S0",
+     "the reasoning engine's prediction (all bank inputs)",
+     null
+    ],
+    [
+     "S1",
+     "YWHAE knockdown, K562 genome-wide screen (recalled by the engine)",
+     4787
+    ],
+    [
+     "S2",
+     "DECR1 knockdown, K562 genome-wide screen (recalled by the engine)",
+     973
+    ],
+    [
+     "S3",
+     "YWHAZ knockdown, K562 genome-wide screen (recalled by the engine)",
+     4789
+    ],
+    [
+     "S4",
+     "TXNDC12 knockdown, K562 genome-wide screen (most co-essential gene in DepMap, r = 0.17)",
+     4505
+    ]
+   ]
+  },
+  {
+   "n": 8,
+   "t": 760,
+   "gene": "GAPVD1",
+   "sources": [
+    [
+     "S0",
+     "the reasoning engine's prediction (all bank inputs)",
+     null
+    ],
+    [
+     "S1",
+     "YWHAE knockdown, K562 genome-wide screen (recalled by the engine)",
+     4787
+    ],
+    [
+     "S2",
+     "PTEN knockdown, RPE1 screen (another cell type) (recalled by the engine)",
+     7858
+    ],
+    [
+     "S3",
+     "DECR1 knockdown, K562 genome-wide screen (recalled by the engine)",
+     973
+    ],
+    [
+     "S4",
+     "CSNK1A1 knockdown, K562 genome-wide screen (interaction partner)",
+     845
+    ],
+    [
+     "S5",
+     "SH3GL1 knockdown, K562 genome-wide screen (most co-essential gene in DepMap, r = 0.36)",
+     3752
+    ]
+   ]
+  },
+  {
+   "n": 9,
+   "t": 756,
+   "gene": "GALNT11",
+   "sources": [
+    [
+     "S0",
+     "the reasoning engine's prediction (all bank inputs)",
+     null
+    ],
+    [
+     "S1",
+     "YWHAE knockdown, K562 genome-wide screen (recalled by the engine)",
+     4787
+    ],
+    [
+     "S2",
+     "YWHAZ knockdown, K562 genome-wide screen (recalled by the engine)",
+     4789
+    ],
+    [
+     "S3",
+     "DECR1 knockdown, K562 genome-wide screen (recalled by the engine)",
+     973
+    ],
+    [
+     "S4",
+     "ZNF672 knockdown, K562 genome-wide screen (most co-essential gene in DepMap, r = 0.27)",
+     4986
+    ]
+   ]
+  },
+  {
+   "n": 10,
+   "t": 1223,
+   "gene": "MRPS27",
+   "sources": [
+    [
+     "S0",
+     "the reasoning engine's prediction (all bank inputs)",
+     null
+    ],
+    [
+     "S1",
+     "SNRPD3 knockdown, RPE1 screen (another cell type) (recalled by the engine)",
+     8168
+    ],
+    [
+     "S2",
+     "SNRPD3 knockdown, K562 essential screen (recalled by the engine)",
+     6306
+    ],
+    [
+     "S3",
+     "RAN knockdown, RPE1 screen (another cell type) (recalled by the engine)",
+     7888
+    ],
+    [
+     "S4",
+     "RPS6 knockdown, K562 essential screen (interaction partner)",
+     6196
+    ],
+    [
+     "S5",
+     "RPL10 knockdown, K562 genome-wide screen (interaction partner)",
+     3501
+    ],
+    [
+     "S6",
+     "MRPS14 knockdown, K562 genome-wide screen (most co-essential gene in DepMap, r = 0.62)",
+     2409
+    ],
+    [
+     "S7",
+     "MRPS27 itself knocked down in RPE1 cells (another cell type)",
+     7504
+    ]
+   ]
+  },
+  {
+   "n": 11,
+   "t": 436,
+   "gene": "CT45A5",
+   "sources": [
+    [
+     "S0",
+     "the reasoning engine's prediction (all bank inputs)",
+     null
+    ],
+    [
+     "S1",
+     "PTEN knockdown, RPE1 screen (another cell type) (recalled by the engine)",
+     7858
+    ],
+    [
+     "S2",
+     "YWHAE knockdown, K562 genome-wide screen (recalled by the engine)",
+     4787
+    ],
+    [
+     "S3",
+     "RB1 knockdown, K562 genome-wide screen (recalled by the engine)",
+     3351
+    ],
+    [
+     "S4",
+     "SUPT5H knockdown, K562 essential screen (interaction partner)",
+     6355
+    ],
+    [
+     "S5",
+     "CT45A5 itself knocked down in RPE1 cells (another cell type)",
+     6900
+    ]
+   ]
+  },
+  {
+   "n": 12,
+   "t": 167,
+   "gene": "AURKB",
+   "sources": [
+    [
+     "S0",
+     "the reasoning engine's prediction (all bank inputs)",
+     null
+    ],
+    [
+     "S1",
+     "RAN knockdown, K562 essential screen (recalled by the engine)",
+     6062
+    ],
+    [
+     "S2",
+     "RAN knockdown, RPE1 screen (another cell type) (recalled by the engine)",
+     7888
+    ],
+    [
+     "S3",
+     "SNRPD3 knockdown, K562 essential screen (recalled by the engine)",
+     6306
+    ],
+    [
+     "S4",
+     "PTGES3 knockdown, K562 genome-wide screen (interaction partner)",
+     3246
+    ],
+    [
+     "S5",
+     "MAD2L1 knockdown, K562 essential screen (most co-essential gene in DepMap, r = 0.25)",
+     5627
+    ],
+    [
+     "S6",
+     "AURKB itself knocked down in RPE1 cells (another cell type)",
+     6696
+    ]
+   ]
+  },
+  {
+   "n": 13,
+   "t": 1354,
+   "gene": "NPW",
+   "sources": [
+    [
+     "S0",
+     "the reasoning engine's prediction (all bank inputs)",
+     null
+    ],
+    [
+     "S1",
+     "YWHAE knockdown, K562 genome-wide screen (recalled by the engine)",
+     4787
+    ],
+    [
+     "S2",
+     "PTEN knockdown, RPE1 screen (another cell type) (recalled by the engine)",
+     7858
+    ],
+    [
+     "S3",
+     "DECR1 knockdown, K562 genome-wide screen (recalled by the engine)",
+     973
+    ],
+    [
+     "S4",
+     "ANKRD9 knockdown, K562 genome-wide screen (most co-essential gene in DepMap, r = 0.24)",
+     147
+    ]
+   ]
+  },
+  {
+   "n": 14,
+   "t": 2397,
+   "gene": "YBEY",
+   "sources": [
+    [
+     "S0",
+     "the reasoning engine's prediction (all bank inputs)",
+     null
+    ],
+    [
+     "S1",
+     "YWHAE knockdown, K562 genome-wide screen (recalled by the engine)",
+     4787
+    ],
+    [
+     "S2",
+     "DECR1 knockdown, K562 genome-wide screen (recalled by the engine)",
+     973
+    ],
+    [
+     "S3",
+     "YWHAZ knockdown, K562 genome-wide screen (recalled by the engine)",
+     4789
+    ],
+    [
+     "S4",
+     "FOXRED1 knockdown, K562 genome-wide screen (most co-essential gene in DepMap, r = 0.61)",
+     1449
+    ]
+   ]
+  },
+  {
+   "n": 15,
+   "t": 2137,
+   "gene": "TGFBRAP1",
+   "sources": [
+    [
+     "S0",
+     "the reasoning engine's prediction (all bank inputs)",
+     null
+    ],
+    [
+     "S1",
+     "YWHAE knockdown, K562 genome-wide screen (recalled by the engine)",
+     4787
+    ],
+    [
+     "S2",
+     "YWHAZ knockdown, K562 genome-wide screen (recalled by the engine)",
+     4789
+    ],
+    [
+     "S3",
+     "DECR1 knockdown, K562 genome-wide screen (recalled by the engine)",
+     973
+    ],
+    [
+     "S4",
+     "VPS33A knockdown, K562 essential screen (interaction partner)",
+     6525
+    ],
+    [
+     "S5",
+     "VPS16 knockdown, K562 genome-wide screen (interaction partner)",
+     4663
+    ],
+    [
+     "S6",
+     "RAB5C knockdown, K562 genome-wide screen (most co-essential gene in DepMap, r = 0.35)",
+     3302
+    ]
+   ]
+  },
+  {
+   "n": 16,
+   "t": 1467,
+   "gene": "PGM2L1",
+   "sources": [
+    [
+     "S0",
+     "the reasoning engine's prediction (all bank inputs)",
+     null
+    ],
+    [
+     "S1",
+     "YWHAE knockdown, K562 genome-wide screen (recalled by the engine)",
+     4787
+    ],
+    [
+     "S2",
+     "YWHAZ knockdown, K562 genome-wide screen (recalled by the engine)",
+     4789
+    ],
+    [
+     "S3",
+     "DECR1 knockdown, K562 genome-wide screen (recalled by the engine)",
+     973
+    ],
+    [
+     "S4",
+     "ZNF57 knockdown, K562 genome-wide screen (most co-essential gene in DepMap, r = 0.29)",
+     4964
+    ]
+   ]
+  },
+  {
+   "n": 17,
+   "t": 1598,
+   "gene": "PRKCI",
+   "sources": [
+    [
+     "S0",
+     "the reasoning engine's prediction (all bank inputs)",
+     null
+    ],
+    [
+     "S1",
+     "YWHAE knockdown, K562 genome-wide screen (recalled by the engine)",
+     4787
+    ],
+    [
+     "S2",
+     "PTEN knockdown, RPE1 screen (another cell type) (recalled by the engine)",
+     7858
+    ],
+    [
+     "S3",
+     "DECR1 knockdown, K562 genome-wide screen (recalled by the engine)",
+     973
+    ],
+    [
+     "S4",
+     "SQSTM1 knockdown, K562 genome-wide screen (interaction partner)",
+     3991
+    ],
+    [
+     "S5",
+     "HNF1B knockdown, K562 genome-wide screen (most co-essential gene in DepMap, r = 0.36)",
+     1762
+    ]
+   ]
+  },
+  {
+   "n": 18,
+   "t": 778,
+   "gene": "GEN1",
+   "sources": [
+    [
+     "S0",
+     "the reasoning engine's prediction (all bank inputs)",
+     null
+    ],
+    [
+     "S1",
+     "YWHAE knockdown, K562 genome-wide screen (recalled by the engine)",
+     4787
+    ],
+    [
+     "S2",
+     "DECR1 knockdown, K562 genome-wide screen (recalled by the engine)",
+     973
+    ],
+    [
+     "S3",
+     "YWHAZ knockdown, K562 genome-wide screen (recalled by the engine)",
+     4789
+    ],
+    [
+     "S4",
+     "RMI1 knockdown, K562 essential screen (most co-essential gene in DepMap, r = 0.22)",
+     6094
+    ]
+   ]
+  },
+  {
+   "n": 19,
+   "t": 2458,
+   "gene": "ZNF324",
+   "sources": [
+    [
+     "S0",
+     "the reasoning engine's prediction (all bank inputs)",
+     null
+    ],
+    [
+     "S1",
+     "YWHAE knockdown, K562 genome-wide screen (recalled by the engine)",
+     4787
+    ],
+    [
+     "S2",
+     "PTEN knockdown, RPE1 screen (another cell type) (recalled by the engine)",
+     7858
+    ],
+    [
+     "S3",
+     "DECR1 knockdown, K562 genome-wide screen (recalled by the engine)",
+     973
+    ],
+    [
+     "S4",
+     "TRIM28 knockdown, K562 genome-wide screen (interaction partner)",
+     4410
+    ],
+    [
+     "S5",
+     "ZNF132 knockdown, K562 genome-wide screen (most co-essential gene in DepMap, r = 0.29)",
+     4868
+    ]
+   ]
+  },
+  {
+   "n": 20,
+   "t": 1681,
+   "gene": "RAD51",
+   "sources": [
+    [
+     "S0",
+     "the reasoning engine's prediction (all bank inputs)",
+     null
+    ],
+    [
+     "S1",
+     "YWHAE knockdown, K562 genome-wide screen (recalled by the engine)",
+     4787
+    ],
+    [
+     "S2",
+     "YWHAZ knockdown, K562 genome-wide screen (recalled by the engine)",
+     4789
+    ],
+    [
+     "S3",
+     "DECR1 knockdown, K562 genome-wide screen (recalled by the engine)",
+     973
+    ],
+    [
+     "S4",
+     "RAD51C knockdown, K562 essential screen (interaction partner)",
+     6060
+    ],
+    [
+     "S5",
+     "SPIDR knockdown, K562 genome-wide screen (interaction partner)",
+     3978
+    ],
+    [
+     "S6",
+     "RAD51 itself knocked down in RPE1 cells (another cell type)",
+     7883
+    ]
+   ]
+  },
+  {
+   "n": 21,
+   "t": 256,
+   "gene": "CCDC127",
+   "sources": [
+    [
+     "S0",
+     "the reasoning engine's prediction (all bank inputs)",
+     null
+    ],
+    [
+     "S1",
+     "YWHAE knockdown, K562 genome-wide screen (recalled by the engine)",
+     4787
+    ],
+    [
+     "S2",
+     "PTEN knockdown, RPE1 screen (another cell type) (recalled by the engine)",
+     7858
+    ],
+    [
+     "S3",
+     "DECR1 knockdown, K562 genome-wide screen (recalled by the engine)",
+     973
+    ],
+    [
+     "S4",
+     "FOXH1 knockdown, K562 genome-wide screen (most co-essential gene in DepMap, r = 0.23)",
+     1432
+    ]
+   ]
+  },
+  {
+   "n": 22,
+   "t": 1669,
+   "gene": "RAB24",
+   "sources": [
+    [
+     "S0",
+     "the reasoning engine's prediction (all bank inputs)",
+     null
+    ],
+    [
+     "S1",
+     "YWHAE knockdown, K562 genome-wide screen (recalled by the engine)",
+     4787
+    ],
+    [
+     "S2",
+     "DECR1 knockdown, K562 genome-wide screen (recalled by the engine)",
+     973
+    ],
+    [
+     "S3",
+     "YWHAZ knockdown, K562 genome-wide screen (recalled by the engine)",
+     4789
+    ],
+    [
+     "S4",
+     "GDI2 knockdown, K562 genome-wide screen (interaction partner)",
+     1515
+    ],
+    [
+     "S5",
+     "GDI1 knockdown, K562 genome-wide screen (interaction partner)",
+     1514
+    ],
+    [
+     "S6",
+     "ZNF672 knockdown, K562 genome-wide screen (most co-essential gene in DepMap, r = 0.29)",
+     4986
+    ]
+   ]
+  },
+  {
+   "n": 23,
+   "t": 1634,
+   "gene": "PSMC6",
+   "sources": [
+    [
+     "S0",
+     "the reasoning engine's prediction (all bank inputs)",
+     null
+    ],
+    [
+     "S1",
+     "RAN knockdown, RPE1 screen (another cell type) (recalled by the engine)",
+     7888
+    ],
+    [
+     "S2",
+     "RAN knockdown, K562 essential screen (recalled by the engine)",
+     6062
+    ],
+    [
+     "S3",
+     "YWHAE knockdown, K562 genome-wide screen (recalled by the engine)",
+     4787
+    ],
+    [
+     "S4",
+     "PSMD2 knockdown, K562 genome-wide screen (interaction partner)",
+     3225
+    ],
+    [
+     "S5",
+     "PSMC4 knockdown, K562 genome-wide screen (interaction partner)",
+     3219
+    ],
+    [
+     "S6",
+     "PSMC1 knockdown, K562 essential screen (most co-essential gene in DepMap, r = 0.30)",
+     6023
+    ],
+    [
+     "S7",
+     "PSMC6 itself knocked down in RPE1 cells (another cell type)",
+     7840
+    ]
+   ]
+  },
+  {
+   "n": 24,
+   "t": 1414,
+   "gene": "PAN3",
+   "sources": [
+    [
+     "S0",
+     "the reasoning engine's prediction (all bank inputs)",
+     null
+    ],
+    [
+     "S1",
+     "YWHAE knockdown, K562 genome-wide screen (recalled by the engine)",
+     4787
+    ],
+    [
+     "S2",
+     "DECR1 knockdown, K562 genome-wide screen (recalled by the engine)",
+     973
+    ],
+    [
+     "S3",
+     "YWHAZ knockdown, K562 genome-wide screen (recalled by the engine)",
+     4789
+    ],
+    [
+     "S4",
+     "PABPC1 knockdown, K562 essential screen (interaction partner)",
+     5882
+    ],
+    [
+     "S5",
+     "TNRC6A knockdown, K562 genome-wide screen (interaction partner)",
+     4346
+    ],
+    [
+     "S6",
+     "PAN2 knockdown, K562 genome-wide screen (most co-essential gene in DepMap, r = 0.31)",
+     2827
+    ]
+   ]
+  },
+  {
+   "n": 25,
+   "t": 2212,
+   "gene": "TRAK1",
+   "sources": [
+    [
+     "S0",
+     "the reasoning engine's prediction (all bank inputs)",
+     null
+    ],
+    [
+     "S1",
+     "YWHAE knockdown, K562 genome-wide screen (recalled by the engine)",
+     4787
+    ],
+    [
+     "S2",
+     "DECR1 knockdown, K562 genome-wide screen (recalled by the engine)",
+     973
+    ],
+    [
+     "S3",
+     "PTEN knockdown, RPE1 screen (another cell type) (recalled by the engine)",
+     7858
+    ],
+    [
+     "S4",
+     "OGT knockdown, K562 genome-wide screen (interaction partner)",
+     2773
+    ],
+    [
+     "S5",
+     "DYNLL2 knockdown, K562 genome-wide screen (interaction partner)",
+     1121
+    ],
+    [
+     "S6",
+     "ABCG1 knockdown, K562 genome-wide screen (most co-essential gene in DepMap, r = 0.18)",
+     19
+    ]
+   ]
+  },
+  {
+   "n": 26,
+   "t": 284,
+   "gene": "CD99",
+   "sources": [
+    [
+     "S0",
+     "the reasoning engine's prediction (all bank inputs)",
+     null
+    ],
+    [
+     "S1",
+     "YWHAE knockdown, K562 genome-wide screen (recalled by the engine)",
+     4787
+    ],
+    [
+     "S2",
+     "YWHAZ knockdown, K562 genome-wide screen (recalled by the engine)",
+     4789
+    ],
+    [
+     "S3",
+     "DECR1 knockdown, K562 genome-wide screen (recalled by the engine)",
+     973
+    ]
+   ]
+  },
+  {
+   "n": 27,
+   "t": 755,
+   "gene": "GAK",
+   "sources": [
+    [
+     "S0",
+     "the reasoning engine's prediction (all bank inputs)",
+     null
+    ],
+    [
+     "S1",
+     "YWHAE knockdown, K562 genome-wide screen (recalled by the engine)",
+     4787
+    ],
+    [
+     "S2",
+     "YWHAZ knockdown, K562 genome-wide screen (recalled by the engine)",
+     4789
+    ],
+    [
+     "S3",
+     "DECR1 knockdown, K562 genome-wide screen (recalled by the engine)",
+     973
+    ],
+    [
+     "S4",
+     "HSPA8 knockdown, K562 essential screen (interaction partner)",
+     5549
+    ],
+    [
+     "S5",
+     "CLTC knockdown, K562 essential screen (most co-essential gene in DepMap, r = 0.31)",
+     5226
+    ],
+    [
+     "S6",
+     "GAK itself knocked down in RPE1 cells (another cell type)",
+     7126
+    ]
+   ]
+  },
+  {
+   "n": 28,
+   "t": 99,
+   "gene": "ARFIP2",
+   "sources": [
+    [
+     "S0",
+     "the reasoning engine's prediction (all bank inputs)",
+     null
+    ],
+    [
+     "S1",
+     "YWHAE knockdown, K562 genome-wide screen (recalled by the engine)",
+     4787
+    ],
+    [
+     "S2",
+     "YWHAZ knockdown, K562 genome-wide screen (recalled by the engine)",
+     4789
+    ],
+    [
+     "S3",
+     "DECR1 knockdown, K562 genome-wide screen (recalled by the engine)",
+     973
+    ],
+    [
+     "S4",
+     "ITGB3BP knockdown, K562 genome-wide screen (interaction partner)",
+     1930
+    ],
+    [
+     "S5",
+     "COPE knockdown, K562 essential screen (most co-essential gene in DepMap, r = 0.17)",
+     5241
+    ]
+   ]
+  },
+  {
+   "n": 29,
+   "t": 1506,
+   "gene": "PLEKHA5",
+   "sources": [
+    [
+     "S0",
+     "the reasoning engine's prediction (all bank inputs)",
+     null
+    ],
+    [
+     "S1",
+     "YWHAE knockdown, K562 genome-wide screen (recalled by the engine)",
+     4787
+    ],
+    [
+     "S2",
+     "PTEN knockdown, RPE1 screen (another cell type) (recalled by the engine)",
+     7858
+    ],
+    [
+     "S3",
+     "DECR1 knockdown, K562 genome-wide screen (recalled by the engine)",
+     973
+    ],
+    [
+     "S4",
+     "YWHAZ knockdown, K562 genome-wide screen (interaction partner)",
+     4789
+    ],
+    [
+     "S5",
+     "KLF4 knockdown, K562 genome-wide screen (most co-essential gene in DepMap, r = 0.18)",
+     2009
+    ]
+   ]
+  },
+  {
+   "n": 30,
+   "t": 2254,
+   "gene": "TUBA4A",
+   "sources": [
+    [
+     "S0",
+     "the reasoning engine's prediction (all bank inputs)",
+     null
+    ],
+    [
+     "S1",
+     "YWHAE knockdown, K562 genome-wide screen (recalled by the engine)",
+     4787
+    ],
+    [
+     "S2",
+     "YWHAZ knockdown, K562 genome-wide screen (recalled by the engine)",
+     4789
+    ],
+    [
+     "S3",
+     "DECR1 knockdown, K562 genome-wide screen (recalled by the engine)",
+     973
+    ],
+    [
+     "S4",
+     "CCT2 knockdown, K562 genome-wide screen (interaction partner)",
+     558
+    ],
+    [
+     "S5",
+     "CCT7 knockdown, K562 genome-wide screen (interaction partner)",
+     563
+    ],
+    [
+     "S6",
+     "HADHA knockdown, K562 genome-wide screen (most co-essential gene in DepMap, r = 0.17)",
+     1667
+    ]
+   ]
+  },
+  {
+   "n": 31,
+   "t": 126,
+   "gene": "ASCC3",
+   "sources": [
+    [
+     "S0",
+     "the reasoning engine's prediction (all bank inputs)",
+     null
+    ],
+    [
+     "S1",
+     "RAN knockdown, RPE1 screen (another cell type) (recalled by the engine)",
+     7888
+    ],
+    [
+     "S2",
+     "RAN knockdown, K562 essential screen (recalled by the engine)",
+     6062
+    ],
+    [
+     "S3",
+     "YWHAE knockdown, K562 genome-wide screen (recalled by the engine)",
+     4787
+    ],
+    [
+     "S4",
+     "ASCC2 knockdown, K562 genome-wide screen (interaction partner)",
+     234
+    ],
+    [
+     "S5",
+     "ASCC3 itself knocked down in RPE1 cells (another cell type)",
+     6664
+    ]
+   ]
+  },
+  {
+   "n": 32,
+   "t": 1784,
+   "gene": "RPL36A",
+   "sources": [
+    [
+     "S0",
+     "the reasoning engine's prediction (all bank inputs)",
+     null
+    ],
+    [
+     "S1",
+     "YWHAE knockdown, K562 genome-wide screen (recalled by the engine)",
+     4787
+    ],
+    [
+     "S2",
+     "YWHAZ knockdown, K562 genome-wide screen (recalled by the engine)",
+     4789
+    ],
+    [
+     "S3",
+     "DECR1 knockdown, K562 genome-wide screen (recalled by the engine)",
+     973
+    ],
+    [
+     "S4",
+     "RPL6 knockdown, K562 genome-wide screen (most co-essential gene in DepMap, r = 0.29)",
+     3541
+    ],
+    [
+     "S5",
+     "RPL36A itself knocked down in RPE1 cells (another cell type)",
+     7977
+    ]
+   ]
+  },
+  {
+   "n": 33,
+   "t": 2232,
+   "gene": "TROAP",
+   "sources": [
+    [
+     "S0",
+     "the reasoning engine's prediction (all bank inputs)",
+     null
+    ],
+    [
+     "S1",
+     "YWHAE knockdown, K562 genome-wide screen (recalled by the engine)",
+     4787
+    ],
+    [
+     "S2",
+     "PTEN knockdown, RPE1 screen (another cell type) (recalled by the engine)",
+     7858
+    ],
+    [
+     "S3",
+     "DECR1 knockdown, K562 genome-wide screen (recalled by the engine)",
+     973
+    ],
+    [
+     "S4",
+     "BYSL knockdown, K562 genome-wide screen (interaction partner)",
+     419
+    ],
+    [
+     "S5",
+     "MAPRE3 knockdown, K562 genome-wide screen (interaction partner)",
+     2177
+    ],
+    [
+     "S6",
+     "USP5 knockdown, K562 essential screen (most co-essential gene in DepMap, r = 0.25)",
+     6507
+    ]
+   ]
+  },
+  {
+   "n": 34,
+   "t": 456,
+   "gene": "CUL7",
+   "sources": [
+    [
+     "S0",
+     "the reasoning engine's prediction (all bank inputs)",
+     null
+    ],
+    [
+     "S1",
+     "YWHAE knockdown, K562 genome-wide screen (recalled by the engine)",
+     4787
+    ],
+    [
+     "S2",
+     "PTEN knockdown, RPE1 screen (another cell type) (recalled by the engine)",
+     7858
+    ],
+    [
+     "S3",
+     "DECR1 knockdown, K562 genome-wide screen (recalled by the engine)",
+     973
+    ],
+    [
+     "S4",
+     "SF3B3 knockdown, K562 essential screen (interaction partner)",
+     6254
+    ],
+    [
+     "S5",
+     "SKP1 knockdown, K562 essential screen (interaction partner)",
+     6263
+    ],
+    [
+     "S6",
+     "ANKRD16 knockdown, K562 genome-wide screen (most co-essential gene in DepMap, r = 0.24)",
+     141
+    ],
+    [
+     "S7",
+     "CUL7 itself knocked down in RPE1 cells (another cell type)",
+     6910
+    ]
+   ]
+  },
+  {
+   "n": 35,
+   "t": 98,
+   "gene": "ARF5",
+   "sources": [
+    [
+     "S0",
+     "the reasoning engine's prediction (all bank inputs)",
+     null
+    ],
+    [
+     "S1",
+     "YWHAE knockdown, K562 genome-wide screen (recalled by the engine)",
+     4787
+    ],
+    [
+     "S2",
+     "DECR1 knockdown, K562 genome-wide screen (recalled by the engine)",
+     973
+    ],
+    [
+     "S3",
+     "PTEN knockdown, RPE1 screen (another cell type) (recalled by the engine)",
+     7858
+    ],
+    [
+     "S4",
+     "BUB1 knockdown, K562 essential screen (most co-essential gene in DepMap, r = 0.17)",
+     5136
+    ]
+   ]
+  },
+  {
+   "n": 36,
+   "t": 1667,
+   "gene": "QSER1",
+   "sources": [
+    [
+     "S0",
+     "the reasoning engine's prediction (all bank inputs)",
+     null
+    ],
+    [
+     "S1",
+     "YWHAE knockdown, K562 genome-wide screen (recalled by the engine)",
+     4787
+    ],
+    [
+     "S2",
+     "PTEN knockdown, RPE1 screen (another cell type) (recalled by the engine)",
+     7858
+    ],
+    [
+     "S3",
+     "DECR1 knockdown, K562 genome-wide screen (recalled by the engine)",
+     973
+    ],
+    [
+     "S4",
+     "TMEM179B knockdown, K562 genome-wide screen (most co-essential gene in DepMap, r = 0.19)",
+     4302
+    ]
+   ]
+  },
+  {
+   "n": 37,
+   "t": 49,
+   "gene": "AK3",
+   "sources": [
+    [
+     "S0",
+     "the reasoning engine's prediction (all bank inputs)",
+     null
+    ],
+    [
+     "S1",
+     "YWHAE knockdown, K562 genome-wide screen (recalled by the engine)",
+     4787
+    ],
+    [
+     "S2",
+     "DECR1 knockdown, K562 genome-wide screen (recalled by the engine)",
+     973
+    ],
+    [
+     "S3",
+     "YWHAZ knockdown, K562 genome-wide screen (recalled by the engine)",
+     4789
+    ],
+    [
+     "S4",
+     "RAB4A knockdown, K562 genome-wide screen (most co-essential gene in DepMap, r = 0.22)",
+     3299
+    ]
+   ]
+  },
+  {
+   "n": 38,
+   "t": 1762,
+   "gene": "RPF1",
+   "sources": [
+    [
+     "S0",
+     "the reasoning engine's prediction (all bank inputs)",
+     null
+    ],
+    [
+     "S1",
+     "RPSA knockdown, K562 essential screen (recalled by the engine)",
+     6200
+    ],
+    [
+     "S2",
+     "RPL15 knockdown, K562 essential screen (recalled by the engine)",
+     6122
+    ],
+    [
+     "S3",
+     "RPSA knockdown, K562 genome-wide screen (recalled by the engine)",
+     3596
+    ],
+    [
+     "S4",
+     "PWP1 knockdown, K562 genome-wide screen (most co-essential gene in DepMap, r = 0.31)",
+     3270
+    ],
+    [
+     "S5",
+     "RPF1 itself knocked down in RPE1 cells (another cell type)",
+     7945
+    ]
+   ]
+  },
+  {
+   "n": 39,
+   "t": 716,
+   "gene": "FERMT2",
+   "sources": [
+    [
+     "S0",
+     "the reasoning engine's prediction (all bank inputs)",
+     null
+    ],
+    [
+     "S1",
+     "YWHAE knockdown, K562 genome-wide screen (recalled by the engine)",
+     4787
+    ],
+    [
+     "S2",
+     "YWHAZ knockdown, K562 genome-wide screen (recalled by the engine)",
+     4789
+    ],
+    [
+     "S3",
+     "DECR1 knockdown, K562 genome-wide screen (recalled by the engine)",
+     973
+    ],
+    [
+     "S4",
+     "ELMO2 knockdown, K562 genome-wide screen (most co-essential gene in DepMap, r = 0.53)",
+     1213
+    ]
+   ]
+  },
+  {
+   "n": 40,
+   "t": 1198,
+   "gene": "MRPL3",
+   "sources": [
+    [
+     "S0",
+     "the reasoning engine's prediction (all bank inputs)",
+     null
+    ],
+    [
+     "S1",
+     "RAN knockdown, RPE1 screen (another cell type) (recalled by the engine)",
+     7888
+    ],
+    [
+     "S2",
+     "SNRPD3 knockdown, RPE1 screen (another cell type) (recalled by the engine)",
+     8168
+    ],
+    [
+     "S3",
+     "RAN knockdown, K562 essential screen (recalled by the engine)",
+     6062
+    ],
+    [
+     "S4",
+     "MRPL37 knockdown, K562 essential screen (interaction partner)",
+     5718
+    ],
+    [
+     "S5",
+     "MRPL10 knockdown, K562 essential screen (interaction partner)",
+     5697
+    ],
+    [
+     "S6",
+     "MRPL15 knockdown, K562 essential screen (most co-essential gene in DepMap, r = 0.63)",
+     5700
+    ],
+    [
+     "S7",
+     "MRPL3 itself knocked down in RPE1 cells (another cell type)",
+     7465
+    ]
+   ]
+  },
+  {
+   "n": 41,
+   "t": 672,
+   "gene": "FAF2",
+   "sources": [
+    [
+     "S0",
+     "the reasoning engine's prediction (all bank inputs)",
+     null
+    ],
+    [
+     "S1",
+     "YWHAE knockdown, K562 genome-wide screen (recalled by the engine)",
+     4787
+    ],
+    [
+     "S2",
+     "YWHAZ knockdown, K562 genome-wide screen (recalled by the engine)",
+     4789
+    ],
+    [
+     "S3",
+     "DECR1 knockdown, K562 genome-wide screen (recalled by the engine)",
+     973
+    ],
+    [
+     "S4",
+     "VCP knockdown, K562 genome-wide screen (interaction partner)",
+     4647
+    ],
+    [
+     "S5",
+     "UBE2G2 knockdown, K562 genome-wide screen (most co-essential gene in DepMap, r = 0.46)",
+     4528
+    ],
+    [
+     "S6",
+     "FAF2 itself knocked down in RPE1 cells (another cell type)",
+     7091
+    ]
+   ]
+  },
+  {
+   "n": 42,
+   "t": 162,
+   "gene": "ATXN2L",
+   "sources": [
+    [
+     "S0",
+     "the reasoning engine's prediction (all bank inputs)",
+     null
+    ],
+    [
+     "S1",
+     "YWHAE knockdown, K562 genome-wide screen (recalled by the engine)",
+     4787
+    ],
+    [
+     "S2",
+     "PTEN knockdown, RPE1 screen (another cell type) (recalled by the engine)",
+     7858
+    ],
+    [
+     "S3",
+     "DECR1 knockdown, K562 genome-wide screen (recalled by the engine)",
+     973
+    ],
+    [
+     "S4",
+     "DDX6 knockdown, K562 genome-wide screen (interaction partner)",
+     972
+    ],
+    [
+     "S5",
+     "LSM12 knockdown, K562 genome-wide screen (interaction partner)",
+     2116
+    ]
+   ]
+  },
+  {
+   "n": 43,
+   "t": 1497,
+   "gene": "PIP4P1",
+   "sources": [
+    [
+     "S0",
+     "the reasoning engine's prediction (all bank inputs)",
+     null
+    ],
+    [
+     "S1",
+     "YWHAE knockdown, K562 genome-wide screen (recalled by the engine)",
+     4787
+    ],
+    [
+     "S2",
+     "YWHAZ knockdown, K562 genome-wide screen (recalled by the engine)",
+     4789
+    ],
+    [
+     "S3",
+     "DECR1 knockdown, K562 genome-wide screen (recalled by the engine)",
+     973
+    ],
+    [
+     "S4",
+     "LAMTOR1 knockdown, K562 genome-wide screen (interaction partner)",
+     2046
+    ],
+    [
+     "S5",
+     "BLOC1S2 knockdown, K562 genome-wide screen (interaction partner)",
+     371
+    ],
+    [
+     "S6",
+     "GTF3C3 knockdown, K562 essential screen (most co-essential gene in DepMap, r = 0.19)",
+     5508
+    ]
+   ]
+  },
+  {
+   "n": 44,
+   "t": 12,
+   "gene": "AC015871.1",
+   "sources": [
+    [
+     "S0",
+     "the reasoning engine's prediction (all bank inputs)",
+     null
+    ],
+    [
+     "S1",
+     "YWHAE knockdown, K562 genome-wide screen (recalled by the engine)",
+     4787
+    ],
+    [
+     "S2",
+     "DECR1 knockdown, K562 genome-wide screen (recalled by the engine)",
+     973
+    ],
+    [
+     "S3",
+     "PTEN knockdown, RPE1 screen (another cell type) (recalled by the engine)",
+     7858
+    ]
+   ]
+  },
+  {
+   "n": 45,
+   "t": 193,
+   "gene": "BLCAP",
+   "sources": [
+    [
+     "S0",
+     "the reasoning engine's prediction (all bank inputs)",
+     null
+    ],
+    [
+     "S1",
+     "YWHAE knockdown, K562 genome-wide screen (recalled by the engine)",
+     4787
+    ],
+    [
+     "S2",
+     "PTEN knockdown, RPE1 screen (another cell type) (recalled by the engine)",
+     7858
+    ],
+    [
+     "S3",
+     "DECR1 knockdown, K562 genome-wide screen (recalled by the engine)",
+     973
+    ],
+    [
+     "S4",
+     "TMSB10 knockdown, K562 genome-wide screen (most co-essential gene in DepMap, r = 0.17)",
+     4331
+    ]
+   ]
+  },
+  {
+   "n": 46,
+   "t": 2439,
+   "gene": "ZIK1",
+   "sources": [
+    [
+     "S0",
+     "the reasoning engine's prediction (all bank inputs)",
+     null
+    ],
+    [
+     "S1",
+     "YWHAE knockdown, K562 genome-wide screen (recalled by the engine)",
+     4787
+    ],
+    [
+     "S2",
+     "DECR1 knockdown, K562 genome-wide screen (recalled by the engine)",
+     973
+    ],
+    [
+     "S3",
+     "PTEN knockdown, RPE1 screen (another cell type) (recalled by the engine)",
+     7858
+    ],
+    [
+     "S4",
+     "ZNF586 knockdown, K562 genome-wide screen (most co-essential gene in DepMap, r = 0.18)",
+     4970
+    ]
+   ]
+  },
+  {
+   "n": 47,
+   "t": 525,
+   "gene": "DLAT",
+   "sources": [
+    [
+     "S0",
+     "the reasoning engine's prediction (all bank inputs)",
+     null
+    ],
+    [
+     "S1",
+     "YWHAE knockdown, K562 genome-wide screen (recalled by the engine)",
+     4787
+    ],
+    [
+     "S2",
+     "YWHAZ knockdown, K562 genome-wide screen (recalled by the engine)",
+     4789
+    ],
+    [
+     "S3",
+     "DECR1 knockdown, K562 genome-wide screen (recalled by the engine)",
+     973
+    ],
+    [
+     "S4",
+     "STAT5A knockdown, K562 genome-wide screen (interaction partner)",
+     4046
+    ],
+    [
+     "S5",
+     "CS knockdown, K562 essential screen (most co-essential gene in DepMap, r = 0.32)",
+     5266
+    ]
+   ]
+  },
+  {
+   "n": 48,
+   "t": 1062,
+   "gene": "LMX1B",
+   "sources": [
+    [
+     "S0",
+     "the reasoning engine's prediction (all bank inputs)",
+     null
+    ],
+    [
+     "S1",
+     "YWHAE knockdown, K562 genome-wide screen (recalled by the engine)",
+     4787
+    ],
+    [
+     "S2",
+     "PTEN knockdown, RPE1 screen (another cell type) (recalled by the engine)",
+     7858
+    ],
+    [
+     "S3",
+     "DECR1 knockdown, K562 genome-wide screen (recalled by the engine)",
+     973
+    ],
+    [
+     "S4",
+     "HMG20B knockdown, K562 genome-wide screen (most co-essential gene in DepMap, r = 0.20)",
+     1748
+    ]
+   ]
+  },
+  {
+   "n": 49,
+   "t": 1482,
+   "gene": "PHTF1",
+   "sources": [
+    [
+     "S0",
+     "the reasoning engine's prediction (all bank inputs)",
+     null
+    ],
+    [
+     "S1",
+     "YWHAE knockdown, K562 genome-wide screen (recalled by the engine)",
+     4787
+    ],
+    [
+     "S2",
+     "DECR1 knockdown, K562 genome-wide screen (recalled by the engine)",
+     973
+    ],
+    [
+     "S3",
+     "PTEN knockdown, RPE1 screen (another cell type) (recalled by the engine)",
+     7858
+    ],
+    [
+     "S4",
+     "RTCA knockdown, K562 genome-wide screen (most co-essential gene in DepMap, r = 0.28)",
+     3625
+    ]
+   ]
+  },
+  {
+   "n": 50,
+   "t": 1733,
+   "gene": "RHOT2",
+   "sources": [
+    [
+     "S0",
+     "the reasoning engine's prediction (all bank inputs)",
+     null
+    ],
+    [
+     "S1",
+     "YWHAE knockdown, K562 genome-wide screen (recalled by the engine)",
+     4787
+    ],
+    [
+     "S2",
+     "YWHAZ knockdown, K562 genome-wide screen (recalled by the engine)",
+     4789
+    ],
+    [
+     "S3",
+     "DECR1 knockdown, K562 genome-wide screen (recalled by the engine)",
+     973
+    ],
+    [
+     "S4",
+     "IPO5 knockdown, K562 genome-wide screen (interaction partner)",
+     1905
+    ],
+    [
+     "S5",
+     "MRPL18 knockdown, K562 genome-wide screen (most co-essential gene in DepMap, r = 0.22)",
+     2367
+    ]
+   ]
+  }
+ ]
+}

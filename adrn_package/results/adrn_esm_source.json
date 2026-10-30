@@ -1,0 +1,140 @@
+{
+  "test": "adrn_esm_source",
+  "model": "esm2_t12_35M_UR50D",
+  "penalties": {
+    "chan2a": 30.0,
+    "esm": 1.0,
+    "chan2a_esm": 1000.0,
+    "esm_shuffled": 1000.0
+  },
+  "means": {
+    "cohort1": {
+      "chan2a": 0.23274999999999998,
+      "esm": 0.171,
+      "chan2a_esm": 0.23199999999999998,
+      "esm_shuffled": 0.14125,
+      "frequency": 0.16150000000000003
+    },
+    "_holdout": {
+      "chan2a": 0.28925,
+      "esm": 0.20675000000000004,
+      "chan2a_esm": 0.28175000000000006,
+      "esm_shuffled": 0.17074999999999999,
+      "frequency": 0.199
+    }
+  },
+  "strata": {
+    "cohort1": {
+      "twinned": {
+        "n": 11,
+        "chan2a": 0.2636363636363636,
+        "chan2a_esm": 0.30000000000000004,
+        "gain": 0.03636363636363637
+      },
+      "unique": {
+        "n": 189,
+        "chan2a": 0.230952380952381,
+        "chan2a_esm": 0.22804232804232805,
+        "gain": -0.002910052910052907
+      }
+    },
+    "_holdout": {
+      "twinned": {
+        "n": 19,
+        "chan2a": 0.28157894736842104,
+        "chan2a_esm": 0.24999999999999994,
+        "gain": -0.03157894736842106
+      },
+      "unique": {
+        "n": 181,
+        "chan2a": 0.2900552486187845,
+        "chan2a_esm": 0.2850828729281768,
+        "gain": -0.004972375690607735
+      }
+    }
+  },
+  "gates": {
+    "G1": {
+      "contrast": "chan2a_esm - chan2a",
+      "cells": [
+        [
+          -0.0007499999999999962,
+          -0.008749999999999997,
+          0.007750000000000002
+        ],
+        [
+          -0.007499999999999999,
+          -0.0165,
+          0.0015000000000000002
+        ]
+      ],
+      "pass": false
+    },
+    "G2": {
+      "contrast": "esm - frequency",
+      "cells": [
+        [
+          0.009499999999999998,
+          -0.006250000000000002,
+          0.025
+        ],
+        [
+          0.007750000000000002,
+          -0.010249999999999999,
+          0.025
+        ]
+      ],
+      "pass": false
+    },
+    "G3": {
+      "contrast": "esm - esm_shuffled",
+      "cells": [
+        [
+          0.029750000000000002,
+          0.011749999999999998,
+          0.04800000000000001
+        ],
+        [
+          0.036,
+          0.01625,
+          0.05525
+        ]
+      ],
+      "pass": true
+    }
+  },
+  "log": [
+    "====================================================================================================",
+    "ESM-2 SEQUENCE SOURCE SIDE vs CURATED ANNOTATION CHANNELS",
+    "====================================================================================================",
+    "  PREDECLARED  G1 chan2a_esm>chan2a | G2 esm>frequency | G3 esm>esm_shuffled -- both cohorts, 95% CI",
+    "  named channels: 170 kept of 170 built (120 pathways, 12 compartments, 9 lesion classes, rest structural); mean channels per gene 14.9",
+    "  extra channels: 535 kept of 691 built  (TIER A 526, TIER B 9); 250 GO, 120 complexes, 120 pfam, 120 domains",
+    "  ESM embeddings merged from 4 file(s): (5120, 480), missing 125 of 5,120",
+    "  60 programmes fitted on 4,720 training knockouts",
+    "  penalty chan2a         ->    30.0  (val 0.0378)",
+    "  penalty esm            ->     1.0  (val 0.0257)",
+    "  penalty chan2a_esm     ->  1000.0  (val 0.0378)",
+    "  penalty esm_shuffled   ->  1000.0  (val 0.0175)",
+    "\n  === cohort1 (200 knockouts; 11 have an exact channel twin; 7 lack a sequence) ===",
+    "  chan2a_esm       0.2320",
+    "  chan2a           0.2327",
+    "  esm              0.1710",
+    "  esm_shuffled     0.1412",
+    "  frequency        0.1615",
+    "    twinned   n= 11  chan2a 0.2636 -> chan2a_esm 0.3000   gain +0.0364",
+    "    unique    n=189  chan2a 0.2310 -> chan2a_esm 0.2280   gain -0.0029",
+    "\n  === _holdout (200 knockouts; 19 have an exact channel twin; 5 lack a sequence) ===",
+    "  chan2a_esm       0.2818",
+    "  chan2a           0.2893",
+    "  esm              0.2068",
+    "  esm_shuffled     0.1707",
+    "  frequency        0.1990",
+    "    twinned   n= 19  chan2a 0.2816 -> chan2a_esm 0.2500   gain -0.0316",
+    "    unique    n=181  chan2a 0.2901 -> chan2a_esm 0.2851   gain -0.0050",
+    "\n  gate   contrast                                    cohort1                cohort2  verdict",
+    "  G1     chan2a_esm - chan2a          -0.0007 [-0.0087,+0.0078]  -0.0075 [-0.0165,+0.0015]  fail",
+    "  G2     esm - frequency              +0.0095 [-0.0063,+0.0250]  +0.0078 [-0.0102,+0.0250]  fail",
+    "  G3     esm - esm_shuffled           +0.0298 [+0.0117,+0.0480]  +0.0360 [+0.0163,+0.0553]  PASS"
+  ]
+}

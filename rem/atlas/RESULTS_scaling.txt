@@ -1,0 +1,229 @@
+=================================================================================================
+K(N):  HOW MANY EXTRA RATE MEASUREMENTS, AS THE RATE COUNT GROWS?
+=================================================================================================
+  multi-type branching process, N = m(m+1) rates, chemistry error 1.0 kcal/mol
+  criterion: ||g_null|| <= 0.2497, i.e. sigma*||g_null|| <= 0.3010 orders
+  which is a factor of two on the answer with 90% two-sided coverage
+  rare-event depth held in log10 Y = (-3.5, -2.0), 5 independent circuits per size
+
+=================================================================================================
+S1  THE ADJOINT IS EXACT, AND CHEAP
+=================================================================================================
+  central differences are only second-order accurate, so a fixed bar would test the
+  finite difference rather than the adjoint. The signature to look for is h^2 decay.
+      step h     worst rel    ratio
+        0.02     2.992e-04      nan
+        0.01     7.488e-05     4.00
+       0.005     1.872e-05     4.00
+      0.0025     4.681e-06     4.00
+     0.00125     1.170e-06     4.00
+  PASS -- the residual is finite-difference truncation, the adjoint is exact (bars: halving ratio 4.0 +- 0.5, and below 1e-5 at the smallest step)
+  one adjoint pass gives all 72 gradients in 1.368 ms
+  72 one-at-a-time evaluations take 95.6 ms
+  measured speedup 70x, and it grows with N by construction:
+  the adjoint is one solve regardless of the number of rates.
+
+=================================================================================================
+S2  THE FIXED POINT IS THE RIGHT ONE
+=================================================================================================
+  worst |residual| of the fixed-point equation over all circuits: 1.24e-14   PASS (bar 1e-13)
+  q1 range over all circuits: 0.407013 to 1.000000   PASS (must be strictly inside 0..1)
+  iteration is started at zero and the map is monotone, so this is the MINIMAL fixed point
+
+=================================================================================================
+THE SWEEP
+=================================================================================================
+    m=  3  N=   12  done
+    m=  4  N=   20  done
+    m=  6  N=   42  done
+    m=  8  N=   72  done
+    m= 11  N=  132  done
+    m= 16  N=  272  done
+    m= 22  N=  506  done
+    m= 32  N= 1056  done
+
+=================================================================================================
+S3  DEPTH IS HELD FIXED AS N GROWS
+=================================================================================================
+  log10 Y over every circuit: -2.903 to -2.619  (target band (-3.5, -2.0))
+  PASS (bar: within 0.6 orders of the band)
+
+=================================================================================================
+K(N)  --  observable regime: growth only
+=================================================================================================
+       N  M obs  K median  K min  K max      K/N  random K  part. ratio  99% count
+      12      1       8.0      7      9   0.6667      11.0         4.17        7.0
+      20      1      11.0      6     13   0.5500      17.0         3.79        8.0
+      42      1      17.0     12     27   0.4048      39.0         2.91       13.0
+      72      1      22.0     19     30   0.3056      67.0         3.45       20.0
+     132      1      37.0     27     55   0.2803     121.0         3.90       23.0
+     272      1      37.0     21     49   0.1360     258.0         7.45       36.0
+     506      1      40.0     32     73   0.0791     463.0         4.71       50.0
+    1056      1      38.0     34     44   0.0360     991.0         7.02       49.0
+  fit  K ~ a*log(N)+b : a = +7.932, b = -10.605, R2 = 0.8813
+  fit  K ~ c*N^alpha  : alpha = 0.372, c = 4.0154, R2 = 0.8620
+  fit  K ~ c*N        : c = 0.0530, R2 = -1.1253
+  best description: log
+
+=================================================================================================
+K(N)  --  observable regime: growth + composition
+=================================================================================================
+       N  M obs  K median  K min  K max      K/N  random K  part. ratio  99% count
+      12      3       4.0      4      7   0.3333       9.0         4.26        9.0
+      20      4       8.0      3     10   0.4000      15.0         4.41       14.0
+      42      6      12.0     10     19   0.2857      35.0         8.42       27.0
+      72      8      16.0     14     20   0.2222      56.0         7.08       40.0
+     132     11      19.0     15     29   0.1439     105.0         7.53       59.0
+     272     16      21.0     18     24   0.0772     229.0        17.07      126.0
+     506     22      26.0     21     33   0.0514     411.0         6.27      173.0
+    1056     32      30.0     27     35   0.0284     925.0        11.58      298.0
+  fit  K ~ a*log(N)+b : a = +5.612, b = -9.078, R2 = 0.9920
+  fit  K ~ c*N^alpha  : alpha = 0.403, c = 2.2250, R2 = 0.8893
+  fit  K ~ c*N        : c = 0.0374, R2 = -0.4767
+  best description: log
+
+=================================================================================================
+K(N)  --  observable regime: growth + composition + death flux
+=================================================================================================
+       N  M obs  K median  K min  K max      K/N  random K  part. ratio  99% count
+      12      5       5.0      3      5   0.4167       7.0         5.62        9.0
+      20      7       5.0      2      6   0.2500      13.0         9.32       15.0
+      42     11       8.0      5     15   0.1905      30.0        11.92       26.0
+      72     15      10.0      9     17   0.1389      54.0        14.23       43.0
+     132     21      12.0      7     21   0.0909      98.0        17.34       67.0
+     272     31       7.0      4      9   0.0257     209.0        20.46      124.0
+     506     43       8.0      6     12   0.0158     389.0        29.73      187.0
+    1056     63       4.0      3      6   0.0038     763.0        19.90      286.0
+  fit  K ~ a*log(N)+b : a = +0.083, b = +6.991, R2 = 0.0023
+  fit  K ~ c*N^alpha  : alpha = 0.004, c = 6.8056, R2 = 0.0003
+  fit  K ~ c*N        : c = 0.0088, R2 = -6.1800
+  best description: log
+
+=================================================================================================
+S4  NON-VACUITY
+=================================================================================================
+  circuits with K = 0 or K >= N: 0   PASS
+
+=================================================================================================
+S5  THE MATCHED CONTROL  (rates chosen at random)
+=================================================================================================
+  at N = 1056: greedy median 4.0, random median 763.0, ratio 190.75x
+  PASS -- the selection rule is doing real work (bar 2x)
+
+=================================================================================================
+S7  THE SPARSITY DIAGNOSTIC
+=================================================================================================
+  If the unconstrained gradient concentrates on a bounded number of rates, K must saturate;
+  if its support grows with N, K must grow with it. K and this count must agree.
+       N   99% count   K median   count/N      K/N
+      12         9.0        5.0    0.7500   0.4167
+      20        15.0        5.0    0.7500   0.2500
+      42        26.0        8.0    0.6190   0.1905
+      72        43.0       10.0    0.5972   0.1389
+     132        67.0       12.0    0.5076   0.0909
+     272       124.0        7.0    0.4559   0.0257
+     506       187.0        8.0    0.3696   0.0158
+    1056       286.0        4.0    0.2708   0.0038
+
+=================================================================================================
+S8  CAN THIS METHOD DETECT A WALL AT ALL?
+=================================================================================================
+  The same measurement with the answer gradient replaced by a DENSE random unit vector,
+  for which no concentration exists. K must grow proportionally to N, or a linear reading
+  in S6 would be unreachable on any evidence and the whole curve uninterpretable.
+       N  K dense median      K/N
+      12             7.0   0.5833
+      20            12.0   0.6000
+      42            26.0   0.6190
+      72            49.0   0.6806
+     132            93.0   0.7045
+     272           198.0   0.7279
+     506           362.0   0.7154
+    1056           812.0   0.7689
+  dense-control fits: alpha = 1.062 (R2 0.9997), linear R2 = 0.9985
+  PASS -- the method can detect a wall, so a sublinear result is meaningful (bar alpha >= 0.7)
+
+=================================================================================================
+S9  IT IS NOT ONE LUCKY NETWORK
+=================================================================================================
+       N   K min   K median   K max   spread
+      12       3        5.0       5        2
+      20       2        5.0       6        4
+      42       5        8.0      15       10
+      72       9       10.0      17        8
+     132       7       12.0      21       14
+     272       4        7.0       9        5
+     506       6        8.0      12        6
+    1056       3        4.0       6        3
+
+=================================================================================================
+The first of the two scaling curves. K(N) says whether a cell can be SPECIFIED;
+the largest required group size says whether it can be COMPUTED. This is the first.
+=================================================================================================
+
+=================================================================================================
+POST-RUN READING.  Hand-written after the run; NOT produced by scaling.py.
+=================================================================================================
+
+S8 IS WHAT MAKES THE REST READABLE.  With the answer gradient replaced by a dense random vector,
+K grows as N^1.062 with R2 0.9997 and K/N rises from 0.58 to 0.77.  The method can produce a
+linear K(N).  So the sublinear curves below are falsifiable statements, not an artefact of a
+criterion that is easy to satisfy.
+
+WHAT K(N) DOES.  Median over five independent circuits per size:
+
+    N        growth only    + composition    + composition + death flux
+    12            8               4                    5
+    72           22              16                   10
+    272          37              21                    7
+    1056         38              30                    4
+
+With only a growth rate, K rises logarithmically (R2 0.881, power-law exponent 0.372).  With
+growth plus composition it is cleanly logarithmic (R2 0.992, exponent 0.403).  With the full
+observable set K does not grow at all over an 88-fold range in N -- the log fit has R2 0.002 and
+the power-law exponent is 0.004.  K/N falls from 0.42 to 0.0038.
+
+S5, the matched control, is emphatic: at N = 1056 the projection needs a median of 4 measurements
+where random selection needs 763, a factor of 190.
+
+=================================================================================================
+S7's PREDECLARED READING IS REFUTED, AND THE REASON MATTERS
+=================================================================================================
+S7 predeclared that if the number of components carrying 99% of the unconstrained gradient grows
+with N, then K must grow too.  It does not.  That count rises 9, 15, 26, 43, 67, 124, 187, 286
+across the sweep while K stays flat at 4 to 12.  The predeclared coupling was wrong, and the
+reason is that the two quantities measure different things: the 99% count measures how SPREAD the
+residual is, while K measures how far its MAGNITUDE sits above a fixed absolute target.  A
+residual can be spread over hundreds of components and still be small enough to need almost no
+measurements.
+
+=================================================================================================
+THE DIAGNOSTIC THAT WAS MISSING, AND IT QUALIFIES THE HEADLINE
+=================================================================================================
+Measured after the run, because without it K(N) would be over-claimed:
+
+    N      ||g||   ||g_null|| before any measurement   ratio to target   K
+    12     20.07              3.231                        12.94         5
+    72      8.36              2.847                        11.41        10
+    272     7.63              1.725                         6.91         7
+    1056    5.69              1.086                         4.35         4
+
+    ||g|| ~ N^-0.304        ||g_null|| ~ N^-0.268
+
+So larger circuits are INTRINSICALLY EASIER in this family: the residual starts 12.9 times above
+the criterion at N = 12 and only 4.4 times above it at N = 1056.  Part of the flat K is that the
+starting point is closer to the target, not that the selection rule gets better.  That dilution is
+real -- in a larger network with the same tail depth no single rate dominates -- but it is a
+property of the network family and it must be stated beside the curve.
+
+THE CAVEAT THIS EXPOSES, WHICH IS NOT YET TESTED.  Switching rates here are drawn independently
+for all m(m-1) ordered pairs, so every type couples to every other and the network becomes DENSER
+as it grows.  Real biological networks are sparse.  In a dense network individual rates dilute by
+construction, which is very likely where N^-0.30 comes from.  A sparse family, where each type
+couples to a fixed number of others, has rates growing like m rather than m^2 and does not dilute
+the same way.  Until that is measured, the honest claim is:
+
+    K(N) is flat to logarithmic for a DENSELY COUPLED network family over 12 to 1056 rates,
+    with the caveat that such networks dilute per-rate sensitivity as they grow.
+
+Whether it survives a sparse topology is the next measurement, not an assumption.

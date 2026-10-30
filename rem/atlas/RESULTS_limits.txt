@@ -1,0 +1,94 @@
+=================================================================================================
+TESTING THE BIOLOGICAL NEURON TO ITS LIMIT
+=================================================================================================
+  channel tree        37,537 parameters
+  biased tanh tree    37,675 parameters
+  MLP shallow         37,531 parameters
+  MLP deep            37,933 parameters
+
+=================================================================================================
+L1  THE NEW CONTROL: GRADIENT CHECK AND SYMMETRY (BLOCKING)
+=================================================================================================
+  gradient check worst relative error   4.44e-09   (bar 1e-5)
+  max |f(-x) + f(x)|                    1.16e+00   (must be > 0: not odd)
+
+  L1: PASS -- the biased tanh tree is correctly differentiated and is not odd
+
+=================================================================================================
+SWEEP 1  DIFFICULTY: parity order k over 16 inputs, 8,000 training examples
+=================================================================================================
+  L2 harness control, shallow MLP at k=2: 1.000   (bar 0.99)
+  L2: PASS
+
+  test accuracy (train accuracy in brackets), mean of 3 seeds
+      k             channel tree        biased tanh tree             MLP shallow                MLP deep
+      2           1.000 (1.00)            1.000 (1.00)            1.000 (1.00)            1.000 (1.00)  
+      4           1.000 (1.00)            1.000 (1.00)            1.000 (1.00)            1.000 (1.00)  
+      6           1.000 (1.00)            0.995 (1.00)            1.000 (1.00)            0.973 (0.97)  
+      8           1.000 (1.00)            0.959 (1.00)            1.000 (1.00)            0.937 (0.94)  
+     10           1.000 (1.00)            0.911 (1.00)            0.993 (1.00)            0.962 (0.96)  
+     12           1.000 (1.00)            0.903 (1.00)            0.987 (1.00)            0.941 (0.94)  
+
+  DIFFICULTY LIMIT (largest k with mean test >= 0.90):
+    channel tree       k =   12
+    biased tanh tree   k =   12
+    MLP shallow        k =   12
+    MLP deep           k =   12
+
+=================================================================================================
+SWEEP 2  SAMPLES: training-set size at k = 12   (rule: largest k every model passed)
+=================================================================================================
+        n             channel tree        biased tanh tree             MLP shallow                MLP deep
+      250           0.497 (1.00)            0.499 (1.00)            0.494 (1.00)            0.495 (1.00)  
+      500           0.500 (1.00)            0.494 (1.00)            0.491 (1.00)            0.496 (1.00)  
+     1000           0.495 (1.00)            0.499 (1.00)            0.491 (1.00)            0.489 (1.00)  
+     2000           0.733 (1.00)            0.489 (1.00)            0.512 (1.00)            0.529 (1.00)  
+     4000           0.963 (1.00)            0.549 (1.00)            0.792 (1.00)            0.925 (0.99)  
+
+  SAMPLE LIMIT (fewest training examples with mean test >= 0.90):
+    channel tree       n = 4000
+    biased tanh tree   n = none
+    MLP shallow        n = none
+    MLP deep           n = 4000
+
+=================================================================================================
+L3  IS THE BENCHMARK UNSATURATED?
+=================================================================================================
+  difficulty sweep has a failing cell: False
+  sample sweep has a failing cell:     True
+
+  L3: PASS -- the benchmark breaks models, so limits can be ranked
+
+=================================================================================================
+L0  THE VERDICT
+=================================================================================================
+  channel tree strictly better than ALL controls on difficulty: False
+  channel tree strictly better than ALL controls on samples:    False
+  channel tree worse than SOME control on difficulty:           False
+  channel tree worse than SOME control on samples:              False
+
+  L0: NO ADVANTAGE
+
+=================================================================================================
+L5  WHERE THE FAILURES ARE: CANNOT FIT, OR FITS BUT DOES NOT GENERALISE?
+=================================================================================================
+  failing runs: 58   of which CANNOT FIT (train < 0.95): 1   FIT BUT DID NOT GENERALISE: 57
+    channel tree       failing  12   cannot fit   0   overfit  12
+    biased tanh tree   failing  17   cannot fit   0   overfit  17
+    MLP shallow        failing  15   cannot fit   0   overfit  15
+    MLP deep           failing  14   cannot fit   1   overfit  13
+
+  artifact: outputs/limits.json (132 training runs)
+
+=================================================================================================
+L4  WHAT THIS IS AND IS NOT
+=================================================================================================
+  1. Parity is a clean test of compositional learning. It is not reasoning, and a model's
+     limit on parity says nothing direct about ARC.
+  2. Limits are at a fixed 10,000-step budget, identical for every model. A model that
+     breaks at k might pass with more steps; so might its controls.
+  3. The trees take their branching (4) and depth (4) from Blue Brain morphology. Other
+     morphologies were not swept.
+  4. Three seeds per cell; the 0.90 threshold is applied to the mean.
+
+  runtime 290s

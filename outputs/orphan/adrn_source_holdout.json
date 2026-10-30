@@ -1,0 +1,109 @@
+{
+  "test": "adrn_source_holdout",
+  "summary": {
+    "random": {
+      "means": {
+        "ridge": 0.34805936073059357,
+        "knn": 0.34543378995433793,
+        "gbm": 0.35
+      },
+      "contrasts": {
+        "gbm - ridge": {
+          "gap": 0.0019406392694063929,
+          "ci": [
+            -0.005025684931506849,
+            0.009360730593607305
+          ],
+          "resolved": false
+        },
+        "knn - ridge": {
+          "gap": -0.002625570776255711,
+          "ci": [
+            -0.014269406392694063,
+            0.00878995433789954
+          ],
+          "resolved": false
+        }
+      },
+      "n": 438
+    },
+    "complex": {
+      "means": {
+        "ridge": 0.2908675799086758,
+        "knn": 0.26472602739726026,
+        "gbm": 0.28949771689497716
+      },
+      "contrasts": {
+        "gbm - ridge": {
+          "gap": -0.001369863013698629,
+          "ci": [
+            -0.009474885844748855,
+            0.00627853881278539
+          ],
+          "resolved": false
+        },
+        "knn - ridge": {
+          "gap": -0.026141552511415526,
+          "ci": [
+            -0.039497716894977164,
+            -0.012899543378995435
+          ],
+          "resolved": true
+        }
+      },
+      "n": 438
+    },
+    "pathway": {
+      "means": {
+        "ridge": 0.24349315068493152,
+        "knn": 0.22899543378995432,
+        "gbm": 0.2391552511415525
+      },
+      "contrasts": {
+        "gbm - ridge": {
+          "gap": -0.004337899543378993,
+          "ci": [
+            -0.013127853881278538,
+            0.00445205479452055
+          ],
+          "resolved": false
+        },
+        "knn - ridge": {
+          "gap": -0.014497716894977168,
+          "ci": [
+            -0.02831050228310502,
+            -0.0004566210045662069
+          ],
+          "resolved": true
+        }
+      },
+      "n": 438
+    }
+  },
+  "log": [
+    "====================================================================================================",
+    "SOURCE-SIDE STRUCTURED HOLDOUT: do trees separate from ridge when the split is hard?",
+    "====================================================================================================",
+    "  named channels: 170 kept of 170 built (120 pathways, 12 compartments, 9 lesion classes, rest structural); mean channels per gene 14.9",
+    "  extra channels: 535 kept of 691 built  (TIER A 526, TIER B 9); 250 GO, 120 complexes, 120 pfam, 120 domains",
+    "  4,720 training sources, 438 with >= 5 movers (only these are scored)",
+    "\n### random source split  (438 scored held-out sources)",
+    "  gbm      precision@20 0.3500",
+    "  ridge    precision@20 0.3481",
+    "  knn      precision@20 0.3454",
+    "  gbm - ridge     +0.0019     [-0.0050, +0.0094]  within noise",
+    "  knn - ridge     -0.0026     [-0.0143, +0.0088]  within noise",
+    "\n### complex source split  (438 scored held-out sources)",
+    "  gbm      precision@20 0.2895",
+    "  ridge    precision@20 0.2909",
+    "  knn      precision@20 0.2647",
+    "  gbm - ridge     -0.0014     [-0.0095, +0.0063]  within noise",
+    "  knn - ridge     -0.0261     [-0.0395, -0.0129]  RESOLVED",
+    "\n### pathway source split  (438 scored held-out sources)",
+    "  gbm      precision@20 0.2392",
+    "  ridge    precision@20 0.2435",
+    "  knn      precision@20 0.2290",
+    "  gbm - ridge     -0.0043     [-0.0131, +0.0045]  within noise",
+    "  knn - ridge     -0.0145     [-0.0283, -0.0005]  RESOLVED"
+  ]
+}

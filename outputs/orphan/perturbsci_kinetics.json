@@ -1,0 +1,15 @@
+{
+ "n_kos": 197,
+ "self_kd_nascent": -0.3409,
+ "self_kd_whole": -0.3342,
+ "regulon_enrich_nascent_fixedthr": 1.945,
+ "regulon_enrich_whole_fixedthr": 27.015,
+ "regulon_enrich_nascent_top100": 1.92,
+ "regulon_enrich_whole_top100": 22.119,
+ "n_reg_kos": 60,
+ "movers_nascent": 1137.5,
+ "movers_whole": 125.1,
+ "nascent_wins_fair": false,
+ "verdict": "PERTURBSCI-KINETICS (perturbsci_kinetics.py): the fast/direct readout test at the right timescale (GSE218566, HEK293 CRISPRi, 197 knockdowns, 4sU NASCENT vs WHOLE RNA). Direct-target (regulon) enrichment, 60 KOs -- the DECISIVE, depth-matched top-100 comparison: NASCENT 1.92x vs WHOLE 22.12x -- nascent does NOT beat whole even matched for depth; the total readout is as or more direct-target-enriched. (Fixed-threshold looked like nascent 1.9x vs whole 27.0x, but that is a DEPTH CONFOUND -- nascent is ~18% of counts, so it throws 1138 noisy movers/KO vs whole's 125, drowning the signal at a fixed cutoff; the top-100 comparison removes it.) Self-knockdown nascent -0.34 vs whole -0.33 (near-equal: chronic CRISPRi is already at steady state, so even nascent isn't 'early'). CONCLUSION: even the 4sU nascent readout does not cleanly out-resolve the total on this dataset -- because CRISPRi is CHRONIC (both pools are at repressed steady state) and single-cell nascent is shallow. The thesis is not refuted but this dataset can't confirm it: the decisive experiment remains a FAST-ACUTE degron (dTAG, protein gone in ~1-2 h) with a DENSE hours time-course and deep nascent capture -- which does not yet exist as clean public data. (Scope: HEK293 CRISPRi, mostly metabolic/chromatin targets, single labelling window.) Deterministic.",
+ "note": "PERTURBSCI-KINETICS (perturbsci_kinetics.py): the fast/direct readout test at the right timescale (GSE218566, HEK293 CRISPRi, 197 knockdowns, 4sU NASCENT vs WHOLE RNA). Direct-target (regulon) enrichment, 60 KOs -- the DECISIVE, depth-matched top-100 comparison: NASCENT 1.92x vs WHOLE 22.12x -- nascent does NOT beat whole even matched for depth; the total readout is as or more direct-target-enriched. (Fixed-threshold looked like nascent 1.9x vs whole 27.0x, but that is a DEPTH CONFOUND -- nascent is ~18% of counts, so it throws 1138 noisy movers/KO vs whole's 125, drowning the signal at a fixed cutoff; the top-100 comparison removes it.) Self-knockdown nascent -0.34 vs whole -0.33 (near-equal: chronic CRISPRi is already at steady state, so even nascent isn't 'early'). CONCLUSION: even the 4sU nascent readout does not cleanly out-resolve the total on this dataset -- because CRISPRi is CHRONIC (both pools are at repressed steady state) and single-cell nascent is shallow. The thesis is not refuted but this dataset can't confirm it: the decisive experiment remains a FAST-ACUTE degron (dTAG, protein gone in ~1-2 h) with a DENSE hours time-course and deep nascent capture -- which does not yet exist as clean public data. (Scope: HEK293 CRISPRi, mostly metabolic/chromatin targets, single labelling window.) Deterministic."
+}

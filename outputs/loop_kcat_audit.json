@@ -1,0 +1,206 @@
+{
+ "test": "loop_kcat_audit",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/uniprot_kinetics_human.tsv",
+    "bytes": 3402310,
+    "hash": "23921e8cc3968e29",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/kinetics_bundle.json.gz",
+    "bytes": 193597,
+    "hash": "b00f3fdb8642fa3f",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/ec_kcat_medians.json.gz",
+    "bytes": 32040,
+    "hash": "5241443b6f6ae98e",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/HumanGEM_genes.tsv",
+    "bytes": 1132077,
+    "hash": "2a6058a157b3b9f3",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+    "bytes": 38524393,
+    "hash": "b857a72939e09be8",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 1309,
+   "used": 242,
+   "selection": "filtered",
+   "fraction": 0.18487394957983194
+  },
+  "seed": 12400,
+  "controls": [
+   "a constant global median as the null for both kcat and KM",
+   "genes already tier 'measured' EXCLUDED from the audit",
+   "publication count against having a measured value at all",
+   "the bundle's own claimed tier ordering, retested",
+   "unit-scale bounds as a parser check",
+   "three denominators on the coverage"
+  ],
+  "note": "UniProt curates per protein from primary literature with PubMed ids; CatPred trained on BRENDA/SABIO, which share that literature, so this is a LOWER BOUND on the error and not an unbiased estimate",
+  "warnings": []
+ },
+ "gates": {
+  "K1": true,
+  "K5": true,
+  "K2": false,
+  "K3": false,
+  "K4": true,
+  "K6": true
+ },
+ "correction": "cell_assembled recorded enzyme kinetics ABSENT; the bundle exists and carries 8,184 reaction kcats",
+ "bundle": {
+  "reactions": 8184,
+  "genes": 2549,
+  "tiers": {
+   "4_global_median": 305,
+   "1_human_EC": 1811,
+   "2_catpred": 5941,
+   "3_any_organism_EC": 127
+  },
+  "global_median": 1.85,
+  "measured_human_records": 2437,
+  "distinct_human_ec": 362
+ },
+ "uniprot": {
+  "entries": 1309,
+  "mention_kcat": 250,
+  "parsed_kcat": 242,
+  "genes_kcat": 242,
+  "genes_km": 1275
+ },
+ "k1": {
+  "kcat_median": 0.7477719737998325,
+  "kcat_max": 8000.0,
+  "km_median": 43.58897548183445,
+  "km_max": 130000.00000000006,
+  "parse_rate": 0.968
+ },
+ "k2": {
+  "n_held": 66,
+  "pred_fold": 12.95424053519006,
+  "null_fold": 9.41824649925774,
+  "pred_within2": 0.13636363636363635,
+  "pred_within10": 0.45454545454545453,
+  "log10_diff": 0.13834039127690123,
+  "p": 0.5535
+ },
+ "k3": {
+  "1_human_EC": 3.8250010748637515,
+  "2_catpred": 13.28610045033761,
+  "4_global_median": 9.41824649925774
+ },
+ "k4": {
+  "n": 628,
+  "pred_fold": 3.5390920819662,
+  "null_fold": 5.772524923094288,
+  "const_uM": 43.58897548183445,
+  "log10_diff": -0.21247326409264056,
+  "p": 0.0
+ },
+ "k5": {
+  "n_shared": 150,
+  "n_excluded": 84,
+  "n_held": 66,
+  "pubs_with": 81.5,
+  "pubs_without": 64.0,
+  "pubs_difference": 17.5,
+  "pubs_p": 0.0105
+ },
+ "k6": {
+  "ens2sym": 2848,
+  "reactions_touched": 1088,
+  "moved_2x": 863,
+  "moved_10x": 590,
+  "gene_rule_reactions": 7782
+ },
+ "seconds": 2.4577832221984863,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 124 -- audit the enzyme kinetics against measurement",
+  "====================================================================================================",
+  "",
+  "  the bundle: 8,184 reactions and 2,549 genes with a kcat; global median fallback 1.85/s",
+  "     2_catpred                5941   72.6%",
+  "     1_human_EC               1811   22.1%",
+  "     4_global_median           305    3.7%",
+  "     3_any_organism_EC         127    1.6%",
+  "  measured base: 2,437 human records over 362 distinct EC numbers",
+  "",
+  "  UniProt: 1,309 human reviewed proteins with a Kinetics block",
+  "     mention kcat 250, parsed 242 (96.8%); 242 genes with a kcat, 1275 with a KM",
+  "",
+  "K1 THE PARSER DID NOT INVENT UNITS",
+  "     kcat /s : median 0.748  range 2.97e-05 to 8.00e+03  gate max < 1e+07",
+  "     KM   uM : median 43.59  range 6.32e-04 to 1.30e+05  gate max < 1e+06",
+  "     parse rate on kcat-mentioning entries 96.8%   gate >= 90%",
+  "     positive control PNP: 5.67/s from 7 published values",
+  "     positive control FH: 218/s from 2 published values",
+  "     positive control TK1: 5.39/s from 3 published values",
+  "     K1 PASS",
+  "",
+  "K5 INDEPENDENCE AND SELECTION, BOTH NAMED",
+  "     150 genes have both a UniProt kcat and a bundle kcat",
+  "     EXCLUDED, already tier 'measured' in the bundle: 84 -- scoring on these would be scoring a lookup",
+  "     HELD OUT, bundle used a prediction: 66",
+  "     tiers of the held-out set: catpred+ECprior 42, EC-class 20, catpred(calibrated) 3, EC-class-prior 1",
+  "     SELECTION: genes with a measured kcat have median 82 publications against 64 for those without, difference +18, p = 0.0105",
+  "     so the audit set is NOT a random sample of the model's genes, and the fold-errors below describe the enzymes people study",
+  "     K5 PASS",
+  "",
+  "K2 HOW WRONG ARE THE PREDICTIONS?",
+  "     held-out genes with both values: 66",
+  "     bundle prediction   median fold-error   12.95x   within 2x 13.6%   within 10x 45.5%",
+  "     global-median null  median fold-error    9.42x   within 2x 12.1%   within 10x 53.0%",
+  "     log10 fold-error difference +0.138 (negative favours the prediction), permutation p = 0.5535",
+  "     the bundle's own leave-one-out figure for CatPred was 8.38x",
+  "     K2 FAIL -- the prediction DOES NOT beat a constant 1.85/s",
+  "",
+  "K3 THE TIER ORDERING IS REAL",
+  "     tier 1 (human EC median) testable on 74 genes with a UniProt kcat",
+  "       tier 1  median fold-error 3.83x  (bundle claims 2.62-2.80x)",
+  "       tier 2  median fold-error 13.29x  on 45 genes  (bundle claims 8.38x)",
+  "       tier 4  median fold-error 9.42x  (bundle claims 9.25-14.23x)",
+  "     K3 FAIL -- the claimed ordering DOES NOT hold on values none of the tiers used",
+  "",
+  "K4 THE PREDICTED KM, AGAINST 628 MEASUREMENTS",
+  "     628 genes with a predicted KM and a measured KM",
+  "     every KM in this model is tagged catpred+ECprior -- there is no measured-KM tier",
+  "     predicted KM       median fold-error    3.54x   within 2x 30.1%",
+  "     constant 43.6 uM null  median fold-error    5.77x   within 2x 22.6%",
+  "     log10 difference -0.212, permutation p = 0.0000",
+  "     K4 PASS -- the predicted KM beats a constant",
+  "",
+  "K6 WHAT IT WOULD CHANGE",
+  "     Ensembl -> symbol map from HumanGEM_genes.tsv: 2,848 genes",
+  "     reactions whose gene set contains a measured gene: 1,088 of 7,782 with a gene rule",
+  "     of those, kcat moves by more than  2x: 863",
+  "                                       10x: 590",
+  "     THREE DENOMINATORS  by reaction 14.0% of gene-rule reactions, 8.4% of the 12,931 model reactions",
+  "                         by gene     242 measured of 2,549 with a kcat = 9.5%, and of 16,492 model genes = 1.5%",
+  "     K6 PASS",
+  "",
+  "====================================================================================================",
+  "  K1  PASS",
+  "  K2  FAIL",
+  "  K3  FAIL",
+  "  K4  PASS",
+  "  K5  PASS",
+  "  K6  PASS",
+  "  4/6",
+  "====================================================================================================",
+  "    manifest: 5 inputs, coverage 242/1309 (18.5%) by 'filtered', seed 12400, controls 6"
+ ]
+}

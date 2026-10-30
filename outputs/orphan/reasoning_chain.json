@@ -1,0 +1,195 @@
+[
+  {
+    "gene": "VHL",
+    "variant": "Y115H",
+    "mode": "significance-uncertain",
+    "conclusion": "VHL Y115H: cannot confirm it matters (ESM/\u0394\u0394G neutral). IF pathogenic, mechanism = HIF1a interface loss (conditional hypothesis)",
+    "confidence": 0.3,
+    "notes": [
+      "significance UNCONFIRMED \u2014 ESM/\u0394\u0394G do not flag this. Being at an interface is a weak lean toward pathogenic (6-protein CMH OR 1.8 among ESM-missed, but p=0.14, not significant), NOT enough for a call. Reported as a CONDITIONAL mechanism hypothesis: needs an independent signal (clinical recurrence, assay)."
+    ],
+    "chain": [
+      {
+        "step": "1 molecular",
+        "finding": "uncertain",
+        "significant": false,
+        "detail": "ESM func 0.0, ddG 1.16",
+        "confidence": "low"
+      },
+      {
+        "step": "2 localisation",
+        "significant": false,
+        "confidence": "high",
+        "finding": "mechanism: AT the HIF1a interface (exp. 1LM8, 3.23 A) \u2014 mechanism, not evidence of pathogenicity",
+        "detail": {
+          "HIF1a": 3.23
+        }
+      }
+    ]
+  },
+  {
+    "gene": "VHL",
+    "variant": "R167W",
+    "mode": "whole-product",
+    "conclusion": "VHL R167W [functional (direction unresolved)] whole-product -> loses RHOBTB3 ATPase cycle -> VHL lost -> downstream / synthetic-lethal target (no direct drug)",
+    "confidence": 0.8,
+    "notes": [],
+    "chain": [
+      {
+        "step": "1 molecular",
+        "finding": "functional (direction unresolved)",
+        "significant": true,
+        "detail": "ESM func 1.74, ddG -0.23",
+        "confidence": "medium"
+      },
+      {
+        "step": "2 localisation",
+        "significant": false,
+        "confidence": "medium",
+        "finding": "mechanism: not at any partner interface -> intramolecular (stability/allostery), whole-product effect",
+        "detail": "NOT at any inter-chain interface in this structure -> the mutation's effect is intramolecular (stability/allostery), not a specific partner break"
+      },
+      {
+        "step": "3 propagation",
+        "mode": "whole-product",
+        "confidence": "medium",
+        "finding": "propagates loss of downstream programme",
+        "inject": {
+          "VHL": -1.0
+        },
+        "up": [
+          "PTK6 Expression",
+          "Regulation of gene expression by Hypoxia-inducible Factor",
+          "PTK6 promotes HIF1A stabilization"
+        ],
+        "lost": [
+          "RHOBTB3 ATPase cycle",
+          "SUMOylation of ubiquitinylation proteins",
+          "Oxygen-dependent proline hydroxylation of Hypoxia-inducible Factor Alpha"
+        ]
+      },
+      {
+        "step": "4 phenotype",
+        "confidence": "medium",
+        "finding": "RHOBTB3 ATPase cycle / SUMOylation of ubiquitinylation proteins"
+      },
+      {
+        "step": "5 target",
+        "finding": "VHL lost -> downstream / synthetic-lethal target (no direct drug)",
+        "confidence": "medium"
+      }
+    ]
+  },
+  {
+    "gene": "BRAF",
+    "variant": "V600E",
+    "mode": "gof-activation",
+    "conclusion": "BRAF V600E [GOF-candidate] gof-activation -> activates Signalling to p38 via RIT and RIN -> revert BRAF (the activated driver)",
+    "confidence": 1.0,
+    "notes": [],
+    "chain": [
+      {
+        "step": "1 molecular",
+        "finding": "GOF-candidate",
+        "significant": true,
+        "detail": "ESM func 1.126, ddG 0.51",
+        "confidence": "medium"
+      },
+      {
+        "step": "1b prior",
+        "finding": "recurrent somatic hotspot (independent significance signal)",
+        "significant": true,
+        "confidence": "medium"
+      },
+      {
+        "step": "2 localisation",
+        "significant": false,
+        "confidence": "medium",
+        "finding": "mechanism: recurrent, functional, stability-neutral -> activating (exact interface needs AF-Multimer)",
+        "detail": "burial 167.0"
+      },
+      {
+        "step": "3 propagation",
+        "mode": "gof-activation",
+        "confidence": "medium",
+        "finding": "drives UP downstream programme",
+        "inject": {
+          "BRAF": 1.0
+        },
+        "up": [
+          "Signalling to p38 via RIT and RIN",
+          "Negative feedback regulation of MAPK pathway",
+          "ARMS-mediated activation"
+        ],
+        "lost": [
+          "Eukaryotic Translation Elongation",
+          "Protein methylation",
+          "RAS GTPase cycle mutants"
+        ]
+      },
+      {
+        "step": "4 phenotype",
+        "confidence": "medium",
+        "finding": "Signalling to p38 via RIT and RIN / Negative feedback regulation of MAPK pathway"
+      },
+      {
+        "step": "5 target",
+        "finding": "revert BRAF (the activated driver)",
+        "confidence": "medium"
+      }
+    ]
+  },
+  {
+    "gene": "TP53",
+    "variant": "R175H",
+    "mode": "whole-product",
+    "conclusion": "TP53 R175H [functional (direction unresolved)] whole-product -> loses Transcriptional  activation of  cell cycle inhibitor p21 -> TP53 lost -> downstream / synthetic-lethal target (no direct drug)",
+    "confidence": 0.8,
+    "notes": [],
+    "chain": [
+      {
+        "step": "1 molecular",
+        "finding": "functional (direction unresolved)",
+        "significant": true,
+        "detail": "ESM func 0.615, ddG 0.76",
+        "confidence": "medium"
+      },
+      {
+        "step": "2 localisation",
+        "significant": false,
+        "confidence": "low",
+        "finding": "mechanism: buried, no complex structure -> interface unresolved",
+        "detail": "burial 182.0"
+      },
+      {
+        "step": "3 propagation",
+        "mode": "whole-product",
+        "confidence": "medium",
+        "finding": "propagates loss of downstream programme",
+        "inject": {
+          "TP53": -1.0
+        },
+        "up": [
+          "The NLRP1 inflammasome",
+          "Cellular hexose transport",
+          "G2 Phase"
+        ],
+        "lost": [
+          "Transcriptional  activation of  cell cycle inhibitor p21",
+          "Transcriptional activation of p53 responsive genes",
+          "Activation of NOXA and translocation to mitochondria"
+        ]
+      },
+      {
+        "step": "4 phenotype",
+        "confidence": "medium",
+        "finding": "Transcriptional  activation of  cell cycle inhibitor p21 / Transcriptional activation of p53 responsive genes"
+      },
+      {
+        "step": "5 target",
+        "finding": "TP53 lost -> downstream / synthetic-lethal target (no direct drug)",
+        "confidence": "medium"
+      }
+    ]
+  }
+]

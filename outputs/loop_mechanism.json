@@ -1,0 +1,159 @@
+{
+  "test": "loop_mechanism",
+  "manifest": {
+    "manifest_version": 1,
+    "inputs": [
+      {
+        "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/_sphere_chain_v2.pkl",
+        "bytes": 8085619,
+        "hash": "c16be4b8707dbbc1",
+        "method": "sha256:full"
+      },
+      {
+        "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/uniprot_ft",
+        "kind": "directory",
+        "files": 141,
+        "bytes": 757504,
+        "hash": "74d5d450cdeed724",
+        "method": "sha256:tree"
+      },
+      {
+        "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/uniprot_seq",
+        "kind": "directory",
+        "files": 141,
+        "bytes": 193616,
+        "hash": "570c17c29e6aae7a",
+        "method": "sha256:tree"
+      },
+      {
+        "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+        "bytes": 38524393,
+        "hash": "b857a72939e09be8",
+        "method": "sha256:full"
+      }
+    ],
+    "coverage": {
+      "available": 29286,
+      "used": 16307,
+      "selection": "filtered",
+      "fraction": 0.5568189578638257
+    },
+    "seed": 1904,
+    "controls": [
+      "UniProt numbering checked per gene, failures named and dropped",
+      "no annotation-derived feature enters M3",
+      "gene-level composition scored as an explicit control",
+      "100 label permutations for the multi-class null",
+      "gene-grouped folds throughout",
+      "M2 declared a confounded description, not a result"
+    ],
+    "note": "mechanism labels are UniProt residue annotations, not disease names -- ClinVar's per-gene disease names are mostly synonyms and severity variants",
+    "warnings": []
+  },
+  "gates": {
+    "M1 UniProt numbering matches": true,
+    "M2 categories separate (reported)": true,
+    "M3 structure predicts mechanism": true,
+    "M4 not memorising the gene": true,
+    "M5 mechanism visible to the model": true
+  },
+  "m1_agreement": 1.0,
+  "m1_dropped": [],
+  "category_rates": {
+    "catalytic": 0.8995601173020528,
+    "membrane": 0.8729805013927576,
+    "none": 0.48906879085674704,
+    "regulatory": 0.38095238095238093,
+    "structural": 0.7579843860894251
+  },
+  "class_counts": {
+    "none": 11297,
+    "catalytic": 1227,
+    "membrane": 1567,
+    "structural": 2136,
+    "regulatory": 80
+  },
+  "macro_auc": 0.7304143077274539,
+  "per_class_auc": {
+    "catalytic": 0.735166966074984,
+    "membrane": 0.8381398830526834,
+    "none": 0.6464563835063343,
+    "regulatory": 0.8004105811302151,
+    "structural": 0.6318977248730527
+  },
+  "null_mean": 0.497391449656257,
+  "null_95": 0.5119142224529946,
+  "gene_level_macro": 0.6533208847205156,
+  "combined_macro": 0.760939792062782,
+  "pathogenicity_auc_by_mechanism": {
+    "catalytic": 0.8615518236277432,
+    "membrane": 0.8875519206439839,
+    "none": 0.9404922524657647,
+    "regulatory": 0.8459615384615384,
+    "structural": 0.91609759245225
+  },
+  "n_variants": 29286,
+  "n_pathogenic_used": 16307,
+  "seconds": 723.2946207523346,
+  "log": [
+    "====================================================================================================",
+    "  LOOP 57 -- among the harmful ones, why is each one harmful?",
+    "====================================================================================================",
+    "\n  29,286 variants, 141 genes, 141 with UniProt annotation",
+    "\n  M1 UNIPROT NUMBERING MATCHES OUR RESIDUE INDEX",
+    "     overall agreement 1.0000 over 29,286 variants in 141 genes",
+    "     genes below 95% and DROPPED entirely: 0",
+    "     kept 29,286 variants in 141 genes",
+    "     M1 PASS",
+    "\n  M2 MECHANISM CATEGORIES SEPARATE PATHOGENICITY -- REPORTED, NOT CLAIMED",
+    "     mechanism     variants  % of all  % pathogenic",
+    "     catalytic        1,364      4.7%         90.0%",
+    "     membrane         1,795      6.1%         87.3%",
+    "     none            23,099     78.9%         48.9%",
+    "     regulatory         210      0.7%         38.1%",
+    "     structural       2,818      9.6%         75.8%",
+    "     baseline 55.7%. A residue is annotated because somebody STUDIED it, and",
+    "     pathogenic variants attract study, so this spread is partly attention. It is the",
+    "     description M3 has to beat, not a finding.",
+    "\n  M3 STRUCTURAL CONTEXT PREDICTS WHICH MECHANISM, AMONG PATHOGENIC VARIANTS ONLY",
+    "     pathogenic variants: 16,307. classes with >= 30: catalytic 1,227, membrane 1,567, none 11,297, regulatory 80, structural 2,136",
+    "     16,307 rows, 141 genes, 16 structural features, NO annotation-derived input",
+    "       catalytic   one-vs-rest AUC 0.7352   (n=1,227)",
+    "       membrane    one-vs-rest AUC 0.8381   (n=1,567)",
+    "       none        one-vs-rest AUC 0.6465   (n=11,297)",
+    "       regulatory  one-vs-rest AUC 0.8004   (n=80)",
+    "       structural  one-vs-rest AUC 0.6319   (n=2,136)",
+    "     MACRO AUC 0.7304",
+    "     null (labels permuted, 100 draws): mean 0.4974, 95th 0.5119",
+    "     M3 PASS",
+    "\n  M4 IT IS NOT MEMORISING THE GENE",
+    "     GENE-LEVEL block only (TF status, regulatory in/out degree, complex membership,",
+    "     pathway count, PPI degree) -- 6 features, all constant within a gene",
+    "     macro AUC 0.6533 against the structural block's 0.7304",
+    "     both together 0.7609   (+0.0305 over structure alone)",
+    "     M4 PASS  (structure beats the gene-level block on held-out genes)",
+    "\n  M5 MECHANISM IS VISIBLE TO THE PATHOGENICITY MODEL",
+    "     the loop 54 model refitted here, then its held-out score read out BY mechanism",
+    "     mechanism          n   AUC within that class",
+    "     catalytic      1,364                  0.8616",
+    "     membrane       1,795                  0.8876",
+    "     none          23,099                  0.9405",
+    "     regulatory       210                  0.8460",
+    "     structural     2,818                  0.9161",
+    "     hardest mechanism for the pathogenicity model: regulatory at 0.8460",
+    "     M5 PASS  (reported by name rather than pooled)",
+    "\n====================================================================================================",
+    "  M1 UniProt numbering matches            PASS",
+    "  M2 categories separate (reported)       PASS",
+    "  M3 structure predicts mechanism         PASS",
+    "  M4 not memorising the gene              PASS",
+    "  M5 mechanism visible to the model       PASS",
+    "  AMONG PATHOGENIC VARIANTS ALONE, structural context predicts WHICH KIND of damage at",
+    "  macro AUC 0.7304 against a permuted null of 0.5119, using no annotation-derived",
+    "  input. The gene-level block -- TF status, regulatory degree, complex membership, pathway",
+    "  and PPI counts -- reaches 0.6533 on its own and 0.7609 combined.",
+    "  This is the first question in the arc whose answer is a MECHANISM rather than a score.",
+    "  It does not make the pathogenicity model better; it says what the model is looking at.",
+    "===================================================================================================="
+  ]
+}

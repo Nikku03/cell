@@ -1,0 +1,43 @@
+========================================================================================================
+LOOP 270 -- THE TWO NUMBERS LOOP 268 FLAGGED AS UNSAFE TO QUOTE
+========================================================================================================
+     Loop 268 recorded both problems in its own output rather than reporting past
+     them. Neither changes a gate verdict there; both change what its numbers mean.
+     49 lines, ~644 conditions each, K=322 as loop 268 used
+W1 IS THE JUMP AT n=48 REAL?
+       held-out line 1/20   [13s]
+       held-out line 6/20   [43s]
+       held-out line 11/20   [73s]
+       held-out line 16/20   [102s]
+        n     excess       null   step ratio
+       36    +0.0138    +0.0011             
+       40    +0.0190    +0.0013        1.37x
+       42    +0.0228    +0.0014        1.20x
+       44    +0.0311    +0.0016        1.36x
+       46    +0.0424    +0.0017        1.36x
+       47    +0.0554    +0.0018        1.31x
+       48    +0.0833    +0.0016        1.50x
+     largest step ratio 1.50x; loop 268's coarse grid showed 4.46x at n=48
+     W1 PASS -- no step exceeds 1.50x, so the curve is smooth and loop 268's 4.46x was an artefact of its coarse grid
+W2 DO THE DOSES AGREE ONCE MATCHED?
+     matched: 184 conditions per line and K=92 for BOTH doses
+     loop 268 used 253/K=126 and 204/K=102 -- three things moving at once
+     dose 0.05: full +0.0663, diagonal +0.0101, off-diagonal +0.0562
+     dose 0.5: full +0.0325, diagonal +0.0058, off-diagonal +0.0266
+     matched difference 0.0296; loop 268's unmatched U6 reported 0.0430
+     W2 FAIL -- matched on conditions and K the doses still differ by 0.0296; U6's verdict stands and the effect really does depend on concentration
+W3 WHAT THIS CANNOT SHOW
+     W1 tests smoothness on a finer grid of the SAME sampling scheme. If the jump
+     came from something other than grid coarseness -- a threshold in how many lines
+     span the held-out one -- a smooth curve here would not detect it.
+     W2 matches conditions and K. It does not match which DRUGS appear at each dose,
+     and if the two doses were run on different compound sets that difference
+     remains inside the comparison.
+     Neither gate revises loop 268's verdicts. U4 and U6 stand as recorded; what
+     changes is which of their numbers may be quoted and what they mean.
+========================================================================================================
+  W1  PASS
+  W2  FAIL
+  1/2   [131s]
+========================================================================================================
+     written outputs/loop_tahoe_diagnostics.json

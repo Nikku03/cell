@@ -1,0 +1,197 @@
+{
+ "reroute_validation": {
+  "n_genes": 2848,
+  "n_sole_catalyst_genes": 625,
+  "frac_sole_catalyst": 0.219,
+  "buffered_isozyme_KOs": {
+   "GAPDH": {
+    "active_reactions_lost": 0,
+    "biomass_frac": 1.0,
+    "has_isozyme": true
+   },
+   "PGK1": {
+    "active_reactions_lost": 0,
+    "biomass_frac": 1.0,
+    "has_isozyme": true
+   },
+   "ENO1": {
+    "active_reactions_lost": 0,
+    "biomass_frac": 1.0,
+    "has_isozyme": true
+   },
+   "PKM": {
+    "active_reactions_lost": 0,
+    "biomass_frac": 1.0,
+    "has_isozyme": true
+   }
+  },
+  "deterministic_singleton_KOs": {
+   "CYP51A1": {
+    "active_reactions_lost": 0,
+    "biomass_frac": 1.0
+   },
+   "FDFT1": {
+    "active_reactions_lost": 0,
+    "biomass_frac": 1.0
+   },
+   "SQLE": {
+    "active_reactions_lost": 0,
+    "biomass_frac": 1.0
+   },
+   "GCLC": {
+    "active_reactions_lost": 0,
+    "biomass_frac": 1.0
+   },
+   "CPS1": {
+    "active_reactions_lost": 0,
+    "biomass_frac": 1.0
+   },
+   "DHODH": {
+    "active_reactions_lost": 2,
+    "biomass_frac": 1.0
+   }
+  }
+ },
+ "closure_map_demo": [
+  {
+   "metabolite": "cholesterol",
+   "direction": "down",
+   "sensors_fired": [
+    "SREBF2"
+   ],
+   "second_wave_size": 22,
+   "example_targets": {
+    "SREBF2": [
+     "ABCA1",
+     "ABCG5",
+     "ABCG8",
+     "ACOT7",
+     "FABP6",
+     "FAS",
+     "FDFT1",
+     "FDPS"
+    ]
+   }
+  },
+  {
+   "metabolite": "fatty acid",
+   "direction": "up",
+   "sensors_fired": [
+    "PPARA",
+    "PPARD"
+   ],
+   "second_wave_size": 53,
+   "example_targets": {
+    "PPARA": [
+     "ACADL",
+     "ACOX1",
+     "ACSL1",
+     "ANGPTL4",
+     "APOA4",
+     "APOA5",
+     "APOB",
+     "APOB"
+    ],
+    "PPARD": [
+     "ANG",
+     "ANGPTL4",
+     "CAT",
+     "HSD11B2",
+     "LPL",
+     "PDK4",
+     "SAT1",
+     "SOD1"
+    ]
+   }
+  },
+  {
+   "metabolite": "bile acid",
+   "direction": "up",
+   "sensors_fired": [
+    "NR1H4"
+   ],
+   "second_wave_size": 20,
+   "example_targets": {
+    "NR1H4": [
+     "ABCB11",
+     "ABCB4",
+     "ABCC4",
+     "CYP7A1",
+     "DCN",
+     "EDN1",
+     "FABP6",
+     "HSD3B2"
+    ]
+   }
+  },
+  {
+   "metabolite": "retinoic acid",
+   "direction": "up",
+   "sensors_fired": [
+    "RARA",
+    "RXRA"
+   ],
+   "second_wave_size": 49,
+   "example_targets": {
+    "RARA": [
+     "ABCC3",
+     "ANXA8",
+     "CCNA1",
+     "CDKN1A",
+     "CRABP1",
+     "CRH",
+     "CXCR5",
+     "CYP1A1"
+    ],
+    "RXRA": [
+     "ABCA1",
+     "ABCB11",
+     "ABCC3",
+     "CGB5",
+     "CPT1B",
+     "CXCR5",
+     "CYP3A4",
+     "CYP7A1"
+    ]
+   }
+  },
+  {
+   "metabolite": "succinate",
+   "direction": "up",
+   "sensors_fired": [
+    "EPAS1",
+    "HIF1A"
+   ],
+   "second_wave_size": 106,
+   "example_targets": {
+    "HIF1A": [
+     "ABCB1",
+     "ACE",
+     "ACE2",
+     "AGTR1",
+     "ALAS2",
+     "ALDOA",
+     "ALOX5AP",
+     "APEX1"
+    ],
+    "EPAS1": [
+     "CA9",
+     "CCR7",
+     "COL10A1",
+     "FLT1",
+     "MMP14",
+     "MSC",
+     "PTPRZ1",
+     "SERPINE1"
+    ]
+   }
+  }
+ ],
+ "footprint_blocker": {
+  "metabolic_KOs_in_perturbseq": 1441,
+  "with_ge10_movers": 6,
+  "with_ge5_movers": 19,
+  "median_movers": 0.0
+ },
+ "note": "Point 5 realized honestly: route the far-field cascade through mass-balanced metabolism (Human-GEM FBA) instead of a statistical RWR walk. Pipeline: KO->enzyme capacity->FBA->metabolite shift->curated metabolite-sensing TF (SREBP/LXR/PPAR/FXR/RAR/HIF)->near-field TRRUST regulon = predicted second wave. MEASURED reality: the metabolic core is itself heavily buffered -- only ~22% of genes are a sole catalyst (rest have isozymes), and even most sole-catalyst biosynthetic enzymes lose no flux because the open-exchange model imports the product (only a few e.g. DHODH bite); pfba flux points are non-unique so specific reroute/sensor numbers are illustrative not validated. The metabolite->sensor->regulon closure is shown on STATED metabolite changes (curated map, decoupled from the noisy flux step) and is concrete but NOT broadly validatable: K562 Perturb-seq metabolic-KO footprints are near-empty (1/1441 KOs move >=10 genes). Steady-state FBA gives fluxes not concentration transients (dFBA/kinetics needed for 'substrate spikes'). Honest: correct architecture; it LOCATES the wall (bypass + import buffering + data sparsity) rather than breaking it. A real queryable pipeline + a precise negative."
+}

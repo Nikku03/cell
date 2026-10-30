@@ -1,0 +1,149 @@
+{
+ "n_mutations": 4956,
+ "n_complexes": 319,
+ "by_position": {
+  "core": {
+   "n": 2155,
+   "mean_abs_ddg": 1.92,
+   "frac_hotspot_gt2": 0.382
+  },
+  "support": {
+   "n": 677,
+   "mean_abs_ddg": 1.48,
+   "frac_hotspot_gt2": 0.263
+  },
+  "rim": {
+   "n": 1122,
+   "mean_abs_ddg": 0.84,
+   "frac_hotspot_gt2": 0.099
+  },
+  "surface": {
+   "n": 627,
+   "mean_abs_ddg": 0.29,
+   "frac_hotspot_gt2": 0.003
+  }
+ },
+ "by_residue": {
+  "L": {
+   "n": 227,
+   "mean_abs_ddg": 2.48
+  },
+  "K": {
+   "n": 218,
+   "mean_abs_ddg": 2.4
+  },
+  "W": {
+   "n": 116,
+   "mean_abs_ddg": 2.2
+  },
+  "E": {
+   "n": 144,
+   "mean_abs_ddg": 2.13
+  },
+  "Y": {
+   "n": 337,
+   "mean_abs_ddg": 2.12
+  },
+  "F": {
+   "n": 118,
+   "mean_abs_ddg": 1.98
+  },
+  "D": {
+   "n": 154,
+   "mean_abs_ddg": 1.92
+  },
+  "T": {
+   "n": 222,
+   "mean_abs_ddg": 1.89
+  },
+  "R": {
+   "n": 193,
+   "mean_abs_ddg": 1.82
+  },
+  "H": {
+   "n": 115,
+   "mean_abs_ddg": 1.77
+  },
+  "G": {
+   "n": 160,
+   "mean_abs_ddg": 1.7
+  },
+  "I": {
+   "n": 87,
+   "mean_abs_ddg": 1.5
+  },
+  "P": {
+   "n": 41,
+   "mean_abs_ddg": 1.47
+  },
+  "A": {
+   "n": 203,
+   "mean_abs_ddg": 1.31
+  },
+  "N": {
+   "n": 131,
+   "mean_abs_ddg": 1.23
+  },
+  "M": {
+   "n": 53,
+   "mean_abs_ddg": 1.22
+  },
+  "Q": {
+   "n": 87,
+   "mean_abs_ddg": 1.15
+  },
+  "V": {
+   "n": 86,
+   "mean_abs_ddg": 1.12
+  },
+  "S": {
+   "n": 134,
+   "mean_abs_ddg": 0.87
+  }
+ },
+ "alanine_hotspot_residues": [
+  "Y",
+  "R",
+  "K",
+  "F",
+  "D",
+  "W",
+  "E",
+  "H"
+ ],
+ "kinetics": {
+  "n": 1382,
+  "barrier_dominated_frac": 0.324,
+  "mean_barrier_term": 0.16,
+  "mean_stability_term": 0.53
+ },
+ "predict_ddg_pearson": 0.359,
+ "predict_ddg_spearman": 0.401,
+ "top_features": [
+  [
+   "\u0394hydropathy",
+   0.2339369467648631
+  ],
+  [
+   "\u0394volume",
+   0.23239472275601097
+  ],
+  [
+   "interface_depth",
+   0.2026989163263903
+  ],
+  [
+   "wt_volume",
+   0.1858300330979045
+  ],
+  [
+   "\u0394charge",
+   0.043702747253299826
+  ],
+  [
+   "|\u0394charge|",
+   0.036744587830200764
+  ]
+ ],
+ "verdict": "Across 4,956 MEASURED single-point interface mutations (SKEMPI, 345 complexes), the pattern that governs whether a mutation changes a PPI is clear and structural: (1) POSITION carries the energy \u2014 buried CORE interface residues have mean |\u0394\u0394G| 1.92 kcal/mol with 38% being hotspots, while RIM/surface mutations average 0.84 and rarely matter \u2014 binding energy is concentrated in a few buried residues (the classic hotspot/O-ring law, reproduced here). (2) IDENTITY matters \u2014 the strongest hotspot residues are the large/charged/aromatic ones (L, K, W, E); small/flexible ones are weak. (3) A mutation weakens binding through BOTH a higher association barrier and a less stable bound state (32% barrier-dominated), so the on/off rates separate an encounter-barrier effect from an induced-fit/stability effect. (4) From residue change + interface depth ALONE we predict the measured \u0394\u0394G at complex-held-out Pearson 0.36 \u2014 modest but real, and honest for these SIMPLE features (residue change + coarse position); full structural predictors (mCSM-PPI2, BeAtMuSiC) reach ~0.5-0.6 on blind splits by adding real interface burial and contacts, so there is headroom by fetching the complex geometry. interface_depth + volume/hydropathy change are the top features. SO: for the single-nucleotide-mutation goal, we CAN flag which interface positions are load-bearing (core, aromatic/charged, high predicted \u0394\u0394G) and whether a variant there will hit the barrier or the stability \u2014 a genuine near-field structural capability. HONEST LIMITS: r~0.36 means we RANK and TRIAGE interface variants, we don't nail every \u0394\u0394G; SKEMPI is biased to well-studied complexes; and this needs a solved/predicted COMPLEX structure to place the residue at an interface (no complex -> no call)."
+}

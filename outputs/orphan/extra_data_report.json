@@ -1,0 +1,13 @@
+{
+  "reactome": {
+    "n_pathways": 2792,
+    "covered": 10489,
+    "coverage_pct": 63.6,
+    "new_genes": 6656
+  },
+  "causal": {
+    "total": 60103,
+    "new_vs_model": 84,
+    "signed": 54123
+  }
+}

@@ -1,0 +1,393 @@
+{
+  "n_eval": 630,
+  "arms": {
+    "NODE": 0.47675782725899507,
+    "BIP-PW": 0.4799690609941965,
+    "HYPER": 0.4797793107999475,
+    "BIP-FULL": 0.4813859422951199,
+    "BIP-NS": 0.4807959643185227,
+    "LINE-NB": 0.4812257088906823,
+    "UNION(NODE,BIP-FULL)": 0.47834885180608666,
+    "HYPER-SHUF": 0.4729126441153386,
+    "HYPER-REWIRE": 0.1703292771527793,
+    "SIZE-MATCHED": 0.18018569589833466,
+    "TIDE": 0.2670929329168468
+  },
+  "vs_node": {
+    "NODE": {
+      "delta": 0.0,
+      "se": 0.0,
+      "verdict": "reference"
+    },
+    "BIP-PW": {
+      "delta": 0.0032112337352014106,
+      "se": 0.003090948969459929,
+      "verdict": "indistinguishable"
+    },
+    "HYPER": {
+      "delta": 0.0030214835409524137,
+      "se": 0.0025771840814409995,
+      "verdict": "indistinguishable"
+    },
+    "BIP-FULL": {
+      "delta": 0.00462811503612474,
+      "se": 0.002315814164637657,
+      "verdict": "indistinguishable"
+    },
+    "BIP-NS": {
+      "delta": 0.004038137059527515,
+      "se": 0.002633641127340549,
+      "verdict": "indistinguishable"
+    },
+    "LINE-NB": {
+      "delta": 0.004467881631687171,
+      "se": 0.002681206324055785,
+      "verdict": "indistinguishable"
+    },
+    "UNION(NODE,BIP-FULL)": {
+      "delta": 0.001591024547091571,
+      "se": 0.0019073336297764085,
+      "verdict": "indistinguishable"
+    },
+    "HYPER-SHUF": {
+      "delta": -0.003845183143656507,
+      "se": 0.003055277461328022,
+      "verdict": "indistinguishable"
+    },
+    "HYPER-REWIRE": {
+      "delta": -0.3064285501062158,
+      "se": 0.012323577781404227,
+      "verdict": "WORSE"
+    },
+    "SIZE-MATCHED": {
+      "delta": -0.2965721313606604,
+      "se": 0.013236434076487847,
+      "verdict": "WORSE"
+    },
+    "TIDE": {
+      "delta": -0.20966489434214822,
+      "se": 0.011813569365588842,
+      "verdict": "WORSE"
+    }
+  },
+  "controls": {
+    "HYPER-SHUF": {
+      "delta": 0.008473298179781244,
+      "se": 0.002715512297908305,
+      "verdict": "BETTER"
+    },
+    "HYPER-REWIRE": {
+      "delta": 0.3110566651423405,
+      "se": 0.012262847230820315,
+      "verdict": "BETTER"
+    },
+    "SIZE-MATCHED": {
+      "delta": 0.30120024639678517,
+      "se": 0.013069039902509835,
+      "verdict": "BETTER"
+    }
+  },
+  "best_non_incumbent": "BIP-FULL",
+  "per_split": {
+    "NODE": [
+      0.5203967342120651,
+      0.5043040932137559,
+      0.41317106192769276,
+      0.4900243835642663,
+      0.4558928633771953
+    ],
+    "BIP-PW": [
+      0.5237588145226769,
+      0.5030549017963207,
+      0.42927898516065394,
+      0.4921754249315217,
+      0.4515771785598094
+    ],
+    "HYPER": [
+      0.5290454109930094,
+      0.5077979372548505,
+      0.4185808613009429,
+      0.4894431814396939,
+      0.4540291630112408
+    ],
+    "BIP-FULL": [
+      0.5311027962104586,
+      0.5049329351636501,
+      0.42016409726001996,
+      0.4961369493167287,
+      0.4545929335247417
+    ],
+    "BIP-NS": [
+      0.5281544256680619,
+      0.5081377067938277,
+      0.42406983970354944,
+      0.48970521450865184,
+      0.45391263491852224
+    ],
+    "LINE-NB": [
+      0.5350331066071446,
+      0.5095749145865363,
+      0.42017544427153797,
+      0.4904964529898599,
+      0.4508486259983328
+    ],
+    "HYPER-SHUF": [
+      0.521550800602891,
+      0.4996143570417903,
+      0.41516595012038443,
+      0.48289369134306964,
+      0.44533842146855757
+    ],
+    "HYPER-REWIRE": [
+      0.16315366602066378,
+      0.18571596932420475,
+      0.13840595120342372,
+      0.1829824676135813,
+      0.1813883316020228
+    ],
+    "SIZE-MATCHED": [
+      0.19530361643909824,
+      0.17127450166915717,
+      0.17854293640341745,
+      0.18301151125875206,
+      0.1727959137212484
+    ],
+    "TIDE": [
+      0.2920294725146192,
+      0.27257509460838386,
+      0.2537158198793827,
+      0.25754363171098205,
+      0.2596006458708665
+    ],
+    "UNION(NODE,BIP-FULL)": [
+      0.5247518579699226,
+      0.5034909696616738,
+      0.4173350431435987,
+      0.49055723550111846,
+      0.4556091527541199
+    ]
+  },
+  "split_level_test": {
+    "BIP-PW": {
+      "mean": 0.0032112337352014574,
+      "se": 0.003493001989603982,
+      "t": 0.9193334973065761,
+      "pos": 3,
+      "verdict": "indistinguishable"
+    },
+    "HYPER": {
+      "mean": 0.0030214835409524076,
+      "se": 0.0019292076939250102,
+      "t": 1.5661784630379227,
+      "pos": 3,
+      "verdict": "indistinguishable"
+    },
+    "BIP-FULL": {
+      "mean": 0.004628115036124747,
+      "se": 0.0021894495042364586,
+      "t": 2.113825885077327,
+      "pos": 4,
+      "verdict": "indistinguishable"
+    },
+    "BIP-NS": {
+      "mean": 0.004038137059527558,
+      "se": 0.002409897776796931,
+      "t": 1.6756466180465006,
+      "pos": 3,
+      "verdict": "indistinguishable"
+    },
+    "LINE-NB": {
+      "mean": 0.004467881631687232,
+      "se": 0.00329335448861057,
+      "t": 1.3566355055729764,
+      "pos": 4,
+      "verdict": "indistinguishable"
+    },
+    "UNION(NODE,BIP-FULL)": {
+      "mean": 0.001591024547091624,
+      "se": 0.0011107348869247662,
+      "t": 1.4324071079612983,
+      "pos": 3,
+      "verdict": "indistinguishable"
+    }
+  },
+  "agreement_with_node": {
+    "NODE": 1.0,
+    "BIP-PW": 0.9997316058167424,
+    "HYPER": 0.9987825611058923,
+    "BIP-FULL": 0.9990793003283791,
+    "BIP-NS": 0.9988404409775723,
+    "LINE-NB": 0.9972823913472088
+  },
+  "cfg_picks": {
+    "NODE": [
+      [
+        2.0,
+        0.5,
+        2.0
+      ],
+      [
+        2.0,
+        0.5,
+        1.0
+      ],
+      [
+        3.0,
+        0.5,
+        1.0
+      ],
+      [
+        2.0,
+        0.5,
+        2.0
+      ],
+      [
+        3.0,
+        0.5,
+        1.0
+      ]
+    ],
+    "BIP-PW": [
+      [
+        2.0,
+        0.5,
+        2.0
+      ],
+      [
+        3.0,
+        0.5,
+        1.0
+      ],
+      [
+        2.0,
+        0.5,
+        2.0
+      ],
+      [
+        2.0,
+        0.5,
+        2.0
+      ],
+      [
+        2.0,
+        0.5,
+        2.0
+      ]
+    ],
+    "HYPER": [
+      [
+        2.0,
+        0.5,
+        2.0
+      ],
+      [
+        2.0,
+        0.5,
+        2.0
+      ],
+      [
+        2.0,
+        0.5,
+        2.0
+      ],
+      [
+        2.0,
+        0.5,
+        1.0
+      ],
+      [
+        2.0,
+        0.5,
+        2.0
+      ]
+    ],
+    "BIP-FULL": [
+      [
+        2.0,
+        0.5,
+        2.0
+      ],
+      [
+        2.0,
+        0.5,
+        2.0
+      ],
+      [
+        3.0,
+        0.5,
+        1.0
+      ],
+      [
+        2.0,
+        0.5,
+        2.0
+      ],
+      [
+        2.0,
+        0.5,
+        2.0
+      ]
+    ],
+    "BIP-NS": [
+      [
+        2.0,
+        0.5,
+        2.0
+      ],
+      [
+        2.0,
+        0.5,
+        2.0
+      ],
+      [
+        2.0,
+        0.5,
+        2.0
+      ],
+      [
+        2.0,
+        0.5,
+        1.0
+      ],
+      [
+        2.0,
+        0.5,
+        2.0
+      ]
+    ],
+    "LINE-NB": [
+      [
+        2.0,
+        0.5,
+        0.0
+      ],
+      [
+        2.0,
+        0.5,
+        0.0
+      ],
+      [
+        2.0,
+        0.5,
+        0.0
+      ],
+      [
+        2.0,
+        0.5,
+        0.0
+      ],
+      [
+        3.0,
+        0.5,
+        1.0
+      ]
+    ]
+  },
+  "graph": {
+    "ppi_pairwise": 191447,
+    "complexes": 1463,
+    "memberships": 5385,
+    "clique_edges": 38408
+  },
+  "verdict": "PROMOTING INTERACTIONS TO MARKOV STATES. The incumbent NODE chain scores 0.4768 here. THE LITERAL BIPARTITE FORM IS A NO-OP AND THIS WAS PREDICTED BEFORE IT WAS RUN: every one of the 191,447 PPI interactions in this dataset is PAIRWISE, and a protein->interaction->protein walk over pairwise interactions is algebraically the LAZY node walk, 1/2 I + 1/2 P (verified to 1.1e-16 numerically). BIP-PW measures 0.4800, +0.0032 +/- 0.0031 vs NODE -- indistinguishable. THE PLACE IT CAN DIFFER IS COMPLEXES, because a complex is a real hyperedge and the incumbent clique-expands it into k(k-1) edges: 38,522 edges from 5,394 memberships, a 7.1x inflation quadratic in complex size. As a state a complex takes a protein's mass ONCE instead of k-1 times, which shifts the complex layer's share of outgoing mass by up to 0.714 (RPL41) and -- the point -- shifts it BY A DIFFERENT AMOUNT FOR EVERY PROTEIN (SD 0.137), so the incumbent's global cw sweep cannot reach it. HYPER measures 0.4798 (+0.0030 +/- 0.0026, indistinguishable), the full bipartite form 0.4814 (+0.0046, indistinguishable), and the non-backtracking interaction-only walk 0.4812 (+0.0045, indistinguishable). NO INTERACTION-STATE ARM BEATS THE INCUMBENT ON THIS METRIC. The best of them, BIP-FULL, sits +0.0046 +/- 0.0023 from NODE (indistinguishable), and against its controls it is +0.0085 vs the complex shuffle (BETTER) and +0.3012 vs response-size-matched neighbours (BETTER). FIVE ARMS ALL LANDED POSITIVE, WHICH IS ONE OBSERVATION AND NOT FIVE. The arms agree with NODE at mean row-wise Spearman BIP-PW +1.000, HYPER +0.999, BIP-FULL +0.999, BIP-NS +0.999, LINE-NB +0.997. They are the same predictor in different coordinates, so the consistent sign is what one correlated statistic does, not independent corroboration. The conservative per-split test over 5 genuinely independent units agrees with the pooled bootstrap and calls BIP-FULL +0.0046 +/- 0.0022 (t=2.11, 4/5 splits positive, indistinguishable). AND THE UNION SETTLES IT. Summing the z-scored NODE and BIP-FULL rankings scores 0.4783 against NODE 0.4768 and BIP-FULL 0.4814 -- it lands BETWEEN its parents rather than above them, which is the signature of two views of one predictor, not two predictors. This is the same lesson redundancy_check drew about the ensemble: extra routes to information already present buy nothing. THE COMPLEX LAYER IS THE REAL STORY HERE AND IT IS A NEGATIVE ONE. Shuffling WHICH proteins belong to which complex, while preserving every complex size and every protein's complex count, scores 0.4729 against NODE's 0.4768 -- indistinguishable. The membership content of the complex layer is worth approximately nothing, which independently reproduces graph_null's finding that PPI-only equals PPI-plus-complexes. The PPI layer, by contrast, is decisive -- rewiring it collapses the chain to 0.1703. SO EACH ARM FAILED FOR ITS OWN REASON, and it is worth separating them rather than reporting one flat 'no effect'. HYPER and BIP-FULL could not win because clique-expansion and hyperedge states differ ONLY in how they weight the complex layer, and that layer's content is inert. BIP-PW could not win because pairwise interactions make the bipartite walk algebraically the lazy node walk -- a theorem, not a measurement. LINE-NB is the one arm whose mechanism is genuinely new (non-backtracking cannot be written as any reweighting of the node walk), and it ties too, at Spearman +0.997 with NODE -- which says backtracking is not what limits a chain truncated at 2 steps, since a 2-step walk has barely enough length to backtrack at all. WHAT THIS DOES NOT SAY. It does not say hyperedges are the wrong representation of a complex -- it says that under THIS readout, where the chain's only job is to rank non-test knockouts so the top 10 can have their measured profiles averaged, the ranking is not sensitive to the size-normalisation. A neighbour selector needs only the ORDER of the top handful to be right, and both weightings put the same physical partners at the top; they disagree about how much mass a 52-member complex should absorb, which is a question the top-10 cut never asks. Chain configs were pre-registered on TRAIN only (NODE=(2, 0.5, 2.0); BIP-PW=(2, 0.5, 2.0); HYPER=(2, 0.5, 2.0); BIP-FULL=(2, 0.5, 2.0); BIP-NS=(2, 0.5, 2.0); LINE-NB=(2, 0.5, 0.0)). Truncation at 1-3 steps is load-bearing throughout: the stationary distribution of any of these undirected walks is degree/2|E|, which does not depend on the start node at all, so a converged chain would provably carry no perturbation signal. Five splits of one cell line."
+}

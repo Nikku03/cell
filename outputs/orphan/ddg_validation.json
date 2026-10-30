@@ -1,0 +1,27 @@
+{
+  "summary": {
+    "n_test": 669,
+    "pearson_r": 0.472,
+    "rmse_kcal_mol": 1.45,
+    "anti_symmetry_bias": -0.0,
+    "anti_symmetry_corr": 0.997,
+    "beats_or_matches": [
+      "DDGun",
+      "DDGun3D",
+      "ACDC-NN",
+      "ThermoNet",
+      "FoldX",
+      "mCSM"
+    ]
+  },
+  "baselines_S669_abs_r": {
+    "DDGun": 0.404,
+    "DDGun3D": 0.432,
+    "ACDC-NN": 0.46,
+    "ThermoNet": 0.391,
+    "FoldX": 0.214,
+    "mCSM": 0.359
+  },
+  "passed": true,
+  "detail": "from-scratch (numpy+sklearn, no torch/MSA/PLM): biophysical + burial contact-number, trained S2648, blind-tested S669"
+}

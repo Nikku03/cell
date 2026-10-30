@@ -1,0 +1,33 @@
+{
+ "knockout": "GATA1",
+ "all_movers": 250,
+ "tide_movers": 17,
+ "specific_movers": 233,
+ "named_naive": 230,
+ "named_naive_frac": 0.9871,
+ "unknown": 3,
+ "specifically_named_1hop": 9,
+ "specifically_named_frac": 0.0386,
+ "by_hop": {
+  "1": 9,
+  "2": 107,
+  "3plus": 114,
+  "unknown": 3
+ },
+ "breakdown": {
+  "direct_target": 9,
+  "physical_partner": 0,
+  "cofactor_route": 52,
+  "indirect_chain_ge2hop": 169,
+  "unknown": 3
+ },
+ "direct_sign_match": [
+  1,
+  8
+ ],
+ "direct_sign_rate": 0.125,
+ "discrimination_1hop": 3.626,
+ "discrimination_maxhop": 1.019,
+ "verdict": "CASE STUDY (GATA1 knockout, K562; case_study.py): the whole finding made concrete on ONE knockout. GATA1 (master erythroid TF) moved 250 genes; 17 are the generic tide (removed), leaving 233 GATA1-SPECIFIC movers a mechanism must explain. Naively, a curated path within 4 hops 'names' 230/233 (99%) -- but hop depth decides whether a name is real: only 9 are 1-hop (direct target/physical partner), 107 are 2-hop, and 114 need 3-4-hop chains; 3 have NO curated path at all. And of the 8 signed DIRECT targets, only 1 (12%) even moved the DIRECTION the curated activation/repression sign predicts -- 'an edge exists' is not 'we predicted the effect'. THE HONESTY GUARD is decisive: 1-hop reach discriminates specific movers from non-movers 3.6x, but by 4 hops that collapses to 1.0x -- the small-world graph reaches specific movers and random non-movers almost equally, so the 114 long chains are CONNECTIVITY, not explanation, and the 107 2-hop ones are already weak. Honestly, only ~9/233 (~4%) are SPECIFICALLY named -- and that canonical regulon is mostly the tide we removed. So the GATA1-specific response is, gene-for-gene, either unreached or reachable only by non-discriminating walks: mostly uncatalogued -- not because we picked the wrong database, but because those edges are in NO database. One knockout reproduces the whole-dataset ~10% ceiling. Deterministic.",
+ "note": "CASE STUDY (GATA1 knockout, K562; case_study.py): the whole finding made concrete on ONE knockout. GATA1 (master erythroid TF) moved 250 genes; 17 are the generic tide (removed), leaving 233 GATA1-SPECIFIC movers a mechanism must explain. Naively, a curated path within 4 hops 'names' 230/233 (99%) -- but hop depth decides whether a name is real: only 9 are 1-hop (direct target/physical partner), 107 are 2-hop, and 114 need 3-4-hop chains; 3 have NO curated path at all. And of the 8 signed DIRECT targets, only 1 (12%) even moved the DIRECTION the curated activation/repression sign predicts -- 'an edge exists' is not 'we predicted the effect'. THE HONESTY GUARD is decisive: 1-hop reach discriminates specific movers from non-movers 3.6x, but by 4 hops that collapses to 1.0x -- the small-world graph reaches specific movers and random non-movers almost equally, so the 114 long chains are CONNECTIVITY, not explanation, and the 107 2-hop ones are already weak. Honestly, only ~9/233 (~4%) are SPECIFICALLY named -- and that canonical regulon is mostly the tide we removed. So the GATA1-specific response is, gene-for-gene, either unreached or reachable only by non-discriminating walks: mostly uncatalogued -- not because we picked the wrong database, but because those edges are in NO database. One knockout reproduces the whole-dataset ~10% ceiling. Deterministic."
+}

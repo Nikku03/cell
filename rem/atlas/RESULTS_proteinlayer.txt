@@ -1,0 +1,103 @@
+=================================================================================================
+THE PROTEIN LAYER, THE SPLICING LAYER, AND A LABELLED TF NETWORK
+=================================================================================================
+  fetching UniProt reviewed human proteome (CC BY 4.0)...
+  20,190 reviewed entries with a primary symbol   [17.5 MB cached]
+
+=================================================================================================
+P1  THE JOIN, WITH SYNONYM RESCUE REPORTED SEPARATELY
+=================================================================================================
+  encyclopedia genes                     16,492
+  matched on PRIMARY symbol              16,472   99.9%
+  RESCUED via UniProt synonym                19    0.1%
+  still unmatched                             1    0.0%
+  ambiguous synonyms (>1 accession), NOT rescued       0
+
+=================================================================================================
+P0  THE CEILING GATE: BEFORE AND AFTER, PER FIELD
+=================================================================================================
+
+    field                      before    after   verdict                     
+    sequence length                 0   16,491   NEW LAYER                   
+    molecular mass                  0   16,491   NEW LAYER                   
+    isoform count                   0   16,491   NEW LAYER                   
+    Pfam domains                    0   16,124   NEW LAYER                   
+    subcellular location       16,492   16,491   already covered             
+    PTM sites                   8,425    8,400   already covered             
+    3D structure record            13       13   already covered             
+
+  P0: the fetch is justified by the fields at ZERO before -- sequence, mass, isoforms,
+  domains. `comp` already gives every gene a location, but a single coarse label with no
+  evidence code; UniProt's is evidence-attributed. Counted as a quality change, not a gain.
+
+=================================================================================================
+P2  THE SPLICING LAYER, AND THE ASSUMPTION IT TESTS
+=================================================================================================
+  genes with an isoform record           16,491
+  ONE protein  (1 isoform)                7,235   43.9%
+  MORE THAN ONE                           9,256   56.1%
+  mean isoforms per gene                   2.20
+  max                                        37  (['CACNA1C'])
+
+     isoforms    genes
+            1    7,235
+            2    4,644
+            3    2,217
+            4    1,081
+            5      547
+            6      313
+            7      167
+            8      106
+         >= 9      181
+
+  P2: 56.1% of the proteome is NOT one-gene-one-protein. Every per-gene
+  record in this repo -- the 16,492 rows, the 21,955 signed edges, every coverage
+  fraction -- aggregates over that silently. The aggregation error is unmeasured, and
+  nothing in the record has ever bounded it.
+
+=================================================================================================
+P3  LABELLING THE TF NETWORK FROM THREE SOURCES THAT DISAGREE
+=================================================================================================
+  UniProt keyword TF-like                 2,790
+  CollecTRI regulators                    1,189   {'dbTF': 1022, 'coTF': 163, 'GTF': 4}
+  encyclopedia `tf` flag                  1,285
+
+     UniProt  CollecTRI  ency.tf    genes
+        True      False    False    1,585
+        True       True     True    1,116
+        True      False     True       78
+       False       True     True       51
+       False      False     True       40
+        True       True    False       11
+
+  P3: the encyclopedia's `tf` flag is corroborated by NEITHER other source on 40 genes.
+  All three agree on 1,116. Corroboration count is carried per gene in the
+  artifact so a consumer can choose a threshold instead of inheriting one.
+
+=================================================================================================
+P4  THE LABELLED NETWORK
+=================================================================================================
+  reg edges  signed  54,128  unsigned 558,005
+  sig edges  signed  16,924  unsigned     508
+
+  distinct regulators in the network      4,633
+  ...labelled TF by >=2 independent sources  1,248   26.9%
+
+  artifact: outputs/protein_tf_layer.json  (3.8 MB, 16,492 genes)
+    TP53: {"tf_corroboration": 3, "tf_class": "dbTF", "acc": "P04637", "len": 393, "mass": 43653, "isoforms": 9, "pfam": ["PF00870", "PF08563", "PF07710", "PF18521"], "loc": "Cytoplasm", "n_ptm_sites"
+    NR3C1: {"tf_corroboration": 3, "tf_class": "dbTF", "acc": "P04150", "len": 777, "mass": 85659, "isoforms": 16, "pfam": ["PF02155", "PF00104", "PF00105"], "loc": "[Isoform Alpha]: Cytoplasm", "n_ptm
+    HK1: {"tf_corroboration": 0, "acc": "P19367", "len": 917, "mass": 102486, "isoforms": 4, "pfam": ["PF00349", "PF03727"], "loc": "Mitochondrion outer membrane", "n_ptm_sites": 2, "geneid": "3098",
+
+=================================================================================================
+P5  WHAT THIS DOES NOT SETTLE
+=================================================================================================
+  1. Isoform COUNTS are not isoform-resolved edges. Knowing TP53 has 9 forms does not tell
+     us which one carries any of its 1,310 signed targets. The network is still gene-level.
+  2. A UniProt keyword is a curator's label, not a measurement, and 'DNA-binding' covers
+     far more than sequence-specific transcription factors.
+  3. Reviewed/Swiss-Prot only. Unreviewed TrEMBL entries are excluded by construction, so
+     genes absent here are absent from the REVIEWED proteome, not from biology.
+  4. Subcellular location is text with evidence codes; it is not parsed into the
+     encyclopedia's 12-compartment vocabulary, and no mapping is asserted.
+
+  runtime 90.8s

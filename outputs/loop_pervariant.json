@@ -1,0 +1,89 @@
+{
+  "test": "loop_pervariant",
+  "manifest": {
+    "manifest_version": 1,
+    "inputs": [
+      {
+        "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/clinvar.vcf.gz",
+        "bytes": 193118277,
+        "hash": "a31a293e659799bc",
+        "method": "sha256:ends8M"
+      },
+      {
+        "path": "outputs/loop_variant.json",
+        "bytes": 515019,
+        "hash": "d7d7725d22aad643",
+        "method": "sha256:full"
+      }
+    ],
+    "coverage": {
+      "available": 143945,
+      "used": 143945,
+      "selection": "filtered",
+      "fraction": 1.0
+    },
+    "seed": 1904,
+    "controls": [
+      "200 WITHIN-GENE label shuffles",
+      "leave-one-out centroids",
+      "gene-grouped cross-validation",
+      "the gene-level score as the direct comparator"
+    ],
+    "note": "within-gene shuffling is the control that matters: a global shuffle would let position rediscover which genes are pathogenic",
+    "warnings": []
+  },
+  "gates": {
+    "X1 variant resolution": true,
+    "X2 signal above within-gene shuffles": true,
+    "X3 beats the gene score": true,
+    "X4 sequence and cell information combine": false
+  },
+  "auc_position": 0.6297042965653844,
+  "auc_gene": 0.5044002841507165,
+  "auc_position_sub": 0.6052151543375531,
+  "cv": {
+    "position": 0.5865599862264474,
+    "gene": 0.42078327731739884,
+    "both": 0.5856222232382206
+  },
+  "null": {
+    "mean": 0.5389519328175298,
+    "sd": 0.0010362673010546684,
+    "p95": 0.5405346495389151
+  },
+  "n_variants": 143945,
+  "n_genes": 2945,
+  "frac_genes_varying": 1.0,
+  "log": [
+    "====================================================================================================",
+    "ONE NUMBER PER VARIANT, NOT ONE PER GENE",
+    "====================================================================================================",
+    "  loop 5 declared this limit about itself and it has stood since: every mutation in a gene got",
+    "  the same score. ClinVar carries a position for every variant, and that is a real per-variant",
+    "  feature already on disk.",
+    "\n  225,130 missense variants with a clinical assertion over 15,229 genes",
+    "  kept 143,945 variants in 2,945 genes with >= 6 variants and >= 2 of each class",
+    "  scored 143,945 variants with a leave-one-out centroid (67,475 pathogenic)",
+    "\n  X1 VARIANT RESOLUTION -- 100.0% of genes have variants scored differently   X1 PASS",
+    "\n  positional clustering (leave-one-out) AUC 0.6297",
+    "  X2 SIGNAL -- 200 WITHIN-GENE shuffles: null 0.5390 +/- 0.0010, 95th 0.5405   X2 PASS",
+    "    Shuffling within gene holds the gene-level signal fixed, so this measures ONLY what",
+    "    position adds. A global shuffle would let it rediscover which genes are pathogenic.",
+    "\n  X3 BEATS THE GENE SCORE -- on the 37,011 variants that have both:",
+    "    gene-level cell score (loop 5)  0.5044",
+    "    per-variant position            0.6052",
+    "    X3 PASS",
+    "\n  X4 THEY COMBINE -- 5-fold CV grouped BY GENE (no gene in both train and test):",
+    "    position alone 0.5866 | gene score alone 0.4208 | both 0.5856 (-0.0009)   X4 FAIL",
+    "\n====================================================================================================",
+    "  X1 variant resolution                       PASS",
+    "  X2 signal above within-gene shuffles        PASS",
+    "  X3 beats the gene score                     PASS",
+    "  X4 sequence and cell information combine    FAIL",
+    "  VARIANT-RESOLVED AND SEQUENCE-ONLY. Position works and the cell model adds nothing at this",
+    "  resolution, so `any point mutation` should be reported as a sequence-level result rather",
+    "  than a cell-model one.",
+    "====================================================================================================",
+    "    manifest: 2 inputs, coverage 143945/143945 (100.0%) by 'filtered', seed 1904, controls 4"
+  ]
+}

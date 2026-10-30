@@ -1,0 +1,133 @@
+=================================================================================================
+A REAL CELL-TYPE EXPRESSION MATRIX, AND WHAT IT RESOLVES
+=================================================================================================
+  fetching Human Protein Atlas consensus single-cell RNA (CC BY-SA 4.0)...
+  20,151 genes x 154 cell types
+  present where nCPM >= max(1.0, 10% of the gene's own peak)
+  cell types per gene: median 20, p25 5, p75 78, max 154
+
+=================================================================================================
+H1  VALIDITY ON TEXTBOOK CASES, BOTH DIRECTIONS (BLOCKING)
+=================================================================================================
+    PASS  expect PRESENT  ALB     in hepatocytes
+    PASS  expect PRESENT  INS     in pancreatic islet cells
+    PASS  expect PRESENT  MYH7    in cardiomyocytes
+    PASS  expect PRESENT  CD3E    in t-cells
+    PASS  expect PRESENT  SPI1    in monocytes
+    PASS  expect PRESENT  GATA1   in erythrocyte progenitors
+    PASS  expect PRESENT  KRT14   in basal keratinocytes
+    PASS  expect PRESENT  GFAP    in astrocytes
+    PASS  expect PRESENT  SFTPC   in alveolar cells type 2
+    PASS  expect PRESENT  MS4A1   in b-cells
+    PASS  expect PRESENT  MBP     in oligodendrocytes
+    PASS  expect PRESENT  RHO     in rod photoreceptor cells
+    PASS  expect ABSENT   ALB     in cardiomyocytes
+    PASS  expect ABSENT   INS     in astrocytes
+    PASS  expect ABSENT   MYH7    in b-cells
+    PASS  expect ABSENT   RHO     in hepatocytes
+    PASS  expect ABSENT   SFTPC   in t-cells
+
+  THE SWEEP, so the result is not knife-edge on one chosen value:
+      FRAC   positives   negatives   median cell types/gene
+      0.00       12/12         4/5                      126
+      0.01       12/12         5/5                       88
+      0.05       12/12         5/5                       37
+      0.10       12/12         5/5                       20
+      0.20       12/12         5/5                        9
+      0.50       10/12         5/5                        2
+
+  DISCLOSURE: the rule FORM was chosen from the ambient-contamination mechanism, but the
+  10% value was picked by looking at this sweep. These 17 pairs are therefore now a
+  CALIBRATION set and can no longer serve as an independent test of the threshold. An
+  independent test needs held-out marker/cell-type pairs not consulted here. This is the
+  same error the set-point work made when it calibrated a requirement on a noised oracle,
+  recorded so it is not repeated silently.
+
+  positives 12/12 = 100.0%     negatives 5/5 = 100.0%
+
+  H1: PASS -- textbook cases recovered in both directions
+
+  contradictions from dyncell: 1,169
+
+=================================================================================================
+H0  COVERAGE, THEN H2  RESOLUTION
+=================================================================================================
+  both sides covered by the matrix    1,165   99.7%
+  one or both sides uncovered             4    0.3%
+
+  RESOLVED in >=1 cell type           1,159   99.5% of covered
+  co-expressed in every cell type         6    0.5% of covered
+
+  as a fraction of ALL 1,169 contradictions: 99.1%
+
+  H2 DISTRIBUTION -- cell types in which a contradiction resolves:
+      cell types   contradictions
+             1-1                1
+             2-5                2
+            6-20               68
+           21-50              277
+          51-100              550
+         101-160              261
+
+    BCL2: resolves in 39 cell types
+       goes UP   where only its activators are present: ['adipocytes', 'adrenal cortex cells', 'astrocytes']
+       goes DOWN where only its repressors are present: ['epicardial cells', 'fallopian tube ciliated cells', 'oocytes']
+
+    CRH: resolves in 85 cell types
+       goes UP   where only its activators are present: ['adipocytes', 'astrocytes', 'bergmann glia']
+       goes DOWN where only its repressors are present: ['basal keratinocytes', 'breast hormone-responsive cells', 'breast secretory cells']
+
+    CSN2: resolves in 42 cell types
+       goes UP   where only its activators are present: ['oocytes', 'platelets']
+       goes DOWN where only its repressors are present: ['adipocytes', 'adrenal cortex cells', 'astrocytes']
+
+    IGF1R: resolves in 19 cell types
+       goes UP   where only its activators are present: ['adrenal cortex cells', 'distal convoluted tubule cells', 'gastric progenitor cells']
+       goes DOWN where only its repressors are present: ['brain excitatory neurons', 'brain inhibitory neurons', 'epicardial cells']
+
+    RB1: resolves in 98 cell types
+       goes UP   where only its activators are present: ['epicardial cells', 'fallopian tube ciliated cells', 'respiratory ciliated cells']
+       goes DOWN where only its repressors are present: ['adipocytes', 'adrenal cortex cells', 'adrenal medulla cells']
+
+=================================================================================================
+H3  THE MATCHED CONTROL -- AND IT REFUTES H2's HEADLINE
+=================================================================================================
+  'resolves in >=1 of 154 cell types'   real 1,159   permuted 1,158   = 1.001x
+
+  THAT CRITERION IS VACUOUS AND H2's HEADLINE DIES WITH IT. Permuting which gene holds
+  which expression profile resolves essentially the same number of contradictions -- a
+  margin of 1 out of 1,159. Among 154 profiles almost any two differ
+  somewhere, so 'resolves SOMEWHERE' is satisfied by construction. The 99.3% figure
+  above is therefore NOT a result and must not be quoted as one.
+
+  THE NON-VACUOUS STATISTIC -- how MANY cell types resolve each contradiction:
+                   p25   median     p75
+    real            42       74      98
+    permuted        46       72     102
+
+  paired: real beats permuted on 537 of 1,165 contradictions = 46.1%  (chance is 50%)
+
+  H3: FAIL -- the paired win rate is at chance, so the expression matrix tells us nothing the permuted one does not
+
+  written: memory_bank/cell/context_resolution.json (1,159 resolved genes)
+
+=================================================================================================
+H4  WHAT THIS DOES NOT SETTLE
+=================================================================================================
+  1. Expression is PRESENCE, not activity. A TF can be transcribed and not active, so a
+     resolution says which edge CANNOT fire here, not that the surviving one does.
+  2. HPA consensus is averaged over donors and studies. It cannot speak to a particular
+     experiment, and the contradictions came from a network with no experiment behind it.
+  3. The 10%-of-peak value was calibrated on the 17 validation pairs, so those pairs are
+     no longer an independent test of it. Held-out markers would be.
+  4. AND THE ROUTE IS CLOSED, NOT MERELY UNFINISHED. The conflicting regulators here are
+     TP53, RELA, NR3C1, MYC and STAT3 -- all broadly expressed. Their contradictions are
+     therefore not about PRESENCE at all, which is why a presence matrix cannot adjudicate
+     them and why permuting it changes nothing. The context variable that would work is
+     ACTIVITY, and no reference atlas carries activity: it requires measuring the system.
+  5. This closes the loop against a REFERENCE, not against a measurement of the system
+     being modelled. The remaining gap is the same one four routes already named: a
+     perturbation experiment in a named cell type. Nothing here substitutes for it.
+  6. CC BY-SA 4.0 is share-alike. A distributed derivative inherits the copyleft.
+
+  runtime 7.9s

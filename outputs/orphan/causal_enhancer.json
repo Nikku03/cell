@@ -1,0 +1,1145 @@
+{
+ "module": "causal_enhancer",
+ "question": "do the TFs bound at a distal element, weighted by whether those TFs are causal for the gene in K562 Perturb-seq, predict a CRISPR-validated enhancer-gene link better than distance and better than accessibility?",
+ "decision_threshold_stated_before_numbers": {
+  "min_increment_auprc_over_best_baseline": 0.01,
+  "min_seeds_of_total": [
+   4,
+   5
+  ],
+  "min_fraction_of_swap_draws_real_beats_decoy": 0.9,
+  "swap_draws": 20,
+  "rule": "all three must hold; failing (i) = no increment, failing (ii) = reads the gene and the distance, failing (iii) = reads TF density not TF identity"
+ },
+ "ground_truth": {
+  "source": "EP CRISPR benchmark (EngreitzLab/CRISPR_comparison), K562 arm: EPCrisprBenchmark_combined_data.training_K562.GRCh38.tsv.gz + K562 rows of EPCrisprBenchmark_combined_data.heldout_5_cell_types.GRCh38.tsv.gz",
+  "n_pairs_powered": 11545,
+  "n_positives": 457,
+  "positive_base_rate": 0.03958423559982677,
+  "n_elements": 4362,
+  "n_genes": 2078,
+  "n_chromosomes": 23,
+  "median_distance_bp": 376596.0,
+  "min_distance_bp": 1176.0,
+  "power_col": "PowerAtEffectSize25",
+  "min_power": 0.8,
+  "datasets": {
+   "Nasser2021": 3303,
+   "Gasperini2019": 5123,
+   "Schraivogel2020": 1296,
+   "Xie": 427,
+   "Morris": 161,
+   "K562_DC_TAP": 1235
+  }
+ },
+ "joins": {
+  "benchmark_gene_to_replogle": {
+   "rate": 0.9522568029982076,
+   "declared_floor": 0.85,
+   "raises": true
+  },
+  "encode_chip_target_to_replogle_perturbation": {
+   "n": 507,
+   "of": 519,
+   "rate": 0.976878612716763,
+   "declared_floor": 0.85,
+   "raises": true
+  }
+ },
+ "occupancy": {
+  "n_tfs": 507,
+  "output_type": "conservative IDR thresholded peaks",
+  "element_pad_bp": 250,
+  "frac_cells_bound": 0.10671145006136012,
+  "median_tfs_per_element": 36.0,
+  "n_elements_with_no_profiled_tf": 74
+ },
+ "causal_weights": {
+  "z_edge": 5.0,
+  "normalisation": "per-gene robust z (lfc - median)/(1.4826*MAD)",
+  "self_knockdown_diagonal_zeroed": 406
+ },
+ "cv": {
+  "scheme": "chromosome-held-out (gene-disjoint by construction)",
+  "folds": 5,
+  "seeds": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "mean_frac_chromosomes_in_same_fold_across_seed_pairs": 0.6948616600790514
+ },
+ "arms_raw_auprc": {
+  "distance_only": {
+   "auprc_mean": 0.27859166143205827,
+   "auprc_sd": 0.009808895243922753,
+   "auprc_per_seed": [
+    0.26241044458011925,
+    0.28648373446807973,
+    0.2817447245661896,
+    0.2729797242545486,
+    0.2893396792913543
+   ],
+   "n_features": 1,
+   "lift_over_base_rate": 7.037944707293462
+  },
+  "accessibility_only": {
+   "auprc_mean": 0.08294055540844085,
+   "auprc_sd": 0.003431003518018549,
+   "auprc_per_seed": [
+    0.07825163485130698,
+    0.08686911654819182,
+    0.0869478438871864,
+    0.08108286666172196,
+    0.08155131509379712
+   ],
+   "n_features": 5,
+   "lift_over_base_rate": 2.095292586849999
+  },
+  "distance+accessibility": {
+   "auprc_mean": 0.3438285616276284,
+   "auprc_sd": 0.0046675623850607325,
+   "auprc_per_seed": [
+    0.33816819225994593,
+    0.35215098307705806,
+    0.3441087118353302,
+    0.34108831674857953,
+    0.3436266042172284
+   ],
+   "n_features": 6,
+   "lift_over_base_rate": 8.685997251621378
+  },
+  "dist+acc+TFoccupancy": {
+   "auprc_mean": 0.35240976928763496,
+   "auprc_sd": 0.004668625670729704,
+   "auprc_per_seed": [
+    0.3462041796844827,
+    0.35945441316378024,
+    0.3495458195468899,
+    0.3511209489300727,
+    0.35572348511294927
+   ],
+   "n_features": 7,
+   "lift_over_base_rate": 8.90278071427953
+  },
+  "gene_responsiveness_only": {
+   "auprc_mean": 0.07442656096762953,
+   "auprc_sd": 0.0029794785606542195,
+   "auprc_per_seed": [
+    0.07248687098899377,
+    0.07877875533796361,
+    0.07433043607680177,
+    0.07634980127691818,
+    0.0701869411574704
+   ],
+   "n_features": 4,
+   "lift_over_base_rate": 1.8802071036570742
+  },
+  "dist+acc+gene": {
+   "auprc_mean": 0.3384436443605156,
+   "auprc_sd": 0.008934620626758974,
+   "auprc_per_seed": [
+    0.3253278850012777,
+    0.35157664527564486,
+    0.34278350074461,
+    0.33263798445684334,
+    0.3398922063242019
+   ],
+   "n_features": 10,
+   "lift_over_base_rate": 8.549960337291362
+  },
+  "TFcausality_only": {
+   "auprc_mean": 0.09588108316899391,
+   "auprc_sd": 0.005418787491257226,
+   "auprc_per_seed": [
+    0.09514776673916757,
+    0.0980217039935762,
+    0.10466672902660822,
+    0.08827855653524978,
+    0.09329065955036778
+   ],
+   "n_features": 10,
+   "lift_over_base_rate": 2.4222037312604696
+  },
+  "FULL_dist+acc+TFcausality": {
+   "auprc_mean": 0.3586922250485385,
+   "auprc_sd": 0.007361698180429899,
+   "auprc_per_seed": [
+    0.3618364490336932,
+    0.3653593319827802,
+    0.3663902795345365,
+    0.35136707941582057,
+    0.3485079852758619
+   ],
+   "n_features": 16,
+   "lift_over_base_rate": 9.061491768458154
+  },
+  "FULL+gene": {
+   "auprc_mean": 0.35938487377686246,
+   "auprc_sd": 0.007726355841163085,
+   "auprc_per_seed": [
+    0.3585504288589114,
+    0.3711135510358692,
+    0.3622873191779076,
+    0.3471655219999547,
+    0.3578075478116694
+   ],
+   "n_features": 20,
+   "lift_over_base_rate": 9.07898986379404
+  },
+  "SCREEN_only": {
+   "auprc_mean": 0.0589785212539744,
+   "auprc_sd": 0.005263566853960537,
+   "auprc_per_seed": [
+    0.04847537275321677,
+    0.06217930880681727,
+    0.061510470214298146,
+    0.06106764453990084,
+    0.061659809955639036
+   ],
+   "n_features": 6,
+   "lift_over_base_rate": 1.4899497327727231
+  },
+  "distance+SCREEN": {
+   "auprc_mean": 0.31786565272868017,
+   "auprc_sd": 0.008377110028000899,
+   "auprc_per_seed": [
+    0.3054804579618755,
+    0.32945594885284774,
+    0.3183574113714847,
+    0.3124107945003898,
+    0.32362365095680307
+   ],
+   "n_features": 7,
+   "lift_over_base_rate": 8.030107135126066
+  },
+  "dist+SCREEN+accessibility": {
+   "auprc_mean": 0.37942947783729586,
+   "auprc_sd": 0.0074309918336484425,
+   "auprc_per_seed": [
+    0.3674471923245566,
+    0.3880658649500335,
+    0.3786619411965687,
+    0.37654218062887546,
+    0.38643021008644496
+   ],
+   "n_features": 12,
+   "lift_over_base_rate": 9.585368318668666
+  },
+  "dist+SCREEN+acc+TFoccupancy": {
+   "auprc_mean": 0.37441474448390905,
+   "auprc_sd": 0.012223257345536817,
+   "auprc_per_seed": [
+    0.35527853894837474,
+    0.3888704570168845,
+    0.36878122809037167,
+    0.37297810786345087,
+    0.38616539050046345
+   ],
+   "n_features": 13,
+   "lift_over_base_rate": 9.458683205835294
+  },
+  "dist+SCREEN+acc+occ+TFcausality": {
+   "auprc_mean": 0.3724249976309729,
+   "auprc_sd": 0.005825030552228179,
+   "auprc_per_seed": [
+    0.3712027817937927,
+    0.3778398907361957,
+    0.37509000696979006,
+    0.36164007459023123,
+    0.3763522340648551
+   ],
+   "n_features": 22,
+   "lift_over_base_rate": 9.408417062690551
+  },
+  "TFcausality+RANK_only": {
+   "auprc_mean": 0.09777902659814584,
+   "auprc_sd": 0.004261624177603048,
+   "auprc_per_seed": [
+    0.09780772636762848,
+    0.10233174324399386,
+    0.10153631855345416,
+    0.09035430153235838,
+    0.09686504329329444
+   ],
+   "n_features": 15,
+   "lift_over_base_rate": 2.470150682878761
+  },
+  "FULL+RANK": {
+   "auprc_mean": 0.36278352456824586,
+   "auprc_sd": 0.006477526493651689,
+   "auprc_per_seed": [
+    0.3615362782294853,
+    0.37168772660252386,
+    0.36844615585347934,
+    0.35814613291005015,
+    0.35410132924569077
+   ],
+   "n_features": 21,
+   "lift_over_base_rate": 9.164848558294088
+  },
+  "dist+acc+occ+RANK": {
+   "auprc_mean": 0.36041880441713936,
+   "auprc_sd": 0.00834211688832066,
+   "auprc_per_seed": [
+    0.363399147526473,
+    0.37420048046174487,
+    0.36042509630010405,
+    0.3541021793266676,
+    0.3499671184707071
+   ],
+   "n_features": 12,
+   "lift_over_base_rate": 9.105109621435172
+  }
+ },
+ "positive_base_rate_for_every_auprc_above": 0.03958423559982677,
+ "ladder": [
+  {
+   "rung": "+ accessibility",
+   "from_arm": "distance_only",
+   "to_arm": "distance+accessibility",
+   "EFFECT_raw_auprc_from": 0.27859166143205827,
+   "EFFECT_raw_auprc_to": 0.3438285616276284,
+   "paired_delta_mean": 0.06523690019557013,
+   "paired_delta_per_seed": [
+    0.07575774767982668,
+    0.06566724860897832,
+    0.06236398726914061,
+    0.06810859249403095,
+    0.054286924925874114
+   ],
+   "n_seeds_clearing_min_increment": 5,
+   "n_seeds_positive": 5,
+   "of_seeds": 5,
+   "clears_prespecified_gate": true
+  },
+  {
+   "rung": "+ TF occupancy COUNT (no causality)",
+   "from_arm": "distance+accessibility",
+   "to_arm": "dist+acc+TFoccupancy",
+   "EFFECT_raw_auprc_from": 0.3438285616276284,
+   "EFFECT_raw_auprc_to": 0.35240976928763496,
+   "paired_delta_mean": 0.008581207660006529,
+   "paired_delta_per_seed": [
+    0.008035987424536761,
+    0.007303430086722185,
+    0.005437107711559697,
+    0.01003263218149314,
+    0.012096880895720863
+   ],
+   "n_seeds_clearing_min_increment": 2,
+   "n_seeds_positive": 5,
+   "of_seeds": 5,
+   "clears_prespecified_gate": false
+  },
+  {
+   "rung": "+ TF CAUSALITY weights",
+   "from_arm": "dist+acc+TFoccupancy",
+   "to_arm": "FULL_dist+acc+TFcausality",
+   "EFFECT_raw_auprc_from": 0.35240976928763496,
+   "EFFECT_raw_auprc_to": 0.3586922250485385,
+   "paired_delta_mean": 0.006282455760903527,
+   "paired_delta_per_seed": [
+    0.015632269349210526,
+    0.00590491881899996,
+    0.01684445998764661,
+    0.0002461304857478974,
+    -0.007215499837087358
+   ],
+   "n_seeds_clearing_min_increment": 2,
+   "n_seeds_positive": 4,
+   "of_seeds": 5,
+   "clears_prespecified_gate": false
+  },
+  {
+   "rung": "+ gene responsiveness",
+   "from_arm": "FULL_dist+acc+TFcausality",
+   "to_arm": "FULL+gene",
+   "EFFECT_raw_auprc_from": 0.3586922250485385,
+   "EFFECT_raw_auprc_to": 0.35938487377686246,
+   "paired_delta_mean": 0.0006926487283239746,
+   "paired_delta_per_seed": [
+    -0.0032860201747818008,
+    0.0057542190530889825,
+    -0.004102960356628937,
+    -0.004201557415865864,
+    0.009299562535807493
+   ],
+   "n_seeds_clearing_min_increment": 0,
+   "n_seeds_positive": 2,
+   "of_seeds": 5,
+   "clears_prespecified_gate": false
+  }
+ ],
+ "ladder_extra_and_post_hoc": [
+  {
+   "rung": "[both TF rungs together] over dist+acc",
+   "from_arm": "distance+accessibility",
+   "to_arm": "FULL_dist+acc+TFcausality",
+   "EFFECT_raw_auprc_from": 0.3438285616276284,
+   "EFFECT_raw_auprc_to": 0.3586922250485385,
+   "paired_delta_mean": 0.014863663420910056,
+   "paired_delta_per_seed": [
+    0.023668256773747287,
+    0.013208348905722145,
+    0.022281567699206306,
+    0.010278762667241037,
+    0.004881381058633505
+   ],
+   "n_seeds_clearing_min_increment": 4,
+   "n_seeds_positive": 5,
+   "of_seeds": 5,
+   "clears_prespecified_gate": true
+  },
+  {
+   "rung": "[POST HOC] + within-gene RANK identity block",
+   "from_arm": "FULL_dist+acc+TFcausality",
+   "to_arm": "FULL+RANK",
+   "EFFECT_raw_auprc_from": 0.3586922250485385,
+   "EFFECT_raw_auprc_to": 0.36278352456824586,
+   "paired_delta_mean": 0.0040912995197074035,
+   "paired_delta_per_seed": [
+    -0.000300170804207911,
+    0.00632839461974366,
+    0.0020558763189428286,
+    0.006779053494229581,
+    0.005593343969828857
+   ],
+   "n_seeds_clearing_min_increment": 0,
+   "n_seeds_positive": 4,
+   "of_seeds": 5,
+   "clears_prespecified_gate": false
+  },
+  {
+   "rung": "[POST HOC] RANK block over dist+acc+count",
+   "from_arm": "dist+acc+TFoccupancy",
+   "to_arm": "dist+acc+occ+RANK",
+   "EFFECT_raw_auprc_from": 0.35240976928763496,
+   "EFFECT_raw_auprc_to": 0.36041880441713936,
+   "paired_delta_mean": 0.008009035129504372,
+   "paired_delta_per_seed": [
+    0.017194967841990316,
+    0.014746067297964627,
+    0.010879276753214151,
+    0.002981230396594925,
+    -0.005756366642242161
+   ],
+   "n_seeds_clearing_min_increment": 3,
+   "n_seeds_positive": 4,
+   "of_seeds": 5,
+   "clears_prespecified_gate": false
+  }
+ ],
+ "ladder_gate_applied_to_every_rung": {
+  "rule": "paired per-seed delta >= 0.01 in >= 4/5 partitions -- the SAME bar the question under test is held to, applied to every rung so no rung earns a positive claim on a number that would have failed it",
+  "rungs_clearing": [
+   "+ accessibility"
+  ],
+  "rungs_sub_threshold": [
+   "+ TF occupancy COUNT (no causality)",
+   "+ TF CAUSALITY weights",
+   "+ gene responsiveness"
+  ]
+ },
+ "screen_conditioned_ladder": {
+  "why": "six K562 screens with a 14x spread in positive rate; element width sits in the accessibility block and is close to a screen label, so a rung can pay by naming the batch",
+  "screen_only_auprc": 0.0589785212539744,
+  "n_screens": 6,
+  "positive_rate_by_screen": {
+   "Gasperini2019": 0.05055631465937927,
+   "K562_DC_TAP": 0.02348178137651822,
+   "Morris": 0.18012422360248448,
+   "Nasser2021": 0.027247956403269755,
+   "Schraivogel2020": 0.012345679012345678,
+   "Xie": 0.07962529274004684
+  },
+  "median_element_width_bp_by_screen": {
+   "Gasperini2019": 500.0,
+   "K562_DC_TAP": 499.0,
+   "Morris": 760.0,
+   "Nasser2021": 520.0,
+   "Schraivogel2020": 393.0,
+   "Xie": 884.0
+  },
+  "rungs": [
+   {
+    "rung": "SCREEN label over distance",
+    "from_arm": "distance_only",
+    "to_arm": "distance+SCREEN",
+    "EFFECT_raw_auprc_from": 0.27859166143205827,
+    "EFFECT_raw_auprc_to": 0.31786565272868017,
+    "paired_delta_mean": 0.03927399129662187,
+    "paired_delta_per_seed": [
+     0.043070013381756256,
+     0.042972214384768004,
+     0.036612686805295114,
+     0.03943107024584119,
+     0.034283971665448776
+    ],
+    "n_seeds_clearing_min_increment": 5,
+    "n_seeds_positive": 5,
+    "of_seeds": 5,
+    "clears_prespecified_gate": true
+   },
+   {
+    "rung": "accessibility over distance+SCREEN",
+    "from_arm": "distance+SCREEN",
+    "to_arm": "dist+SCREEN+accessibility",
+    "EFFECT_raw_auprc_from": 0.31786565272868017,
+    "EFFECT_raw_auprc_to": 0.37942947783729586,
+    "paired_delta_mean": 0.061563825108615675,
+    "paired_delta_per_seed": [
+     0.061966734362681075,
+     0.058609916097185744,
+     0.060304529825084,
+     0.06413138612848568,
+     0.06280655912964189
+    ],
+    "n_seeds_clearing_min_increment": 5,
+    "n_seeds_positive": 5,
+    "of_seeds": 5,
+    "clears_prespecified_gate": true
+   },
+   {
+    "rung": "TF COUNT over dist+SCREEN+acc",
+    "from_arm": "dist+SCREEN+accessibility",
+    "to_arm": "dist+SCREEN+acc+TFoccupancy",
+    "EFFECT_raw_auprc_from": 0.37942947783729586,
+    "EFFECT_raw_auprc_to": 0.37441474448390905,
+    "paired_delta_mean": -0.005014733353386791,
+    "paired_delta_per_seed": [
+     -0.012168653376181837,
+     0.0008045920668510176,
+     -0.009880713106197037,
+     -0.0035640727654245863,
+     -0.0002648195859815128
+    ],
+    "n_seeds_clearing_min_increment": 0,
+    "n_seeds_positive": 1,
+    "of_seeds": 5,
+    "clears_prespecified_gate": false
+   },
+   {
+    "rung": "TF CAUSALITY over dist+SCREEN+acc+count",
+    "from_arm": "dist+SCREEN+acc+TFoccupancy",
+    "to_arm": "dist+SCREEN+acc+occ+TFcausality",
+    "EFFECT_raw_auprc_from": 0.37441474448390905,
+    "EFFECT_raw_auprc_to": 0.3724249976309729,
+    "paired_delta_mean": -0.0019897468529360917,
+    "paired_delta_per_seed": [
+     0.015924242845417935,
+     -0.01103056628068877,
+     0.006308778879418386,
+     -0.011338033273219639,
+     -0.009813156435608372
+    ],
+    "n_seeds_clearing_min_increment": 1,
+    "n_seeds_positive": 2,
+    "of_seeds": 5,
+    "clears_prespecified_gate": false
+   }
+  ]
+ },
+ "tf_axis_permutation": {
+  "what_is_held_fixed": "the element, the gene, the EXACT number of bound TFs, and the gene's EXACT z distribution over all profiled TFs (a permuted column is the same multiset, so the GENE block is bit-identical). Only the correspondence between a TF's occupancy and a TF's causality is destroyed.",
+  "n_tf_strata_degree_stratified": 69,
+  "models_refitted": false,
+  "draws": 20,
+  "results": {
+   "free": {
+    "FULL_dist+acc+TFcausality": {
+     "label": "PERMUTATION A -- free relabelling of the TF axis",
+     "model_arm": "FULL_dist+acc+TFcausality",
+     "draws": 20,
+     "kind": "free",
+     "EFFECT_raw_real_auprc": 0.3586922250485385,
+     "permuted_auprc_mean": 0.3548517062868313,
+     "permuted_auprc_sd": 0.006846112972002585,
+     "permuted_auprc_min": 0.34066169003595975,
+     "permuted_auprc_max": 0.36608209532683716,
+     "frac_draws_real_beats_permuted": 0.6,
+     "delta_real_minus_permuted": 0.0038405187617071568,
+     "frac_of_real_reproduced_by_permutation": 0.9892929969106873,
+     "frac_tfs_relabelled_per_draw": 0.998224852071006,
+     "post_hoc": false
+    },
+    "TFcausality_only": {
+     "label": "PERMUTATION A -- free relabelling of the TF axis",
+     "model_arm": "TFcausality_only",
+     "draws": 20,
+     "kind": "free",
+     "EFFECT_raw_real_auprc": 0.09588108316899391,
+     "permuted_auprc_mean": 0.08697521433916648,
+     "permuted_auprc_sd": 0.005275792311679767,
+     "permuted_auprc_min": 0.07832234221425396,
+     "permuted_auprc_max": 0.09906252358882606,
+     "frac_draws_real_beats_permuted": 0.95,
+     "delta_real_minus_permuted": 0.008905868829827426,
+     "frac_of_real_reproduced_by_permutation": 0.9071154753839138,
+     "frac_tfs_relabelled_per_draw": 0.998224852071006,
+     "post_hoc": false
+    },
+    "FULL+RANK": {
+     "label": "PERMUTATION A -- free relabelling of the TF axis",
+     "model_arm": "FULL+RANK",
+     "draws": 20,
+     "kind": "free",
+     "EFFECT_raw_real_auprc": 0.36278352456824586,
+     "permuted_auprc_mean": 0.35606258113626055,
+     "permuted_auprc_sd": 0.007315216924533718,
+     "permuted_auprc_min": 0.34240688634249156,
+     "permuted_auprc_max": 0.3687677346940901,
+     "frac_draws_real_beats_permuted": 0.8,
+     "delta_real_minus_permuted": 0.006720943431985316,
+     "frac_of_real_reproduced_by_permutation": 0.9814739562939524,
+     "frac_tfs_relabelled_per_draw": 0.998224852071006,
+     "post_hoc": true
+    },
+    "TFcausality+RANK_only": {
+     "label": "PERMUTATION A -- free relabelling of the TF axis",
+     "model_arm": "TFcausality+RANK_only",
+     "draws": 20,
+     "kind": "free",
+     "EFFECT_raw_real_auprc": 0.09777902659814584,
+     "permuted_auprc_mean": 0.08639185506363825,
+     "permuted_auprc_sd": 0.005399992292122237,
+     "permuted_auprc_min": 0.07807346143260419,
+     "permuted_auprc_max": 0.0969790430482926,
+     "frac_draws_real_beats_permuted": 1.0,
+     "delta_real_minus_permuted": 0.011387171534507592,
+     "frac_of_real_reproduced_by_permutation": 0.8835417785318439,
+     "frac_tfs_relabelled_per_draw": 0.998224852071006,
+     "post_hoc": true
+    }
+   },
+   "degree_stratified": {
+    "FULL_dist+acc+TFcausality": {
+     "label": "PERMUTATION B -- DEGREE-STRATIFIED relabelling (configuration model on the TF axis)",
+     "model_arm": "FULL_dist+acc+TFcausality",
+     "draws": 20,
+     "kind": "degree",
+     "EFFECT_raw_real_auprc": 0.3586922250485385,
+     "permuted_auprc_mean": 0.3605803071949939,
+     "permuted_auprc_sd": 0.005905704795939251,
+     "permuted_auprc_min": 0.3486706904288586,
+     "permuted_auprc_max": 0.3696479806108478,
+     "frac_draws_real_beats_permuted": 0.45,
+     "delta_real_minus_permuted": -0.0018880821464554165,
+     "frac_of_real_reproduced_by_permutation": 1.005263794458327,
+     "frac_tfs_relabelled_per_draw": 0.8643984220907297,
+     "post_hoc": false
+    },
+    "TFcausality_only": {
+     "label": "PERMUTATION B -- DEGREE-STRATIFIED relabelling (configuration model on the TF axis)",
+     "model_arm": "TFcausality_only",
+     "draws": 20,
+     "kind": "degree",
+     "EFFECT_raw_real_auprc": 0.09588108316899391,
+     "permuted_auprc_mean": 0.10076211374973025,
+     "permuted_auprc_sd": 0.00456723691691922,
+     "permuted_auprc_min": 0.09286154798035615,
+     "permuted_auprc_max": 0.11157633429071354,
+     "frac_draws_real_beats_permuted": 0.2,
+     "delta_real_minus_permuted": -0.0048810305807363424,
+     "frac_of_real_reproduced_by_permutation": 1.050907128073776,
+     "frac_tfs_relabelled_per_draw": 0.8643984220907297,
+     "post_hoc": false
+    },
+    "FULL+RANK": {
+     "label": "PERMUTATION B -- DEGREE-STRATIFIED relabelling (configuration model on the TF axis)",
+     "model_arm": "FULL+RANK",
+     "draws": 20,
+     "kind": "degree",
+     "EFFECT_raw_real_auprc": 0.36278352456824586,
+     "permuted_auprc_mean": 0.36035873132096696,
+     "permuted_auprc_sd": 0.004988114886064357,
+     "permuted_auprc_min": 0.3509075498720582,
+     "permuted_auprc_max": 0.37028191784227954,
+     "frac_draws_real_beats_permuted": 0.8,
+     "delta_real_minus_permuted": 0.0024247932472789002,
+     "frac_of_real_reproduced_by_permutation": 0.9933161428701464,
+     "frac_tfs_relabelled_per_draw": 0.8643984220907297,
+     "post_hoc": true
+    },
+    "TFcausality+RANK_only": {
+     "label": "PERMUTATION B -- DEGREE-STRATIFIED relabelling (configuration model on the TF axis)",
+     "model_arm": "TFcausality+RANK_only",
+     "draws": 20,
+     "kind": "degree",
+     "EFFECT_raw_real_auprc": 0.09777902659814584,
+     "permuted_auprc_mean": 0.10060468235461498,
+     "permuted_auprc_sd": 0.004163210199244711,
+     "permuted_auprc_min": 0.09280174556619099,
+     "permuted_auprc_max": 0.10794559372576573,
+     "frac_draws_real_beats_permuted": 0.25,
+     "delta_real_minus_permuted": -0.0028256557564691337,
+     "frac_of_real_reproduced_by_permutation": 1.0288983829638851,
+     "frac_tfs_relabelled_per_draw": 0.8643984220907297,
+     "post_hoc": true
+    }
+   }
+  },
+  "tf_identity_survives_degree_stratified_permutation": false
+ },
+ "best_baseline": "dist+acc+TFoccupancy",
+ "increment_over_best_baseline": 0.006282455760903527,
+ "increment_over_distance_plus_accessibility": 0.014863663420910056,
+ "increment_over_distance_accessibility_TFoccupancy": 0.006282455760903527,
+ "increment_per_seed_passes": [
+  1,
+  0,
+  1,
+  0,
+  0
+ ],
+ "element_swap": {
+  "distance_x_accessibility": {
+   "label": "SWAP A -- decoy matched on distance decile x accessibility decile",
+   "model_arm": "FULL_dist+acc+TFcausality",
+   "draws": 20,
+   "distance_mode": "decoy_distance",
+   "prespecified": true,
+   "EFFECT_raw_real_auprc": 0.3586922250485385,
+   "swapped_auprc_mean": 0.2345708072433479,
+   "swapped_auprc_sd": 0.010644437223037751,
+   "swapped_auprc_min": 0.2148497468681057,
+   "swapped_auprc_max": 0.2524865430660233,
+   "frac_draws_real_beats_swap": 1.0,
+   "delta_real_minus_swap": 0.12412141780519059,
+   "frac_of_real_reproduced_by_swap": 0.653961225983099,
+   "n_pairs_without_valid_donor_per_draw": 0,
+   "residual_imbalance_real_minus_decoy": {
+    "log10_dist": 0.0008429638100744263,
+    "dhs_pct": -0.0003830404394516873,
+    "n_tf_bound": -0.3898397574707701
+   },
+   "residual_imbalance_max_abs": {
+    "log10_dist": 0.0035366285936921926,
+    "dhs_pct": 0.0012734144251345114,
+    "n_tf_bound": 0.9258553486357783
+   },
+   "residual_imbalance_mean_mannwhitney_p": {
+    "log10_dist": 0.9467553701312434,
+    "dhs_pct": 0.9641691360961774,
+    "n_tf_bound": 0.5406606326653481
+   }
+  },
+  "degree_matched": {
+   "label": "SWAP B -- decoy additionally matched on n-TFs-bound decile (DEGREE-MATCHED)",
+   "model_arm": "FULL_dist+acc+TFcausality",
+   "draws": 20,
+   "distance_mode": "decoy_distance",
+   "prespecified": true,
+   "EFFECT_raw_real_auprc": 0.3586922250485385,
+   "swapped_auprc_mean": 0.2559701875132925,
+   "swapped_auprc_sd": 0.009991995865068368,
+   "swapped_auprc_min": 0.23968006787150334,
+   "swapped_auprc_max": 0.2788596821550067,
+   "frac_draws_real_beats_swap": 1.0,
+   "delta_real_minus_swap": 0.102722037535246,
+   "frac_of_real_reproduced_by_swap": 0.7136206743222673,
+   "n_pairs_without_valid_donor_per_draw": 265,
+   "residual_imbalance_real_minus_decoy": {
+    "log10_dist": 0.002013465820931648,
+    "dhs_pct": 0.00019334575154899558,
+    "n_tf_bound": -0.09053269813772431
+   },
+   "residual_imbalance_max_abs": {
+    "log10_dist": 0.005084411876913997,
+    "dhs_pct": 0.0009252032077007311,
+    "n_tf_bound": 0.25881333910783866
+   },
+   "residual_imbalance_mean_mannwhitney_p": {
+    "log10_dist": 0.9031038237281119,
+    "dhs_pct": 0.9544796198704368,
+    "n_tf_bound": 0.8921026657664729
+   }
+  },
+  "distance_x_accessibility_TFCarm": {
+   "label": "SWAP A -- decoy matched on distance decile x accessibility decile",
+   "model_arm": "TFcausality_only",
+   "draws": 20,
+   "distance_mode": "decoy_distance",
+   "prespecified": true,
+   "EFFECT_raw_real_auprc": 0.09588108316899391,
+   "swapped_auprc_mean": 0.08773027056619978,
+   "swapped_auprc_sd": 0.004465573257396098,
+   "swapped_auprc_min": 0.08043742586055273,
+   "swapped_auprc_max": 0.09674586813480142,
+   "frac_draws_real_beats_swap": 0.9,
+   "delta_real_minus_swap": 0.008150812602794127,
+   "frac_of_real_reproduced_by_swap": 0.9149903992174554,
+   "n_pairs_without_valid_donor_per_draw": 0,
+   "residual_imbalance_real_minus_decoy": {
+    "log10_dist": 0.0008429638100744263,
+    "dhs_pct": -0.0003830404394516873,
+    "n_tf_bound": -0.3898397574707701
+   },
+   "residual_imbalance_max_abs": {
+    "log10_dist": 0.0035366285936921926,
+    "dhs_pct": 0.0012734144251345114,
+    "n_tf_bound": 0.9258553486357783
+   },
+   "residual_imbalance_mean_mannwhitney_p": {
+    "log10_dist": 0.9467553701312434,
+    "dhs_pct": 0.9641691360961774,
+    "n_tf_bound": 0.5406606326653481
+   }
+  },
+  "degree_matched_TFCarm": {
+   "label": "SWAP B -- decoy additionally matched on n-TFs-bound decile (DEGREE-MATCHED)",
+   "model_arm": "TFcausality_only",
+   "draws": 20,
+   "distance_mode": "decoy_distance",
+   "prespecified": true,
+   "EFFECT_raw_real_auprc": 0.09588108316899391,
+   "swapped_auprc_mean": 0.10364360179442475,
+   "swapped_auprc_sd": 0.003480565641355138,
+   "swapped_auprc_min": 0.09732329201148042,
+   "swapped_auprc_max": 0.11180378658362917,
+   "frac_draws_real_beats_swap": 0.0,
+   "delta_real_minus_swap": -0.007762518625430842,
+   "frac_of_real_reproduced_by_swap": 1.0809598553632225,
+   "n_pairs_without_valid_donor_per_draw": 265,
+   "residual_imbalance_real_minus_decoy": {
+    "log10_dist": 0.002013465820931648,
+    "dhs_pct": 0.00019334575154899558,
+    "n_tf_bound": -0.09053269813772431
+   },
+   "residual_imbalance_max_abs": {
+    "log10_dist": 0.005084411876913997,
+    "dhs_pct": 0.0009252032077007311,
+    "n_tf_bound": 0.25881333910783866
+   },
+   "residual_imbalance_mean_mannwhitney_p": {
+    "log10_dist": 0.9031038237281119,
+    "dhs_pct": 0.9544796198704368,
+    "n_tf_bound": 0.8921026657664729
+   }
+  },
+  "element_only_distance_x_accessibility": {
+   "label": "SWAP A -- decoy matched on distance decile x accessibility decile",
+   "model_arm": "FULL_dist+acc+TFcausality",
+   "draws": 20,
+   "distance_mode": "real_distance",
+   "prespecified": false,
+   "EFFECT_raw_real_auprc": 0.3586922250485385,
+   "swapped_auprc_mean": 0.33461278988499166,
+   "swapped_auprc_sd": 0.00967568528431212,
+   "swapped_auprc_min": 0.31675457176790145,
+   "swapped_auprc_max": 0.3530776300378137,
+   "frac_draws_real_beats_swap": 1.0,
+   "delta_real_minus_swap": 0.024079435163546825,
+   "frac_of_real_reproduced_by_swap": 0.932868812084543,
+   "n_pairs_without_valid_donor_per_draw": 0,
+   "residual_imbalance_real_minus_decoy": {
+    "log10_dist": 0.0008429638100744263,
+    "dhs_pct": -0.0003830404394516873,
+    "n_tf_bound": -0.3898397574707701
+   },
+   "residual_imbalance_max_abs": {
+    "log10_dist": 0.0035366285936921926,
+    "dhs_pct": 0.0012734144251345114,
+    "n_tf_bound": 0.9258553486357783
+   },
+   "residual_imbalance_mean_mannwhitney_p": {
+    "log10_dist": 0.9467553701312434,
+    "dhs_pct": 0.9641691360961774,
+    "n_tf_bound": 0.5406606326653481
+   }
+  },
+  "element_only_degree_matched": {
+   "label": "SWAP B -- decoy additionally matched on n-TFs-bound decile (DEGREE-MATCHED)",
+   "model_arm": "FULL_dist+acc+TFcausality",
+   "draws": 20,
+   "distance_mode": "real_distance",
+   "prespecified": false,
+   "EFFECT_raw_real_auprc": 0.3586922250485385,
+   "swapped_auprc_mean": 0.3589226173058463,
+   "swapped_auprc_sd": 0.007613841111545307,
+   "swapped_auprc_min": 0.3429407978846798,
+   "swapped_auprc_max": 0.381200164491548,
+   "frac_draws_real_beats_swap": 0.45,
+   "delta_real_minus_swap": -0.00023039225730780988,
+   "frac_of_real_reproduced_by_swap": 1.0006423118239505,
+   "n_pairs_without_valid_donor_per_draw": 265,
+   "residual_imbalance_real_minus_decoy": {
+    "log10_dist": 0.002013465820931648,
+    "dhs_pct": 0.00019334575154899558,
+    "n_tf_bound": -0.09053269813772431
+   },
+   "residual_imbalance_max_abs": {
+    "log10_dist": 0.005084411876913997,
+    "dhs_pct": 0.0009252032077007311,
+    "n_tf_bound": 0.25881333910783866
+   },
+   "residual_imbalance_mean_mannwhitney_p": {
+    "log10_dist": 0.9031038237281119,
+    "dhs_pct": 0.9544796198704368,
+    "n_tf_bound": 0.8921026657664729
+   }
+  },
+  "element_only_distance_x_accessibility_TFCarm": {
+   "label": "SWAP A -- decoy matched on distance decile x accessibility decile",
+   "model_arm": "TFcausality_only",
+   "draws": 20,
+   "distance_mode": "real_distance",
+   "prespecified": false,
+   "EFFECT_raw_real_auprc": 0.09588108316899391,
+   "swapped_auprc_mean": 0.08773027056619978,
+   "swapped_auprc_sd": 0.004465573257396098,
+   "swapped_auprc_min": 0.08043742586055273,
+   "swapped_auprc_max": 0.09674586813480142,
+   "frac_draws_real_beats_swap": 0.9,
+   "delta_real_minus_swap": 0.008150812602794127,
+   "frac_of_real_reproduced_by_swap": 0.9149903992174554,
+   "n_pairs_without_valid_donor_per_draw": 0,
+   "residual_imbalance_real_minus_decoy": {
+    "log10_dist": 0.0008429638100744263,
+    "dhs_pct": -0.0003830404394516873,
+    "n_tf_bound": -0.3898397574707701
+   },
+   "residual_imbalance_max_abs": {
+    "log10_dist": 0.0035366285936921926,
+    "dhs_pct": 0.0012734144251345114,
+    "n_tf_bound": 0.9258553486357783
+   },
+   "residual_imbalance_mean_mannwhitney_p": {
+    "log10_dist": 0.9467553701312434,
+    "dhs_pct": 0.9641691360961774,
+    "n_tf_bound": 0.5406606326653481
+   }
+  },
+  "element_only_degree_matched_TFCarm": {
+   "label": "SWAP B -- decoy additionally matched on n-TFs-bound decile (DEGREE-MATCHED)",
+   "model_arm": "TFcausality_only",
+   "draws": 20,
+   "distance_mode": "real_distance",
+   "prespecified": false,
+   "EFFECT_raw_real_auprc": 0.09588108316899391,
+   "swapped_auprc_mean": 0.10364360179442475,
+   "swapped_auprc_sd": 0.003480565641355138,
+   "swapped_auprc_min": 0.09732329201148042,
+   "swapped_auprc_max": 0.11180378658362917,
+   "frac_draws_real_beats_swap": 0.0,
+   "delta_real_minus_swap": -0.007762518625430842,
+   "frac_of_real_reproduced_by_swap": 1.0809598553632225,
+   "n_pairs_without_valid_donor_per_draw": 265,
+   "residual_imbalance_real_minus_decoy": {
+    "log10_dist": 0.002013465820931648,
+    "dhs_pct": 0.00019334575154899558,
+    "n_tf_bound": -0.09053269813772431
+   },
+   "residual_imbalance_max_abs": {
+    "log10_dist": 0.005084411876913997,
+    "dhs_pct": 0.0009252032077007311,
+    "n_tf_bound": 0.25881333910783866
+   },
+   "residual_imbalance_mean_mannwhitney_p": {
+    "log10_dist": 0.9031038237281119,
+    "dhs_pct": 0.9544796198704368,
+    "n_tf_bound": 0.8921026657664729
+   }
+  }
+ },
+ "descriptive_cross_check_causal_bound_TFs": {
+  "label": "matched on dist x acc deciles ONLY",
+  "n_draws": 20,
+  "n_positives_matched": 457,
+  "EFFECT_raw_positives_mean_n_causal_bound_TFs": 1.7024070021881836,
+  "matched_negatives_mean": 1.3089715536105033,
+  "ratio": 1.3005683717820125,
+  "frac_draws_p_lt_0.05": 1.0,
+  "median_p": 0.001692920883048434,
+  "clears_min_swap_frac": true
+ },
+ "descriptive_cross_check_DEGREE_MATCHED": {
+  "label": "DEGREE-MATCHED (+ n-TFs-bound decile)",
+  "n_draws": 20,
+  "n_positives_matched": 452,
+  "EFFECT_raw_positives_mean_n_causal_bound_TFs": 1.7123893805309733,
+  "matched_negatives_mean": 1.4233407079646017,
+  "ratio": 1.2030776404756354,
+  "frac_draws_p_lt_0.05": 0.6,
+  "median_p": 0.027475953689288915,
+  "clears_min_swap_frac": false
+ },
+ "descriptive_cross_check_n_TF_bound_for_contrast": {
+  "label": "for contrast: n TFs BOUND, dist x acc only",
+  "n_draws": 20,
+  "n_positives_matched": 457,
+  "EFFECT_raw_positives_mean_n_causal_bound_TFs": 102.48577680525163,
+  "matched_negatives_mean": 88.795295404814,
+  "ratio": 1.1541802562627141,
+  "frac_draws_p_lt_0.05": 1.0,
+  "median_p": 0.0021804272962866644,
+  "clears_min_swap_frac": true
+ },
+ "descriptive_cross_check_note": "the dist x acc version is matched on everything EXCEPT the covariate this module says does the work. Positives sit at elements carrying 102 bound TFs against 53 for negatives, so the DEGREE-MATCHED row is the one that counts and it is the one reported in the verdict.",
+ "gates_prespecified": {
+  "increment": false,
+  "element_swap": true,
+  "degree_matched_swap": true
+ },
+ "diagnostics_post_hoc": {
+  "note": "added after the first run, when the prespecified swap turned out to also coarsen distance to its decile; reported so the prespecified gates are not read as stronger than they are",
+  "tf_identity_survives_degree_matched_swap_on_TFcausality_arm": false,
+  "tf_identity_survives_degree_stratified_TF_axis_permutation": false,
+  "post_hoc_rank_identity_block": {
+   "what": "within-gene ranks of |z| down the TF axis: gene-scale-free, so it cannot be bought with gene responsiveness the way a magnitude aggregate can",
+   "FULL_plus_RANK_auprc": 0.36278352456824586,
+   "paired_delta_over_FULL": 0.0040912995197074035,
+   "n_seeds_clearing": 0,
+   "erased_by_degree_stratified_TF_permutation": 0.9933161428701464
+  },
+  "swap_machinery_consistency_check_passed": true,
+  "element_only_swap_full_model_frac_reproduced": 0.932868812084543,
+  "element_only_degree_matched_full_model_frac_reproduced": 1.0006423118239505
+ },
+ "verdict": "NEITHER WHICH TFs NOR HOW MANY -- TF CAUSALITY IS NOT DETECTED OVER AN OCCUPANCY-COUNT BASELINE, AND THE OCCUPANCY COUNT DOES NOT CLEAR THE SAME BAR EITHER. Of the four rungs of the ladder only ACCESSIBILITY clears the threshold this module fixed before seeing any number, and the element's TF set -- counted or weighted by causality -- is sub-threshold both ways. On 11,545 powered distal K562 CRISPR pairs at a 0.0396 positive base rate (457 positives), chromosome-held-out AUPRC is 0.2786 for distance alone (7.0x the base rate), 0.0829 for accessibility alone, 0.0744 for gene responsiveness with no element information at all, 0.3438 for distance + accessibility, 0.3524 once the raw COUNT of the 507 profiled TFs bound at the element is added, and 0.3587 once those TFs are WEIGHTED by their Perturb-seq causality for the gene. One nuisance has to be named before any of that is read as chromatin: the K562 arm is 6 screens whose positive rates run 0.0123 to 0.1801, and the screen one-hot ALONE, with no element and no distance, reaches 0.0590 (1.5x the base rate). Told which screen a pair came from, accessibility still adds +0.0616 (5/5 partitions at the bar) against +0.0652 when it is not, so the accessibility rung is not explained by batch. Read as a ladder: accessibility adds +0.0652 to distance, the raw number of bound TFs adds a further +0.0086, and weighting those TFs by whether their knockdown actually moves the gene adds only +0.0063 on top -- below the prespecified 0.010 bar and clearing it in 2/5 chromosome partitions. Against the two baselines the question named, TF causality does add (+0.0149 over distance+accessibility, +0.0801 over distance alone), but 58% of that increment is bought by counting TFs, which needs no Perturb-seq. The DEGREE-MATCHED element swap says the same thing in the sharpest form available here: on the TF-causality-only arm, which has no distance feature to lose, a decoy element carrying the same NUMBER of bound TFs but a DIFFERENT TF SET scores 0.1036 against the real element's 0.0959 -- 108% of it, with the real element winning 0% of 20 draws -- and the decoy landing slightly ABOVE the real element is NOT read as a reversal; it is what no pair-specific signal looks like, the real TF-identity features being replaced by a smoother draw from the same distribution. THE CLEANER IDENTITY TEST AGREES AND IS THE ONE TO QUOTE, because it never touches the element at all: relabelling the TF axis of the causal matrix -- which holds the element, the gene, the EXACT number of bound TFs and the gene's EXACT z distribution over all 507 TFs fixed, and destroys only which TF's binding goes with which TF's causality -- leaves the TF-causality-only arm at 0.1008 against the real 0.0959 (105% reproduced, real wins 20% of 20 draws) and the full model at 0.3606 against 0.3587 (101%, real wins 45%), under a DEGREE-STRATIFIED permutation in which a TF can only be exchanged for one of similar binding degree and similar causal breadth. AND THE CONTRAST BETWEEN THE TWO PERMUTATIONS IS THE MOST INSTRUCTIVE NUMBER IN THE MODULE, so it leads rather than sits in a footnote: a FREE relabelling of the TF axis IS beaten by the real data -- the TF-causality-only arm scores 0.0959 against a freely permuted 0.0870, winning 95% of 20 draws, and the post hoc rank arm wins 100% -- so a module that had run only the uniform control would have reported TF IDENTITY AS A REAL EFFECT. The whole of that apparent effect is TF-side DEGREE: how many elements a TF binds and how many genes its knockdown moves. Hold those two deciles fixed and the real assignment of causality to occupancy loses its entire advantage (20% and 25% of draws). That is the finding, not a caveat: promiscuous TFs sit on many elements and move many genes, and that alone reproduces everything the causal weighting appeared to contribute. AND THE COUNT DOES NOT ESCAPE THE SAME BAR. Applying the module's own gate to every rung rather than only to the rung under test: accessibility over distance clears it (+0.0652 paired, 5/5), but the TF COUNT rung does NOT (+0.0086, 2/5) and neither does the TF CAUSALITY rung (+0.0063, 2/5). So the honest reading is not 'identity fails, count works': BOTH TF rungs are sub-threshold, the count differing only in being consistent in sign (5/5 partitions positive against 4/5). AND THE COUNT DOES NOT SURVIVE BEING TOLD WHICH SCREEN THE PAIR CAME FROM: with the screen one-hot already in the model the TF COUNT rung is -0.0050 and positive in only 1/5 partitions, and the TF CAUSALITY rung on top of it -0.0020 in 2/5 -- both NOT DETECTED, and neither is called reversed, because a negative point estimate that no partition supports is an absence of signal and not evidence of the opposite. The screens differ in element geometry (median width 393-884 bp) and by 15x in hit rate, and a wider element carries more ChIP peaks, so the TF count was partly reading the assay. ACCESSIBILITY IS THE ONLY RUNG LEFT STANDING: it clears the bar both naively (+0.0652, 5/5) and with the screen held (+0.0616, 5/5). WHICH transcription factors sit on a distal element, weighted by their causal effect on the gene, is not shown here to matter; and HOW MANY sit on it, which an earlier version of this module credited with the finding, does not clear the bar either and does not survive the screen. The prespecified swap gates (ii) and (iii) both pass on the full model (100% and 100%), but they are lenient by construction -- a decile-matched decoy carries the decile of the distance and not the distance, and the full model has a distance feature to lose. Hold the real distance and swap only the element, and the same degree-matched decoys reproduce 100% of the full model's AUPRC (0.3589 against 0.3587), with the real element winning 45% of 20 draws -- a coin flip. THE DESCRIPTIVE CROSS-CHECK GOES THE SAME WAY ONCE IT IS DEGREE-MATCHED, and this replaces what an earlier version of this module called the one real thing that survived: matched on distance x accessibility deciles only, positives carry 1.70 bound-and-causal TFs against 1.31 (1.30x, p<0.05 in 100% of 20 draws) -- but positives sit at elements carrying 102 bound TFs against 53 for negatives, so that comparison was matched on everything EXCEPT the covariate this module says does the work. Add the n-TFs-bound decile and it falls to 1.71 against 1.42 (1.20x) with p<0.05 in only 60% of 20 draws, short of the 90% bar the module uses for every other matched control. NOTHING IS LEFT STANDING ON THE HEADLINE QUESTION -- not the predictive increment, not the element swap, not the TF-axis permutation, and not the descriptive association once it is matched on TF count. This is a null and the project commits it. The POST HOC detectability probe is reported so the null is not read as stronger than it is: a second, gene-scale-free identity block built from WITHIN-GENE RANKS of |z| moves the full model to 0.3628 (+0.0041 paired, 0/5 partitions at the bar), which is still sub-threshold but says the aggregation choice is not the whole story, and it too is erased by the degree-stratified TF permutation (99% reproduced, real wins 80%).",
+ "limits": [
+  "same cell line on both sides. TF->gene causality is Replogle K562 Perturb-seq and the ground truth is CRISPRi enhancer perturbation in K562. The experiments differ (gene knockdown vs element silencing, different labs and libraries), so this is not scoring a K562 layer on K562 Perturb-seq, but 'which genes move easily in K562' is shared between them. That nuisance is what the gene-responsiveness-only arm (0.0744 AUPRC with NO element information) measures and what the element swap removes. There is no RPE1 enhancer-CRISPR benchmark to escape to.",
+  "the benchmark's K562 arm is 6 screens with different libraries, element geometries and hit rates (positive rate 0.0123 to 0.1801). Dataset is NOT a matching key in the element swap, so a decoy can come from a different screen than its target pair. The screen one-hot alone reaches 0.0590 AUPRC with no element information, and element WIDTH -- which sits in the accessibility block -- is close to a screen label ({'Gasperini2019': 500, 'K562_DC_TAP': 499, 'Morris': 760, 'Nasser2021': 520, 'Schraivogel2020': 393, 'Xie': 884} bp median by screen). CONTROL 7 conditions every rung on the screen; the numbers are in screen_conditioned_ladder.",
+  "the SCREEN one-hot used in CONTROL 7 is a nuisance covariate available here only because the benchmark records which screen tested which pair. It is not a feature a deployed E-G predictor could use, and it is never part of a biological arm -- it exists to ask which rungs survive knowing the batch, not to raise anyone's AUPRC.",
+  "one ChIP file per TF (lowest-accession GRCh38 'conservative IDR thresholded peaks'). A TF whose K562 experiments disagree is represented by one of them, and 12 ChIP-profiled TFs are dropped for having no Replogle perturbation.",
+  "507 TFs is a large but not exhaustive slice of the ~1,600 human TFs; an element's real driver may be a TF with no K562 ChIP track, which would make its TF-causality features look empty for a reason that is about ENCODE's coverage and not about the element.",
+  "occupancy is binary at ELEMENT_PAD=250 bp around the tested element. Peak strength is discarded, so a marginal peak and a summit-in-the-middle peak count the same.",
+  "'causal' is |robust z| >= 5.0 in a pseudobulk knockdown. It is a CONSEQUENCE of removing the TF, direct or not -- bound_causal.py's own finding is that only 31.6% of causal edges are bound at the promoter at all, so most of these weights are downstream effects that happen to be attached to a TF that also sits at this element.",
+  "the swap donor pool is the benchmark's own 4,362 elements. That is deliberate (a decoy that is a real tested candidate is a harder control than a random genomic window) but it means the control asks 'is THIS element better than ANOTHER TESTED element', not 'better than random DNA'.",
+  "THE PRESPECIFIED SWAP GATES ARE LENIENT, AND THIS WEAKENS THE PART OF THE RESULT THAT PASSED. A decile-matched decoy carries the DECILE of the real distance, not the real distance, so any arm holding a distance feature loses within-decile resolution under the swap and its AUPRC falls for a reason unrelated to the element. Gates (ii) and (iii) pass on the full model largely for that reason. The element-only variants (real distance retained) and the TF-causality-only arm are reported alongside and are the sharper reads; they were added AFTER seeing the first result and are labelled post hoc in the JSON.",
+  "the degree-matched swap has 265 pairs per draw (2.3%) whose distance x accessibility x n-TF-bound decile cell held no valid donor; those pairs keep their own element, which biases that control TOWARD the real elements, i.e. makes it conservative.",
+  "the causality weights are aggregates over the bound TF set (count, max, mean, top-5, signed mean, and two gene-background-subtracted terms). A per-TF model that learned which INDIVIDUAL TFs matter is not fitted here: with 457 positives over 507 TFs it would be fitting noise, and that is a real ceiling on this design rather than a claim that no such signal exists.",
+  "AND THE AGGREGATION IS A WEAKER INSTRUMENT THAN IT LOOKS, WHICH WEAKENS THIS MODULE'S OWN NULL. The bound set is not small: pair-weighted, positives carry 102 of the 507 profiled TFs and negatives 53. A mean of |z| over ~55 of 507 TFs is close to the gene's mean over all of them, so a magnitude aggregate is structurally near-blind to WHICH TFs those are, and a null from it is partly a statement about the aggregation. The POST HOC within-gene-RANK block is included precisely to probe that, and it does move the full model (+0.0041 paired, 0/5 at the bar) -- sub-threshold, but not zero, so 'no identity signal exists' is NOT what this module is entitled to say. What it is entitled to say is that no parameterisation tried here converts identity into ranking power that survives a degree-stratified TF permutation.",
+  "the TF-axis permutation (CONTROL 6) preserves each TF's causal vector and each element's occupancy exactly, but a free permutation also breaks the association between a TF's BINDING degree and its CAUSAL breadth, and that association is the entire apparent effect: the real data beats the FREE permutation in 95% of draws on the TF-causality-only arm and the DEGREE-STRATIFIED one in only 20%. A module that ran only the uniform version would have reported a positive. The stratified draws relabel 86% of TFs against 100% for free draws -- with 69 strata over 507 TFs and the smallest holding 2, the stratified control moves less and is therefore the more conservative of the two, which makes the real side's failure to beat it the stronger reading.",
+  "the screen-conditioned rungs (CONTROL 7) are themselves a limit on this module's OWN null as well as on its positive claims: conditioning on the screen raises every arm that contains it (distance + screen reaches 0.3179 against 0.2786), so the TF rungs are being asked to add on top of a stronger model than the prespecified ladder used. That is the right test for 'is this batch', but it is a harder test than the prespecified one and the prespecified gates are not rescored on it.",
+  "the element-swap donor is drawn uniformly over PAIRS, not over elements, so an element tested against many genes is over-represented among decoys (mean pairs-per-element behind a donor draw is higher than the 2.65 a uniform-over-elements draw would give). That skews decoys toward multiply-tested elements. The TF-axis permutation does not have this defect, which is another reason it is the identity number quoted.",
+  "pairs below PowerAtEffectSize25 0.8 are excluded, not counted as negatives, because not-detected is not not-linked. 234 pairs are dropped that way.",
+  "AUPRC is pooled over out-of-fold predictions within a seed. Folds are whole chromosomes, so fold sizes are uneven and a single large chromosome carries disproportionate weight in every partition.",
+  "a decoy element is required to be on a different chromosome from the gene, which removes the risk that the decoy genuinely regulates the gene but also means the swap changes chromosome-level context (replication timing, compartment) along with the element.",
+  "the model is one gradient-boosting configuration, fixed across all arms rather than tuned per arm. A tuned baseline could beat an untuned full model or the reverse; holding it fixed is what makes the arms comparable, and it means no arm is at its ceiling."
+ ],
+ "log": [
+  "========================================================================================================",
+  "DISTAL ENHANCER-GENE LINKS SCORED BY TF CAUSALITY -- is there an increment over distance and",
+  "accessibility, and does it survive replacing the element with a decile-matched decoy?",
+  "========================================================================================================",
+  "  DECISION THRESHOLD, FIXED BEFORE THE NUMBERS: TF causality earns a place only if the full model beats the",
+  "  best baseline by >= 0.010 AUPRC in >= 4/5 CV partitions, AND beats the distance x accessibility",
+  "  matched element swap in >= 90% of 20 draws, AND beats the DEGREE-matched swap in >= 90% of 20.",
+  "\n  1  GROUND TRUTH -- CRISPR enhancer perturbation, EP CRISPR benchmark K562 arm",
+  "    EPCrisprBenchmark_combined_data.training_K562.GRCh38.tsv.gz: 10,356 K562 pairs",
+  "    EPCrisprBenchmark_combined_data.heldout_5_cell_types.GRCh38.tsv.gz: 1,918 K562 pairs",
+  "    12,274 K562 pairs; 12,040 powered at PowerAtEffectSize25 >= 0.8",
+  "    Perturb-seq K562: 11,258 perturbations x 8,248 genes; 0 genes have zero MAD and are z=0 by construction",
+  "    JOIN benchmark measuredGeneEnsemblId -> Replogle var/gene_id: 11,688/12,274 (95.2%), expected >= 85%",
+  "    ANALYSIS SET: 11,545 powered distal pairs, 457 positives, BASE RATE 0.0396",
+  "    datasets: {'Nasser2021': 3303, 'Gasperini2019': 5123, 'Schraivogel2020': 1296, 'Xie': 427, 'Morris': 161, 'K562_DC_TAP': 1235}",
+  "    4,362 distinct elements, 2,078 distinct genes, 23 chromosomes; distance to TSS median 376,596 bp (min 1,176 -- the benchmark carries no promoter-proximal pair, so every pair here is distal)",
+  "\n  2  TF OCCUPANCY AT THE ELEMENTS -- ENCODE K562 ChIP crossed with Replogle perturbations",
+  "    ENCODE: 1,169 released K562 'conservative IDR thresholded peaks' TF ChIP files over 519 TF targets",
+  "    JOIN ENCODE K562 ChIP target -> Replogle perturbation: 507/519 (97.7%), expected >= 85%",
+  "    occupancy matrix from cache: 507 TFs x 4,362 elements",
+  "    occupancy: 507 TFs x 4,362 elements, 10.7% of cells bound; TFs per element median 36 (IQR 12-80), 74 elements carry no profiled TF at all",
+  "\n  3  FEATURES",
+  "    TF->gene causal weights: 507 TFs x 8,248 genes, robust z, 406 self-knockdown diagonal entries zeroed",
+  "    POST HOC identity block: within-gene ranks of |z| down the 507-TF axis (rank 1 = the TF whose knockdown moves that gene most), invariant to gene responsiveness",
+  "    accessibility: DHS.RPM (benchmark pipeline) median 3.34; K562 ATAC peak overlaps 4,807/11,545 pairs, median signal 11.30",
+  "    SCREEN one-hot (CONTROL 7): 6 K562 screens, positive rates {'Gasperini2019': 0.0506, 'K562_DC_TAP': 0.0235, 'Morris': 0.1801, 'Nasser2021': 0.0272, 'Schraivogel2020': 0.0123, 'Xie': 0.0796}",
+  "    element width by screen (median bp), the reason width can act as a screen label: {'Gasperini2019': 500, 'K562_DC_TAP': 499, 'Morris': 760, 'Nasser2021': 520, 'Schraivogel2020': 393, 'Xie': 884}",
+  "    feature blocks: DIST(1); ACC(5); OCC(1); GENE(4); TFC(9); RANK(5); SCREEN(6)",
+  "\n  4  OUT-OF-FOLD AUPRC, chromosome-held-out (gene-disjoint), 5 genuinely different partitions x 5 folds",
+  "    POSITIVE BASE RATE 0.0396 (457/11545) -- every AUPRC below is RAW, not a difference from a shuffle",
+  "    partition check: mean agreement of chromosome CO-MEMBERSHIP across seed pairs 0.69 (1.00 would mean the seeds are relabelings of one split)",
+  "    distance_only                AUPRC 0.2786 +/- 0.0098  (7.04x the 0.0396 base rate, 1 features)",
+  "    accessibility_only           AUPRC 0.0829 +/- 0.0034  (2.10x the 0.0396 base rate, 5 features)",
+  "    distance+accessibility       AUPRC 0.3438 +/- 0.0047  (8.69x the 0.0396 base rate, 6 features)",
+  "    dist+acc+TFoccupancy         AUPRC 0.3524 +/- 0.0047  (8.90x the 0.0396 base rate, 7 features)",
+  "    gene_responsiveness_only     AUPRC 0.0744 +/- 0.0030  (1.88x the 0.0396 base rate, 4 features)",
+  "    dist+acc+gene                AUPRC 0.3384 +/- 0.0089  (8.55x the 0.0396 base rate, 10 features)",
+  "    TFcausality_only             AUPRC 0.0959 +/- 0.0054  (2.42x the 0.0396 base rate, 10 features)",
+  "    FULL_dist+acc+TFcausality    AUPRC 0.3587 +/- 0.0074  (9.06x the 0.0396 base rate, 16 features)",
+  "    FULL+gene                    AUPRC 0.3594 +/- 0.0077  (9.08x the 0.0396 base rate, 20 features)",
+  "    SCREEN_only                  AUPRC 0.0590 +/- 0.0053  (1.49x the 0.0396 base rate, 6 features)",
+  "    distance+SCREEN              AUPRC 0.3179 +/- 0.0084  (8.03x the 0.0396 base rate, 7 features)",
+  "    dist+SCREEN+accessibility    AUPRC 0.3794 +/- 0.0074  (9.59x the 0.0396 base rate, 12 features)",
+  "    dist+SCREEN+acc+TFoccupancy  AUPRC 0.3744 +/- 0.0122  (9.46x the 0.0396 base rate, 13 features)",
+  "    dist+SCREEN+acc+occ+TFcausality AUPRC 0.3724 +/- 0.0058  (9.41x the 0.0396 base rate, 22 features)",
+  "    TFcausality+RANK_only        AUPRC 0.0978 +/- 0.0043  (2.47x the 0.0396 base rate, 15 features)",
+  "    FULL+RANK                    AUPRC 0.3628 +/- 0.0065  (9.16x the 0.0396 base rate, 21 features)",
+  "    dist+acc+occ+RANK            AUPRC 0.3604 +/- 0.0083  (9.11x the 0.0396 base rate, 12 features)",
+  "    THE LADDER -- each rung adds one thing to the rung above it, and EVERY rung is put through the SAME gate",
+  "    (0.010 paired AUPRC in >= 4/5 partitions) as the one the question is about:",
+  "      distance only                                0.2786   (the floor)",
+  "      + accessibility                              0.3438   paired +0.0652  >= 0.010 in 5/5, positive in 5/5  CLEARS THE BAR",
+  "      + TF occupancy COUNT (no causality)          0.3524   paired +0.0086  >= 0.010 in 2/5, positive in 5/5  SUB-THRESHOLD",
+  "      + TF CAUSALITY weights                       0.3587   paired +0.0063  >= 0.010 in 2/5, positive in 4/5  SUB-THRESHOLD",
+  "      + gene responsiveness                        0.3594   paired +0.0007  >= 0.010 in 0/5, positive in 2/5  SUB-THRESHOLD",
+  "      [both TF rungs together] over dist+acc       0.3587   paired +0.0149  >= 0.010 in 4/5, positive in 5/5  CLEARS THE BAR",
+  "      [POST HOC] + within-gene RANK identity block 0.3628   paired +0.0041  >= 0.010 in 0/5, positive in 4/5  SUB-THRESHOLD",
+  "      [POST HOC] RANK block over dist+acc+count    0.3604   paired +0.0080  >= 0.010 in 3/5, positive in 4/5  SUB-THRESHOLD",
+  "    BEST BASELINE: dist+acc+TFoccupancy at 0.3524",
+  "    INCREMENT of FULL_dist+acc+TFcausality over it: +0.0063 AUPRC (>= 0.010 in 2/5 partitions)",
+  "    for contrast, over distance+accessibility alone: +0.0149 -- the gap between these two numbers IS the raw count of bound TFs, which needs no Perturb-seq at all",
+  "\n  4b CONTROL 7 -- THE SCREEN-IDENTITY PROBE. Six K562 screens, positive rates spanning 0.0123 to 0.1801 (a 15x spread), and element",
+  "     WIDTH -- which sits in the ACCESSIBILITY block -- differs by screen. A model can therefore buy AUPRC by naming the batch. Every",
+  "     rung is re-run with the screen one-hot already in the model; a rung that survives is about the element, one that does not is about the batch.",
+  "      SCREEN one-hot alone (no element, no distance) 0.0590   (1.49x the base rate)",
+  "      SCREEN label over distance                   0.3179   paired +0.0393  >= 0.010 in 5/5, positive in 5/5  CLEARS THE BAR",
+  "      accessibility over distance+SCREEN           0.3794   paired +0.0616  >= 0.010 in 5/5, positive in 5/5  CLEARS THE BAR",
+  "      TF COUNT over dist+SCREEN+acc                0.3744   paired -0.0050  >= 0.010 in 0/5, positive in 1/5  SUB-THRESHOLD",
+  "      TF CAUSALITY over dist+SCREEN+acc+count      0.3724   paired -0.0020  >= 0.010 in 1/5, positive in 2/5  SUB-THRESHOLD",
+  "\n  5  ELEMENT SWAP -- keep the gene, replace the element with a decile-matched decoy",
+  "    matching on DECILES, not quartiles: distance decile x accessibility (DHS percentile) decile; the degree-matched variant adds the n-TFs-bound decile",
+  "    SWAP A -- decoy matched on distance decile x accessibility decile",
+  "      residual imbalance (real - decoy): {'log10_dist': 0.0008, 'dhs_pct': -0.0004, 'n_tf_bound': -0.3898}   mean Mann-Whitney p per covariate: {'log10_dist': 0.947, 'dhs_pct': 0.964, 'n_tf_bound': 0.541}",
+  "      0 pairs per draw had no valid donor in their decile cell and kept their own element (they make the control CONSERVATIVE, not liberal)",
+  "      [PRESPEC decoy_distance  FULL_dist+acc+TFcausality] real 0.3587   swapped 0.2346 +/- 0.0106 (range 0.2148-0.2525);  real beats the decoy in 100% of 20 draws; the decoy reproduces 65% of the real AUPRC",
+  "      [PRESPEC decoy_distance  TFcausality_only] real 0.0959   swapped 0.0877 +/- 0.0045 (range 0.0804-0.0967);  real beats the decoy in 90% of 20 draws; the decoy reproduces 91% of the real AUPRC",
+  "      [POSTHOC real_distance   FULL_dist+acc+TFcausality] real 0.3587   swapped 0.3346 +/- 0.0097 (range 0.3168-0.3531);  real beats the decoy in 100% of 20 draws; the decoy reproduces 93% of the real AUPRC",
+  "      [POSTHOC real_distance   TFcausality_only] real 0.0959   swapped 0.0877 +/- 0.0045 (range 0.0804-0.0967);  real beats the decoy in 90% of 20 draws; the decoy reproduces 91% of the real AUPRC",
+  "    SWAP B -- decoy additionally matched on n-TFs-bound decile (DEGREE-MATCHED)",
+  "      residual imbalance (real - decoy): {'log10_dist': 0.002, 'dhs_pct': 0.0002, 'n_tf_bound': -0.0905}   mean Mann-Whitney p per covariate: {'log10_dist': 0.903, 'dhs_pct': 0.954, 'n_tf_bound': 0.892}",
+  "      265 pairs per draw had no valid donor in their decile cell and kept their own element (they make the control CONSERVATIVE, not liberal)",
+  "      [PRESPEC decoy_distance  FULL_dist+acc+TFcausality] real 0.3587   swapped 0.2560 +/- 0.0100 (range 0.2397-0.2789);  real beats the decoy in 100% of 20 draws; the decoy reproduces 71% of the real AUPRC",
+  "      [PRESPEC decoy_distance  TFcausality_only] real 0.0959   swapped 0.1036 +/- 0.0035 (range 0.0973-0.1118);  real beats the decoy in 0% of 20 draws; the decoy reproduces 108% of the real AUPRC",
+  "      [POSTHOC real_distance   FULL_dist+acc+TFcausality] real 0.3587   swapped 0.3589 +/- 0.0076 (range 0.3429-0.3812);  real beats the decoy in 45% of 20 draws; the decoy reproduces 100% of the real AUPRC",
+  "      [POSTHOC real_distance   TFcausality_only] real 0.0959   swapped 0.1036 +/- 0.0035 (range 0.0973-0.1118);  real beats the decoy in 0% of 20 draws; the decoy reproduces 108% of the real AUPRC",
+  "\n  5b CONTROL 6 -- TF-AXIS PERMUTATION. The element swap changes the ELEMENT, so it confounds 'which TFs' with everything",
+  "     else an element carries. This does not touch the element. It relabels the TF axis of the CAUSAL matrix while the measured",
+  "     OCCUPANCY matrix stays exactly as it is, so n_TFs_bound is preserved EXACTLY (not to a decile), the gene's whole z",
+  "     distribution over the 507 TFs is preserved EXACTLY (a permuted column is the same multiset), and the GENE block is",
+  "     bit-identical. The one thing destroyed is which TF's binding goes with which TF's causality. Models are NEVER refitted.",
+  "     DEGREE-STRATIFIED variant: 69 TF strata (binding-degree decile x causal-breadth decile), sizes 2-21. A TF that binds everywhere and moves everything",
+  "     can only be exchanged for another such TF, so the permutation cannot be beaten by TF-side degree -- the configuration model on the TF axis.",
+  "    PERMUTATION A -- free relabelling of the TF axis  (100% of TFs relabelled per draw)",
+  "      [FULL_dist+acc+TFcausality ] real 0.3587   TF-permuted 0.3549 +/- 0.0068 (range 0.3407-0.3661);  real beats the permutation in 60% of 20 draws; the permutation reproduces 99%",
+  "      [TFcausality_only          ] real 0.0959   TF-permuted 0.0870 +/- 0.0053 (range 0.0783-0.0991);  real beats the permutation in 95% of 20 draws; the permutation reproduces 91%",
+  "      [FULL+RANK                 ] real 0.3628   TF-permuted 0.3561 +/- 0.0073 (range 0.3424-0.3688);  real beats the permutation in 80% of 20 draws; the permutation reproduces 98%",
+  "      [TFcausality+RANK_only     ] real 0.0978   TF-permuted 0.0864 +/- 0.0054 (range 0.0781-0.0970);  real beats the permutation in 100% of 20 draws; the permutation reproduces 88%",
+  "    PERMUTATION B -- DEGREE-STRATIFIED relabelling (configuration model on the TF axis)  (86% of TFs relabelled per draw)",
+  "      [FULL_dist+acc+TFcausality ] real 0.3587   TF-permuted 0.3606 +/- 0.0059 (range 0.3487-0.3696);  real beats the permutation in 45% of 20 draws; the permutation reproduces 101%",
+  "      [TFcausality_only          ] real 0.0959   TF-permuted 0.1008 +/- 0.0046 (range 0.0929-0.1116);  real beats the permutation in 20% of 20 draws; the permutation reproduces 105%",
+  "      [FULL+RANK                 ] real 0.3628   TF-permuted 0.3604 +/- 0.0050 (range 0.3509-0.3703);  real beats the permutation in 80% of 20 draws; the permutation reproduces 99%",
+  "      [TFcausality+RANK_only     ] real 0.0978   TF-permuted 0.1006 +/- 0.0042 (range 0.0928-0.1079);  real beats the permutation in 25% of 20 draws; the permutation reproduces 103%",
+  "\n  6  READING THE THREE THINGS TOGETHER",
+  "    (i)   increment >= 0.010 in >= 4/5 partitions: FAIL  (+0.0063, 2/5)",
+  "    (ii)  beats the distance x accessibility swap in >= 90% of draws: PASS  (100%)",
+  "    (iii) beats the DEGREE-matched swap in >= 90% of draws: PASS  (100%)",
+  "    gates (ii) and (iii) are PRESPECIFIED and both pass on the full model, but they are LENIENT and saying so is part of",
+  "    the result: a decile-matched decoy carries the decile of the real distance, not the real distance, so any arm with a",
+  "    distance feature loses AUPRC under the swap for a reason that is not about the element. The two sharper readings:",
+  "      element-only swap (real distance kept), FULL model: real 0.3587 vs decoy 0.3346 (93% reproduced, real wins 100%); degree-matched 0.3589 (100%, real wins 45%)",
+  "      TF-causality-only arm (no distance feature at all), DEGREE-matched decoy: real 0.0959 vs decoy 0.1036 (108% reproduced, real wins 0% of 20 draws)",
+  "    consistency check: the TF-causality-only arm has no distance feature, so its decoy-distance and real-distance swaps must be identical -- 0.103644 vs 0.103644 (OK)",
+  "\n    descriptive cross-check: TFs bound AND causal at the element, positives vs matched negatives",
+  "      matched on dist x acc deciles ONLY           positives 1.70 vs matched negatives 1.31 (1.30x), p<0.05 in 100% of 20 draws (median p 0.00169)  holds",
+  "      DEGREE-MATCHED (+ n-TFs-bound decile)        positives 1.71 vs matched negatives 1.42 (1.20x), p<0.05 in 60% of 20 draws (median p 0.0275)  DOES NOT HOLD at the 90% bar",
+  "      for contrast: n TFs BOUND, dist x acc only   positives 102.49 vs matched negatives 88.80 (1.15x), p<0.05 in 100% of 20 draws (median p 0.00218)  holds",
+  "      raw, unmatched: positives sit at elements carrying 102 bound TFs against 53 for negatives (1.92x) -- which is why the degree-matched row above is the one that counts",
+  "\n========================================================================================================",
+  "VERDICT: NEITHER WHICH TFs NOR HOW MANY -- TF CAUSALITY IS NOT DETECTED OVER AN OCCUPANCY-COUNT BASELINE, AND THE OCCUPANCY COUNT DOES NOT CLEAR THE SAME BAR EITHER. Of the four rungs of the ladder only ACCESSIBILITY clears the threshold this module fixed before seeing any number, and the element's TF set -- counted or weighted by causality -- is sub-threshold both ways. On 11,545 powered distal K562 CRISPR pairs at a 0.0396 positive base rate (457 positives), chromosome-held-out AUPRC is 0.2786 for distance alone (7.0x the base rate), 0.0829 for accessibility alone, 0.0744 for gene responsiveness with no element information at all, 0.3438 for distance + accessibility, 0.3524 once the raw COUNT of the 507 profiled TFs bound at the element is added, and 0.3587 once those TFs are WEIGHTED by their Perturb-seq causality for the gene. One nuisance has to be named before any of that is read as chromatin: the K562 arm is 6 screens whose positive rates run 0.0123 to 0.1801, and the screen one-hot ALONE, with no element and no distance, reaches 0.0590 (1.5x the base rate). Told which screen a pair came from, accessibility still adds +0.0616 (5/5 partitions at the bar) against +0.0652 when it is not, so the accessibility rung is not explained by batch. Read as a ladder: accessibility adds +0.0652 to distance, the raw number of bound TFs adds a further +0.0086, and weighting those TFs by whether their knockdown actually moves the gene adds only +0.0063 on top -- below the prespecified 0.010 bar and clearing it in 2/5 chromosome partitions. Against the two baselines the question named, TF causality does add (+0.0149 over distance+accessibility, +0.0801 over distance alone), but 58% of that increment is bought by counting TFs, which needs no Perturb-seq. The DEGREE-MATCHED element swap says the same thing in the sharpest form available here: on the TF-causality-only arm, which has no distance feature to lose, a decoy element carrying the same NUMBER of bound TFs but a DIFFERENT TF SET scores 0.1036 against the real element's 0.0959 -- 108% of it, with the real element winning 0% of 20 draws -- and the decoy landing slightly ABOVE the real element is NOT read as a reversal; it is what no pair-specific signal looks like, the real TF-identity features being replaced by a smoother draw from the same distribution. THE CLEANER IDENTITY TEST AGREES AND IS THE ONE TO QUOTE, because it never touches the element at all: relabelling the TF axis of the causal matrix -- which holds the element, the gene, the EXACT number of bound TFs and the gene's EXACT z distribution over all 507 TFs fixed, and destroys only which TF's binding goes with which TF's causality -- leaves the TF-causality-only arm at 0.1008 against the real 0.0959 (105% reproduced, real wins 20% of 20 draws) and the full model at 0.3606 against 0.3587 (101%, real wins 45%), under a DEGREE-STRATIFIED permutation in which a TF can only be exchanged for one of similar binding degree and similar causal breadth. AND THE CONTRAST BETWEEN THE TWO PERMUTATIONS IS THE MOST INSTRUCTIVE NUMBER IN THE MODULE, so it leads rather than sits in a footnote: a FREE relabelling of the TF axis IS beaten by the real data -- the TF-causality-only arm scores 0.0959 against a freely permuted 0.0870, winning 95% of 20 draws, and the post hoc rank arm wins 100% -- so a module that had run only the uniform control would have reported TF IDENTITY AS A REAL EFFECT. The whole of that apparent effect is TF-side DEGREE: how many elements a TF binds and how many genes its knockdown moves. Hold those two deciles fixed and the real assignment of causality to occupancy loses its entire advantage (20% and 25% of draws). That is the finding, not a caveat: promiscuous TFs sit on many elements and move many genes, and that alone reproduces everything the causal weighting appeared to contribute. AND THE COUNT DOES NOT ESCAPE THE SAME BAR. Applying the module's own gate to every rung rather than only to the rung under test: accessibility over distance clears it (+0.0652 paired, 5/5), but the TF COUNT rung does NOT (+0.0086, 2/5) and neither does the TF CAUSALITY rung (+0.0063, 2/5). So the honest reading is not 'identity fails, count works': BOTH TF rungs are sub-threshold, the count differing only in being consistent in sign (5/5 partitions positive against 4/5). AND THE COUNT DOES NOT SURVIVE BEING TOLD WHICH SCREEN THE PAIR CAME FROM: with the screen one-hot already in the model the TF COUNT rung is -0.0050 and positive in only 1/5 partitions, and the TF CAUSALITY rung on top of it -0.0020 in 2/5 -- both NOT DETECTED, and neither is called reversed, because a negative point estimate that no partition supports is an absence of signal and not evidence of the opposite. The screens differ in element geometry (median width 393-884 bp) and by 15x in hit rate, and a wider element carries more ChIP peaks, so the TF count was partly reading the assay. ACCESSIBILITY IS THE ONLY RUNG LEFT STANDING: it clears the bar both naively (+0.0652, 5/5) and with the screen held (+0.0616, 5/5). WHICH transcription factors sit on a distal element, weighted by their causal effect on the gene, is not shown here to matter; and HOW MANY sit on it, which an earlier version of this module credited with the finding, does not clear the bar either and does not survive the screen. The prespecified swap gates (ii) and (iii) both pass on the full model (100% and 100%), but they are lenient by construction -- a decile-matched decoy carries the decile of the distance and not the distance, and the full model has a distance feature to lose. Hold the real distance and swap only the element, and the same degree-matched decoys reproduce 100% of the full model's AUPRC (0.3589 against 0.3587), with the real element winning 45% of 20 draws -- a coin flip. THE DESCRIPTIVE CROSS-CHECK GOES THE SAME WAY ONCE IT IS DEGREE-MATCHED, and this replaces what an earlier version of this module called the one real thing that survived: matched on distance x accessibility deciles only, positives carry 1.70 bound-and-causal TFs against 1.31 (1.30x, p<0.05 in 100% of 20 draws) -- but positives sit at elements carrying 102 bound TFs against 53 for negatives, so that comparison was matched on everything EXCEPT the covariate this module says does the work. Add the n-TFs-bound decile and it falls to 1.71 against 1.42 (1.20x) with p<0.05 in only 60% of 20 draws, short of the 90% bar the module uses for every other matched control. NOTHING IS LEFT STANDING ON THE HEADLINE QUESTION -- not the predictive increment, not the element swap, not the TF-axis permutation, and not the descriptive association once it is matched on TF count. This is a null and the project commits it. The POST HOC detectability probe is reported so the null is not read as stronger than it is: a second, gene-scale-free identity block built from WITHIN-GENE RANKS of |z| moves the full model to 0.3628 (+0.0041 paired, 0/5 partitions at the bar), which is still sub-threshold but says the aggregation choice is not the whole story, and it too is erased by the degree-stratified TF permutation (99% reproduced, real wins 80%).",
+  "========================================================================================================"
+ ]
+}

@@ -1,0 +1,50 @@
+{
+ "n": 808,
+ "orthogonality_pearson": 0.146,
+ "n_breakers": 161,
+ "intrinsic_miss_rate": 0.944,
+ "auc_intrinsic_only": 0.562,
+ "auc_nexus_dualsensor": 0.755,
+ "fusion_gain": 0.193,
+ "fba_demo": {
+  "reaction": "MAR05141",
+  "cases": [
+   {
+    "case": "healthy",
+    "ddg_fold": 0.0,
+    "ddg_bind": 0.0,
+    "activity": 1.0,
+    "biomass_frac": 1.0
+   },
+   {
+    "case": "mild both",
+    "ddg_fold": 1.5,
+    "ddg_bind": 1.5,
+    "activity": 1.0,
+    "biomass_frac": 1.0
+   },
+   {
+    "case": "interface break",
+    "ddg_fold": 0.2,
+    "ddg_bind": 6.0,
+    "activity": 0.992,
+    "biomass_frac": 1.0
+   },
+   {
+    "case": "fold break",
+    "ddg_fold": 6.0,
+    "ddg_bind": 0.2,
+    "activity": 0.835,
+    "biomass_frac": 1.0
+   },
+   {
+    "case": "severe both (catastrophic)",
+    "ddg_fold": 9.0,
+    "ddg_bind": 9.0,
+    "activity": 0.019,
+    "biomass_frac": 0.037
+   }
+  ]
+ },
+ "verdict": "NEXUS wires the two orthogonal failure modes into one graded enzyme-health node with the three refinements. REFINEMENT #1 (soft AND): activity = folded_fraction(\u0394\u0394G_fold) * bound_fraction(\u0394\u0394G_bind), a product of two two-state equilibrium fractions in [0,1] \u2014 graded, not Boolean, so partial damage gives partial activity. REFINEMENT #2 (loss only): bound_fraction never rewards a mutation; no neomorphic-gain claim. REFINEMENT #3 (validate, don't assume) is the honest core, and it holds on MEASURED, NON-CIRCULAR data: on 808 SKEMPI interface mutations the two sensors are ORTHOGONAL \u2014 Pearson(predicted \u0394\u0394G_fold, measured \u0394\u0394G_bind) = 0.15 \u2014 so a stability-only node is BLIND to interface failures, missing 94% of the strong measured binding-breakers. Complex-held-out, classifying a real interface failure from the intrinsic sensor ALONE is near-chance (AUC 0.56); adding the EXTRINSIC sensor (flex_physics interface features) lifts it to 0.75 (+0.19) \u2014 the second sensor is what catches the failure the first is blind to, which is the whole 'you need both' thesis, measured and non-circular. HONEST BOUNDARY: the two SENSORS live in near-field STRUCTURE (the recoverable regime \u2014 that is why they work), and the soft-AND is clean logic; but the last link, activity -> FBA -> whole-cell phenotype, is the FAR-FIELD step this project repeatedly finds does NOT compose. The FBA demo makes that visible honestly: the two-state fractions SATURATE (a single mutation rarely fully unfolds a protein) and metabolic EXCESS CAPACITY buffers moderate loss, so only near-catastrophic damage moves flux \u2014 real physics, not a bug. So the metabolic step is a DEMONSTRATION of the wiring, NOT a validated phenotype predictor (that needs testing against measured IEM/essentiality). Net: the dual-sensor node is real and the orthogonality that makes it necessary is measured and non-circular; the structural half is trustworthy, the phenotype half is the honest open edge \u2014 exactly the structure-vs-dynamics split the whole project keeps landing on."
+}

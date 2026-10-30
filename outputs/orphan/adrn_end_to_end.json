@@ -1,0 +1,28 @@
+{
+ "test": "adrn_end_to_end",
+ "vocab": 6089,
+ "dim": 128,
+ "n_train": 4720,
+ "log": [
+  "========================================================================================================",
+  "END-TO-END LEARNED MODEL ON THE SEALED KNOCKOUT PROTOCOL",
+  "========================================================================================================",
+  "  No hand-picked channels, no hand-cut buckets, no hand-designed conjunctions.",
+  "  PREDECLARED: a learned model earns the headline only if it beats chan2a on BOTH cohorts.",
+  "  un-curated vocabulary: 6,089 terms occurring >= 3 times (no top-N cut, no curation)",
+  "  mean terms per gene 24.4; genes with none 334",
+  "\n  training pool 4,720; NMF basis on training only ...",
+  "\n  training (dim 128, early stopping on 10% of training knockouts)",
+  "    e2e_full   stopped at epoch 33, validation MSE 0.006742",
+  "    e2e_nmf    stopped at epoch 30, validation MSE 0.003621",
+  "  named channels: 170 kept of 170 built (120 pathways, 12 compartments, 9 lesion classes, rest structural); mean channels per gene 14.9",
+  "  extra channels: 535 kept of 691 built  (TIER A 526, TIER B 9); 250 GO, 120 complexes, 120 pfam, 120 domains",
+  "  trees: 60 gradient-boosted regressors on 696 channels ...",
+  "  cohort1   e2e_full   -> ko_predictions_e2e_full.json",
+  "  cohort1   e2e_nmf    -> ko_predictions_e2e_nmf.json",
+  "  cohort1   trees      -> ko_predictions_trees.json",
+  "  _holdout  e2e_full   -> ko_predictions_e2e_full_holdout.json",
+  "  _holdout  e2e_nmf    -> ko_predictions_e2e_nmf_holdout.json",
+  "  _holdout  trees      -> ko_predictions_trees_holdout.json"
+ ]
+}

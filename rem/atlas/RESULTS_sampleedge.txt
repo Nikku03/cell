@@ -1,0 +1,93 @@
+=================================================================================================
+IS THE SAMPLE-EFFICIENCY EDGE REAL, AND IS IT THE CHANNEL DYNAMICS?
+=================================================================================================
+  channel tree          37,537 parameters
+  weighted tanh tree    36,857 parameters
+  MLP deep              37,933 parameters
+  MLP shallow           37,531 parameters
+
+=================================================================================================
+S1  THE ISOLATING CONTROL (BLOCKING)
+=================================================================================================
+  gradient check worst relative error   1.71e-08   (bar 1e-5)
+  max |f(-x) + f(x)| with biases set    9.50e-01   (must be > 0)
+  parameter gap to channel tree         1.8%     (bar 2%)
+
+  S1: PASS
+
+  S2 harness, shallow MLP at k=2: 1.000 (bar 0.99)  -> PASS
+
+=================================================================================================
+FRESH-SEED SWEEP: k = 12, seeds 10-14 (limits.py used 0-2), n = 1500..4000
+=================================================================================================
+  mean test accuracy over 5 seeds [min - max]
+        n              channel tree       weighted tanh tree                 MLP deep              MLP shallow
+     1500        0.605 [0.49-0.69]       0.539 [0.50-0.57]       0.512 [0.49-0.53]       0.484 [0.48-0.49]
+     2000        0.665 [0.51-0.76]       0.583 [0.54-0.62]       0.627 [0.51-0.84]       0.518 [0.49-0.54]
+     2500        0.879 [0.80-0.93]       0.671 [0.64-0.72]       0.726 [0.63-0.88]       0.580 [0.56-0.59]
+     3000        0.898 [0.85-0.94]       0.749 [0.65-0.85]       0.786 [0.59-0.96]       0.632 [0.58-0.71]
+     3500        0.920 [0.86-0.98]       0.827 [0.74-0.90]       0.837 [0.69-0.93]       0.714 [0.69-0.73]
+     4000        0.979 [0.95-1.00]       0.906 [0.86-0.94]       0.944 [0.89-0.98]       0.768 [0.71-0.83]
+
+  SAMPLE LIMIT (smallest n with mean test >= 0.90):
+    channel tree         3500
+    weighted tanh tree   4000
+    MLP deep             4000
+    MLP shallow          none
+
+=================================================================================================
+S0  DOES THE EXPLORATORY SIGNAL REPLICATE?
+=================================================================================================
+  vs MLP deep       limit strictly better: True   paired wins/losses 21/9  sign p = 2.14e-02  -> beats it
+  vs MLP shallow    limit strictly better: True   paired wins/losses 28/2  sign p = 4.34e-07  -> beats it
+
+  S0: REPLICATED -- the channel tree is more sample-efficient than both MLPs on fresh seeds
+
+=================================================================================================
+S3  IS IT THE CHANNEL DYNAMICS? (vs the structurally identical tanh tree)
+=================================================================================================
+  vs weighted tanh tree   limit strictly better: True   paired wins/losses 26/4  sign p = 2.97e-05
+
+  S3: THE CHANNEL DYNAMICS CONTRIBUTE -- with everything else identical, the gated
+  conductance beats tanh on both criteria.
+
+=================================================================================================
+S4  THRESHOLD-FREE: MEAN TEST ACCURACY OVER THE WHOLE n GRID
+=================================================================================================
+    channel tree         0.824 +/- 0.027
+    weighted tanh tree   0.712 +/- 0.015
+    MLP deep             0.739 +/- 0.047
+    MLP shallow          0.616 +/- 0.011
+
+  failing runs 97: perfect train fit in 96, could not fit in 1
+
+  artifact: outputs/sampleedge.json (120 runs)
+
+=================================================================================================
+S5  WHAT THIS IS AND IS NOT
+=================================================================================================
+  1. Parity at k = 12 over 16 inputs. Sample efficiency on parity is not reasoning, and does
+     not transfer to ARC by itself.
+  2. Fixed 10,000-step budget, identical early stopping for all.
+  3. One tree shape (branching 4, depth 4, from Blue Brain morphology).
+  4. Five seeds per cell. The sign test pools n and seed and treats pairs as independent;
+     cells at the same seed share a parity subset, so p is somewhat optimistic.
+
+  runtime 254s
+
+=================================================================================================
+POST-RUN: THE CONSERVATIVE RE-ANALYSIS S5(4) CALLED FOR -- CLUSTERED BY SEED
+=================================================================================================
+  The pooled sign test treats every (n, seed) cell as independent, but cells at one seed share a
+  parity subset. Treating each SEED as one unit (mean test accuracy over the n grid):
+     seed   channel   wtanh   mlpdeep   mlp
+       10    0.821    0.714    0.650   0.604
+       11    0.846    0.735    0.767   0.634
+       12    0.838    0.690    0.739   0.622
+       13    0.772    0.707    0.787   0.608     <- deep MLP beats the channel tree on this seed
+       14    0.844    0.716    0.752   0.613
+  vs weighted tanh  5/5 seeds, sign p = 0.031, paired t = 8.17   ROBUST
+  vs MLP shallow    5/5 seeds, sign p = 0.031, paired t = 18.08  ROBUST
+  vs MLP deep       4/5 seeds, sign p = 0.188, paired t = 2.89   NOT ESTABLISHED
+  And a budget confound on that last comparison: the deep MLP ended 5 of 30 runs at the
+  10,000-step cap WITHOUT fitting its training set; the channel tree never exceeded 1,000 steps.

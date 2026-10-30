@@ -1,0 +1,70 @@
+========================================================================================================
+LOOP 261 -- CAN THE PER-LINE SCALE VECTOR s_c BE PREDICTED FROM ANNOTATION?
+========================================================================================================
+     Loop 259's branches collapsed: for a FIXED line, B1, B2 and B4 are all s_c * xg,
+     and their oracles matched to four decimals (0.4762 both). One 978-vector per line
+     is the whole target. Oracle s_c is worth +0.0247; every out-of-sample attempt so
+     far has taken 0.0000 of it (B1 +0.0001, B4 -0.0003, B3 -0.0152, loop 258 -0.0001).
+     DECLARED FIRST: if the s_c share a common component, a CONSTANT predictor using no
+     annotation transfers and buys the headroom. M4 is scored against that, not the
+     baseline, because the shared part is not something annotation earned.
+     33,197 (gene, line) pairs, 3,801 genes, 978 landmarks, 9 cell lines
+     annotation z_c: 101 dims per line (50 expression PCs + 50 dependency PCs + mutation burden)
+     lambda chosen per fold: 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1
+
+     baseline                           0.4515
+     + ORACLE s_c (cheating)            0.4762   +0.0247
+     + constant s (no annotation)       0.4516   +0.0001
+     + ridge from z_c                   0.4507   -0.0008
+     + ridge, line labels shuffled      0.4497   -0.0017
+M1 DOES THE ORACLE REPRODUCE +0.0247?
+     oracle s_c fitted on the held-out line's own answers: +0.0247 against the +0.0247 already measured
+     M1 PASS -- reproduces to 0.0000; there is +0.0247 of headroom and the target is correctly extracted
+M2 IS s_c ITSELF RELIABLE, OR IS IT NOISE?
+     split-half over GENES within each line, correlation of the two s_c estimates:
+     0.957, 0.960, 0.935, 0.952, 0.958, 0.960, 0.958, 0.956, 0.932
+     mean 0.9518
+     M2 PASS -- s_c reproduces at 0.952 from disjoint halves of its own line, so it is a real quantity and worth trying to predict
+M3 DOES A CONSTANT, ANNOTATION-FREE SCALE ALREADY TRANSFER?
+     mean of the 8 training lines' s_c, applied to the held-out line: +0.0001
+     this uses NO annotation and no line-specific information at all
+     M3 FAIL -- a shared scale is worth +0.0001; there is no transferable common component, so the whole +0.0247 is line-specific
+M4 LOAD-BEARING -- DOES ANNOTATION PREDICT THE LINE-SPECIFIC PART?
+     ridge from z_c 0.4507 vs constant predictor 0.4516   -0.0009
+     scored against the CONSTANT, not the baseline: the shared component is not
+     something the annotation earned, and crediting it there would be double-counting
+     M4 FAIL -- annotation is worth -0.0009 beyond a constant scale; z_c does not predict which line gets which scaling
+M5 PERMUTED CONTROL
+     M5 VOID -- M4 did not pass, so there is nothing here to test
+M6 HOW MUCH OF THE HEADROOM IS RECOVERED?
+     best out-of-sample arm +0.0001 of the oracle's +0.0247 = 0.4%
+     M6 FAIL -- only 0.4% of the +0.0247 headroom is recovered; the scale exists and remains unpredictable
+M7 HOW WELL IS s_c PREDICTED AS A VECTOR?
+     leave-one-line-out correlation between predicted and true s_c:
+       ridge from z_c      +0.0549
+       constant predictor  +0.1617
+     split-half reliability of s_c itself was 0.9518, which is the ceiling both
+     of these live under. Reported, not gated.
+M8 WHAT THIS CANNOT SHOW
+     Nine cell lines. The ridge fits 101 annotation dims from EIGHT training lines, so
+     it is underdetermined by construction and lambda is doing most of the work; the
+     inner leave-one-line-out picks it honestly but cannot manufacture degrees of
+     freedom. A FAIL here does not prove annotation is uninformative in general -- it
+     proves it is not learnable from eight examples in this form.
+     s_c is a DIAGONAL scaling. It is the exact object loop 259's branches spanned, but
+     it cannot express a rotation, and a genuinely off-diagonal interaction would be
+     invisible to every number here.
+     s_c* for the held-out line is fitted on that line's own residual, so the oracle
+     is an upper bound that no honest model can reach, not a target to aim at.
+     978 landmarks and shRNA, not a transcriptome and not a clean knockout, and every
+     number lives under loop 254's construct ceiling.
+========================================================================================================
+  M1  PASS
+  M2  PASS
+  M3  FAIL
+  M4  FAIL
+  M5  VOID
+  M6  FAIL
+  2/5   [72s]   (1 VOID: M5)
+========================================================================================================
+     written outputs/loop_scale_probe.json

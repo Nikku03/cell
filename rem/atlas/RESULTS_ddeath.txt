@@ -1,0 +1,204 @@
+=================================================================================================
+PHYSIOLOGY PLUS ONE MEASURED RATE  --  DOES THE GAP CLOSE?
+=================================================================================================
+  chemistry error 1.0 kcal/mol, sigma = 0.7330 orders per rate
+  true physiology: net growth 0.6180 /h, log-kill -0.1747, plateau -0.1438, outgrowth at 12 h +2.0336
+
+=================================================================================================
+D1  THE MACHINERY IS EXACT
+=================================================================================================
+  (a) outgrowth against an independent matrix exponential, 40 random rate vectors:
+      worst 4.57e-12   PASS (bar 1e-10)
+  (b) true rate vector satisfies its own observables: 0.00e+00   PASS (bar 1e-10)
+  (c) vectorised aggregates against the scalar path: 5.55e-17   PASS (bar 1e-12)
+
+=================================================================================================
+THE LINEAR PROJECTION THIS TEST IS CHECKING
+=================================================================================================
+  Jacobian rank 4 of 4, ||g|| 2.9063, ||g_null|| 0.9439
+  (constrain_rank R5 recorded 0.9462 under its grid-snapped lag)
+     rate held   free component   reduction   predicted spread
+       d_death           0.0682      0.8757             0.0500
+        k_kill           0.9403      0.0036             0.6893
+          a_on           0.9404      0.0035             0.6893
+       kd_kill           0.9415      0.0024             0.6901
+          b_on           0.9432      0.0007             0.6914
+         a_off           0.9438      0.0001             0.6918
+            mu           0.9438      0.0001             0.6918
+         b_off           0.9439      0.0000             0.6919
+
+=================================================================================================
+THE TOLERANCE SCALE
+=================================================================================================
+  tau is a fraction of each observable's own spread under the chemistry prior, so no
+  instrument precision is invented. Prior spreads:
+     growth rate  16.49
+        log-kill  0.5243
+         plateau  0.4604
+       outgrowth  40.74
+    ran g0=6 A tau=0.05: acceptance 0.265, adapted step scale 8.967e-01, 1500 evaluated
+    ran g0=6 A tau=0.01: acceptance 0.251, adapted step scale 5.587e-01, 1500 evaluated
+    ran g0=6 A tau=0.001: acceptance 0.222, adapted step scale 1.413e-01, 1500 evaluated
+    ran g0=6 A tau=0.0001: acceptance 0.206, adapted step scale 5.913e-02, 1500 evaluated
+    ran g0=6 B tau=0.05: acceptance 0.250, adapted step scale 9.589e-01, 1500 evaluated
+    ran g0=6 B tau=0.01: acceptance 0.269, adapted step scale 5.080e-01, 1500 evaluated
+    ran g0=6 B tau=0.001: acceptance 0.251, adapted step scale 1.063e-01, 1500 evaluated
+    ran g0=6 B tau=0.0001: acceptance 0.216, adapted step scale 6.323e-02, 1500 evaluated
+    ran g0=6 C tau=0.05: acceptance 0.246, adapted step scale 9.901e-01, 1500 evaluated
+    ran g0=6 C tau=0.01: acceptance 0.252, adapted step scale 6.472e-01, 1500 evaluated
+    ran g0=6 C tau=0.001: acceptance 0.241, adapted step scale 1.477e-01, 1500 evaluated
+    ran g0=6 C tau=0.0001: acceptance 0.250, adapted step scale 7.127e-02, 1500 evaluated
+    ran g0=6 D tau=None: acceptance 0.252, adapted step scale 1.084e+00, 1500 evaluated
+    ran g0=8 A tau=0.01: acceptance 0.251, adapted step scale 5.587e-01, 1500 evaluated
+    ran g0=8 B tau=0.01: acceptance 0.269, adapted step scale 5.080e-01, 1500 evaluated
+    ran g0=8 C tau=0.01: acceptance 0.252, adapted step scale 6.472e-01, 1500 evaluated
+    ran g0=8 D tau=None: acceptance 0.252, adapted step scale 1.084e+00, 1500 evaluated
+
+=================================================================================================
+D10  TWO METHODS THAT SHARE NO MACHINERY MUST AGREE
+=================================================================================================
+  at tau_scale = 0.05, importance weighting has ESS 8815 on 300000 draws
+  importance weighted : sd 0.6804, within x2 0.3460, within x10 0.8513
+  Metropolis          : sd 0.6938, within x2 0.3573, within x10 0.8413
+  relative disagreement 0.0197   PASS -- the sampler may be trusted at tight tolerances (bar 30%)
+
+=================================================================================================
+D11  THE SAMPLER IS MIXING
+=================================================================================================
+  chains start dispersed from the prior, not at the truth, so this is a real test
+                       arm / tau  acceptance   step scale   across-chain sd  relative
+                      A tau=0.05       0.265    8.967e-01            0.0487    0.0703
+                      A tau=0.01       0.251    5.587e-01            0.0535    0.0830
+                     A tau=0.001       0.222    1.413e-01            0.0834    0.1337
+                    A tau=0.0001       0.206    5.913e-02            0.1236    0.3135
+                      B tau=0.05       0.250    9.589e-01            0.0193    0.0574
+                      B tau=0.01       0.269    5.080e-01            0.0103    0.0842
+                     B tau=0.001       0.251    1.063e-01            0.0036    0.1748
+                    B tau=0.0001       0.216    6.323e-02            0.0006    0.1381
+                      C tau=0.05       0.246    9.901e-01            0.0430    0.0702
+                      C tau=0.01       0.252    6.472e-01            0.0339    0.0542
+                     C tau=0.001       0.241    1.477e-01            0.0673    0.1041
+                    C tau=0.0001       0.250    7.127e-02            0.0530    0.1624
+                      D tau=None       0.252    1.084e+00            0.0779    0.0539
+  worst relative across-chain spread in arm B: 0.1748   FAIL -- chains have not converged (bar 0.10)
+
+=================================================================================================
+THE ARMS  --  g0 = 6, Y_true = 1.723690e-02
+=================================================================================================
+                                 arm  predicted       sd      p05      p95    range  within x2  within x10
+        A physiology alone  tau=0.05     0.7964   0.6938  -0.9254   1.5162   3.4234     0.3573      0.8413
+        A physiology alone  tau=0.01     0.6995   0.6443  -0.5620   1.5668   2.5956     0.4393      0.8420
+       A physiology alone  tau=0.001     0.6920   0.6235  -0.4453   1.5211   2.2883     0.3873      0.8340
+      A physiology alone  tau=0.0001     0.6919   0.3942  -0.4627   0.7018   1.5956     0.4227      0.9947
+    B physiology + d_death  tau=0.05     0.3956   0.3365  -0.5718   0.5367   2.3534     0.6193      0.9980
+    B physiology + d_death  tau=0.01     0.1101   0.1221  -0.2421   0.1587   0.8882     0.9780      1.0000
+   B physiology + d_death  tau=0.001     0.0510   0.0208  -0.0208   0.0470   0.1342     1.0000      1.0000
+  B physiology + d_death  tau=0.0001     0.0500   0.0046  -0.0059   0.0089   0.0244     1.0000      1.0000
+    C physiology + kd_kill  tau=0.05     0.7113   0.6122  -0.6181   1.4326   3.0412     0.4200      0.8800
+    C physiology + kd_kill  tau=0.01     0.6946   0.6251  -0.4888   1.5554   2.4559     0.4347      0.8593
+   C physiology + kd_kill  tau=0.001     0.6902   0.6468  -0.4336   1.5726   2.2728     0.3793      0.8067
+  C physiology + kd_kill  tau=0.0001     0.6901   0.3264  -0.4349   0.6032   1.4740     0.5820      1.0000
+      D d_death alone, no physiology         --   1.4447  -2.4214   1.7452   9.4359     0.1133      0.3853
+
+=================================================================================================
+THE ARMS  --  g0 = 8, Y_true = 4.475797e-03
+=================================================================================================
+                                 arm  predicted       sd      p05      p95    range  within x2  within x10
+        A physiology alone  tau=0.01     0.6995   0.8595  -0.7504   2.0884   3.4553     0.3473      0.7787
+    B physiology + d_death  tau=0.01     0.1101   0.1613  -0.3105   0.2142   1.1900     0.9333      1.0000
+    C physiology + kd_kill  tau=0.01     0.6946   0.8335  -0.6509   2.0752   3.2714     0.3167      0.8120
+      D d_death alone, no physiology         --   1.9224  -3.2244   2.3247  12.5794     0.0893      0.2840
+
+=================================================================================================
+D3  IT REPRODUCES WHAT IT EXTENDS
+=================================================================================================
+  arm A sd 0.6443 against constrain_rank R4's 0.5984: relative 0.0768   PASS (bar 30%)
+  arm A within x2 0.4393 (R4 0.4890), within x10 0.8420 (R4 0.8767)
+  NOTE: R4 used manifold projection, which the third correction shows yields a SELECTED
+  sample. Agreement is reassuring; disagreement would favour this estimate, not R4's.
+
+=================================================================================================
+D4  THE DELIVERABLE
+=================================================================================================
+  at tau_scale = 0.01, i.e. physiology known to a thousandth of its natural spread:
+  physiology alone     : sd 0.6443, within x2 0.4393, within x10 0.8420
+  physiology + d_death : sd 0.1221, within x2 0.9780, within x10 1.0000
+  the one measurement buys +0.5387 on x2 and +0.1580 on x10, and shrinks the spread by a factor of 5.28
+
+=================================================================================================
+D5  THE PREDICTION IS TESTED
+=================================================================================================
+  the Gaussian posterior predicts sqrt(g' Sigma g) = 0.1101 orders, whose tau -> 0
+  limit is sigma * ||g_null|| = 0.0500 -- the constrain_rank projection
+  measured 0.1221 orders, relative disagreement 0.1088
+  PASS -- the linear projection is confirmed as an experiment-design tool, and the
+  table above can be used to decide which measurement to buy.
+
+=================================================================================================
+D6  THE MATCHED CONTROL
+=================================================================================================
+  projected free components: d_death 0.0682, kd_kill 0.9415, baseline 0.9439
+  measured at tau_scale 0.01: d_death sd 0.1221, kd_kill sd 0.6251, ratio 5.12x
+  PASS -- the ranking is informative (bar 3x)
+
+=================================================================================================
+D7  IS IT THE RATE OR THE COMBINATION?
+=================================================================================================
+  d_death alone, no physiology : sd 1.4447, within x2 0.1133, within x10 0.3853
+  hybrid.py greedy at m = 1    : within x2 0.1050, within x10 0.4817
+  physiology alone             : within x2 0.4393, within x10 0.8420
+  physiology + d_death         : within x2 0.9780, within x10 1.0000
+
+=================================================================================================
+D8  HAS THE TOLERANCE LIMIT BEEN REACHED?
+=================================================================================================
+                         arm    tau=0.05    tau=0.01   tau=0.001  tau=0.0001
+          A physiology alone      0.6938      0.6443      0.6235      0.3942
+      B physiology + d_death      0.3365      0.1221      0.0208      0.0046
+      C physiology + kd_kill      0.6122      0.6251      0.6468      0.3264
+             analytic, arm A      0.7964      0.6995      0.6920      0.6919
+             analytic, arm B      0.3956      0.1101      0.0510      0.0500
+  A measured spread BELOW its own analytic value is not physics; it is a chain that has
+  not moved. The previous run failed exactly that way and its numbers are recorded as void.
+  arm B change between the two tightest tolerances: 0.7772   FAIL -- report as an upper bound, not the posterior (bar 30%)
+
+=================================================================================================
+D9  DOMAIN  --  the rarer question
+=================================================================================================
+                                            sd   within x2  within x10
+           A physiology alone , g0=6    0.6443      0.4393      0.8420
+           A physiology alone , g0=8    0.8595      0.3473      0.7787
+       B physiology + d_death , g0=6    0.1221      0.9780      1.0000
+       B physiology + d_death , g0=8    0.1613      0.9333      1.0000
+
+=================================================================================================
+
+-------------------------------------------------------------------------------------------------
+ADDENDUM after the reference tolerance was moved from 1e-3 to 0.01.
+-------------------------------------------------------------------------------------------------
+D4, D5, D6, D7 and D9 above now quote tau_scale = 0.01, the tightest tolerance at which D11
+confirms convergence, and they agree with the hand-written reading. D5 now PASSES as printed:
+predicted 0.1101, measured 0.1221, relative 0.1088.
+
+D9, unreportable in the previous run, is now measured at a converged tolerance:
+
+    arm                              sd      within x2    within x10
+    physiology alone,     g0 = 6   0.6443      0.4393        0.8420
+    physiology alone,     g0 = 8   0.8595      0.3473        0.7787
+    physiology + d_death, g0 = 6   0.1221      0.9780        1.0000
+    physiology + d_death, g0 = 8   0.1613      0.9333        1.0000
+
+The rarer question (Y = 4.476e-03 against 1.724e-02) costs physiology alone nearly a tenth of its
+factor-of-2 fraction, 0.4393 to 0.3473, and costs physiology-plus-one-rate less than five points,
+0.9780 to 0.9333. So the conclusion survives a deeper tail, and survives it better WITH the extra
+measurement than without -- which is the direction rateneed's N6 and hybrid's H11 would predict,
+since both found sensitivity grows with tail depth and the measured rate is the one carrying it.
+
+ONE MISSTATEMENT IN THE PRINTED TEXT, corrected rather than reprinted: D4's line reads "physiology
+known to a thousandth of its natural spread". At tau_scale 0.01 it is a HUNDREDTH. The number
+0.01 beside it is right and every figure in the table is right; only the word is wrong. The source
+string has been fixed so it is computed rather than hardcoded.
+
+D11's headline still reads FAIL because its worst case is taken over all four tolerances including
+the two that are voided. On the reportable rows it passes: arm B relative across-chain spread
+0.057 at tau_scale 0.05 and 0.084 at 0.01, both inside the 0.10 bar.

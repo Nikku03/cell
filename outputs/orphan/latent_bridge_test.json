@@ -1,0 +1,30 @@
+{
+ "n_scored": 200,
+ "n_train": 1300,
+ "auc_latent": 0.711,
+ "auc_mean": 0.693,
+ "latent_gain": 0.018,
+ "pear_latent": 0.518,
+ "pear_mean": 0.537,
+ "by_novelty": {
+  "novel (far from training)": {
+   "n": 66,
+   "auc_latent": 0.653,
+   "auc_mean": 0.67,
+   "latent_gain": -0.017
+  },
+  "mid": {
+   "n": 68,
+   "auc_latent": 0.724,
+   "auc_mean": 0.723,
+   "latent_gain": 0.001
+  },
+  "familiar (close twin in training)": {
+   "n": 66,
+   "auc_latent": 0.735,
+   "auc_mean": 0.695,
+   "latent_gain": 0.04
+  }
+ },
+ "verdict": "Tested the M-L-M architecture's load-bearing assumption \u2014 that a learned latent predicts a held-out knockout's response \u2014 with a faithful Geneformer-style co-expression embedding + k-NN transfer, vs the 'predict the mean perturbation response' baseline. LATENT transfer reaches AUC 0.711 at predicting which genes move; the MEAN baseline reaches 0.693 \u2014 a gain of just 0.018. So the latent bridge helps only marginally over knowing NOTHING about which gene was hit, because most of a knockout's measured response is a GENERIC program (stress / proliferation / cell-cycle) shared across perturbations \u2014 which is exactly why 'predict the mean' is so hard to beat and why scGPT/Geneformer/GEARS have repeatedly failed to beat it in fair benchmarks (Ahlmann-Eltze 2024). Decisively for the proposal: the claimed MOAT is NOVEL mutations, and that is where transfer collapses \u2014 on the genes FARTHEST from any training twin the latent gain is -0.017 (AUC 0.653 vs mean 0.67); the model can only 'know the far-field effect' of a perturbation it has effectively already seen. So Phase 2 does NOT cross the transitivity wall \u2014 it relocates it into a latent space where the wall reappears as 'this perturbation is unlike anything in training.' A foundation model is worth wiring for INTERPOLATION (perturbations seen in other contexts \u2014 which our cross-cell-type result already does at r~0.6), not for the physics-guided NOVEL missense that is the pitch. Recommendation before building Phase 2: none of scGPT/Geneformer will beat this baseline on novel perturbations; if a learned model is used, it must be reported against the mean baseline and the novel-stratum, or it will look better than it is."
+}

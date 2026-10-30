@@ -1,0 +1,19 @@
+{
+ "n_kos": 378,
+ "tide_null": 0.2603,
+ "oracle": 0.6168,
+ "undirected_ppi": {
+  "specific": 0.0552,
+  "all_mover": 0.0679,
+  "n": 375
+ },
+ "directed_signed": {
+  "specific": 0.0218,
+  "all_mover": 0.0174,
+  "n": 88
+ },
+ "directed_shuffled": 0.0022,
+ "beats_tide": false,
+ "verdict": "MECHANISTIC PROPAGATE (mechanistic_propagate.py): the 'knock the protein out of the network and simulate to the final effect' idea, tested. Propagating a knockout to steady state on the UNDIRECTED PPI (physical binding) scores 0.055 on tide-removed SPECIFIC movers, and on the DIRECTED SIGNED regulatory network 0.022 (shuffled-edge control 0.002), both vs the TIDE-null 0.260 and the retrieval ORACLE 0.617. Neither beats the tide-null on SPECIFIC movers: propagation recovers only the GENERIC cascade (all-mover recall 0.07 -- the tide), not the knockout-specific response. WHY: (1) the PPI graph is PHYSICAL binding, but an mRNA change is a TRANSCRIPTIONAL/regulatory effect, so it is the wrong graph; (2) even the directed regulatory graph only encodes GENERIC 'X regulates Y' edges, so propagating them reproduces the generic cascade every strong KO shares (the tide), which is exactly the part the metric removes; (3) a true simulation needs quantitative dynamics -- rates, thresholds, feedback, cell-specific active state -- which we do not have, so propagation is only reachability, not simulation. This matches transformer_causal (directed tracer traces the generic cascade, fails on the specific residue) and confirms the specific response is not a function of the static network topology -- it is context-specific biology no propagation on a generic wiring diagram can produce. Deterministic.",
+ "note": "MECHANISTIC PROPAGATE (mechanistic_propagate.py): the 'knock the protein out of the network and simulate to the final effect' idea, tested. Propagating a knockout to steady state on the UNDIRECTED PPI (physical binding) scores 0.055 on tide-removed SPECIFIC movers, and on the DIRECTED SIGNED regulatory network 0.022 (shuffled-edge control 0.002), both vs the TIDE-null 0.260 and the retrieval ORACLE 0.617. Neither beats the tide-null on SPECIFIC movers: propagation recovers only the GENERIC cascade (all-mover recall 0.07 -- the tide), not the knockout-specific response. WHY: (1) the PPI graph is PHYSICAL binding, but an mRNA change is a TRANSCRIPTIONAL/regulatory effect, so it is the wrong graph; (2) even the directed regulatory graph only encodes GENERIC 'X regulates Y' edges, so propagating them reproduces the generic cascade every strong KO shares (the tide), which is exactly the part the metric removes; (3) a true simulation needs quantitative dynamics -- rates, thresholds, feedback, cell-specific active state -- which we do not have, so propagation is only reachability, not simulation. This matches transformer_causal (directed tracer traces the generic cascade, fails on the specific residue) and confirms the specific response is not a function of the static network topology -- it is context-specific biology no propagation on a generic wiring diagram can produce. Deterministic."
+}

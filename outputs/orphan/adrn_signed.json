@@ -1,0 +1,381 @@
+{
+  "test": "adrn_signed",
+  "K_values": [
+    30,
+    60,
+    120
+  ],
+  "npreds": [
+    10,
+    20,
+    50
+  ],
+  "pct_down": 26.146774035796955,
+  "cells": {
+    "K30|n10": {
+      "frequency": 0.1975,
+      "abs": 0.30774999999999997,
+      "signed": 0.2735,
+      "abs_ORACLE1": 0.5735,
+      "signed_ORACLE1": 0.54125,
+      "abs_ORACLE5": 0.6024999999999999,
+      "signed_ORACLE5": 0.54875,
+      "abs_ORACLE10": 0.5927500000000001,
+      "signed_ORACLE10": 0.5422499999999999
+    },
+    "K30|n20": {
+      "frequency": 0.18025000000000002,
+      "abs": 0.252625,
+      "signed": 0.218125,
+      "abs_ORACLE1": 0.436125,
+      "signed_ORACLE1": 0.41824999999999996,
+      "abs_ORACLE5": 0.461875,
+      "signed_ORACLE5": 0.42924999999999996,
+      "abs_ORACLE10": 0.45575000000000004,
+      "signed_ORACLE10": 0.4256249999999999
+    },
+    "K30|n50": {
+      "frequency": 0.13995000000000002,
+      "abs": 0.1791,
+      "signed": 0.15360000000000004,
+      "abs_ORACLE1": 0.281,
+      "signed_ORACLE1": 0.2741,
+      "abs_ORACLE5": 0.29535000000000006,
+      "signed_ORACLE5": 0.27645000000000003,
+      "abs_ORACLE10": 0.2905,
+      "signed_ORACLE10": 0.27305
+    },
+    "K60|n10": {
+      "frequency": 0.1975,
+      "abs": 0.3085,
+      "signed": 0.27425000000000005,
+      "abs_ORACLE1": 0.5735,
+      "signed_ORACLE1": 0.54125,
+      "abs_ORACLE5": 0.6024999999999999,
+      "signed_ORACLE5": 0.54875,
+      "abs_ORACLE10": 0.5927500000000001,
+      "signed_ORACLE10": 0.5422499999999999
+    },
+    "K60|n20": {
+      "frequency": 0.18025000000000002,
+      "abs": 0.256375,
+      "signed": 0.21912500000000001,
+      "abs_ORACLE1": 0.436125,
+      "signed_ORACLE1": 0.41824999999999996,
+      "abs_ORACLE5": 0.461875,
+      "signed_ORACLE5": 0.42924999999999996,
+      "abs_ORACLE10": 0.45575000000000004,
+      "signed_ORACLE10": 0.4256249999999999
+    },
+    "K60|n50": {
+      "frequency": 0.13995000000000002,
+      "abs": 0.17965000000000003,
+      "signed": 0.15600000000000003,
+      "abs_ORACLE1": 0.281,
+      "signed_ORACLE1": 0.2741,
+      "abs_ORACLE5": 0.29535000000000006,
+      "signed_ORACLE5": 0.27645000000000003,
+      "abs_ORACLE10": 0.2905,
+      "signed_ORACLE10": 0.27305
+    },
+    "K120|n10": {
+      "frequency": 0.1975,
+      "abs": 0.31425000000000003,
+      "signed": 0.2735,
+      "abs_ORACLE1": 0.5735,
+      "signed_ORACLE1": 0.54125,
+      "abs_ORACLE5": 0.6024999999999999,
+      "signed_ORACLE5": 0.54875,
+      "abs_ORACLE10": 0.5927500000000001,
+      "signed_ORACLE10": 0.5422499999999999
+    },
+    "K120|n20": {
+      "frequency": 0.18025000000000002,
+      "abs": 0.256875,
+      "signed": 0.21962500000000001,
+      "abs_ORACLE1": 0.436125,
+      "signed_ORACLE1": 0.41824999999999996,
+      "abs_ORACLE5": 0.461875,
+      "signed_ORACLE5": 0.42924999999999996,
+      "abs_ORACLE10": 0.45575000000000004,
+      "signed_ORACLE10": 0.4256249999999999
+    },
+    "K120|n50": {
+      "frequency": 0.13995000000000002,
+      "abs": 0.18170000000000003,
+      "signed": 0.15725,
+      "abs_ORACLE1": 0.281,
+      "signed_ORACLE1": 0.2741,
+      "abs_ORACLE5": 0.29535000000000006,
+      "signed_ORACLE5": 0.27645000000000003,
+      "abs_ORACLE10": 0.2905,
+      "signed_ORACLE10": 0.27305
+    }
+  },
+  "gap_signed_minus_abs": -0.032427777777777764,
+  "sweeps": {
+    "model": {
+      "name": "signed - abs (model)",
+      "verdict": "HARMFUL",
+      "n_cells": 9,
+      "inert_axes": [],
+      "n_duplicate_cells": 0,
+      "n_effective_cells": 9,
+      "n_resolved_pos": 0,
+      "n_resolved_neg": 9,
+      "sign_consistent": true,
+      "cells_needed_for_robust": 6,
+      "passing_configs": [],
+      "cells": [
+        {
+          "config": {
+            "K": 30,
+            "npred": 10
+          },
+          "cohort": "K30|n10",
+          "n": 400,
+          "delta": -0.03425,
+          "lo": -0.05025,
+          "hi": -0.018500000000000003
+        },
+        {
+          "config": {
+            "K": 30,
+            "npred": 20
+          },
+          "cohort": "K30|n20",
+          "n": 400,
+          "delta": -0.0345,
+          "lo": -0.046125,
+          "hi": -0.023125
+        },
+        {
+          "config": {
+            "K": 30,
+            "npred": 50
+          },
+          "cohort": "K30|n50",
+          "n": 400,
+          "delta": -0.025500000000000002,
+          "lo": -0.03425,
+          "hi": -0.016950000000000003
+        },
+        {
+          "config": {
+            "K": 60,
+            "npred": 10
+          },
+          "cohort": "K60|n10",
+          "n": 400,
+          "delta": -0.03425,
+          "lo": -0.0495,
+          "hi": -0.019250000000000003
+        },
+        {
+          "config": {
+            "K": 60,
+            "npred": 20
+          },
+          "cohort": "K60|n20",
+          "n": 400,
+          "delta": -0.03725,
+          "lo": -0.048625,
+          "hi": -0.026125000000000002
+        },
+        {
+          "config": {
+            "K": 60,
+            "npred": 50
+          },
+          "cohort": "K60|n50",
+          "n": 400,
+          "delta": -0.02365,
+          "lo": -0.0323,
+          "hi": -0.0155
+        },
+        {
+          "config": {
+            "K": 120,
+            "npred": 10
+          },
+          "cohort": "K120|n10",
+          "n": 400,
+          "delta": -0.040749999999999995,
+          "lo": -0.055749999999999994,
+          "hi": -0.026000000000000002
+        },
+        {
+          "config": {
+            "K": 120,
+            "npred": 20
+          },
+          "cohort": "K120|n20",
+          "n": 400,
+          "delta": -0.03725,
+          "lo": -0.04825,
+          "hi": -0.026125
+        },
+        {
+          "config": {
+            "K": 120,
+            "npred": 50
+          },
+          "cohort": "K120|n50",
+          "n": 400,
+          "delta": -0.024450000000000003,
+          "lo": -0.03275,
+          "hi": -0.01665
+        }
+      ]
+    },
+    "oracle": {
+      "name": "signed ORACLE - abs ORACLE",
+      "verdict": "HARMFUL",
+      "n_cells": 9,
+      "inert_axes": [],
+      "n_duplicate_cells": 6,
+      "n_effective_cells": 3,
+      "n_resolved_pos": 0,
+      "n_resolved_neg": 9,
+      "sign_consistent": true,
+      "cells_needed_for_robust": 6,
+      "passing_configs": [],
+      "cells": [
+        {
+          "config": {
+            "K": 30,
+            "npred": 10
+          },
+          "cohort": "K30|n10",
+          "n": 400,
+          "delta": -0.05375,
+          "lo": -0.06724999999999999,
+          "hi": -0.04125
+        },
+        {
+          "config": {
+            "K": 30,
+            "npred": 20
+          },
+          "cohort": "K30|n20",
+          "n": 400,
+          "delta": -0.032624999999999994,
+          "lo": -0.04100312500000001,
+          "hi": -0.0245
+        },
+        {
+          "config": {
+            "K": 30,
+            "npred": 50
+          },
+          "cohort": "K30|n50",
+          "n": 400,
+          "delta": -0.0189,
+          "lo": -0.023150000000000004,
+          "hi": -0.014849999999999999
+        },
+        {
+          "config": {
+            "K": 60,
+            "npred": 10
+          },
+          "cohort": "K60|n10",
+          "n": 400,
+          "delta": -0.05375,
+          "lo": -0.06724999999999999,
+          "hi": -0.04125
+        },
+        {
+          "config": {
+            "K": 60,
+            "npred": 20
+          },
+          "cohort": "K60|n20",
+          "n": 400,
+          "delta": -0.032624999999999994,
+          "lo": -0.04100312500000001,
+          "hi": -0.0245
+        },
+        {
+          "config": {
+            "K": 60,
+            "npred": 50
+          },
+          "cohort": "K60|n50",
+          "n": 400,
+          "delta": -0.0189,
+          "lo": -0.023150000000000004,
+          "hi": -0.014849999999999999
+        },
+        {
+          "config": {
+            "K": 120,
+            "npred": 10
+          },
+          "cohort": "K120|n10",
+          "n": 400,
+          "delta": -0.05375,
+          "lo": -0.06724999999999999,
+          "hi": -0.04125
+        },
+        {
+          "config": {
+            "K": 120,
+            "npred": 20
+          },
+          "cohort": "K120|n20",
+          "n": 400,
+          "delta": -0.032624999999999994,
+          "lo": -0.04100312500000001,
+          "hi": -0.0245
+        },
+        {
+          "config": {
+            "K": 120,
+            "npred": 50
+          },
+          "cohort": "K120|n50",
+          "n": 400,
+          "delta": -0.0189,
+          "lo": -0.023150000000000004,
+          "hi": -0.014849999999999999
+        }
+      ]
+    }
+  },
+  "log": [
+    "====================================================================================================",
+    "THE SIGN DEFECT: does discarding direction cost anything?",
+    "====================================================================================================",
+    "  PREDECLARED: signed > abs => abs() was costing accuracy, revert it.",
+    "               signed ~ abs => a real defect that does not bind. Do not claim a fix.",
+    "\n  5,120 perturbations x 8,246 genes; sealed 400; train 4,720",
+    "  named channels: 170 kept of 170 built (120 pathways, 12 compartments, 9 lesion classes, rest structural); mean channels per gene 14.9",
+    "  extra channels: 535 kept of 691 built  (TIER A 526, TIER B 9); 250 GO, 120 complexes, 120 pfam, 120 domains",
+    "  of 30,673 strong moves, 8,020 are DOWN (26.1%) -- this is the information abs() erases",
+    "  abs matrix (4720, 8246) | signed split matrix (4720, 16492)",
+    "\n  K=30: abs penalty 100.0 | signed penalty 100.0",
+    "    N=10: freq 0.1975 | abs 0.3077 | signed 0.2735 | absORACLE 0.6025 | sigORACLE 0.5487",
+    "    N=20: freq 0.1803 | abs 0.2526 | signed 0.2181 | absORACLE 0.4619 | sigORACLE 0.4292",
+    "    N=50: freq 0.1400 | abs 0.1791 | signed 0.1536 | absORACLE 0.2954 | sigORACLE 0.2765",
+    "\n  K=60: abs penalty 100.0 | signed penalty 100.0",
+    "    N=10: freq 0.1975 | abs 0.3085 | signed 0.2743 | absORACLE 0.6025 | sigORACLE 0.5487",
+    "    N=20: freq 0.1803 | abs 0.2564 | signed 0.2191 | absORACLE 0.4619 | sigORACLE 0.4292",
+    "    N=50: freq 0.1400 | abs 0.1797 | signed 0.1560 | absORACLE 0.2954 | sigORACLE 0.2765",
+    "\n  K=120: abs penalty 100.0 | signed penalty 100.0",
+    "    N=10: freq 0.1975 | abs 0.3143 | signed 0.2735 | absORACLE 0.6025 | sigORACLE 0.5487",
+    "    N=20: freq 0.1803 | abs 0.2569 | signed 0.2196 | absORACLE 0.4619 | sigORACLE 0.4292",
+    "    N=50: freq 0.1400 | abs 0.1817 | signed 0.1573 | absORACLE 0.2954 | sigORACLE 0.2765",
+    "\n  SWEEP signed - abs (model)   axes[K,npred]  9 cells\n  config                       cohort         delta                 95% CI\n  K=30 npred=10                K30|n10      -0.0343 [ -0.0503, -0.0185] RES-\n  K=30 npred=20                K30|n20      -0.0345 [ -0.0461, -0.0231] RES-\n  K=30 npred=50                K30|n50      -0.0255 [ -0.0343, -0.0170] RES-\n  K=60 npred=10                K60|n10      -0.0343 [ -0.0495, -0.0193] RES-\n  K=60 npred=20                K60|n20      -0.0372 [ -0.0486, -0.0261] RES-\n  K=60 npred=50                K60|n50      -0.0237 [ -0.0323, -0.0155] RES-\n  K=120 npred=10               K120|n10     -0.0407 [ -0.0557, -0.0260] RES-\n  K=120 npred=20               K120|n20     -0.0372 [ -0.0483, -0.0261] RES-\n  K=120 npred=50               K120|n50     -0.0245 [ -0.0328, -0.0167] RES-\n  -> HARMFUL   resolved +0/-9 of 9 (>= 6 needed), sign-consistent True",
+    "\n  SWEEP signed ORACLE - abs ORACLE   axes[K,npred]  9 cells\n  config                       cohort         delta                 95% CI\n  K=30 npred=10                K30|n10      -0.0537 [ -0.0672, -0.0413] RES-\n  K=30 npred=20                K30|n20      -0.0326 [ -0.0410, -0.0245] RES-\n  K=30 npred=50                K30|n50      -0.0189 [ -0.0232, -0.0148] RES-\n  K=60 npred=10                K60|n10      -0.0537 [ -0.0672, -0.0413] RES-\n  K=60 npred=20                K60|n20      -0.0326 [ -0.0410, -0.0245] RES-\n  K=60 npred=50                K60|n50      -0.0189 [ -0.0232, -0.0148] RES-\n  K=120 npred=10               K120|n10     -0.0537 [ -0.0672, -0.0413] RES-\n  K=120 npred=20               K120|n20     -0.0326 [ -0.0410, -0.0245] RES-\n  K=120 npred=50               K120|n50     -0.0189 [ -0.0232, -0.0148] RES-\n  -> HARMFUL   resolved +0/-9 of 9 (>= 6 needed), sign-consistent True\n     WARNING: 6 of 9 cells are numerically identical to another cell -- they duplicate rather than test. Real observations: 3.",
+    "  GUARD oracle: inert axes [], duplicate cells 6",
+    "\n  signed - abs (model): -0.0324, resolved positive in 0/9",
+    "\n  READING",
+    "  Keeping the sign is worth -0.0324, not resolved. The defect is real -- the model genuinely",
+    "  cannot represent the additive composition Norman measured -- but on THIS task, ranking the",
+    "  top-N movers, it does not bind. Report it as a defect that does not cost anything here, and",
+    "  do not claim a fix. Where it would bind is any use that needs to ADD two predicted responses.",
+    "  The signed oracle does not beat the magnitude oracle -- for retrieval on this task, direction",
+    "  carries nothing extra, and abs() was not throwing away anything findable."
+  ]
+}

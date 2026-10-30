@@ -1,0 +1,87 @@
+{
+  "test": "cell_orphan_evidence",
+  "liveness": {
+    "codependency": {
+      "pos": [
+        1,
+        11,
+        14,
+        1,
+        7,
+        58
+      ],
+      "neg": [
+        13013,
+        6257,
+        4370
+      ],
+      "n_pos_top50": 5
+    },
+    "coexpression": {
+      "pos": [
+        2895,
+        1455,
+        39,
+        1,
+        58,
+        3121
+      ],
+      "neg": [
+        6141,
+        5457,
+        13869
+      ],
+      "n_pos_top50": 2
+    }
+  },
+  "retrieval": {
+    "codependency": {
+      "at1": 0.0075,
+      "at15": 0.0425,
+      "at50": 0.0725,
+      "at200": 0.14,
+      "median": 3152.0,
+      "at15_obscure": 0.0125
+    },
+    "coexpression": {
+      "at1": 0.0075,
+      "at15": 0.025,
+      "at50": 0.04,
+      "at200": 0.09,
+      "median": 5369.0,
+      "at15_obscure": 0.0
+    }
+  },
+  "topk": 15,
+  "log": [
+    "====================================================================================================",
+    "CO-EXPRESSION AND CO-DEPENDENCY AS EVIDENCE -- can data the literature lacks beat the prior?",
+    "====================================================================================================",
+    "  Closed-book naming is 0.463 on enzymes with <20 papers and 0.812 on those with >500, so the",
+    "  score is substantially memory and true gaps are a coin flip. Both channels below are measured",
+    "  across ~1,150 cell lines and are orthogonal to how much has been WRITTEN about a gene.",
+    "  codependency : 18,443 genes x 1,150 cell lines (DepMap 24Q2 CRISPR)",
+    "  coexpression : 19,193 genes x 1,517 cell lines (DepMap 24Q2 expression, md5 f00c434d\u2026)",
+    "\n  LIVENESS GATE -- anchor two subunits of an obligate complex, the third must come back high",
+    "    channel        positive control (rank of held-out subunit)         negative",
+    "    codependency   [1, 11, 14, 1, 7, 58]                               [13013, 6257, 4370]",
+    "    coexpression   [2895, 1455, 39, 1, 58, 3121]                       [6141, 5457, 13869]",
+    "    (ribosomal and common-essential genes have flat profiles by construction, so a miss there is",
+    "     expected; the gate is that MOST controls land high and unrelated genes do not.)",
+    "  Both channels are live. A negative from here is about the BIOLOGY, not the plumbing.",
+    "\n  RETRIEVAL -- how often is the true catalyst in the top 15 the solver would be shown?",
+    "  Asked BEFORE spending a single solver: evidence that never contains the answer cannot supply it.",
+    "    channel             @1    @15    @50   @200   median rank   @15 obscure bin",
+    "    codependency     0.007  0.043  0.072  0.140          3152             0.013",
+    "    coexpression     0.007  0.025  0.040  0.090          5369             0.000",
+    "\n  READING (retrieval only -- whether the evidence HELPS is measured separately, after the run)",
+    "  THE EVIDENCE ALMOST NEVER CONTAINS THE ANSWER. Best channel 'codependency' puts the true catalyst",
+    "  in the top 15 for 1.2% of obscure reactions, median rank 3152 of ~18,000.",
+    "  Both channels are LIVE -- they recover obligate complexes -- so this is a statement about",
+    "  what they measure, not about the code. Co-dependency is a claim about VIABILITY covariance",
+    "  and co-expression about transcriptional co-regulation; neither is a claim that one gene",
+    "  ACTS ON another's substrate. Most metabolic enzymes are also non-essential in culture,",
+    "  where the medium supplies what the pathway would make, so their profiles are near-flat.",
+    "  wrote 400 evidence puzzles in 8 batches -> /tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/evid"
+  ]
+}

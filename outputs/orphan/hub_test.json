@@ -1,0 +1,55 @@
+{
+ "Q1_magnitude_blindspot": {
+  "n_tf": 145,
+  "n_nontf": 1706,
+  "tf_actual_median": 2.0,
+  "tf_pred_median": 12.4,
+  "nontf_actual_median": 1.5,
+  "nontf_pred_median": 11.2,
+  "tf_pred_over_actual": 3.14,
+  "nontf_pred_over_actual": 2.81
+ },
+ "Q2_regulon_fix": {
+  "n_tf_with_regulon": 51,
+  "recall_tide_only": 0.485,
+  "recall_tide_plus_regulon": 0.377,
+  "recall_regulon_only": 0.007
+ },
+ "named_hubs": [
+  {
+   "ko": "MYC",
+   "has_regulon": true,
+   "actual_movers": 4,
+   "pred_movers": -10.0,
+   "tide_hits15": 0,
+   "regulon_hits15": 0,
+   "regulon_size_shown": 15,
+   "flavour_pred": 13,
+   "flavour_actual": 10
+  },
+  {
+   "ko": "STAT5A",
+   "has_regulon": true,
+   "actual_movers": 0,
+   "pred_movers": 18.0,
+   "tide_hits15": 0,
+   "regulon_hits15": 0,
+   "regulon_size_shown": 13,
+   "flavour_pred": 13,
+   "flavour_actual": 13
+  },
+  {
+   "ko": "GATA1",
+   "has_regulon": true,
+   "actual_movers": 722,
+   "pred_movers": 7.0,
+   "tide_hits15": 5,
+   "regulon_hits15": 2,
+   "regulon_size_shown": 15,
+   "flavour_pred": 13,
+   "flavour_actual": 14
+  }
+ ],
+ "verdict": "REGULATORY-HUB TEST -- and it CORRECTS my GATA1-driven hypothesis on both counts. (Q1) there is NO systematic TF-hub magnitude blind spot. The real problem is a SKEWED TAIL: most TF knockouts have a TINY response (median TF moves 2 genes) while the capacity model predicts ~12 for everything -- so it OVER-predicts the many weak hubs (pred/actual 3.14x, ~ the same 2.81x as non-TFs) and UNDER-predicts the rare tail giants like GATA1 (722 movers, predicted ~10). GATA1 is a tail outlier, not evidence that TFs are systematically under-read -- my earlier 'hub blind spot' generalisation from one example was wrong; the honest defect is that capacity predicts a relative RANKING, not the extreme tail of a highly skewed response-size distribution. (Q2) the regulon does NOT fix hubs either: adding a TF's own curated regulon to the tide HURTS recall (48% -> 38%), and the regulon ALONE recovers only 0.7% of a hub's actual movers. Even for TFs the curated regulon is enriched-but-negligible for RECALL (its ~6x is a per-target enrichment over a tiny base, not coverage of the wave), so swapping tide genes for regulon genes trades 48%-recall genes for ~1%-recall genes. BOTTOM LINE: testing more regulatory hubs killed two plausible fixes. There is no TF-specific magnitude blind spot (it's a skewed-tail calibration limit that hits the rare giant responders of any type), and the near-field regulon does not recover a hub's broad wave (it stays enriched-but-tiny). Most TF knockouts in this data barely respond at all (MYC 4 movers, STAT5A 0); GATA1 is the exception, not the rule. The honest stack is unchanged: magnitude = a rough ranking that misses the tail, the broad wave = the generic tide (even for hubs), the regulon = tight near-field enrichment only, and identity = abstain.",
+ "note": "Regulatory-hub (TF) stress test that CORRECTS the GATA1-driven hypothesis. Q1: NO systematic TF-hub magnitude blind spot -- capacity over-predicts the many WEAK hubs (median TF moves 2, predicted 12; pred/actual 3.14x ~ 2.81x non-TF) and under-predicts rare tail giants (GATA1 722 vs ~10). It's a skewed-tail calibration limit, not TF-specific; GATA1 is an outlier. Q2: the regulon does NOT fix hubs -- adding a TF's own regulon to the tide HURTS recall (48%->38%) and regulon-only recovers 0.7% of movers (enriched-but-negligible; 6x is per-target enrichment, not wave coverage). Most TF KOs barely respond (MYC 4, STAT5A 0); GATA1 is the exception. Testing more hubs killed two plausible fixes. Honest stack unchanged: magnitude = rough ranking that misses the tail; broad wave = generic tide (even for hubs); regulon = tight near-field enrichment only; identity = abstain."
+}

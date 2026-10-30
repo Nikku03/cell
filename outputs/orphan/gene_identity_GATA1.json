@@ -1,0 +1,265 @@
+{
+ "gene": "GATA1",
+ "identity": {
+  "locus": "chrX:48786589",
+  "compartment": "nucleus",
+  "process": "transcription",
+  "publications": 325,
+  "dark": 0,
+  "confidence": "split",
+  "essential": 0,
+  "loeuf": 0.321,
+  "abundance_ppm": 0.423
+ },
+ "function": {
+  "GO_molecular_function": [
+   "transcription cis-regulatory region binding",
+   "RNA polymerase II transcription regulatory region sequence-specific DNA binding",
+   "RNA polymerase II cis-regulatory region sequence-specific DNA binding",
+   "DNA-binding transcription factor activity, RNA polymerase II-specific",
+   "cis-regulatory region sequence-specific DNA binding",
+   "transcription coregulator binding"
+  ],
+  "GO_biological_process": [
+   "negative regulation of transcription by RNA polymerase II",
+   "regulation of DNA-templated transcription",
+   "regulation of transcription by RNA polymerase II",
+   "positive regulation of cytosolic calcium ion concentration",
+   "male gonad development",
+   "anatomical structure morphogenesis"
+  ],
+  "GO_component": [
+   "chromatin",
+   "nucleus",
+   "nucleoplasm",
+   "transcription regulator complex"
+  ],
+  "reactome": [],
+  "reactome_primary": "Factors involved in megakaryocyte developmen"
+ },
+ "machinery": {
+  "complexes": [],
+  "n_complexes": 0,
+  "complex_partners": [],
+  "n_complex_partners": 0,
+  "ppi_degree": 33,
+  "ppi_partners": [
+   "BRD3",
+   "BRD4",
+   "CBFA2T3",
+   "CHRD",
+   "DGCR6L",
+   "DHX36",
+   "EP300",
+   "FANCL",
+   "FRS3",
+   "GATA2",
+   "HNRNPK",
+   "HOXA1",
+   "IKZF1",
+   "KANK2"
+  ],
+  "catalyses": [],
+  "ptm": {
+   "n": 17,
+   "c": [
+    "Phospho",
+    "Acetyl"
+   ]
+  }
+ },
+ "control": {
+  "is_tf": true,
+  "n_targets": 883,
+  "n_targets_with_known_function": 840,
+  "frac_targets_annotated": 0.951,
+  "regulon_by_process": [
+   [
+    "other",
+    235
+   ],
+   [
+    "transcription",
+    191
+   ],
+   [
+    "transport/uptake",
+    136
+   ],
+   [
+    "signaling",
+    112
+   ],
+   [
+    "trafficking/secretion",
+    76
+   ],
+   [
+    "metabolism",
+    34
+   ],
+   [
+    "degradation",
+    31
+   ],
+   [
+    "structure/cytoskeleton",
+    31
+   ]
+  ],
+  "note": "n_targets_with_known_function uses the strict definition: an informative GO molecular function term, or a process outside the 'other' bucket",
+  "regulon_by_compartment": [
+   [
+    "nucleus",
+    261
+   ],
+   [
+    "cytoplasm",
+    231
+   ],
+   [
+    "plasma membrane",
+    109
+   ],
+   [
+    "membrane",
+    62
+   ],
+   [
+    "cytoskeleton",
+    56
+   ],
+   [
+    "ER",
+    36
+   ]
+  ],
+  "example_targets": [
+   {
+    "gene": "BCL2L1",
+    "sign": 1,
+    "process": "signaling",
+    "function": "protein binding"
+   },
+   {
+    "gene": "FCGRT",
+    "sign": 1,
+    "process": "transport/uptake",
+    "function": "protein binding"
+   },
+   {
+    "gene": "IGHE",
+    "sign": 1,
+    "process": "trafficking/secretion",
+    "function": "antigen binding"
+   },
+   {
+    "gene": "EPB42",
+    "sign": 1,
+    "process": "transport/uptake",
+    "function": "protein-glutamine gamma-glutamyltransferase activity"
+   },
+   {
+    "gene": "PRG2",
+    "sign": 1,
+    "process": "trafficking/secretion",
+    "function": "protein binding"
+   },
+   {
+    "gene": "MBP",
+    "sign": 1,
+    "process": "transport/uptake",
+    "function": "protein binding"
+   },
+   {
+    "gene": "SPTB",
+    "sign": 1,
+    "process": "transport/uptake",
+    "function": "actin binding"
+   },
+   {
+    "gene": "MPL",
+    "sign": 1,
+    "process": "transport/uptake",
+    "function": "cytokine receptor activity"
+   },
+   {
+    "gene": "SPI1",
+    "sign": -1,
+    "process": "transcription",
+    "function": "transcription cis-regulatory region binding"
+   },
+   {
+    "gene": "NFIL3",
+    "sign": 1,
+    "process": "transcription",
+    "function": "RNA polymerase II transcription regulatory region sequence-specific DNA binding"
+   },
+   {
+    "gene": "NPR1",
+    "sign": -1,
+    "process": "transport/uptake",
+    "function": "peptide receptor activity"
+   },
+   {
+    "gene": "GP6",
+    "sign": 1,
+    "process": "transport/uptake",
+    "function": "transmembrane signaling receptor activity"
+   }
+  ]
+ },
+ "controlled_by": {
+  "n_regulators": 40,
+  "regulators": [
+   {
+    "tf": "DLX4",
+    "sign": 1
+   },
+   {
+    "tf": "SPI1",
+    "sign": 1
+   },
+   {
+    "tf": "MYB",
+    "sign": 1
+   },
+   {
+    "tf": "MYC",
+    "sign": -1
+   },
+   {
+    "tf": "GATA2",
+    "sign": 1
+   },
+   {
+    "tf": "ETS1",
+    "sign": 1
+   },
+   {
+    "tf": "TFCP2",
+    "sign": 1
+   },
+   {
+    "tf": "NR2C1",
+    "sign": -1
+   },
+   {
+    "tf": "NR2C2",
+    "sign": -1
+   },
+   {
+    "tf": "ZNF148",
+    "sign": 1
+   },
+   {
+    "tf": "TP53",
+    "sign": 1
+   },
+   {
+    "tf": "CBFB",
+    "sign": 1
+   }
+  ]
+ }
+}

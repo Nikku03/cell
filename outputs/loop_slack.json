@@ -1,0 +1,100 @@
+{
+  "test": "loop_slack",
+  "manifest": {
+    "manifest_version": 1,
+    "inputs": [
+      {
+        "path": "outputs/loop_medium.json",
+        "bytes": 630150,
+        "hash": "27f9b5d490c811b1",
+        "method": "sha256:full"
+      },
+      {
+        "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+        "bytes": 38524393,
+        "hash": "b857a72939e09be8",
+        "method": "sha256:full"
+      }
+    ],
+    "coverage": {
+      "available": 1784,
+      "used": 1775,
+      "selection": "filtered",
+      "fraction": 0.9949551569506726
+    },
+    "seed": 1904,
+    "controls": [
+      "threshold swept over five orders of magnitude",
+      "DepMap dependency distribution as external comparator",
+      "200 label shuffles for the rank test"
+    ],
+    "note": "audits loop_medium's own M3 gate rather than the repository",
+    "warnings": []
+  },
+  "gates": {
+    "P1 the gate was the problem": true,
+    "P2 the right amount of slack": true,
+    "P3 the slack is in the right places": false
+  },
+  "sweep": {
+    "1e-09": 0.1350896860986547,
+    "0.0001": 0.1289237668161435,
+    "0.001": 0.1210762331838565,
+    "0.01": 0.11715246636771301,
+    "0.05": 0.11434977578475336,
+    "0.1": 0.1109865470852018
+  },
+  "frac_at_1pct": 0.11715246636771301,
+  "shape_gaps": {
+    "0.01": 0.1267605633802817,
+    "0.05": 0.06873239436619719,
+    "0.1": 0.0219718309859155
+  },
+  "rank_spearman": 0.28890979108829284,
+  "rank_null_p95": 0.4283818418846218,
+  "n_costly": 206,
+  "log": [
+    "====================================================================================================",
+    "DOES THE CELL HAVE SLACK -- and was the gate that said no asking the right question?",
+    "====================================================================================================",
+    "  loop_medium's M3 counted a knockout as 'moving growth' if it changed mu by more than 1e-9.",
+    "  That is a floating-point threshold, not a biological one. This audits my own gate first.",
+    "\n  1,784 scored knockouts from loop 4's defined-medium model",
+    "\n  DIAGNOSIS: 1,525 of 1,784 knockouts have a NEGATIVE cost, clustered at -7.25e-07.",
+    "    A knockout cannot improve growth in this model, so that is arithmetic, not biology.",
+    "    loop_medium calibrated the uptake cap by BISECTION and then used the bisection's last",
+    "    iterate as mu_WT (0.029999790) instead of re-solving at the final bounds.",
+    "    Every unaffected knockout then solved to a very slightly HIGHER mu, so 1 - mu_KO/mu_WT",
+    "    came out at about -7e-07 -- and M3's `abs(diff) > 1e-9` test counted all 1,525 of",
+    "    them as 'moving growth'. That is where 92% came from.",
+    "    The fix for any future run is one line: re-solve mu_WT at the final bounds, or test",
+    "    against a relative threshold rather than an absolute one.",
+    "\n  P1 THE THRESHOLD SWEEP -- where does the answer change?",
+    "        cost >     fraction moving growth",
+    "         1e-09                     13.5%   <- loop_medium used this",
+    "         1e-04                     12.9%",
+    "         1e-03                     12.1%",
+    "         1e-02                     11.7%   <- 1% of growth, a real effect",
+    "         5e-02                     11.4%",
+    "         1e-01                     11.1%",
+    "\n    at a 1% cost threshold, 11.7% of deletions move growth   (gate < 50%)   P1 PASS",
+    "    M3's failure WAS an artefact of the cutoff. The model does have slack; the gate was",
+    "    counting numerical dust as biology. loop_medium's conclusion is restated accordingly.",
+    "\n  P2 SHAPE -- against DepMap's own dependency fractions (1,775 genes with both)",
+    "       threshold     model    DepMap      gap",
+    "           1e-02     11.6%     24.3%    12.7%",
+    "           5e-02     11.3%     18.2%     6.9%",
+    "           1e-01     11.0%     13.2%     2.2%",
+    "    largest gap 12.7%  (gate < 15%)   P2 PASS",
+    "\n  P3 RANK -- among the 206 genes costing more than 1%, does the model rank them",
+    "    like DepMap does?  Spearman +0.2889 vs |null| 95th pct 0.4284   P3 FAIL",
+    "\n====================================================================================================",
+    "  P1 the gate was the problem             PASS",
+    "  P2 the right amount of slack            PASS",
+    "  P3 the slack is in the right places     FAIL",
+    "  M3 WAS MEASURING NUMERICAL DUST. The model tolerates most single deletions at any",
+    "  biologically meaningful threshold, and loop_medium's conclusion is corrected.",
+    "====================================================================================================",
+    "    manifest: 2 inputs, coverage 1775/1784 (99.5%) by 'filtered', seed 1904, controls 3"
+  ]
+}

@@ -1,0 +1,96 @@
+{
+ "model": "audit-matched-control-v1",
+ "trigger": "colab/impute_reg_sign.py found |SMD| 0.25 in its decile-matched swapped source and the tightening moved its increment by more than the effect was worth",
+ "audits": [
+  "colab/causal_reg.py (+15.0 sign transfer)",
+  "colab/reliable_edges.py (committed today)"
+ ],
+ "smd_bar": 0.1,
+ "n_seeds": 5,
+ "near_k": 25,
+ "incumbent": {
+  "label": "INCUMBENT |z| >= 5 (the +15.0 headline's edge rule)",
+  "n_edges": 216274,
+  "agree": 0.671851447700602,
+  "decile": {
+   "increment": 0.15203861767942517,
+   "sd": 0.0014197230445095704,
+   "smd_strength": -0.020260845124721528,
+   "smd_log_cells": 0.10987675886874189
+  },
+  "nearest": {
+   "increment": 0.15284777643174863,
+   "sd": 0.0011024822769483843,
+   "smd_strength": -0.0033949568402022122,
+   "smd_log_cells": 0.10167423925031653
+  },
+  "joint": {
+   "increment": 0.14939382450040226,
+   "sd": 0.00047937532801568247,
+   "smd_strength": -0.0023397166281938554,
+   "smd_log_cells": 0.11269358746484062
+  },
+  "spread_across_constructions": 0.003453951931346372,
+  "fraction_of_headline_moved": 0.022717596253269426
+ },
+ "power_weighted": {
+  "label": "POWER-WEIGHTED z (admitted today on the decile control)",
+  "n_edges": 216274,
+  "agree": 0.7009765390199469,
+  "decile": {
+   "increment": 0.18053210279552792,
+   "sd": 0.0009259985875978282,
+   "smd_strength": -0.007638738956302404,
+   "smd_log_cells": 0.17543455380744913
+  },
+  "nearest": {
+   "increment": 0.18229005798200432,
+   "sd": 0.0012041532219636433,
+   "smd_strength": -0.0018102189525961876,
+   "smd_log_cells": 0.16015525620459273
+  },
+  "joint": {
+   "increment": 0.17842736528662717,
+   "sd": 0.0012680428911671802,
+   "smd_strength": -1.782117469701916e-05,
+   "smd_log_cells": 0.1342267871805678
+  },
+  "spread_across_constructions": 0.0038626926953771457,
+  "fraction_of_headline_moved": 0.021396154121973873
+ },
+ "decile_control_imbalanced": false,
+ "worst_abs_smd": 0.020260845124721528,
+ "both_survive": true,
+ "limits": [
+  "this audits the SOURCE side of the swap only. The target gene is held fixed by construction in this control and is not at issue",
+  "the nearest-in-strength arm uses a fixed neighbourhood of 25 ranks. A tighter neighbourhood balances better and shrinks the pool, and no attempt was made to tune that trade-off",
+  "the joint arm matches RPE1 cell count among the nearest-in-strength candidates rather than jointly optimising both, so its balance on cell count is better than the nearest arm's but is not guaranteed to be under the bar",
+  "it does not re-audit the decile-matched MAGNITUDE control used by the project's fast test, which is a different comparison with a different matching and needs its own pass",
+  "5 seeds per construction. The seed spread is reported and the increments here are large relative to it, but 5 is few for a spread estimate"
+ ],
+ "verdict": "BOTH HEADLINES SURVIVE THE TIGHTER CONTROL. The decile-matched swapped source leaves |SMD| 0.020 on RPE1 perturbation strength for the incumbent |z| >= 5 edge set, inside the 0.10 balance bar, so the defect impute_reg_sign found on curated TF sources does NOT reproduce on this edge set -- the two differ because curated sources are all TFs and sit at the top of their decile, while a |z| >= 5 edge set spans the whole strength range. Recomputed under three constructions of the control, the incumbent increment reads +0.1520 (decile), +0.1528 (nearest in strength), +0.1494 (nearest + cell-count matched) -- a span of 0.0035, or 2% of the decile value. The power-weighted rule reads +0.1805 / +0.1823 / +0.1784, a span of 0.0039. The ordering between the two rules is preserved under every construction, so today's admission of the power-weighted rule does not depend on which control was used.",
+ "log": [
+  "====================================================================================================",
+  "AUDIT: does the decile-matched swapped-source control hold up in causal_reg / reliable_edges?",
+  "====================================================================================================",
+  "  TRIGGER: impute_reg_sign found |SMD| 0.25 on perturbation strength inside its decile-matched",
+  "  swapped source, and tightening the control moved its increment by more than the effect.",
+  "  6,881 non-finite entries in the K562 matrix set to NaN (they are not zeros)",
+  "    RPE1 pseudobulk from cache: 2,122 perturbations",
+  "    RPE1 genes -> K562 genes: 7,094/8,749 (81.1%)",
+  "    RPE1 perturbations -> K562: 2,119/2,122 (99.9%)",
+  "  shared grid 2,119 x 7,094; finite in both 15,031,399",
+  "\n  INCUMBENT |z| >= 5 (the +15.0 headline's edge rule): 216,274 edges, raw sign agreement 0.6719",
+  "    decile   increment +0.1520 (sd 0.0014)   SMD strength -0.020  SMD log cells +0.110",
+  "    nearest  increment +0.1528 (sd 0.0011)   SMD strength -0.003  SMD log cells +0.102",
+  "    joint    increment +0.1494 (sd 0.0005)   SMD strength -0.002  SMD log cells +0.113",
+  "    -> across the three constructions the increment spans 0.0035, which is 2% of the decile-matched value",
+  "\n  POWER-WEIGHTED z (admitted today on the decile control): 216,274 edges, raw sign agreement 0.7010",
+  "    decile   increment +0.1805 (sd 0.0009)   SMD strength -0.008  SMD log cells +0.175",
+  "    nearest  increment +0.1823 (sd 0.0012)   SMD strength -0.002  SMD log cells +0.160",
+  "    joint    increment +0.1784 (sd 0.0013)   SMD strength -0.000  SMD log cells +0.134",
+  "    -> across the three constructions the increment spans 0.0039, which is 2% of the decile-matched value",
+  "\n====================================================================================================",
+  "  VERDICT: BOTH HEADLINES SURVIVE THE TIGHTER CONTROL. The decile-matched swapped source leaves |SMD| 0.020 on RPE1 perturbation strength for the incumbent |z| >= 5 edge set, inside the 0.10 balance bar, so the defect impute_reg_sign found on curated TF sources does NOT reproduce on this edge set -- the two differ because curated sources are all TFs and sit at the top of their decile, while a |z| >= 5 edge set spans the whole strength range. Recomputed under three constructions of the control, the incumbent increment reads +0.1520 (decile), +0.1528 (nearest in strength), +0.1494 (nearest + cell-count matched) -- a span of 0.0035, or 2% of the decile value. The power-weighted rule reads +0.1805 / +0.1823 / +0.1784, a span of 0.0039. The ordering between the two rules is preserved under every construction, so today's admission of the power-weighted rule does not depend on which control was used."
+ ]
+}

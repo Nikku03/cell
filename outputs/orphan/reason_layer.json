@@ -1,0 +1,157 @@
+{
+ "panel": [
+  {
+   "ko": "GATA1",
+   "n_movers": 295,
+   "reasoned_hits": 0,
+   "fullstack_hits": 2,
+   "prior_hits": 1,
+   "reasoned_top10": [
+    "ALAS2",
+    "GYPB",
+    "HEMGN",
+    "GP1BB",
+    "PRG2",
+    "KLF1",
+    "FTH1",
+    "SNHG1",
+    "MT-ND2",
+    "GAS5"
+   ],
+   "reasoned_correct": []
+  },
+  {
+   "ko": "POT1",
+   "n_movers": 201,
+   "reasoned_hits": 2,
+   "fullstack_hits": 2,
+   "prior_hits": 2,
+   "reasoned_top10": [
+    "SNHG1",
+    "MT-ND2",
+    "GAS5",
+    "FTH1",
+    "MT-CO3",
+    "EEF1A1",
+    "MALAT1",
+    "FTL",
+    "BTG1",
+    "TPT1"
+   ],
+   "reasoned_correct": [
+    "SNHG1",
+    "EEF1A1"
+   ]
+  },
+  {
+   "ko": "SUPT6H",
+   "n_movers": 168,
+   "reasoned_hits": 4,
+   "fullstack_hits": 5,
+   "prior_hits": 5,
+   "reasoned_top10": [
+    "SNHG1",
+    "MT-ND2",
+    "GAS5",
+    "FTH1",
+    "HIST1H1C",
+    "EEF1A1",
+    "MT-CO3",
+    "RPS3",
+    "MALAT1",
+    "TPT1"
+   ],
+   "reasoned_correct": [
+    "FTH1",
+    "EEF1A1",
+    "MT-CO3",
+    "RPS3"
+   ]
+  },
+  {
+   "ko": "CHMP3",
+   "n_movers": 126,
+   "reasoned_hits": 3,
+   "fullstack_hits": 1,
+   "prior_hits": 1,
+   "reasoned_top10": [
+    "SNHG1",
+    "MT-ND2",
+    "GAS5",
+    "FTH1",
+    "MT-CO3",
+    "EEF1A1",
+    "MALAT1",
+    "FTL",
+    "MT-ATP6",
+    "TPT1"
+   ],
+   "reasoned_correct": [
+    "FTH1",
+    "MALAT1",
+    "FTL"
+   ]
+  },
+  {
+   "ko": "RPL7A",
+   "n_movers": 124,
+   "reasoned_hits": 6,
+   "fullstack_hits": 7,
+   "prior_hits": 7,
+   "reasoned_top10": [
+    "RPS3",
+    "RPS9",
+    "RPS18",
+    "RPS2",
+    "RPS12",
+    "SNHG1",
+    "FTH1",
+    "MT-ND2",
+    "EEF1A1",
+    "GAS5"
+   ],
+   "reasoned_correct": [
+    "RPS9",
+    "RPS12",
+    "SNHG1",
+    "FTH1",
+    "MT-ND2",
+    "GAS5"
+   ]
+  },
+  {
+   "ko": "AQR",
+   "n_movers": 117,
+   "reasoned_hits": 4,
+   "fullstack_hits": 3,
+   "prior_hits": 3,
+   "reasoned_top10": [
+    "SNHG1",
+    "MT-ND2",
+    "GAS5",
+    "FTH1",
+    "MT-CO3",
+    "EEF1A1",
+    "MALAT1",
+    "IGFL2-AS1",
+    "MT-ATP6",
+    "TPT1"
+   ],
+   "reasoned_correct": [
+    "SNHG1",
+    "GAS5",
+    "MT-CO3",
+    "TPT1"
+   ]
+  }
+ ],
+ "avg_reasoned": 3.17,
+ "avg_fullstack": 3.33,
+ "avg_prior": 3.17,
+ "reasoning_vs_fullstack": -0.17,
+ "reasoning_vs_prior": 0.0,
+ "threshold": 1.5,
+ "n_panel": 6,
+ "verdict": "BIOLOGY-EXPERT REASONING LAYER, strict held-out (context given, movers hidden; reasoner commits top-10 before reveal), panel of 6 well-powered K562-deep knockouts. RESULT: reasoning does NOT improve the prediction -- reasoned 3.17/10 vs mechanical full-stack 3.33/10 vs generic prior 3.17/10 (-0.17 vs full-stack, +0.00 vs prior). And crucially, WHERE the reasoner made confident MECHANISTIC bets they BACKFIRED: GATA1 (bet the erythroid effector program ALAS2/GYPB/HEMGN/GP1BB) scored 0/10 vs the prior's 1 and full-stack's 2 -- with 295 genes moving, almost none were the canonical erythroid targets; SUPT6H (bet histone genes, its known specialty) 4 vs 5; RPL7A (bet co-regulated RP genes) 6 vs 7. Where reasoning 'helped' (CHMP3 +2, AQR +1) it was luck reordering GENERIC prior genes (MALAT1/FTL/TPT1), not biological insight. This generalizes the EIF2S1 lesson: the readout is dominated by generic stress-responsive genes, so betting on the biologically-correct specific program strictly hurts. The wall is NOT a reasoning gap -- a domain-expert reasoner with all context except the answer cannot beat the dumb prior, because the missing thing is the MEASUREMENT of specific transmission, not its interpretation. Honest caveats: n=6 panel (the -0.17 is within noise), single-shot (iterative feedback would leak the test set), and the reasoner reranked a mostly-generic candidate pool; a tool-augmented reasoner might differ -- but the direction is unambiguous and consistent with every prior result: specific mechanism, however sourced, does not lift the absolute count on this readout.",
+ "note": "Test of a biology-expert reasoning layer on top of the full stack, strict held-out (context + full-stack candidate pool given, measured movers hidden; the LLM reasoner commits a reranked top-10 per knockout BEFORE reveal). Panel = 6 well-powered K562-deep knockouts (GATA1 + 5 essential core-machinery genes). RESULT: reasoning does not help -- reasoned 3.17/10 = generic prior 3.17/10, slightly below mechanical full-stack 3.33/10. Confident mechanistic bets BACKFIRED (GATA1 erythroid program 0/10 despite 295 movers; SUPT6H histone -1; RPL7A RP-genes -1); apparent gains (CHMP3/AQR) were generic-gene reordering luck. Generalizes the EIF2S1 finding: the transcriptomic readout is dominated by generic stress-responsive genes, so betting the biologically-correct specific program hurts. The far-field wall is a MEASUREMENT gap, not a reasoning gap -- a domain expert with all context except the answer cannot beat the prior. Caveats: n=6 (within noise), single-shot (iterative feedback leaks), reranking a mostly-generic pool."
+}

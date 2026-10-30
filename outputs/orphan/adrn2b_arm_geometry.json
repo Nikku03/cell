@@ -1,0 +1,44 @@
+{
+  "arms": {
+    "polynomial_control": {
+      "dimension": 488,
+      "effective_rank_1pct": 168,
+      "exact_matrix_rank": 488,
+      "mean_l2_norm": 13.02266461596816,
+      "norm_ratio_vs_control": 1.000000041914524,
+      "s_1": 47.74936936557011,
+      "s_169": 7.848757554113617e-07,
+      "s_457": 2.9044744412634476e-07,
+      "step_size_ratio_vs_control": 1.00000008382905
+    },
+    "transformer": {
+      "dimension": 488,
+      "effective_rank_1pct": 179,
+      "exact_matrix_rank": 488,
+      "mean_l2_norm": 14.258966860393011,
+      "norm_ratio_vs_control": 1.0949347064168977,
+      "s_1": 200.89960770110252,
+      "s_169": 22.002381524393325,
+      "s_457": 3.217896590133475e-07,
+      "step_size_ratio_vs_control": 1.198882011316258
+    },
+    "workspace_gru": {
+      "dimension": 488,
+      "effective_rank_1pct": 442,
+      "exact_matrix_rank": 488,
+      "mean_l2_norm": 21.50383392345636,
+      "norm_ratio_vs_control": 1.651262276877783,
+      "s_1": 339.93047505397993,
+      "s_169": 28.881945363867757,
+      "s_457": 2.3710983737052,
+      "step_size_ratio_vs_control": 2.7266671070396
+    }
+  },
+  "digital_block": {
+    "dimension": 288,
+    "mean_l2_norm": 16.7680606842041
+  },
+  "draws": 1200,
+  "sequence_length": 16,
+  "singular_value_threshold": 0.01
+}

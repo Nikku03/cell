@@ -1,0 +1,18 @@
+{
+  "summary": {
+    "n_predictions": 120,
+    "corroborated": 0,
+    "corroboration_rate": 0.0,
+    "by_kind": {
+      "direct": 0,
+      "shared": 0
+    },
+    "random_baseline": 0.004,
+    "enrichment_over_random": 0.0,
+    "known_ppi_corroboration": 0.092,
+    "known_ppi_enrichment": 23.0,
+    "verdict": "codep IS a valid independent validator (known PPI edges corroborate at 23x over random), but these particular predictions fall in HOUSEKEEPING complexes (spliceosome/ribosome/SRP) that are pan-essential \u2014 their essentiality doesn't VARY across cell lines, so co-dependency is structurally blind to them. Not evidence the predictions are wrong; evidence that co-dependency is the WRONG validator for pan-essential edges. The lesson: match the dataset to the prediction type (co-fractionation/AP-MS or Tahoe co-response for housekeeping complexes; DepMap/codep for context-variable dependencies; GEO for disease)."
+  },
+  "upgraded": [],
+  "note": "codep = CRISPR co-dependency across cell lines, independent of the PPI network. It validates CONTEXT-VARIABLE relationships (known edges 23x over random) but is blind to pan-essential housekeeping complexes. The harness extends to external DepMap/Tahoe/GEO by swapping in `measured`."
+}

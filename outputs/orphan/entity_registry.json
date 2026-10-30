@@ -1,0 +1,44 @@
+{
+ "meta": {
+  "assembly": "GRCh38",
+  "n_entities": 172539,
+  "n_alias": 489113,
+  "n_genes_in_cell": 16472,
+  "n_cell_genes_unmapped": 20,
+  "positional_key_note": "cell_complete.json.gz keys several dicts (ppm, abund, coexpr, codep, gene2cplx, model4, cellcycle, drugs, generxn, emask, darkfn) by the gene's INDEX in `genes`, not by symbol. `cell_index` maps those keys to entity ids. Looking them up by symbol returns None for every gene and is the bug that silently zeroed an abundance control.",
+  "namespaces": {
+   "gene": [
+    "ensembl",
+    "symbol",
+    "uniprot",
+    "entrez",
+    "refseq"
+   ],
+   "protein": [
+    "uniprot"
+   ]
+  }
+ },
+ "entity_types": {
+  "gene": 86431,
+  "protein": 86108
+ },
+ "alias_namespaces": {
+  "ensembl": 86411,
+  "symbol": 41797,
+  "entrez": 28433,
+  "refseq": 160256,
+  "uniprot": 172216
+ },
+ "self_test": {
+  "cell_genes_by_symbol": {
+   "joined": 16492,
+   "of": 16492,
+   "rate": 1.0,
+   "via": "symbol",
+   "label": "cell genes by symbol"
+  },
+  "ppm_keys_as_symbols": "raises JoinError (intended)",
+  "ppm_keys_via_cell_index_pct": 100.0
+ }
+}

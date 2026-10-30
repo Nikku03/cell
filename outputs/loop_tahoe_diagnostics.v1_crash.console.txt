@@ -1,0 +1,36 @@
+========================================================================================================
+LOOP 270 -- THE TWO NUMBERS LOOP 268 FLAGGED AS UNSAFE TO QUOTE
+========================================================================================================
+     Loop 268 recorded both problems in its own output rather than reporting past
+     them. Neither changes a gate verdict there; both change what its numbers mean.
+     49 lines, ~644 conditions each, K=322 as loop 268 used
+W1 IS THE JUMP AT n=48 REAL?
+       held-out line 1/20   [15s]
+       held-out line 6/20   [46s]
+       held-out line 11/20   [78s]
+       held-out line 16/20   [109s]
+        n     excess       null   step ratio
+       36    +0.0138    +0.0011             
+       40    +0.0190    +0.0013        1.37x
+       42    +0.0228    +0.0014        1.20x
+       44    +0.0311    +0.0016        1.36x
+       46    +0.0424    +0.0017        1.36x
+       47    +0.0554    +0.0018        1.31x
+       48    +0.0833    +0.0016        1.50x
+     largest step ratio 1.50x; loop 268's coarse grid showed 4.46x at n=48
+     W1 PASS -- no step exceeds 1.50x, so the curve is smooth and loop 268's 4.46x was an artefact of its coarse grid
+W2 DO THE DOSES AGREE ONCE MATCHED?
+     matched: 204 conditions per line and K=102 for BOTH doses
+     loop 268 used 253/K=126 and 204/K=102 -- three things moving at once
+     dose 0.05: full +0.0688, diagonal +0.0136, off-diagonal +0.0551
+Traceback (most recent call last):
+  File "/home/user/cell/colab/loop_tahoe_diagnostics.py", line 221, in <module>
+    main()
+  File "/home/user/cell/colab/loop_tahoe_diagnostics.py", line 169, in main
+    keep = np.concatenate([r2.choice(np.where(cl == l)[0], size=nmin, replace=False)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/cell/colab/loop_tahoe_diagnostics.py", line 169, in <listcomp>
+    keep = np.concatenate([r2.choice(np.where(cl == l)[0], size=nmin, replace=False)
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "numpy/random/_generator.pyx", line 917, in numpy.random._generator.Generator.choice
+ValueError: Cannot take a larger sample than population when replace is False

@@ -1,0 +1,72 @@
+{
+ "lines": {
+  "K562": {
+   "knockouts": 1400,
+   "usable_sources": 247,
+   "edges": 16572,
+   "specific_edges": 7048
+  },
+  "RPE1": {
+   "knockouts": 2151,
+   "usable_sources": 793,
+   "edges": 60233,
+   "specific_edges": 12998
+  },
+  "HepG2": {
+   "knockouts": 2151,
+   "usable_sources": 455,
+   "edges": 38492,
+   "specific_edges": 11068
+  },
+  "Jurkat": {
+   "knockouts": 2151,
+   "usable_sources": 173,
+   "edges": 11083,
+   "specific_edges": 5117
+  }
+ },
+ "pairwise_reproduction": {
+  "K562->RPE1": 0.0863,
+  "K562->HepG2": 0.102,
+  "K562->Jurkat": 0.0883,
+  "RPE1->K562": 0.1291,
+  "RPE1->HepG2": 0.1311,
+  "RPE1->Jurkat": 0.0754,
+  "HepG2->K562": 0.1138,
+  "HepG2->RPE1": 0.1186,
+  "HepG2->Jurkat": 0.0575,
+  "Jurkat->K562": 0.0762,
+  "Jurkat->RPE1": 0.0676,
+  "Jurkat->HepG2": 0.0468
+ },
+ "consensus_core": 1091,
+ "testable_elsewhere": 23645,
+ "core_fraction": 0.0461,
+ "transfer_auc": {
+  "static_codep": 0.5094,
+  "static_ppi": 0.5055,
+  "by_line": {
+   "RPE1": [
+    0.5336,
+    0.638
+   ],
+   "HepG2": [
+    0.5398,
+    0.5692
+   ],
+   "Jurkat": [
+    0.5364,
+    0.2939
+   ]
+  },
+  "any_other_line": 0.5544
+ },
+ "conserved_vs_private": {
+  "conserved_src_ess": 0.972,
+  "private_src_ess": 0.93,
+  "conserved_tgt_indeg": 5.29,
+  "private_tgt_indeg": 4.55
+ },
+ "verdict": "MULTILINE NETWORK (multiline_network.py): built the measured causal graph in every cell line with usable knockouts and asked whether it TRANSFERS. Per line (usable sources / specific edges): K562 247/7,048, RPE1 793/12,998, HepG2 455/11,068, Jurkat 173/5,117. CONSERVATION: 1,091 specific edges are measured in 2+ lines out of 23,645 that were testable elsewhere (4.6%) -- so most measured causal edges are CONTEXT-PRIVATE rather than conserved wiring, which matches this project's long-standing cross-line finding from the other direction. THE TRANSFER TEST is the practical payoff: against the SAME degree-matched negatives where static features managed only co-dependency AUC 0.509 / PPI 0.506, simply asking 'is this edge present in another MEASURED line' scores 0.540 (HepG2, covering 57% of pairs), and pooling every other line gives 0.554. So even a measured donor line only modestly beats annotation -- the causal map is largely context-specific and does not transfer. WHAT CONSERVES: conserved edges are only SLIGHTLY more essential at the source (0.97 vs 0.93) and slightly more hub-facing at the target (5.3 vs 4.6) than K562-private ones -- a real but weak tendency, not a clean separation. READING, stated plainly: NEITHER annotation NOR another measured cell line predicts a specific causal edge. Pooling three other measured lines reaches AUC 0.554 against 0.509 for co-dependency -- better, but both sit near the 0.5 floor, and pairwise reproduction is only 5-13%. Cell lines are not replicates of one wiring diagram: they share a small conserved essential core (1,091 edges, 4.6% of what was testable) and are otherwise privately wired. PRACTICAL CONSEQUENCE: you cannot buy the causal map of your cell line by measuring a different one, any more than by consulting a database -- the specific wiring has to be measured in the context you care about. What DOES transfer is the essential core, which is also the part databases already cover best. Scope: top-~250-genes-per-knockout store for all lines (truncation binds for only 9-24 knockouts each), all lines treated identically. Deterministic.",
+ "note": "MULTILINE NETWORK (multiline_network.py): built the measured causal graph in every cell line with usable knockouts and asked whether it TRANSFERS. Per line (usable sources / specific edges): K562 247/7,048, RPE1 793/12,998, HepG2 455/11,068, Jurkat 173/5,117. CONSERVATION: 1,091 specific edges are measured in 2+ lines out of 23,645 that were testable elsewhere (4.6%) -- so most measured causal edges are CONTEXT-PRIVATE rather than conserved wiring, which matches this project's long-standing cross-line finding from the other direction. THE TRANSFER TEST is the practical payoff: against the SAME degree-matched negatives where static features managed only co-dependency AUC 0.509 / PPI 0.506, simply asking 'is this edge present in another MEASURED line' scores 0.540 (HepG2, covering 57% of pairs), and pooling every other line gives 0.554. So even a measured donor line only modestly beats annotation -- the causal map is largely context-specific and does not transfer. WHAT CONSERVES: conserved edges are only SLIGHTLY more essential at the source (0.97 vs 0.93) and slightly more hub-facing at the target (5.3 vs 4.6) than K562-private ones -- a real but weak tendency, not a clean separation. READING, stated plainly: NEITHER annotation NOR another measured cell line predicts a specific causal edge. Pooling three other measured lines reaches AUC 0.554 against 0.509 for co-dependency -- better, but both sit near the 0.5 floor, and pairwise reproduction is only 5-13%. Cell lines are not replicates of one wiring diagram: they share a small conserved essential core (1,091 edges, 4.6% of what was testable) and are otherwise privately wired. PRACTICAL CONSEQUENCE: you cannot buy the causal map of your cell line by measuring a different one, any more than by consulting a database -- the specific wiring has to be measured in the context you care about. What DOES transfer is the essential core, which is also the part databases already cover best. Scope: top-~250-genes-per-knockout store for all lines (truncation binds for only 9-24 knockouts each), all lines treated identically. Deterministic."
+}

@@ -1,0 +1,141 @@
+{
+ "test": "five-clause principle as ablatable structural terms",
+ "arms": {
+  "MLP": 0.5496645670155261,
+  "+BUDGET": 0.5501170467477235,
+  "+CLOSURE": 0.5482999971040544,
+  "+MEMORY": 0.5498049006282495,
+  "+INFOCOST": 0.5497157773337941,
+  "+ALL": 0.5498070845666668,
+  "RIDGE": 0.5585223356564374
+ },
+ "A1": {
+  "delta": -0.008833442924713117,
+  "se": 7.631478907139893e-05,
+  "z": -115.75007979709784
+ },
+ "A6": {
+  "+BUDGET": {
+   "delta": 0.0008596045445763118,
+   "se": 7.375360637465194e-05,
+   "z": 11.6550849081157
+  },
+  "+CLOSURE": {
+   "delta": -0.0012120021250044803,
+   "se": 7.78493814861849e-05,
+   "z": -15.56855175810949
+  },
+  "+MEMORY": {
+   "delta": -2.356660629585775e-05,
+   "se": 7.607703347318987e-05,
+   "z": -0.30977293961078023
+  },
+  "+INFOCOST": {
+   "delta": 0.00011123516476969393,
+   "se": 2.880353827160679e-05,
+   "z": 3.8618576551528903
+  }
+ },
+ "A2": {
+  "best": "+BUDGET",
+  "delta": 0.0008596045445763118
+ },
+ "A3": {
+  "delta": -0.0007619106122588495,
+  "se": 8.145316693206479e-05,
+  "z": -9.353971625121876
+ },
+ "A4": {
+  "best": "+BUDGET",
+  "delta": -0.007973838380136806,
+  "se": 7.512063040382503e-05,
+  "z": -106.14711747321532
+ },
+ "A5": {
+  "seed_sd": {
+   "MLP": 0.00032444172804708244,
+   "+BUDGET": 0.0003893201109422748,
+   "+CLOSURE": 0.00020571960483988669,
+   "+MEMORY": 0.00012475415675828247,
+   "+INFOCOST": 0.0003432634143436724,
+   "+ALL": 0.00017371871010296577
+  }
+ },
+ "gates": {
+  "A1": false,
+  "A2": false,
+  "A3": false,
+  "A4": false,
+  "A5": false
+ },
+ "void": [
+  "A3",
+  "A5"
+ ],
+ "seconds": 985.3194100856781,
+ "log": [
+  "========================================================================================================",
+  "LOOP 251 -- THE PRINCIPLE AS FIVE ABLATABLE TERMS, EACH AGAINST THE SAME CAPACITY",
+  "========================================================================================================",
+  "     Loop 241's two MLPs LOST to their linear twins by -0.0155 and -0.0170. So a",
+  "     constrained network is interesting only if each constraint beats an UNCONSTRAINED",
+  "     network of the same capacity (A2) and the whole thing beats ridge (A4).",
+  "     The budget premise, measured first: over 11,258 K562 perturbations the up/down",
+  "     ratio is 1.1467 with 7.9% net imbalance -- a SOFT budget, so the currency clause",
+  "     enters as a penalty with weight 0.3, not as a hard projection.",
+  "     The scaling clause is NOT tested: one cell line, no size axis.",
+  "     sci-fate: 7,179 cells x 18,122 genes, timepoints [np.float64(0.0), np.float64(2.0), np.float64(4.0), np.float64(6.0), np.float64(8.0), np.float64(10.0)] h",
+  "     target: the 2,000 most variable new-RNA genes",
+  "     memory basis frozen from loop 249: tau = 1.94 h and 5.25 h",
+  "     fitting: ridge, then six neural arms x 3 seeds ...",
+  "       RIDGE       0.5585   [245s]",
+  "       MLP         0.5497   (seeds 0.5497, 0.5500, 0.5493)   [331s]",
+  "       +BUDGET     0.5501   (seeds 0.5505, 0.5500, 0.5498)   [502s]",
+  "       +CLOSURE    0.5483   (seeds 0.5485, 0.5483, 0.5481)   [554s]",
+  "       +MEMORY     0.5498   (seeds 0.5497, 0.5498, 0.5499)   [639s]",
+  "       +INFOCOST   0.5497   (seeds 0.5498, 0.5500, 0.5493)   [765s]",
+  "       +ALL        0.5498   (seeds 0.5498, 0.5500, 0.5496)   [985s]",
+  "A1 DOES THE UNCONSTRAINED NETWORK BEAT RIDGE?",
+  "     MLP 0.5497 vs RIDGE 0.5585   paired -0.0088 +/- 0.0001 (-115.8 se)",
+  "     A1 FAIL -- the unconstrained network is -0.0088 against ridge; the loop 241 pattern holds and the constrained arms must clear ridge too",
+  "A6 WHICH CLAUSE PAYS, AND DOES ANY HURT? -- reported, not gated",
+  "       +BUDGET     over MLP: +0.00086 +/- 0.00007  (+11.7 se)",
+  "       +CLOSURE    over MLP: -0.00121 +/- 0.00008  (-15.6 se)",
+  "       +MEMORY     over MLP: -0.00002 +/- 0.00008  (-0.3 se)",
+  "       +INFOCOST   over MLP: +0.00011 +/- 0.00003  (+3.9 se)",
+  "A2 DOES ANY SINGLE CONSTRAINT BEAT THE UNCONSTRAINED NETWORK?",
+  "     best single constraint is +BUDGET at +0.00086",
+  "     A2 FAIL -- the best constraint adds +0.00086 over the same capacity unconstrained, against a 0.005 bar",
+  "A3 DOES THE FULL MODEL BEAT THE BEST SINGLE CONSTRAINT?",
+  "     +ALL 0.5498 vs +BUDGET 0.5505   paired -0.00076 +/- 0.00008 (-9.4 se)",
+  "     A3 VOID -- A2 did not pass, so there is nothing here to test",
+  "A4 DOES THE BEST ARM BEAT RIDGE AT ALL?",
+  "     best neural arm +BUDGET 0.5505 vs RIDGE 0.5585   paired -0.0080 +/- 0.0001 (-106.1 se)",
+  "     A4 FAIL -- the best neural arm is -0.0080 against ridge; the linear model remains the thing to beat",
+  "A5 IS THE ADVANTAGE BIGGER THAN THE SEED NOISE?",
+  "       MLP         across-seed sd 0.00032",
+  "       +BUDGET     across-seed sd 0.00039",
+  "       +CLOSURE    across-seed sd 0.00021",
+  "       +MEMORY     across-seed sd 0.00012",
+  "       +INFOCOST   across-seed sd 0.00034",
+  "       +ALL        across-seed sd 0.00017",
+  "     A5 VOID -- A2 did not pass, so there is nothing here to test",
+  "A7 WHAT THIS CANNOT SHOW",
+  "     The scaling clause is not tested at all: one cell line, no size axis, no taxa.",
+  "     'Information cost' here is an L1 penalty on deviation from a population mean -- a",
+  "     regulariser with a thermodynamic story attached, not a measurement of joules.",
+  "     Landauer's exchange rate is not established by anything in this loop.",
+  "     A built-in fixed point is an assumption: +CLOSURE beating MLP would show the",
+  "     assumption helps prediction, not that the cell has that fixed point.",
+  "     Predicting the rate from the state at one instant is not simulating the dynamics.",
+  "     A model can score here and still diverge when iterated.",
+  "========================================================================================================",
+  "  A1  FAIL",
+  "  A2  FAIL",
+  "  A3  VOID",
+  "  A4  FAIL",
+  "  A5  VOID",
+  "  0/3   [985s]   (2 VOID: A3, A5)",
+  "========================================================================================================"
+ ]
+}

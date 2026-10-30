@@ -1,0 +1,80 @@
+=================================================================================================
+THE MODEL AUDIT   conservation -> seal -> energy -> only then sensitivities
+=================================================================================================
+  model recon3d.json   sha256 aba925f17547a42f9fdb4c1f685d8936...
+  10600 reactions, 5835 metabolites, 40425 nonzeros
+
+=================================================================================================
+M1  BOUNDARY IDENTIFICATION IS STRUCTURAL AND COMPLETE
+=================================================================================================
+  structural (exactly one metabolite) : 1806
+    by name prefix: EX_ 1560, DM_ 145, SK_ 101
+  name-based (EX_/DM_/SK_)            : 1806
+  structural but unnamed 0, named but not structural 0
+  declared medium 43, supply-closed 1763, UNACCOUNTED 0
+  M1: PASS
+
+=================================================================================================
+M2  CONSERVATION AUDIT  (this is the one that comes first)
+=================================================================================================
+  internal reactions 8794, of which 7771 have parseable formulas on every
+  metabolite (88.4%); the rest carry R- or X-groups and cannot be checked
+  IMBALANCED: 60 of 7771 checked  (0.77%)
+  by element set:
+    O+S                    41
+    H+O                    8
+    O                      3
+    H                      2
+    C+H                    1
+    N+O                    1
+    S                      1
+    H+N+O                  1
+    C+H+O                  1
+    H+O+S                  1
+  hydrogen-only imbalances: 2 of 60  (3%) -- protonation convention, not mass creation
+  imbalances involving C, N, P or S: 47
+  M2: FAIL -- 60 internal reactions do not conserve elements
+      A FAIL here does not by itself invalidate anything. It says a pathology exists.
+      M5 asks the question that matters: does the physiological solution USE it?
+
+=================================================================================================
+M3  THE SEALED-CELL TEST
+=================================================================================================
+  growth on the declared medium         : 1.688875 /h
+  growth with every supply direction shut: -1.898540e-14 /h
+  M3: PASS -- a sealed cell does not grow
+
+=================================================================================================
+M4  THE ENERGY-LOOP TEST
+=================================================================================================
+  Mass conservation does not imply energy conservation: a network can balance every atom
+  and still run a cycle that nets ATP. Sealed exactly as in M3, each currency is drained
+  through an elementally balanced dissipation reaction and the drain is maximised.
+  ATP    max drain  -1.932676e-12   dissipation reaction is balanced   PASS
+  NADH   max drain  -9.094947e-13   dissipation reaction is balanced   PASS
+  NADPH  max drain   2.273737e-12   dissipation reaction is balanced   PASS
+  FADH2  max drain  -1.332107e-12   dissipation reaction is balanced   PASS
+  M4: PASS -- no free energy in a sealed box
+
+=================================================================================================
+M5  DO THE IMBALANCED REACTIONS MATTER ON THE CORRECTED MODEL?
+=================================================================================================
+  of the 60 imbalanced reactions, 0 carry flux in the optimal solution
+  growth with all 60 knocked out : 1.688875 /h   against 1.688875 /h
+  relative change 0.0000%   (predeclared bar: 5%)
+  M5: PASS -- the pathology exists but the physiological solution does not lean on it.
+      The corrected sensitivity results stand as computed.
+
+=================================================================================================
+M6  MAY SENSITIVITIES BE COMPUTED ON THIS MODEL?
+=================================================================================================
+    M1 boundaries accounted   PASS
+    M2 conservation           FAIL   (advisory; M5 is the decider)
+    M3 sealed cell            PASS   (BLOCKING)
+    M4 energy loops           PASS   (BLOCKING)
+    M5 imbalance irrelevant   PASS   (BLOCKING)
+
+  VERDICT: sensitivities MAY be computed on this model.
+  The rule is mechanical, not a judgement call: M1, M3, M4 and M5 all block. M2 alone does
+  not, because an imbalanced reaction that carries no flux and supports no growth is a
+  defect in the reconstruction rather than a defect in the answer.

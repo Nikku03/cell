@@ -1,0 +1,184 @@
+{
+ "test": "loop 139 -- measured constants instead of fitted ones",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+    "bytes": 38524393,
+    "hash": "b857a72939e09be8",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/_rt_matrix.npy",
+    "bytes": 2618048,
+    "hash": "ad5b99930f04d922",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/_rt_geneidx.json",
+    "bytes": 103518,
+    "hash": "2877ad9f4b808899",
+    "method": "sha256:full"
+   },
+   {
+    "path": "outputs/loop_noise.json",
+    "bytes": 14549,
+    "hash": "5c4c9c1bc54c4a02",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 16492,
+   "used": 16355,
+   "selection": "all",
+   "fraction": 0.9916929420325006
+  },
+  "seed": 13900,
+  "controls": [
+   "the derived sigma is computed BEFORE any score is read",
+   "the conclusion is tested at both ends of the literature range",
+   "the noise exponent is imposed, not fitted, and compared against the measurement's own reproducibility ceiling",
+   "no layer is promoted on a subset"
+  ],
+  "note": "replaces two FITTED parameters with measured or derived ones. A fitted parameter can only ever look better in-sample; the question is whether the constrained model still predicts.",
+  "warnings": []
+ },
+ "gates": {
+  "W1": true,
+  "W2": true,
+  "W3": true,
+  "W4": true,
+  "W5": true,
+  "W6": true
+ },
+ "w1": {
+  "s_phase_min": 480.0,
+  "fork_range": [
+   1.5,
+   2.0
+  ],
+  "derived_sigma_kb": {
+   "1.5": 360.0,
+   "2.0": 480.0
+  },
+  "swept_best_sigma_kb": 400.0,
+  "swept_best_rho": 0.5657413617349013,
+  "brackets": true
+ },
+ "w2": {
+  "swept_sigma": 400.0,
+  "swept_rho": 0.5640850147740668,
+  "derived_sigma": 420.0,
+  "derived_rho": 0.5647235784117839,
+  "ratio": 1.001132034393739,
+  "bar": 0.95
+ },
+ "w3": {
+  "1.5": {
+   "sigma": 360.0,
+   "rho": 0.5621651706528551
+  },
+  "2.0": {
+   "sigma": 480.0,
+   "rho": 0.5658541229815283
+  }
+ },
+ "w4": {
+  "fitted_exponent": -0.40626614335218586,
+  "physics_exponent": -0.5,
+  "gap": 0.09373385664781414,
+  "reproducibility_ceiling": 0.8859801110390698
+ },
+ "w5": {
+  "median_ratio": 0.5198597399238413,
+  "b_self": 1.8111110763074718,
+  "b_reported": 4.250131570000001,
+  "b_cross": 11.298549274932533,
+  "cross_over_self": 6.238462909722927
+ },
+ "w6": {
+  "replication_unfitted": true,
+  "noise_exponent_imposed": true
+ },
+ "seconds": 4.237791538238525,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 139 -- stop fitting what someone has already measured",
+  "====================================================================================================",
+  "",
+  "W1 DERIVE THE SMOOTHING WIDTH INSTEAD OF SWEEPING IT",
+  "     S phase 480 min (recorded parameter)",
+  "     fork speed, LITERATURE RANGE 1.5-2.0 kb/min",
+  "     I could not verify a single primary citation through PubMed, so the range is used",
+  "     and W3 tests both ends rather than asserting a precise value.",
+  "       v = 1.5 kb/min  ->  sigma = v*T_S/2 = 360 kb",
+  "       v = 2.0 kb/min  ->  sigma = v*T_S/2 = 480 kb",
+  "     the SWEPT optimum was sigma 400 kb at rho 0.5657",
+  "     derived range 360-480 kb brackets the swept optimum: True",
+  "     W1 PASS -- computed before any score was read",
+  "",
+  "  rebuilding the RT scoring exactly as loop 100 did (same bins, same TSS map) ...",
+  "     22 chromosomes, 16,181 genes",
+  "",
+  "W2 DOES THE DERIVED WIDTH PREDICT AS WELL AS THE FITTED ONE?",
+  "     sigma 400 kb, SWEPT (fitted on this data)   rho 0.5641",
+  "     sigma 420 kb, DERIVED from v=1.75 and T_S  rho 0.5647",
+  "     the derived width reaches 100.1% of the fitted one",
+  "     W2 PASS -- replication timing is predicted from TWO MEASURED CONSTANTS with",
+  "     nothing fitted. The sweep was buying -0.1% and costing a free parameter.",
+  "",
+  "W3 IS THE ANSWER ROBUST ACROSS THE LITERATURE RANGE?",
+  "     v = 1.5 kb/min  ->  sigma 360 kb  ->  rho 0.5622  (99.7% of fitted)",
+  "     v = 2.0 kb/min  ->  sigma 480 kb  ->  rho 0.5659  (100.3% of fitted)",
+  "     W3 PASS -- the verdict holds at both ends of the measured range",
+  "",
+  "W4 IMPOSE THE -1/2 EXPONENT INSTEAD OF FITTING IT",
+  "     within Larsson alone, the FITTED exponent is -0.4063",
+  "     physics fixes it at -0.5000 -- Poisson and partitioning statistics of",
+  "     independent molecules, the same 1/sqrt(N) this repo already closes on in loop 125 D6",
+  "     the fitted model spends one degree of freedom to move 0.0937",
+  "     away from the value theory supplies for free.",
+  "     the measurement's own allele-to-allele reproducibility ceiling is rho 0.8860,",
+  "     so no model can be judged on differences far below that.",
+  "     W4 PASS -- the fitted exponent is within 0.15 of the physical value, so imposing the physics costs almost nothing and buys a free parameter back",
+  "",
+  "W5 WHAT IS THE FACTOR OF TWO?",
+  "     my burst size / reported burst size, median ratio 0.5199",
+  "     median b within Larsson alone   1.8111",
+  "     median b reported by Larsson    4.2501",
+  "     median b across the join        11.2985  (6.24x the within-dataset value)",
+  "     Larsson's kinetic parameters are per ALLELE; copy numbers are per CELL, and humans",
+  "     are diploid. A ratio of 0.5199 against an expected 0.5000 is a",
+  "     discrepancy of 0.0199.",
+  "     W5 PASS -- ",
+  "     THE FACTOR IS DIPLOIDY, NOT BIOLOGY. A ratio of 0.5 between a per-cell and a",
+  "     per-allele quantity in a diploid organism is a UNIT ERROR, and it is fixed by",
+  "     halving copies rather than by changing the model. The 6.24x cross-dataset",
+  "     inflation is a separate and larger problem and is NOT explained by this.",
+  "",
+  "W6 THE HONEST ACCOUNTING",
+  "     REPLICATION: sigma is now DERIVED from v*T_S/2 with v from the literature and T_S",
+  "     recorded. It reaches 100.1% of the swept optimum and the layer can move from FAILED to a prediction with nothing fitted.",
+  "     What does NOT change: the fork SIMULATION is still beaten by its own analytic limit,",
+  "     and loop 138 V2 showed its speed parameter is invisible to the data. Fixing the",
+  "     constant does not make the simulation work -- it makes the SMOOTHED-ORIGIN model an",
+  "     unfitted prediction, which is a different and smaller claim.",
+  "     NOISE: the exponent is imposed at -0.5, within 0.0937 of what the fit",
+  "     found inside one dataset. The remaining gap to the record's -0.2055",
+  "     is the cross-dataset join, which loop 138 V4 already located and which no choice of",
+  "     exponent repairs.",
+  "     NEITHER layer is promoted on a subset, and neither claim rests on a fitted number.",
+  "",
+  "====================================================================================================",
+  "  W1  PASS",
+  "  W2  PASS",
+  "  W3  PASS",
+  "  W4  PASS",
+  "  W5  PASS",
+  "  W6  PASS",
+  "  6/6",
+  "====================================================================================================",
+  "    manifest: 4 inputs, coverage 16355/16492 (99.2%) by 'all', seed 13900, controls 4"
+ ]
+}

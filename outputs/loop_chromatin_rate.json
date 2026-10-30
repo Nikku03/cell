@@ -1,0 +1,175 @@
+{
+ "test": "loop_chromatin_rate",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE63nnn/GSE63525/suppl/GSE63525_GM12878_insitu_primary_30.hic",
+    "kind": "remote",
+    "hash": null,
+    "method": "none:remote"
+   },
+   {
+    "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+    "bytes": 38524393,
+    "hash": "b857a72939e09be8",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/_schwan2011.json",
+    "bytes": 469617,
+    "hash": "7aae9e39013f859d",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/_tss_hg19.bed",
+    "bytes": 493972,
+    "hash": "f9256113c7481f82",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 4190,
+   "used": 3358,
+   "selection": "filtered",
+   "fraction": 0.8014319809069212
+  },
+  "seed": 9501,
+  "controls": [
+   "the compartment called from the map's own PC1, not from GC",
+   "the textbook A/B result required first as a pipeline check",
+   "publication count and mRNA abundance both partialled out",
+   "a position-shuffle null VERIFIED able to move the statistic",
+   "each chromatin feature reported separately, not combined",
+   "PC1 sign orientation declared as a convention"
+  ],
+  "note": "loops 87 and 87b failed with a graph on both sides; loop 91 supplied a rate, and loop 94 showed any predictor must add over abundance",
+  "warnings": []
+ },
+ "gates": {
+  "H1 the textbook A/B result reproduces": true,
+  "H2 chromatin predicts transcription rate": true,
+  "H3 it beats the fame baseline": true,
+  "H4 it adds over abundance": true,
+  "H5 the null fires and was shown able to": false,
+  "H6 coverage declared": true
+ },
+ "n_genes": 3358,
+ "features": {
+  "compartment PC1": {
+   "rho": 0.0846406184998323,
+   "n": 3358,
+   "partial_pubs": 0.08274466600691814,
+   "partial_abundance": 0.04249392673625043
+  },
+  "insulation at TSS": {
+   "rho": 0.006956380089267553,
+   "n": 3351,
+   "partial_pubs": -0.009493430623274957,
+   "partial_abundance": -0.021923072829901278
+  },
+  "local contact density": {
+   "rho": 0.15449228713499577,
+   "n": 3358,
+   "partial_pubs": 0.14898123462095214,
+   "partial_abundance": 0.036771790815203424
+  }
+ },
+ "pubs_rho": 0.3282223357253303,
+ "abundance_rho": 0.9350880690358515,
+ "h1": {
+  "n_A": 2174,
+  "n_B": 1184,
+  "median_A": 18.6,
+  "median_B": 16.86,
+  "p": 0.0004386606916735626
+ },
+ "h5": {
+  "feature": "local contact density",
+  "moved_fraction": 0.9925104228707564,
+  "null_mean": 0.10294075835642272,
+  "survive": 0.6663164890974318
+ },
+ "seconds": 1223.384527206421,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 95 -- does chromatin predict transcription rate?",
+  "====================================================================================================",
+  "",
+  "  4,190 genes with a transcription rate; 16,362 with an hg19 TSS",
+  "",
+  "     chr1    327 rated genes,  327 on mappable bins",
+  "     chr2    236 rated genes,  236 on mappable bins",
+  "     chr3    212 rated genes,  212 on mappable bins",
+  "     chr4    124 rated genes,  124 on mappable bins",
+  "     chr5    162 rated genes,  161 on mappable bins",
+  "     chr6    143 rated genes,  143 on mappable bins",
+  "     chr7    155 rated genes,  155 on mappable bins",
+  "     chr8    102 rated genes,  102 on mappable bins",
+  "     chr9    146 rated genes,  146 on mappable bins",
+  "     chr10   147 rated genes,  147 on mappable bins",
+  "     chr11   219 rated genes,  219 on mappable bins",
+  "     chr12   163 rated genes,  163 on mappable bins",
+  "     chr13    48 rated genes,   48 on mappable bins",
+  "     chr14   113 rated genes,  113 on mappable bins",
+  "     chr15   109 rated genes,  109 on mappable bins",
+  "     chr16   139 rated genes,  138 on mappable bins",
+  "     chr17   220 rated genes,  219 on mappable bins",
+  "     chr18    38 rated genes,   38 on mappable bins",
+  "     chr19   218 rated genes,  218 on mappable bins",
+  "     chr20   101 rated genes,  101 on mappable bins",
+  "     chr21    34 rated genes,   34 on mappable bins",
+  "     chr22    88 rated genes,   88 on mappable bins",
+  "     chrX    117 rated genes,  117 on mappable bins",
+  "  3,358 genes with both a transcription rate and a chromatin position",
+  "",
+  "  PC1 sign oriented per chromosome so that positive = the more expressed compartment",
+  "  (the eigenvector sign is arbitrary, so this is a convention, not a fit -- and it is",
+  "   why H1 is tested on the MAGNITUDE of the A/B difference, not on its sign)",
+  "",
+  "H1 THE TEXTBOOK RESULT REPRODUCES",
+  "     A compartment 2,174 genes, median mRNA copies 18.6",
+  "     B compartment 1,184 genes, median mRNA copies 16.9",
+  "     ratio 1.10x   Mann-Whitney p 4.387e-04",
+  "     H1 PASS -- the compartment call is picking up real activity",
+  "",
+  "H2 CHROMATIN PREDICTS TRANSCRIPTION RATE",
+  "     compartment PC1          +0.0846   n 3,358",
+  "     insulation at TSS        +0.0070   n 3,351",
+  "     local contact density    +0.1545   n 3,358",
+  "",
+  "H3 IT BEATS THE FAME BASELINE",
+  "     pubs vs transcription rate +0.3282",
+  "     compartment PC1          raw +0.0846 -> given pubs +0.0827   retained    98%   ok",
+  "     insulation at TSS        raw +0.0070 -> given pubs -0.0095   retained  -136%   FAILS",
+  "     local contact density    raw +0.1545 -> given pubs +0.1490   retained    96%   ok",
+  "     H3 PASS",
+  "",
+  "H4 IT ADDS OVER ABUNDANCE",
+  "     mRNA copies vs transcription rate +0.9351",
+  "     compartment PC1          given mRNA copies +0.0425   positive",
+  "     insulation at TSS        given mRNA copies -0.0219   GONE",
+  "     local contact density    given mRNA copies +0.0368   positive",
+  "     H4 PASS",
+  "",
+  "H5 THE NULL FIRES, AND IS FIRST SHOWN TO BE ABLE TO",
+  "     nulling the strongest feature: local contact density (+0.1545)",
+  "     CAPABILITY CHECK: the shuffle changes the feature value for 99.3% of genes",
+  "     (loop 94's null preserved its statistic exactly and reported 100% survival; a null",
+  "      that cannot move its own input is not evidence, so this is checked before use)",
+  "     real +0.1545   position-shuffled +0.1029 +/- 0.0091   survives 67%",
+  "     H5 FAIL",
+  "",
+  "H6 COVERAGE DECLARED",
+  "     3,358 genes of the 4,190 with a transcription rate",
+  "     over 23 chromosomes",
+  "",
+  "  PASS  H1 the textbook A/B result reproduces",
+  "  PASS  H2 chromatin predicts transcription rate",
+  "  PASS  H3 it beats the fame baseline",
+  "  PASS  H4 it adds over abundance",
+  "  FAIL  H5 the null fires and was shown able to",
+  "  PASS  H6 coverage declared",
+  "    manifest: 4 inputs, coverage 3358/4190 (80.1%) by 'filtered', seed 9501, controls 6"
+ ]
+}

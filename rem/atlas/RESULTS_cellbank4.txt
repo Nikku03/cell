@@ -1,0 +1,20 @@
+=================================================================================================
+THE MEMORY BANK OF ALL THE CELL DATA, THE ENGINE REASONING OVER IT, AND CLAUDE ARBITRATING
+=================================================================================================
+  bank: records {'A': 5052, 'B': 1550, 'C': 1953} (dropped for lack of features: {'B': [115, 1665, 8202], 'C': [213, 2166, 7094]})
+  storage 3.2 MB vs 282 MB as float32 responses (87x smaller); nearest-16 query 0.062 ms, get 0.2 us
+  H1 compression keeps what matters: partner-mean prediction on 1263 TRAIN genes, median r full +0.074 vs int8 +0.131 -> PASS
+  TEST knockdowns (2,525), median / mean r:
+     E0 engine, memory = screen-A TRAIN       +0.226 / +0.230
+     E1 engine, FULL BANK                     +0.233 / +0.237
+     E1s full bank, labels shuffled           +0.218 / +0.216
+     E2 full bank + own RPE1 record           +0.250 / +0.259
+     R1 ridge on E1's inputs                  +0.195 / +0.197
+  G1 full bank vs screen-A memory (PRIMARY)    better 1,298 / worse 1,227  median +0.0006  p 0.16 -> NO DIFFERENCE
+  G2 + own RPE1 record                         better 1,492 / worse 1,033  median +0.0034  p 6.3e-20 -> NO DIFFERENCE
+  G3 right records vs shuffled                 better 1,496 / worse 1,029  median +0.0054  p 1.4e-20 -> NO DIFFERENCE
+  G4 engine vs ridge, same inputs (descr.)     better 1,798 / worse 727  median +0.0252  p 8.5e-104 -> BETTER
+  NOTE: G3 is not BETTER, so G1 does not count.
+  Claude arbitrating on 50 TEST genes: median r Claude's blend +0.258 | engine (S0) +0.271 | equal-weight blend +0.224
+  C1 Claude's blend vs the engine (PRIMARY)    better 24 / worse 26  median -0.0019  p 0.89 -> NO DIFFERENCE
+  C2 Claude's weights vs equal weights         better 33 / worse 17  median +0.0104  p 0.033 -> BETTER
