@@ -5680,3 +5680,31 @@ NOTEBOOK SECTION 16 -- THE LLM WORKING WITH THE REASONING ENGINE AND THE MEMORY 
   L1 precision vs the same picks scored on another TEST gene (one-sided permutation p < 0.05).
   L2 precision vs the engine's own top-4 / bottom-4 from the same menu (paired sign test p < 0.05).
   CPU smoke test with a tiny stand-in model passed end to end (its numbers carry no meaning).
+
+=================================================================================================
+CLAUDELOOP -- CLAUDE AS THE LLM WITH THE REASONING ENGINE AND THE MEMORY BANK: PRIMARY L2 NO DIFFERENCE
+=================================================================================================
+  claudeloop.py (committed before running, bc399ea); Claude's 800 picks committed before scoring (887738e).
+  Notebook section 16's proposal loop run in the sandbox with Claude (this session) as the LLM. The engine
+  (section 9 design, non-LLM features; TEST median r 0.157) recalled 3 TRAIN experiments per gene from a
+  memory bank of 2,527 measured knockdowns, plus up to 2 measured partners. For the notebook's 100 random
+  TEST genes, Claude read the Atlas document, the recalled facts and a 20-item menu, and picked exactly
+  4 pathways UP and 4 DOWN. A pick is confirmed if the pathway is in the measured top / bottom 10%.
+        confirmed share: Claude 50.2% | same picks on another gene's measurement 36.8% |
+                         engine's own picks 48.8% | engine's picks on another gene 37.6%
+  L1 Claude vs null: +0.135 per gene, sign-flip p 0.0028 -> BETTER.
+  L2 PRIMARY Claude vs the engine's picks: better on 9 genes, worse on 5, tied 86, p 0.42 -> NO DIFFERENCE.
+  E1 engine vs null: +0.111, p 0.013 (there is real signal to find).
+  D  (descriptive) Claude kept the engine's picks on 70 genes and changed 55 of 800 picks on 30; the changed
+     picks were confirmed 35/55 (64%), the engine picks they replaced 23/55 (42%). The largest wins came
+     where the memory bank held a close partner's measured knockdown: UBA52 (ribosomal protein eL40,
+     read against the RPL5/11/17/23 facts) 5/8 vs the engine's 1/8; RFC1 (RFC2/RFC3) 3/3 vs 0/3; POLR1E
+     (POLR1D) 2/2 vs 0/2; GTF2A2 (TBP) 3/3 vs 1/3. The largest loss: ATG16L1 (barely expressed; its
+     ATG5/ATG12 partners misled) 1/4 vs 3/4. 800 hypotheses written to the memory bank, 402 confirmed.
+  WHAT IT MEANS. Reading the engine's recalled memories, Claude's picks beat chance clearly, but by the
+  primary test they are not better than the engine's own picks: Claude mostly agreed with the engine, so
+  only 14 genes could differ. When Claude did overrule the engine, it was right more often than the engine
+  (descriptive, not a gate), mainly by reading a close partner's measured experiment from the memory bank.
+  The confirmed share on another gene is high (37%) because a few pathways (mitochondrial RNAs,
+  ribosomal translation) move in most knockdowns. NOT: Claude may have seen these screens' papers in
+  training; one reader, one pass; 100 genes.

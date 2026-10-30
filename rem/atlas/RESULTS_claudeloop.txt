@@ -1,0 +1,11 @@
+=================================================================================================
+CLAUDE AS THE LLM, WITH THE REASONING ENGINE AND THE MEMORY BANK: THE PROPOSAL LOOP
+=================================================================================================
+  engine on all 2,525 TEST knockdowns (no LLM features): median r +0.157
+  genes answered 100 of 100
+  confirmed share of picks: Claude 50.2% | Claude's picks on another gene's measurement 36.8% | engine's picks 48.8% | engine's picks on another gene 37.6%
+  L1 Claude vs null: mean +0.135, sign-flip p 0.0028 -> BETTER
+  L2 Claude vs the engine's own picks (PRIMARY): better on 9 genes, worse on 5, tied 86, p 0.42 -> NO DIFFERENCE
+  E1 engine vs null (descriptive): mean +0.111, sign-flip p 0.013
+  D  Claude changed 55 of 800 picks from the engine's; confirmed: changed picks 35/55, the engine picks they replaced 23/55
+  memory bank: 800 hypotheses written (402 confirmed) -> outputs/claudeloop/memory_bank_hypotheses.jsonl
