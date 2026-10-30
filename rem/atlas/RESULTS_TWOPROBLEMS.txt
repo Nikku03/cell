@@ -5615,3 +5615,30 @@ CELLPUZZLE -- THE JIGSAW AND THE MAZE: THE POSITIVE CONTROL FAILS, SO NOTHING WA
   pieces cannot be inferred from these data alone: they are the jigsaw's missing pieces, and must come from
   another source (documents read by the LLM, interaction partners, or new experiments). Real data not run,
   as predeclared.
+
+=================================================================================================
+CLIQUENET -- BRAIN-LIKE HIGHER-DIMENSIONAL CLIQUES: THEY RESCUE DEPTH, BUT THE SHALLOW TREE STILL WINS
+=================================================================================================
+  cliquenet.py (committed before running; a 50-step timing check on non-evaluation seed 999 disclosed).
+  24 blocks of L bump units, identical units / depth / inputs / tensor sizes; only the wiring inside a block
+  differs: CHAIN (each unit reads the previous, dim 1) vs CLIQUE (each reads every earlier unit, a directed
+  clique of dim L - 1; Reimann et al. 2017, doi 10.3389/fncom.2017.00048). Harness PASS on both tasks.
+        long-chain accuracy (deepest test)   TREE     CHAIN-5  CLIQUE-5  CHAIN-12  CLIQUE-12
+        H1S 12 items, snap, k=16             0.902    0.390    0.594     0.315     0.749
+            learnt (of 10)                   10       0        2         0         9
+        P1N 6 items, no snap, k=32           0.849    0.349    0.515     0.308     0.754
+            learnt (of 10)                   10       10       10        8         10
+  K1 PRIMARY, 11-dim cliques vs chains at equal size and depth: NO VERDICT on both tasks by the
+     predeclared rule, because the CHAIN arm did not learn (0/10 and 8/10; the rule needs 9/10 in both).
+     Descriptively the gap is large: CLIQUE-12 learnt 9/10 and 10/10 where CHAIN-12 failed.
+  K2 4-dim cliques vs chains: P1N HELPS (10/10, +0.177); H1S no verdict (2/10 vs 0/10 learnt).
+  K3 11-dim vs 4-dim cliques: P1N HELPS (10/10, +0.196) -- confounded with depth (12 vs 5 units), and
+     depth alone makes chains WORSE (CHAIN-12 below CHAIN-5 on both tasks): cliques are what make depth usable.
+  K4 vs the reasoning engine's tree (not parameter-matched: 76.6k vs 61.5k on H1S, 26.3k vs 23.8k on P1N):
+     CLIQUE-12 lower on 9/10 seeds on both tasks -> HURTS. No arm was exact.
+  WHAT IT MEANS. When a network computes in a deep sequence, wiring each unit to every earlier one (a
+  high-dimensional directed clique) turns a network that cannot learn into one that can, and more
+  dimensions help more. This is also the known effect of dense skip connections on training deep networks
+  (short gradient paths); this design cannot separate 'dimension' from 'skip connections'. The engine's
+  shallow, wide tree avoids the deep-sequence problem altogether and remains the best update function
+  tested. Not modelled: overlapping cliques, cavities, recurrence inside the circuit.
