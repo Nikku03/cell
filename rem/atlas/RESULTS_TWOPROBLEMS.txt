@@ -5708,3 +5708,36 @@ CLAUDELOOP -- CLAUDE AS THE LLM WITH THE REASONING ENGINE AND THE MEMORY BANK: P
   The confirmed share on another gene is high (37%) because a few pathways (mitochondrial RNAs,
   ribosomal translation) move in most knockdowns. NOT: Claude may have seen these screens' papers in
   training; one reader, one pass; 100 genes.
+
+=================================================================================================
+CELLBANK4 -- A COMPACT MEMORY BANK OF ALL THE CELL DATA; THE ENGINE OVER IT; CLAUDE ARBITRATING
+=================================================================================================
+  cellbank4.py (committed before running, 9e78728; a 2-epoch plumbing check on seed 999 disclosed); the bank,
+  the engine runs and Claude's weights committed before scoring (fc38ea8).
+  THE BANK (memory_bank/cell_v4): 8,555 measured knockdowns (K562 genome-wide 5,052; K562 essential 1,550;
+  RPE1 1,953) as int8 codes on 128 shared components, plus partners, co-essential genes and an SQLite index.
+  3.2 MB instead of 282 MB (87x smaller); nearest-16 lookup 0.06 ms; get by gene 0.2 us.
+  H1 PASS: predicting TRAIN genes from partners' records, int8 codes r 0.131 vs full floats 0.074 (the
+  compression removes noise as well as space).
+  TEST knockdowns (2,525), median r: E0 engine, screen-A memory 0.226 | E1 full bank 0.233 | E1s shuffled
+  labels 0.218 | E2 full bank + the gene's own RPE1 record 0.250 (mean 0.259) | R1 ridge on E1's inputs 0.195.
+  G1 PRIMARY E1 vs E0: 1,298 / 1,227, per-gene median +0.0006 -> NO DIFFERENCE (and G3 not BETTER, so G1
+     would not count anyway).
+  G2 E2 vs E1: 1,492 / 1,033, p 6e-20, per-gene median +0.0034 -> NO DIFFERENCE by the +0.01 rule.
+  G3 E1 vs shuffled: 1,496 / 1,029, p 1e-20, +0.0054 -> NO DIFFERENCE by the +0.01 rule.
+  G4 (descriptive) engine vs ridge on the same inputs: 1,798 / 727, +0.025 -> BETTER. The first time in
+     this record the engine clearly beats a plain learner given the same information.
+  C1 PRIMARY for Claude, Claude's weighted blend vs the engine on 50 TEST genes: 24 / 26 -> NO DIFFERENCE
+     (median r 0.258 vs 0.271). C2 Claude's weights vs equal weights: 33 / 17, +0.0104, p 0.033 -> BETTER.
+  POST-HOC (cellbank4_posthoc.py, not predeclared): the RPE1 gain sits entirely in the 980 TEST genes that
+     have their own RPE1 record: E2 0.350 vs E1 0.285 (720 / 260 genes, per-gene +0.026); the other 1,545
+     genes are unchanged (772 / 773). On the 810 of them that also have a screen-B replicate, E2 reaches
+     0.366, ABOVE that replicate's own agreement with screen A (0.326). CORRECTION to earlier wording: the
+     screen-B replicate is one noisy measurement taken on a different day, so its 0.315 is not a true upper
+     bound; a model that pools several measurements can exceed it. Partner records alone add nothing
+     (+0.0007).
+  WHAT IT MEANS. Storing all the data compactly works (87x smaller, faster, no loss). Adding more OTHER
+  genes' experiments to the memory does not help the engine predict an unmeasured gene. What helps a lot is
+  any measurement of the SAME knockdown, even in another cell type: for genes knocked down in RPE1 the
+  engine translates that record into K562 and reaches 0.35-0.37. Given the same inputs, the engine uses them
+  far better than ridge. Claude choosing weights beats equal weights but not the engine's own blend.
