@@ -84,7 +84,7 @@ def build():
         for c, g in enumerate(L.columns):
             if g not in row_of:
                 continue
-            p = Pv.iloc[:, c].to_numpy(dtype=float)
+            p = Pv.iloc[:, c].to_numpy(dtype=float, copy=True)
             e = KE[row_of[g]]
             if e in own_row:
                 p[own_row[e]] = np.nan                       # the knocked-down gene itself does not count
