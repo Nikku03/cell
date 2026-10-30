@@ -1,8 +1,13 @@
 {
  "P0": {
-  "auroc_direct": 0.806004879753915,
-  "auroc_total": 0.999729873539647,
+  "auroc_all": 0.806004879753915,
+  "auroc_never_knocked_down": 0.6567656221526496,
   "direction": 0.7188888888888889,
+  "maze_r_unseen": null,
+  "reported_seen_sources": {
+   "auroc_direct_map": 0.9865087113111042,
+   "auroc_noisy_total": 0.995690078124253
+  },
   "passed": false
  }
 }
