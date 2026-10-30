@@ -5741,3 +5741,26 @@ CELLBANK4 -- A COMPACT MEMORY BANK OF ALL THE CELL DATA; THE ENGINE OVER IT; CLA
   any measurement of the SAME knockdown, even in another cell type: for genes knocked down in RPE1 the
   engine translates that record into K562 and reaches 0.35-0.37. Given the same inputs, the engine uses them
   far better than ridge. Claude choosing weights beats equal weights but not the engine's own blend.
+
+=================================================================================================
+CELLBANK5 -- HEPG2 AND JURKAT JOIN THE MEMORY BANK: A SMALL CONSISTENT GAIN, BELOW THE BAR
+=================================================================================================
+  cellbank5.py (committed before running, a6254f6; one pre-run code fix, a read-only array, 2nd commit).
+  memory_bank/cell_v5 = cell_v4 + Nadig et al. 2025 (Nature Genetics; figshare 29498366, CC BY 4.0)
+  essential-gene CRISPRi screens: HepG2 1,631 and Jurkat 1,563 knockdowns stored (>= 20 genes at
+  p < 0.001); 11,749 records in 3.7 MB. H2 PASS: on the same TRAIN knockdowns HepG2 agrees with
+  K562-essential at median r 0.46 and Jurkat at 0.57 (shuffled pairs -0.01).
+  Coverage of TEST genes by their own record elsewhere: RPE1 980, HepG2 812, Jurkat 787; HepG2 or Jurkat
+  922, of which only 27 lack an RPE1 record (all three are essential-gene screens of nearly the same genes).
+  R  E2 reproduced: 0.248 here vs 0.250 in cellbank4.
+  G5 PRIMARY, E3 (own records in RPE1 + HepG2 + Jurkat) vs E2 (own RPE1 only), on the 922 genes:
+     median r 0.377 vs 0.355; better 525 / worse 397, p 3e-5, per-gene median +0.0061 -> NO DIFFERENCE
+     (significant, below the +0.01 bar).
+  G6 all TEST genes: 0.255 vs 0.248; 1,354 / 1,171; +0.0009 -> NO DIFFERENCE.
+  G7 (descriptive) the 27 newly covered genes: 0.299 vs 0.283 (16 / 11).
+     Genes with their own record in all three other cell types (668): E3 0.430 vs E2 0.419.
+  WHAT IT MEANS. More cell types of the same knockdown help a little and consistently (more genes improve
+  than worsen), but the new screens cover almost the same essential genes as RPE1, so they add little that
+  is new. The best numbers are for genes measured in three other cell types (0.43). To reach the other
+  ~1,500 TEST genes, the bank needs GENOME-WIDE screens in other cell types (public ones exist for HCT116,
+  HEK293T, iPSC and hESC, but as 1-20 GB files under a non-commercial, share-alike licence).
