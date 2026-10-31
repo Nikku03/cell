@@ -1,0 +1,685 @@
+{
+ "T1": {
+  "n": 62,
+  "better": 35,
+  "worse": 27,
+  "p": 0.37415171240479483,
+  "median_gain": 0.018267848121467978,
+  "verdict": "NO DIFFERENCE",
+  "rows": [
+   {
+    "compound": "AMG-900",
+    "targets": [
+     "AURKA",
+     "AURKB"
+    ],
+    "r_target": 0.20165318250656128,
+    "null": 0.08575447648763657,
+    "percentile": 0.7314924782264449
+   },
+   {
+    "compound": "AT9283",
+    "targets": [
+     "AURKA",
+     "AURKB",
+     "JAK2"
+    ],
+    "r_target": 0.07680017501115799,
+    "null": 0.055042266845703125,
+    "percentile": 0.5534441805225653
+   },
+   {
+    "compound": "AZD1480",
+    "targets": [
+     "JAK2"
+    ],
+    "r_target": 0.16541950404644012,
+    "null": 0.0597042515873909,
+    "percentile": 0.7444576405384006
+   },
+   {
+    "compound": "Abexinostat (PCI-24781)",
+    "targets": [
+     "HDAC1",
+     "HDAC2",
+     "HDAC3",
+     "HDAC6",
+     "HDAC7",
+     "HDAC8"
+    ],
+    "r_target": 0.010649308562278748,
+    "null": -0.033434562385082245,
+    "percentile": 0.6149709685932964
+   },
+   {
+    "compound": "Alendronate sodium trihydrate",
+    "targets": [
+     "FDPS"
+    ],
+    "r_target": -0.465374618768692,
+    "null": 0.13534602522850037,
+    "percentile": 0.02454473475851148
+   },
+   {
+    "compound": "Alisertib (MLN8237)",
+    "targets": [
+     "AURKA"
+    ],
+    "r_target": -0.01740875281393528,
+    "null": -0.03692200034856796,
+    "percentile": 0.5378068091844814
+   },
+   {
+    "compound": "Avagacestat (BMS-708163)",
+    "targets": [
+     "APH1A",
+     "PSEN1",
+     "PSENEN"
+    ],
+    "r_target": 0.3396315276622772,
+    "null": 0.07584190368652344,
+    "percentile": 0.8564264977566641
+   },
+   {
+    "compound": "Azacitidine",
+    "targets": [
+     "DNMT1",
+     "DNMT3A"
+    ],
+    "r_target": -0.13144613802433014,
+    "null": -0.0792214497923851,
+    "percentile": 0.404889152810768
+   },
+   {
+    "compound": "BMS-911543",
+    "targets": [
+     "JAK2"
+    ],
+    "r_target": -0.02397029660642147,
+    "null": 0.08698877692222595,
+    "percentile": 0.35748218527315917
+   },
+   {
+    "compound": "Barasertib (AZD1152-HQPA)",
+    "targets": [
+     "AURKB"
+    ],
+    "r_target": 0.08815648406744003,
+    "null": 0.025739874690771103,
+    "percentile": 0.6300475059382423
+   },
+   {
+    "compound": "Baricitinib (LY3009104, INCB028050)",
+    "targets": [
+     "JAK2"
+    ],
+    "r_target": -0.2947887182235718,
+    "null": -0.0045205033384263515,
+    "percentile": 0.06690419635787807
+   },
+   {
+    "compound": "Belinostat (PXD101)",
+    "targets": [
+     "HDAC1",
+     "HDAC2",
+     "HDAC3",
+     "HDAC6",
+     "HDAC7",
+     "HDAC8"
+    ],
+    "r_target": 0.017987186089158058,
+    "null": -0.03188665956258774,
+    "percentile": 0.6056677223541832
+   },
+   {
+    "compound": "Bosutinib (SKI-606)",
+    "targets": [
+     "BCR"
+    ],
+    "r_target": 0.40079766511917114,
+    "null": -0.09760791808366776,
+    "percentile": 0.9845605700712589
+   },
+   {
+    "compound": "CUDC-101",
+    "targets": [
+     "HDAC1",
+     "HDAC2",
+     "HDAC3",
+     "HDAC6",
+     "HDAC7",
+     "HDAC8"
+    ],
+    "r_target": 0.01057202648371458,
+    "null": -0.03092334419488907,
+    "percentile": 0.5818157825283716
+   },
+   {
+    "compound": "CUDC-907",
+    "targets": [
+     "HDAC1",
+     "HDAC2",
+     "HDAC3",
+     "HDAC6",
+     "HDAC7",
+     "HDAC8",
+     "PIK3CA",
+     "PIK3CB",
+     "PIK3CD"
+    ],
+    "r_target": 0.023815074935555458,
+    "null": 0.026473011821508408,
+    "percentile": 0.5134380223453857
+   },
+   {
+    "compound": "CYC116",
+    "targets": [
+     "AURKA",
+     "AURKB"
+    ],
+    "r_target": 0.06494682282209396,
+    "null": 0.09185747057199478,
+    "percentile": 0.45981789390340455
+   },
+   {
+    "compound": "Capecitabine",
+    "targets": [
+     "TYMS"
+    ],
+    "r_target": 0.0540495328605175,
+    "null": 0.06246689707040787,
+    "percentile": 0.48891528107680127
+   },
+   {
+    "compound": "Cerdulatinib (PRT062070, PRT2070)",
+    "targets": [
+     "SYK",
+     "TYK2"
+    ],
+    "r_target": 0.023020878434181213,
+    "null": -0.02076040580868721,
+    "percentile": 0.5894695170229612
+   },
+   {
+    "compound": "Crizotinib (PF-02341066)",
+    "targets": [
+     "NPM1"
+    ],
+    "r_target": -0.2031480371952057,
+    "null": -0.14063003659248352,
+    "percentile": 0.4418052256532066
+   },
+   {
+    "compound": "Danusertib (PHA-739358)",
+    "targets": [
+     "AURKA",
+     "AURKB"
+    ],
+    "r_target": -0.3336971402168274,
+    "null": -0.10598044842481613,
+    "percentile": 0.21417260490894693
+   },
+   {
+    "compound": "Dasatinib",
+    "targets": [
+     "BCR",
+     "FYN",
+     "YES1"
+    ],
+    "r_target": 0.015418429858982563,
+    "null": -0.106204092502594,
+    "percentile": 0.5259303246239113
+   },
+   {
+    "compound": "Decitabine",
+    "targets": [
+     "DNMT1",
+     "DNMT3A"
+    ],
+    "r_target": 0.02515687793493271,
+    "null": -0.040805473923683167,
+    "percentile": 0.582541567695962
+   },
+   {
+    "compound": "Disulfiram",
+    "targets": [
+     "ALDH2"
+    ],
+    "r_target": 0.14145907759666443,
+    "null": 0.07734405994415283,
+    "percentile": 0.5989707046714172
+   },
+   {
+    "compound": "ENMD-2076",
+    "targets": [
+     "AURKA",
+     "AURKB"
+    ],
+    "r_target": -0.4449976086616516,
+    "null": -0.09464199841022491,
+    "percentile": 0.13173000791765638
+   },
+   {
+    "compound": "Entinostat (MS-275)",
+    "targets": [
+     "HDAC1",
+     "HDAC2",
+     "HDAC3",
+     "HDAC6",
+     "HDAC7",
+     "HDAC8"
+    ],
+    "r_target": -0.019231870770454407,
+    "null": -0.1101420521736145,
+    "percentile": 0.5949458960147797
+   },
+   {
+    "compound": "Fedratinib (SAR302503, TG101348)",
+    "targets": [
+     "JAK2"
+    ],
+    "r_target": -0.0438038632273674,
+    "null": -0.10772795230150223,
+    "percentile": 0.5766033254156769
+   },
+   {
+    "compound": "Filgotinib (GLPG0634)",
+    "targets": [
+     "JAK2",
+     "TYK2"
+    ],
+    "r_target": -0.11595341563224792,
+    "null": -0.041549406945705414,
+    "percentile": 0.3359065716547902
+   },
+   {
+    "compound": "Flavopiridol HCl",
+    "targets": [
+     "CDK1",
+     "CDK2",
+     "CDK6",
+     "CDK7",
+     "CDK9"
+    ],
+    "r_target": 0.18201716244220734,
+    "null": 0.05761397257447243,
+    "percentile": 0.7114410134600158
+   },
+   {
+    "compound": "Fluorouracil (5-Fluoracil, 5-FU)",
+    "targets": [
+     "TYMS"
+    ],
+    "r_target": 0.08489666879177094,
+    "null": 0.09047913551330566,
+    "percentile": 0.4936658749010293
+   },
+   {
+    "compound": "GSK1070916",
+    "targets": [
+     "AURKB"
+    ],
+    "r_target": -0.4667385518550873,
+    "null": -0.09688225388526917,
+    "percentile": 0.012866191607284245
+   },
+   {
+    "compound": "Gandotinib (LY2784544)",
+    "targets": [
+     "JAK2"
+    ],
+    "r_target": 0.046084143221378326,
+    "null": 0.10721588879823685,
+    "percentile": 0.4105304829770388
+   },
+   {
+    "compound": "Givinostat (ITF2357)",
+    "targets": [
+     "HDAC1",
+     "HDAC2",
+     "HDAC3",
+     "HDAC6",
+     "HDAC7",
+     "HDAC8"
+    ],
+    "r_target": 0.010574132204055786,
+    "null": -0.018409185111522675,
+    "percentile": 0.5773950910530482
+   },
+   {
+    "compound": "KW-2449",
+    "targets": [
+     "AURKA",
+     "AURKB"
+    ],
+    "r_target": -0.29639315605163574,
+    "null": -0.05121143162250519,
+    "percentile": 0.1577593032462391
+   },
+   {
+    "compound": "Lenalidomide (CC-5013)",
+    "targets": [
+     "CRBN",
+     "DDB1",
+     "RBX1"
+    ],
+    "r_target": 0.006408005952835083,
+    "null": 0.09316675364971161,
+    "percentile": 0.4084191079440486
+   },
+   {
+    "compound": "MK-5108 (VX-689)",
+    "targets": [
+     "AURKA"
+    ],
+    "r_target": 0.2581804096698761,
+    "null": 0.06384389102458954,
+    "percentile": 0.861243072050673
+   },
+   {
+    "compound": "MLN8054",
+    "targets": [
+     "AURKA"
+    ],
+    "r_target": 0.11708132177591324,
+    "null": -0.017079170793294907,
+    "percentile": 0.7824623911322248
+   },
+   {
+    "compound": "Mercaptopurine (6-MP)",
+    "targets": [
+     "PPAT"
+    ],
+    "r_target": 0.3023205101490021,
+    "null": -0.1259322464466095,
+    "percentile": 0.9445764053840063
+   },
+   {
+    "compound": "Mocetinostat (MGCD0103)",
+    "targets": [
+     "HDAC1",
+     "HDAC2",
+     "HDAC3",
+     "HDAC8"
+    ],
+    "r_target": -0.06743372976779938,
+    "null": -0.07223432511091232,
+    "percentile": 0.507818685669042
+   },
+   {
+    "compound": "Momelotinib (CYT387)",
+    "targets": [
+     "JAK2"
+    ],
+    "r_target": 0.06768260896205902,
+    "null": 0.05072230100631714,
+    "percentile": 0.5393903404592241
+   },
+   {
+    "compound": "Navitoclax (ABT-263)",
+    "targets": [
+     "BCL2L1"
+    ],
+    "r_target": 0.0407177098095417,
+    "null": 0.09023630619049072,
+    "percentile": 0.4000395882818686
+   },
+   {
+    "compound": "Nilotinib (AMN-107)",
+    "targets": [
+     "BCR"
+    ],
+    "r_target": 0.7331908345222473,
+    "null": -0.11867626011371613,
+    "percentile": 0.9992082343626286
+   },
+   {
+    "compound": "Nintedanib (BIBF 1120)",
+    "targets": [
+     "FGFR1"
+    ],
+    "r_target": -0.10654555261135101,
+    "null": -0.13735195994377136,
+    "percentile": 0.5273159144893111
+   },
+   {
+    "compound": "Obatoclax Mesylate (GX15-070)",
+    "targets": [
+     "BCL2L1",
+     "MCL1"
+    ],
+    "r_target": -0.522986650466919,
+    "null": -0.12353456020355225,
+    "percentile": 0.01514251781472684
+   },
+   {
+    "compound": "Panobinostat (LBH589)",
+    "targets": [
+     "HDAC1",
+     "HDAC2",
+     "HDAC3",
+     "HDAC6",
+     "HDAC7",
+     "HDAC8"
+    ],
+    "r_target": 0.01526940893381834,
+    "null": -0.0017530397744849324,
+    "percentile": 0.5472750065980471
+   },
+   {
+    "compound": "Quisinostat (JNJ-26481585) 2HCl",
+    "targets": [
+     "HDAC1",
+     "HDAC2",
+     "HDAC3",
+     "HDAC6",
+     "HDAC7",
+     "HDAC8"
+    ],
+    "r_target": -0.006163761019706726,
+    "null": 0.008980881422758102,
+    "percentile": 0.4850884138295064
+   },
+   {
+    "compound": "Raltitrexed",
+    "targets": [
+     "TYMS"
+    ],
+    "r_target": -0.0022275703959167004,
+    "null": -0.06699970364570618,
+    "percentile": 0.6395486935866983
+   },
+   {
+    "compound": "Regorafenib (BAY 73-4506)",
+    "targets": [
+     "FGFR1",
+     "RAF1"
+    ],
+    "r_target": -0.116326704621315,
+    "null": -0.11922531574964523,
+    "percentile": 0.5030680918448139
+   },
+   {
+    "compound": "Roscovitine (Seliciclib,CYC202)",
+    "targets": [
+     "CDK1",
+     "CDK2",
+     "CDK5",
+     "CDK7",
+     "CDK9"
+    ],
+    "r_target": 0.13603658974170685,
+    "null": 0.15061533451080322,
+    "percentile": 0.5047110055423595
+   },
+   {
+    "compound": "Rucaparib (AG-014699,PF-01367338) phosphate",
+    "targets": [
+     "PARP1",
+     "PARP2"
+    ],
+    "r_target": 0.16572372615337372,
+    "null": 0.09717097878456116,
+    "percentile": 0.5945170229612035
+   },
+   {
+    "compound": "Ruxolitinib (INCB018424)",
+    "targets": [
+     "JAK2",
+     "TYK2"
+    ],
+    "r_target": -0.04960484802722931,
+    "null": 0.07817654311656952,
+    "percentile": 0.34619952494061756
+   },
+   {
+    "compound": "S-Ruxolitinib (INCB018424)",
+    "targets": [
+     "JAK2",
+     "TYK2"
+    ],
+    "r_target": 0.037982478737831116,
+    "null": 0.04263324663043022,
+    "percentile": 0.48555027711797305
+   },
+   {
+    "compound": "SGI-1776 free base",
+    "targets": [
+     "PIM1",
+     "PIM2",
+     "PIM3"
+    ],
+    "r_target": -0.03228103742003441,
+    "null": -0.05498471483588219,
+    "percentile": 0.5349696489839008
+   },
+   {
+    "compound": "SNS-314",
+    "targets": [
+     "AURKA",
+     "AURKB"
+    ],
+    "r_target": 0.19912731647491455,
+    "null": 0.08833406120538712,
+    "percentile": 0.6693388756927949
+   },
+   {
+    "compound": "Sorafenib Tosylate",
+    "targets": [
+     "RAF1"
+    ],
+    "r_target": -0.24574197828769684,
+    "null": -0.09326870739459991,
+    "percentile": 0.18309580364212194
+   },
+   {
+    "compound": "TAK-901",
+    "targets": [
+     "AURKB"
+    ],
+    "r_target": -0.33840587735176086,
+    "null": -0.08604791015386581,
+    "percentile": 0.09936658749010292
+   },
+   {
+    "compound": "Tacedinaline (CI994)",
+    "targets": [
+     "HDAC1",
+     "HDAC2",
+     "HDAC3",
+     "HDAC6",
+     "HDAC7",
+     "HDAC8"
+    ],
+    "r_target": -0.008203630335628986,
+    "null": -0.07804453372955322,
+    "percentile": 0.5981459487991554
+   },
+   {
+    "compound": "Tazemetostat (EPZ-6438)",
+    "targets": [
+     "EZH2"
+    ],
+    "r_target": 0.12612295150756836,
+    "null": 0.0056959171779453754,
+    "percentile": 0.7719714964370546
+   },
+   {
+    "compound": "Temsirolimus (CCI-779, NSC 683864)",
+    "targets": [
+     "FKBP1A"
+    ],
+    "r_target": -0.19623327255249023,
+    "null": -0.03527221083641052,
+    "percentile": 0.09382422802850356
+   },
+   {
+    "compound": "Thalidomide",
+    "targets": [
+     "CRBN",
+     "DDB1",
+     "RBX1"
+    ],
+    "r_target": 0.04551122710108757,
+    "null": 0.10066872835159302,
+    "percentile": 0.44378463974663496
+   },
+   {
+    "compound": "Tofacitinib (CP-690550) Citrate",
+    "targets": [
+     "JAK2",
+     "TYK2"
+    ],
+    "r_target": 0.1803925335407257,
+    "null": 0.15326660871505737,
+    "percentile": 0.5296912114014252
+   },
+   {
+    "compound": "Tozasertib (VX-680, MK-0457)",
+    "targets": [
+     "AURKA",
+     "AURKB"
+    ],
+    "r_target": -0.24776139855384827,
+    "null": -0.08278780430555344,
+    "percentile": 0.2885985748218527
+   },
+   {
+    "compound": "Veliparib (ABT-888)",
+    "targets": [
+     "PARP1",
+     "PARP2"
+    ],
+    "r_target": 0.3309415578842163,
+    "null": 0.13208553194999695,
+    "percentile": 0.7173396674584323
+   }
+  ]
+ },
+ "G8": {
+  "G8 PRIMARY, all TEST genes": {
+   "n": 2525,
+   "better": 1202,
+   "worse": 1323,
+   "p": 0.016919140859488768,
+   "median_diff": -0.000965416431427002,
+   "verdict": "NO DIFFERENCE"
+  },
+  "genes with a drug response (descr.)": {
+   "n": 24,
+   "better": 5,
+   "worse": 19,
+   "p": 0.006610751152038574,
+   "median_diff": -0.02737811580300331,
+   "verdict": "WORSE"
+  },
+  "genes with any drug data (descr.)": {
+   "n": 2421,
+   "better": 1151,
+   "worse": 1270,
+   "p": 0.01645841294143066,
+   "median_diff": -0.000965416431427002,
+   "verdict": "NO DIFFERENCE"
+  }
+ }
+}

@@ -2,28 +2,116 @@
  "(+)-JQ1": {
   "chembl": [],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "CEP135",
+    0.458
+   ],
+   [
+    "KANSL2",
+    0.43
+   ],
+   [
+    "RNPC3",
+    0.426
+   ],
+   [
+    "SASS6",
+    0.419
+   ],
+   [
+    "RTTN",
+    0.416
+   ]
+  ]
  },
  "2-Methoxyestradiol (2-MeOE2)": {
   "chembl": [
    "CHEMBL299613"
   ],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "URM1",
+    0.463
+   ],
+   [
+    "CTU1",
+    0.45
+   ],
+   [
+    "DEGS1",
+    0.416
+   ],
+   [
+    "ELP4",
+    0.407
+   ],
+   [
+    "TNPO3",
+    0.402
+   ]
+  ]
  },
  "A-366": {
   "chembl": [
    "CHEMBL3109630"
   ],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "MIER3",
+    0.547
+   ],
+   [
+    "DDX5",
+    0.545
+   ],
+   [
+    "PYGB",
+    0.536
+   ],
+   [
+    "MLEC",
+    0.533
+   ],
+   [
+    "FOXP1",
+    0.532
+   ]
+  ]
  },
  "ABT-737": {
   "chembl": [
    "CHEMBL376408"
   ],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "CDC123",
+    0.607
+   ],
+   [
+    "EIF1",
+    0.604
+   ],
+   [
+    "ZNF700",
+    0.567
+   ],
+   [
+    "BOLA2",
+    0.558
+   ],
+   [
+    "RAB24",
+    0.548
+   ]
+  ]
  },
  "AC480 (BMS-599626)": {
   "chembl": [
@@ -47,17 +135,83 @@
     "ERBB4",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "METAP2",
+    0.494
+   ],
+   [
+    "KARS",
+    0.486
+   ],
+   [
+    "CARS",
+    0.48
+   ],
+   [
+    "NUBP1",
+    0.462
+   ],
+   [
+    "EEF1G",
+    0.462
+   ]
   ]
  },
  "AG-14361": {
   "chembl": [],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "DCAF16",
+    0.621
+   ],
+   [
+    "FOXG1",
+    0.611
+   ],
+   [
+    "CCDC74A",
+    0.605
+   ],
+   [
+    "ZNF326",
+    0.604
+   ],
+   [
+    "CNNM3",
+    0.603
+   ]
+  ]
  },
  "AG-490 (Tyrphostin B42)": {
   "chembl": [],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "SNRNP200",
+    0.607
+   ],
+   [
+    "EPM2AIP1",
+    0.59
+   ],
+   [
+    "PYGB",
+    0.581
+   ],
+   [
+    "C5orf22",
+    0.577
+   ],
+   [
+    "ZDHHC8",
+    0.559
+   ]
+  ]
  },
  "AICAR (Acadesine)": {
   "chembl": [
@@ -93,6 +247,28 @@
     "PRKAG3",
     "ACTIVATOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "NIPAL3",
+    0.64
+   ],
+   [
+    "KAT2A",
+    0.619
+   ],
+   [
+    "DCAF16",
+    0.617
+   ],
+   [
+    "CLCN7",
+    0.603
+   ],
+   [
+    "ZNF326",
+    0.599
+   ]
   ]
  },
  "AMG-900": {
@@ -117,6 +293,28 @@
     "AURKC",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "BROX",
+    0.479
+   ],
+   [
+    "GSC",
+    0.468
+   ],
+   [
+    "MRM3",
+    0.457
+   ],
+   [
+    "NONO",
+    0.456
+   ],
+   [
+    "RAB32",
+    0.454
+   ]
   ]
  },
  "AR-42": {
@@ -124,7 +322,29 @@
    "CHEMBL191482"
   ],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "ATRIP",
+    0.538
+   ],
+   [
+    "ATR",
+    0.533
+   ],
+   [
+    "SH3KBP1",
+    0.466
+   ],
+   [
+    "RAD9A",
+    0.46
+   ],
+   [
+    "MIS18BP1",
+    0.431
+   ]
+  ]
  },
  "AT9283": {
   "chembl": [
@@ -163,6 +383,28 @@
     "JAK3",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "THOC5",
+    0.508
+   ],
+   [
+    "LIMD2",
+    0.473
+   ],
+   [
+    "PPP1R11",
+    0.463
+   ],
+   [
+    "SCRIB",
+    0.453
+   ],
+   [
+    "ANKLE2",
+    0.449
+   ]
   ]
  },
  "AZ 960": {
@@ -170,7 +412,29 @@
    "CHEMBL1774055"
   ],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "ZWILCH",
+    0.605
+   ],
+   [
+    "DSN1",
+    0.539
+   ],
+   [
+    "STAT6",
+    0.532
+   ],
+   [
+    "POLR2H",
+    0.526
+   ],
+   [
+    "SPC25",
+    0.521
+   ]
+  ]
  },
  "AZD1480": {
   "chembl": [
@@ -183,6 +447,28 @@
    [
     "JAK2",
     "INHIBITOR"
+   ]
+  ],
+  "top_knockdowns": [
+   [
+    "DCAF7",
+    0.498
+   ],
+   [
+    "UBFD1",
+    0.477
+   ],
+   [
+    "DDR1",
+    0.471
+   ],
+   [
+    "SSR4",
+    0.469
+   ],
+   [
+    "TMX1",
+    0.467
    ]
   ]
  },
@@ -248,6 +534,28 @@
     "HDAC9",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "ATR",
+    0.518
+   ],
+   [
+    "MIS18BP1",
+    0.495
+   ],
+   [
+    "ATRIP",
+    0.489
+   ],
+   [
+    "CTR9",
+    0.477
+   ],
+   [
+    "SH3KBP1",
+    0.465
+   ]
   ]
  },
  "Alendronate sodium trihydrate": {
@@ -261,6 +569,28 @@
    [
     "FDPS",
     "INHIBITOR"
+   ]
+  ],
+  "top_knockdowns": [
+   [
+    "DCAF16",
+    0.712
+   ],
+   [
+    "FOXG1",
+    0.692
+   ],
+   [
+    "CENPV",
+    0.678
+   ],
+   [
+    "SESN2",
+    0.673
+   ],
+   [
+    "ZNF326",
+    0.666
    ]
   ]
  },
@@ -276,6 +606,28 @@
     "AURKA",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "ALDOA",
+    0.676
+   ],
+   [
+    "STAT5B",
+    0.667
+   ],
+   [
+    "ORC5",
+    0.642
+   ],
+   [
+    "BCR",
+    0.604
+   ],
+   [
+    "ZNF414",
+    0.604
+   ]
   ]
  },
  "Altretamine": {
@@ -283,7 +635,29 @@
    "CHEMBL1455"
   ],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "CLCN7",
+    0.579
+   ],
+   [
+    "IRF5",
+    0.56
+   ],
+   [
+    "CYB561D2",
+    0.557
+   ],
+   [
+    "FOXG1",
+    0.552
+   ],
+   [
+    "MON2",
+    0.548
+   ]
+  ]
  },
  "Alvespimycin (17-DMAG) HCl": {
   "chembl": [
@@ -301,6 +675,28 @@
    [
     "HSP90AB1",
     "INHIBITOR"
+   ]
+  ],
+  "top_knockdowns": [
+   [
+    "TRPM7",
+    0.666
+   ],
+   [
+    "TPX2",
+    0.658
+   ],
+   [
+    "MED19",
+    0.631
+   ],
+   [
+    "TUBGCP3",
+    0.608
+   ],
+   [
+    "SPINDOC",
+    0.604
    ]
   ]
  },
@@ -320,6 +716,28 @@
    [
     "CYP19A1",
     "INHIBITOR"
+   ]
+  ],
+  "top_knockdowns": [
+   [
+    "KAT2A",
+    0.627
+   ],
+   [
+    "DCAF16",
+    0.62
+   ],
+   [
+    "ZNF326",
+    0.612
+   ],
+   [
+    "EIF1",
+    0.607
+   ],
+   [
+    "FOXG1",
+    0.586
    ]
   ]
  },
@@ -425,22 +843,110 @@
     "HTR7",
     "ANTAGONIST"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "DCAF16",
+    0.713
+   ],
+   [
+    "ZNF326",
+    0.641
+   ],
+   [
+    "FOXG1",
+    0.639
+   ],
+   [
+    "BTG2",
+    0.63
+   ],
+   [
+    "CNNM3",
+    0.621
+   ]
   ]
  },
  "Anacardic Acid": {
   "chembl": [],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "ZNF699",
+    0.538
+   ],
+   [
+    "RRAGC",
+    0.505
+   ],
+   [
+    "FBXO45",
+    0.503
+   ],
+   [
+    "DCAF16",
+    0.501
+   ],
+   [
+    "ZNF320",
+    0.497
+   ]
+  ]
  },
  "Andarine": {
   "chembl": [],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "ZNF19",
+    0.622
+   ],
+   [
+    "CLCN7",
+    0.615
+   ],
+   [
+    "CBX1",
+    0.614
+   ],
+   [
+    "NIPAL3",
+    0.614
+   ],
+   [
+    "SLC25A14",
+    0.607
+   ]
+  ]
  },
  "Aurora A Inhibitor I": {
   "chembl": [],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "PHF20L1",
+    0.602
+   ],
+   [
+    "WAS",
+    0.568
+   ],
+   [
+    "ABHD13",
+    0.567
+   ],
+   [
+    "ARHGAP5",
+    0.557
+   ],
+   [
+    "NFATC2",
+    0.551
+   ]
+  ]
  },
  "Avagacestat (BMS-708163)": {
   "chembl": [
@@ -479,6 +985,28 @@
     "PSENEN",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "ZNF326",
+    0.578
+   ],
+   [
+    "ARVCF",
+    0.567
+   ],
+   [
+    "DCAF16",
+    0.565
+   ],
+   [
+    "SKI",
+    0.541
+   ],
+   [
+    "FOXG1",
+    0.539
+   ]
   ]
  },
  "Azacitidine": {
@@ -498,17 +1026,83 @@
     "DNMT3A",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "SPHK2",
+    0.621
+   ],
+   [
+    "HBS1L",
+    0.586
+   ],
+   [
+    "EIF2S1",
+    0.572
+   ],
+   [
+    "SLC35A1",
+    0.567
+   ],
+   [
+    "EIF2S3",
+    0.567
+   ]
   ]
  },
  "BMS-265246": {
   "chembl": [],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "FKBP5",
+    0.627
+   ],
+   [
+    "UBIAD1",
+    0.599
+   ],
+   [
+    "SPATA2L",
+    0.59
+   ],
+   [
+    "BCL6B",
+    0.583
+   ],
+   [
+    "COMMD6",
+    0.574
+   ]
+  ]
  },
  "BMS-536924": {
   "chembl": [],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "VEZF1",
+    0.462
+   ],
+   [
+    "CD2AP",
+    0.439
+   ],
+   [
+    "ZNF699",
+    0.424
+   ],
+   [
+    "COP1",
+    0.421
+   ],
+   [
+    "UBE2G1",
+    0.418
+   ]
+  ]
  },
  "BMS-754807": {
   "chembl": [
@@ -527,6 +1121,28 @@
     "INSR",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "NAA10",
+    0.456
+   ],
+   [
+    "NAA15",
+    0.374
+   ],
+   [
+    "INTS10",
+    0.364
+   ],
+   [
+    "MGAT4B",
+    0.364
+   ],
+   [
+    "ARRB2",
+    0.349
+   ]
   ]
  },
  "BMS-911543": {
@@ -541,6 +1157,28 @@
     "JAK2",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "DCAF16",
+    0.623
+   ],
+   [
+    "IKZF4",
+    0.592
+   ],
+   [
+    "NIPAL3",
+    0.575
+   ],
+   [
+    "KAT2A",
+    0.575
+   ],
+   [
+    "ZNF699",
+    0.573
+   ]
   ]
  },
  "BRD4770": {
@@ -548,7 +1186,29 @@
    "CHEMBL3970748"
   ],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "SETX",
+    0.619
+   ],
+   [
+    "PYGB",
+    0.613
+   ],
+   [
+    "SLC39A14",
+    0.609
+   ],
+   [
+    "RHOQ",
+    0.604
+   ],
+   [
+    "SPRY4",
+    0.6
+   ]
+  ]
  },
  "Barasertib (AZD1152-HQPA)": {
   "chembl": [
@@ -562,6 +1222,28 @@
    [
     "AURKB",
     "INHIBITOR"
+   ]
+  ],
+  "top_knockdowns": [
+   [
+    "EIF4A2",
+    0.527
+   ],
+   [
+    "LRP5",
+    0.497
+   ],
+   [
+    "GADD45A",
+    0.496
+   ],
+   [
+    "PIP4P1",
+    0.482
+   ],
+   [
+    "PABPC1",
+    0.477
    ]
   ]
  },
@@ -581,6 +1263,28 @@
    [
     "JAK2",
     "INHIBITOR"
+   ]
+  ],
+  "top_knockdowns": [
+   [
+    "A1BG",
+    0.454
+   ],
+   [
+    "PRKRA",
+    0.451
+   ],
+   [
+    "ZNF174",
+    0.451
+   ],
+   [
+    "UBQLN4",
+    0.438
+   ],
+   [
+    "GLMN",
+    0.436
    ]
   ]
  },
@@ -646,12 +1350,56 @@
     "HDAC9",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "HNRNPM",
+    0.478
+   ],
+   [
+    "CTR9",
+    0.451
+   ],
+   [
+    "MIS18BP1",
+    0.445
+   ],
+   [
+    "WDR61",
+    0.44
+   ],
+   [
+    "HAUS6",
+    0.432
+   ]
   ]
  },
  "Bisindolylmaleimide IX (Ro 31-8220 Mesylate)": {
   "chembl": [],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "RAD1",
+    0.526
+   ],
+   [
+    "HUS1",
+    0.511
+   ],
+   [
+    "SLC25A46",
+    0.51
+   ],
+   [
+    "MEIS2",
+    0.5
+   ],
+   [
+    "ACAD9",
+    0.495
+   ]
+  ]
  },
  "Bosutinib (SKI-606)": {
   "chembl": [
@@ -685,6 +1433,28 @@
     "SRC",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "RNPC3",
+    0.544
+   ],
+   [
+    "TRPM7",
+    0.531
+   ],
+   [
+    "RANBP3",
+    0.523
+   ],
+   [
+    "NUP133",
+    0.519
+   ],
+   [
+    "PGAM1",
+    0.518
+   ]
   ]
  },
  "Busulfan": {
@@ -692,12 +1462,56 @@
    "CHEMBL820"
   ],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "DCAF16",
+    0.658
+   ],
+   [
+    "ZNF326",
+    0.654
+   ],
+   [
+    "RRAGC",
+    0.648
+   ],
+   [
+    "PTPN2",
+    0.642
+   ],
+   [
+    "CLEC11A",
+    0.64
+   ]
+  ]
  },
  "CEP-33779": {
   "chembl": [],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "EIF1",
+    0.634
+   ],
+   [
+    "SPRY4",
+    0.565
+   ],
+   [
+    "RAB24",
+    0.547
+   ],
+   [
+    "ANKFY1",
+    0.542
+   ],
+   [
+    "RASA2",
+    0.542
+   ]
+  ]
  },
  "CUDC-101": {
   "chembl": [
@@ -770,6 +1584,28 @@
    [
     "HDAC9",
     "INHIBITOR"
+   ]
+  ],
+  "top_knockdowns": [
+   [
+    "MIS18BP1",
+    0.483
+   ],
+   [
+    "HNRNPM",
+    0.457
+   ],
+   [
+    "HAUS6",
+    0.453
+   ],
+   [
+    "SH3KBP1",
+    0.433
+   ],
+   [
+    "PDCD7",
+    0.43
    ]
   ]
  },
@@ -850,6 +1686,28 @@
     "PIK3CD",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "ATRIP",
+    0.501
+   ],
+   [
+    "ATR",
+    0.487
+   ],
+   [
+    "OIP5",
+    0.441
+   ],
+   [
+    "HAUS6",
+    0.438
+   ],
+   [
+    "SLU7",
+    0.437
+   ]
   ]
  },
  "CYC116": {
@@ -879,6 +1737,28 @@
     "KDR",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "TBX10",
+    0.539
+   ],
+   [
+    "CLCN7",
+    0.518
+   ],
+   [
+    "NIPAL3",
+    0.514
+   ],
+   [
+    "IRF5",
+    0.506
+   ],
+   [
+    "COA8",
+    0.505
+   ]
   ]
  },
  "Capecitabine": {
@@ -893,6 +1773,28 @@
     "TYMS",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "DCAF16",
+    0.622
+   ],
+   [
+    "EDC3",
+    0.59
+   ],
+   [
+    "ZNF326",
+    0.589
+   ],
+   [
+    "CYB561D2",
+    0.585
+   ],
+   [
+    "KAT2A",
+    0.573
+   ]
   ]
  },
  "Carmofur": {
@@ -900,7 +1802,29 @@
    "CHEMBL460499"
   ],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "PTPN2",
+    0.698
+   ],
+   [
+    "DCAF16",
+    0.697
+   ],
+   [
+    "ZNF326",
+    0.678
+   ],
+   [
+    "RRAGC",
+    0.668
+   ],
+   [
+    "PRKAB1",
+    0.663
+   ]
+  ]
  },
  "Cediranib (AZD2171)": {
   "chembl": [
@@ -939,6 +1863,28 @@
     "PDGFRB",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "PFN1",
+    0.57
+   ],
+   [
+    "NAA50",
+    0.548
+   ],
+   [
+    "RPL29",
+    0.533
+   ],
+   [
+    "SRSF2",
+    0.523
+   ],
+   [
+    "PABPC4",
+    0.52
+   ]
   ]
  },
  "Celecoxib": {
@@ -952,6 +1898,28 @@
    [
     "PTGS2",
     "INHIBITOR"
+   ]
+  ],
+  "top_knockdowns": [
+   [
+    "FOXG1",
+    0.598
+   ],
+   [
+    "DCAF16",
+    0.593
+   ],
+   [
+    "SPRY4",
+    0.57
+   ],
+   [
+    "ZNF699",
+    0.562
+   ],
+   [
+    "EIF1",
+    0.56
    ]
   ]
  },
@@ -982,6 +1950,28 @@
     "TYK2",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "DGKD",
+    0.512
+   ],
+   [
+    "SLC35F6",
+    0.498
+   ],
+   [
+    "ACTB",
+    0.48
+   ],
+   [
+    "PRKRA",
+    0.462
+   ],
+   [
+    "ZNF174",
+    0.461
+   ]
   ]
  },
  "Cimetidine": {
@@ -996,6 +1986,28 @@
     "HRH2",
     "ANTAGONIST"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "DCAF16",
+    0.675
+   ],
+   [
+    "RASA3",
+    0.667
+   ],
+   [
+    "KAT2A",
+    0.652
+   ],
+   [
+    "CYB561D2",
+    0.65
+   ],
+   [
+    "ZNF326",
+    0.649
+   ]
   ]
  },
  "Clevudine": {
@@ -1003,12 +2015,56 @@
    "CHEMBL458875"
   ],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "CNNM3",
+    0.684
+   ],
+   [
+    "CENPV",
+    0.683
+   ],
+   [
+    "RRAGC",
+    0.68
+   ],
+   [
+    "DCAF16",
+    0.672
+   ],
+   [
+    "ZNF699",
+    0.666
+   ]
+  ]
  },
  "Costunolide": {
   "chembl": [],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "KAT2A",
+    0.65
+   ],
+   [
+    "SWSAP1",
+    0.546
+   ],
+   [
+    "FOXG1",
+    0.539
+   ],
+   [
+    "DCAF16",
+    0.538
+   ],
+   [
+    "TBX5",
+    0.526
+   ]
+  ]
  },
  "Crizotinib (PF-02341066)": {
   "chembl": [
@@ -1047,6 +2103,28 @@
     "ROS1",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "PPAT",
+    0.744
+   ],
+   [
+    "TUBGCP3",
+    0.72
+   ],
+   [
+    "TPX2",
+    0.709
+   ],
+   [
+    "MCM4",
+    0.699
+   ],
+   [
+    "ORC5",
+    0.699
+   ]
   ]
  },
  "Curcumin": {
@@ -1054,19 +2132,85 @@
    "CHEMBL140"
   ],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "ZNF326",
+    0.628
+   ],
+   [
+    "DCAF16",
+    0.62
+   ],
+   [
+    "RASA3",
+    0.568
+   ],
+   [
+    "FOXG1",
+    0.566
+   ],
+   [
+    "PICALM",
+    0.556
+   ]
+  ]
  },
  "Cyclocytidine HCl": {
   "chembl": [],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "SLC2A11",
+    0.563
+   ],
+   [
+    "POLE2",
+    0.535
+   ],
+   [
+    "DUT",
+    0.5
+   ],
+   [
+    "TFRC",
+    0.49
+   ],
+   [
+    "PNKP",
+    0.467
+   ]
+  ]
  },
  "Dacinostat (LAQ824)": {
   "chembl": [
    "CHEMBL356066"
   ],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "ATR",
+    0.507
+   ],
+   [
+    "ATRIP",
+    0.5
+   ],
+   [
+    "SH3KBP1",
+    0.452
+   ],
+   [
+    "CLASP1",
+    0.436
+   ],
+   [
+    "MIS18BP1",
+    0.432
+   ]
+  ]
  },
  "Danusertib (PHA-739358)": {
   "chembl": [
@@ -1090,6 +2234,28 @@
     "AURKC",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "ORC5",
+    0.75
+   ],
+   [
+    "MCM4",
+    0.726
+   ],
+   [
+    "PPAT",
+    0.725
+   ],
+   [
+    "TUBGCP3",
+    0.723
+   ],
+   [
+    "ALDOA",
+    0.719
+   ]
   ]
  },
  "Daphnetin": {
@@ -1097,7 +2263,29 @@
    "CHEMBL244948"
   ],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "FOXG1",
+    0.607
+   ],
+   [
+    "EDC3",
+    0.596
+   ],
+   [
+    "ARVCF",
+    0.594
+   ],
+   [
+    "DCAF16",
+    0.58
+   ],
+   [
+    "KAT2A",
+    0.577
+   ]
+  ]
  },
  "Dasatinib": {
   "chembl": [
@@ -1181,6 +2369,28 @@
     "YES1",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "PPP2R2A",
+    0.715
+   ],
+   [
+    "TUBGCP3",
+    0.669
+   ],
+   [
+    "ALDOA",
+    0.635
+   ],
+   [
+    "PPAT",
+    0.633
+   ],
+   [
+    "RPL29",
+    0.614
+   ]
   ]
  },
  "Decitabine": {
@@ -1200,6 +2410,28 @@
     "DNMT3A",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "FUBP1",
+    0.445
+   ],
+   [
+    "CNOT1",
+    0.429
+   ],
+   [
+    "TADA3",
+    0.403
+   ],
+   [
+    "HHEX",
+    0.402
+   ],
+   [
+    "MED16",
+    0.392
+   ]
   ]
  },
  "Disulfiram": {
@@ -1213,6 +2445,28 @@
    [
     "ALDH2",
     "INHIBITOR"
+   ]
+  ],
+  "top_knockdowns": [
+   [
+    "DCAF16",
+    0.513
+   ],
+   [
+    "PTF1A",
+    0.507
+   ],
+   [
+    "CLCN7",
+    0.5
+   ],
+   [
+    "ZNF699",
+    0.5
+   ],
+   [
+    "NIPAL3",
+    0.499
    ]
   ]
  },
@@ -1228,19 +2482,85 @@
     "ALDH5A1",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "KAT2A",
+    0.645
+   ],
+   [
+    "APOBR",
+    0.611
+   ],
+   [
+    "ARVCF",
+    0.605
+   ],
+   [
+    "CNNM3",
+    0.595
+   ],
+   [
+    "FOXG1",
+    0.585
+   ]
   ]
  },
  "Droxinostat": {
   "chembl": [],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "SPATA22",
+    0.526
+   ],
+   [
+    "CNOT1",
+    0.504
+   ],
+   [
+    "MFN1",
+    0.486
+   ],
+   [
+    "CMIP",
+    0.473
+   ],
+   [
+    "DHX15",
+    0.47
+   ]
+  ]
  },
  "EED226": {
   "chembl": [
    "CHEMBL4065484"
   ],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "KAT2A",
+    0.61
+   ],
+   [
+    "SPATA2L",
+    0.578
+   ],
+   [
+    "OTP",
+    0.569
+   ],
+   [
+    "TERF1",
+    0.562
+   ],
+   [
+    "PRR13",
+    0.561
+   ]
+  ]
  },
  "ENMD-2076": {
   "chembl": [
@@ -1284,19 +2604,85 @@
     "KIT",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "PPP2R2A",
+    0.677
+   ],
+   [
+    "ALDOA",
+    0.675
+   ],
+   [
+    "PGK1",
+    0.668
+   ],
+   [
+    "PPAT",
+    0.662
+   ],
+   [
+    "PKM",
+    0.638
+   ]
   ]
  },
  "ENMD-2076 L-(+)-Tartaric acid": {
   "chembl": [],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "ALDOA",
+    0.702
+   ],
+   [
+    "STAT5B",
+    0.69
+   ],
+   [
+    "PPP2R2A",
+    0.678
+   ],
+   [
+    "ADSS",
+    0.675
+   ],
+   [
+    "PGAM1",
+    0.657
+   ]
+  ]
  },
  "Ellagic acid": {
   "chembl": [
    "CHEMBL6246"
   ],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "FOXG1",
+    0.639
+   ],
+   [
+    "DCAF16",
+    0.613
+   ],
+   [
+    "ZNF326",
+    0.609
+   ],
+   [
+    "EDC3",
+    0.6
+   ],
+   [
+    "ARVCF",
+    0.596
+   ]
+  ]
  },
  "Entacapone": {
   "chembl": [
@@ -1309,6 +2695,28 @@
    [
     "COMT",
     "INHIBITOR"
+   ]
+  ],
+  "top_knockdowns": [
+   [
+    "DCAF16",
+    0.697
+   ],
+   [
+    "ARVCF",
+    0.656
+   ],
+   [
+    "FOXG1",
+    0.614
+   ],
+   [
+    "PRR14L",
+    0.608
+   ],
+   [
+    "ZNF326",
+    0.603
    ]
   ]
  },
@@ -1374,6 +2782,28 @@
     "HDAC9",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "DYNC1H1",
+    0.58
+   ],
+   [
+    "PMF1",
+    0.563
+   ],
+   [
+    "CENPK",
+    0.563
+   ],
+   [
+    "HJURP",
+    0.561
+   ],
+   [
+    "MIS18A",
+    0.56
+   ]
   ]
  },
  "Enzastaurin (LY317615)": {
@@ -1388,17 +2818,83 @@
     "PRKCB",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "ZNF700",
+    0.521
+   ],
+   [
+    "DCAF16",
+    0.485
+   ],
+   [
+    "KPNA2",
+    0.481
+   ],
+   [
+    "NUCB2",
+    0.479
+   ],
+   [
+    "MPHOSPH9",
+    0.472
+   ]
   ]
  },
  "Epothilone A": {
   "chembl": [],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "COX15",
+    0.537
+   ],
+   [
+    "SYS1",
+    0.491
+   ],
+   [
+    "MAD2L1",
+    0.486
+   ],
+   [
+    "TRAPPC5",
+    0.483
+   ],
+   [
+    "CMIP",
+    0.48
+   ]
+  ]
  },
  "FLLL32": {
   "chembl": [],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "SNRNP200",
+    0.502
+   ],
+   [
+    "SLC35A1",
+    0.481
+   ],
+   [
+    "AQR",
+    0.465
+   ],
+   [
+    "PPIE",
+    0.458
+   ],
+   [
+    "KIN",
+    0.458
+   ]
+  ]
  },
  "Fasudil (HA-1077) HCl": {
   "chembl": [
@@ -1416,6 +2912,28 @@
    [
     "ROCK2",
     "INHIBITOR"
+   ]
+  ],
+  "top_knockdowns": [
+   [
+    "IER3",
+    0.612
+   ],
+   [
+    "UBIAD1",
+    0.607
+   ],
+   [
+    "LAMA5",
+    0.586
+   ],
+   [
+    "SLC18B1",
+    0.582
+   ],
+   [
+    "CLCN7",
+    0.58
    ]
   ]
  },
@@ -1435,6 +2953,28 @@
    [
     "JAK2",
     "INHIBITOR"
+   ]
+  ],
+  "top_knockdowns": [
+   [
+    "XPO1",
+    0.604
+   ],
+   [
+    "HJURP",
+    0.55
+   ],
+   [
+    "SEC61A1",
+    0.542
+   ],
+   [
+    "PMF1",
+    0.532
+   ],
+   [
+    "BGLAP",
+    0.527
    ]
   ]
  },
@@ -1464,6 +3004,28 @@
    [
     "TYK2",
     "INHIBITOR"
+   ]
+  ],
+  "top_knockdowns": [
+   [
+    "GKAP1",
+    0.445
+   ],
+   [
+    "METTL8",
+    0.444
+   ],
+   [
+    "TFPT",
+    0.443
+   ],
+   [
+    "AP2A1",
+    0.44
+   ],
+   [
+    "RRP7A",
+    0.431
    ]
   ]
  },
@@ -1504,6 +3066,28 @@
     "CDK9",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "FDX2",
+    0.518
+   ],
+   [
+    "GABRG3",
+    0.516
+   ],
+   [
+    "NDUFC1",
+    0.505
+   ],
+   [
+    "CAPN1",
+    0.495
+   ],
+   [
+    "SENP6",
+    0.485
+   ]
   ]
  },
  "Fluorouracil (5-Fluoracil, 5-FU)": {
@@ -1518,6 +3102,28 @@
    [
     "TYMS",
     "INHIBITOR"
+   ]
+  ],
+  "top_knockdowns": [
+   [
+    "PICALM",
+    0.608
+   ],
+   [
+    "ZNF326",
+    0.603
+   ],
+   [
+    "EDC3",
+    0.602
+   ],
+   [
+    "DCAF16",
+    0.596
+   ],
+   [
+    "POLE3",
+    0.593
    ]
   ]
  },
@@ -1537,26 +3143,114 @@
     "ESR1",
     "DEGRADER"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "NIPAL3",
+    0.58
+   ],
+   [
+    "PWWP2A",
+    0.547
+   ],
+   [
+    "SIK3",
+    0.54
+   ],
+   [
+    "PTF1A",
+    0.537
+   ],
+   [
+    "HNRNPAB",
+    0.531
+   ]
   ]
  },
  "G007-LK": {
   "chembl": [],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "ZNF326",
+    0.616
+   ],
+   [
+    "FOXG1",
+    0.606
+   ],
+   [
+    "DCAF16",
+    0.585
+   ],
+   [
+    "RRAGC",
+    0.577
+   ],
+   [
+    "CNNM3",
+    0.574
+   ]
+  ]
  },
  "GSK J1": {
   "chembl": [
    "CHEMBL3188597"
   ],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "ARVCF",
+    0.66
+   ],
+   [
+    "DCAF16",
+    0.65
+   ],
+   [
+    "RASA3",
+    0.623
+   ],
+   [
+    "DDN",
+    0.613
+   ],
+   [
+    "ISYNA1",
+    0.612
+   ]
+  ]
  },
  "GSK-LSD1 2HCl": {
   "chembl": [
    "CHEMBL4301645"
   ],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "SLC39A14",
+    0.64
+   ],
+   [
+    "PCGF1",
+    0.621
+   ],
+   [
+    "DERL1",
+    0.613
+   ],
+   [
+    "NPEPPS",
+    0.607
+   ],
+   [
+    "WAS",
+    0.601
+   ]
+  ]
  },
  "GSK1070916": {
   "chembl": [
@@ -1575,6 +3269,28 @@
     "AURKC",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "RPL29",
+    0.61
+   ],
+   [
+    "ZNF496",
+    0.51
+   ],
+   [
+    "XPO1",
+    0.502
+   ],
+   [
+    "TTI1",
+    0.498
+   ],
+   [
+    "MTMR1",
+    0.493
+   ]
   ]
  },
  "Gandotinib (LY2784544)": {
@@ -1588,6 +3304,28 @@
    [
     "JAK2",
     "INHIBITOR"
+   ]
+  ],
+  "top_knockdowns": [
+   [
+    "PDXK",
+    0.609
+   ],
+   [
+    "NOSIP",
+    0.604
+   ],
+   [
+    "FIGLA",
+    0.593
+   ],
+   [
+    "EGR1",
+    0.58
+   ],
+   [
+    "CDC25A",
+    0.579
    ]
   ]
  },
@@ -1653,6 +3391,28 @@
     "HDAC9",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "ATR",
+    0.54
+   ],
+   [
+    "ATRIP",
+    0.514
+   ],
+   [
+    "MIS18BP1",
+    0.473
+   ],
+   [
+    "SH3KBP1",
+    0.43
+   ],
+   [
+    "HAUS6",
+    0.415
+   ]
   ]
  },
  "Glesatinib?(MGCD265)": {
@@ -1692,38 +3452,170 @@
     "TEK",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "ALDOA",
+    0.8
+   ],
+   [
+    "HSPA8",
+    0.745
+   ],
+   [
+    "STAT5B",
+    0.742
+   ],
+   [
+    "BCR",
+    0.738
+   ],
+   [
+    "PPAT",
+    0.725
+   ]
   ]
  },
  "Hesperadin": {
   "chembl": [],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "PPAT",
+    0.639
+   ],
+   [
+    "CDK6",
+    0.609
+   ],
+   [
+    "CCND3",
+    0.604
+   ],
+   [
+    "NUP133",
+    0.576
+   ],
+   [
+    "GTF2H3",
+    0.574
+   ]
+  ]
  },
  "INO-1001 (3-Aminobenzamide)": {
   "chembl": [
    "CHEMBL1556"
   ],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "FOXG1",
+    0.568
+   ],
+   [
+    "ZNF326",
+    0.551
+   ],
+   [
+    "EDC3",
+    0.544
+   ],
+   [
+    "DCAF16",
+    0.535
+   ],
+   [
+    "FBXO45",
+    0.519
+   ]
+  ]
  },
  "IOX2": {
   "chembl": [
    "CHEMBL3186774"
   ],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "DCAF16",
+    0.656
+   ],
+   [
+    "NFKB1",
+    0.65
+   ],
+   [
+    "PRR14L",
+    0.648
+   ],
+   [
+    "ARVCF",
+    0.642
+   ],
+   [
+    "PRKAB1",
+    0.633
+   ]
+  ]
  },
  "ITSA-1 (ITSA1)": {
   "chembl": [],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "SIK3",
+    0.533
+   ],
+   [
+    "ABCB8",
+    0.476
+   ],
+   [
+    "ZNF670",
+    0.471
+   ],
+   [
+    "TOP3A",
+    0.467
+   ],
+   [
+    "C5orf22",
+    0.464
+   ]
+  ]
  },
  "Iniparib (BSI-201)": {
   "chembl": [
    "CHEMBL1170047"
   ],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "ZNF326",
+    0.671
+   ],
+   [
+    "DCAF16",
+    0.622
+   ],
+   [
+    "FOXG1",
+    0.618
+   ],
+   [
+    "STAT5A",
+    0.582
+   ],
+   [
+    "SETX",
+    0.571
+   ]
+  ]
  },
  "Ivosidenib (AG-120)": {
   "chembl": [
@@ -1737,6 +3629,28 @@
     "IDH1",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "DCAF16",
+    0.602
+   ],
+   [
+    "ZNF326",
+    0.589
+   ],
+   [
+    "ARVCF",
+    0.567
+   ],
+   [
+    "FOXG1",
+    0.542
+   ],
+   [
+    "KAT2A",
+    0.54
+   ]
   ]
  },
  "JNJ-26854165 (Serdemetan)": {
@@ -1744,12 +3658,56 @@
    "CHEMBL2137530"
   ],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "EGR1",
+    0.45
+   ],
+   [
+    "SMIM29",
+    0.395
+   ],
+   [
+    "CNOT1",
+    0.381
+   ],
+   [
+    "CUL3",
+    0.376
+   ],
+   [
+    "HIST1H2AA",
+    0.374
+   ]
+  ]
  },
  "JNJ-7706621": {
   "chembl": [],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "RNF113A",
+    0.693
+   ],
+   [
+    "XAB2",
+    0.68
+   ],
+   [
+    "NSRP1",
+    0.654
+   ],
+   [
+    "MAP4",
+    0.626
+   ],
+   [
+    "SAP30BP",
+    0.612
+   ]
+  ]
  },
  "KW-2449": {
   "chembl": [
@@ -1778,17 +3736,83 @@
     "FLT3",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "STAT5B",
+    0.657
+   ],
+   [
+    "ADSS",
+    0.651
+   ],
+   [
+    "ALDOA",
+    0.634
+   ],
+   [
+    "ORC5",
+    0.623
+   ],
+   [
+    "RBM12",
+    0.619
+   ]
   ]
  },
  "Ki16425": {
   "chembl": [],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "ZNF326",
+    0.562
+   ],
+   [
+    "EDC3",
+    0.561
+   ],
+   [
+    "ARVCF",
+    0.538
+   ],
+   [
+    "DCAF16",
+    0.532
+   ],
+   [
+    "KAT2A",
+    0.528
+   ]
+  ]
  },
  "Ki8751": {
   "chembl": [],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "SLC27A4",
+    0.596
+   ],
+   [
+    "GMPS",
+    0.55
+   ],
+   [
+    "CCDC78",
+    0.545
+   ],
+   [
+    "MTHFD2",
+    0.533
+   ],
+   [
+    "ZNF592",
+    0.533
+   ]
+  ]
  },
  "Lapatinib (GW-572016) Ditosylate": {
   "chembl": [
@@ -1807,6 +3831,28 @@
    [
     "ERBB2",
     "INHIBITOR"
+   ]
+  ],
+  "top_knockdowns": [
+   [
+    "CSRNP3",
+    0.509
+   ],
+   [
+    "ARL1",
+    0.485
+   ],
+   [
+    "SLC35A1",
+    0.485
+   ],
+   [
+    "EXOC6",
+    0.482
+   ],
+   [
+    "COPB2",
+    0.438
    ]
   ]
  },
@@ -1853,6 +3899,28 @@
     "RBX1",
     "MODULATOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "FOXG1",
+    0.629
+   ],
+   [
+    "ZNF326",
+    0.598
+   ],
+   [
+    "GALC",
+    0.582
+   ],
+   [
+    "DCAF16",
+    0.582
+   ],
+   [
+    "MAP3K2",
+    0.578
+   ]
   ]
  },
  "Linifanib (ABT-869)": {
@@ -1897,6 +3965,28 @@
     "PDGFRB",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "DCAF16",
+    0.589
+   ],
+   [
+    "DEPDC5",
+    0.572
+   ],
+   [
+    "RPRD2",
+    0.568
+   ],
+   [
+    "SESN2",
+    0.557
+   ],
+   [
+    "ZNF326",
+    0.553
+   ]
   ]
  },
  "Lomustine": {
@@ -1904,7 +3994,29 @@
    "CHEMBL514"
   ],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "DCAF16",
+    0.683
+   ],
+   [
+    "CNNM3",
+    0.66
+   ],
+   [
+    "ZNF699",
+    0.647
+   ],
+   [
+    "FOXG1",
+    0.641
+   ],
+   [
+    "CCDC74A",
+    0.639
+   ]
+  ]
  },
  "Luminespib (AUY-922, NVP-AUY922)": {
   "chembl": [
@@ -1923,24 +4035,112 @@
     "HSP90AB1",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "TPX2",
+    0.673
+   ],
+   [
+    "PKM",
+    0.665
+   ],
+   [
+    "ALDOA",
+    0.644
+   ],
+   [
+    "PGK1",
+    0.638
+   ],
+   [
+    "TRPM7",
+    0.636
+   ]
   ]
  },
  "M344": {
   "chembl": [],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "ATR",
+    0.52
+   ],
+   [
+    "ATRIP",
+    0.511
+   ],
+   [
+    "CTR9",
+    0.496
+   ],
+   [
+    "PDCD7",
+    0.465
+   ],
+   [
+    "PAF1",
+    0.443
+   ]
+  ]
  },
  "MC1568": {
   "chembl": [],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "ATG5",
+    0.46
+   ],
+   [
+    "EDC4",
+    0.449
+   ],
+   [
+    "KAT2A",
+    0.446
+   ],
+   [
+    "EDC3",
+    0.444
+   ],
+   [
+    "GATAD2A",
+    0.44
+   ]
+  ]
  },
  "MK-0752": {
   "chembl": [
    "CHEMBL4205422"
   ],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "APEX2",
+    0.544
+   ],
+   [
+    "SKI",
+    0.533
+   ],
+   [
+    "HDDC2",
+    0.53
+   ],
+   [
+    "PIP4P1",
+    0.528
+   ],
+   [
+    "DOCK6",
+    0.528
+   ]
+  ]
  },
  "MK-5108 (VX-689)": {
   "chembl": [
@@ -1953,6 +4153,28 @@
    [
     "AURKA",
     "INHIBITOR"
+   ]
+  ],
+  "top_knockdowns": [
+   [
+    "TMEM87A",
+    0.517
+   ],
+   [
+    "UBE2S",
+    0.517
+   ],
+   [
+    "MZT1",
+    0.516
+   ],
+   [
+    "DCAF7",
+    0.513
+   ],
+   [
+    "MTBP",
+    0.511
    ]
   ]
  },
@@ -1968,6 +4190,28 @@
     "AURKA",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "UBAP2L",
+    0.489
+   ],
+   [
+    "PHF3",
+    0.484
+   ],
+   [
+    "GMPS",
+    0.484
+   ],
+   [
+    "PPP1R10",
+    0.479
+   ],
+   [
+    "GADD45A",
+    0.46
+   ]
   ]
  },
  "Maraviroc": {
@@ -1982,6 +4226,28 @@
     "CCR5",
     "ANTAGONIST"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "DCAF16",
+    0.636
+   ],
+   [
+    "CLCN7",
+    0.588
+   ],
+   [
+    "HDDC2",
+    0.585
+   ],
+   [
+    "RASA3",
+    0.577
+   ],
+   [
+    "ZNF19",
+    0.571
+   ]
   ]
  },
  "Meprednisone": {
@@ -1993,6 +4259,28 @@
    [
     "NR3C1",
     "AGONIST"
+   ]
+  ],
+  "top_knockdowns": [
+   [
+    "DCAF16",
+    0.67
+   ],
+   [
+    "KAT2A",
+    0.656
+   ],
+   [
+    "SLC18B1",
+    0.637
+   ],
+   [
+    "UBIAD1",
+    0.628
+   ],
+   [
+    "ZNF326",
+    0.627
    ]
   ]
  },
@@ -2008,6 +4296,28 @@
     "PPAT",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "DOHH",
+    0.567
+   ],
+   [
+    "CNOT3",
+    0.565
+   ],
+   [
+    "TRPM7",
+    0.562
+   ],
+   [
+    "LMO2",
+    0.548
+   ],
+   [
+    "DYNLL2",
+    0.529
+   ]
   ]
  },
  "Mesna": {
@@ -2015,7 +4325,29 @@
    "CHEMBL975"
   ],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "DCAF16",
+    0.644
+   ],
+   [
+    "CYB561D2",
+    0.62
+   ],
+   [
+    "SESN2",
+    0.61
+   ],
+   [
+    "SKI",
+    0.597
+   ],
+   [
+    "FOXG1",
+    0.597
+   ]
+  ]
  },
  "Mocetinostat (MGCD0103)": {
   "chembl": [
@@ -2049,6 +4381,28 @@
     "HDAC8",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "CTR9",
+    0.567
+   ],
+   [
+    "HJURP",
+    0.515
+   ],
+   [
+    "CDC73",
+    0.511
+   ],
+   [
+    "PAF1",
+    0.502
+   ],
+   [
+    "PMF1",
+    0.499
+   ]
   ]
  },
  "Momelotinib (CYT387)": {
@@ -2072,6 +4426,28 @@
    [
     "JAK2",
     "INHIBITOR"
+   ]
+  ],
+  "top_knockdowns": [
+   [
+    "CTTN",
+    0.501
+   ],
+   [
+    "RMDN3",
+    0.446
+   ],
+   [
+    "COX20",
+    0.445
+   ],
+   [
+    "TMEM115",
+    0.445
+   ],
+   [
+    "WARS2",
+    0.44
    ]
   ]
  },
@@ -2117,12 +4493,56 @@
     "RET",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "SPRY4",
+    0.567
+   ],
+   [
+    "NSD2",
+    0.56
+   ],
+   [
+    "SLC35F6",
+    0.556
+   ],
+   [
+    "MVK",
+    0.544
+   ],
+   [
+    "GARS",
+    0.528
+   ]
   ]
  },
  "NVP-BSK805 2HCl": {
   "chembl": [],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "PFN1",
+    0.615
+   ],
+   [
+    "NAA50",
+    0.542
+   ],
+   [
+    "VMP1",
+    0.537
+   ],
+   [
+    "PEX19",
+    0.535
+   ],
+   [
+    "RPL29",
+    0.533
+   ]
+  ]
  },
  "Navitoclax (ABT-263)": {
   "chembl": [
@@ -2151,6 +4571,28 @@
     "BCL2L2-PABPN1",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "QRSL1",
+    0.46
+   ],
+   [
+    "TSEN15",
+    0.458
+   ],
+   [
+    "RMDN3",
+    0.453
+   ],
+   [
+    "ABI2",
+    0.439
+   ],
+   [
+    "NDUFAB1",
+    0.438
+   ]
   ]
  },
  "Nilotinib (AMN-107)": {
@@ -2170,6 +4612,28 @@
    [
     "BCR",
     "INHIBITOR"
+   ]
+  ],
+  "top_knockdowns": [
+   [
+    "ALDOA",
+    0.744
+   ],
+   [
+    "MCM4",
+    0.739
+   ],
+   [
+    "HSPA8",
+    0.735
+   ],
+   [
+    "BCR",
+    0.733
+   ],
+   [
+    "GAB2",
+    0.729
    ]
   ]
  },
@@ -2225,6 +4689,28 @@
     "PDGFRB",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "RPL29",
+    0.656
+   ],
+   [
+    "VPS29",
+    0.642
+   ],
+   [
+    "ALDOA",
+    0.631
+   ],
+   [
+    "XPO1",
+    0.624
+   ],
+   [
+    "PGK1",
+    0.624
+   ]
   ]
  },
  "Obatoclax Mesylate (GX15-070)": {
@@ -2270,6 +4756,28 @@
     "MCL1",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "PHB2",
+    0.702
+   ],
+   [
+    "PHB",
+    0.676
+   ],
+   [
+    "PMF1",
+    0.665
+   ],
+   [
+    "HSPA9",
+    0.661
+   ],
+   [
+    "HGS",
+    0.657
+   ]
   ]
  },
  "Ofloxacin": {
@@ -2277,55 +4785,253 @@
    "CHEMBL4"
   ],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "NFATC2",
+    0.527
+   ],
+   [
+    "HDDC2",
+    0.515
+   ],
+   [
+    "PWWP2A",
+    0.514
+   ],
+   [
+    "SKI",
+    0.514
+   ],
+   [
+    "RFX6",
+    0.507
+   ]
+  ]
  },
  "PCI-34051": {
   "chembl": [],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "SIK3",
+    0.484
+   ],
+   [
+    "TOP3A",
+    0.469
+   ],
+   [
+    "GKAP1",
+    0.46
+   ],
+   [
+    "NOL7",
+    0.456
+   ],
+   [
+    "CMTR1",
+    0.452
+   ]
+  ]
  },
  "PD173074": {
   "chembl": [
    "CHEMBL189584"
   ],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "IKZF4",
+    0.572
+   ],
+   [
+    "WAS",
+    0.571
+   ],
+   [
+    "RBL1",
+    0.571
+   ],
+   [
+    "ARHGAP5",
+    0.55
+   ],
+   [
+    "NSD2",
+    0.539
+   ]
+  ]
  },
  "PD98059": {
   "chembl": [],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "SKI",
+    0.585
+   ],
+   [
+    "HDDC2",
+    0.568
+   ],
+   [
+    "DCAF16",
+    0.565
+   ],
+   [
+    "PWWP2A",
+    0.561
+   ],
+   [
+    "CBX1",
+    0.56
+   ]
+  ]
  },
  "PF-3845": {
   "chembl": [
    "CHEMBL1651524"
   ],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "DCAF16",
+    0.687
+   ],
+   [
+    "ARVCF",
+    0.653
+   ],
+   [
+    "HDDC2",
+    0.637
+   ],
+   [
+    "SESN2",
+    0.635
+   ],
+   [
+    "CLCN7",
+    0.634
+   ]
+  ]
  },
  "PF-573228": {
   "chembl": [],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "GADD45A",
+    0.403
+   ],
+   [
+    "GLOD5",
+    0.37
+   ],
+   [
+    "TAF13",
+    0.361
+   ],
+   [
+    "SOX18",
+    0.358
+   ],
+   [
+    "CDK2",
+    0.355
+   ]
+  ]
  },
  "PFI-1 (PF-6405761)": {
   "chembl": [
    "CHEMBL2179387"
   ],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "TAF1",
+    0.493
+   ],
+   [
+    "SUPT5H",
+    0.488
+   ],
+   [
+    "MIS18A",
+    0.468
+   ],
+   [
+    "PAF1",
+    0.456
+   ],
+   [
+    "NKX6-1",
+    0.453
+   ]
+  ]
  },
  "PHA-680632": {
   "chembl": [],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "ALDOA",
+    0.728
+   ],
+   [
+    "PPAT",
+    0.72
+   ],
+   [
+    "ORC5",
+    0.714
+   ],
+   [
+    "MCM4",
+    0.705
+   ],
+   [
+    "TUBGCP3",
+    0.689
+   ]
+  ]
  },
  "PJ34": {
   "chembl": [
    "CHEMBL3233481"
   ],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "RSAD1",
+    0.568
+   ],
+   [
+    "SOX11",
+    0.551
+   ],
+   [
+    "SKI",
+    0.527
+   ],
+   [
+    "DNAJC24",
+    0.52
+   ],
+   [
+    "MKS1",
+    0.517
+   ]
+  ]
  },
  "Panobinostat (LBH589)": {
   "chembl": [
@@ -2388,6 +5094,28 @@
    [
     "HDAC9",
     "INHIBITOR"
+   ]
+  ],
+  "top_knockdowns": [
+   [
+    "ATRIP",
+    0.474
+   ],
+   [
+    "MRPS36",
+    0.458
+   ],
+   [
+    "RAD9A",
+    0.452
+   ],
+   [
+    "ATR",
+    0.449
+   ],
+   [
+    "SH3KBP1",
+    0.445
    ]
   ]
  },
@@ -2457,6 +5185,28 @@
     "TUBB8",
     "STABILISER"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "NDUFS1",
+    0.405
+   ],
+   [
+    "AARS",
+    0.357
+   ],
+   [
+    "HARS2",
+    0.355
+   ],
+   [
+    "RARS2",
+    0.353
+   ],
+   [
+    "PGD",
+    0.349
+   ]
   ]
  },
  "Pelitinib (EKB-569)": {
@@ -2471,6 +5221,28 @@
     "EGFR",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "XPO1",
+    0.49
+   ],
+   [
+    "CSNK1A1",
+    0.475
+   ],
+   [
+    "HIPK1",
+    0.473
+   ],
+   [
+    "SRP9",
+    0.459
+   ],
+   [
+    "NDUFS1",
+    0.457
+   ]
   ]
  },
  "Pirarubicin": {
@@ -2478,14 +5250,58 @@
    "CHEMBL2354444"
   ],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "POLE",
+    0.517
+   ],
+   [
+    "PCNA",
+    0.517
+   ],
+   [
+    "RPA2",
+    0.494
+   ],
+   [
+    "POLA2",
+    0.483
+   ],
+   [
+    "POLE2",
+    0.478
+   ]
+  ]
  },
  "Pracinostat (SB939)": {
   "chembl": [
    "CHEMBL1851943"
   ],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "ATR",
+    0.538
+   ],
+   [
+    "ATRIP",
+    0.517
+   ],
+   [
+    "MIS18BP1",
+    0.471
+   ],
+   [
+    "CTR9",
+    0.471
+   ],
+   [
+    "SH3KBP1",
+    0.446
+   ]
+  ]
  },
  "Prednisone": {
   "chembl": [
@@ -2497,6 +5313,28 @@
     "NR3C1",
     "AGONIST"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "FOXG1",
+    0.678
+   ],
+   [
+    "DCAF16",
+    0.635
+   ],
+   [
+    "ZNF326",
+    0.631
+   ],
+   [
+    "KAT2A",
+    0.627
+   ],
+   [
+    "PGRMC1",
+    0.626
+   ]
   ]
  },
  "Quercetin": {
@@ -2504,7 +5342,29 @@
    "CHEMBL50"
   ],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "RRAGC",
+    0.612
+   ],
+   [
+    "CLCN7",
+    0.606
+   ],
+   [
+    "NDUFA7",
+    0.604
+   ],
+   [
+    "IRF5",
+    0.583
+   ],
+   [
+    "SETX",
+    0.581
+   ]
+  ]
  },
  "Quisinostat (JNJ-26481585) 2HCl": {
   "chembl": [
@@ -2568,12 +5428,56 @@
     "HDAC9",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "ATRIP",
+    0.501
+   ],
+   [
+    "ATR",
+    0.498
+   ],
+   [
+    "MIS18BP1",
+    0.48
+   ],
+   [
+    "MRPS36",
+    0.45
+   ],
+   [
+    "SH3KBP1",
+    0.435
+   ]
   ]
  },
  "RG108": {
   "chembl": [],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "ZMYM6",
+    0.573
+   ],
+   [
+    "CCDC74A",
+    0.562
+   ],
+   [
+    "KAT2A",
+    0.56
+   ],
+   [
+    "PRR14L",
+    0.557
+   ],
+   [
+    "DCAF16",
+    0.555
+   ]
+  ]
  },
  "Raltitrexed": {
   "chembl": [
@@ -2586,6 +5490,28 @@
    [
     "TYMS",
     "INHIBITOR"
+   ]
+  ],
+  "top_knockdowns": [
+   [
+    "TFRC",
+    0.463
+   ],
+   [
+    "ARRB2",
+    0.459
+   ],
+   [
+    "SZRD1",
+    0.432
+   ],
+   [
+    "ZNF84",
+    0.428
+   ],
+   [
+    "ATIC",
+    0.427
    ]
   ]
  },
@@ -2602,6 +5528,28 @@
    [
     "MTNR1B",
     "AGONIST"
+   ]
+  ],
+  "top_knockdowns": [
+   [
+    "DCAF16",
+    0.544
+   ],
+   [
+    "EDC3",
+    0.535
+   ],
+   [
+    "KAT2A",
+    0.532
+   ],
+   [
+    "SKI",
+    0.53
+   ],
+   [
+    "SIK3",
+    0.52
    ]
   ]
  },
@@ -2702,6 +5650,28 @@
     "TEK",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "PTCD3",
+    0.563
+   ],
+   [
+    "CTNNB1",
+    0.56
+   ],
+   [
+    "HSPE1",
+    0.525
+   ],
+   [
+    "IARS2",
+    0.524
+   ],
+   [
+    "HARS",
+    0.518
+   ]
   ]
  },
  "Resminostat": {
@@ -2709,21 +5679,87 @@
    "CHEMBL4296717"
   ],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "ATR",
+    0.579
+   ],
+   [
+    "ATRIP",
+    0.561
+   ],
+   [
+    "PMF1",
+    0.497
+   ],
+   [
+    "HJURP",
+    0.491
+   ],
+   [
+    "SSRP1",
+    0.487
+   ]
+  ]
  },
  "Resveratrol": {
   "chembl": [
    "CHEMBL165"
   ],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "CDIPT",
+    0.542
+   ],
+   [
+    "SNAPC4",
+    0.538
+   ],
+   [
+    "PPA1",
+    0.537
+   ],
+   [
+    "PTPN1",
+    0.531
+   ],
+   [
+    "KLF8",
+    0.53
+   ]
+  ]
  },
  "Rigosertib (ON-01910)": {
   "chembl": [
    "CHEMBL1241855"
   ],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "BET1",
+    0.665
+   ],
+   [
+    "TRAPPC5",
+    0.62
+   ],
+   [
+    "TRAPPC11",
+    0.619
+   ],
+   [
+    "USE1",
+    0.591
+   ],
+   [
+    "MAD2L1",
+    0.579
+   ]
+  ]
  },
  "Roscovitine (Seliciclib,CYC202)": {
   "chembl": [
@@ -2757,6 +5793,28 @@
     "CDK9",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "LRRC47",
+    0.726
+   ],
+   [
+    "CLCN7",
+    0.687
+   ],
+   [
+    "SESN2",
+    0.686
+   ],
+   [
+    "PRKAB1",
+    0.685
+   ],
+   [
+    "SYK",
+    0.684
+   ]
   ]
  },
  "Roxadustat (FG-4592)": {
@@ -2786,6 +5844,28 @@
     "P4HTM",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "TBX5",
+    0.428
+   ],
+   [
+    "KAT2A",
+    0.42
+   ],
+   [
+    "ARVCF",
+    0.416
+   ],
+   [
+    "FOXG1",
+    0.412
+   ],
+   [
+    "NIPAL3",
+    0.41
+   ]
   ]
  },
  "Rucaparib (AG-014699,PF-01367338) phosphate": {
@@ -2810,6 +5890,28 @@
    [
     "PARP3",
     "INHIBITOR"
+   ]
+  ],
+  "top_knockdowns": [
+   [
+    "RRAGC",
+    0.607
+   ],
+   [
+    "NFATC2",
+    0.592
+   ],
+   [
+    "TBC1D10B",
+    0.585
+   ],
+   [
+    "DCAF16",
+    0.582
+   ],
+   [
+    "NPEPPS",
+    0.579
    ]
   ]
  },
@@ -2840,6 +5942,28 @@
     "TYK2",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "PWWP2A",
+    0.649
+   ],
+   [
+    "CYB561D2",
+    0.637
+   ],
+   [
+    "NFATC2",
+    0.603
+   ],
+   [
+    "FOXG1",
+    0.602
+   ],
+   [
+    "NIPAL3",
+    0.596
+   ]
   ]
  },
  "S-Ruxolitinib (INCB018424)": {
@@ -2869,19 +5993,85 @@
     "TYK2",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "KAT2A",
+    0.57
+   ],
+   [
+    "FAM160B2",
+    0.536
+   ],
+   [
+    "GATAD2A",
+    0.522
+   ],
+   [
+    "SWSAP1",
+    0.519
+   ],
+   [
+    "EIF4A3",
+    0.515
+   ]
   ]
  },
  "S3I-201": {
   "chembl": [],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "FOXG1",
+    0.645
+   ],
+   [
+    "EIF1",
+    0.64
+   ],
+   [
+    "CCDC93",
+    0.636
+   ],
+   [
+    "ZFAND1",
+    0.633
+   ],
+   [
+    "DCAF16",
+    0.631
+   ]
+  ]
  },
  "SB431542": {
   "chembl": [
    "CHEMBL440084"
   ],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "DCAF16",
+    0.639
+   ],
+   [
+    "ZNF326",
+    0.615
+   ],
+   [
+    "CLCN7",
+    0.59
+   ],
+   [
+    "FOXG1",
+    0.576
+   ],
+   [
+    "CCDC93",
+    0.571
+   ]
+  ]
  },
  "SGI-1776 free base": {
   "chembl": [
@@ -2905,12 +6095,56 @@
     "PIM3",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "VPS51",
+    0.582
+   ],
+   [
+    "TRAPPC11",
+    0.569
+   ],
+   [
+    "UBA6",
+    0.562
+   ],
+   [
+    "VPS53",
+    0.556
+   ],
+   [
+    "VMP1",
+    0.552
+   ]
   ]
  },
  "SL-327": {
   "chembl": [],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "ZSCAN10",
+    0.531
+   ],
+   [
+    "PIP4P1",
+    0.508
+   ],
+   [
+    "SHOC2",
+    0.495
+   ],
+   [
+    "PABPC1",
+    0.494
+   ],
+   [
+    "DHRS1",
+    0.492
+   ]
+  ]
  },
  "SNS-314": {
   "chembl": [
@@ -2934,12 +6168,56 @@
     "AURKC",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "GARS",
+    0.56
+   ],
+   [
+    "DCAF16",
+    0.543
+   ],
+   [
+    "PWWP2A",
+    0.536
+   ],
+   [
+    "MAST4",
+    0.535
+   ],
+   [
+    "SETX",
+    0.535
+   ]
   ]
  },
  "SRT1720 HCl": {
   "chembl": [],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "COX18",
+    0.672
+   ],
+   [
+    "COQ5",
+    0.665
+   ],
+   [
+    "GRB10",
+    0.659
+   ],
+   [
+    "NDUFA11",
+    0.65
+   ],
+   [
+    "RAD1",
+    0.65
+   ]
+  ]
  },
  "SRT2104 (GSK2245840)": {
   "chembl": [
@@ -2951,12 +6229,56 @@
     "SIRT1",
     "ACTIVATOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "EDC3",
+    0.489
+   ],
+   [
+    "KAT2A",
+    0.486
+   ],
+   [
+    "PGRMC1",
+    0.475
+   ],
+   [
+    "TBX5",
+    0.475
+   ],
+   [
+    "RASA3",
+    0.474
+   ]
   ]
  },
  "SRT3025 HCl": {
   "chembl": [],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "CNOT1",
+    0.397
+   ],
+   [
+    "TFRC",
+    0.379
+   ],
+   [
+    "CUL3",
+    0.369
+   ],
+   [
+    "CLDN15",
+    0.365
+   ],
+   [
+    "CMTR1",
+    0.363
+   ]
+  ]
  },
  "Selisistat (EX 527)": {
   "chembl": [
@@ -2970,19 +6292,85 @@
     "SIRT1",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "FOXG1",
+    0.64
+   ],
+   [
+    "DCAF16",
+    0.608
+   ],
+   [
+    "PWWP2A",
+    0.589
+   ],
+   [
+    "ZNF326",
+    0.588
+   ],
+   [
+    "KAT2A",
+    0.582
+   ]
   ]
  },
  "Sirtinol": {
   "chembl": [],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "EIF1",
+    0.723
+   ],
+   [
+    "SPRY4",
+    0.663
+   ],
+   [
+    "RAB24",
+    0.647
+   ],
+   [
+    "CBL",
+    0.642
+   ],
+   [
+    "LZTR1",
+    0.616
+   ]
+  ]
  },
  "Sodium Phenylbutyrate": {
   "chembl": [
    "CHEMBL1746"
   ],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "ARVCF",
+    0.621
+   ],
+   [
+    "RFX6",
+    0.568
+   ],
+   [
+    "PTPN2",
+    0.539
+   ],
+   [
+    "BACH1",
+    0.536
+   ],
+   [
+    "ATXN7L3",
+    0.535
+   ]
+  ]
  },
  "Sorafenib Tosylate": {
   "chembl": [
@@ -3036,6 +6424,28 @@
     "RET",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "TARS",
+    0.624
+   ],
+   [
+    "AARS",
+    0.624
+   ],
+   [
+    "HSPE1",
+    0.62
+   ],
+   [
+    "IARS2",
+    0.616
+   ],
+   [
+    "THG1L",
+    0.61
+   ]
   ]
  },
  "Streptozotocin (STZ)": {
@@ -3043,7 +6453,29 @@
    "CHEMBL1977579"
   ],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "WAS",
+    0.63
+   ],
+   [
+    "TXLNG",
+    0.623
+   ],
+   [
+    "CLCN7",
+    0.621
+   ],
+   [
+    "SKI",
+    0.613
+   ],
+   [
+    "LRRC47",
+    0.611
+   ]
+  ]
  },
  "TAK-901": {
   "chembl": [
@@ -3057,22 +6489,110 @@
     "AURKB",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "PPAT",
+    0.627
+   ],
+   [
+    "PGAM1",
+    0.593
+   ],
+   [
+    "PGK1",
+    0.577
+   ],
+   [
+    "ALDOA",
+    0.575
+   ],
+   [
+    "TRPM7",
+    0.57
+   ]
   ]
  },
  "TG101209": {
   "chembl": [],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "XPO1",
+    0.562
+   ],
+   [
+    "CENPK",
+    0.544
+   ],
+   [
+    "DCTN5",
+    0.535
+   ],
+   [
+    "HJURP",
+    0.532
+   ],
+   [
+    "RNPC3",
+    0.531
+   ]
+  ]
  },
  "TGX-221": {
   "chembl": [],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "C5orf22",
+    0.492
+   ],
+   [
+    "CHI3L2",
+    0.466
+   ],
+   [
+    "CNOT6",
+    0.445
+   ],
+   [
+    "NSUN5",
+    0.444
+   ],
+   [
+    "NECAP2",
+    0.442
+   ]
+  ]
  },
  "TMP195": {
   "chembl": [],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "SETX",
+    0.598
+   ],
+   [
+    "FOXG1",
+    0.576
+   ],
+   [
+    "DCAF16",
+    0.574
+   ],
+   [
+    "SPRY4",
+    0.57
+   ],
+   [
+    "ZNF326",
+    0.544
+   ]
+  ]
  },
  "Tacedinaline (CI994)": {
   "chembl": [
@@ -3136,6 +6656,28 @@
     "HDAC9",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "VMP1",
+    0.609
+   ],
+   [
+    "ATR",
+    0.564
+   ],
+   [
+    "ATRIP",
+    0.56
+   ],
+   [
+    "HGS",
+    0.558
+   ],
+   [
+    "MFN1",
+    0.554
+   ]
   ]
  },
  "Tanespimycin (17-AAG)": {
@@ -3155,6 +6697,28 @@
     "HSP90AB1",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "PPAT",
+    0.643
+   ],
+   [
+    "TPX2",
+    0.629
+   ],
+   [
+    "NUP133",
+    0.618
+   ],
+   [
+    "TRPM7",
+    0.618
+   ],
+   [
+    "PGK1",
+    0.615
+   ]
   ]
  },
  "Tazemetostat (EPZ-6438)": {
@@ -3170,6 +6734,28 @@
     "EZH2",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "KAT2A",
+    0.433
+   ],
+   [
+    "TBX5",
+    0.416
+   ],
+   [
+    "SAP18",
+    0.415
+   ],
+   [
+    "EIF1AD",
+    0.409
+   ],
+   [
+    "CMTR1",
+    0.409
+   ]
   ]
  },
  "Temsirolimus (CCI-779, NSC 683864)": {
@@ -3183,6 +6769,28 @@
    [
     "FKBP1A",
     "INHIBITOR"
+   ]
+  ],
+  "top_knockdowns": [
+   [
+    "COPB1",
+    0.465
+   ],
+   [
+    "CSRNP3",
+    0.455
+   ],
+   [
+    "SPHK2",
+    0.426
+   ],
+   [
+    "SLC1A5",
+    0.405
+   ],
+   [
+    "SUV39H2",
+    0.402
    ]
   ]
  },
@@ -3213,6 +6821,28 @@
     "RBX1",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "KAT2A",
+    0.58
+   ],
+   [
+    "DCAF16",
+    0.571
+   ],
+   [
+    "GALC",
+    0.558
+   ],
+   [
+    "ARVCF",
+    0.552
+   ],
+   [
+    "FOXG1",
+    0.552
+   ]
   ]
  },
  "Thiotepa": {
@@ -3220,12 +6850,56 @@
    "CHEMBL671"
   ],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "CLCN7",
+    0.637
+   ],
+   [
+    "ARVCF",
+    0.621
+   ],
+   [
+    "NSD2",
+    0.615
+   ],
+   [
+    "MON2",
+    0.59
+   ],
+   [
+    "DCAF16",
+    0.59
+   ]
+  ]
  },
  "Tie2 kinase inhibitor": {
   "chembl": [],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "ZBTB24",
+    0.624
+   ],
+   [
+    "WAS",
+    0.603
+   ],
+   [
+    "ALX3",
+    0.602
+   ],
+   [
+    "IKZF4",
+    0.6
+   ],
+   [
+    "VEZF1",
+    0.599
+   ]
+  ]
  },
  "Tofacitinib (CP-690550) Citrate": {
   "chembl": [
@@ -3254,6 +6928,28 @@
     "TYK2",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "RASA3",
+    0.663
+   ],
+   [
+    "KAT2A",
+    0.639
+   ],
+   [
+    "UBIAD1",
+    0.637
+   ],
+   [
+    "NFKB1",
+    0.628
+   ],
+   [
+    "KCTD9",
+    0.623
+   ]
   ]
  },
  "Toremifene Citrate": {
@@ -3269,6 +6965,28 @@
    [
     "ESR2",
     "MODULATOR"
+   ]
+  ],
+  "top_knockdowns": [
+   [
+    "ATAD3A",
+    0.485
+   ],
+   [
+    "VPS26A",
+    0.44
+   ],
+   [
+    "TERF2IP",
+    0.414
+   ],
+   [
+    "RPL12",
+    0.406
+   ],
+   [
+    "EEF1G",
+    0.405
    ]
   ]
  },
@@ -3295,6 +7013,28 @@
     "AURKC",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "ALDOA",
+    0.757
+   ],
+   [
+    "MCM4",
+    0.723
+   ],
+   [
+    "ORC5",
+    0.716
+   ],
+   [
+    "STAT5B",
+    0.708
+   ],
+   [
+    "TUBGCP3",
+    0.687
+   ]
   ]
  },
  "Trametinib (GSK1120212)": {
@@ -3314,6 +7054,28 @@
     "MAP2K2",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "ZNF219",
+    0.626
+   ],
+   [
+    "GAB2",
+    0.611
+   ],
+   [
+    "PTPN11",
+    0.61
+   ],
+   [
+    "INPPL1",
+    0.591
+   ],
+   [
+    "HSPA8",
+    0.587
+   ]
   ]
  },
  "Tranylcypromine (2-PCPA) HCl": {
@@ -3321,7 +7083,29 @@
    "CHEMBL257990"
   ],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "NPEPPS",
+    0.634
+   ],
+   [
+    "CUL4B",
+    0.634
+   ],
+   [
+    "ATXN7L3",
+    0.61
+   ],
+   [
+    "IGF2R",
+    0.605
+   ],
+   [
+    "RRAGC",
+    0.6
+   ]
+  ]
  },
  "Triamcinolone Acetonide": {
   "chembl": [
@@ -3333,43 +7117,197 @@
     "NR3C1",
     "AGONIST"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "DCAF16",
+    0.603
+   ],
+   [
+    "ZNF326",
+    0.589
+   ],
+   [
+    "KAT2A",
+    0.567
+   ],
+   [
+    "SLC18B1",
+    0.558
+   ],
+   [
+    "EDC3",
+    0.556
+   ]
   ]
  },
  "Trichostatin A (TSA)": {
   "chembl": [],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "ATRIP",
+    0.578
+   ],
+   [
+    "ATR",
+    0.556
+   ],
+   [
+    "PMF1",
+    0.549
+   ],
+   [
+    "HJURP",
+    0.537
+   ],
+   [
+    "MIS18A",
+    0.535
+   ]
+  ]
  },
  "Tubastatin A HCl": {
   "chembl": [
    "CHEMBL2018302"
   ],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "PCGF1",
+    0.517
+   ],
+   [
+    "SLC35F6",
+    0.505
+   ],
+   [
+    "USP21",
+    0.478
+   ],
+   [
+    "CBL",
+    0.475
+   ],
+   [
+    "RPL22L1",
+    0.447
+   ]
+  ]
  },
  "Tucidinostat (Chidamide)": {
   "chembl": [
    "CHEMBL3621988"
   ],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "SSRP1",
+    0.57
+   ],
+   [
+    "DYNC1H1",
+    0.566
+   ],
+   [
+    "PMF1",
+    0.563
+   ],
+   [
+    "HJURP",
+    0.554
+   ],
+   [
+    "SUPT16H",
+    0.551
+   ]
+  ]
  },
  "UNC0379": {
   "chembl": [],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "SIGLEC14",
+    0.498
+   ],
+   [
+    "CHEK1",
+    0.488
+   ],
+   [
+    "UFM1",
+    0.476
+   ],
+   [
+    "GFM2",
+    0.46
+   ],
+   [
+    "GTF3C6",
+    0.45
+   ]
+  ]
  },
  "UNC0631": {
   "chembl": [],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "RFX6",
+    0.591
+   ],
+   [
+    "ARVCF",
+    0.586
+   ],
+   [
+    "DCAF16",
+    0.558
+   ],
+   [
+    "MAP3K2",
+    0.531
+   ],
+   [
+    "FAM160B2",
+    0.53
+   ]
+  ]
  },
  "UNC1999": {
   "chembl": [
    "CHEMBL3414619"
   ],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "EIF1",
+    0.478
+   ],
+   [
+    "CBL",
+    0.475
+   ],
+   [
+    "LZTR1",
+    0.471
+   ],
+   [
+    "SLC35F6",
+    0.458
+   ],
+   [
+    "CDIPT",
+    0.436
+   ]
+  ]
  },
  "Valproic acid sodium salt (Sodium valproate)": {
   "chembl": [
@@ -3382,6 +7320,28 @@
    [
     "ALDH5A1",
     "INHIBITOR"
+   ]
+  ],
+  "top_knockdowns": [
+   [
+    "SKI",
+    0.594
+   ],
+   [
+    "NIPAL3",
+    0.588
+   ],
+   [
+    "ZNF326",
+    0.587
+   ],
+   [
+    "PWWP2A",
+    0.586
+   ],
+   [
+    "BTG2",
+    0.58
    ]
   ]
  },
@@ -3512,6 +7472,28 @@
     "TEK",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "HSPA8",
+    0.692
+   ],
+   [
+    "PPAT",
+    0.678
+   ],
+   [
+    "ALDOA",
+    0.673
+   ],
+   [
+    "PFN1",
+    0.648
+   ],
+   [
+    "STAT5B",
+    0.64
+   ]
   ]
  },
  "Veliparib (ABT-888)": {
@@ -3537,38 +7519,170 @@
     "PARP3",
     "INHIBITOR"
    ]
+  ],
+  "top_knockdowns": [
+   [
+    "DCAF16",
+    0.696
+   ],
+   [
+    "POLE3",
+    0.665
+   ],
+   [
+    "KAT2A",
+    0.661
+   ],
+   [
+    "DDN",
+    0.65
+   ],
+   [
+    "IER3",
+    0.646
+   ]
   ]
  },
  "WHI-P154": {
   "chembl": [],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "ATAD3A",
+    0.586
+   ],
+   [
+    "SSB",
+    0.584
+   ],
+   [
+    "TERF2IP",
+    0.504
+   ],
+   [
+    "EIF2S2",
+    0.498
+   ],
+   [
+    "DTWD1",
+    0.491
+   ]
+  ]
  },
  "WP1066": {
   "chembl": [
    "CHEMBL1923234"
   ],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "ARVCF",
+    0.5
+   ],
+   [
+    "DCAF16",
+    0.485
+   ],
+   [
+    "KAT2A",
+    0.474
+   ],
+   [
+    "FAM160B2",
+    0.471
+   ],
+   [
+    "EIF1",
+    0.459
+   ]
+  ]
  },
  "XAV-939": {
   "chembl": [
    "CHEMBL1086580"
   ],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "ZNF326",
+    0.617
+   ],
+   [
+    "DCAF16",
+    0.607
+   ],
+   [
+    "FOXG1",
+    0.597
+   ],
+   [
+    "HDDC2",
+    0.564
+   ],
+   [
+    "ARVCF",
+    0.56
+   ]
+  ]
  },
  "YM155 (Sepantronium Bromide)": {
   "chembl": [
    "CHEMBL2105734"
   ],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "SIGLEC14",
+    0.633
+   ],
+   [
+    "DHX16",
+    0.579
+   ],
+   [
+    "MIER3",
+    0.557
+   ],
+   [
+    "BBC3",
+    0.55
+   ],
+   [
+    "SNRPA1",
+    0.546
+   ]
+  ]
  },
  "ZM 447439": {
   "chembl": [],
   "lof_targets": [],
-  "all_targets": []
+  "all_targets": [],
+  "top_knockdowns": [
+   [
+    "RRP36",
+    0.579
+   ],
+   [
+    "DFFA",
+    0.568
+   ],
+   [
+    "NAF1",
+    0.558
+   ],
+   [
+    "POP1",
+    0.549
+   ],
+   [
+    "FBXL14",
+    0.548
+   ]
+  ]
  },
  "Zileuton": {
   "chembl": [
@@ -3581,6 +7695,28 @@
    [
     "ALOX5",
     "INHIBITOR"
+   ]
+  ],
+  "top_knockdowns": [
+   [
+    "KAT2A",
+    0.584
+   ],
+   [
+    "ARVCF",
+    0.582
+   ],
+   [
+    "SKI",
+    0.572
+   ],
+   [
+    "DCAF16",
+    0.568
+   ],
+   [
+    "ZNF326",
+    0.568
    ]
   ]
  }

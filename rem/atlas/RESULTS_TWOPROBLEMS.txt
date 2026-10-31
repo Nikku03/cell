@@ -5764,3 +5764,32 @@ CELLBANK5 -- HEPG2 AND JURKAT JOIN THE MEMORY BANK: A SMALL CONSISTENT GAIN, BEL
   is new. The best numbers are for genes measured in three other cell types (0.43). To reach the other
   ~1,500 TEST genes, the bank needs GENOME-WIDE screens in other cell types (public ones exist for HCT116,
   HEK293T, iPSC and hESC, but as 1-20 GB files under a non-commercial, share-alike licence).
+
+=================================================================================================
+CELLBANK6 -- DRUG DEVELOPMENT IN THE MEMORY BANK: TARGET MATCHES FOR THE BEST-KNOWN DRUGS, NO GAIN FOR KNOCKDOWNS
+=================================================================================================
+  cellbank6.py (committed before running, 924450b). memory_bank/cell_v6 = cell_v5 + sci-Plex3 (Srivatsan 2020,
+  CC BY 4.0) K562 responses to 188 compounds x 4 doses (752 records, 173,652 cells) + Open Targets 26.09 (CC0):
+  13,128 drugs (5,052 with a mechanism), 17,095 target genes, 20,433 stopped-trial records, 3,019 warnings,
+  openFDA adverse reactions, target safety events, chemical probes, tractability. 144 / 188 compounds matched
+  to ChEMBL by name; 90 have a loss-of-function target; 62 of those targets have a K562 knockdown record.
+  T1 PRIMARY drug response vs its targets' knockdowns (62 compounds): median r 0.015 vs null -0.018; higher
+     for 35, lower for 27; median gain +0.018, p 0.37 -> NO DIFFERENCE. Targets sit at the 53rd percentile
+     of all 5,052 knockdowns. Strong single matches: nilotinib vs BCR knockdown r 0.73 (100th percentile;
+     K562 is driven by BCR-ABL, and CRISPRi of BCR silences the fusion), bosutinib vs BCR 0.40 (98th),
+     6-mercaptopurine vs PPAT 0.30 (94th; PPAT is the purine-synthesis step it blocks), avagacestat vs
+     gamma-secretase 0.34 (86th), MK-5108 vs AURKA 0.26 (86th).
+  T2 descriptive: 150 UNVALIDATED hypotheses written to the bank journal. Patterns: 14 HDAC inhibitors all
+     resemble ATR / ATRIP knockdown (replication-stress signalling); HSP90 inhibitors resemble PPAT, TPX2 and
+     glycolysis (ALDOA, PKM) knockdowns; azacitidine resembles EIF2S1 / HBS1L (translation); rigosertib
+     resembles ER-Golgi trafficking knockdowns (BET1, TRAPPC5, TRAPPC11); JNJ-7706621 resembles splicing-factor
+     knockdowns (RNF113A, XAB2, NSRP1). These are similarities, not mechanisms; strong 10 uM responses also
+     share general stress programmes.
+  G8 PRIMARY E4 (E3 + drug-development features + drug-response input) vs E3 on 2,525 TEST knockdowns:
+     0.257 vs 0.259; better 1,202 / worse 1,323, median -0.001, p 0.017 -> NO DIFFERENCE (slightly worse,
+     under the bar). On the 24 TEST genes with a drug response, E4 is worse (5 / 19, -0.027; descriptive).
+  WHAT IT MEANS. The bank can now answer drug-development questions: for the drugs whose mechanism is best
+  understood in K562 (BCR-ABL inhibitors), the drug's effect matches knocking down its target almost
+  exactly, which is target validation from data. Across all 62 drugs the match is not reliable (many are
+  research compounds with several targets, at a toxic dose). Drug data does not help predict knockdowns:
+  too few genes have a drug, and the engine overfits them.
