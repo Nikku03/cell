@@ -5793,3 +5793,25 @@ CELLBANK6 -- DRUG DEVELOPMENT IN THE MEMORY BANK: TARGET MATCHES FOR THE BEST-KN
   exactly, which is target validation from data. Across all 62 drugs the match is not reliable (many are
   research compounds with several targets, at a toxic dose). Drug data does not help predict knockdowns:
   too few genes have a drug, and the engine overfits them.
+
+=================================================================================================
+CELLBANK7 -- WHAT CLINICAL TRIALS AND DRUG DEVELOPMENT REVEALED ABOUT GENES: STORED, BUT NO GAIN FOR THE CELL MODEL
+=================================================================================================
+  cellbank7.py (committed before running, 8c16519). memory_bank/cell_v7: a 67-number clinical profile and a
+  readable fact sheet for 1,882 genes, from Open Targets 26.09 (CC0), using only loss-of-function drugs:
+  patient adverse events (openFDA) in 14 organ categories, drug warnings (12 toxicity classes), trials (number,
+  share stopped, stop reasons, highest stage), blood-cancer / cancer indications, preclinical safety events.
+  Coverage: 509 screen-A knockdowns, 271 TEST genes; 713 genes with patient adverse events.
+  C1 TRAIN, response size of K562 knockdowns, genes whose drugs lower blood counts in patients vs other drug
+     targets: 9.69 (n 67) vs 9.10 (n 10), one-sided p 0.088 -> NOT SHOWN.
+  C2 TEST replication: 10.12 (n 76) vs 8.40 (n 15), p 0.027 -> CONSISTENT. With C1 not shown, the link is
+     suggestive only. Design weakness found: most drug targets' drugs carry some blood adverse event in
+     openFDA, so the comparison group is small (10 and 15 genes).
+  G9 PRIMARY E5 (E3 + clinical profile) vs E3 on the 271 TEST genes with a profile: median r 0.288 vs 0.280,
+     but per gene better 119 / worse 152, median -0.002, p 0.052 -> NO DIFFERENCE.
+  G10 all TEST: 0.260 vs 0.256; 1,241 / 1,284 -> NO DIFFERENCE.
+  WHAT IT MEANS. What trials found about a gene is now stored with every gene that is a drug target, and it
+  agrees in direction with the cell data (drugs that hurt blood cells in patients target genes whose loss
+  shakes K562, an erythroleukaemia line, harder). But as numbers fed to the engine it does not improve
+  predictions of how K562 responds to losing the gene: it says how much a gene matters in the body, not what
+  its loss does to the other 8,000 genes in this cell.
