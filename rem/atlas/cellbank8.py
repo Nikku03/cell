@@ -51,6 +51,15 @@ GATES ON EXAM, PREDECLARED (paired sign test over genes; BETTER = p < 0.05 and m
 NOT: one translator design, one neighbour rule, one confidence model; symbol matching across screens; the
      reprocessed effects and the Replogle/Nadig records differ in pipeline, which the translator must absorb.
 
+REVISION 1 (after DEV, before the EXAM was read; the first version's outputs are kept as *_v1). DEV showed M2
+0.259 vs E3 0.256 (621 / 573), and that accuracy rose steeply with record strength (strongest quarter 0.389, the
+rest 0.22-0.25) while the translator weighed every unit-scaled record equally, though half of all records sit at
+or below a screen's typical no-effect norm. Change: the translator weights each input record by a learned
+per-screen function of its strength, sigmoid(a_s log strength + b_s) (a = 1, b = 0 at the start), in its
+average; the residual net also gets each screen's log strength. Nothing else changed; E3 is reused from the first
+run (identical arm); the EXAM gates are unchanged, with M2 = the revised model (the first version is reported on
+the EXAM as descriptive only).
+
 Run: python3 -P rem/atlas/cellbank8.py pull | build | train | dev | exam
 """
 
@@ -247,16 +256,17 @@ def source_tensor(G, bank):
     S = len(SRC); NPH = G["NPH"]
     meta = json.load(open(os.path.join(BANK8, "records_meta.json")))
     Z = torch.zeros(S + 1, NPH, 128); Mk = torch.zeros(S + 1, NPH, dtype=torch.bool); St = torch.zeros(S, NPH)
+    Lg = torch.zeros(S + 1, NPH)                       # log strength (0 for the K562 target and missing records)
     for j, g in enumerate(G["KN"]):
         d = bank.by_gene.get(g, {})
         for s, n in enumerate(SRC):
             i = d.get(f"S:{n}")
             if i is not None:
                 v = torch.tensor(bank.z([i])[0]); Z[s, j] = v / v.norm().clamp(min=1e-12); Mk[s, j] = True
-                St[s, j] = meta["strength"][str(i)]
+                St[s, j] = meta["strength"][str(i)]; Lg[s, j] = math.log(max(meta["strength"][str(i)], 1e-3))
     rtr = G["rtr"]
     za = G["Ztr"].cpu(); Z[S, rtr] = za / za.norm(dim=1, keepdim=True).clamp(min=1e-12); Mk[S, rtr] = True
-    return Z, Mk, St
+    return Z, Mk, St, Lg
 
 
 def make_translator(G, S):
@@ -267,20 +277,22 @@ def make_translator(G, S):
             super().__init__()
             self.enc = nn.Parameter(torch.randn(S + 1, 128, T_DIM) * (1 / math.sqrt(128)))
             self.dec = nn.Parameter(torch.randn(S + 1, T_DIM, 128) * (1 / math.sqrt(T_DIM)))
+            self.ga, self.gb = nn.Parameter(torch.ones(S + 1)), nn.Parameter(torch.zeros(S + 1))
 
-        def forward(self, Zg, Mg, tgt):                # Zg (n, S+1, 128), Mg (n, S+1) float, tgt (n,)
-            H = torch.einsum("nsd,sdh->nsh", Zg, self.enc) * Mg[..., None]
-            h = H.sum(1) / Mg.sum(1, keepdim=True).clamp(min=1.0)
+        def forward(self, Zg, Mg, tgt, Lg):            # Zg (n, S+1, 128), Mg (n, S+1) float, tgt (n,), Lg (n, S+1)
+            w = Mg * torch.sigmoid(self.ga * Lg + self.gb)   # trust in each record, from its strength
+            H = torch.einsum("nsd,sdh->nsh", Zg, self.enc) * w[..., None]
+            h = H.sum(1) / w.sum(1, keepdim=True).clamp(min=1e-3)
             return torch.einsum("nh,nhd->nd", h, self.dec[tgt])
     return T()
 
 
-def train_translator(G, Z, Mk, genes_ok, seed):
+def train_translator(G, Z, Mk, Lg, genes_ok, seed):
     """Train on the genes in genes_ok (indices into KN) by hiding one available screen at a time."""
     torch, np = G["torch"], G["np"]
     S = Z.shape[0] - 1
     torch.manual_seed(seed); rng = np.random.default_rng(seed)
-    Zg, Mg = Z.permute(1, 0, 2), Mk.T.float()          # (NPH, S+1, 128), (NPH, S+1)
+    Zg, Mg, Lgg = Z.permute(1, 0, 2), Mk.T.float(), Lg.T   # (NPH, S+1, 128), (NPH, S+1), (NPH, S+1)
     ok = [j for j in genes_ok if int(Mk[:, j].sum()) >= 2]
     tr = make_translator(G, S); opt = torch.optim.Adam(tr.parameters(), lr=T_LR, weight_decay=T_WD)
     for step in range(T_STEPS):
@@ -292,20 +304,20 @@ def train_translator(G, Z, Mk, genes_ok, seed):
         for i in np.nonzero(keep.sum(1) == 0)[0]:     # at least one input
             others = [s for s in np.nonzero(avail[i])[0] if s != tgt[i]]; keep[i, rng.choice(others)] = True
         x = Zg[torch.as_tensor(b)]; m = torch.tensor(keep, dtype=torch.float32); t = torch.tensor(tgt)
-        pred = tr(x, m, t)
+        pred = tr(x, m, t, Lgg[torch.as_tensor(b)])
         y = x[torch.arange(len(b)), t]
         loss = 1 - torch.nn.functional.cosine_similarity(pred, y, dim=1).mean()
         opt.zero_grad(); loss.backward(); opt.step()
     return tr
 
 
-def translate(G, tr, Z, Mk, rows, target, exclude_target=True):
+def translate(G, tr, Z, Mk, Lg, rows, target, exclude_target=True):
     torch = G["torch"]
     with torch.no_grad():
         Zg, Mg = Z.permute(1, 0, 2)[rows], Mk.T.float()[rows].clone()
         if exclude_target:
             Mg[:, target] = 0.0
-        return tr(Zg, Mg, torch.full((len(rows),), target, dtype=torch.long)), Mg.sum(1)
+        return tr(Zg, Mg, torch.full((len(rows),), target, dtype=torch.long), Lg.T[rows]), Mg.sum(1)
 
 
 # ---------------------------------------------------------------------------------------------------------
@@ -402,7 +414,7 @@ def train():
     bank8 = cb4.Bank(BANK8); bank6 = cb4.Bank(V6)
     KN, rtr, rte, split = G["KN"], G["rtr"], G["rte"], G["split"]
     S = len(SRC)
-    Z, Mk, St = source_tensor(G, bank8)
+    Z, Mk, St, Lg = source_tensor(G, bank8)
     train_genes = [j for j, g in enumerate(KN) if split(g) == "TRAIN"]
     test_genes = [j for j, g in enumerate(KN) if split(g) == "TEST"]
 
@@ -411,13 +423,13 @@ def train():
     Tz = torch.zeros(G["NPH"], 128); Tn = torch.zeros(G["NPH"])
     tr_rows = [int(i) for i in rtr]
     for k in range(5):
-        tr = train_translator(G, Z, Mk, [j for j in train_genes if fold(KN[j]) != k], seed=k)
+        tr = train_translator(G, Z, Mk, Lg, [j for j in train_genes if fold(KN[j]) != k], seed=k)
         rows = [j for j in tr_rows if fold(KN[j]) == k]
-        p, nin = translate(G, tr, Z, Mk, rows, S); Tz[rows] = p; Tn[rows] = nin
+        p, nin = translate(G, tr, Z, Mk, Lg, rows, S); Tz[rows] = p; Tn[rows] = nin
         print(f"  translator fold {k}: {time.time() - t0:.0f}s", flush=True)
-    final = train_translator(G, Z, Mk, train_genes, seed=99)
+    final = train_translator(G, Z, Mk, Lg, train_genes, seed=99)
     te_rows = [int(i) for i in rte]
-    p, nin = translate(G, final, Z, Mk, te_rows, S); Tz[te_rows] = p; Tn[te_rows] = nin
+    p, nin = translate(G, final, Z, Mk, Lg, te_rows, S); Tz[te_rows] = p; Tn[te_rows] = nin
     has_T = Tn > 0
     Tu = torch.where(has_T[:, None], Tz / Tz.norm(dim=1, keepdim=True).clamp(min=1e-12), torch.zeros_like(Tz))
     mean_tr = G["Ztr"].cpu().mean(0); mean_tr = mean_tr / mean_tr.norm()
@@ -426,7 +438,7 @@ def train():
     single = []
     for s in range(S):
         Ms = torch.zeros_like(Mk); Ms[s] = Mk[s]
-        ps, _ = translate(G, final, Z, Ms, te_rows, S); single.append(torch.where(Mk[s, te_rows][:, None], ps, torch.full_like(ps, float("nan"))))
+        ps, _ = translate(G, final, Z, Ms, Lg, te_rows, S); single.append(torch.where(Mk[s, te_rows][:, None], ps, torch.full_like(ps, float("nan"))))
     single = torch.stack(single, 1)                    # (n_te, S, 128)
     agree = []
     for t in range(len(te_rows)):
@@ -440,7 +452,7 @@ def train():
     for s in range(S):
         rows = [j for j in test_genes if bool(Mk[s, j]) and int(Mk[:S, j].sum()) >= 2]
         if len(rows) >= 20:
-            ps, _ = translate(G, final, Z, Mk, rows, s)
+            ps, _ = translate(G, final, Z, Mk, Lg, rows, s)
             Vt = G["Vy"].cpu().T
             r = G["pearson_rows"](ps @ Vt, Z[s, rows] @ Vt)
             mat[SRC[s]] = dict(n=len(rows), median_r=float(torch.nan_to_num(r).median()))
@@ -450,7 +462,7 @@ def train():
     K, hasK = k562_records(G, bank6)
     An = analog(G, Z, Mk, K, hasK)
     Pt, Ct = cb4.inputs(G, bank6, False)
-    flags = torch.cat([Mk[:S].T.float(), torch.log1p(Mk[:S].sum(0).float())[:, None], has_T.float()[:, None]], 1)
+    flags = torch.cat([Mk[:S].T.float(), torch.log1p(Mk[:S].sum(0).float())[:, None], has_T.float()[:, None], Lg[:S].T], 1)
     X2 = cb4.scaled(G, [Tu, flags, An, Pt, Ct])
     print(f"  inputs ready: {X2.shape[1]} features ({time.time() - t0:.0f}s)", flush=True)
 
@@ -463,15 +475,22 @@ def train():
             outs.append(pz); info.setdefault(arm, []).append(round(best, 4))
             print(f"  {arm} seed {s}: held-out TRAIN r {best:+.3f}  ({time.time() - t0:.0f}s)", flush=True)
         preds[arm] = torch.stack(outs).mean(0); preds[arm + "_seeds"] = torch.stack(outs)
-    # E3: the previous best, rerun on its own bank and inputs
-    oC, oD, oE = cb5.own_inputs(G, bank6, ("C", "D", "E"))
-    X3 = cb4.scaled(G, [Pt, Ct, oC, oD, oE]); cb4.SCREENS = cb5.ALL
-    outs = []
-    for s in SEEDS:
-        pz, best, _ = cb4.run_arm(G, bank6, "E3", s, X3)
-        outs.append(pz); info.setdefault("E3", []).append(round(best, 4))
-        print(f"  E3 seed {s}: held-out TRAIN r {best:+.3f}  ({time.time() - t0:.0f}s)", flush=True)
-    preds["E3"] = torch.stack(outs).mean(0)
+    # E3: the previous best, rerun on its own bank and inputs (revision 1 reuses the first run's E3: identical arm)
+    v1 = os.path.join(CACHE, "train_out_v1.pt")
+    if os.path.exists(v1):
+        o1 = torch.load(v1); preds["E3"] = o1["preds"]["E3"]
+        for a in ("T", "M2", "M2e"):
+            preds[a + "_v1"] = o1["preds"][a]
+        info["E3"] = json.load(open(os.path.join(OUTD, "train_info_v1.json")))["heldout_train_r"]["E3"]
+    else:
+        oC, oD, oE = cb5.own_inputs(G, bank6, ("C", "D", "E"))
+        X3 = cb4.scaled(G, [Pt, Ct, oC, oD, oE]); cb4.SCREENS = cb5.ALL
+        outs = []
+        for s in SEEDS:
+            pz, best, _ = cb4.run_arm(G, bank6, "E3", s, X3)
+            outs.append(pz); info.setdefault("E3", []).append(round(best, 4))
+            print(f"  E3 seed {s}: held-out TRAIN r {best:+.3f}  ({time.time() - t0:.0f}s)", flush=True)
+        preds["E3"] = torch.stack(outs).mean(0)
     conf = dict(n_screens=Mk[:S, te_rows].sum(0).float().tolist(), agreement=agree, analog_sim=An[te_rows, 128].tolist(),
                 strength=[float(St[:, j][Mk[:S, j]].mean()) if bool(Mk[:S, j].any()) else 0.0 for j in te_rows],
                 partner=(Pt[te_rows, 128] > 0).float().tolist(), coess=Ct[te_rows, 128].tolist())
@@ -550,9 +569,12 @@ def dev():
     P_(f"  TEST genes {len(genes):,}: inspected before (excluded) {n_seen}; DEV {dv.sum()}, EXAM {ex.sum()}")
     P_(f"  any-to-any translator, TEST-split genes, median r predicting each screen from the others: " +
        ", ".join(f"{k} {v['median_r']:.2f}" for k, v in info["translator_matrix"].items()))
-    S = {a: score(preds[a]) for a in ("E3", "T", "M2", "M2e")}
+    S = {a: score(preds[a]) for a in ("E3", "T", "M2", "M2e") + tuple(k for k in ("T_v1", "M2_v1", "M2e_v1") if k in preds)}
     P_(f"  DEV (n {dv.sum()}): median r | specific r | fraction of ceiling (r; ceiling {np.median(ceil[dv]):.3f}, specific ceiling {np.median(ceil_s[dv]):.3f})")
-    for a, lab in (("E3", "E3 previous best"), ("T", "T translator alone"), ("M2", "M2 new model (plain net)"), ("M2e", "M2e same inputs, snapping engine")):
+    for a, lab in (("E3", "E3 previous best"), ("T_v1", "T first version"), ("M2_v1", "M2 first version"), ("M2e_v1", "M2e first version"),
+                   ("T", "T translator alone"), ("M2", "M2 new model (plain net)"), ("M2e", "M2e same inputs, snapping engine")):
+        if a not in S:
+            continue
         r, rs = S[a]
         P_(f"     {lab:34s} {np.median(r[dv]):+.3f} | {np.median(rs[dv]):+.3f} | {np.median(r[dv]) / np.median(ceil[dv]):.0%}")
     covered = np.array([o["conf"]["n_screens"][k] > 0 for k in range(len(genes))])
@@ -587,8 +609,10 @@ def exam():
     S = {a: score(preds[a]) for a in ("E3", "T", "M2", "M2e")}
     P_(RULE); P_("ENGINE V2 -- THE LOCKED EXAM (scored once)"); P_(RULE)
     P_(f"  EXAM genes {ex.sum()}; ceiling r {np.median(ceil[ex]):.3f}, specific {np.median(ceil_s[ex]):.3f}")
-    for a in ("E3", "T", "M2", "M2e"):
-        P_(f"     {a:4s} median r {np.median(S[a][0][ex]):+.3f} ({np.median(S[a][0][ex]) / np.median(ceil[ex]):.0%} of ceiling) | specific r {np.median(S[a][1][ex]):+.3f}")
+    for a in [k for k in ("M2_v1",) if k in preds]:
+        S[a] = score(preds[a])
+    for a in ("E3", "T", "M2", "M2e") + tuple(k for k in ("M2_v1",) if k in preds):
+        P_(f"     {a:6s} median r {np.median(S[a][0][ex]):+.3f} ({np.median(S[a][0][ex]) / np.median(ceil[ex]):.0%} of ceiling) | specific r {np.median(S[a][1][ex]):+.3f}")
     V = {"X1": verdict(S["M2"][0][ex], S["E3"][0][ex]), "X2": verdict(S["M2"][0][ex], S["T"][0][ex]),
          "X3": verdict(S["M2"][0][ex], S["M2e"][0][ex]), "X4": verdict(S["M2"][1][ex], S["E3"][1][ex])}
     for tag, lab in (("X1", "PRIMARY M2 vs E3, r"), ("X2", "M2 vs T, r"), ("X3", "M2 vs M2e, r"), ("X4", "M2 vs E3, specific r")):
