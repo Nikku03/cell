@@ -91,6 +91,16 @@ ANALOG_K, ANALOG_TEMP = 20, 10.0
 split2 = lambda g: "DEV" if int(hashlib.sha256(("exam-2026-11:" + g).encode()).hexdigest(), 16) % 2 == 0 else "EXAM"
 
 
+def nb():
+    """The notebook's data, with the projection basis replaced by the one stored in the bank (cell_v4-v6), so
+    every stored record, every new record and the training targets share one coordinate system. (torch's
+    randomised PCA in a fresh container with re-fetched inputs gives a slightly different basis.)"""
+    G = cb4.notebook(); torch = G["torch"]
+    B = torch.tensor(cb4.Bank(V6).basis.astype("float32")).to(G["DEV"])
+    G["Vy"] = B; G["Ztr"] = G["Y_tr"] @ B
+    return G
+
+
 # ---------------------------------------------------------------------------------------------------------
 # 4. pull the effect matrices (range requests; only rows of knocked-down genes with screen-A features)
 # ---------------------------------------------------------------------------------------------------------
@@ -143,7 +153,7 @@ def pull():
     import h5py
     import numpy as np
     from multiprocessing import Pool
-    G = cb4.notebook(); os.makedirs(CACHE, exist_ok=True)
+    G = nb(); os.makedirs(CACHE, exist_ok=True)
     to_kn, to_col = aliases(G)
     n_dst = len(G["A"]["genes"])
     for name, fid, cell, design in SOURCES:
@@ -194,7 +204,7 @@ def pull():
 # ---------------------------------------------------------------------------------------------------------
 def build():
     import numpy as np
-    G = cb4.notebook(); torch = G["torch"]
+    G = nb(); torch = G["torch"]
     old = cb4.Bank(V6); meta = json.load(open(os.path.join(V6, "records_meta.json")))
     Vy = G["Vy"].cpu().numpy(); split = G["split"]
     codes, scale, rep = [old.codes], [old.scale], {}
@@ -387,7 +397,7 @@ def train_residual(G, X, Tz, kind, seed):
 
 def train():
     t0 = time.time()
-    G = cb4.notebook(); torch, np = G["torch"], G["np"]
+    G = nb(); torch, np = G["torch"], G["np"]
     os.makedirs(CACHE, exist_ok=True); os.makedirs(OUTD, exist_ok=True)
     bank8 = cb4.Bank(BANK8); bank6 = cb4.Bank(V6)
     KN, rtr, rte, split = G["KN"], G["rtr"], G["rte"], G["split"]
@@ -529,7 +539,7 @@ def dev():
 
     def P_(s=""):
         print(s, flush=True); out.append(s)
-    G = cb4.notebook(); np = G["np"]; torch = G["torch"]
+    G = nb(); np = G["np"]; torch = G["torch"]
     o = torch.load(os.path.join(CACHE, "train_out.pt")); preds = o["preds"]
     score, ceil, ceil_s = scorer(G)
     genes, dv, ex, n_seen = sets(G)
@@ -568,7 +578,7 @@ def exam():
 
     def P_(s=""):
         print(s, flush=True); out.append(s)
-    G = cb4.notebook(); np = G["np"]; torch = G["torch"]
+    G = nb(); np = G["np"]; torch = G["torch"]
     from scipy.stats import spearmanr
     o = torch.load(os.path.join(CACHE, "train_out.pt")); preds = o["preds"]
     digest = hashlib.sha256(b"".join(preds[a].numpy().tobytes() for a in ("E3", "T", "M2", "M2e"))).hexdigest()
