@@ -5815,3 +5815,44 @@ CELLBANK7 -- WHAT CLINICAL TRIALS AND DRUG DEVELOPMENT REVEALED ABOUT GENES: STO
   shakes K562, an erythroleukaemia line, harder). But as numbers fed to the engine it does not improve
   predictions of how K562 responds to losing the gene: it says how much a gene matters in the body, not what
   its loss does to the other 8,000 genes in this cell.
+
+=================================================================================================
+MODEL REVIEW (POST-HOC, DESCRIPTIVE) -- A LINEAR MAP MATCHES OR BEATS THE ENGINE WHERE IT IS BEST; RECALL HAS COLLAPSED
+=================================================================================================
+  modelreview_posthoc.py, written after cellbank7 at the user's request to review the model. Nothing here was
+  predeclared. It uses the committed bank (cell_v6) and outputs plus the screen-A file for the measured TEST
+  answers; numpy only, no retraining, so engine figures are the ledger's (medians on the identical gene sets,
+  not paired per gene).
+  R1 CEILING OF THE REPRESENTATION. A perfect prediction inside the bank's 128 components scores median r 0.451
+     on TEST (0.406 on genes unmeasured elsewhere, 0.629 on genes measured in three other cell types). The
+     engine's 0.26 overall is 57% of it. A perfect prediction of only the first 2 components scores 0.273,
+     i.e. more than the engine's overall figure: most of what is scored sits in 2-3 global programmes.
+  R2 TRIVIAL BASELINES, same genes and answers (median r):
+        TEST genes                       n      engine (ledger)      ridge from own records   ridge, RPE1 only
+        with an RPE1 record              980    E2 0.350             0.378                    0.350
+        with a HepG2 or Jurkat record    922    E3 0.377 / E2 0.355  0.400                    0.369
+        with all three                   668    E3 0.430 / E2 0.419  0.454                    0.418
+        with none                        1,518  E3 0.217             0.131 (a constant guess)  -
+     The ridge map takes ONLY the gene's own records from other cell types (387 numbers), fitted on 991 TRAIN
+     genes, lambda by CV inside TRAIN. From the RPE1 record alone it equals E2 (0.350 vs 0.350; 0.418 vs
+     0.419). From all three it is about 0.02 above E3. Simply copying a record scores 0.19-0.27; the bank's
+     compressed K562-essential replicate of the same gene scores 0.44-0.48 (so the raw 0.315-0.326 replicate
+     figure understated the ceiling; the engine does not exceed the denoised replicate).
+     On genes with no record elsewhere the engine (0.217) is well above a constant guess (0.131), partners'
+     mean (0.057) and co-essential mean (0.112).
+  R3 RECALL HAS COLLAPSED. In the stored recalls of the full-bank engine (50 random TEST genes x 3), 150 recalls
+     use 12 distinct records of ~8,500 and 4 records make up 86% (YWHAE, DECR1, YWHAZ, PTEN in RPE1). For the
+     screen-A engine (100 genes), 26 distinct of 2,527 and 4 make up 69% (RBAK, RB1, TCF15, ZNF300).
+  R4 PREDICTIONS ARE GENERIC. 33 of 50 genes get the same headline prediction (mitochondrial RNA processing up,
+     MITF lysosome genes down); 17 distinct (top rise, top fall) pairs among 50 genes.
+  CORRECTIONS that follow.
+   (1) cellbank4 G4 ('the engine beats a plain learner on the same inputs', vs one ridge on 1,640 inputs)
+       does not generalise: a ridge restricted to the gene's own other-cell-type records equals or beats the
+       engine on every gene set where such records exist. The engine's gain from RPE1 / HepG2 / Jurkat is a
+       linear translation that a 387-input ridge does as well or better.
+   (2) 'E2 reaches 0.366, above the replicate' (cellbank4 post-hoc) compared with the raw replicate; against
+       the compressed replicate (0.44-0.48) it is below.
+   (3) The snap memory is not recalling gene-specific experiments; it uses a handful of records as templates.
+       This fits G1 (full bank no better than screen-A memory) and G3 (shuffled labels cost only 0.015).
+  NOT: medians on identical gene sets, not a paired test; recalls are top 3 of 16 from seed 0 on samples of
+  50 and 100 genes; a matched plain net on the engine's exact inputs has still not been run.
