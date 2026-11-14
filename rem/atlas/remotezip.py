@@ -8,6 +8,7 @@ archive, h5py reads the member through a file-like object that fetches only the 
 
 from __future__ import annotations
 import collections
+import http.client
 import io
 import struct
 import time
@@ -41,7 +42,7 @@ class RangeFile(io.RawIOBase):
                     raise IOError(f"short read {len(data)} of {b - a}")
                 self.fetched += len(data)
                 return data
-            except (urllib.error.HTTPError, urllib.error.URLError, IOError, TimeoutError) as ex:
+            except (urllib.error.HTTPError, urllib.error.URLError, IOError, TimeoutError, http.client.HTTPException, ConnectionError) as ex:
                 if isinstance(ex, urllib.error.HTTPError) and ex.code in (403, 400):
                     self.url = None                       # the signed URL expired: ask figshare again
                 time.sleep(2 ** k)
