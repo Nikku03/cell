@@ -5856,3 +5856,35 @@ MODEL REVIEW (POST-HOC, DESCRIPTIVE) -- A LINEAR MAP MATCHES OR BEATS THE ENGINE
        This fits G1 (full bank no better than screen-A memory) and G3 (shuffled labels cost only 0.015).
   NOT: medians on identical gene sets, not a paired test; recalls are top 3 of 16 from seed 0 on samples of
   50 and 100 genes; a matched plain net on the engine's exact inputs has still not been run.
+
+=================================================================================================
+CELLBANK8 -- ENGINE V2 ON A LOCKED EXAM: CALIBRATED CONFIDENCE; ACCURACY AT A PLATEAU (+0.002, BELOW THE BAR)
+=================================================================================================
+  cellbank8.py (committed before running, e57c2498; basis fix 1st commit; revision 1 after DEV af01481c; DEV
+  outputs db5caae2, all before the EXAM was read). The seven changes from the model review, all implemented:
+  1 translation first (pred = W.T + residual net); 2 the global snap replaced by gene-specific neighbours (analog
+  transfer through other screens, partners, co-essential), with the plain net vs snapping engine control;
+  3 'specific r' (3 largest TRAIN programmes removed) and fraction of ceiling; 4 eleven reprocessed screens
+  (HCT116, HEK293T, iPSC x4, hESC x2, RPE1/HepG2/Jurkat; figshare 34002315, CC BY-NC-SA, read by HTTP range
+  requests, ~8.5 GB instead of ~60 GB; records local only): TEST genes with a record in another cell type
+  1,007 -> 2,512 of 2,525; 5 an any-to-any linear translator (TEST-split genes, predicting each screen from the
+  others: RPE1 0.78, HepG2 0.72, Jurkat 0.72, hESC 0.47, HCT116 0.39, HEK293T 0.36, iPSC-N 0.09); 6 a locked
+  EXAM: TEST minus the 150 genes inspected one by one, split by hash into DEV 1,194 and EXAM 1,181, scored
+  once (exam_lock.json); 7 a per-gene confidence fitted on DEV.
+  DISCLOSED: this container re-fetched the notebook inputs (1,384 features, not 1,382); all arms ran here, and
+  the bank's stored basis was used throughout. One revision after DEV (strength-weighted translator inputs): DEV
+  M2 0.259 -> 0.260.
+  EXAM (1,181 genes; ceiling 0.458, specific ceiling 0.338), median r | specific r:
+        E3 previous best 0.264 | 0.097    T translator alone 0.233 | 0.083
+        M2 new model     0.269 | 0.106    M2e same inputs, snapping engine 0.268 | 0.103    (M2 first version 0.267)
+  X1 PRIMARY M2 vs E3: 626 / 555, p 0.042, median +0.0018 -> NO DIFFERENCE (significant, below the +0.01 bar).
+  X2 M2 vs T: 800 / 381, +0.024 -> BETTER (the residual net adds to translation).
+  X3 M2 vs M2e: 627 / 554, +0.0008 -> NO DIFFERENCE (the snapping engine adds nothing over a plain net).
+  X4 M2 vs E3, specific r: 657 / 524, p 1e-4, +0.006 -> NO DIFFERENCE (significant, below the bar).
+  X5 confidence: Spearman +0.48, p 2e-69 -> CALIBRATED. By confidence third: low 0.213, middle 0.232, high 0.421.
+  DEV and EXAM agree closely (DEV: E3 0.256, M2 0.260; 633 / 561), so nothing was fitted to the exam.
+  WHAT IT MEANS. Accuracy has reached a plateau near 59% of the ceiling. Two and a half times more genes now
+  have a measurement in another cell type, yet accuracy rose only slightly, because for most genes knocking them
+  down does little in any cell type: the record exists but holds no signal (accuracy rises steeply with record
+  strength). The snapping memory can be dropped: a plain net on the same inputs is as good. The real gain is the
+  confidence: the model now says which third of its predictions to trust (median r 0.42 vs 0.21).

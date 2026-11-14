@@ -1,0 +1,17 @@
+=================================================================================================
+ENGINE V2 -- THE LOCKED EXAM (scored once)
+=================================================================================================
+  EXAM genes 1181; ceiling r 0.458, specific 0.338
+     E3     median r +0.264 (58% of ceiling) | specific r +0.097
+     T      median r +0.233 (51% of ceiling) | specific r +0.083
+     M2     median r +0.269 (59% of ceiling) | specific r +0.106
+     M2e    median r +0.268 (59% of ceiling) | specific r +0.103
+     M2_v1  median r +0.267 (58% of ceiling) | specific r +0.104
+  X1 PRIMARY M2 vs E3, r    better 626 / worse 555, median +0.0018, p 0.042 -> NO DIFFERENCE
+  X2 M2 vs T, r             better 800 / worse 381, median +0.0238, p 9.6e-35 -> BETTER
+  X3 M2 vs M2e, r           better 627 / worse 554, median +0.0008, p 0.036 -> NO DIFFERENCE
+  X4 M2 vs E3, specific r   better 657 / worse 524, median +0.0060, p 0.00012 -> NO DIFFERENCE
+  X5 confidence on EXAM: Spearman +0.48, p 2.3e-69 -> CALIBRATED
+     by confidence third: low median r +0.213 | middle median r +0.232 | high median r +0.421
+     EXAM genes with a record elsewhere  n 1175: E3 +0.264, T +0.233, M2 +0.269, M2e +0.269
+     EXAM genes with none                n    6: E3 +0.156, T +0.069, M2 +0.146, M2e +0.157
