@@ -5888,3 +5888,42 @@ CELLBANK8 -- ENGINE V2 ON A LOCKED EXAM: CALIBRATED CONFIDENCE; ACCURACY AT A PL
   down does little in any cell type: the record exists but holds no signal (accuracy rises steeply with record
   strength). The snapping memory can be dropped: a plain net on the same inputs is as good. The real gain is the
   confidence: the model now says which third of its predictions to trust (median r 0.42 vs 0.21).
+
+=================================================================================================
+CELLBANK9 -- THE DATASETS ALREADY ON DRIVE (LINCS, TAHOE, GENEFORMER, ARCHS4): NO GAIN (-0.003, NO DIFFERENCE)
+=================================================================================================
+  cellbank9.py (committed before any run, 73a89467; revision 0 after `build`, before training, 2268878f: gate Y2's
+  subgroup 'no record elsewhere' had 13 of 2,525 TEST genes, replaced by the weak-record half; DEV outputs
+  committed before the EXAM was read for these gates). The Drive inventory found four large datasets never used by
+  the engine. The Drive connector caps downloads at 10 MB, so each was read from its public origin (the Drive
+  copies are downloads of the same releases): LINCS 2020 Level 5 (clue.io S3; consensus shRNA trt_sh.cgs and
+  CRISPR trt_xpr exemplar signatures; 1.9 + 5.0 GB by range requests); Tahoe-100M DE statistics (tahoebio
+  cell_eval, CC0, 65,218 drug conditions); Geneformer V2-104M input token embeddings (66 MB slice of the model
+  file); ARCHS4 v2 (5 fixed blocks of 2,000 samples, 6,244 bulk kept, 1.5 GB). Raw data and records local only.
+  HOW THEY ENTERED. LINCS as two new screens (one record per gene: mean exemplar signature; 1,668 and 1,254 genes)
+  for a 13-screen translator; Tahoe / Geneformer / ARCHS4 as gene-neighbour inputs (20 nearest genes by cosine,
+  their K562 records averaged), the same form as the analog / partner / co-essential inputs. Coverage of TEST
+  genes: LINCS-sh 808, LINCS-xpr 606, Tahoe 82 (only 159 of its 2,000 measured genes are knocked down here),
+  Geneformer 2,480, ARCHS4 2,489. Arms matched, all retrained in one run; the M2 rerun reproduced cellbank8's M2
+  exactly (DEV 0.260, EXAM 0.269).
+  EXAM (second read of cellbank8's EXAM half; 1,181 genes; ceiling 0.458), median r | specific r:
+        M2 (cellbank8 model) 0.269 | 0.106    M9L + LINCS 0.268 | 0.107
+        M9N + neighbours     0.268 | 0.103    M9  + both  0.267 | 0.103
+  Y1 PRIMARY M9 vs M2: 515 / 666, median -0.0026, p 1e-5 -> NO DIFFERENCE (consistently a hair worse).
+  Y2 M9 vs M2, weak-record half (586 genes): 258 / 328, -0.0023 -> NO DIFFERENCE.
+  Y3 M9 vs M2, specific r: 513 / 668, -0.0045 -> NO DIFFERENCE.
+  (descriptive) M9L vs M2 -0.0007 (567 / 614); M9N vs M2 -0.0010 (542 / 639). DEV agreed (M9 -0.0022).
+  WHY (cellbank9_posthoc.py, DEV only, written after the gates): each source alone vs 'predict the mean response'
+  (median r 0.056). LINCS records alone predict K562 responses at r 0.033 (shRNA) and 0.035 (CRISPR): no better
+  than the mean (they beat it on 51% / 48% of genes), against 0.25-0.29 for an RPE1 / HepG2 / Jurkat record
+  alone. The neighbour sources do carry signal (ARCHS4 0.130, Tahoe 0.138 on 41 genes, Geneformer 0.090) but the
+  same kind and size as the co-essential input already in M2 (0.137), and well below analog transfer (0.236).
+  WHAT IT MEANS. The data already on Drive does not move the engine. L1000 knockdown signatures (978 measured
+  genes, the rest inferred; bulk, 96 h, other cancer lines) do not translate into K562 Perturb-seq responses, and
+  gene-similarity data (co-expression, foundation-model embeddings, drug co-response) repeats what co-essentiality
+  and analog transfer already say. This matches the earlier 'latent bridge' result (UPDATES.md): neighbour
+  transfer approaches the generic mean response. The remaining headroom is in direct K562 (or close-cell-type)
+  perturbation measurements with strong signal, not in more similarity data.
+  NOT: one pooling of LINCS signatures (mean over lines, times, doses; per-line records untried); input, not
+  contextual, Geneformer embeddings; one ARCHS4 draw (6,244 samples); Tabula Sapiens, DepMap expression and ESM
+  (also on Drive) not tried; the EXAM half has now been read twice.
