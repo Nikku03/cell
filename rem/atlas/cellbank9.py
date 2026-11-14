@@ -40,7 +40,11 @@ GATES, PREDECLARED (paired sign test over genes; BETTER = p < 0.05 and median ga
   once (outputs/cellbank8/exam_lock.json); nothing in this script was chosen by looking at it. Development uses DEV
   only. `exam` scores once, writes outputs/cellbank9/exam_lock.json, and refuses to run again.
   Y1  PRIMARY: M9 vs M2, r, all EXAM genes.
-  Y2  M9 vs M2, r, EXAM genes with no record in any other cell type in bank v8 (where new data should matter most).
+  Y2  M9 vs M2, r, EXAM genes whose strongest record in another cell type (bank v8) is weaker than the median over
+      all TEST genes (the weak-record half: where new data should matter most).
+      [Revision 0, after `build`, before any training or scoring: Y2 first read "EXAM genes with no record in any
+      other cell type in bank v8"; the build report showed only 13 of 2,525 TEST genes have none (~6 on EXAM), too
+      few for a test, so the subgroup was replaced as above. The no-record genes are still reported, descriptively.]
   Y3  M9 vs M2, specific r (top 3 TRAIN programmes removed).
   Descriptive (no verdicts claimed): M9L and M9N vs M2; coverage of each source; fraction of ceiling.
 NOT: one way to pool LINCS signatures, one neighbour rule (k 20, temperature 10), one ARCHS4 sample draw, input
@@ -398,6 +402,7 @@ def train():
             print(f"  {arm} seed {s}: held-out TRAIN r {best:+.3f} ({X.shape[1]} features, {time.time() - t0:.0f}s)", flush=True)
         preds[arm] = torch.stack(outs).mean(0)
     cov = dict(v8=Mk8[:len(SRC8), te_rows].any(0).tolist(), v9=Mk9[:len(SRC9), te_rows].any(0).tolist(),
+               max_strength_v8=St8[:, te_rows].max(0).values.tolist(),
                **{f"screen_{n}": Mk9[s, te_rows].tolist() for s, n in enumerate(SRC9) if n in NEW},
                **{f"nb_{n}": NBH[n][te_rows].tolist() for n in NB})
     torch.save(dict(preds=preds, cov=cov, te_rows=te_rows), os.path.join(CACHE9, "train_out.pt"))
@@ -422,6 +427,7 @@ def _report(half):
     m = dv if half == "DEV" else ex
     S = {a: score(preds[a]) for a in ARMS}
     c8 = np.array(cov["v8"]); c9 = np.array(cov["v9"])
+    ms = np.array(cov["max_strength_v8"]); weak = ms < np.median(ms)      # median over all TEST genes, both halves
     o8 = torch.load(os.path.join(cb8.CACHE, "train_out.pt"))["preds"]["M2"]
     r_old = score(o8)[0]
     lines = []
@@ -434,19 +440,21 @@ def _report(half):
         r, rs = S[a]
         P_(f"     {LABEL[a]:42s} {np.median(r[m]):+.3f} | {np.median(rs[m]):+.3f} | {np.median(r[m]) / np.median(ceil[m]):.0%}")
     P_(f"     {'(cellbank8 M2 as scored there)':42s} {np.median(r_old[m]):+.3f}")
-    for lab, mm in (("with a record elsewhere (v8)", m & c8), ("with none (v8)", m & ~c8), ("with none (v8) but a LINCS record", m & ~c8 & c9)):
+    for lab, mm in (("weak-record half (v8)", m & weak), ("strong-record half (v8)", m & ~weak),
+                    ("with no record elsewhere (v8)", m & ~c8), ("with none (v8) but a LINCS record", m & ~c8 & c9)):
         P_(f"     genes {lab:34s} n {mm.sum():4d}: " + ", ".join(f"{a} {np.median(S[a][0][mm]):+.3f}" for a in ARMS))
-    return G, S, m, c8, lines
+    return G, S, m, weak, lines
 
 
 def dev():
     out = []
     P_ = lambda s="": (print(s, flush=True), out.append(s))
     P_(RULE); P_("CELLBANK9 -- engine v2 + the Drive datasets: DEVELOPMENT SET (open)"); P_(RULE)
-    G, S, m, c8, lines = _report("DEV"); out += lines
+    G, S, m, weak, lines = _report("DEV"); out += lines
     for a in ("M9", "M9L", "M9N"):
-        v = cb8.verdict(S[a][0][m], S["M2"][0][m])
-        P_(f"     DEV {a:4s} vs M2: better {v['better']} / worse {v['worse']}, median {v['median_diff']:+.4f}, p {v['p']:.2g}")
+        for lab, mm in (("all", m), ("weak half", m & weak)):
+            v = cb8.verdict(S[a][0][mm], S["M2"][0][mm])
+            P_(f"     DEV {a:4s} vs M2, {lab:9s}: better {v['better']} / worse {v['worse']}, median {v['median_diff']:+.4f}, p {v['p']:.2g}")
     open(os.path.join(HERE, "RESULTS_cellbank9_dev.txt"), "w").write("\n".join(out) + "\n")
 
 
@@ -458,13 +466,13 @@ def exam():
     out = []
     P_ = lambda s="": (print(s, flush=True), out.append(s))
     P_(RULE); P_("CELLBANK9 -- THE EXAM HALF, SECOND READ (scored once for these gates)"); P_(RULE)
-    G, S, m, c8, lines = _report("EXAM"); out += lines
+    G, S, m, weak, lines = _report("EXAM"); out += lines
     torch = G["torch"]
     preds = torch.load(os.path.join(CACHE9, "train_out.pt"))["preds"]
     digest = hashlib.sha256(b"".join(preds[a].numpy().tobytes() for a in ARMS)).hexdigest()
-    V = {"Y1": cb8.verdict(S["M9"][0][m], S["M2"][0][m]), "Y2": cb8.verdict(S["M9"][0][m & ~c8], S["M2"][0][m & ~c8]),
+    V = {"Y1": cb8.verdict(S["M9"][0][m], S["M2"][0][m]), "Y2": cb8.verdict(S["M9"][0][m & weak], S["M2"][0][m & weak]),
          "Y3": cb8.verdict(S["M9"][1][m], S["M2"][1][m])}
-    for tag, lab in (("Y1", "PRIMARY M9 vs M2, r"), ("Y2", "M9 vs M2, r, no record elsewhere"), ("Y3", "M9 vs M2, specific r")):
+    for tag, lab in (("Y1", "PRIMARY M9 vs M2, r"), ("Y2", "M9 vs M2, r, weak-record half"), ("Y3", "M9 vs M2, specific r")):
         v = V[tag]
         P_(f"  {tag} {lab:34s} better {v['better']} / worse {v['worse']}, median {v['median_diff']:+.4f}, p {v['p']:.2g} -> {v['verdict']}")
     for a in ("M9L", "M9N"):
