@@ -474,8 +474,42 @@ def e2g():
     print(f"e2g: {rep}", flush=True)
 
 
+def assemble(species="human"):
+    """CELLxGENE shards -> one CSR matrix (genes x tissue-cell-type pairs) of uint8 me and pc, plus a pair table."""
+    t0 = time.time(); d = os.path.join(BANK, "cellxgene", species)
+    G = json.load(open(os.path.join(d, "genes.json"))); L = json.load(open(os.path.join(d, "labels.json")))["cell_types"]
+    tname = {k: v for x in G["tissues"] for k, v in x.items()}
+    pairs = sorted((t, c) for t, cts in L.items() for c in cts)
+    pcol = {p: i for i, p in enumerate(pairs)}; grow = {g: i for i, (g, _) in enumerate(G["genes"])}
+    R_, C_, ME, PC = [], [], [], []
+    import glob
+    shards = sorted(glob.glob(os.path.join(d, "shards", "shard_*.npz")))
+    for f in shards:
+        z = np.load(f)
+        R_.append(np.array([grow[g] for g in z["gene"]], np.int32))
+        C_.append(np.array([pcol.get((t, c), -1) for t, c in zip(z["tissue"], z["cell"])], np.int32))
+        ME.append(z["me"]); PC.append(z["pc"])
+    r = np.concatenate(R_); c = np.concatenate(C_); me = np.concatenate(ME); pc = np.concatenate(PC)
+    ok = c >= 0; r, c, me, pc = r[ok], c[ok], me[ok], pc[ok]
+    o = np.lexsort((c, r)); r, c, me, pc = r[o], c[o], me[o], pc[o]
+    indptr = np.concatenate([[0], np.cumsum(np.bincount(r, minlength=len(G["genes"])))]).astype(np.int64)
+    np.savez_compressed(os.path.join(BANK, "cellxgene", f"cellxgene_{species}.npz"), indptr=indptr, col=c, me=me, pc=pc,
+                        genes=np.array([g for g, _ in G["genes"]]), symbols=np.array([s for _, s in G["genes"]]))
+    pt = [dict(tissue=t, tissue_name=tname.get(t, ""), cell_type=ct, cell_type_name=L[t][ct]["aggregated"]["name"],
+               cells=L[t][ct]["aggregated"]["total_count"]) for t, ct in pairs]
+    json.dump(dict(species=species, snapshot_id=G["snapshot_id"], shards=len(shards), genes=len(G["genes"]), pairs=pt,
+                   tissues=len({p["tissue"] for p in pt}), cell_types=len({p["cell_type"] for p in pt}),
+                   cells_total=int(sum(p["cells"] for p in pt if p["cell_type"] == "CL:0000000")),
+                   encoding=f"me = uint8 * {ME_STEP} (mean log-normalised expression in expressing cells); pc = uint8 / 255 (share expressing); rolled up over descendant cell types",
+                   entries=int(len(me))), open(os.path.join(BANK, "cellxgene", f"cellxgene_{species}_pairs.json"), "w"))
+    print(f"assemble {species}: {len(G['genes']):,} genes x {len(pairs):,} tissue-cell-type pairs, {len(me):,} entries, "
+          f"{len(shards)} shards ({time.time() - t0:.0f}s)", flush=True)
+
+
 if __name__ == "__main__":
     cmd = sys.argv[1]
+    if cmd == "assemble":
+        assemble(sys.argv[2] if len(sys.argv) > 2 else "human")
     if cmd in ("methylation", "genetics", "e2g"):
         {"methylation": methylation, "genetics": genetics, "e2g": e2g}[cmd]()
     if cmd == "ccre":
