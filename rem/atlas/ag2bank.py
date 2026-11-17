@@ -317,8 +317,167 @@ def ccre():
         print(f"ccre {species}: {len(items)} biosamples, registry {len(reg['id']):,} elements ({time.time() - t0:.0f}s)", flush=True)
 
 
+# ---------------------------------------------------------------------------------------------------------
+# step 4: DNA methylation per cell type -- Loyfer et al. 2023 WGBS atlas (GEO GSE186458), hg38 .beta files
+# reduced to promoter methylation per gene (CpGs of the atlas's homogeneous blocks overlapping TSS +/- 1 kb)
+# ---------------------------------------------------------------------------------------------------------
+GEO_LOYFER = "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE186nnn/GSE186458/suppl/"
+GENCODE46 = "https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_46/gencode.v46.basic.annotation.gtf.gz"
+
+
+def _tss():
+    import gzip
+    import io
+    import re
+    genes = []
+    for line in io.TextIOWrapper(gzip.GzipFile(fileobj=io.BytesIO(_get(GENCODE46))), encoding="utf-8"):
+        if line.startswith("#"):
+            continue
+        f = line.split("\t")
+        if f[2] != "gene":
+            continue
+        gt = re.search('gene_type "([^"]+)"', f[8]).group(1)
+        if gt not in ("protein_coding", "lncRNA"):
+            continue
+        gid = re.search('gene_id "([^".]+)', f[8]).group(1); name = re.search('gene_name "([^"]+)"', f[8]).group(1)
+        tss = int(f[3]) if f[6] == "+" else int(f[4])
+        genes.append((gid, name, gt, f[0], tss))
+    return genes
+
+
+def methylation():
+    t0 = time.time()
+    d = os.path.join(BANK, "methylation"); sh = os.path.join(d, "shards"); os.makedirs(sh, exist_ok=True)
+    import gzip
+    import io
+    fl = _get(GEO_LOYFER + "filelist.txt").decode().splitlines()
+    betas = [l.split("\t")[1] for l in fl[1:] if l.split("\t")[1].endswith(".hg38.beta")]
+    # blocks: chr, start, end, startCpG, endCpG (wgbstools)
+    bl = {}
+    for line in io.TextIOWrapper(gzip.GzipFile(fileobj=io.BytesIO(_get(GEO_LOYFER + "GSE186458_blocks.s207.hg38.bed.gz"))), encoding="utf-8"):
+        f = line.rstrip("\n").split("\t")
+        if len(f) >= 5 and f[1].isdigit():
+            bl.setdefault(f[0], []).append((int(f[1]), int(f[2]), int(f[3]), int(f[4])))
+    bl = {c: np.array(sorted(v), dtype=np.int64) for c, v in bl.items()}
+    genes = _tss(); rng = []
+    for gid, name, gt, ch, tss in genes:
+        b = bl.get(ch)
+        if b is None:
+            rng.append((0, 0)); continue
+        lo = np.searchsorted(b[:, 1], tss - 1000, side="right"); hi = np.searchsorted(b[:, 0], tss + 1000, side="left")
+        rng.append((int(b[lo:hi, 2].min()), int(b[lo:hi, 3].max())) if hi > lo else (0, 0))
+    rng = np.array(rng, dtype=np.int64)
+    json.dump(dict(genes=[g[:3] for g in genes]), open(os.path.join(d, "genes.json"), "w"))
+
+    def one(fn):
+        p = os.path.join(sh, fn.replace(".hg38.beta", ".npz"))
+        if os.path.exists(p):
+            return
+        a = np.frombuffer(_get(GEO_LOYFER + fn, timeout=1800), dtype=np.uint8).reshape(-1, 2).astype(np.int64)
+        cm = np.concatenate([[0], np.cumsum(a[:, 0])]); cc = np.concatenate([[0], np.cumsum(a[:, 1])])
+        lo = np.clip(rng[:, 0] - 1, 0, len(a)); hi = np.clip(rng[:, 1] - 1, 0, len(a))     # CpG indices are 1-based
+        m = cm[hi] - cm[lo]; c = cc[hi] - cc[lo]
+        beta = np.where(c > 0, np.round(m / np.maximum(c, 1) * 250), 255).astype(np.uint8)
+        np.savez_compressed(p, beta=beta, cov=np.minimum(c, 65535).astype(np.uint16))
+    done = 0
+    with ThreadPoolExecutor(3) as ex:
+        for _ in as_completed([ex.submit(one, fn) for fn in betas]):
+            done += 1
+            if done % 25 == 0 or done == len(betas):
+                print(f"methylation: {done}/{len(betas)} samples ({time.time() - t0:.0f}s)", flush=True)
+    names = [fn.replace(".hg38.beta", "") for fn in betas]
+    B = np.stack([np.load(os.path.join(sh, n + ".npz"))["beta"] for n in names])
+    np.savez_compressed(os.path.join(d, "loyfer2023_promoter_beta.npz"), beta=B, samples=np.array(names),
+                        genes=np.array([g[0] for g in genes]))
+    json.dump(dict(source="loyfer_2023_methylation_atlas", accession="GSE186458", samples=len(names),
+                   cell_types=sorted({n.split("_", 1)[1].rsplit("-", 1)[0] for n in names}), genes=len(genes),
+                   unit="promoter methylation (TSS +/- 1 kb, atlas blocks), beta x 250 as uint8, 255 = no coverage"),
+              open(os.path.join(d, "meta.json"), "w"), indent=1)
+    print(f"methylation: {len(names)} samples x {len(genes):,} gene promoters ({time.time() - t0:.0f}s)", flush=True)
+
+
+# ---------------------------------------------------------------------------------------------------------
+# step 5: genetics -- GTEx v11 SuSiE QTLs, IBDverse sc-eQTL credible sets (eQTL Catalogue r8 beta),
+# Open Targets 26.03 credible sets (slimmed), TraitGym
+# ---------------------------------------------------------------------------------------------------------
+def _save(url, path, timeout=3600):
+    if os.path.exists(path):
+        return os.path.getsize(path)
+    tmp = path + ".part"
+    with open(tmp, "wb") as f:
+        f.write(_get(url, timeout=timeout))
+    os.replace(tmp, path); return os.path.getsize(path)
+
+
+def _links(url, pat):
+    import re
+    return re.findall(pat, _get(url).decode(errors="replace"))
+
+
+def genetics():
+    t0 = time.time(); d = os.path.join(BANK, "genetics"); rep = {}
+    g = os.path.join(d, "gtex_v11"); os.makedirs(g, exist_ok=True)
+    for q in ("eQTL", "sQTL", "apaQTL"):
+        n = _save(f"https://storage.googleapis.com/adult-gtex/bulk-qtl/v11/susie-qtl/GTEx_Analysis_v11_{q}_SuSiE.tar", os.path.join(g, f"GTEx_v11_{q}_SuSiE.tar"))
+        rep[f"gtex_v11_{q}_susie_mb"] = round(n / 1e6, 1)
+    print(f"genetics: GTEx v11 SuSiE done ({time.time() - t0:.0f}s)", flush=True)
+    ib = os.path.join(d, "ibdverse"); os.makedirs(ib, exist_ok=True)
+    base = "https://ftp.ebi.ac.uk/pub/databases/spot/eQTL/r8_beta/susie/QTS000045/"
+    qtds = sorted(set(_links(base, r'href="(QTD\d+)/"')))
+    for q in qtds:
+        for fn in _links(base + q + "/", r'href="([^"]+credible_sets\.tsv\.gz)"'):
+            _save(base + q + "/" + fn, os.path.join(ib, fn))
+    rep["ibdverse_datasets"] = len(qtds); rep["ibdverse_files"] = len(os.listdir(ib))
+    print(f"genetics: IBDverse {len(qtds)} datasets ({time.time() - t0:.0f}s)", flush=True)
+    import pyarrow.parquet as pq
+    ot = os.path.join(d, "opentargets_26.03"); os.makedirs(ot, exist_ok=True)
+    for tbl, keep in (("credible_set", ["studyLocusId", "studyId", "studyType", "chromosome", "position", "variantId", "finemappingMethod",
+                                         "confidence", "credibleSetIndex", "pValueMantissa", "pValueExponent", "beta", "locus"]),
+                      ("study", ["studyId", "studyType", "traitFromSource", "diseaseIds", "projectId", "nSamples", "biosampleId", "condition"])):
+        ob = f"https://ftp.ebi.ac.uk/pub/databases/opentargets/platform/26.03/output/{tbl}/"
+        parts = sorted(set(_links(ob, r'href="(part-[^"]+\.parquet)"')))
+        for k, fn in enumerate(parts):
+            out = os.path.join(ot, f"{tbl}_{k:04d}.parquet")
+            if os.path.exists(out):
+                continue
+            tmp = os.path.join(ot, "tmp.parquet"); open(tmp, "wb").write(_get(ob + fn))
+            t = pq.read_table(tmp); cols = [c for c in keep if c in t.column_names]; t = t.select(cols)
+            if "locus" in cols:                                    # keep only variant id and posterior probability per locus row
+                import pyarrow as pa
+                import pyarrow.compute as pc
+                loc = t.column("locus").combine_chunks()
+                flat = loc.flatten()
+                sub = pa.StructArray.from_arrays([flat.field("variantId"), flat.field("posteriorProbability")], ["variantId", "posteriorProbability"])
+                t = t.set_column(cols.index("locus"), "locus", pa.ListArray.from_arrays(loc.offsets, sub))
+            pq.write_table(t, out, compression="zstd"); os.remove(tmp)
+        rep[f"ot_{tbl}_parts"] = len(parts)
+        print(f"genetics: Open Targets {tbl} {len(parts)} parts ({time.time() - t0:.0f}s)", flush=True)
+    tg = os.path.join(d, "traitgym"); os.makedirs(tg, exist_ok=True)
+    for t_ in ("complex_traits_all", "mendelian_traits_all"):
+        rep[f"traitgym_{t_}_mb"] = round(_save(f"https://huggingface.co/datasets/songlab/TraitGym/resolve/main/{t_}/test.parquet",
+                                                os.path.join(tg, f"{t_}.parquet")) / 1e6, 1)
+    json.dump(rep, open(os.path.join(d, "report.json"), "w"), indent=1)
+    print(f"genetics done: {rep} ({time.time() - t0:.0f}s)", flush=True)
+
+
+# ---------------------------------------------------------------------------------------------------------
+# step 6: enhancer-gene ground truth -- ENCODE-rE2G CRISPRi benchmarks (Gschwind et al. 2026)
+# ---------------------------------------------------------------------------------------------------------
+def e2g():
+    d = os.path.join(BANK, "enhancer_gene"); os.makedirs(d, exist_ok=True)
+    raw = "https://raw.githubusercontent.com/EngreitzLab/CRISPR_comparison/main/resources/crispr_data/"
+    rep = {}
+    for fn in ("EPCrisprBenchmark_combined_data.heldout_5_cell_types.GRCh38.tsv.gz", "EPCrisprBenchmark_combined_data.training_K562.GRCh38.tsv.gz"):
+        rep[fn] = _save(raw + fn, os.path.join(d, fn))
+    json.dump(dict(files=rep, source="gschwind_2026_encode_re2g", repo="https://github.com/EngreitzLab/CRISPR_comparison"),
+              open(os.path.join(d, "report.json"), "w"), indent=1)
+    print(f"e2g: {rep}", flush=True)
+
+
 if __name__ == "__main__":
     cmd = sys.argv[1]
+    if cmd in ("methylation", "genetics", "e2g"):
+        {"methylation": methylation, "genetics": genetics, "e2g": e2g}[cmd]()
     if cmd == "ccre":
         ccre()
     if cmd == "cellxgene":
