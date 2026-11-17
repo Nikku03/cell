@@ -1,0 +1,321 @@
+{
+ "catalogue": "memory_bank/datasets/alphagenome2.json",
+ "built": "2026-11-17",
+ "where": "rem/atlas/_cache/ag2bank (local, git-ignored)",
+ "rebuild": "python3 -P rem/atlas/ag2bank.py cellxgene human|mouse; assemble human|mouse; gtex; fantom5 human|mouse; encode_rna; ccre; methylation; genetics; e2g; report",
+ "total_mb": 3798.6,
+ "by_catalogue_entry": {
+  "ref_genomes": {
+   "status": "not needed as a layer",
+   "reason": "public references (GRCh38/GRCm38, GENCODE); fetched on demand"
+  },
+  "bulk_rna": {
+   "status": "held (compressed)",
+   "layers": [
+    "encode_rna_human",
+    "encode_rna_mouse",
+    "gtex_v8_tissue_median"
+   ]
+  },
+  "splicing": {
+   "status": "not held",
+   "reason": "splice junction tables need the raw RNA-seq alignments (terabytes); gene-level expression is held instead"
+  },
+  "bulk_accessibility": {
+   "status": "held (compressed)",
+   "layers": [
+    "ccre_human",
+    "ccre_mouse"
+   ]
+  },
+  "chip": {
+   "status": "held (compressed)",
+   "layers": [
+    "ccre_human",
+    "ccre_mouse"
+   ]
+  },
+  "cage": {
+   "status": "held (compressed)",
+   "layers": [
+    "fantom5_cage_human",
+    "fantom5_cage_mouse"
+   ]
+  },
+  "procap": {
+   "status": "not held",
+   "reason": "PRO-cap tracks: source list is in AlphaGenome 1's supplement, not this paper. Not pulled."
+  },
+  "contact_maps": {
+   "status": "not held",
+   "reason": "77 Hi-C / Micro-C maps of 10-100+ GB each; the compact form the model needs (1-Mb-window contacts at 2 kb) means reading most of each file. Not pulled."
+  },
+  "methylation_wgbs": {
+   "status": "held (compressed)",
+   "layers": [
+    "methylation_wgbs"
+   ]
+  },
+  "methylation_snm3c": {
+   "status": "not held",
+   "reason": "single-nucleus ALLC files (terabytes on Hugging Face). Not pulled; the bulk WGBS atlas is."
+  },
+  "single_cell_corpus": {
+   "status": "held (compressed)",
+   "layers": [
+    "cellxgene_human",
+    "cellxgene_mouse"
+   ]
+  },
+  "expression_encoder_cells": {
+   "status": "held (compressed)",
+   "layers": [
+    "cellxgene_human"
+   ]
+  },
+  "gtex_expression_eval": {
+   "status": "held (compressed)",
+   "layers": [
+    "gtex_v8_tissue_median"
+   ]
+  },
+  "gtex_v11_eqtl": {
+   "status": "held (compressed)",
+   "layers": [
+    "genetics"
+   ]
+  },
+  "ag1_qtl_benchmarks": {
+   "status": "not held",
+   "reason": "AlphaGenome 1 benchmark sets; defined in AlphaGenome 1's supplement. Not pulled."
+  },
+  "tenk10k": {
+   "status": "not held",
+   "reason": "TenK10K single-cell eQTL summary statistics: no public download found (2026-11-17)."
+  },
+  "ibdverse": {
+   "status": "held (compressed)",
+   "layers": [
+    "genetics"
+   ]
+  },
+  "parkinsons": {
+   "status": "not held",
+   "reason": "Sigalova et al. 2026 Parkinson's multiome: cohort data, access not public / not located."
+  },
+  "covid_vaccine": {
+   "status": "not held",
+   "reason": "Zhang et al. 2023 vaccine atlas: GEO accession not confirmed (candidates GSE202262, PRJNA985376/7). Not pulled."
+  },
+  "cellxgene_heldout": {
+   "status": "not held",
+   "reason": "evaluation split of CELLxGENE; the data are inside the CELLxGENE aggregates."
+  },
+  "imputation_heldout": {
+   "status": "not held",
+   "reason": "ENCODE tracks; inside the ENCODE pulls."
+  },
+  "encode_re2g_crispri": {
+   "status": "held (compressed)",
+   "layers": [
+    "enhancer_gene_crispri"
+   ]
+  },
+  "astrocyte_crispri": {
+   "status": "not held",
+   "reason": "Green et al. 2026 astrocyte CRISPRi: data location not found. Not pulled."
+  },
+  "encode_ccres": {
+   "status": "held (compressed)",
+   "layers": [
+    "ccre_human",
+    "ccre_mouse"
+   ]
+  },
+  "hudep2_bcl11a": {
+   "status": "not held",
+   "reason": "single-locus case study: 3.8 GB ATAC bigWigs + 12.9 GB Capture-Pore-C pairs. Not pulled."
+  },
+  "traitgym": {
+   "status": "held (compressed)",
+   "layers": [
+    "genetics"
+   ]
+  },
+  "gwas_panel": {
+   "status": "held (compressed)",
+   "layers": [
+    "genetics"
+   ]
+  },
+  "ag2_predictions": {
+   "status": "not held",
+   "reason": "AlphaGenome 2's own predictions: the download page needs a Google account sign-in. Not pulled from here."
+  }
+ },
+ "layers": {
+  "cellxgene_human": {
+   "genes": 60810,
+   "tissue_cell_type_pairs": 6790,
+   "tissues": 64,
+   "cell_types": 883,
+   "cells": 86653829,
+   "entries": 109498402,
+   "mb": 202.8
+  },
+  "cellxgene_mouse": {
+   "genes": 49413,
+   "tissue_cell_type_pairs": 2044,
+   "tissues": 32,
+   "cell_types": 570,
+   "cells": 17688395,
+   "entries": 30945915,
+   "mb": 45.2
+  },
+  "encode_rna_human": {
+   "source": "encode_portal",
+   "unit": "TPM per gene, replicates averaged (log1p stored); RSEM TPM, or STAR gene counts converted with GENCODE exon-union lengths where only those exist (annotation None)",
+   "experiments": 1517,
+   "failed": [],
+   "biosamples": 296,
+   "assembly": "GRCh38",
+   "profiles": 1517,
+   "genes": 58735,
+   "mb": 81.2,
+   "distinct_biosamples": 296
+  },
+  "encode_rna_mouse": {
+   "source": "encode_portal",
+   "unit": "TPM per gene, replicates averaged (log1p stored); RSEM TPM, or STAR gene counts converted with GENCODE exon-union lengths where only those exist (annotation None)",
+   "experiments": 452,
+   "failed": [
+    {
+     "experiment": "ENCSR323OER",
+     "error": "unrecognised gene quantification format: /files/ENCFF803LSU/@@download/ENCFF803LSU.tsv"
+    },
+    {
+     "experiment": "ENCSR479UTA",
+     "error": "unrecognised gene quantification format: /files/ENCFF624RHD/@@download/ENCFF624RHD.tsv"
+    }
+   ],
+   "biosamples": 80,
+   "assembly": "mm10",
+   "profiles": 452,
+   "genes": 55536,
+   "mb": 23.0,
+   "distinct_biosamples": 80
+  },
+  "fantom5_cage_human": {
+   "source": "fantom5_cage",
+   "url": "https://fantom.gsc.riken.jp/5/datafiles/reprocessed/hg38_latest/extra/CAGE_peaks_expression/hg38_fair+new_genes_phase1and2_tpm.osc.txt.gz",
+   "unit": "CAGE TPM per gene (log1p stored)",
+   "samples": 1829,
+   "assembly": "hg38",
+   "profiles": 1829,
+   "genes": 23274,
+   "mb": 48.8
+  },
+  "fantom5_cage_mouse": {
+   "source": "fantom5_cage",
+   "url": "https://fantom.gsc.riken.jp/5/datafiles/reprocessed/mm10_latest/extra/CAGE_peaks_expression/mm10_fair+new_genes_phase1and2_tpm.osc.txt.gz",
+   "unit": "CAGE TPM per gene (log1p stored)",
+   "samples": 1073,
+   "assembly": "mm10",
+   "profiles": 1073,
+   "genes": 24576,
+   "mb": 28.8
+  },
+  "gtex_v8_tissue_median": {
+   "source": "gtex_portal",
+   "url": "https://storage.googleapis.com/adult-gtex/bulk-gex/v8/rna-seq/GTEx_Analysis_2017-06-05_v8_RNASeQCv1.1.9_gene_median_tpm.gct.gz",
+   "unit": "median TPM per tissue (log1p stored)",
+   "tissues": 54,
+   "profiles": 54,
+   "genes": 56200,
+   "mb": 3.3
+  },
+  "ccre_human": {
+   "biosamples": 1678,
+   "registry_elements": 2348854,
+   "classes": [
+    "PLS",
+    "pELS",
+    "dELS",
+    "CA-H3K4me3",
+    "CA-CTCF",
+    "CA-TF",
+    "CA-only",
+    "TF-only",
+    "Low-DNase"
+   ],
+   "distinct_biosample_terms": 445,
+   "mb": 1415.8
+  },
+  "ccre_mouse": {
+   "biosamples": 393,
+   "registry_elements": 926843,
+   "classes": [
+    "PLS",
+    "pELS",
+    "dELS",
+    "CA-H3K4me3",
+    "CA-CTCF",
+    "CA-TF",
+    "CA-only",
+    "TF-only",
+    "Low-DNase"
+   ],
+   "distinct_biosample_terms": 82,
+   "mb": 158.4
+  },
+  "methylation_wgbs": {
+   "source": "loyfer_2023_methylation_atlas",
+   "accession": "GSE186458",
+   "samples": 253,
+   "failed": [],
+   "cell_types": 128,
+   "genes": 39323,
+   "unit": "promoter methylation (TSS +/- 1 kb, atlas blocks), beta x 250 as uint8, 255 = no coverage",
+   "mb": 9.7
+  },
+  "genetics": {
+   "gtex_v11_eQTL_susie_mb": 182.6,
+   "gtex_v11_sQTL_susie_mb": 174.2,
+   "gtex_v11_apaQTL_susie_mb": 35.2,
+   "ibdverse_datasets": 72,
+   "ibdverse_files": 72,
+   "ot_credible_set_parts": 200,
+   "ot_study_parts": 1,
+   "traitgym_complex_traits_all_mb": 230.9,
+   "traitgym_mendelian_traits_all_mb": 27.3,
+   "mb": 1780.2
+  },
+  "enhancer_gene_crispri": {
+   "files": {
+    "EPCrisprBenchmark_combined_data.heldout_5_cell_types.GRCh38.tsv.gz": 373837,
+    "EPCrisprBenchmark_combined_data.training_K562.GRCh38.tsv.gz": 996546
+   },
+   "source": "gschwind_2026_encode_re2g",
+   "repo": "https://github.com/EngreitzLab/CRISPR_comparison",
+   "mb": 1.4
+  }
+ },
+ "not_fetched": {
+  "contact_maps": "77 Hi-C / Micro-C maps of 10-100+ GB each; the compact form the model needs (1-Mb-window contacts at 2 kb) means reading most of each file. Not pulled.",
+  "methylation_snm3c": "single-nucleus ALLC files (terabytes on Hugging Face). Not pulled; the bulk WGBS atlas is.",
+  "single_cell_corpus": "raw count matrices of the 36 studies (terabytes). Their cell-type summaries are covered by the CELLxGENE aggregates wherever the study is on CELLxGENE; ENCODE/GEO-only studies are not.",
+  "expression_encoder_cells": "107 million individual cells (terabytes). Summarised as CELLxGENE per-cell-type aggregates instead.",
+  "bulk_rna_recount3": "recount3 coverage (terabytes); GTEx and ENCODE gene-level expression pulled instead.",
+  "procap": "PRO-cap tracks: source list is in AlphaGenome 1's supplement, not this paper. Not pulled.",
+  "tenk10k": "TenK10K single-cell eQTL summary statistics: no public download found (2026-11-17).",
+  "parkinsons": "Sigalova et al. 2026 Parkinson's multiome: cohort data, access not public / not located.",
+  "covid_vaccine": "Zhang et al. 2023 vaccine atlas: GEO accession not confirmed (candidates GSE202262, PRJNA985376/7). Not pulled.",
+  "astrocyte_crispri": "Green et al. 2026 astrocyte CRISPRi: data location not found. Not pulled.",
+  "cellxgene_heldout": "evaluation split of CELLxGENE; the data are inside the CELLxGENE aggregates.",
+  "imputation_heldout": "ENCODE tracks; inside the ENCODE pulls.",
+  "ag1_qtl_benchmarks": "AlphaGenome 1 benchmark sets; defined in AlphaGenome 1's supplement. Not pulled.",
+  "hudep2_bcl11a": "single-locus case study: 3.8 GB ATAC bigWigs + 12.9 GB Capture-Pore-C pairs. Not pulled.",
+  "ag2_predictions": "AlphaGenome 2's own predictions: the download page needs a Google account sign-in. Not pulled from here.",
+  "gwas_panel_gnomad": "gnomAD v4.1 common variants: sites files are hundreds of GB. Not pulled; Open Targets credible sets are."
+ }
+}
