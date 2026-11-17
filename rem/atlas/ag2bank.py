@@ -222,6 +222,15 @@ def _enc_tpm(href, asm="GRCh38"):
             if len(f) > ti and f[gi].startswith("ENS"):
                 out[f[gi].split(".")[0]] = float(f[ti])
         return out
+    fc = next((i for i, l in enumerate(lines[:5]) if l.startswith("Geneid\t")), None)
+    if fc is not None:                                      # featureCounts: Geneid, Chr, Start, End, Strand, Length, count
+        rate = {}
+        for l in lines[fc + 1:]:
+            f = l.split("\t")
+            if len(f) >= 7 and f[0].startswith("ENS") and float(f[5]) > 0:
+                rate[f[0].split(".")[0]] = float(f[-1]) / (float(f[5]) / 1000.0)
+        tot = sum(rate.values()) or 1.0
+        return {g: v / tot * 1e6 for g, v in rate.items()}
     # STAR ReadsPerGene counts (no header): gene, unstranded, strand 1, strand 2 -> TPM with GENCODE exon lengths,
     # using the count column with the largest total (the library's strandedness)
     rows = [l.split("\t") for l in lines if l.startswith("ENS")]
