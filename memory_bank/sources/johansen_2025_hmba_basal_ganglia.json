@@ -1,0 +1,10 @@
+{
+  "id": "johansen_2025_hmba_basal_ganglia",
+  "type": "preprint",
+  "citation": "Johansen, N. J. et al. Cross-species consensus atlas of the primate basal ganglia. bioRxiv (2025).",
+  "doi": "10.64898/2025.12.15.694496",
+  "organism": "human",
+  "authority": "primary",
+  "licence": "not checked (verify before redistributing or commercial use)",
+  "notes": "Human and Mammalian Brain Atlas (HMBA) basal ganglia snMultiome; used unlabelled for the AG2 expression autoencoder only."
+}

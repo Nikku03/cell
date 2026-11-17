@@ -1,0 +1,10 @@
+{
+  "id": "gtex_portal",
+  "type": "database",
+  "citation": "The GTEx Consortium. The GTEx Consortium atlas of genetic regulatory effects across human tissues. Science 369, 1318-1330 (2020).",
+  "url": "https://gtexportal.org",
+  "organism": "human",
+  "authority": "primary",
+  "licence": "open-access summary data; individual-level data controlled (dbGaP)",
+  "notes": "AG2 used GTEx v8 gene TPM (training), RNA-seq coverage via recount3, and GTEx v11 SuSiE fine-mapped eQTLs (evaluation, 49 tissues)."
+}

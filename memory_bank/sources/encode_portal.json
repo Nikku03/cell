@@ -1,0 +1,10 @@
+{
+  "id": "encode_portal",
+  "type": "database",
+  "citation": "ENCODE Project Consortium. An integrated encyclopedia of DNA elements in the human genome. Nature 489, 57-74 (2012); data navigation: Kagda et al. Nature Communications 16, 9592 (2025).",
+  "url": "https://www.encodeproject.org",
+  "organism": "human, mouse",
+  "authority": "primary",
+  "licence": "open access (ENCODE data release policy: no restrictions on use; cite the consortium)",
+  "notes": "Bulk RNA-seq, ATAC-seq, DNase-seq, histone and TF ChIP-seq, Intact Hi-C, single-cell RNA/ATAC/Multiome, cCREs. K562 is an ENCODE tier-1 cell line: K562 tracks for this project's model are here."
+}

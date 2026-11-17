@@ -1,0 +1,10 @@
+{
+  "id": "cellxgene_discover",
+  "type": "database",
+  "citation": "CZI Cell Science Program et al. CZ CELLxGENE Discover: a single-cell data platform for scalable exploration, analysis and modeling of aggregated data. Nucleic Acids Research 53, D886-D900 (2025).",
+  "url": "https://cellxgene.cziscience.com",
+  "organism": "human, mouse",
+  "authority": "primary",
+  "licence": "per dataset (most CC BY 4.0); verify per collection",
+  "notes": "AG2: count matrices for part of its 36-study single-cell corpus; snapshot of 16 March 2026 (human, UMI assays, primary cells only) for the 107-million-cell expression encoder; a temporal split of 16 held-out datasets for evaluation."
+}

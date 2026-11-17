@@ -1,0 +1,10 @@
+{
+  "id": "cuomo_2026_tenk10k",
+  "type": "peer_reviewed_paper",
+  "citation": "Cuomo, A. S. et al. Rare and common genetic variants shape single-cell immune gene expression. Nature (2026); caQTLs: Xue, A. et al. Genetic regulation of cell type-specific chromatin accessibility shapes immune function and disease risk. medRxiv (2025).",
+  "doi": "10.1038/s41586-026-10721-2",
+  "organism": "human",
+  "authority": "primary",
+  "licence": "not checked (verify before redistributing or commercial use)",
+  "notes": "TenK10K: fine-mapped single-cell eQTLs in 28 PBMC cell types and caQTLs in 24 cell types; AG2 evaluation only."
+}

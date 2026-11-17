@@ -1,0 +1,11 @@
+{
+  "id": "alphagenome2_predictions",
+  "type": "dataset",
+  "citation": "Gayoso, A. et al. (2026) AlphaGenome 2 precomputed predictions (see gayoso_2026_alphagenome2).",
+  "url": "https://deepmind.google.com/science/alphagenome/downloads",
+  "api": "https://github.com/google-deepmind/alphagenome",
+  "organism": "human",
+  "authority": "secondary",
+  "licence": "research use; API non-commercial (per the paper's code availability)",
+  "notes": "Model OUTPUT, not measured data: enhancer-gene link atlas across 640 primary human conditions; single-cell expression variant effect scores for ~6.8M variants across 510 human conditions (filtered by effect size)."
+}

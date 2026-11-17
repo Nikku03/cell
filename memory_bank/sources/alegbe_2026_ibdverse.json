@@ -1,0 +1,11 @@
+{
+  "id": "alegbe_2026_ibdverse",
+  "type": "peer_reviewed_paper",
+  "citation": "Alegbe, T. et al. Cell-type-resolved genetic variation shapes inflammatory bowel disease risk. Nature 656, 129-139 (2026); processed by the eQTL Catalogue (Kerimov et al. Nature Genetics 53, 1290-1299 (2021)).",
+  "url": "https://www.ebi.ac.uk/eqtl/",
+  "accession": "eQTL Catalogue release r8, study QTS000045",
+  "organism": "human",
+  "authority": "primary",
+  "licence": "not checked (verify before redistributing or commercial use)",
+  "notes": "IBDverse single-cell eQTLs, intestinal epithelial and immune cells (47 cell types used); AG2 evaluation only."
+}

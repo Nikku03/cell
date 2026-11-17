@@ -1,0 +1,10 @@
+{
+  "id": "zhou_2026_snm3c_atlas",
+  "type": "dataset",
+  "citation": "Zhou, J. et al. Human body single-cell atlas of three-dimensional genome organization and DNA methylation. Science 393, eadx0673 (2026).",
+  "url": "https://huggingface.co/datasets/zhoujt1994/HumanCellEpigenomeAtlas_sc_allc",
+  "organism": "human",
+  "authority": "primary",
+  "licence": "not checked (verify before redistributing or commercial use)",
+  "notes": "snm3C-seq single-nucleus methylation + 3D genome; ALLC files on Hugging Face; 115 pseudobulks used by AG2."
+}

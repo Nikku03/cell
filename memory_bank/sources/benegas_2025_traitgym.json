@@ -1,0 +1,10 @@
+{
+  "id": "benegas_2025_traitgym",
+  "type": "preprint",
+  "citation": "Benegas, G., Eraslan, G. & Song, Y. S. Benchmarking DNA Sequence Models for Causal Regulatory Variant Prediction in Human Genetics. bioRxiv (2025).",
+  "doi": "10.1101/2025.02.11.637758",
+  "organism": "human",
+  "authority": "primary",
+  "licence": "not checked (verify before redistributing or commercial use)",
+  "notes": "TraitGym complex-traits benchmark: 11,400 variants (fine-mapped causal PIP > 0.9 vs matched controls)."
+}

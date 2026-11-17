@@ -1,0 +1,10 @@
+{
+  "id": "open_targets_platform",
+  "type": "database",
+  "citation": "Buniello, A. et al. Open Targets Platform: facilitating therapeutic hypotheses building in drug discovery. Nucleic Acids Research 53, D1467-D1475 (2025).",
+  "url": "https://platform.opentargets.org",
+  "organism": "human",
+  "authority": "primary",
+  "licence": "CC0 1.0",
+  "notes": "AG2 used release 26.03 SuSiE GWAS credible sets (1,879,681 SNVs). This project's cell_v6/cell_v7 already use Open Targets 26.09 (drugs, targets, clinical)."
+}

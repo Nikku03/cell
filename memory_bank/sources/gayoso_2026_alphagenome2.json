@@ -1,0 +1,14 @@
+{
+  "id": "gayoso_2026_alphagenome2",
+  "type": "preprint",
+  "citation": "Gayoso, A., Mottram, A., Karollus, A., Novati, G., Drotár, P., Reid, J., et al., Hassabis, D., Kohli, P., Avsec, Ž. AlphaGenome 2 predicts regulatory activity and variant effects across cell states. Google DeepMind (2026).",
+  "url": "https://storage.googleapis.com/deepmind-media/DeepMind.com/Blog/alphagenome-2-deciphering-how-cells-read-dna-to-better-understand-disease/alphagenome-2.pdf",
+  "blog": "https://deepmind.google/blog/alphagenome-2-deciphering-how-cells-read-dna-to-better-understand-disease/",
+  "organism": "human, mouse",
+  "authority": "primary",
+  "read_on": "2026-11-17",
+  "notes": "Source of the dataset catalogue memory_bank/datasets/alphagenome2.json (Methods: 'Training data acquisition and processing', evaluation sections, 'Data availability'; Supplementary Table 1; Supplementary Figure 1). Supplementary Tables 2 and 3 (per-dataset accessions) are not in the PDF.",
+  "caveats": [
+    "Read from the PDF as released 2026-11; counts marked 'approx' in the catalogue were read off a bar chart (Supplementary Figure 1), not from text."
+  ]
+}
