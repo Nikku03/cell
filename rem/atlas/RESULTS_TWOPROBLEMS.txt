@@ -5977,3 +5977,34 @@ BIOBRAIN -- THE BRAIN'S NEURO ENGINE POINTED AT THE CELL: COMPLEXES ARE THE UNIT
   NOT: one complex resource (Complex Portal); responses compressed to K562's 128 components; the reprocessed
   screens differ in pipeline, so cell type and pipeline cannot be separated here; iPSC-N carries almost no
   structure (the cell-level counterpart of a network that did not learn its task); 200-draw nulls (p floor 0.005).
+
+=================================================================================================
+AG2BANK -- THE ALPHAGENOME 2 DATASETS PULLED INTO THE MEMORY BANK (DATA ACQUISITION; NO TEST)
+=================================================================================================
+  ag2bank.py (each step committed before it ran). The datasets catalogued in memory_bank/datasets/alphagenome2.json,
+  pulled from their public origins and reduced to compressed per-cell-type records (~3.8 GB, local cache
+  rem/atlas/_cache/ag2bank, git-ignored; raw sources run to many terabytes): CELLxGENE expression aggregates for every
+  gene x (tissue, cell type) -- human 60,810 genes x 6,790 pairs (64 tissues, 883 cell types, ~87M cells), mouse
+  49,413 x 2,044 (32, 570, ~18M); ENCODE RNA-seq 1,517 human + 452 mouse experiments; GTEx v8 54 tissues; FANTOM5
+  CAGE 1,829 + 1,073 samples; ENCODE Registry v4 cCRE activity in 1,678 human + 393 mouse biosamples (2.35M / 0.93M
+  elements); Loyfer 2023 WGBS promoter methylation, 253 samples x 39,323 genes; GTEx v11 SuSiE eQTL/sQTL/apaQTL;
+  IBDverse sc-eQTL credible sets (72 cell types, eQTL Catalogue r8 beta); Open Targets 26.03 credible sets (200
+  parts, slimmed) + studies; TraitGym; ENCODE-rE2G CRISPRi enhancer-gene benchmarks. 14 of 28 catalogue entries held;
+  the rest are listed with reasons in memory_bank/datasets/alphagenome2_holdings.json.
+  CORRECTIONS DURING THE PULL (all fixed before the data were used; each fix committed):
+   (1) ~375 human ENCODE experiments have only STAR gene counts and 34 mouse ones only featureCounts tables; the first
+       parser rejected them. Converted to TPM (GENCODE exon-union lengths / the tables' own lengths); 2 mouse files in
+       an unrecognised format are logged and skipped (452 of 454).
+   (2) The CELLxGENE service labels only the cell types it displays; 1,444 rolled-up parent pairs (15.6% of entries)
+       were first dropped. All pairs are kept; names from the Cell Ontology, cell counts estimated where unlabelled.
+   (3) IBDverse credible sets are parquet, not tsv.gz: none were fetched at first (an empty listing passed). Fixed;
+       an empty listing is now an error.
+   (4) The WGBS .beta files live in each sample's GEO folder; every download 404'd and the thread pool swallowed the
+       errors. Fixed; thread failures are now logged, counted and excluded in every step.
+   Sanity check: promoter methylation GAPDH 0.02 (housekeeping, unmethylated); ALB, APOA1, CD19, CD3E 0.8-0.9 in
+   adipocytes and neurons (silent there).
+  NOT HELD: 3D contact maps (10-100+ GB per map), snm3C single-nucleus methylation and raw single-cell matrices
+  (terabytes), recount3 coverage, splice junctions, PRO-cap, TenK10K sc-eQTLs (no public download found), the
+  Parkinson's cohort and COVID vaccine atlas (access / accession not confirmed), the astrocyte CRISPRi screen (location
+  not found), the HUDEP-2 case study (single locus, 17 GB), AlphaGenome 2's own predictions (download needs a Google
+  sign-in). The local cache does not survive a container reset; the code rebuilds it.
