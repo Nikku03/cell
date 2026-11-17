@@ -369,16 +369,22 @@ def ccre():
                 idx.append(i); cls.append(code.get(c, 255))
             np.savez_compressed(p, idx=np.array(idx, np.uint32), cls=np.array(cls, np.uint8))
             return extra
-        done = 0
+        done, failed = 0, []
         with ThreadPoolExecutor(4) as ex:
-            for _ in as_completed([ex.submit(one, a) for a in items]):
+            futs = {ex.submit(one, a): a["accession"] for a in items}
+            for fu in as_completed(futs):
                 done += 1
+                try:
+                    fu.result()
+                except Exception as e:
+                    failed.append(dict(annotation=futs[fu], error=str(e)[:200]))
                 if done % 50 == 0 or done == len(items):
-                    print(f"ccre {species}: {done}/{len(items)} biosamples ({time.time() - t0:.0f}s)", flush=True)
+                    print(f"ccre {species}: {done}/{len(items)} biosamples, {len(failed)} failed ({time.time() - t0:.0f}s)", flush=True)
+        items = [a for a in items if os.path.exists(os.path.join(sh, f"{a['accession']}.npz"))]
         meta = [dict(annotation=a["accession"], file=bed(a), biosample=a["biosample_ontology"]["term_name"],
                      term_id=a["biosample_ontology"].get("term_id"), classification=a["biosample_ontology"]["classification"],
                      description=a.get("description", "")) for a in items]
-        json.dump(dict(classes=CCRE_CLASSES, registry_elements=int(len(reg["id"])), biosamples=meta,
+        json.dump(dict(classes=CCRE_CLASSES, registry_elements=int(len(reg["id"])), biosamples=meta, failed=failed,
                        source="encode_portal", note="ENCODE Registry v4 biosample-specific cCRE classifications; Low-DNase (inactive) omitted"),
                   open(os.path.join(d, "meta.json"), "w"))
         print(f"ccre {species}: {len(items)} biosamples, registry {len(reg['id']):,} elements ({time.time() - t0:.0f}s)", flush=True)
@@ -440,23 +446,32 @@ def methylation():
         p = os.path.join(sh, fn.replace(".hg38.beta", ".npz"))
         if os.path.exists(p):
             return
-        a = np.frombuffer(_get(GEO_LOYFER + fn, timeout=1800), dtype=np.uint8).reshape(-1, 2).astype(np.int64)
+        gsm = fn.split("_")[0]                               # files live in each sample's own GEO folder
+        url = f"https://ftp.ncbi.nlm.nih.gov/geo/samples/{gsm[:-3]}nnn/{gsm}/suppl/{fn}"
+        a = np.frombuffer(_get(url, timeout=1800), dtype=np.uint8).reshape(-1, 2).astype(np.int64)
         cm = np.concatenate([[0], np.cumsum(a[:, 0])]); cc = np.concatenate([[0], np.cumsum(a[:, 1])])
         lo = np.clip(rng[:, 0] - 1, 0, len(a)); hi = np.clip(rng[:, 1] - 1, 0, len(a))     # CpG indices are 1-based
         m = cm[hi] - cm[lo]; c = cc[hi] - cc[lo]
         beta = np.where(c > 0, np.round(m / np.maximum(c, 1) * 250), 255).astype(np.uint8)
         np.savez_compressed(p, beta=beta, cov=np.minimum(c, 65535).astype(np.uint16))
-    done = 0
+    done, failed = 0, []
     with ThreadPoolExecutor(3) as ex:
-        for _ in as_completed([ex.submit(one, fn) for fn in betas]):
+        futs = {ex.submit(one, fn): fn for fn in betas}
+        for fu in as_completed(futs):
             done += 1
+            try:
+                fu.result()
+            except Exception as e:
+                failed.append(dict(file=futs[fu], error=str(e)[:200]))
             if done % 25 == 0 or done == len(betas):
-                print(f"methylation: {done}/{len(betas)} samples ({time.time() - t0:.0f}s)", flush=True)
-    names = [fn.replace(".hg38.beta", "") for fn in betas]
+                print(f"methylation: {done}/{len(betas)} samples, {len(failed)} failed ({time.time() - t0:.0f}s)", flush=True)
+    if len(failed) > len(betas) // 2:
+        raise RuntimeError(f"methylation: {len(failed)} of {len(betas)} samples failed, e.g. {failed[:2]}")
+    names = [fn.replace(".hg38.beta", "") for fn in betas if os.path.exists(os.path.join(sh, fn.replace(".hg38.beta", ".npz")))]
     B = np.stack([np.load(os.path.join(sh, n + ".npz"))["beta"] for n in names])
     np.savez_compressed(os.path.join(d, "loyfer2023_promoter_beta.npz"), beta=B, samples=np.array(names),
                         genes=np.array([g[0] for g in genes]))
-    json.dump(dict(source="loyfer_2023_methylation_atlas", accession="GSE186458", samples=len(names),
+    json.dump(dict(source="loyfer_2023_methylation_atlas", accession="GSE186458", samples=len(names), failed=failed,
                    cell_types=sorted({n.split("_", 1)[1].rsplit("-", 1)[0] for n in names}), genes=len(genes),
                    unit="promoter methylation (TSS +/- 1 kb, atlas blocks), beta x 250 as uint8, 255 = no coverage"),
               open(os.path.join(d, "meta.json"), "w"), indent=1)
