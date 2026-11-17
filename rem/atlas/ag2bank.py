@@ -250,8 +250,77 @@ def encode_rna():
                             biosamples=len(set(m["biosample"])), assembly=asm))
 
 
+# ---------------------------------------------------------------------------------------------------------
+# step 3: chromatin per biosample -- ENCODE Registry v4 biosample-specific cCRE classes
+# (from each biosample's DNase/ATAC, H3K4me3, H3K27ac, CTCF): only active elements kept (class != Low-DNase),
+# as uint32 index into the registry + uint8 class code
+# ---------------------------------------------------------------------------------------------------------
+CCRE_CLASSES = ["PLS", "pELS", "dELS", "CA-H3K4me3", "CA-CTCF", "CA-TF", "CA-only", "TF-only", "Low-DNase"]
+
+
+def _ccre_rows(acc):
+    import gzip
+    import io
+    b = _get(f"{ENC}/files/{acc}/@@download/{acc}.bed.gz", timeout=1800)
+    for line in io.TextIOWrapper(gzip.GzipFile(fileobj=io.BytesIO(b)), encoding="utf-8"):
+        f = line.rstrip("\n").split("\t")
+        if len(f) >= 10:
+            yield f
+
+
+def ccre():
+    t0 = time.time()
+    ann = _enc_json("/search/?type=Annotation&annotation_type=candidate+Cis-Regulatory+Elements&status=released&encyclopedia_version=ENCODE+v4"
+                    "&field=accession&field=assembly&field=biosample_ontology.term_name&field=biosample_ontology.term_id"
+                    "&field=biosample_ontology.classification&field=description&field=files.accession&field=files.file_format&field=files.assembly")
+    code = {c: i for i, c in enumerate(CCRE_CLASSES)}
+    for asm, species in (("GRCh38", "human"), ("mm10", "mouse")):
+        items = [a for a in ann if a.get("biosample_ontology") and asm in a.get("assembly", [])]
+        d = os.path.join(BANK, "ccre", species); sh = os.path.join(d, "shards"); os.makedirs(sh, exist_ok=True)
+        reg_p = os.path.join(d, "registry.npz")
+        bed = lambda a: next((f["accession"] for f in a["files"] if f.get("file_format") == "bed" and f.get("assembly") == asm), None)
+        items = [a for a in items if bed(a)]
+        if not os.path.exists(reg_p):
+            ids, ch, st, en = [], [], [], []
+            for f in _ccre_rows(bed(items[0])):
+                ids.append(f[3]); ch.append(f[0]); st.append(int(f[1])); en.append(int(f[2]))
+            np.savez_compressed(reg_p, id=np.array(ids), chrom=np.array(ch), start=np.array(st, np.int32), end=np.array(en, np.int32))
+        reg = np.load(reg_p); index = {x: i for i, x in enumerate(reg["id"].tolist())}
+
+        def one(a):
+            p = os.path.join(sh, f"{a['accession']}.npz")
+            if os.path.exists(p):
+                return 0
+            idx, cls, extra = [], [], 0
+            for f in _ccre_rows(bed(a)):
+                c = f[9]
+                if c == "Low-DNase":
+                    continue
+                i = index.get(f[3])
+                if i is None:
+                    extra += 1; continue
+                idx.append(i); cls.append(code.get(c, 255))
+            np.savez_compressed(p, idx=np.array(idx, np.uint32), cls=np.array(cls, np.uint8))
+            return extra
+        done = 0
+        with ThreadPoolExecutor(4) as ex:
+            for _ in as_completed([ex.submit(one, a) for a in items]):
+                done += 1
+                if done % 50 == 0 or done == len(items):
+                    print(f"ccre {species}: {done}/{len(items)} biosamples ({time.time() - t0:.0f}s)", flush=True)
+        meta = [dict(annotation=a["accession"], file=bed(a), biosample=a["biosample_ontology"]["term_name"],
+                     term_id=a["biosample_ontology"].get("term_id"), classification=a["biosample_ontology"]["classification"],
+                     description=a.get("description", "")) for a in items]
+        json.dump(dict(classes=CCRE_CLASSES, registry_elements=int(len(reg["id"])), biosamples=meta,
+                       source="encode_portal", note="ENCODE Registry v4 biosample-specific cCRE classifications; Low-DNase (inactive) omitted"),
+                  open(os.path.join(d, "meta.json"), "w"))
+        print(f"ccre {species}: {len(items)} biosamples, registry {len(reg['id']):,} elements ({time.time() - t0:.0f}s)", flush=True)
+
+
 if __name__ == "__main__":
     cmd = sys.argv[1]
+    if cmd == "ccre":
+        ccre()
     if cmd == "cellxgene":
         cellxgene(sys.argv[2] if len(sys.argv) > 2 else "human")
     elif cmd == "gtex":
