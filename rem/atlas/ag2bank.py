@@ -103,7 +103,160 @@ def cellxgene(species="human"):
     print(f"cellxgene {species}: done, {len(batches)} batches of {BATCH} genes ({time.time() - t0:.0f}s)", flush=True)
 
 
+# ---------------------------------------------------------------------------------------------------------
+# step 2: bulk expression profiles (GTEx tissues, ENCODE RNA-seq biosamples, FANTOM5 CAGE samples)
+# stored as float16 log1p(TPM), samples x genes, with a metadata table per row
+# ---------------------------------------------------------------------------------------------------------
+UA = {"User-Agent": "cell-memory-bank"}
+
+
+def _get(url, tries=6, timeout=900):
+    for k in range(tries):
+        try:
+            with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=timeout) as r:
+                return r.read()
+        except (urllib.error.URLError, TimeoutError, ConnectionError) as ex:
+            if k == tries - 1:
+                raise
+            time.sleep(5 * 2 ** k)
+
+
+def _gunzip(b):
+    import gzip
+    return gzip.decompress(b).decode("utf-8", errors="replace")
+
+
+def _save_profiles(name, M, rows, cols, meta, info):
+    d = os.path.join(BANK, "bulk"); os.makedirs(d, exist_ok=True)
+    np.savez_compressed(os.path.join(d, f"{name}.npz"), X=np.log1p(np.clip(M, 0, None)).astype(np.float16),
+                        rows=np.array(rows), cols=np.array(cols))
+    json.dump(dict(meta=meta, info=info), open(os.path.join(d, f"{name}_meta.json"), "w"))
+    print(f"{name}: {M.shape[0]:,} profiles x {M.shape[1]:,} genes  {info}", flush=True)
+
+
+def gtex():
+    url = "https://storage.googleapis.com/adult-gtex/bulk-gex/v8/rna-seq/GTEx_Analysis_2017-06-05_v8_RNASeQCv1.1.9_gene_median_tpm.gct.gz"
+    lines = _gunzip(_get(url)).splitlines()
+    head = lines[2].split("\t"); tissues = head[2:]
+    genes, sym, M = [], [], []
+    for l in lines[3:]:
+        f = l.split("\t")
+        if len(f) == len(head):
+            genes.append(f[0].split(".")[0]); sym.append(f[1]); M.append([float(x) for x in f[2:]])
+    M = np.array(M, dtype=np.float32).T
+    _save_profiles("gtex_v8_tissue_median", M, tissues, genes, dict(symbols=sym),
+                   dict(source="gtex_portal", url=url, unit="median TPM per tissue (log1p stored)", tissues=len(tissues)))
+
+
+def fantom5(species="human"):
+    asm = "hg38" if species == "human" else "mm10"
+    url = (f"https://fantom.gsc.riken.jp/5/datafiles/reprocessed/{asm}_latest/extra/CAGE_peaks_expression/"
+           f"{asm}_fair+new_genes_phase1and2_tpm.osc.txt.gz")
+    import urllib.parse
+    lines = [l for l in _gunzip(_get(url)).splitlines() if not l.startswith("##")]
+    head = lines[0].split("\t"); samples = head[1:]
+    genes, M = [], []
+    for l in lines[1:]:
+        f = l.split("\t")
+        if len(f) == len(head):
+            genes.append(f[0]); M.append([float(x) for x in f[1:]])
+    M = np.array(M, dtype=np.float32).T
+    desc = [urllib.parse.unquote(s.split(".CNhs")[0].replace("tpm.", "", 1)) for s in samples]
+    lib = [s.split(".")[-4] if s.count(".") >= 4 else "" for s in samples]
+    _save_profiles(f"fantom5_cage_{species}", M, samples, genes, dict(description=desc, library=lib),
+                   dict(source="fantom5_cage", url=url, unit="CAGE TPM per gene (log1p stored)", samples=len(samples), assembly=asm))
+
+
+ENC = "https://www.encodeproject.org"
+ANN_PREF = {"GRCh38": ["V29", "V24", "V22", None], "mm10": ["M21", "M4", None]}
+
+
+def _enc_json(q):
+    return json.loads(_get(ENC + q + "&format=json&limit=all").decode())["@graph"]
+
+
+def _enc_tpm(href):
+    lines = _get(ENC + href).decode().splitlines()
+    h = lines[0].split("\t"); gi, ti = h.index("gene_id"), h.index("TPM")
+    out = {}
+    for l in lines[1:]:
+        f = l.split("\t")
+        if len(f) > ti and f[gi].startswith("ENS"):
+            out[f[gi].split(".")[0]] = float(f[ti])
+    return out
+
+
+def encode_rna():
+    t0 = time.time()
+    exps = _enc_json("/search/?type=Experiment&status=released&assay_title=total+RNA-seq&assay_title=polyA+plus+RNA-seq"
+                     "&files.output_type=gene+quantifications&field=accession&field=assay_title&field=biosample_ontology.term_name"
+                     "&field=biosample_ontology.term_id&field=biosample_ontology.classification&field=replicates.library.biosample.organism.scientific_name"
+                     "&field=replicates.library.biosample.life_stage")
+    meta = {}
+    for e in exps:
+        reps = [r["library"]["biosample"] for r in e.get("replicates", []) if r.get("library", {}).get("biosample")]
+        meta[e["accession"]] = dict(assay=e["assay_title"], biosample=e["biosample_ontology"]["term_name"],
+                                    term_id=e["biosample_ontology"]["term_id"], classification=e["biosample_ontology"]["classification"],
+                                    organism=reps[0]["organism"]["scientific_name"] if reps else "?",
+                                    life_stage=sorted({b.get("life_stage", "") for b in reps}))
+    files = _enc_json("/search/?type=File&status=released&output_type=gene+quantifications&file_format=tsv"
+                      "&assay_title=total+RNA-seq&assay_title=polyA+plus+RNA-seq&field=accession&field=href&field=dataset"
+                      "&field=assembly&field=genome_annotation")
+    by = {}
+    for f in files:
+        acc = f["dataset"].strip("/").split("/")[-1]
+        if f.get("assembly") in ANN_PREF and acc in meta:
+            by.setdefault((acc, f["assembly"]), []).append(f)
+    chosen = {}
+    for (acc, asm), fl in by.items():
+        for ann in ANN_PREF[asm]:
+            sel = [f for f in fl if f.get("genome_annotation") == ann]
+            if sel:
+                chosen[(acc, asm)] = (ann, sel); break
+    for asm, species in (("GRCh38", "human"), ("mm10", "mouse")):
+        keys = sorted(k for k in chosen if k[1] == asm)
+        sh = os.path.join(BANK, "bulk", f"encode_rna_{species}_shards"); os.makedirs(sh, exist_ok=True)
+        ref_p = os.path.join(sh, "genes.json")
+        if not os.path.exists(ref_p):
+            ann0 = ANN_PREF[asm][0]
+            first = next(f for k in keys for f in chosen[k][1] if chosen[k][0] == ann0)
+            json.dump(sorted(_enc_tpm(first["href"])), open(ref_p, "w"))
+        ref = json.load(open(ref_p)); col = {g: i for i, g in enumerate(ref)}
+
+        def one(k):
+            p = os.path.join(sh, f"{k[0]}.npy")
+            if os.path.exists(p):
+                return
+            vs = []
+            for f in chosen[k][1]:
+                v = np.full(len(ref), np.nan, np.float32)
+                for g, x in _enc_tpm(f["href"]).items():
+                    if g in col:
+                        v[col[g]] = x
+                vs.append(v)
+            np.save(p, np.nanmean(np.stack(vs), 0).astype(np.float32))
+        done = 0
+        with ThreadPoolExecutor(4) as ex:
+            for _ in as_completed([ex.submit(one, k) for k in keys]):
+                done += 1
+                if done % 100 == 0 or done == len(keys):
+                    print(f"encode_rna {species}: {done}/{len(keys)} experiments ({time.time() - t0:.0f}s)", flush=True)
+        M = np.stack([np.load(os.path.join(sh, f"{k[0]}.npy")) for k in keys])
+        rows = [k[0] for k in keys]
+        m = dict(experiment=rows, annotation=[chosen[k][0] for k in keys], replicates=[len(chosen[k][1]) for k in keys],
+                 **{f: [meta[k[0]][f] for k in keys] for f in ("assay", "biosample", "term_id", "classification", "life_stage")})
+        _save_profiles(f"encode_rna_{species}", np.nan_to_num(M), rows, ref, m,
+                       dict(source="encode_portal", unit="RSEM TPM per gene, replicates averaged (log1p stored)", experiments=len(rows),
+                            biosamples=len(set(m["biosample"])), assembly=asm))
+
+
 if __name__ == "__main__":
     cmd = sys.argv[1]
     if cmd == "cellxgene":
         cellxgene(sys.argv[2] if len(sys.argv) > 2 else "human")
+    elif cmd == "gtex":
+        gtex()
+    elif cmd == "fantom5":
+        fantom5(sys.argv[2] if len(sys.argv) > 2 else "human")
+    elif cmd == "encode_rna":
+        encode_rna()
