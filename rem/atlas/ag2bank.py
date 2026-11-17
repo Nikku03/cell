@@ -492,7 +492,10 @@ def genetics():
     base = "https://ftp.ebi.ac.uk/pub/databases/spot/eQTL/r8_beta/susie/QTS000045/"
     qtds = sorted(set(_links(base, r'href="(QTD\d+)/"')))
     for q in qtds:
-        for fn in _links(base + q + "/", r'href="([^"]+credible_sets\.tsv\.gz)"'):
+        fns = _links(base + q + "/", r'href="([^"]+credible_sets\.(?:tsv\.gz|parquet))"')
+        if not fns:
+            raise RuntimeError(f"IBDverse {q}: no credible-set file listed")
+        for fn in fns:
             _save(base + q + "/" + fn, os.path.join(ib, fn))
     rep["ibdverse_datasets"] = len(qtds); rep["ibdverse_files"] = len(os.listdir(ib))
     print(f"genetics: IBDverse {len(qtds)} datasets ({time.time() - t0:.0f}s)", flush=True)
