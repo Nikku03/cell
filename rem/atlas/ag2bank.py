@@ -175,15 +175,66 @@ def _enc_json(q):
     return json.loads(_get(ENC + q + "&format=json&limit=all").decode())["@graph"]
 
 
-def _enc_tpm(href):
+GENCODE_LEN = {"GRCh38": GENCODE46 if "GENCODE46" in globals() else None,
+               "mm10": "https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M25/gencode.vM25.basic.annotation.gtf.gz"}
+_LEN = {}
+
+
+def _gene_lengths(asm):
+    """Exon-union length (bp) per unversioned gene id, from GENCODE basic (v46 human, vM25 mouse); cached."""
+    if asm in _LEN:
+        return _LEN[asm]
+    p = os.path.join(RAW, f"gene_lengths_{asm}.json")
+    if not os.path.exists(p):
+        import gzip
+        import io
+        import re
+        url = GENCODE_LEN[asm] or "https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_46/gencode.v46.basic.annotation.gtf.gz"
+        ex = {}
+        for line in io.TextIOWrapper(gzip.GzipFile(fileobj=io.BytesIO(_get(url))), encoding="utf-8"):
+            if line.startswith("#"):
+                continue
+            f = line.split("\t")
+            if f[2] == "exon":
+                g = re.search('gene_id "([^".]+)', f[8]).group(1)
+                ex.setdefault(g, []).append((int(f[3]), int(f[4])))
+        L = {}
+        for g, iv in ex.items():
+            iv.sort(); tot, s0, e0 = 0, iv[0][0], iv[0][1]
+            for s, e in iv[1:]:
+                if s > e0:
+                    tot += e0 - s0 + 1; s0, e0 = s, e
+                else:
+                    e0 = max(e0, e)
+            L[g] = tot + e0 - s0 + 1
+        os.makedirs(RAW, exist_ok=True); json.dump(L, open(p, "w"))
+    _LEN[asm] = json.load(open(p)); return _LEN[asm]
+
+
+def _enc_tpm(href, asm="GRCh38"):
     lines = _get(ENC + href).decode().splitlines()
-    h = lines[0].split("\t"); gi, ti = h.index("gene_id"), h.index("TPM")
+    h = lines[0].split("\t")
     out = {}
-    for l in lines[1:]:
-        f = l.split("\t")
-        if len(f) > ti and f[gi].startswith("ENS"):
-            out[f[gi].split(".")[0]] = float(f[ti])
-    return out
+    if "TPM" in h and "gene_id" in h:                       # RSEM gene quantification
+        gi, ti = h.index("gene_id"), h.index("TPM")
+        for l in lines[1:]:
+            f = l.split("\t")
+            if len(f) > ti and f[gi].startswith("ENS"):
+                out[f[gi].split(".")[0]] = float(f[ti])
+        return out
+    # STAR ReadsPerGene counts (no header): gene, unstranded, strand 1, strand 2 -> TPM with GENCODE exon lengths,
+    # using the count column with the largest total (the library's strandedness)
+    rows = [l.split("\t") for l in lines if l.startswith("ENS")]
+    if not rows or len(rows[0]) < 4:
+        raise ValueError(f"unrecognised gene quantification format: {href}")
+    C = np.array([[float(x) for x in r[1:4]] for r in rows]); col = int(C[:, 1:].sum(0).argmax()) + 1 if C[:, 1:].sum() > 0.6 * C[:, 0].sum() else 0
+    L = _gene_lengths(asm); rate = {}
+    for r, c in zip(rows, C[:, col]):
+        g = r[0].split(".")[0]; ln = L.get(g)
+        if ln:
+            rate[g] = c / (ln / 1000.0)
+    tot = sum(rate.values()) or 1.0
+    return {g: v / tot * 1e6 for g, v in rate.items()}
 
 
 def encode_rna():
@@ -220,7 +271,7 @@ def encode_rna():
         if not os.path.exists(ref_p):
             ann0 = ANN_PREF[asm][0]
             first = next(f for k in keys for f in chosen[k][1] if chosen[k][0] == ann0)
-            json.dump(sorted(_enc_tpm(first["href"])), open(ref_p, "w"))
+            json.dump(sorted(_enc_tpm(first["href"], asm)), open(ref_p, "w"))
         ref = json.load(open(ref_p)); col = {g: i for i, g in enumerate(ref)}
 
         def one(k):
@@ -230,23 +281,30 @@ def encode_rna():
             vs = []
             for f in chosen[k][1]:
                 v = np.full(len(ref), np.nan, np.float32)
-                for g, x in _enc_tpm(f["href"]).items():
+                for g, x in _enc_tpm(f["href"], asm).items():
                     if g in col:
                         v[col[g]] = x
                 vs.append(v)
             np.save(p, np.nanmean(np.stack(vs), 0).astype(np.float32))
-        done = 0
+        done, failed = 0, []
         with ThreadPoolExecutor(4) as ex:
-            for _ in as_completed([ex.submit(one, k) for k in keys]):
+            futs = {ex.submit(one, k): k for k in keys}
+            for fu in as_completed(futs):
                 done += 1
+                try:
+                    fu.result()
+                except Exception as e:                      # logged and skipped, never silent
+                    failed.append(dict(experiment=futs[fu][0], error=str(e)[:200]))
                 if done % 100 == 0 or done == len(keys):
-                    print(f"encode_rna {species}: {done}/{len(keys)} experiments ({time.time() - t0:.0f}s)", flush=True)
+                    print(f"encode_rna {species}: {done}/{len(keys)} experiments, {len(failed)} failed ({time.time() - t0:.0f}s)", flush=True)
+        keys = [k for k in keys if os.path.exists(os.path.join(sh, f"{k[0]}.npy"))]
         M = np.stack([np.load(os.path.join(sh, f"{k[0]}.npy")) for k in keys])
         rows = [k[0] for k in keys]
         m = dict(experiment=rows, annotation=[chosen[k][0] for k in keys], replicates=[len(chosen[k][1]) for k in keys],
                  **{f: [meta[k[0]][f] for k in keys] for f in ("assay", "biosample", "term_id", "classification", "life_stage")})
         _save_profiles(f"encode_rna_{species}", np.nan_to_num(M), rows, ref, m,
-                       dict(source="encode_portal", unit="RSEM TPM per gene, replicates averaged (log1p stored)", experiments=len(rows),
+                       dict(source="encode_portal", unit="TPM per gene, replicates averaged (log1p stored); RSEM TPM, or STAR gene counts "
+                                 "converted with GENCODE exon-union lengths where only those exist (annotation None)", experiments=len(rows), failed=failed,
                             biosamples=len(set(m["biosample"])), assembly=asm))
 
 
