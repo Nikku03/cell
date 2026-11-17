@@ -506,8 +506,81 @@ def assemble(species="human"):
           f"{len(shards)} shards ({time.time() - t0:.0f}s)", flush=True)
 
 
+NOT_FETCHED = {
+    "contact_maps": "77 Hi-C / Micro-C maps of 10-100+ GB each; the compact form the model needs (1-Mb-window contacts at 2 kb) "
+                    "means reading most of each file. Not pulled.",
+    "methylation_snm3c": "single-nucleus ALLC files (terabytes on Hugging Face). Not pulled; the bulk WGBS atlas is.",
+    "single_cell_corpus": "raw count matrices of the 36 studies (terabytes). Their cell-type summaries are covered by the CELLxGENE "
+                          "aggregates wherever the study is on CELLxGENE; ENCODE/GEO-only studies are not.",
+    "expression_encoder_cells": "107 million individual cells (terabytes). Summarised as CELLxGENE per-cell-type aggregates instead.",
+    "bulk_rna_recount3": "recount3 coverage (terabytes); GTEx and ENCODE gene-level expression pulled instead.",
+    "procap": "PRO-cap tracks: source list is in AlphaGenome 1's supplement, not this paper. Not pulled.",
+    "tenk10k": "TenK10K single-cell eQTL summary statistics: no public download found (2026-11-17).",
+    "parkinsons": "Sigalova et al. 2026 Parkinson's multiome: cohort data, access not public / not located.",
+    "covid_vaccine": "Zhang et al. 2023 vaccine atlas: GEO accession not confirmed (candidates GSE202262, PRJNA985376/7). Not pulled.",
+    "astrocyte_crispri": "Green et al. 2026 astrocyte CRISPRi: data location not found. Not pulled.",
+    "cellxgene_heldout": "evaluation split of CELLxGENE; the data are inside the CELLxGENE aggregates.",
+    "imputation_heldout": "ENCODE tracks; inside the ENCODE pulls.",
+    "ag1_qtl_benchmarks": "AlphaGenome 1 benchmark sets; defined in AlphaGenome 1's supplement. Not pulled.",
+    "hudep2_bcl11a": "single-locus case study: 3.8 GB ATAC bigWigs + 12.9 GB Capture-Pore-C pairs. Not pulled.",
+    "ag2_predictions": "AlphaGenome 2's own predictions: the download page needs a Google account sign-in. Not pulled from here.",
+    "gwas_panel_gnomad": "gnomAD v4.1 common variants: sites files are hundreds of GB. Not pulled; Open Targets credible sets are.",
+}
+
+
+def _du(p):
+    tot = 0
+    for root, _, files in os.walk(p):
+        for f in files:
+            tot += os.path.getsize(os.path.join(root, f))
+    return tot
+
+
+def report():
+    out = dict(built=time.strftime("%Y-%m-%d"), bank_dir="rem/atlas/_cache/ag2bank (local, git-ignored)", holdings={}, not_fetched=NOT_FETCHED)
+    H = out["holdings"]
+    for sp in ("human", "mouse"):
+        p = os.path.join(BANK, "cellxgene", f"cellxgene_{sp}_pairs.json")
+        if os.path.exists(p):
+            j = json.load(open(p))
+            H[f"cellxgene_{sp}"] = dict(genes=j["genes"], tissue_cell_type_pairs=len(j["pairs"]), tissues=j["tissues"],
+                                        cell_types=j["cell_types"], cells=j["cells_total"], entries=j["entries"],
+                                        mb=round(os.path.getsize(os.path.join(BANK, "cellxgene", f"cellxgene_{sp}.npz")) / 1e6, 1))
+    for f in sorted(os.listdir(os.path.join(BANK, "bulk"))) if os.path.isdir(os.path.join(BANK, "bulk")) else []:
+        if f.endswith("_meta.json"):
+            j = json.load(open(os.path.join(BANK, "bulk", f))); n = f[:-10]
+            z = np.load(os.path.join(BANK, "bulk", n + ".npz"))
+            H[n] = dict(j["info"], profiles=int(z["X"].shape[0]), genes=int(z["X"].shape[1]),
+                        mb=round(os.path.getsize(os.path.join(BANK, "bulk", n + ".npz")) / 1e6, 1))
+            if "biosample" in j["meta"]:
+                H[n]["distinct_biosamples"] = len(set(j["meta"]["biosample"]))
+    for sp in ("human", "mouse"):
+        p = os.path.join(BANK, "ccre", sp, "meta.json")
+        if os.path.exists(p):
+            j = json.load(open(p))
+            H[f"ccre_{sp}"] = dict(biosamples=len(j["biosamples"]), registry_elements=j["registry_elements"], classes=j["classes"],
+                                   distinct_biosample_terms=len({b["biosample"] for b in j["biosamples"]}),
+                                   mb=round(_du(os.path.join(BANK, "ccre", sp)) / 1e6, 1))
+    p = os.path.join(BANK, "methylation", "meta.json")
+    if os.path.exists(p):
+        H["methylation_wgbs"] = dict(json.load(open(p)), mb=round(os.path.getsize(os.path.join(BANK, "methylation", "loyfer2023_promoter_beta.npz")) / 1e6, 1))
+        H["methylation_wgbs"]["cell_types"] = len(H["methylation_wgbs"]["cell_types"])
+    p = os.path.join(BANK, "genetics", "report.json")
+    if os.path.exists(p):
+        H["genetics"] = dict(json.load(open(p)), mb=round(_du(os.path.join(BANK, "genetics")) / 1e6, 1))
+    p = os.path.join(BANK, "enhancer_gene", "report.json")
+    if os.path.exists(p):
+        H["enhancer_gene_crispri"] = dict(json.load(open(p)), mb=round(_du(os.path.join(BANK, "enhancer_gene")) / 1e6, 1))
+    out["total_mb"] = round(sum(v.get("mb", 0) for v in H.values()), 1)
+    os.makedirs(R("outputs", "ag2bank"), exist_ok=True)
+    json.dump(out, open(R("outputs", "ag2bank", "build_report.json"), "w"), indent=1)
+    print(json.dumps(out, indent=1)[:6000])
+
+
 if __name__ == "__main__":
     cmd = sys.argv[1]
+    if cmd == "report":
+        report()
     if cmd == "assemble":
         assemble(sys.argv[2] if len(sys.argv) > 2 else "human")
     if cmd in ("methylation", "genetics", "e2g"):
