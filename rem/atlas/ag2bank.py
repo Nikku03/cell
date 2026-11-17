@@ -532,16 +532,44 @@ def e2g():
     print(f"e2g: {rep}", flush=True)
 
 
+def _cl_names():
+    """Cell Ontology id -> name, from the CL basic OBO release (cached)."""
+    p = os.path.join(RAW, "cl_names.json")
+    if not os.path.exists(p):
+        txt = _get("http://purl.obolibrary.org/obo/cl/cl-basic.obo").decode(errors="replace")
+        names, cur = {}, None
+        for line in txt.splitlines():
+            if line.startswith("id: "):
+                cur = line[4:].strip()
+            elif line.startswith("name: ") and cur:
+                names.setdefault(cur, line[6:].strip())
+            elif line.startswith("[Term]"):
+                cur = None
+        os.makedirs(RAW, exist_ok=True); json.dump(names, open(p, "w"))
+    return json.load(open(p))
+
+
 def assemble(species="human"):
     """CELLxGENE shards -> one CSR matrix (genes x tissue-cell-type pairs) of uint8 me and pc, plus a pair table."""
     t0 = time.time(); d = os.path.join(BANK, "cellxgene", species)
     G = json.load(open(os.path.join(d, "genes.json"))); L = json.load(open(os.path.join(d, "labels.json")))["cell_types"]
     tname = {k: v for x in G["tissues"] for k, v in x.items()}
-    pairs = sorted((t, c) for t, cts in L.items() for c in cts)
-    pcol = {p: i for i, p in enumerate(pairs)}; grow = {g: i for i, (g, _) in enumerate(G["genes"])}
-    R_, C_, ME, PC = [], [], [], []
     import glob
     shards = sorted(glob.glob(os.path.join(d, "shards", "shard_*.npz")))
+    # every pair seen in the data, not only those the service labels (rolled-up parent cell types are unlabelled);
+    # cells per pair: the label table's total where given, else estimated as max over genes of n / pc
+    seen, est = set(), {}
+    for f in shards:
+        z = np.load(f)
+        for t, c, n, pc in zip(z["tissue"].tolist(), z["cell"].tolist(), z["n"].tolist(), z["pc"].tolist()):
+            seen.add((t, c))
+            if pc >= 25:                                     # pc >= ~0.1: a stable n / pc
+                e = n / (pc / 255.0)
+                if e > est.get((t, c), 0):
+                    est[(t, c)] = e
+    pairs = sorted(seen | {(t, c) for t, cts in L.items() for c in cts})
+    pcol = {p: i for i, p in enumerate(pairs)}; grow = {g: i for i, (g, _) in enumerate(G["genes"])}
+    R_, C_, ME, PC = [], [], [], []
     for f in shards:
         z = np.load(f)
         R_.append(np.array([grow[g] for g in z["gene"]], np.int32))
@@ -553,8 +581,13 @@ def assemble(species="human"):
     indptr = np.concatenate([[0], np.cumsum(np.bincount(r, minlength=len(G["genes"])))]).astype(np.int64)
     np.savez_compressed(os.path.join(BANK, "cellxgene", f"cellxgene_{species}.npz"), indptr=indptr, col=c, me=me, pc=pc,
                         genes=np.array([g for g, _ in G["genes"]]), symbols=np.array([s for _, s in G["genes"]]))
-    pt = [dict(tissue=t, tissue_name=tname.get(t, ""), cell_type=ct, cell_type_name=L[t][ct]["aggregated"]["name"],
-               cells=L[t][ct]["aggregated"]["total_count"]) for t, ct in pairs]
+    cl = _cl_names()
+    pt = []
+    for t, ct in pairs:
+        lab = L.get(t, {}).get(ct, {}).get("aggregated")
+        pt.append(dict(tissue=t, tissue_name=tname.get(t, ""), cell_type=ct,
+                       cell_type_name=lab["name"] if lab else cl.get(ct, ""), labelled=bool(lab),
+                       cells=int(lab["total_count"]) if lab else int(round(est.get((t, ct), 0))), cells_estimated=not lab))
     json.dump(dict(species=species, snapshot_id=G["snapshot_id"], shards=len(shards), genes=len(G["genes"]), pairs=pt,
                    tissues=len({p["tissue"] for p in pt}), cell_types=len({p["cell_type"] for p in pt}),
                    cells_total=int(sum(p["cells"] for p in pt if p["cell_type"] == "CL:0000000")),
