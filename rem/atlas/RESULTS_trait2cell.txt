@@ -1,0 +1,29 @@
+=================================================================================================
+TRAIT2CELL -- use 4: disease variants -> cell types (Open Targets credible sets x ENCODE open chromatin)
+=================================================================================================
+  V1 PRIMARY (known answers): 7 of 8 traits' top biosample in the expected category (chance expectation 0.97, p = 6.8e-08) -> PASS
+  * LDL cholesterol              -> left lobe of liver                           t   20.0  expected liver     HIT  (first expected at rank 1)
+      next: right lobe of liver; right lobe of liver; right lobe of liver; right lobe of liver
+  * lymphocyte count             -> lower lobe of left lung                      t    5.3  expected lymphoid  miss (first expected at rank 29)
+      next: upper lobe of left lung; dorsolateral prefrontal cortex; pancreas; frontal cortex
+  * red blood cell count         -> CMK                                          t   12.8  expected erythroid HIT  (first expected at rank 1)
+      next: hematopoietic multipotent prog; hematopoietic multipotent prog; hematopoietic multipotent prog; hematopoietic multipotent prog
+  * inflammatory bowel disease   -> stimulated activated CD8-positive, alpha-bet t    6.4  expected immune    HIT  (first expected at rank 1)
+      next: stimulated activated CD4-posit; T-helper 1 cell; CD4-positive, alpha-beta T cel; activated CD4-positive, alpha-
+  * atrial fibrillation          -> heart                                        t   12.8  expected heart     HIT  (first expected at rank 1)
+      next: left cardiac atrium; heart; heart; heart
+  * schizophrenia                -> dorsolateral prefrontal cortex               t    5.2  expected brain     HIT  (first expected at rank 1)
+      next: putamen; vagina; inferior parietal cortex; effector memory CD4-positive, 
+  * monocyte count               -> CD14-positive monocyte                       t   18.9  expected myeloid   HIT  (first expected at rank 1)
+      next: CD14-positive monocyte; CD14-positive monocyte; CD14-positive monocyte; HL-60
+  * eGFR                         -> kidney                                       t   11.4  expected kidney    HIT  (first expected at rank 1)
+      next: renal pelvis; lower lobe of left lung; right lobe of liver; right kidney
+    Alzheimer's disease          -> heart right ventricle                        t    6.6  expected myeloid   miss (first expected at rank 2)
+      next: CD14-positive monocyte; T-cell; CD1c-positive myeloid dendriti; right lobe of liver
+    type 2 diabetes              -> lower lobe of left lung                      t   10.4  expected pancreas  miss (first expected at rank 5)
+      next: upper lobe of left lung; chorion; right kidney; pancreas
+    platelet count               -> CMK                                          t   15.5  expected erythroid HIT  (first expected at rank 1)
+      next: hematopoietic multipotent prog; spleen; hematopoietic multipotent prog; common myeloid progenitor, CD3
+    height                       -> left hindlimb                                t   15.6  expected None      miss (first expected at rank None)
+      next: femur; right forelimb; right hindlimb; upper lobe of left lung
+  (* gated; the others are descriptive. Score = t statistic of 'open in this biosample' for the trait's PIP, controlling for how many biosamples the element is open in.)

@@ -1,0 +1,714 @@
+{
+ "hits": 7,
+ "of": 8,
+ "chance_p": 6.771342196245175e-08,
+ "chance_expected": 0.9690566037735848,
+ "verdict": "PASS",
+ "category_share": {
+  "brain": 0.19169811320754718,
+  "kidney": 0.06566037735849056,
+  "erythroid": 0.02339622641509434,
+  "liver": 0.010566037735849057,
+  "heart": 0.045283018867924525,
+  "lymphoid": 0.28679245283018867,
+  "pancreas": 0.013584905660377358,
+  "myeloid": 0.02339622641509434,
+  "immune": 0.3222641509433962
+ },
+ "traits": {
+  "ldl": {
+   "label": "LDL cholesterol",
+   "study": "GCST90002412",
+   "expected": "liver",
+   "hit": true,
+   "first_expected_rank": 1,
+   "top": [
+    {
+     "annotation": "ENCSR381HUL",
+     "biosample": "left lobe of liver",
+     "description": "candidate regulatory elements for GRCh38 in left lobe of liver",
+     "t": 20.0,
+     "categories": [
+      "liver"
+     ]
+    },
+    {
+     "annotation": "ENCSR934LAZ",
+     "biosample": "right lobe of liver",
+     "description": "candidate regulatory elements for GRCh38 in right lobe of liver",
+     "t": 19.55,
+     "categories": [
+      "liver"
+     ]
+    },
+    {
+     "annotation": "ENCSR020PMU",
+     "biosample": "right lobe of liver",
+     "description": "candidate regulatory elements for GRCh38 in right lobe of liver",
+     "t": 16.14,
+     "categories": [
+      "liver"
+     ]
+    },
+    {
+     "annotation": "ENCSR409STE",
+     "biosample": "right lobe of liver",
+     "description": "candidate regulatory elements for GRCh38 in right lobe of liver",
+     "t": 15.33,
+     "categories": [
+      "liver"
+     ]
+    },
+    {
+     "annotation": "ENCSR311SUG",
+     "biosample": "right lobe of liver",
+     "description": "candidate regulatory elements for GRCh38 in right lobe of liver",
+     "t": 14.96,
+     "categories": [
+      "liver"
+     ]
+    }
+   ],
+   "gated": true,
+   "variants_in_elements": 3639,
+   "pip_in_elements": 270.6,
+   "pip_total": 676.0
+  },
+  "lymph": {
+   "label": "lymphocyte count",
+   "study": "GCST90310171",
+   "expected": "lymphoid",
+   "hit": false,
+   "first_expected_rank": 29,
+   "top": [
+    {
+     "annotation": "ENCSR743RYE",
+     "biosample": "lower lobe of left lung",
+     "description": "candidate regulatory elements for GRCh38 in lower lobe of left lung",
+     "t": 5.3,
+     "categories": []
+    },
+    {
+     "annotation": "ENCSR749FOZ",
+     "biosample": "upper lobe of left lung",
+     "description": "candidate regulatory elements for GRCh38 in upper lobe of left lung",
+     "t": 4.36,
+     "categories": []
+    },
+    {
+     "annotation": "ENCSR826JNM",
+     "biosample": "dorsolateral prefrontal cortex",
+     "description": "candidate regulatory elements for GRCh38 in dorsolateral prefrontal cortex (previously identified as middle frontal area 46) (Alzheimer's disease)",
+     "t": 3.41,
+     "categories": [
+      "brain"
+     ]
+    },
+    {
+     "annotation": "ENCSR642FFJ",
+     "biosample": "pancreas",
+     "description": "candidate regulatory elements for GRCh38 in pancreas",
+     "t": 3.4,
+     "categories": [
+      "pancreas"
+     ]
+    },
+    {
+     "annotation": "ENCSR099CXL",
+     "biosample": "frontal cortex",
+     "description": "candidate regulatory elements for GRCh38 in frontal cortex",
+     "t": 3.35,
+     "categories": [
+      "brain"
+     ]
+    }
+   ],
+   "gated": true,
+   "variants_in_elements": 1003,
+   "pip_in_elements": 593.0,
+   "pip_total": 2494.7
+  },
+  "rbc": {
+   "label": "red blood cell count",
+   "study": "GCST90476345",
+   "expected": "erythroid",
+   "hit": true,
+   "first_expected_rank": 1,
+   "top": [
+    {
+     "annotation": "ENCSR380YQG",
+     "biosample": "CMK",
+     "description": "candidate regulatory elements for GRCh38 in CMK",
+     "t": 12.8,
+     "categories": [
+      "erythroid",
+      "immune",
+      "myeloid"
+     ]
+    },
+    {
+     "annotation": "ENCSR842LUC",
+     "biosample": "hematopoietic multipotent progenitor cell",
+     "description": "candidate regulatory elements for GRCh38 in hematopoietic multipotent progenitor cell (treated)",
+     "t": 10.44,
+     "categories": [
+      "erythroid"
+     ]
+    },
+    {
+     "annotation": "ENCSR261ENT",
+     "biosample": "hematopoietic multipotent progenitor cell",
+     "description": "candidate regulatory elements for GRCh38 in hematopoietic multipotent progenitor cell (treated)",
+     "t": 10.25,
+     "categories": [
+      "erythroid"
+     ]
+    },
+    {
+     "annotation": "ENCSR001KHN",
+     "biosample": "hematopoietic multipotent progenitor cell",
+     "description": "candidate regulatory elements for GRCh38 in hematopoietic multipotent progenitor cell (treated)",
+     "t": 9.69,
+     "categories": [
+      "erythroid"
+     ]
+    },
+    {
+     "annotation": "ENCSR163AUS",
+     "biosample": "hematopoietic multipotent progenitor cell",
+     "description": "candidate regulatory elements for GRCh38 in hematopoietic multipotent progenitor cell (treated)",
+     "t": 9.5,
+     "categories": [
+      "erythroid"
+     ]
+    }
+   ],
+   "gated": true,
+   "variants_in_elements": 6302,
+   "pip_in_elements": 587.9,
+   "pip_total": 1783.6
+  },
+  "ibd": {
+   "label": "inflammatory bowel disease",
+   "study": "GCST90292538",
+   "expected": "immune",
+   "hit": true,
+   "first_expected_rank": 1,
+   "top": [
+    {
+     "annotation": "ENCSR800PNA",
+     "biosample": "stimulated activated CD8-positive, alpha-beta memory T cell",
+     "description": "candidate regulatory elements for GRCh38 in stimulated activated CD8-positive, alpha-beta memory T cell (treated)",
+     "t": 6.36,
+     "categories": [
+      "immune",
+      "lymphoid"
+     ]
+    },
+    {
+     "annotation": "ENCSR304VWJ",
+     "biosample": "stimulated activated CD4-positive, alpha-beta T cell",
+     "description": "candidate regulatory elements for GRCh38 in stimulated activated CD4-positive, alpha-beta T cell (treated)",
+     "t": 6.2,
+     "categories": [
+      "immune",
+      "lymphoid"
+     ]
+    },
+    {
+     "annotation": "ENCSR875KMH",
+     "biosample": "T-helper 1 cell",
+     "description": "candidate regulatory elements for GRCh38 in T-helper 1 cell",
+     "t": 5.77,
+     "categories": [
+      "immune",
+      "lymphoid"
+     ]
+    },
+    {
+     "annotation": "ENCSR755AQQ",
+     "biosample": "CD4-positive, alpha-beta T cell",
+     "description": "candidate regulatory elements for GRCh38 in CD4-positive, alpha-beta T cell (treated)",
+     "t": 5.73,
+     "categories": [
+      "immune",
+      "lymphoid"
+     ]
+    },
+    {
+     "annotation": "ENCSR675EMF",
+     "biosample": "activated CD4-positive, alpha-beta T cell",
+     "description": "candidate regulatory elements for GRCh38 in activated CD4-positive, alpha-beta T cell (treated)",
+     "t": 5.65,
+     "categories": [
+      "immune",
+      "lymphoid"
+     ]
+    }
+   ],
+   "gated": true,
+   "variants_in_elements": 245,
+   "pip_in_elements": 108.4,
+   "pip_total": 290.6
+  },
+  "af": {
+   "label": "atrial fibrillation",
+   "study": "GCST90624412",
+   "expected": "heart",
+   "hit": true,
+   "first_expected_rank": 1,
+   "top": [
+    {
+     "annotation": "ENCSR831AJL",
+     "biosample": "heart",
+     "description": "candidate regulatory elements for GRCh38 in heart (embryonic)",
+     "t": 12.75,
+     "categories": [
+      "heart"
+     ]
+    },
+    {
+     "annotation": "ENCSR868QGP",
+     "biosample": "left cardiac atrium",
+     "description": "candidate regulatory elements for GRCh38 in left cardiac atrium (embryonic)",
+     "t": 12.27,
+     "categories": [
+      "heart"
+     ]
+    },
+    {
+     "annotation": "ENCSR513OKX",
+     "biosample": "heart",
+     "description": "candidate regulatory elements for GRCh38 in heart (embryonic)",
+     "t": 11.88,
+     "categories": [
+      "heart"
+     ]
+    },
+    {
+     "annotation": "ENCSR296AQP",
+     "biosample": "heart",
+     "description": "candidate regulatory elements for GRCh38 in heart (embryonic)",
+     "t": 11.66,
+     "categories": [
+      "heart"
+     ]
+    },
+    {
+     "annotation": "ENCSR187CGW",
+     "biosample": "heart",
+     "description": "candidate regulatory elements for GRCh38 in heart (embryonic)",
+     "t": 11.48,
+     "categories": [
+      "heart"
+     ]
+    }
+   ],
+   "gated": true,
+   "variants_in_elements": 2227,
+   "pip_in_elements": 306.8,
+   "pip_total": 867.8
+  },
+  "scz": {
+   "label": "schizophrenia",
+   "study": "GCST90503210",
+   "expected": "brain",
+   "hit": true,
+   "first_expected_rank": 1,
+   "top": [
+    {
+     "annotation": "ENCSR810JSI",
+     "biosample": "dorsolateral prefrontal cortex",
+     "description": "candidate regulatory elements for GRCh38 in dorsolateral prefrontal cortex (previously identified as middle frontal area 46)",
+     "t": 5.18,
+     "categories": [
+      "brain"
+     ]
+    },
+    {
+     "annotation": "ENCSR662HRJ",
+     "biosample": "putamen",
+     "description": "candidate regulatory elements for GRCh38 in putamen",
+     "t": 4.97,
+     "categories": [
+      "brain"
+     ]
+    },
+    {
+     "annotation": "ENCSR674DOV",
+     "biosample": "vagina",
+     "description": "candidate regulatory elements for GRCh38 in vagina",
+     "t": 4.92,
+     "categories": []
+    },
+    {
+     "annotation": "ENCSR365KWZ",
+     "biosample": "inferior parietal cortex",
+     "description": "candidate regulatory elements for GRCh38 in inferior parietal cortex",
+     "t": 4.88,
+     "categories": [
+      "brain"
+     ]
+    },
+    {
+     "annotation": "ENCSR246PDA",
+     "biosample": "effector memory CD4-positive, alpha-beta T cell",
+     "description": "candidate regulatory elements for GRCh38 in effector memory CD4-positive, alpha-beta T cell",
+     "t": 4.76,
+     "categories": [
+      "immune",
+      "lymphoid"
+     ]
+    }
+   ],
+   "gated": true,
+   "variants_in_elements": 2797,
+   "pip_in_elements": 67.3,
+   "pip_total": 236.7
+  },
+  "mono": {
+   "label": "monocyte count",
+   "study": "GCST90002340",
+   "expected": "myeloid",
+   "hit": true,
+   "first_expected_rank": 1,
+   "top": [
+    {
+     "annotation": "ENCSR596FZJ",
+     "biosample": "CD14-positive monocyte",
+     "description": "candidate regulatory elements for GRCh38 in CD14-positive monocyte",
+     "t": 18.86,
+     "categories": [
+      "immune",
+      "myeloid"
+     ]
+    },
+    {
+     "annotation": "ENCSR972DQO",
+     "biosample": "CD14-positive monocyte",
+     "description": "candidate regulatory elements for GRCh38 in CD14-positive monocyte",
+     "t": 17.83,
+     "categories": [
+      "immune",
+      "myeloid"
+     ]
+    },
+    {
+     "annotation": "ENCSR504UVR",
+     "biosample": "CD14-positive monocyte",
+     "description": "candidate regulatory elements for GRCh38 in CD14-positive monocyte",
+     "t": 17.78,
+     "categories": [
+      "immune",
+      "myeloid"
+     ]
+    },
+    {
+     "annotation": "ENCSR164VIW",
+     "biosample": "CD14-positive monocyte",
+     "description": "candidate regulatory elements for GRCh38 in CD14-positive monocyte",
+     "t": 16.97,
+     "categories": [
+      "immune",
+      "myeloid"
+     ]
+    },
+    {
+     "annotation": "ENCSR745KBE",
+     "biosample": "HL-60",
+     "description": "candidate regulatory elements for GRCh38 in HL-60",
+     "t": 16.65,
+     "categories": [
+      "immune",
+      "myeloid"
+     ]
+    }
+   ],
+   "gated": true,
+   "variants_in_elements": 4214,
+   "pip_in_elements": 452.9,
+   "pip_total": 1118.7
+  },
+  "egfr": {
+   "label": "eGFR",
+   "study": "GCST90692984",
+   "expected": "kidney",
+   "hit": true,
+   "first_expected_rank": 1,
+   "top": [
+    {
+     "annotation": "ENCSR621EMQ",
+     "biosample": "kidney",
+     "description": "candidate regulatory elements for GRCh38 in kidney (embryonic)",
+     "t": 11.44,
+     "categories": [
+      "kidney"
+     ]
+    },
+    {
+     "annotation": "ENCSR044ILS",
+     "biosample": "renal pelvis",
+     "description": "candidate regulatory elements for GRCh38 in renal pelvis (embryonic)",
+     "t": 11.03,
+     "categories": [
+      "kidney"
+     ]
+    },
+    {
+     "annotation": "ENCSR743RYE",
+     "biosample": "lower lobe of left lung",
+     "description": "candidate regulatory elements for GRCh38 in lower lobe of left lung",
+     "t": 10.96,
+     "categories": []
+    },
+    {
+     "annotation": "ENCSR934LAZ",
+     "biosample": "right lobe of liver",
+     "description": "candidate regulatory elements for GRCh38 in right lobe of liver",
+     "t": 10.7,
+     "categories": [
+      "liver"
+     ]
+    },
+    {
+     "annotation": "ENCSR654HRK",
+     "biosample": "right kidney",
+     "description": "candidate regulatory elements for GRCh38 in right kidney (embryonic)",
+     "t": 10.46,
+     "categories": [
+      "kidney"
+     ]
+    }
+   ],
+   "gated": true,
+   "variants_in_elements": 4789,
+   "pip_in_elements": 402.5,
+   "pip_total": 1091.5
+  },
+  "alz": {
+   "label": "Alzheimer's disease",
+   "study": "GCST90027158",
+   "expected": "myeloid",
+   "hit": false,
+   "first_expected_rank": 2,
+   "top": [
+    {
+     "annotation": "ENCSR670PZI",
+     "biosample": "heart right ventricle",
+     "description": "candidate regulatory elements for GRCh38 in heart right ventricle",
+     "t": 6.61,
+     "categories": [
+      "heart"
+     ]
+    },
+    {
+     "annotation": "ENCSR504UVR",
+     "biosample": "CD14-positive monocyte",
+     "description": "candidate regulatory elements for GRCh38 in CD14-positive monocyte",
+     "t": 5.34,
+     "categories": [
+      "immune",
+      "myeloid"
+     ]
+    },
+    {
+     "annotation": "ENCSR839TDF",
+     "biosample": "T-cell",
+     "description": "candidate regulatory elements for GRCh38 in T-cell",
+     "t": 5.31,
+     "categories": [
+      "immune",
+      "lymphoid"
+     ]
+    },
+    {
+     "annotation": "ENCSR734TLD",
+     "biosample": "CD1c-positive myeloid dendritic cell",
+     "description": "candidate regulatory elements for GRCh38 in CD1c-positive myeloid dendritic cell",
+     "t": 5.25,
+     "categories": [
+      "immune",
+      "myeloid"
+     ]
+    },
+    {
+     "annotation": "ENCSR311SUG",
+     "biosample": "right lobe of liver",
+     "description": "candidate regulatory elements for GRCh38 in right lobe of liver",
+     "t": 5.23,
+     "categories": [
+      "liver"
+     ]
+    }
+   ],
+   "gated": false,
+   "variants_in_elements": 740,
+   "pip_in_elements": 36.0,
+   "pip_total": 81.1
+  },
+  "t2d": {
+   "label": "type 2 diabetes",
+   "study": "GCST90475667",
+   "expected": "pancreas",
+   "hit": false,
+   "first_expected_rank": 5,
+   "top": [
+    {
+     "annotation": "ENCSR743RYE",
+     "biosample": "lower lobe of left lung",
+     "description": "candidate regulatory elements for GRCh38 in lower lobe of left lung",
+     "t": 10.38,
+     "categories": []
+    },
+    {
+     "annotation": "ENCSR749FOZ",
+     "biosample": "upper lobe of left lung",
+     "description": "candidate regulatory elements for GRCh38 in upper lobe of left lung",
+     "t": 9.01,
+     "categories": []
+    },
+    {
+     "annotation": "ENCSR842JEQ",
+     "biosample": "chorion",
+     "description": "candidate regulatory elements for GRCh38 in chorion",
+     "t": 8.73,
+     "categories": []
+    },
+    {
+     "annotation": "ENCSR142LJA",
+     "biosample": "right kidney",
+     "description": "candidate regulatory elements for GRCh38 in right kidney (embryonic)",
+     "t": 7.61,
+     "categories": [
+      "kidney"
+     ]
+    },
+    {
+     "annotation": "ENCSR642FFJ",
+     "biosample": "pancreas",
+     "description": "candidate regulatory elements for GRCh38 in pancreas",
+     "t": 7.6,
+     "categories": [
+      "pancreas"
+     ]
+    }
+   ],
+   "gated": false,
+   "variants_in_elements": 4301,
+   "pip_in_elements": 305.2,
+   "pip_total": 920.3
+  },
+  "plt": {
+   "label": "platelet count",
+   "study": "GCST90691817",
+   "expected": "erythroid",
+   "hit": true,
+   "first_expected_rank": 1,
+   "top": [
+    {
+     "annotation": "ENCSR380YQG",
+     "biosample": "CMK",
+     "description": "candidate regulatory elements for GRCh38 in CMK",
+     "t": 15.53,
+     "categories": [
+      "erythroid",
+      "immune",
+      "myeloid"
+     ]
+    },
+    {
+     "annotation": "ENCSR001KHN",
+     "biosample": "hematopoietic multipotent progenitor cell",
+     "description": "candidate regulatory elements for GRCh38 in hematopoietic multipotent progenitor cell (treated)",
+     "t": 12.94,
+     "categories": [
+      "erythroid"
+     ]
+    },
+    {
+     "annotation": "ENCSR486PRW",
+     "biosample": "spleen",
+     "description": "candidate regulatory elements for GRCh38 in spleen (embryonic)",
+     "t": 12.8,
+     "categories": [
+      "immune"
+     ]
+    },
+    {
+     "annotation": "ENCSR659SDR",
+     "biosample": "hematopoietic multipotent progenitor cell",
+     "description": "candidate regulatory elements for GRCh38 in hematopoietic multipotent progenitor cell (treated)",
+     "t": 12.34,
+     "categories": [
+      "erythroid"
+     ]
+    },
+    {
+     "annotation": "ENCSR046VUS",
+     "biosample": "common myeloid progenitor, CD34-positive",
+     "description": "candidate regulatory elements for GRCh38 in common myeloid progenitor, CD34-positive",
+     "t": 12.33,
+     "categories": [
+      "erythroid",
+      "immune",
+      "myeloid"
+     ]
+    }
+   ],
+   "gated": false,
+   "variants_in_elements": 6943,
+   "pip_in_elements": 647.3,
+   "pip_total": 1693.0
+  },
+  "height": {
+   "label": "height",
+   "study": "GCST90302890",
+   "expected": null,
+   "hit": false,
+   "first_expected_rank": null,
+   "top": [
+    {
+     "annotation": "ENCSR092RPG",
+     "biosample": "left hindlimb",
+     "description": "candidate regulatory elements for GRCh38 in left hindlimb (embryonic)",
+     "t": 15.56,
+     "categories": []
+    },
+    {
+     "annotation": "ENCSR816YUF",
+     "biosample": "femur",
+     "description": "candidate regulatory elements for GRCh38 in femur (embryonic)",
+     "t": 15.2,
+     "categories": []
+    },
+    {
+     "annotation": "ENCSR334TNK",
+     "biosample": "right forelimb",
+     "description": "candidate regulatory elements for GRCh38 in right forelimb (embryonic)",
+     "t": 13.99,
+     "categories": []
+    },
+    {
+     "annotation": "ENCSR695BFZ",
+     "biosample": "right hindlimb",
+     "description": "candidate regulatory elements for GRCh38 in right hindlimb (embryonic)",
+     "t": 12.39,
+     "categories": []
+    },
+    {
+     "annotation": "ENCSR749FOZ",
+     "biosample": "upper lobe of left lung",
+     "description": "candidate regulatory elements for GRCh38 in upper lobe of left lung",
+     "t": 10.96,
+     "categories": []
+    }
+   ],
+   "gated": false,
+   "variants_in_elements": 11542,
+   "pip_in_elements": 929.8,
+   "pip_total": 2687.3
+  }
+ },
+ "annotations": 1325,
+ "scored": "2026-11-18 06:49"
+}
