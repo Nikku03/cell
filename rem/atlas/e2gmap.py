@@ -232,7 +232,7 @@ def build():
             k = o[lo:hi]; k = k[act[k] > 0]
             if not len(k):
                 continue
-            a = act[k]; dc = dist_contact(reg.mid[k] - tss); abc = a * dc / denom
+            a = act[k]; dc = dist_contact(reg.mid[k] - tss); abc = a * dc / (denom + a * dc)  # same form as features() (fitted on it)
             ca = An[:, k].T @ Ez[:, gcol[gid]]
             X = np.c_[np.log(abc + 1e-6), np.log(dc), a, ca, ca * a]
             p = m.predict_proba(X)[:, 1]; keep = p >= thr
