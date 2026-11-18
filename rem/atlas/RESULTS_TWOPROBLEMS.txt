@@ -6008,3 +6008,34 @@ AG2BANK -- THE ALPHAGENOME 2 DATASETS PULLED INTO THE MEMORY BANK (DATA ACQUISIT
   Parkinson's cohort and COVID vaccine atlas (access / accession not confirmed), the astrocyte CRISPRi screen (location
   not found), the HUDEP-2 case study (single locus, 17 GB), AlphaGenome 2's own predictions (download needs a Google
   sign-in). The local cache does not survive a container reset; the code rebuilds it.
+
+=================================================================================================
+E2GMAP -- USE 3 OF THE ALPHAGENOME 2 DATA: WHICH DNA SWITCH CONTROLS WHICH GENE, PER CELL TYPE
+=================================================================================================
+  e2gmap.py (source committed before any run). Switch-to-gene links scored from the memory bank only: ENCODE
+  Registry v4 element activity per biosample, a power-law contact term (no contact maps held), and co-activity
+  (does the element open where the gene is expressed, across ENCODE biosamples with both assays). Logistic model on
+  [log abc, log distance, activity, co-activity, co-activity x activity], fitted on the ENCODE-rE2G K562 CRISPRi
+  training benchmark (DEV, 10,356 pairs, 471 regulated); scored once on the held-out benchmark (EXAM, 4,378 pairs,
+  190 regulated; WTC11, K562, HCT116, Jurkat, GM12878).
+  DEV (in sample): AUPRC final 0.501, abc 0.480, distance 0.415.
+  EXAM (scored once): AUPRC final 0.415, abc 0.339, distance 0.327.
+    E1 PRIMARY final vs distance  +0.089, 95% CI [+0.046, +0.128] -> BETTER
+    E2 final vs abc               +0.076, 95% CI [+0.052, +0.102] -> BETTER  (co-activity across cell types adds)
+    by cell type final/distance: GM12878 0.85/0.88, HCT116 0.40/0.31, Jurkat 0.75/0.58, K562 0.48/0.37, WTC11 0.50/0.46;
+    by distance: <10 kb 0.80/0.75, 10-100 kb 0.47/0.32, >100 kb 0.13/0.09. Published on this set (weighted
+    differently, not exactly comparable): AlphaGenome 2 0.78, AlphaGenome 1 0.73, Borzoi 0.61, ENCODE-rE2G 0.57.
+  CORRECTION (found after the EXAM, while building the map): 353 of 1,678 human cCRE annotations (and 88 of 393
+  mouse) are mark-only classifications for biosamples without DNase-seq. The bank's parser stored all their rows as
+  an unknown label, read as "inactive everywhere". Activity in the five benchmark cell types was not affected (each
+  has DNase-based annotations, and an all-inactive one cannot lower the most active class), but co-activity counted
+  74 biosample terms with only mark-only annotations as "every element shut" where they had RNA-seq (245 terms used;
+  217 after the fix). Fixed in ag2bank (mark codes 9-15, kinds labelled, re-pull command) and e2gmap (mark-only
+  annotations skipped). The EXAM stands as scored. POST HOC (descriptive, corrected co-activity, refitted on DEV):
+  EXAM AUPRC final 0.443 (as scored 0.415), final - distance +0.115 [+0.068, +0.161], final - abc +0.104
+  [+0.072, +0.136]. HEK293 has only a mark-only annotation; the map uses HEK293T instead.
+  THE MAP (memory bank layer, local: _cache/ag2bank/e2g_map/<cell>.npz): links at >= 50% DEV precision for K562,
+  HepG2, Jurkat, HCT116, HEK293T, H1, H9, WTC11, GM12878, RPE (147k-311k links, ~30k genes each), from the
+  corrected DEV fit.
+  NOT: no 3D contact; activity is a class, not a signal level; one benchmark family (CRISPRi in five cell lines);
+  well below AlphaGenome 2, which reads the DNA sequence itself.
