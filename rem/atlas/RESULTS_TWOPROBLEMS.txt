@@ -6089,3 +6089,27 @@ BIOBRAIN B2 -- USE 5: NEW CLAIMS ON THE ALPHAGENOME 2 DATA, UNDER THE BRAIN'S NE
                 (Foreseen in the NOT line; a null excluding biosamples of the same cell type would be a new version,
                 not a re-score.)
   NOT: one complex resource; CELLxGENE aggregates mix studies and batches; one clustering (K = 100, not tuned).
+
+=================================================================================================
+CELLBANK10 -- USES 1 AND 2 OF THE ALPHAGENOME 2 DATA IN THE K562 ENGINE (EXAM HALF, THIRD READ)
+=================================================================================================
+  cellbank10.py (source committed before any run). Use 1: each gene's K562 context from the new bank layers
+  (ENCODE K562 RNA-seq, FANTOM5 K562 CAGE, CELLxGENE and GTEx expression breadth, K562 open chromatin at the TSS and
+  nearby distal enhancers, erythroid promoter methylation, missing flags; 11 features). Use 2: context-aware
+  translation -- the trust in another screen's record also depends on how differently the gene is expressed in that
+  screen's cell type vs K562 (ENCODE RNA-seq of the matched biosample). Engine v2 (cellbank8) otherwise unchanged;
+  3 seeds. The EXAM half was read before by cellbank8 and cellbank9 (disclosed; this is its third read).
+  DEV (open): M2 +0.260 median r; M10a (context) +0.259, +0.0012 median paired gain, p 0.0003; M10b +0.0004; M10 +0.0008.
+  EXAM (scored once): M2 +0.269; M10a +0.270; M10b +0.270; M10 +0.272 (ceiling 0.458).
+    U1 use 1, M10a vs M2: better 639 / worse 542, median +0.0009, p 0.005 -> NO DIFFERENCE (below the +0.01 size)
+    U2 use 1, confidence ranking: Spearman 0.481 -> 0.484, gain +0.003, bootstrap 2.5% -0.008 -> NO IMPROVEMENT
+    U3 use 1, 'gene off in a cell type -> its knockdown does nothing there': Spearman(expression in the matched ENCODE
+       biosample, record strength) HepG2 +0.14, Jurkat +0.096, HCT116 +0.21, iPSC-N (WTC11) +0.29, hESC-P (H1) +0.05;
+       all positive and significant, but >= 0.10 in only 3 of 5 (needed 4) -> FAIL as declared.
+    U4 use 2, M10b vs M2: better 611 / worse 570, median +0.0003, p 0.24 -> NO DIFFERENCE
+  READING: the K562 engine does not get better from cell-type context: it already knows, through its other inputs
+  (HPA K562 RNA, DepMap, partners), most of what the new expression and chromatin layers say about K562. The
+  biological rule behind use 1 holds in direction everywhere (silent genes give weaker knockdowns) but is weaker than
+  declared in Jurkat and H1.
+  NOT: one engine family; the EXAM half has been read three times; ENCODE's matched biosamples stand in for the
+  screens' own cells (H1 for hESC-P, WTC11 for iPSC-N).

@@ -1,0 +1,69 @@
+{
+ "verdicts": {
+  "U1": {
+   "better": 639,
+   "worse": 542,
+   "p": 0.00519272065947226,
+   "median_diff": 0.000902131199836731,
+   "verdict": "NO DIFFERENCE"
+  },
+  "U4": {
+   "better": 611,
+   "worse": 570,
+   "p": 0.2444317169268093,
+   "median_diff": 0.00028096139430999756,
+   "verdict": "NO DIFFERENCE"
+  },
+  "U2": {
+   "base": 0.4808864405978307,
+   "context": 0.4842470143907926,
+   "gain": 0.003360573792961896,
+   "boot_2_5": -0.00784300489552521,
+   "verdict": "NO IMPROVEMENT"
+  },
+  "U3": {
+   "screens": {
+    "HepG2": {
+     "biosample": "HepG2",
+     "genes": 1854,
+     "rho": 0.13813114400115992,
+     "p": 2.3392745998665623e-09,
+     "pass": true
+    },
+    "Jurkat": {
+     "biosample": "Jurkat, Clone E6-1",
+     "genes": 1949,
+     "rho": 0.09611440461301361,
+     "p": 2.134561013286508e-05,
+     "pass": false
+    },
+    "HCT116": {
+     "biosample": "HCT116",
+     "genes": 4690,
+     "rho": 0.20992167112099305,
+     "p": 7.315054018620849e-48,
+     "pass": true
+    },
+    "iPSC-N": {
+     "biosample": "WTC11",
+     "genes": 4279,
+     "rho": 0.28861317408060877,
+     "p": 7.084692431263906e-83,
+     "pass": true
+    },
+    "hESC-P": {
+     "biosample": "H1",
+     "genes": 2211,
+     "rho": 0.05039204827877327,
+     "p": 0.017804268096587843,
+     "pass": false
+    }
+   },
+   "passing": 3,
+   "verdict": "FAIL"
+  }
+ },
+ "predictions_sha256": "96f730c1a4c2797a70704baa2beb3d0b7d997f04da0b814ed1d98ca3c90a4032",
+ "exam_read": "third (cellbank8, cellbank9 before)",
+ "scored": "2026-11-18 07:10"
+}
