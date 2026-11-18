@@ -1,0 +1,11 @@
+=================================================================================================
+CELLBANK10 -- AG2 data in the K562 engine (uses 1 and 2): DEVELOPMENT SET (open)
+=================================================================================================
+  DEV genes 1194; ceiling 0.443; arms: median r | specific r | fraction of ceiling
+     M2   cellbank8 model, rerun              +0.260 | +0.098 | 59%
+     M10a + K562 context (use 1)              +0.259 | +0.104 | 59%
+     M10b context-aware translation (use 2)   +0.260 | +0.101 | 59%
+     M10  both                                +0.259 | +0.101 | 58%
+     DEV M10a  vs M2: better 660 / worse 534, median +0.0012, p 0.00029
+     DEV M10b  vs M2: better 624 / worse 570, median +0.0004, p 0.13
+     DEV M10   vs M2: better 639 / worse 555, median +0.0008, p 0.016
