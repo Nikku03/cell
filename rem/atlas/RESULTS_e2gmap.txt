@@ -1,0 +1,9 @@
+=================================================================================================
+E2GMAP -- switch-to-gene links from the memory bank, held-out CRISPRi benchmark (scored once)
+=================================================================================================
+  4378 pairs, 190 regulated; AUPRC: final 0.415, abc 0.339, distance 0.327
+  E1 PRIMARY final vs distance          diff +0.089, 95% CI [+0.046, +0.128] -> BETTER
+  E2 final vs abc (co-activity adds?)   diff +0.076, 95% CI [+0.052, +0.102] -> BETTER
+  by cell type: GM12878 final 0.85 / dist 0.88; HCT116 final 0.40 / dist 0.31; Jurkat final 0.75 / dist 0.58; K562 final 0.48 / dist 0.37; WTC11 final 0.50 / dist 0.46
+  by distance: <10kb final 0.80 / dist 0.75; 10-100kb final 0.47 / dist 0.32; >100kb final 0.13 / dist 0.09
+  published on this set (weighted by direct-effect probability, not comparable exactly): AG2 0.78, AG1 0.73, Borzoi 0.61, ENCODE-rE2G 0.57
