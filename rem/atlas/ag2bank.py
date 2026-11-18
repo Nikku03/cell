@@ -323,6 +323,13 @@ def encode_rna():
 # as uint32 index into the registry + uint8 class code
 # ---------------------------------------------------------------------------------------------------------
 CCRE_CLASSES = ["PLS", "pELS", "dELS", "CA-H3K4me3", "CA-CTCF", "CA-TF", "CA-only", "TF-only", "Low-DNase"]
+# Biosamples without DNase-seq get a mark-only ("partial") classification in Registry v4: column 10 is a combination of
+# High-H3K4me3 / High-H3K27ac / High-CTCF, or Unclassified. Stored as codes 9-15 (Unclassified rows skipped). Such a
+# shard is kind "marks": it says which marks are high, not whether the element is open, so it is not comparable with
+# the DNase-based classes 0-8 (kind "dnase"). CORRECTION 2026-11-18: the first pull stored every row of these 353
+# human files as code 255 (unknown label, Unclassified rows included); `ccre_partial` re-pulls them.
+CCRE_MARKS = ["High-H3K4me3", "High-H3K27ac", "High-H3K4me3,High-H3K27ac", "High-CTCF", "High-H3K4me3,High-CTCF",
+              "High-H3K27ac,High-CTCF", "High-H3K4me3,High-H3K27ac,High-CTCF"]
 
 
 def _ccre_rows(acc):
@@ -340,7 +347,7 @@ def ccre():
     ann = _enc_json("/search/?type=Annotation&annotation_type=candidate+Cis-Regulatory+Elements&status=released&encyclopedia_version=ENCODE+v4"
                     "&field=accession&field=assembly&field=biosample_ontology.term_name&field=biosample_ontology.term_id"
                     "&field=biosample_ontology.classification&field=description&field=files.accession&field=files.file_format&field=files.assembly")
-    code = {c: i for i, c in enumerate(CCRE_CLASSES)}
+    code = {c: i for i, c in enumerate(CCRE_CLASSES + CCRE_MARKS)}
     for asm, species in (("GRCh38", "human"), ("mm10", "mouse")):
         items = [a for a in ann if a.get("biosample_ontology") and asm in a.get("assembly", [])]
         d = os.path.join(BANK, "ccre", species); sh = os.path.join(d, "shards"); os.makedirs(sh, exist_ok=True)
@@ -361,7 +368,7 @@ def ccre():
             idx, cls, extra = [], [], 0
             for f in _ccre_rows(bed(a)):
                 c = f[9]
-                if c == "Low-DNase":
+                if c in ("Low-DNase", "Unclassified"):
                     continue
                 i = index.get(f[3])
                 if i is None:
@@ -388,6 +395,40 @@ def ccre():
                        source="encode_portal", note="ENCODE Registry v4 biosample-specific cCRE classifications; Low-DNase (inactive) omitted"),
                   open(os.path.join(d, "meta.json"), "w"))
         print(f"ccre {species}: {len(items)} biosamples, registry {len(reg['id']):,} elements ({time.time() - t0:.0f}s)", flush=True)
+
+
+def _shard_kind(path):
+    c = np.load(path)["cls"]
+    if not len(c):
+        return "empty"
+    if (c == 255).any():
+        return "unparsed"
+    return "marks" if c.min() >= len(CCRE_CLASSES) else "dnase"
+
+
+def ccre_kinds():
+    """Label every cCRE annotation in meta.json with the kind of its shard (dnase / marks / unparsed / empty)."""
+    for sp in ("human", "mouse"):
+        p = os.path.join(BANK, "ccre", sp, "meta.json"); m = json.load(open(p))
+        for b in m["biosamples"]:
+            b["kind"] = _shard_kind(os.path.join(BANK, "ccre", sp, "shards", b["annotation"] + ".npz"))
+        m["mark_codes"] = {str(len(CCRE_CLASSES) + i): c for i, c in enumerate(CCRE_MARKS)}
+        json.dump(m, open(p, "w"))
+        import collections
+        print(sp, dict(collections.Counter(b["kind"] for b in m["biosamples"])), flush=True)
+
+
+def ccre_partial():
+    """CORRECTION: re-pull the mark-only annotations that the first parser stored as code 255, then relabel kinds."""
+    for sp in ("human", "mouse"):
+        m = json.load(open(os.path.join(BANK, "ccre", sp, "meta.json")))
+        n = 0
+        for b in m["biosamples"]:
+            p = os.path.join(BANK, "ccre", sp, "shards", b["annotation"] + ".npz")
+            if _shard_kind(p) == "unparsed":
+                os.remove(p); n += 1
+        print(f"{sp}: {n} unparsed shards removed for re-pull", flush=True)
+    ccre(); ccre_kinds()
 
 
 # ---------------------------------------------------------------------------------------------------------
@@ -705,6 +746,10 @@ if __name__ == "__main__":
         {"methylation": methylation, "genetics": genetics, "e2g": e2g}[cmd]()
     if cmd == "ccre":
         ccre()
+    if cmd == "ccre_kinds":
+        ccre_kinds()
+    if cmd == "ccre_partial":
+        ccre_partial()
     if cmd == "cellxgene":
         cellxgene(sys.argv[2] if len(sys.argv) > 2 else "human")
     elif cmd == "gtex":

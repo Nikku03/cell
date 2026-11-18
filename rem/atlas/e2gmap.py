@@ -26,6 +26,15 @@ THE MAP (memory bank layer, local): for the cell types of our screens and benchm
 HEK293, H1, H9, WTC11, GM12878, retinal pigment epithelial cell), every active element within 1 Mb of each protein-
 coding / lncRNA TSS scored with `final`; links kept where final >= the DEV threshold of 50% precision.
 NOT: no contact maps; element activity is a class, not a signal level; co-activity mixes tissues and cell lines.
+CORRECTION (2026-11-18, found after the EXAM was scored, while building the map): 353 of the 1,678 human cCRE
+annotations are mark-only classifications (biosamples without DNase-seq); the bank's first parser stored every row
+of them as an unknown label, read here as "inactive everywhere". Element activity in the five benchmark cell types
+was unaffected (each has DNase-based annotations, and an all-inactive annotation cannot lower the most active class),
+but co-activity counted 74 biosample terms that only have mark-only annotations as "every element inactive" wherever
+they also had RNA-seq. The EXAM above stands as scored. Now: mark-only annotations are skipped (they say which marks
+are high, not whether an element is open), co-activity uses only terms with a DNase-based annotation, and `posthoc`
+re-scores DEV and EXAM with the corrected co-activity (descriptive, labelled post hoc). The map is built from the
+corrected DEV fit. HEK293 has only a mark-only annotation, so the map uses HEK293T.
 
 Run: python3 -P rem/atlas/e2gmap.py dev | exam | build
 """
@@ -52,7 +61,7 @@ CACHE = os.path.join(HERE, "_cache", "e2gmap")
 DEVF = os.path.join(AG, "enhancer_gene", "EPCrisprBenchmark_combined_data.training_K562.GRCh38.tsv.gz")
 EXAMF = os.path.join(AG, "enhancer_gene", "EPCrisprBenchmark_combined_data.heldout_5_cell_types.GRCh38.tsv.gz")
 CELL_TERM = {"K562": "K562", "WTC11": "WTC11", "HCT116": "HCT116", "Jurkat": "Jurkat, Clone E6-1", "GM12878": "GM12878"}
-MAP_CELLS = ["K562", "HepG2", "Jurkat, Clone E6-1", "HCT116", "HEK293", "H1", "H9", "WTC11", "GM12878", "retinal pigment epithelial cell"]
+MAP_CELLS = ["K562", "HepG2", "Jurkat, Clone E6-1", "HCT116", "HEK293T", "H1", "H9", "WTC11", "GM12878", "retinal pigment epithelial cell"]
 CLASS_ACT = np.array([1.0, 1.0, 1.0, 0.5, 0.5, 0.5, 0.5, 0.25, 0.0])        # PLS pELS dELS CA-H3K4me3 CA-CTCF CA-TF CA-only TF-only Low
 FEATS = ["log_abc", "log_dist", "activity", "coact", "coact_x_activity"]
 
@@ -68,13 +77,27 @@ class Registry:
             ix = np.nonzero(self.chrom == c)[0]; o = ix[np.argsort(self.start[ix])]
             self.by[c] = (o, self.start[o], self.end[o], self.mid[o])
 
-    def activity(self, term):
-        """per-element activity (0-1) in a biosample term: most active class over its biosamples."""
-        cls = np.full(len(self.chrom), 8, np.uint8)
+    def _shard(self, b):
+        s = np.load(os.path.join(CC, "shards", b["annotation"] + ".npz")); c = s["cls"]
+        dnase = bool(len(c)) and int(c.min()) <= 8 and not bool((c == 255).any())     # mark-only / unparsed: skipped
+        return (s["idx"], c) if dnase else (None, None)
+
+    def has_dnase(self, term):
         for b in self.meta:
             if b["biosample"] == term:
-                s = np.load(os.path.join(CC, "shards", b["annotation"] + ".npz"))
-                cls[s["idx"]] = np.minimum(cls[s["idx"]], np.minimum(s["cls"], 8))
+                k = b.get("kind")
+                if k == "dnase" or (k is None and self._shard(b)[0] is not None):
+                    return True
+        return False
+
+    def activity(self, term):
+        """per-element activity (0-1) in a biosample term: most active class over its DNase-based annotations."""
+        cls = np.full(len(self.chrom), 8, np.uint8)
+        for b in self.meta:
+            if b["biosample"] == term and b.get("kind", "dnase") == "dnase":
+                idx, c = self._shard(b)
+                if idx is not None:
+                    cls[idx] = np.minimum(cls[idx], np.minimum(c, 8))
         return CLASS_ACT[cls]
 
     def overlap(self, chrom, s, e):
@@ -94,7 +117,7 @@ def coactivity_inputs(reg):
     """Biosample terms with both element calls and RNA-seq; activity matrix rows are built lazily per element."""
     rna = np.load(os.path.join(AG, "bulk", "encode_rna_human.npz")); m = json.load(open(os.path.join(AG, "bulk", "encode_rna_human_meta.json")))["meta"]
     X = rna["X"].astype(np.float32); gcol = {g: i for i, g in enumerate(rna["cols"].tolist())}
-    terms = sorted(set(m["biosample"]) & {b["biosample"] for b in reg.meta})
+    terms = sorted(t for t in set(m["biosample"]) & {b["biosample"] for b in reg.meta} if reg.has_dnase(t))
     E = np.stack([X[[i for i, b in enumerate(m["biosample"]) if b == t]].mean(0) for t in terms])   # terms x genes
     A = np.stack([reg.activity(t) for t in terms]).astype(np.float32)                                # terms x elements
     return terms, E, gcol, A
@@ -211,11 +234,44 @@ def exam():
     open(os.path.join(HERE, "RESULTS_e2gmap.txt"), "w").write("\n".join(L) + "\n"); print("\n".join(L))
 
 
+def _thr50(y, p):
+    from sklearn.metrics import precision_recall_curve
+    pr, rc, th = precision_recall_curve(y, p); ok = np.nonzero(pr[:-1] >= 0.5)[0]
+    return float(th[ok[0]]) if len(ok) else None
+
+
+def posthoc():
+    """POST HOC (descriptive; after the EXAM was scored): DEV and EXAM re-scored with the corrected co-activity."""
+    dd, Fd = _prep(DEVF, "dev_c"); yd = dd["Regulated"].astype(bool).to_numpy(); m = _fit(Fd, yd)
+    df, F = _prep(EXAMF, "exam_c"); y = df["Regulated"].astype(bool).to_numpy()
+    s = dict(final=m.predict_proba(F)[:, 1], abc=F[:, 0], dist=F[:, 1], coact=F[:, 3])
+    au = {k: _ap(y, v) for k, v in s.items()}
+    rng = np.random.default_rng(3); cells = df["CellType"].to_numpy(); groups = [np.nonzero(cells == c)[0] for c in np.unique(cells)]
+    diffs = {"final-dist": [], "final-abc": []}
+    for _ in range(2000):
+        b = np.concatenate([rng.choice(g, len(g), replace=True) for g in groups])
+        f = _ap(y[b], s["final"][b]); diffs["final-dist"].append(f - _ap(y[b], s["dist"][b])); diffs["final-abc"].append(f - _ap(y[b], s["abc"][b]))
+    lock = json.load(open(os.path.join(OUTD, "exam_lock.json")))
+    res = dict(dev_auprc_in_sample=_ap(yd, m.predict_proba(Fd)[:, 1]), dev_coact_auprc=_ap(yd, Fd[:, 3]), coef=dict(zip(FEATS, m.coef_[0].round(3).tolist())),
+               exam_auprc=au, exam_auprc_as_scored=lock["auprc"],
+               diffs={k: dict(diff=float(np.mean(v)), ci_2_5=float(np.percentile(v, 2.5)), ci_97_5=float(np.percentile(v, 97.5))) for k, v in diffs.items()},
+               by_cell_type={c: {k: _ap(y[cells == c], v[cells == c]) for k, v in s.items()} for c in np.unique(cells) if y[cells == c].any()})
+    json.dump(res, open(os.path.join(OUTD, "posthoc.json"), "w"), indent=1)
+    L = ["=" * 97, "E2GMAP POST HOC -- corrected co-activity (mark-only cCRE annotations no longer read as inactive); descriptive", "=" * 97,
+         f"  EXAM AUPRC corrected: final {au['final']:.3f}, abc {au['abc']:.3f}, distance {au['dist']:.3f}, coact alone {au['coact']:.3f}"
+         f"  (as scored: final {lock['auprc']['final']:.3f}, abc {lock['auprc']['abc']:.3f}, distance {lock['auprc']['dist']:.3f})"]
+    for k, v in res["diffs"].items():
+        L.append(f"  {k:11s} bootstrap mean {v['diff']:+.3f}, 95% interval [{v['ci_2_5']:+.3f}, {v['ci_97_5']:+.3f}]")
+    L.append("  by cell type: " + "; ".join(f"{c} final {x['final']:.2f} / dist {x['dist']:.2f}" for c, x in res["by_cell_type"].items()))
+    L.append(f"  DEV (in sample): final {res['dev_auprc_in_sample']:.3f}; coact alone {res['dev_coact_auprc']:.3f}; coef {res['coef']}")
+    open(os.path.join(HERE, "RESULTS_e2gmap_posthoc.txt"), "w").write("\n".join(L) + "\n"); print("\n".join(L))
+
+
 def build():
-    """The map layer: for MAP_CELLS, active elements within 1 Mb of each gene TSS, scored with the DEV-fitted model."""
+    """The map layer: for MAP_CELLS, active elements within 1 Mb of each gene TSS, scored with the corrected DEV fit."""
     t0 = time.time()
-    dd, Fd = _prep(DEVF, "dev"); m = _fit(Fd, dd["Regulated"].astype(bool).to_numpy())
-    thr = json.load(open(os.path.join(OUTD, "dev.json")))["threshold_precision_50"]
+    dd, Fd = _prep(DEVF, "dev_c"); yd = dd["Regulated"].astype(bool).to_numpy(); m = _fit(Fd, yd)
+    thr = _thr50(yd, m.predict_proba(Fd)[:, 1])
     reg = Registry(); terms, E, gcol, A = coactivity_inputs(reg); Ez = _z(E)
     genes = [g for g in json.load(open(os.path.join(AG, "raw", "gencode46_tss.json"))) if g[0] in gcol]
     out_dir = os.path.join(AG, "e2g_map"); os.makedirs(out_dir, exist_ok=True); rep = {}
@@ -248,4 +304,4 @@ def build():
 
 
 if __name__ == "__main__":
-    {"dev": dev, "exam": exam, "build": build}[sys.argv[1]]()
+    {"dev": dev, "exam": exam, "build": build, "posthoc": posthoc}[sys.argv[1]]()
