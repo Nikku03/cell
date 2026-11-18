@@ -6113,3 +6113,9 @@ CELLBANK10 -- USES 1 AND 2 OF THE ALPHAGENOME 2 DATA IN THE K562 ENGINE (EXAM HA
   declared in Jurkat and H1.
   NOT: one engine family; the EXAM half has been read three times; ENCODE's matched biosamples stand in for the
   screens' own cells (H1 for hESC-P, WTC11 for iPSC-N).
+
+  AG2BANK CORRECTION (5), 2026-11-18: the 353 human and 88 mouse mark-only cCRE annotations (biosamples without
+  DNase-seq) were re-pulled and parsed as mark codes 9-15 (High-H3K4me3 / High-H3K27ac / High-CTCF combinations;
+  Unclassified rows skipped); every annotation now carries a kind (human 1,325 dnase + 353 marks; mouse 305 + 88).
+  One truncated download (IncompleteRead) was not retried by the downloader; fixed (retries now cover it) and fetched.
+  Every analysis above used the DNase-based annotations only, so none of their numbers depends on the re-pull.
