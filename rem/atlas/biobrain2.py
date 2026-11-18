@@ -79,16 +79,19 @@ MARGIN = 0.6
 DEV_TISSUE, DEV_BIOSAMPLE = "blood", "K562"
 K_MODULES = 100
 SIGNAL = {"coexpressed": 3.0, "module_alike": 3.0, "promoter": 1.0}   # planted mechanism size vs unit noise
-CLAIMS = [   # thresholds and dev values filled from `look` (DEV only), before declaring
-    {"id": "coexpressed", "chance": 0.5, "threshold": None, "dev": None, "expect": None,
+# Look (DEV only, 2026-11-18): coexpressed blood AUROC 0.726 (p 0.005; planted 0.986, unstructured 0.500); module_alike
+# K562-A TRAIN 0.518 (p 0.005; 1,123 genes in a module; planted 1.000, unstructured 0.501); promoter K562 0.645 (p 0.005;
+# planted 0.933, shuffled 0.507). Thresholds by the rule chance + 0.6 x (dev - chance): 0.64, 0.51, 0.59.
+CLAIMS = [
+    {"id": "coexpressed", "chance": 0.5, "threshold": 0.64, "dev": 0.726, "expect": "pass",
      "claim": "Two subunits of the same protein complex are co-expressed across a tissue's cell types more than two "
               "genes of different complexes: AUROC of the expression-profile correlation >= threshold, beating the "
               "expression-level-matched membership null."},
-    {"id": "module_alike", "chance": 0.5, "threshold": None, "dev": None, "expect": None,
+    {"id": "module_alike", "chance": 0.5, "threshold": 0.51, "dev": 0.518, "expect": "uncertain (small dev effect)",
      "claim": "Two genes of the same CELLxGENE co-expression module (built from expression alone) that share no "
               "complex respond to knockdown more alike than genes of different modules: AUROC of the specific-response "
               "cosine >= threshold, beating the strength-matched null."},
-    {"id": "promoter", "chance": 0.5, "threshold": None, "dev": None, "expect": None,
+    {"id": "promoter", "chance": 0.5, "threshold": 0.59, "dev": 0.645, "expect": "pass",
      "claim": "Genes whose (variable) promoter is open in a biosample are expressed there more than elsewhere: AUROC of "
               "the expression specificity, open vs closed promoters, >= threshold, beating the mismatched-biosample null."},
 ]
