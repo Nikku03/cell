@@ -1,0 +1,5227 @@
+{
+"source": "https://www.encodeproject.org/search/?type=BiosampleType&limit=all&format=json&field=term_name&field=organ_slims&field=cell_slims&field=system_slims&field=classification",
+"fetched": "2026-11-18",
+"terms": {
+"KBM-7": {
+"organ_slims": [
+"bone element",
+"bone marrow"
+],
+"cell_slims": [
+"cancer cell"
+],
+"system_slims": [
+"immune system",
+"skeletal system"
+]
+},
+"neuron": {
+"organ_slims": [],
+"cell_slims": [
+"neural cell"
+],
+"system_slims": [
+"central nervous system",
+"peripheral nervous system"
+]
+},
+"neuronal stem cell": {
+"organ_slims": [
+"embryo"
+],
+"cell_slims": [
+"neural cell",
+"stem cell"
+],
+"system_slims": [
+"central nervous system"
+]
+},
+"smooth muscle cell": {
+"organ_slims": [
+"musculature of body"
+],
+"cell_slims": [
+"smooth muscle cell"
+],
+"system_slims": [
+"musculature"
+]
+},
+"RCC": {
+"organ_slims": [
+"kidney"
+],
+"cell_slims": [
+"cancer cell"
+],
+"system_slims": [
+"excretory system"
+]
+},
+"GM12891": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"B cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"epithelial cell of esophagus": {
+"organ_slims": [
+"epithelium",
+"esophagus"
+],
+"cell_slims": [
+"epithelial cell"
+],
+"system_slims": [
+"digestive system"
+]
+},
+"ecto neural progenitor cell": {
+"organ_slims": [],
+"cell_slims": [
+"progenitor cell"
+],
+"system_slims": [
+"central nervous system"
+]
+},
+"A673": {
+"organ_slims": [
+"musculature of body"
+],
+"cell_slims": [
+"cancer cell"
+],
+"system_slims": [
+"musculature"
+]
+},
+"neutrophil": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"hematopoietic cell",
+"leukocyte",
+"myeloid cell"
+],
+"system_slims": [
+"immune system"
+]
+},
+"GM19238": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"B cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"colonic mucosa": {
+"organ_slims": [
+"colon",
+"intestine",
+"large intestine"
+],
+"cell_slims": [],
+"system_slims": [
+"digestive system"
+]
+},
+"retinal pigment epithelial cell": {
+"organ_slims": [
+"epithelium",
+"eye"
+],
+"cell_slims": [
+"epithelial cell",
+"neural cell"
+],
+"system_slims": [
+"sensory system"
+]
+},
+"mesenchymal stem cell": {
+"organ_slims": [
+"connective tissue"
+],
+"cell_slims": [
+"connective tissue cell",
+"stem cell"
+],
+"system_slims": []
+},
+"Loucy": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"T cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"mononuclear cell": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"hematopoietic cell",
+"leukocyte",
+"mononuclear cell"
+],
+"system_slims": [
+"immune system"
+]
+},
+"epithelial cell of proximal tubule": {
+"organ_slims": [
+"epithelium",
+"kidney"
+],
+"cell_slims": [
+"epithelial cell"
+],
+"system_slims": [
+"excretory system"
+]
+},
+"HFFc6": {
+"organ_slims": [
+"connective tissue",
+"penis"
+],
+"cell_slims": [
+"connective tissue cell",
+"fibroblast"
+],
+"system_slims": [
+"reproductive system"
+]
+},
+"GM19239": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"B cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"GM12875": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"B cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"kidney capillary endothelial cell": {
+"organ_slims": [
+"blood vessel",
+"epithelium",
+"kidney",
+"vasculature"
+],
+"cell_slims": [
+"endothelial cell",
+"epithelial cell"
+],
+"system_slims": [
+"circulatory system",
+"excretory system"
+]
+},
+"ELF-1": {
+"organ_slims": [
+"embryo"
+],
+"cell_slims": [
+"embryonic cell",
+"stem cell"
+],
+"system_slims": []
+},
+"dendritic cell": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"dendritic cell",
+"hematopoietic cell",
+"leukocyte",
+"myeloid cell"
+],
+"system_slims": [
+"immune system"
+]
+},
+"CD4-positive, alpha-beta memory T cell": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"CD4+ T cell",
+"T cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"pulmonary artery endothelial cell": {
+"organ_slims": [
+"arterial blood vessel",
+"blood vessel",
+"epithelium",
+"vasculature"
+],
+"cell_slims": [
+"endothelial cell",
+"epithelial cell"
+],
+"system_slims": [
+"circulatory system"
+]
+},
+"effector memory CD4-positive, alpha-beta T cell": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"CD4+ T cell",
+"T cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"foreskin fibroblast": {
+"organ_slims": [
+"connective tissue",
+"penis",
+"skin of body"
+],
+"cell_slims": [
+"connective tissue cell",
+"fibroblast"
+],
+"system_slims": [
+"integumental system",
+"reproductive system"
+]
+},
+"AG04450": {
+"organ_slims": [
+"connective tissue",
+"lung"
+],
+"cell_slims": [
+"connective tissue cell",
+"fibroblast"
+],
+"system_slims": [
+"respiratory system"
+]
+},
+"OCI-LY1": {
+"organ_slims": [
+"bone element",
+"bone marrow"
+],
+"cell_slims": [
+"cancer cell"
+],
+"system_slims": [
+"immune system",
+"skeletal system"
+]
+},
+"fibroblast of skin of abdomen": {
+"organ_slims": [
+"connective tissue",
+"skin of body"
+],
+"cell_slims": [
+"connective tissue cell",
+"fibroblast"
+],
+"system_slims": [
+"integumental system"
+]
+},
+"dedifferentiated amniotic fluid mesenchymal stem cell": {
+"organ_slims": [
+"connective tissue",
+"extraembryonic component"
+],
+"cell_slims": [
+"stem cell"
+],
+"system_slims": []
+},
+"HepG2": {
+"organ_slims": [
+"endocrine gland",
+"epithelium",
+"exocrine gland",
+"liver"
+],
+"cell_slims": [
+"cancer cell",
+"epithelial cell"
+],
+"system_slims": [
+"digestive system",
+"endocrine system",
+"exocrine system"
+]
+},
+"ELR": {
+"organ_slims": [
+"connective tissue",
+"penis"
+],
+"cell_slims": [
+"connective tissue cell",
+"fibroblast"
+],
+"system_slims": [
+"reproductive system"
+]
+},
+"G401": {
+"organ_slims": [
+"kidney"
+],
+"cell_slims": [
+"cancer cell"
+],
+"system_slims": [
+"excretory system"
+]
+},
+"placental basal plate": {
+"organ_slims": [
+"extraembryonic component",
+"placenta"
+],
+"cell_slims": [],
+"system_slims": [
+"reproductive system"
+]
+},
+"HFF-Myc": {
+"organ_slims": [
+"connective tissue",
+"penis"
+],
+"cell_slims": [
+"connective tissue cell",
+"fibroblast"
+],
+"system_slims": [
+"reproductive system"
+]
+},
+"SK-N-MC": {
+"organ_slims": [
+"brain",
+"epithelium"
+],
+"cell_slims": [
+"cancer cell",
+"epithelial cell"
+],
+"system_slims": [
+"central nervous system"
+]
+},
+"Daoy": {
+"organ_slims": [
+"brain"
+],
+"cell_slims": [
+"neural cell"
+],
+"system_slims": [
+"central nervous system"
+]
+},
+"epithelial cell of prostate": {
+"organ_slims": [
+"epithelium",
+"prostate gland"
+],
+"cell_slims": [
+"epithelial cell"
+],
+"system_slims": [
+"reproductive system"
+]
+},
+"trophoblast cell": {
+"organ_slims": [
+"embryo",
+"extraembryonic component"
+],
+"cell_slims": [],
+"system_slims": []
+},
+"skeletal muscle satellite cell": {
+"organ_slims": [
+"musculature of body"
+],
+"cell_slims": [],
+"system_slims": [
+"musculature"
+]
+},
+"kidney epithelial cell": {
+"organ_slims": [
+"epithelium",
+"kidney"
+],
+"cell_slims": [
+"epithelial cell"
+],
+"system_slims": [
+"excretory system"
+]
+},
+"pons": {
+"organ_slims": [
+"brain"
+],
+"cell_slims": [],
+"system_slims": [
+"central nervous system"
+]
+},
+"RWPE1": {
+"organ_slims": [
+"epithelium",
+"prostate gland"
+],
+"cell_slims": [
+"epithelial cell"
+],
+"system_slims": [
+"reproductive system"
+]
+},
+"BE2C": {
+"organ_slims": [
+"brain"
+],
+"cell_slims": [
+"cancer cell",
+"neural cell",
+"neuroblastoma cell",
+"stem cell"
+],
+"system_slims": [
+"central nervous system"
+]
+},
+"NCI-H929": {
+"organ_slims": [
+"bone element",
+"bone marrow"
+],
+"cell_slims": [
+"B cell",
+"cancer cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system",
+"skeletal system"
+]
+},
+"HuH-7.5": {
+"organ_slims": [
+"endocrine gland",
+"epithelium",
+"exocrine gland",
+"liver"
+],
+"cell_slims": [
+"cancer cell",
+"epithelial cell"
+],
+"system_slims": [
+"digestive system",
+"endocrine system",
+"exocrine system"
+]
+},
+"GM19240": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"B cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"bipolar neuron": {
+"organ_slims": [
+"brain",
+"ear",
+"eye",
+"spinal cord"
+],
+"cell_slims": [
+"neural cell"
+],
+"system_slims": [
+"central nervous system"
+]
+},
+"NCI-H460": {
+"organ_slims": [
+"epithelium",
+"lung"
+],
+"cell_slims": [
+"cancer cell",
+"epithelial cell"
+],
+"system_slims": [
+"respiratory system"
+]
+},
+"myoepithelial cell of mammary gland": {
+"organ_slims": [
+"epithelium",
+"exocrine gland",
+"mammary gland"
+],
+"cell_slims": [
+"epithelial cell"
+],
+"system_slims": [
+"exocrine system",
+"integumental system"
+]
+},
+"natural killer cell": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"NK cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"brain pericyte": {
+"organ_slims": [
+"brain",
+"connective tissue"
+],
+"cell_slims": [
+"connective tissue cell",
+"hematopoietic cell",
+"neural cell",
+"pericyte"
+],
+"system_slims": [
+"central nervous system"
+]
+},
+"vagina": {
+"organ_slims": [
+"vagina"
+],
+"cell_slims": [],
+"system_slims": [
+"reproductive system"
+]
+},
+"cardiac fibroblast": {
+"organ_slims": [
+"connective tissue",
+"heart"
+],
+"cell_slims": [
+"cardiocyte",
+"connective tissue cell",
+"fibroblast"
+],
+"system_slims": [
+"circulatory system"
+]
+},
+"hepatic stellate cell": {
+"organ_slims": [
+"connective tissue",
+"endocrine gland",
+"exocrine gland",
+"liver"
+],
+"cell_slims": [
+"connective tissue cell",
+"fibroblast"
+],
+"system_slims": [
+"digestive system",
+"endocrine system",
+"exocrine system"
+]
+},
+"GM12892": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"B cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"neural cell": {
+"organ_slims": [],
+"cell_slims": [
+"neural cell"
+],
+"system_slims": [
+"central nervous system",
+"peripheral nervous system"
+]
+},
+"HPDE6-E6E7": {
+"organ_slims": [
+"epithelium",
+"exocrine gland",
+"pancreas"
+],
+"cell_slims": [
+"epithelial cell"
+],
+"system_slims": [
+"digestive system",
+"exocrine system"
+]
+},
+"amniotic epithelial cell": {
+"organ_slims": [
+"epithelium",
+"extraembryonic component",
+"placenta"
+],
+"cell_slims": [
+"epithelial cell"
+],
+"system_slims": [
+"reproductive system"
+]
+},
+"skeletal muscle cell": {
+"organ_slims": [
+"musculature of body"
+],
+"cell_slims": [],
+"system_slims": [
+"musculature"
+]
+},
+"iPS DF 6.9": {
+"organ_slims": [
+"penis",
+"skin of body",
+"skin of prepuce of penis"
+],
+"cell_slims": [
+"induced pluripotent stem cell",
+"stem cell"
+],
+"system_slims": [
+"integumental system",
+"reproductive system"
+]
+},
+"iPS-NIHi11": {
+"organ_slims": [
+"skin of body"
+],
+"cell_slims": [
+"induced pluripotent stem cell",
+"stem cell"
+],
+"system_slims": [
+"integumental system"
+]
+},
+"M059J": {
+"organ_slims": [
+"brain"
+],
+"cell_slims": [
+"cancer cell",
+"neural cell"
+],
+"system_slims": [
+"central nervous system"
+]
+},
+"large intestine": {
+"organ_slims": [
+"intestine",
+"large intestine"
+],
+"cell_slims": [],
+"system_slims": [
+"digestive system"
+]
+},
+"skeletal muscle tissue": {
+"organ_slims": [
+"musculature of body"
+],
+"cell_slims": [],
+"system_slims": [
+"musculature"
+]
+},
+"renal pelvis": {
+"organ_slims": [
+"kidney"
+],
+"cell_slims": [],
+"system_slims": [
+"excretory system"
+]
+},
+"activated CD4-positive, alpha-beta T cell": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"CD4+ T cell",
+"T cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"keratinocyte": {
+"organ_slims": [
+"epithelium",
+"skin of body"
+],
+"cell_slims": [
+"epithelial cell",
+"keratinocyte"
+],
+"system_slims": [
+"integumental system"
+]
+},
+"KOPT-K1": {
+"organ_slims": [
+"blood",
+"bodily fluid",
+"lymph node"
+],
+"cell_slims": [
+"T cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"L1-S8": {
+"organ_slims": [
+"bone element",
+"bone marrow"
+],
+"cell_slims": [
+"induced pluripotent stem cell",
+"stem cell"
+],
+"system_slims": [
+"immune system",
+"skeletal system"
+]
+},
+"cardiac muscle cell": {
+"organ_slims": [
+"heart",
+"musculature of body"
+],
+"cell_slims": [
+"cardiocyte"
+],
+"system_slims": [
+"circulatory system",
+"musculature"
+]
+},
+"LoVo": {
+"organ_slims": [
+"colon",
+"epithelium",
+"intestine",
+"large intestine"
+],
+"cell_slims": [
+"cancer cell",
+"epithelial cell"
+],
+"system_slims": [
+"digestive system"
+]
+},
+"CD4-positive, CD25-positive, alpha-beta regulatory T cell": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"CD4+ T cell",
+"T cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"fibroblast of lung": {
+"organ_slims": [
+"connective tissue",
+"lung"
+],
+"cell_slims": [
+"connective tissue cell",
+"fibroblast"
+],
+"system_slims": [
+"respiratory system"
+]
+},
+"fibroblast of the conjunctiva": {
+"organ_slims": [
+"connective tissue",
+"eye"
+],
+"cell_slims": [
+"connective tissue cell",
+"fibroblast"
+],
+"system_slims": [
+"sensory system"
+]
+},
+"DOHH2": {
+"organ_slims": [],
+"cell_slims": [
+"B cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"MCF-7": {
+"organ_slims": [
+"epithelium",
+"exocrine gland",
+"mammary gland"
+],
+"cell_slims": [
+"cancer cell",
+"epithelial cell"
+],
+"system_slims": [
+"exocrine system",
+"integumental system"
+]
+},
+"HeLa-S3": {
+"organ_slims": [
+"epithelium",
+"uterus"
+],
+"cell_slims": [
+"cancer cell",
+"epithelial cell"
+],
+"system_slims": [
+"reproductive system"
+]
+},
+"duodenal mucosa": {
+"organ_slims": [
+"intestine",
+"small intestine"
+],
+"cell_slims": [],
+"system_slims": [
+"digestive system"
+]
+},
+"iPS-20b": {
+"organ_slims": [
+"skin of body"
+],
+"cell_slims": [
+"induced pluripotent stem cell",
+"stem cell"
+],
+"system_slims": [
+"integumental system"
+]
+},
+"HS-5": {
+"organ_slims": [
+"bone element",
+"bone marrow",
+"connective tissue"
+],
+"cell_slims": [
+"connective tissue cell",
+"fibroblast"
+],
+"system_slims": [
+"immune system",
+"skeletal system"
+]
+},
+"activated CD8-positive, alpha-beta T cell": {
+"organ_slims": [],
+"cell_slims": [
+"T cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"RCC 7860": {
+"organ_slims": [
+"epithelium",
+"kidney"
+],
+"cell_slims": [
+"cancer cell",
+"epithelial cell"
+],
+"system_slims": [
+"excretory system"
+]
+},
+"aorta": {
+"organ_slims": [
+"arterial blood vessel",
+"blood vessel",
+"vasculature"
+],
+"cell_slims": [],
+"system_slims": [
+"circulatory system"
+]
+},
+"islet precursor cell": {
+"organ_slims": [
+"pancreas"
+],
+"cell_slims": [],
+"system_slims": [
+"endocrine system"
+]
+},
+"CD8-positive, alpha-beta memory T cell": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"CD8+ T cell",
+"T cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"MG63": {
+"organ_slims": [
+"bone element"
+],
+"cell_slims": [
+"cancer cell"
+],
+"system_slims": [
+"skeletal system"
+]
+},
+"HUES48": {
+"organ_slims": [
+"embryo"
+],
+"cell_slims": [
+"embryonic cell",
+"stem cell"
+],
+"system_slims": []
+},
+"OCI-LY3": {
+"organ_slims": [
+"bone element",
+"bone marrow",
+"immune organ",
+"lymph node"
+],
+"cell_slims": [
+"cancer cell"
+],
+"system_slims": [
+"immune system",
+"skeletal system"
+]
+},
+"coronary artery": {
+"organ_slims": [
+"arterial blood vessel",
+"blood vessel",
+"heart",
+"vasculature"
+],
+"cell_slims": [],
+"system_slims": [
+"circulatory system"
+]
+},
+"iris pigment epithelial cell": {
+"organ_slims": [
+"epithelium",
+"eye"
+],
+"cell_slims": [
+"epithelial cell"
+],
+"system_slims": [
+"sensory system"
+]
+},
+"naive thymus-derived CD4-positive, alpha-beta T cell": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"CD4+ T cell",
+"T cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"activated CD4-positive, alpha-beta memory T cell": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"CD4+ T cell",
+"T cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"A549": {
+"organ_slims": [
+"lung"
+],
+"cell_slims": [
+"cancer cell"
+],
+"system_slims": [
+"respiratory system"
+]
+},
+"GM12872": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"B cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"NCI-H226": {
+"organ_slims": [
+"lung"
+],
+"cell_slims": [
+"cancer cell"
+],
+"system_slims": [
+"respiratory system"
+]
+},
+"smooth muscle cell of the brain vasculature": {
+"organ_slims": [
+"brain",
+"vasculature"
+],
+"cell_slims": [
+"neural cell",
+"smooth muscle cell"
+],
+"system_slims": [
+"central nervous system",
+"circulatory system"
+]
+},
+"frontal cortex": {
+"organ_slims": [
+"brain"
+],
+"cell_slims": [],
+"system_slims": [
+"central nervous system"
+]
+},
+"RWPE2": {
+"organ_slims": [
+"epithelium",
+"prostate gland"
+],
+"cell_slims": [
+"epithelial cell"
+],
+"system_slims": [
+"reproductive system"
+]
+},
+"RPMI7951": {
+"organ_slims": [
+"epithelium",
+"skin of body"
+],
+"cell_slims": [
+"cancer cell",
+"epithelial cell"
+],
+"system_slims": [
+"integumental system"
+]
+},
+"DND-41": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"T cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"HEK293": {
+"organ_slims": [
+"epithelium",
+"kidney"
+],
+"cell_slims": [
+"epithelial cell"
+],
+"system_slims": [
+"excretory system"
+]
+},
+"AG09309": {
+"organ_slims": [
+"connective tissue",
+"skin of body"
+],
+"cell_slims": [
+"fibroblast"
+],
+"system_slims": [
+"integumental system"
+]
+},
+"iPS DF 4.7": {
+"organ_slims": [
+"penis",
+"skin of body",
+"skin of prepuce of penis"
+],
+"cell_slims": [
+"induced pluripotent stem cell",
+"stem cell"
+],
+"system_slims": [
+"integumental system",
+"reproductive system"
+]
+},
+"Caco-2": {
+"organ_slims": [
+"colon",
+"intestine",
+"large intestine"
+],
+"cell_slims": [
+"cancer cell"
+],
+"system_slims": [
+"digestive system"
+]
+},
+"astrocyte of the cerebellum": {
+"organ_slims": [
+"brain"
+],
+"cell_slims": [
+"neural cell"
+],
+"system_slims": [
+"central nervous system"
+]
+},
+"activated naive CD8-positive, alpha-beta T cell": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"CD8+ T cell",
+"T cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"HTR-8/SVneo": {
+"organ_slims": [
+"embryo",
+"extraembryonic component",
+"placenta"
+],
+"cell_slims": [],
+"system_slims": [
+"reproductive system"
+]
+},
+"AG08396": {
+"organ_slims": [
+"connective tissue",
+"lung"
+],
+"cell_slims": [
+"fibroblast"
+],
+"system_slims": [
+"respiratory system"
+]
+},
+"GM10248": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"B cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"LHCN-M2": {
+"organ_slims": [
+"musculature of body"
+],
+"cell_slims": [
+"embryonic cell",
+"myoblast"
+],
+"system_slims": [
+"musculature"
+]
+},
+"IMR-90": {
+"organ_slims": [
+"connective tissue",
+"lung"
+],
+"cell_slims": [
+"connective tissue cell",
+"fibroblast"
+],
+"system_slims": [
+"respiratory system"
+]
+},
+"mesodermal cell": {
+"organ_slims": [
+"embryo"
+],
+"cell_slims": [
+"embryonic cell"
+],
+"system_slims": []
+},
+"common myeloid progenitor, CD34-positive": {
+"organ_slims": [
+"bone element",
+"bone marrow"
+],
+"cell_slims": [
+"hematopoietic cell",
+"myeloid cell",
+"progenitor cell"
+],
+"system_slims": [
+"immune system"
+]
+},
+"RKO": {
+"organ_slims": [
+"colon",
+"epithelium",
+"intestine",
+"large intestine"
+],
+"cell_slims": [
+"cancer cell",
+"epithelial cell"
+],
+"system_slims": [
+"digestive system"
+]
+},
+"iPS-11a": {
+"organ_slims": [
+"skin of body"
+],
+"cell_slims": [
+"induced pluripotent stem cell",
+"stem cell"
+],
+"system_slims": [
+"integumental system"
+]
+},
+"CWRU1": {
+"organ_slims": [
+"connective tissue"
+],
+"cell_slims": [
+"induced pluripotent stem cell",
+"stem cell"
+],
+"system_slims": []
+},
+"neural crest cell": {
+"organ_slims": [
+"embryo"
+],
+"cell_slims": [
+"embryonic cell",
+"stem cell"
+],
+"system_slims": []
+},
+"HUES64": {
+"organ_slims": [
+"embryo"
+],
+"cell_slims": [
+"embryonic cell",
+"stem cell"
+],
+"system_slims": []
+},
+"SK-MEL-5": {
+"organ_slims": [
+"epithelium",
+"skin of body"
+],
+"cell_slims": [
+"cancer cell",
+"epithelial cell"
+],
+"system_slims": [
+"integumental system"
+]
+},
+"LNCAP": {
+"organ_slims": [
+"prostate gland"
+],
+"cell_slims": [
+"cancer cell"
+],
+"system_slims": [
+"reproductive system"
+]
+},
+"iPS DF 19.7": {
+"organ_slims": [
+"penis",
+"skin of body",
+"skin of prepuce of penis"
+],
+"cell_slims": [
+"induced pluripotent stem cell",
+"stem cell"
+],
+"system_slims": [
+"integumental system",
+"reproductive system"
+]
+},
+"H54": {
+"organ_slims": [
+"brain"
+],
+"cell_slims": [
+"cancer cell"
+],
+"system_slims": [
+"central nervous system"
+]
+},
+"HCEC 1CT": {
+"organ_slims": [
+"colon",
+"intestine",
+"large intestine"
+],
+"cell_slims": [
+"epithelial cell"
+],
+"system_slims": [
+"digestive system"
+]
+},
+"HCT116": {
+"organ_slims": [
+"colon",
+"epithelium",
+"intestine",
+"large intestine"
+],
+"cell_slims": [
+"cancer cell",
+"epithelial cell"
+],
+"system_slims": [
+"digestive system"
+]
+},
+"GM04503": {
+"organ_slims": [
+"connective tissue",
+"skin of body"
+],
+"cell_slims": [
+"fibroblast"
+],
+"system_slims": [
+"integumental system"
+]
+},
+"chondrocyte": {
+"organ_slims": [
+"connective tissue"
+],
+"cell_slims": [
+"connective tissue cell"
+],
+"system_slims": []
+},
+"glomerular endothelial cell": {
+"organ_slims": [
+"epithelium",
+"kidney",
+"vasculature"
+],
+"cell_slims": [
+"endothelial cell",
+"epithelial cell"
+],
+"system_slims": [
+"circulatory system",
+"excretory system"
+]
+},
+"UCSF-4": {
+"organ_slims": [
+"embryo"
+],
+"cell_slims": [
+"embryonic cell",
+"stem cell"
+],
+"system_slims": []
+},
+"foreskin melanocyte": {
+"organ_slims": [
+"penis"
+],
+"cell_slims": [
+"melanocyte"
+],
+"system_slims": [
+"reproductive system"
+]
+},
+"fibroblast of gingiva": {
+"organ_slims": [
+"connective tissue",
+"mouth"
+],
+"cell_slims": [
+"connective tissue cell",
+"fibroblast"
+],
+"system_slims": [
+"digestive system"
+]
+},
+"MM.1S": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"B cell",
+"cancer cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"EL": {
+"organ_slims": [
+"connective tissue",
+"penis"
+],
+"cell_slims": [
+"connective tissue cell",
+"fibroblast"
+],
+"system_slims": [
+"reproductive system"
+]
+},
+"GM12864": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"B cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"WI38": {
+"organ_slims": [
+"connective tissue",
+"lung"
+],
+"cell_slims": [
+"connective tissue cell",
+"fibroblast"
+],
+"system_slims": [
+"respiratory system"
+]
+},
+"fibroblast of villous mesenchyme": {
+"organ_slims": [
+"connective tissue",
+"extraembryonic component",
+"placenta"
+],
+"cell_slims": [
+"connective tissue cell",
+"fibroblast"
+],
+"system_slims": [
+"reproductive system"
+]
+},
+"Ishikawa": {
+"organ_slims": [
+"uterus"
+],
+"cell_slims": [
+"cancer cell"
+],
+"system_slims": [
+"reproductive system"
+]
+},
+"kidney": {
+"organ_slims": [
+"kidney"
+],
+"cell_slims": [],
+"system_slims": [
+"excretory system"
+]
+},
+"A172": {
+"organ_slims": [
+"brain"
+],
+"cell_slims": [
+"cancer cell"
+],
+"system_slims": [
+"central nervous system"
+]
+},
+"adipocyte": {
+"organ_slims": [
+"connective tissue"
+],
+"cell_slims": [
+"connective tissue cell"
+],
+"system_slims": []
+},
+"VCaP": {
+"organ_slims": [
+"epithelium",
+"prostate gland"
+],
+"cell_slims": [
+"cancer cell",
+"epithelial cell"
+],
+"system_slims": [
+"reproductive system"
+]
+},
+"upper lobe of right lung": {
+"organ_slims": [
+"lung"
+],
+"cell_slims": [],
+"system_slims": [
+"respiratory system"
+]
+},
+"AG09319": {
+"organ_slims": [
+"connective tissue",
+"mouth"
+],
+"cell_slims": [
+"fibroblast"
+],
+"system_slims": [
+"digestive system"
+]
+},
+"radial glial cell": {
+"organ_slims": [
+"embryo"
+],
+"cell_slims": [
+"neural cell"
+],
+"system_slims": []
+},
+"NT2/D1": {
+"organ_slims": [
+"epithelium",
+"gonad",
+"testis"
+],
+"cell_slims": [
+"cancer cell",
+"epithelial cell"
+],
+"system_slims": [
+"reproductive system"
+]
+},
+"D341Med": {
+"organ_slims": [
+"brain"
+],
+"cell_slims": [],
+"system_slims": [
+"central nervous system"
+]
+},
+"umbilical cord": {
+"organ_slims": [
+"extraembryonic component"
+],
+"cell_slims": [],
+"system_slims": []
+},
+"hepatocyte": {
+"organ_slims": [
+"endocrine gland",
+"epithelium",
+"exocrine gland",
+"liver"
+],
+"cell_slims": [
+"epithelial cell"
+],
+"system_slims": [
+"digestive system",
+"endocrine system",
+"exocrine system"
+]
+},
+"H9": {
+"organ_slims": [
+"embryo"
+],
+"cell_slims": [
+"embryonic cell",
+"stem cell"
+],
+"system_slims": []
+},
+"hematopoietic multipotent progenitor cell": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"hematopoietic cell",
+"progenitor cell"
+],
+"system_slims": []
+},
+"K562": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"cancer cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"GM13976": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"B cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"endodermal cell": {
+"organ_slims": [
+"embryo"
+],
+"cell_slims": [
+"embryonic cell"
+],
+"system_slims": []
+},
+"ACC112": {
+"organ_slims": [
+"epithelium",
+"exocrine gland",
+"mouth"
+],
+"cell_slims": [
+"cancer cell",
+"epithelial cell"
+],
+"system_slims": [
+"digestive system",
+"exocrine system"
+]
+},
+"right lobe of liver": {
+"organ_slims": [
+"endocrine gland",
+"exocrine gland",
+"liver"
+],
+"cell_slims": [],
+"system_slims": [
+"digestive system",
+"endocrine system",
+"exocrine system"
+]
+},
+"activated CD8-positive, alpha-beta memory T cell": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"CD8+ T cell",
+"T cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"neuroepithelial stem cell": {
+"organ_slims": [
+"embryo",
+"epithelium"
+],
+"cell_slims": [
+"stem cell"
+],
+"system_slims": []
+},
+"KMS-11": {
+"organ_slims": [
+"bone element"
+],
+"cell_slims": [
+"hematopoietic cell"
+],
+"system_slims": [
+"skeletal system"
+]
+},
+"endothelial cell of umbilical vein": {
+"organ_slims": [
+"blood vessel",
+"epithelium",
+"extraembryonic component",
+"placenta",
+"vasculature",
+"vein"
+],
+"cell_slims": [
+"endothelial cell",
+"epithelial cell"
+],
+"system_slims": [
+"circulatory system",
+"reproductive system"
+]
+},
+"C4-2B": {
+"organ_slims": [
+"prostate gland"
+],
+"cell_slims": [
+"cancer cell"
+],
+"system_slims": [
+"reproductive system"
+]
+},
+"HK-2": {
+"organ_slims": [
+"epithelium",
+"kidney"
+],
+"cell_slims": [
+"epithelial cell"
+],
+"system_slims": [
+"excretory system"
+]
+},
+"T-helper 17 cell": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"CD4+ T cell",
+"T cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"mesendoderm": {
+"organ_slims": [
+"embryo"
+],
+"cell_slims": [],
+"system_slims": []
+},
+"C803": {
+"organ_slims": [
+"epithelium",
+"nose"
+],
+"cell_slims": [
+"epithelial cell"
+],
+"system_slims": [
+"peripheral nervous system",
+"respiratory system",
+"sensory system"
+]
+},
+"SJCRH30": {
+"organ_slims": [
+"connective tissue",
+"musculature of body"
+],
+"cell_slims": [
+"cancer cell",
+"connective tissue cell",
+"fibroblast"
+],
+"system_slims": [
+"musculature"
+]
+},
+"GM12801": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"B cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"GM04504": {
+"organ_slims": [
+"connective tissue",
+"skin of body"
+],
+"cell_slims": [
+"fibroblast"
+],
+"system_slims": [
+"integumental system"
+]
+},
+"HUES6": {
+"organ_slims": [
+"embryo"
+],
+"cell_slims": [
+"embryonic cell",
+"stem cell"
+],
+"system_slims": []
+},
+"SU-DHL-6": {
+"organ_slims": [],
+"cell_slims": [
+"B cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"GM10266": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"B cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"22Rv1": {
+"organ_slims": [
+"prostate gland"
+],
+"cell_slims": [
+"cancer cell"
+],
+"system_slims": [
+"reproductive system"
+]
+},
+"transverse colon": {
+"organ_slims": [
+"colon",
+"intestine",
+"large intestine"
+],
+"cell_slims": [],
+"system_slims": [
+"digestive system"
+]
+},
+"8988T": {
+"organ_slims": [
+"pancreas"
+],
+"cell_slims": [
+"cancer cell"
+],
+"system_slims": [
+"endocrine system"
+]
+},
+"forelimb muscle": {
+"organ_slims": [
+"limb",
+"musculature of body"
+],
+"cell_slims": [],
+"system_slims": [
+"musculature"
+]
+},
+"B cell": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"B cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"ectodermal cell": {
+"organ_slims": [
+"embryo"
+],
+"cell_slims": [
+"embryonic cell"
+],
+"system_slims": []
+},
+"Karpas-422": {
+"organ_slims": [
+"blood",
+"bodily fluid",
+"lymph node"
+],
+"cell_slims": [
+"B cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"GM18507": {
+"organ_slims": [
+"lymphoid tissue"
+],
+"cell_slims": [
+"B cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"cardiac septum": {
+"organ_slims": [
+"heart"
+],
+"cell_slims": [],
+"system_slims": [
+"circulatory system"
+]
+},
+"RPMI8226": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"B cell",
+"cancer cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"COLO829": {
+"organ_slims": [
+"connective tissue",
+"skin of body"
+],
+"cell_slims": [
+"cancer cell",
+"connective tissue cell",
+"fibroblast"
+],
+"system_slims": [
+"integumental system"
+]
+},
+"iPS-18c": {
+"organ_slims": [
+"skin of body"
+],
+"cell_slims": [
+"induced pluripotent stem cell",
+"stem cell"
+],
+"system_slims": [
+"integumental system"
+]
+},
+"T-helper 2 cell": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"CD4+ T cell",
+"T cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"HT-29": {
+"organ_slims": [
+"colon",
+"epithelium",
+"intestine",
+"large intestine"
+],
+"cell_slims": [
+"cancer cell",
+"epithelial cell"
+],
+"system_slims": [
+"digestive system"
+]
+},
+"L1-S8R": {
+"organ_slims": [
+"bone element",
+"bone marrow"
+],
+"cell_slims": [
+"induced pluripotent stem cell",
+"stem cell"
+],
+"system_slims": [
+"immune system",
+"skeletal system"
+]
+},
+"GM23248": {
+"organ_slims": [
+"connective tissue",
+"limb",
+"skin of body"
+],
+"cell_slims": [
+"connective tissue cell",
+"fibroblast"
+],
+"system_slims": [
+"integumental system"
+]
+},
+"CMK": {
+"organ_slims": [
+"blood",
+"bodily fluid",
+"bone element",
+"bone marrow"
+],
+"cell_slims": [
+"cancer cell",
+"hematopoietic cell",
+"myeloid cell"
+],
+"system_slims": [
+"immune system",
+"skeletal system"
+]
+},
+"AG08395": {
+"organ_slims": [
+"connective tissue",
+"skin of body"
+],
+"cell_slims": [
+"fibroblast"
+],
+"system_slims": [
+"integumental system"
+]
+},
+"kidney tubule cell": {
+"organ_slims": [
+"epithelium",
+"kidney"
+],
+"cell_slims": [],
+"system_slims": [
+"excretory system"
+]
+},
+"left lung": {
+"organ_slims": [
+"lung"
+],
+"cell_slims": [],
+"system_slims": [
+"respiratory system"
+]
+},
+"mammary epithelial cell": {
+"organ_slims": [
+"epithelium",
+"exocrine gland",
+"mammary gland"
+],
+"cell_slims": [
+"epithelial cell"
+],
+"system_slims": [
+"exocrine system",
+"integumental system"
+]
+},
+"glomerular visceral epithelial cell": {
+"organ_slims": [
+"epithelium",
+"kidney"
+],
+"cell_slims": [
+"epithelial cell"
+],
+"system_slims": [
+"excretory system"
+]
+},
+"prostate gland": {
+"organ_slims": [
+"prostate gland"
+],
+"cell_slims": [],
+"system_slims": [
+"reproductive system"
+]
+},
+"osteoblast": {
+"organ_slims": [
+"connective tissue"
+],
+"cell_slims": [
+"connective tissue cell"
+],
+"system_slims": [
+"skeletal system"
+]
+},
+"dermis blood vessel endothelial cell": {
+"organ_slims": [
+"blood vessel",
+"epithelium",
+"skin of body",
+"vasculature"
+],
+"cell_slims": [
+"endothelial cell",
+"epithelial cell"
+],
+"system_slims": [
+"circulatory system",
+"integumental system"
+]
+},
+"germinal matrix": {
+"organ_slims": [
+"brain"
+],
+"cell_slims": [],
+"system_slims": [
+"central nervous system"
+]
+},
+"ascending aorta": {
+"organ_slims": [
+"arterial blood vessel",
+"blood vessel",
+"vasculature"
+],
+"cell_slims": [],
+"system_slims": [
+"circulatory system"
+]
+},
+"astrocyte": {
+"organ_slims": [
+"brain",
+"spinal cord"
+],
+"cell_slims": [
+"neural cell"
+],
+"system_slims": [
+"central nervous system"
+]
+},
+"CD1c-positive myeloid dendritic cell": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"dendritic cell",
+"hematopoietic cell",
+"leukocyte",
+"myeloid cell"
+],
+"system_slims": [
+"immune system"
+]
+},
+"Panc1": {
+"organ_slims": [
+"epithelium",
+"pancreas"
+],
+"cell_slims": [
+"cancer cell",
+"epithelial cell"
+],
+"system_slims": [
+"endocrine system"
+]
+},
+"lung microvascular endothelial cell": {
+"organ_slims": [
+"blood vessel",
+"epithelium",
+"lung",
+"vasculature"
+],
+"cell_slims": [
+"endothelial cell",
+"epithelial cell"
+],
+"system_slims": [
+"circulatory system",
+"respiratory system"
+]
+},
+"amnion": {
+"organ_slims": [
+"extraembryonic component",
+"placenta"
+],
+"cell_slims": [],
+"system_slims": [
+"reproductive system"
+]
+},
+"Jurkat, Clone E6-1": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"T cell",
+"cancer cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"iPS-NIHi7": {
+"organ_slims": [
+"skin of body"
+],
+"cell_slims": [
+"induced pluripotent stem cell",
+"stem cell"
+],
+"system_slims": [
+"integumental system"
+]
+},
+"NB4": {
+"organ_slims": [
+"bone element",
+"bone marrow"
+],
+"cell_slims": [
+"cancer cell"
+],
+"system_slims": [
+"immune system",
+"skeletal system"
+]
+},
+"fibroblast of mammary gland": {
+"organ_slims": [
+"connective tissue",
+"exocrine gland",
+"mammary gland"
+],
+"cell_slims": [
+"connective tissue cell",
+"fibroblast"
+],
+"system_slims": [
+"exocrine system",
+"integumental system"
+]
+},
+"chorion": {
+"organ_slims": [
+"extraembryonic component"
+],
+"cell_slims": [],
+"system_slims": []
+},
+"D721Med": {
+"organ_slims": [
+"brain"
+],
+"cell_slims": [
+"neural cell"
+],
+"system_slims": [
+"central nervous system"
+]
+},
+"EH": {
+"organ_slims": [
+"connective tissue",
+"penis"
+],
+"cell_slims": [
+"connective tissue cell",
+"fibroblast"
+],
+"system_slims": [
+"reproductive system"
+]
+},
+"T47D": {
+"organ_slims": [
+"epithelium",
+"exocrine gland",
+"mammary gland"
+],
+"cell_slims": [
+"cancer cell",
+"epithelial cell"
+],
+"system_slims": [
+"exocrine system",
+"integumental system"
+]
+},
+"GM12874": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"B cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"HEK293T": {
+"organ_slims": [
+"epithelium",
+"kidney"
+],
+"cell_slims": [
+"epithelial cell"
+],
+"system_slims": [
+"excretory system"
+]
+},
+"right kidney": {
+"organ_slims": [
+"kidney"
+],
+"cell_slims": [],
+"system_slims": [
+"excretory system"
+]
+},
+"testis": {
+"organ_slims": [
+"gonad",
+"testis"
+],
+"cell_slims": [],
+"system_slims": [
+"reproductive system"
+]
+},
+"endocrine pancreas": {
+"organ_slims": [
+"pancreas"
+],
+"cell_slims": [],
+"system_slims": [
+"endocrine system"
+]
+},
+"GM03348": {
+"organ_slims": [
+"connective tissue",
+"skin of body"
+],
+"cell_slims": [
+"fibroblast"
+],
+"system_slims": [
+"integumental system"
+]
+},
+"suppressor macrophage": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"hematopoietic cell",
+"leukocyte",
+"myeloid cell"
+],
+"system_slims": [
+"immune system"
+]
+},
+"renal cortical epithelial cell": {
+"organ_slims": [
+"epithelium",
+"kidney"
+],
+"cell_slims": [
+"epithelial cell"
+],
+"system_slims": [
+"excretory system"
+]
+},
+"HS-27A": {
+"organ_slims": [
+"bone element",
+"bone marrow",
+"epithelium"
+],
+"cell_slims": [
+"epithelial cell"
+],
+"system_slims": [
+"immune system",
+"skeletal system"
+]
+},
+"GM06990": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"B cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"tongue": {
+"organ_slims": [
+"mouth",
+"tongue"
+],
+"cell_slims": [],
+"system_slims": [
+"digestive system",
+"sensory system"
+]
+},
+"PC-3": {
+"organ_slims": [
+"prostate gland"
+],
+"cell_slims": [
+"cancer cell"
+],
+"system_slims": [
+"reproductive system"
+]
+},
+"eye": {
+"organ_slims": [
+"eye"
+],
+"cell_slims": [],
+"system_slims": [
+"sensory system"
+]
+},
+"GM23338": {
+"organ_slims": [
+"skin of body"
+],
+"cell_slims": [
+"induced pluripotent stem cell",
+"stem cell"
+],
+"system_slims": [
+"integumental system"
+]
+},
+"MCF 10A": {
+"organ_slims": [
+"epithelium",
+"exocrine gland",
+"mammary gland"
+],
+"cell_slims": [
+"epithelial cell"
+],
+"system_slims": [
+"exocrine system",
+"integumental system"
+]
+},
+"foreskin keratinocyte": {
+"organ_slims": [
+"epithelium",
+"penis",
+"skin of body"
+],
+"cell_slims": [
+"epithelial cell",
+"keratinocyte"
+],
+"system_slims": [
+"integumental system",
+"reproductive system"
+]
+},
+"gastroesophageal sphincter": {
+"organ_slims": [
+"musculature of body",
+"stomach"
+],
+"cell_slims": [],
+"system_slims": [
+"digestive system",
+"musculature"
+]
+},
+"CD4-positive, alpha-beta T cell": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"CD4+ T cell",
+"T cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"mucosa of descending colon": {
+"organ_slims": [
+"colon",
+"intestine",
+"large intestine"
+],
+"cell_slims": [],
+"system_slims": [
+"digestive system"
+]
+},
+"neurosphere": {
+"organ_slims": [],
+"cell_slims": [
+"stem cell"
+],
+"system_slims": [
+"central nervous system"
+]
+},
+"mucosa of gallbladder": {
+"organ_slims": [
+"gallbladder"
+],
+"cell_slims": [],
+"system_slims": [
+"digestive system"
+]
+},
+"AG04449": {
+"organ_slims": [
+"connective tissue",
+"skin of body"
+],
+"cell_slims": [
+"fibroblast"
+],
+"system_slims": [
+"integumental system"
+]
+},
+"GM12865": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"B cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"esophagus": {
+"organ_slims": [
+"esophagus"
+],
+"cell_slims": [],
+"system_slims": [
+"digestive system"
+]
+},
+"fibroblast of peridontal ligament": {
+"organ_slims": [
+"connective tissue",
+"mouth"
+],
+"cell_slims": [
+"connective tissue cell",
+"fibroblast"
+],
+"system_slims": [
+"skeletal system"
+]
+},
+"brain microvascular endothelial cell": {
+"organ_slims": [
+"blood vessel",
+"brain",
+"epithelium",
+"vasculature"
+],
+"cell_slims": [
+"endothelial cell",
+"epithelial cell",
+"neural cell"
+],
+"system_slims": [
+"central nervous system",
+"circulatory system"
+]
+},
+"posterior vena cava": {
+"organ_slims": [
+"blood vessel",
+"vasculature",
+"vein"
+],
+"cell_slims": [],
+"system_slims": [
+"circulatory system"
+]
+},
+"AG10803": {
+"organ_slims": [
+"connective tissue",
+"skin of body"
+],
+"cell_slims": [
+"fibroblast"
+],
+"system_slims": [
+"integumental system"
+]
+},
+"HL-60": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"cancer cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"urothelium cell line": {
+"organ_slims": [
+"epithelium"
+],
+"cell_slims": [],
+"system_slims": [
+"excretory system"
+]
+},
+"HT1080": {
+"organ_slims": [
+"connective tissue",
+"epithelium"
+],
+"cell_slims": [
+"cancer cell",
+"epithelial cell"
+],
+"system_slims": []
+},
+"activated naive CD4-positive, alpha-beta T cell": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"CD4+ T cell",
+"T cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"CD8-positive, alpha-beta T cell": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"CD8+ T cell",
+"T cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"peripheral blood mononuclear cell": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"hematopoietic cell",
+"leukocyte",
+"mononuclear cell"
+],
+"system_slims": [
+"immune system"
+]
+},
+"AG20443": {
+"organ_slims": [
+"connective tissue",
+"skin of body"
+],
+"cell_slims": [
+"fibroblast"
+],
+"system_slims": [
+"integumental system"
+]
+},
+"GM20000": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"B cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"ACHN": {
+"organ_slims": [
+"kidney"
+],
+"cell_slims": [
+"cancer cell"
+],
+"system_slims": [
+"excretory system"
+]
+},
+"inferior parietal cortex": {
+"organ_slims": [
+"brain"
+],
+"cell_slims": [],
+"system_slims": [
+"central nervous system"
+]
+},
+"astrocyte of the hippocampus": {
+"organ_slims": [
+"brain"
+],
+"cell_slims": [
+"neural cell"
+],
+"system_slims": [
+"central nervous system"
+]
+},
+"Caki2": {
+"organ_slims": [
+"epithelium",
+"kidney"
+],
+"cell_slims": [
+"cancer cell",
+"epithelial cell"
+],
+"system_slims": [
+"excretory system"
+]
+},
+"activated B cell": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"B cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"myocyte": {
+"organ_slims": [
+"musculature of body"
+],
+"cell_slims": [],
+"system_slims": [
+"musculature"
+]
+},
+"uterus": {
+"organ_slims": [
+"uterus"
+],
+"cell_slims": [],
+"system_slims": [
+"reproductive system"
+]
+},
+"esophagus squamous epithelium": {
+"organ_slims": [
+"epithelium",
+"esophagus"
+],
+"cell_slims": [],
+"system_slims": [
+"digestive system"
+]
+},
+"trophoblast": {
+"organ_slims": [
+"embryo"
+],
+"cell_slims": [],
+"system_slims": []
+},
+"Peyer's patch": {
+"organ_slims": [
+"intestine",
+"lymphoid tissue"
+],
+"cell_slims": [],
+"system_slims": [
+"digestive system",
+"immune system"
+]
+},
+"OCI-LY7": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"B cell",
+"cancer cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"lower leg skin": {
+"organ_slims": [
+"limb",
+"skin of body"
+],
+"cell_slims": [],
+"system_slims": [
+"integumental system"
+]
+},
+"NAMALWA": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"B cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"choroid plexus epithelial cell": {
+"organ_slims": [
+"brain",
+"epithelium",
+"vasculature"
+],
+"cell_slims": [
+"epithelial cell",
+"neural cell"
+],
+"system_slims": [
+"central nervous system",
+"circulatory system"
+]
+},
+"H4": {
+"organ_slims": [
+"brain",
+"epithelium"
+],
+"cell_slims": [
+"epithelial cell"
+],
+"system_slims": [
+"central nervous system"
+]
+},
+"body of pancreas": {
+"organ_slims": [
+"pancreas"
+],
+"cell_slims": [],
+"system_slims": []
+},
+"PC-9": {
+"organ_slims": [
+"lung"
+],
+"cell_slims": [
+"cancer cell"
+],
+"system_slims": [
+"respiratory system"
+]
+},
+"lower lobe of left lung": {
+"organ_slims": [
+"lung"
+],
+"cell_slims": [],
+"system_slims": [
+"respiratory system"
+]
+},
+"CD14-positive monocyte": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"hematopoietic cell",
+"leukocyte",
+"monocyte",
+"myeloid cell"
+],
+"system_slims": [
+"immune system"
+]
+},
+"tibial artery": {
+"organ_slims": [
+"arterial blood vessel",
+"blood vessel",
+"limb",
+"vasculature"
+],
+"cell_slims": [],
+"system_slims": [
+"circulatory system"
+]
+},
+"iPS-15b": {
+"organ_slims": [
+"skin of body"
+],
+"cell_slims": [
+"induced pluripotent stem cell",
+"stem cell"
+],
+"system_slims": [
+"integumental system"
+]
+},
+"myotube": {
+"organ_slims": [
+"musculature of body"
+],
+"cell_slims": [],
+"system_slims": [
+"musculature"
+]
+},
+"esophagus muscularis mucosa": {
+"organ_slims": [
+"esophagus",
+"musculature of body"
+],
+"cell_slims": [],
+"system_slims": [
+"digestive system",
+"musculature"
+]
+},
+"HuH-7": {
+"organ_slims": [
+"endocrine gland",
+"epithelium",
+"exocrine gland",
+"liver"
+],
+"cell_slims": [
+"cancer cell",
+"epithelial cell"
+],
+"system_slims": [
+"digestive system",
+"endocrine system",
+"exocrine system"
+]
+},
+"activated CD4-positive, CD25-positive, alpha-beta regulatory T cell": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"CD4+ T cell",
+"T cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"naive B cell": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"B cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"inflammatory macrophage": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"hematopoietic cell",
+"leukocyte",
+"myeloid cell"
+],
+"system_slims": [
+"immune system"
+]
+},
+"SJSA1": {
+"organ_slims": [
+"bone element"
+],
+"cell_slims": [
+"cancer cell"
+],
+"system_slims": [
+"skeletal system"
+]
+},
+"placenta": {
+"organ_slims": [
+"extraembryonic component",
+"placenta"
+],
+"cell_slims": [],
+"system_slims": [
+"reproductive system"
+]
+},
+"mucosa of stomach": {
+"organ_slims": [
+"stomach"
+],
+"cell_slims": [],
+"system_slims": [
+"digestive system"
+]
+},
+"BJ": {
+"organ_slims": [
+"connective tissue",
+"penis",
+"skin of body"
+],
+"cell_slims": [
+"connective tissue cell",
+"fibroblast"
+],
+"system_slims": [
+"reproductive system"
+]
+},
+"psoas muscle": {
+"organ_slims": [
+"musculature of body"
+],
+"cell_slims": [],
+"system_slims": [
+"musculature"
+]
+},
+"sciatic nerve": {
+"organ_slims": [
+"nerve"
+],
+"cell_slims": [],
+"system_slims": [
+"peripheral nervous system"
+]
+},
+"left lobe of liver": {
+"organ_slims": [
+"endocrine gland",
+"exocrine gland",
+"liver"
+],
+"cell_slims": [],
+"system_slims": [
+"digestive system",
+"endocrine system",
+"exocrine system"
+]
+},
+"iPS-18a": {
+"organ_slims": [
+"skin of body"
+],
+"cell_slims": [
+"induced pluripotent stem cell",
+"stem cell"
+],
+"system_slims": [
+"integumental system"
+]
+},
+"HAP-1": {
+"organ_slims": [
+"bone element",
+"bone marrow"
+],
+"cell_slims": [
+"cancer cell"
+],
+"system_slims": [
+"immune system",
+"skeletal system"
+]
+},
+"thoracic aorta": {
+"organ_slims": [
+"arterial blood vessel",
+"blood vessel",
+"vasculature"
+],
+"cell_slims": [],
+"system_slims": [
+"circulatory system"
+]
+},
+"bronchial epithelial cell": {
+"organ_slims": [
+"bronchus",
+"epithelium",
+"lung"
+],
+"cell_slims": [
+"epithelial cell"
+],
+"system_slims": [
+"respiratory system"
+]
+},
+"non-pigmented ciliary epithelial cell": {
+"organ_slims": [
+"epithelium"
+],
+"cell_slims": [
+"epithelial cell"
+],
+"system_slims": []
+},
+"omental fat pad": {
+"organ_slims": [
+"adipose tissue",
+"connective tissue"
+],
+"cell_slims": [],
+"system_slims": []
+},
+"cardiac myoblast": {
+"organ_slims": [
+"heart",
+"musculature of body"
+],
+"cell_slims": [
+"embryonic cell",
+"myoblast"
+],
+"system_slims": [
+"circulatory system",
+"musculature"
+]
+},
+"GM12878": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"B cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"GM12873": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"B cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"parathyroid adenoma": {
+"organ_slims": [
+"paraythroid gland"
+],
+"cell_slims": [],
+"system_slims": [
+"endocrine system"
+]
+},
+"dermis microvascular lymphatic vessel endothelial cell": {
+"organ_slims": [
+"blood vessel",
+"epithelium",
+"lymphatic vessel",
+"skin of body",
+"vasculature"
+],
+"cell_slims": [
+"endothelial cell",
+"epithelial cell"
+],
+"system_slims": [
+"circulatory system",
+"immune system",
+"integumental system"
+]
+},
+"pancreas": {
+"organ_slims": [
+"pancreas"
+],
+"cell_slims": [],
+"system_slims": []
+},
+"H1": {
+"organ_slims": [
+"embryo"
+],
+"cell_slims": [
+"embryonic cell",
+"stem cell"
+],
+"system_slims": []
+},
+"fibroblast of the aortic adventitia": {
+"organ_slims": [
+"arterial blood vessel",
+"blood vessel",
+"connective tissue",
+"vasculature"
+],
+"cell_slims": [
+"connective tissue cell",
+"fibroblast"
+],
+"system_slims": [
+"circulatory system"
+]
+},
+"right renal pelvis": {
+"organ_slims": [
+"kidney",
+"ureter"
+],
+"cell_slims": [],
+"system_slims": [
+"excretory system"
+]
+},
+"substantia nigra": {
+"organ_slims": [
+"brain"
+],
+"cell_slims": [],
+"system_slims": [
+"central nervous system"
+]
+},
+"upper lobe of left lung": {
+"organ_slims": [
+"lung"
+],
+"cell_slims": [],
+"system_slims": [
+"respiratory system"
+]
+},
+"putamen": {
+"organ_slims": [
+"brain"
+],
+"cell_slims": [],
+"system_slims": [
+"central nervous system"
+]
+},
+"WERI-Rb-1": {
+"organ_slims": [
+"eye"
+],
+"cell_slims": [
+"cancer cell",
+"neural cell"
+],
+"system_slims": [
+"sensory system"
+]
+},
+"mid-neurogenesis radial glial cells": {
+"organ_slims": [],
+"cell_slims": [
+"neural cell"
+],
+"system_slims": [
+"central nervous system"
+]
+},
+"temporal lobe": {
+"organ_slims": [
+"brain"
+],
+"cell_slims": [],
+"system_slims": [
+"central nervous system"
+]
+},
+"fibroblast of breast": {
+"organ_slims": [
+"breast"
+],
+"cell_slims": [
+"fibroblast"
+],
+"system_slims": []
+},
+"SK-N-DZ": {
+"organ_slims": [
+"brain"
+],
+"cell_slims": [
+"cancer cell",
+"neural cell",
+"neuroblastoma cell",
+"stem cell"
+],
+"system_slims": [
+"central nervous system"
+]
+},
+"muscle of leg": {
+"organ_slims": [
+"limb",
+"musculature of body"
+],
+"cell_slims": [],
+"system_slims": [
+"musculature"
+]
+},
+"caudate nucleus": {
+"organ_slims": [
+"brain"
+],
+"cell_slims": [],
+"system_slims": [
+"central nervous system"
+]
+},
+"LNCaP clone FGC": {
+"organ_slims": [
+"epithelium",
+"prostate gland"
+],
+"cell_slims": [
+"cancer cell",
+"epithelial cell"
+],
+"system_slims": [
+"reproductive system"
+]
+},
+"gastrocnemius medialis": {
+"organ_slims": [
+"limb",
+"musculature of body"
+],
+"cell_slims": [],
+"system_slims": [
+"musculature"
+]
+},
+"cingulate gyrus": {
+"organ_slims": [
+"brain"
+],
+"cell_slims": [],
+"system_slims": [
+"central nervous system"
+]
+},
+"left cardiac atrium": {
+"organ_slims": [
+"heart"
+],
+"cell_slims": [],
+"system_slims": [
+"circulatory system"
+]
+},
+"limb": {
+"organ_slims": [
+"limb"
+],
+"cell_slims": [],
+"system_slims": [
+"musculature",
+"skeletal system"
+]
+},
+"retina": {
+"organ_slims": [
+"eye"
+],
+"cell_slims": [],
+"system_slims": [
+"sensory system"
+]
+},
+"midbrain": {
+"organ_slims": [
+"brain"
+],
+"cell_slims": [],
+"system_slims": [
+"central nervous system"
+]
+},
+"thyroid gland": {
+"organ_slims": [
+"endocrine gland",
+"thyroid gland"
+],
+"cell_slims": [],
+"system_slims": [
+"endocrine system"
+]
+},
+"mucosa of rectum": {
+"organ_slims": [
+"intestine",
+"large intestine"
+],
+"cell_slims": [],
+"system_slims": [
+"digestive system"
+]
+},
+"T-cell": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"T cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"fibroblast of dermis": {
+"organ_slims": [
+"connective tissue",
+"skin of body"
+],
+"cell_slims": [
+"connective tissue cell",
+"fibroblast"
+],
+"system_slims": [
+"integumental system"
+]
+},
+"astrocyte of the spinal cord": {
+"organ_slims": [
+"spinal cord"
+],
+"cell_slims": [
+"neural cell"
+],
+"system_slims": [
+"central nervous system"
+]
+},
+"heart left ventricle": {
+"organ_slims": [
+"heart"
+],
+"cell_slims": [],
+"system_slims": [
+"circulatory system"
+]
+},
+"fibroblast of skin of right biceps": {
+"organ_slims": [
+"skin of body"
+],
+"cell_slims": [
+"fibroblast"
+],
+"system_slims": [
+"integumental system"
+]
+},
+"Ammon's horn": {
+"organ_slims": [
+"brain"
+],
+"cell_slims": [],
+"system_slims": [
+"central nervous system"
+]
+},
+"amniotic stem cell": {
+"organ_slims": [
+"connective tissue",
+"extraembryonic component"
+],
+"cell_slims": [
+"connective tissue cell",
+"stem cell"
+],
+"system_slims": []
+},
+"SK-N-SH": {
+"organ_slims": [
+"brain"
+],
+"cell_slims": [
+"cancer cell",
+"neuroblastoma cell"
+],
+"system_slims": [
+"central nervous system"
+]
+},
+"suprapubic skin": {
+"organ_slims": [
+"skin of body"
+],
+"cell_slims": [],
+"system_slims": [
+"integumental system"
+]
+},
+"muscle layer of colon": {
+"organ_slims": [
+"colon",
+"intestine",
+"large intestine"
+],
+"cell_slims": [],
+"system_slims": [
+"digestive system"
+]
+},
+"left colon": {
+"organ_slims": [
+"colon",
+"intestine",
+"large intestine"
+],
+"cell_slims": [],
+"system_slims": [
+"digestive system"
+]
+},
+"subcutaneous abdominal adipose tissue": {
+"organ_slims": [
+"adipose tissue",
+"connective tissue"
+],
+"cell_slims": [],
+"system_slims": [
+"integumental system"
+]
+},
+"fibroblast of pulmonary artery": {
+"organ_slims": [
+"arterial blood vessel",
+"blood vessel",
+"connective tissue",
+"vasculature"
+],
+"cell_slims": [
+"connective tissue cell",
+"fibroblast"
+],
+"system_slims": [
+"circulatory system"
+]
+},
+"femur": {
+"organ_slims": [
+"bone element",
+"limb",
+"skeleton"
+],
+"cell_slims": [],
+"system_slims": [
+"skeletal system"
+]
+},
+"kidney glomerular epithelial cell": {
+"organ_slims": [
+"epithelium",
+"kidney"
+],
+"cell_slims": [
+"epithelial cell"
+],
+"system_slims": [
+"excretory system"
+]
+},
+"fibroblast of skin of back": {
+"organ_slims": [
+"connective tissue",
+"skin of body"
+],
+"cell_slims": [
+"connective tissue cell",
+"fibroblast"
+],
+"system_slims": [
+"integumental system"
+]
+},
+"germinal center": {
+"organ_slims": [
+"lymphoid tissue"
+],
+"cell_slims": [],
+"system_slims": [
+"immune system"
+]
+},
+"cerebellum": {
+"organ_slims": [
+"brain"
+],
+"cell_slims": [],
+"system_slims": [
+"central nervous system"
+]
+},
+"heart": {
+"organ_slims": [
+"heart"
+],
+"cell_slims": [],
+"system_slims": [
+"circulatory system"
+]
+},
+"liver": {
+"organ_slims": [
+"endocrine gland",
+"exocrine gland",
+"liver"
+],
+"cell_slims": [],
+"system_slims": [
+"digestive system",
+"endocrine system",
+"exocrine system"
+]
+},
+"cerebellar cortex": {
+"organ_slims": [
+"brain"
+],
+"cell_slims": [],
+"system_slims": [
+"central nervous system"
+]
+},
+"ovary": {
+"organ_slims": [
+"gonad",
+"ovary"
+],
+"cell_slims": [],
+"system_slims": [
+"reproductive system"
+]
+},
+"left renal pelvis": {
+"organ_slims": [
+"kidney",
+"ureter"
+],
+"cell_slims": [],
+"system_slims": [
+"excretory system"
+]
+},
+"hindlimb muscle": {
+"organ_slims": [
+"limb",
+"musculature of body"
+],
+"cell_slims": [],
+"system_slims": [
+"musculature"
+]
+},
+"skeletal muscle myoblast": {
+"organ_slims": [
+"musculature of body"
+],
+"cell_slims": [
+"embryonic cell",
+"myoblast"
+],
+"system_slims": [
+"musculature"
+]
+},
+"right cardiac atrium": {
+"organ_slims": [
+"heart"
+],
+"cell_slims": [],
+"system_slims": [
+"circulatory system"
+]
+},
+"GM08714": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"B cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"embryonic facial prominence": {
+"organ_slims": [
+"embryo"
+],
+"cell_slims": [],
+"system_slims": []
+},
+"lung": {
+"organ_slims": [
+"lung"
+],
+"cell_slims": [],
+"system_slims": [
+"respiratory system"
+]
+},
+"nephron progenitor cell": {
+"organ_slims": [
+"kidney"
+],
+"cell_slims": [
+"progenitor cell"
+],
+"system_slims": [
+"excretory system"
+]
+},
+"motor neuron": {
+"organ_slims": [
+"brain",
+"spinal cord"
+],
+"cell_slims": [
+"neural cell"
+],
+"system_slims": [
+"central nervous system"
+]
+},
+"neural progenitor cell": {
+"organ_slims": [],
+"cell_slims": [
+"progenitor cell"
+],
+"system_slims": [
+"central nervous system"
+]
+},
+"left kidney": {
+"organ_slims": [
+"kidney"
+],
+"cell_slims": [],
+"system_slims": [
+"excretory system"
+]
+},
+"ureter": {
+"organ_slims": [
+"kidney",
+"ureter"
+],
+"cell_slims": [],
+"system_slims": [
+"excretory system"
+]
+},
+"SW480": {
+"organ_slims": [
+"colon",
+"epithelium",
+"intestine",
+"large intestine"
+],
+"cell_slims": [
+"cancer cell",
+"epithelial cell"
+],
+"system_slims": [
+"digestive system"
+]
+},
+"iPS DF 19.11": {
+"organ_slims": [
+"penis",
+"skin of body",
+"skin of prepuce of penis"
+],
+"cell_slims": [
+"induced pluripotent stem cell",
+"stem cell"
+],
+"system_slims": [
+"integumental system",
+"reproductive system"
+]
+},
+"subcutaneous adipose tissue": {
+"organ_slims": [
+"adipose tissue",
+"connective tissue"
+],
+"cell_slims": [],
+"system_slims": [
+"integumental system"
+]
+},
+"mesenteric fat pad": {
+"organ_slims": [
+"adipose tissue",
+"connective tissue"
+],
+"cell_slims": [],
+"system_slims": []
+},
+"T-helper 1 cell": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"CD4+ T cell",
+"T cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"lower lobe of right lung": {
+"organ_slims": [
+"lung"
+],
+"cell_slims": [],
+"system_slims": [
+"respiratory system"
+]
+},
+"globus pallidus": {
+"organ_slims": [
+"brain"
+],
+"cell_slims": [],
+"system_slims": [
+"central nervous system"
+]
+},
+"sigmoid colon": {
+"organ_slims": [
+"colon",
+"intestine",
+"large intestine"
+],
+"cell_slims": [],
+"system_slims": [
+"digestive system"
+]
+},
+"fibroblast of skin of left quadriceps": {
+"organ_slims": [
+"skin of body"
+],
+"cell_slims": [
+"fibroblast"
+],
+"system_slims": [
+"integumental system"
+]
+},
+"right renal cortex interstitium": {
+"organ_slims": [
+"kidney"
+],
+"cell_slims": [],
+"system_slims": [
+"excretory system"
+]
+},
+"fibroblast of skin of right quadriceps": {
+"organ_slims": [
+"skin of body"
+],
+"cell_slims": [
+"fibroblast"
+],
+"system_slims": [
+"integumental system"
+]
+},
+"medulla oblongata": {
+"organ_slims": [
+"brain"
+],
+"cell_slims": [],
+"system_slims": [
+"central nervous system"
+]
+},
+"occipital lobe": {
+"organ_slims": [
+"brain"
+],
+"cell_slims": [],
+"system_slims": [
+"central nervous system"
+]
+},
+"chorionic villus": {
+"organ_slims": [
+"embryo",
+"extraembryonic component",
+"placenta"
+],
+"cell_slims": [],
+"system_slims": [
+"reproductive system"
+]
+},
+"mesothelial cell of epicardium": {
+"organ_slims": [
+"epithelium",
+"heart",
+"pericardium"
+],
+"cell_slims": [
+"cardiocyte",
+"epithelial cell"
+],
+"system_slims": [
+"circulatory system"
+]
+},
+"stomach": {
+"organ_slims": [
+"stomach"
+],
+"cell_slims": [],
+"system_slims": [
+"digestive system"
+]
+},
+"muscle of back": {
+"organ_slims": [
+"musculature of body"
+],
+"cell_slims": [],
+"system_slims": [
+"musculature"
+]
+},
+"adipose tissue": {
+"organ_slims": [
+"adipose tissue",
+"connective tissue"
+],
+"cell_slims": [],
+"system_slims": []
+},
+"angular gyrus": {
+"organ_slims": [
+"brain"
+],
+"cell_slims": [],
+"system_slims": [
+"central nervous system"
+]
+},
+"breast epithelium": {
+"organ_slims": [
+"breast",
+"epithelium"
+],
+"cell_slims": [],
+"system_slims": []
+},
+"brain": {
+"organ_slims": [
+"brain"
+],
+"cell_slims": [],
+"system_slims": [
+"central nervous system"
+]
+},
+"fibroblast of skin of scalp": {
+"organ_slims": [
+"connective tissue",
+"skin of body"
+],
+"cell_slims": [
+"connective tissue cell",
+"fibroblast"
+],
+"system_slims": [
+"integumental system"
+]
+},
+"layer of hippocampus": {
+"organ_slims": [
+"brain"
+],
+"cell_slims": [],
+"system_slims": [
+"central nervous system"
+]
+},
+"thymus": {
+"organ_slims": [
+"endocrine gland",
+"immune organ",
+"thymus"
+],
+"cell_slims": [],
+"system_slims": [
+"endocrine system",
+"immune system"
+]
+},
+"heart right ventricle": {
+"organ_slims": [
+"heart"
+],
+"cell_slims": [],
+"system_slims": [
+"circulatory system"
+]
+},
+"middle frontal gyrus": {
+"organ_slims": [
+"brain"
+],
+"cell_slims": [],
+"system_slims": [
+"central nervous system"
+]
+},
+"naive thymus-derived CD8-positive, alpha-beta T cell": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"CD8+ T cell",
+"T cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"stromal cell of bone marrow": {
+"organ_slims": [
+"bone element",
+"bone marrow",
+"connective tissue"
+],
+"cell_slims": [
+"connective tissue cell"
+],
+"system_slims": [
+"immune system",
+"skeletal system"
+]
+},
+"urinary bladder": {
+"organ_slims": [
+"urinary bladder"
+],
+"cell_slims": [],
+"system_slims": [
+"excretory system"
+]
+},
+"skin of body": {
+"organ_slims": [
+"skin of body"
+],
+"cell_slims": [],
+"system_slims": [
+"integumental system"
+]
+},
+"immature natural killer cell": {
+"organ_slims": [
+"bone element",
+"bone marrow",
+"lymph node",
+"spleen",
+"thymus"
+],
+"cell_slims": [
+"NK cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"fibroblast of upper back skin": {
+"organ_slims": [
+"connective tissue",
+"skin of body"
+],
+"cell_slims": [
+"connective tissue cell",
+"fibroblast"
+],
+"system_slims": [
+"integumental system"
+]
+},
+"central memory CD8-positive, alpha-beta T cell": {
+"organ_slims": [],
+"cell_slims": [
+"T cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"rectal smooth muscle tissue": {
+"organ_slims": [
+"intestine",
+"large intestine",
+"musculature of body"
+],
+"cell_slims": [],
+"system_slims": [
+"digestive system",
+"musculature"
+]
+},
+"progenitor cell of endocrine pancreas": {
+"organ_slims": [
+"endocrine gland",
+"pancreas"
+],
+"cell_slims": [
+"progenitor cell"
+],
+"system_slims": [
+"endocrine system"
+]
+},
+"nephron": {
+"organ_slims": [
+"epithelium",
+"kidney"
+],
+"cell_slims": [],
+"system_slims": [
+"excretory system"
+]
+},
+"type B pancreatic cell": {
+"organ_slims": [
+"endocrine gland",
+"epithelium",
+"pancreas"
+],
+"cell_slims": [
+"epithelial cell"
+],
+"system_slims": [
+"endocrine system"
+]
+},
+"effector CD4-positive, alpha-beta T cell": {
+"organ_slims": [],
+"cell_slims": [
+"T cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"left ventricle myocardium inferior": {
+"organ_slims": [
+"heart"
+],
+"cell_slims": [],
+"system_slims": [
+"circulatory system"
+]
+},
+"H7": {
+"organ_slims": [
+"embryo"
+],
+"cell_slims": [
+"embryonic cell",
+"stem cell"
+],
+"system_slims": []
+},
+"small intestine": {
+"organ_slims": [
+"intestine",
+"small intestine"
+],
+"cell_slims": [],
+"system_slims": [
+"digestive system"
+]
+},
+"Right ventricle myocardium inferior": {
+"organ_slims": [
+"heart"
+],
+"cell_slims": [],
+"system_slims": [
+"circulatory system"
+]
+},
+"right lung": {
+"organ_slims": [
+"lung"
+],
+"cell_slims": [],
+"system_slims": [
+"respiratory system"
+]
+},
+"stimulated activated CD4-positive, alpha-beta T cell": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"CD4+ T cell",
+"T cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"spinal cord": {
+"organ_slims": [
+"spinal cord"
+],
+"cell_slims": [],
+"system_slims": [
+"central nervous system"
+]
+},
+"GM13977": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"B cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"tibial nerve": {
+"organ_slims": [
+"limb",
+"nerve"
+],
+"cell_slims": [],
+"system_slims": [
+"peripheral nervous system"
+]
+},
+"left ventricle myocardium superior": {
+"organ_slims": [
+"heart"
+],
+"cell_slims": [],
+"system_slims": [
+"circulatory system"
+]
+},
+"stomach smooth muscle": {
+"organ_slims": [
+"musculature of body",
+"stomach"
+],
+"cell_slims": [],
+"system_slims": [
+"digestive system",
+"musculature"
+]
+},
+"epidermal melanocyte": {
+"organ_slims": [
+"epithelium",
+"skin of body"
+],
+"cell_slims": [
+"melanocyte"
+],
+"system_slims": [
+"integumental system"
+]
+},
+"muscle of arm": {
+"organ_slims": [
+"limb",
+"musculature of body"
+],
+"cell_slims": [],
+"system_slims": [
+"musculature"
+]
+},
+"activated T-cell": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"T cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"osteocyte": {
+"organ_slims": [
+"bone element",
+"connective tissue"
+],
+"cell_slims": [],
+"system_slims": [
+"skeletal system"
+]
+},
+"T-helper 9 cell": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"CD4+ T cell",
+"T cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"Right ventricle myocardium superior": {
+"organ_slims": [
+"heart"
+],
+"cell_slims": [],
+"system_slims": [
+"circulatory system"
+]
+},
+"muscle of trunk": {
+"organ_slims": [
+"musculature of body"
+],
+"cell_slims": [],
+"system_slims": [
+"musculature"
+]
+},
+"skin epidermis": {
+"organ_slims": [
+"epithelium",
+"skin of body"
+],
+"cell_slims": [],
+"system_slims": [
+"integumental system"
+]
+},
+"left forelimb": {
+"organ_slims": [
+"bone element",
+"limb",
+"skeleton"
+],
+"cell_slims": [],
+"system_slims": [
+"skeletal system"
+]
+},
+"spleen": {
+"organ_slims": [
+"immune organ",
+"spleen"
+],
+"cell_slims": [],
+"system_slims": [
+"digestive system",
+"immune system"
+]
+},
+"adrenal gland": {
+"organ_slims": [
+"adrenal gland",
+"endocrine gland"
+],
+"cell_slims": [],
+"system_slims": [
+"endocrine system"
+]
+},
+"renal cortex interstitium": {
+"organ_slims": [
+"kidney"
+],
+"cell_slims": [],
+"system_slims": [
+"excretory system"
+]
+},
+"superior temporal gyrus": {
+"organ_slims": [
+"brain"
+],
+"cell_slims": [],
+"system_slims": [
+"central nervous system"
+]
+},
+"T follicular helper cell": {
+"organ_slims": [],
+"cell_slims": [
+"T cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"right forelimb": {
+"organ_slims": [
+"bone element",
+"limb",
+"skeleton"
+],
+"cell_slims": [],
+"system_slims": [
+"skeletal system"
+]
+},
+"Calu3": {
+"organ_slims": [],
+"cell_slims": [
+"cancer cell"
+],
+"system_slims": []
+},
+"WTC11": {
+"organ_slims": [
+"connective tissue",
+"skin of body"
+],
+"cell_slims": [
+"connective tissue cell",
+"fibroblast",
+"induced pluripotent stem cell",
+"stem cell"
+],
+"system_slims": [
+"integumental system"
+]
+},
+"right atrium auricular region": {
+"organ_slims": [
+"heart"
+],
+"cell_slims": [],
+"system_slims": [
+"circulatory system"
+]
+},
+"cardiovascular progenitor cell": {
+"organ_slims": [],
+"cell_slims": [
+"stem cell"
+],
+"system_slims": []
+},
+"muscle layer of duodenum": {
+"organ_slims": [
+"intestine",
+"small intestine"
+],
+"cell_slims": [],
+"system_slims": [
+"digestive system"
+]
+},
+"central memory CD4-positive, alpha-beta T cell": {
+"organ_slims": [],
+"cell_slims": [
+"T cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"left renal cortex interstitium": {
+"organ_slims": [
+"kidney"
+],
+"cell_slims": [],
+"system_slims": [
+"excretory system"
+]
+},
+"head of caudate nucleus": {
+"organ_slims": [
+"brain"
+],
+"cell_slims": [],
+"system_slims": [
+"central nervous system"
+]
+},
+"dorsolateral prefrontal cortex": {
+"organ_slims": [
+"brain"
+],
+"cell_slims": [],
+"system_slims": [
+"central nervous system"
+]
+},
+"right hindlimb": {
+"organ_slims": [
+"bone element",
+"limb",
+"skeleton"
+],
+"cell_slims": [],
+"system_slims": [
+"skeletal system"
+]
+},
+"T-helper 22 cell": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"T cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"endothelial cell": {
+"organ_slims": [
+"epithelium"
+],
+"cell_slims": [
+"endothelial cell",
+"epithelial cell"
+],
+"system_slims": []
+},
+"left hindlimb": {
+"organ_slims": [
+"bone element",
+"limb",
+"skeleton"
+],
+"cell_slims": [],
+"system_slims": [
+"skeletal system"
+]
+},
+"IgD-negative memory B cell": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"B cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"glutamatergic neuron": {
+"organ_slims": [],
+"cell_slims": [
+"neural cell"
+],
+"system_slims": []
+},
+"posterior cingulate gyrus": {
+"organ_slims": [
+"brain"
+],
+"cell_slims": [],
+"system_slims": [
+"central nervous system"
+]
+},
+"stimulated activated naive CD8-positive, alpha-beta T cell": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"CD8+ T cell",
+"T cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"activated T-helper 1 cell": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"CD4+ T cell",
+"T cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"stimulated activated effector memory CD8-positive, alpha-beta T cell": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"CD8+ T cell",
+"T cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"activated T-helper 2 cell": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"CD4+ T cell",
+"T cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"stimulated activated CD8-positive, alpha-beta memory T cell": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"CD8+ T cell",
+"T cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"activated T-helper 17 cell": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"CD4+ T cell",
+"T cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"activated T-helper 9 cell": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"CD4+ T cell",
+"T cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"memory B cell": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"B cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"activated gamma-delta T cell": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"T cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"effector memory CD8-positive, alpha-beta T cell": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"CD8+ T cell",
+"T cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"activated effector memory CD4-positive, alpha-beta T cell": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"CD4+ T cell",
+"T cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+},
+"stimulated activated naive B cell": {
+"organ_slims": [
+"blood",
+"bodily fluid"
+],
+"cell_slims": [
+"B cell",
+"hematopoietic cell",
+"leukocyte"
+],
+"system_slims": [
+"immune system"
+]
+}
+}
+}

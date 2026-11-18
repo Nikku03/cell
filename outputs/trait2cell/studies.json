@@ -1,0 +1,160 @@
+{
+ "chosen": {
+  "ldl": {
+   "label": "LDL cholesterol",
+   "expected": "liver",
+   "studyId": "GCST90002412",
+   "trait": "Low density lipoprotein cholesterol levels",
+   "credible_sets": 694,
+   "n": 431167,
+   "project": "GCST",
+   "gated": true,
+   "variants": 15385,
+   "pip_total": 676.0
+  },
+  "lymph": {
+   "label": "lymphocyte count",
+   "expected": "lymphoid",
+   "studyId": "GCST90310171",
+   "trait": "Lymphocyte count (UKB data field 30120)",
+   "credible_sets": 2497,
+   "n": 333152,
+   "project": "GCST",
+   "gated": true,
+   "variants": 4183,
+   "pip_total": 2494.7
+  },
+  "rbc": {
+   "label": "red blood cell count",
+   "expected": "erythroid",
+   "studyId": "GCST90476345",
+   "trait": "red blood cell count (RBC, maximum, inv-norm transformed)",
+   "credible_sets": 1833,
+   "n": 405357,
+   "project": "GCST",
+   "gated": true,
+   "variants": 27601,
+   "pip_total": 1783.6
+  },
+  "ibd": {
+   "label": "inflammatory bowel disease",
+   "expected": "immune",
+   "studyId": "GCST90292538",
+   "trait": "Inflammatory bowel disease",
+   "credible_sets": 293,
+   "n": 398668,
+   "project": "GCST",
+   "gated": true,
+   "variants": 733,
+   "pip_total": 290.6
+  },
+  "af": {
+   "label": "atrial fibrillation",
+   "expected": "heart",
+   "studyId": "GCST90624412",
+   "trait": "Atrial fibrillation",
+   "credible_sets": 885,
+   "n": 1840341,
+   "project": "GCST",
+   "gated": true,
+   "variants": 8394,
+   "pip_total": 867.8
+  },
+  "scz": {
+   "label": "schizophrenia",
+   "expected": "brain",
+   "studyId": "GCST90503210",
+   "trait": "Schizophrenia",
+   "credible_sets": 247,
+   "n": 589624,
+   "project": "GCST",
+   "gated": true,
+   "variants": 17030,
+   "pip_total": 236.7
+  },
+  "mono": {
+   "label": "monocyte count",
+   "expected": "myeloid",
+   "studyId": "GCST90002340",
+   "trait": "Monocyte count",
+   "credible_sets": 1146,
+   "n": 521594,
+   "project": "GCST",
+   "gated": true,
+   "variants": 17127,
+   "pip_total": 1118.7
+  },
+  "egfr": {
+   "label": "eGFR",
+   "expected": "kidney",
+   "studyId": "GCST90692984",
+   "trait": "Estimated glomerular filtration rate (cystatin c)",
+   "credible_sets": 1124,
+   "n": 409996,
+   "project": "GCST",
+   "gated": true,
+   "variants": 20887,
+   "pip_total": 1091.5
+  },
+  "alz": {
+   "label": "Alzheimer's disease",
+   "expected": "myeloid",
+   "studyId": "GCST90027158",
+   "trait": "Alzheimer's disease",
+   "credible_sets": 83,
+   "n": 487511,
+   "project": "GCST",
+   "gated": false,
+   "variants": 3317,
+   "pip_total": 81.1
+  },
+  "t2d": {
+   "label": "type 2 diabetes",
+   "expected": "pancreas",
+   "studyId": "GCST90475667",
+   "trait": "Type 2 diabetes (PheCode 250.2)",
+   "credible_sets": 951,
+   "n": 432648,
+   "project": "GCST",
+   "gated": false,
+   "variants": 20285,
+   "pip_total": 920.3
+  },
+  "plt": {
+   "label": "platelet count",
+   "expected": "erythroid",
+   "studyId": "GCST90691817",
+   "trait": "Platelet count (UKB data field 30080)",
+   "credible_sets": 1740,
+   "n": 407992,
+   "project": "GCST",
+   "gated": false,
+   "variants": 28730,
+   "pip_total": 1693.0
+  },
+  "height": {
+   "label": "height",
+   "expected": null,
+   "studyId": "GCST90302890",
+   "trait": "Height",
+   "credible_sets": 2769,
+   "n": 365934,
+   "project": "GCST",
+   "gated": false,
+   "variants": 51379,
+   "pip_total": 2687.3
+  }
+ },
+ "dnase_annotations": 1325,
+ "category_annotations": {
+  "kidney": 87,
+  "brain": 254,
+  "lymphoid": 380,
+  "immune": 427,
+  "erythroid": 31,
+  "pancreas": 18,
+  "heart": 60,
+  "myeloid": 31,
+  "liver": 14
+ }
+}
