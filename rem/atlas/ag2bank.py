@@ -18,6 +18,7 @@ Run: python3 -P rem/atlas/ag2bank.py cellxgene [human|mouse]
 """
 
 from __future__ import annotations
+import http.client
 import json
 import os
 import sys
@@ -115,7 +116,7 @@ def _get(url, tries=6, timeout=900):
         try:
             with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=timeout) as r:
                 return r.read()
-        except (urllib.error.URLError, TimeoutError, ConnectionError) as ex:
+        except (urllib.error.URLError, TimeoutError, ConnectionError, http.client.HTTPException) as ex:   # IncompleteRead too
             if k == tries - 1:
                 raise
             time.sleep(5 * 2 ** k)
