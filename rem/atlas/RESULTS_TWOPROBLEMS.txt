@@ -6039,3 +6039,30 @@ E2GMAP -- USE 3 OF THE ALPHAGENOME 2 DATA: WHICH DNA SWITCH CONTROLS WHICH GENE,
   corrected DEV fit.
   NOT: no 3D contact; activity is a class, not a signal level; one benchmark family (CRISPRi in five cell lines);
   well below AlphaGenome 2, which reads the DNA sequence itself.
+
+=================================================================================================
+TRAIT2CELL -- USE 4: DISEASE VARIANTS -> CELL TYPES -> GENES -> DRUGS
+=================================================================================================
+  trait2cell.py (source committed before any run; the GWAS study per trait chosen by the declared rule and committed
+  before V1 was scored). Inputs, all from the memory bank: Open Targets 26.03 GWAS credible sets, ENCODE Registry v4
+  open chromatin (1,325 DNase-based human annotations), GTEx v11 SuSiE eQTLs, the use-3 switch-to-gene model
+  (corrected co-activity, fitted on the K562 CRISPRi DEV set), the Open Targets drug layer (memory_bank/cell_v6).
+  V1 PRIMARY (known answers; per annotation, t statistic of 'open here' for the trait's fine-mapped PIP, controlling
+  for element breadth): 7 of 8 traits' top biosample in the expected category (chance expectation 0.97,
+  p = 6.8e-8) -> PASS. LDL -> liver (t 20.0); red blood cell count -> CMK (megakaryoblastic; then haematopoietic
+  progenitors); IBD -> activated CD8 memory T cells; atrial fibrillation -> heart; schizophrenia -> dorsolateral
+  prefrontal cortex; monocyte count -> CD14+ monocytes (t 18.9); eGFR -> kidney. Miss: lymphocyte count -> lung
+  tissue (first lymphoid annotation at rank 29). Descriptive: platelet count -> CMK; height -> limb / femur;
+  Alzheimer's -> heart right ventricle, CD14+ monocytes second; type 2 diabetes -> lung, pancreas at rank 5.
+  V2 (variant -> gene; GTEx fine-mapped eQTL SNVs, PIP >= 0.9, in elements open in the matched ENCODE tissue; 5,397
+  variants, 35 tissues, ~45 candidate genes each): the model names an eQTL gene for 64.4% vs nearest gene 62.4%;
+  model-only 414, nearest-only 303, McNemar p = 3.9e-5 -> BETTER. Top-3 89.5%. Variants > 10 kb from every TSS
+  (1,472): 52.3% vs 46.3%. Four matched tissues gave no items (their ENCODE biosamples have only mark-only
+  annotations); 56,657 candidate variants were not in an element open in the matched biosample.
+  CHAIN (descriptive): LDL -> liver -> APOB (#3; mipomersen), PCSK9 (#5; alirocumab), APOA5, HNF1A, APOC1, CETP #18,
+  LDLR #111; HMGCR, NPC1L1, ANGPTL3, ACLY not reached (no fine-mapped variant with PIP >= 0.1 in liver-open elements
+  near them). Red cells -> JAK2 (ruxolitinib), HBZ, KLF6; atrial fibrillation -> PITX2, HEY2, NFATC1; monocytes ->
+  CSF1R, S1PR4 (fingolimod), SELL; platelets -> MEF2C, NFE2. Lists in outputs/trait2cell/chain.json.
+  NOT: one GWAS per trait; ENCODE's biosamples are uneven (T-cell states outnumber liver or erythroid samples); point
+  overlap only; eQTL genes stand in for causal genes; V2's gain over nearest-gene is small (2 points) though clear;
+  the chain lists candidates, not validated targets.
