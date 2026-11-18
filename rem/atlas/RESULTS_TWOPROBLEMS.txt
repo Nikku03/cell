@@ -6066,3 +6066,26 @@ TRAIT2CELL -- USE 4: DISEASE VARIANTS -> CELL TYPES -> GENES -> DRUGS
   NOT: one GWAS per trait; ENCODE's biosamples are uneven (T-cell states outnumber liver or erythroid samples); point
   overlap only; eQTL genes stand in for causal genes; V2's gain over nearest-gene is small (2 points) though clear;
   the chain lists candidates, not validated targets.
+
+=================================================================================================
+BIOBRAIN B2 -- USE 5: NEW CLAIMS ON THE ALPHAGENOME 2 DATA, UNDER THE BRAIN'S NEURO RULES
+=================================================================================================
+  biobrain2.py (source committed before looking; thresholds set on the DEV subjects only, by the fixed rule
+  chance + 0.6 x (dev - chance); claims declared in rem/atlas/bio_ledger.jsonl and committed before the test).
+  BH over all 6 claims in the ledger (B1 + B2).
+  coexpressed   (CELLxGENE; DEV blood 0.726; threshold 0.64): two subunits of one protein complex are co-expressed
+                across a tissue's cell types. 10/10 fresh tissues pass (AUROC 0.70-0.76, every null p 0.005);
+                controls 10/10 and 10/10; p 0.00098, q 0.0059 -> PASS.
+  module_alike  (co-expression modules from CELLxGENE, expression only; DEV K562-A TRAIN 0.518; threshold 0.51):
+                genes of one module that share no complex respond alike to knockdown. 8/10 pass (RPE1 0.553, HepG2
+                0.575, others 0.51-0.52); K562-essential 0.490 and Jurkat 0.498 fail; p 0.055, q 0.082 -> FAIL (needs
+                9/10). The effect is real but tiny where it exists (AUROC ~0.52): co-expression across the body says
+                little about knockdown response beyond complexes.
+  promoter      (ENCODE RNA x DNase cCRE, 217 biosamples; DEV K562 0.645; threshold 0.59): an open, variable
+                promoter goes with higher expression there than elsewhere. Every subject is above the threshold
+                (AUROC 0.667-0.791), but 3 of 10 miss the null (CD4 T 0.078, CD8 T 0.088, T-cell 0.106): the null
+                pairs a biosample's RNA with every other biosample's promoters, and ENCODE holds many near-identical
+                T-cell states, so the mismatched null is nearly matched for T cells. 7/10, p 0.17 -> FAIL as declared.
+                (Foreseen in the NOT line; a null excluding biosamples of the same cell type would be a new version,
+                not a re-score.)
+  NOT: one complex resource; CELLxGENE aggregates mix studies and batches; one clustering (K = 100, not tuned).
