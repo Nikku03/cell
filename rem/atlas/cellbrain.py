@@ -96,6 +96,7 @@ t2c = _imp("trait2cell")
 e2 = t2c.e2
 from brain.bank import Fact  # noqa: E402  (imported by cellbrain_bank from the brain checkout)
 
+FAM_VERSION = {"F2": "C3"}   # F2's C2 result was withdrawn (pair-key bug); re-declared and re-tested as C3-F2
 VERSION = "C2"   # C1 withdrawn before any result: the five CC BY screens (K562 GW/essential, RPE1, HepG2, Jurkat) were dropped
 TRIAL = "--trial" in sys.argv
 LEDGER = os.path.join(cbb.HOME, "trial_ledger.jsonl") if TRIAL else os.path.join(HERE, "cellbrain_ledger.jsonl")
@@ -474,9 +475,10 @@ def _pairs_of(v, k, perm=None):
     return a, b
 
 
-def f2_support(V, gid, perms=None, kinds=KINDS, plant=None):
-    """Unique gene pairs (global ids) and the number of kinds supporting each."""
-    N = len(gid); per = []
+def f2_support(V, gid, N, perms=None, kinds=KINDS, plant=None):
+    """Unique gene pairs (global ids; N = number of genes, so a pair's key is lo * N + hi) and the kinds supporting each.
+    CORRECTION (C3): C2 used N = len(gid), the number of views, so pair keys collided and the count meant nothing."""
+    per = []
     for kind in kinds:
         keys = []
         for n, v in V.items():
@@ -500,18 +502,18 @@ def run_f2():
         v.knn = (lambda nb: (lambda idx, k: nb[idx][:, :k]))(NB[n])                 # cache: every caller asks for all genes
     allg = sorted({g for v in V.values() for g in v.genes}); G = {g: i for i, g in enumerate(allg)}; N = len(allg)
     gid = {n: np.array([G[g] for g in v.genes]) for n, v in V.items()}
-    u, c = f2_support(V, gid)
+    u, c = f2_support(V, gid, N)
     null = []
     for r in range(3):
         rr = np.random.default_rng(100 + r); perms = {n: deciles(v.level, rr) for n, v in V.items()}
-        _, cn = f2_support(V, gid, perms); null.append(np.array([(cn >= s).sum() for s in range(1, 7)]))
+        _, cn = f2_support(V, gid, N, perms); null.append(np.array([(cn >= s).sum() for s in range(1, 7)]))
     n0 = np.mean(null, 0); n1 = np.array([(c >= s).sum() for s in range(1, 7)]); fdr = n0 / np.maximum(n1, 1)
     s_star = next((s for s in range(2, 7) if fdr[s - 1] <= GATE["q"]), None)
     conf = u[c >= s_star] if s_star else np.array([], np.int64)
     pa = rng.choice(N, 300); pb = rng.choice(N, 300); keys = np.minimum(pa, pb).astype(np.int64) * N + np.maximum(pa, pb)
-    up, cp = f2_support(V, gid, plant=dict(kinds=["KO", "EXPR", "CHROM", "ESS"], keys=keys))
+    up, cp = f2_support(V, gid, N, plant=dict(kinds=["KO", "EXPR", "CHROM", "ESS"], keys=keys))
     hit = np.isin(keys, up[cp >= (s_star or 99)]).mean()
-    u4, c4 = f2_support(V, gid, kinds=["KO", "EXPR", "CHROM", "ESS"]); found = u4[c4 >= 3]
+    u4, c4 = f2_support(V, gid, N, kinds=["KO", "EXPR", "CHROM", "ESS"]); found = u4[c4 >= 3]
     truth = set()
     for n in ("COMPLEX",):
         v = V[n]; C = (v.M @ v.M.T).tocoo(); m = C.row < C.col
@@ -524,7 +526,7 @@ def run_f2():
     enrich = prec / base if base else 0.0
     support_kinds = {}
     for kind in KINDS:
-        uk, _ = f2_support(V, gid, kinds=[kind]); support_kinds[kind] = np.isin(conf, uk)
+        uk, _ = f2_support(V, gid, N, kinds=[kind]); support_kinds[kind] = np.isin(conf, uk)
     rows = []
     for i, k in enumerate(conf.tolist()):
         a, b = allg[k // N], allg[k % N]; ks = [kd for kd in KINDS if support_kinds[kd][i]]
@@ -1007,7 +1009,7 @@ def _gate(conf, neg, planted, known, need):
 
 def _fact(entity, attr, value, fam):
     t = cbb.now()
-    return Fact(entity, attr, value, t[:10], t, "derived", {"name": f"cellbrain:{VERSION}-{fam}", "code_sha": code_sha()},
+    return Fact(entity, attr, value, t[:10], t, "derived", {"name": f"cellbrain:{fid(fam)}", "code_sha": code_sha()},
                 inputs=tuple(sorted(USED[fam])))
 
 
@@ -1035,6 +1037,10 @@ def code_sha():
     return h.hexdigest()[:16]
 
 
+def done_ids():
+    return {r["id"] for r in _read() if r["op"] == "result"}
+
+
 def _read():
     return [json.loads(x) for x in open(LEDGER)] if os.path.exists(LEDGER) else []
 
@@ -1044,10 +1050,14 @@ def _git(*a):
     return subprocess.run(["git", "-C", HERE, *a], capture_output=True, text=True)
 
 
-def withdraw(reason):
+def fid(fam):
+    return f"{FAM_VERSION.get(fam, VERSION)}-{fam}"
+
+
+def withdraw(ids, reason):
     with open(LEDGER, "a") as f:
-        for fam in FAMILIES:
-            f.write(json.dumps(dict(op="withdraw", id=f"C1-{fam}", at=cbb.now(), reason=reason), sort_keys=True) + "\n")
+        for i in ids:
+            f.write(json.dumps(dict(op="withdraw", id=i, at=cbb.now(), reason=reason), sort_keys=True) + "\n")
 
 
 def declare():
@@ -1055,7 +1065,7 @@ def declare():
     os.makedirs(os.path.dirname(LEDGER), exist_ok=True)
     with open(LEDGER, "a") as f:
         for fam in FAMILIES:
-            cid = f"{VERSION}-{fam}"
+            cid = fid(fam)
             if cid in have:
                 print(f"{cid}: already declared"); continue
             rec = dict(op="declare", id=cid, at=cbb.now(), claim=CLAIMS[fam], gate=GATE, code_sha=code_sha(), commit=_git("rev-parse", "HEAD").stdout.strip(),
@@ -1068,15 +1078,15 @@ def test(fams):
         head = _git("show", "HEAD:rem/atlas/cellbrain_ledger.jsonl").stdout
         dec = {json.loads(x)["id"]: json.loads(x) for x in head.splitlines() if x.strip() and json.loads(x)["op"] == "declare"}
         for fam in fams:
-            if f"{VERSION}-{fam}" not in dec:
-                raise SystemExit(f"{VERSION}-{fam}: not declared in HEAD's ledger; declare, commit, then test")
-            if dec[f"{VERSION}-{fam}"]["code_sha"] != code_sha():
-                raise SystemExit(f"{VERSION}-{fam}: code or bank changed since it was declared")
+            if fid(fam) not in dec:
+                raise SystemExit(f"{fid(fam)}: not declared in HEAD's ledger; declare, commit, then test")
+            if fid(fam) not in done_ids() and dec[fid(fam)]["code_sha"] != code_sha():
+                raise SystemExit(f"{fid(fam)}: code or bank changed since it was declared")
     done = {r["id"] for r in _read() if r["op"] == "result"}
     os.makedirs(RUN, exist_ok=True); os.makedirs(OUTD, exist_ok=True)
     bank = cbb.bank() if not TRIAL else None
     for fam in fams:
-        cid = f"{VERSION}-{fam}"
+        cid = fid(fam)
         if cid in done and not TRIAL:
             print(f"{cid}: already tested; skipped"); continue
         t0 = time.time(); FAM[0] = fam; print(f"{cid} ...", flush=True)
@@ -1097,7 +1107,7 @@ def report():
     rs = {r["id"]: r for r in _read() if r["op"] == "result"}
     L_ = ["=" * 97, "CELLBRAIN -- the brain connected to the memory bank, one task: make as many connections as it can", "=" * 97]
     for fam in FAMILIES:
-        r = rs.get(f"{VERSION}-{fam}")
+        r = rs.get(fid(fam))
         if not r:
             continue
         g = r.get("gate", {})
@@ -1120,7 +1130,7 @@ if __name__ == "__main__":
     if args[0] == "declare":
         declare()
     elif args[0] == "withdraw":
-        withdraw(" ".join(args[1:]))
+        withdraw(args[1].split(","), " ".join(args[2:]))
     elif args[0] == "test":
         test(args[1:] or FAMILIES)
     elif args[0] == "card":
