@@ -34,3 +34,19 @@ The bank itself lives in `rem/atlas/_cache/cellbrain/bank`, which is local and g
 |---|---|
 | `python3 -P rem/atlas/cellbrain_bank.py check` | checks every layer's sha and verifies 500 entities |
 | `python3 -P rem/atlas/cellbrain_bank.py card ENSG00000102145` | everything the bank holds about a gene (here GATA1), connections included |
+
+## Connections the brain made (cellbrain C2/C3, 2026-11-20; `rem/atlas/RESULTS_TWOPROBLEMS.txt`)
+
+| Family | Confirmed links | Verdict |
+|---|---|---|
+| F1 data <-> data | 507 view pairs | PASS |
+| F2 gene <-> gene | 9,074 pairs, >= 3 kinds of data | PASS (C3) |
+| F3 cell type <-> cell type | 100,440 among 4,512 units | PASS |
+| F4 disease <-> cell type | 7,426 trait-biosample links, 959 of 1,507 traits | PASS |
+| F5 disease <-> gene <-> tissue | 171,854 shared-variant links | descriptive |
+| F6 knockdown <-> cell identity | 107,872 (75,514 genome-wide) | PASS |
+| F7 complex / pathway <-> cell type | 10,623 | FAIL (planted 87% < 90%) |
+| F8 drug <-> disease | 35,810 untested candidates; OR 1.24 | PASS (weak) |
+| F9 disease <-> disease | 9,398 | PASS |
+
+The strongest 20,000 public links per family are in `outputs/cellbrain/F*_connections.json`. Every link is in the bank: `python3 -P rem/atlas/cellbrain.py card ENSG00000102145`.

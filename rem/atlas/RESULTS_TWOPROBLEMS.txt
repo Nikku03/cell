@@ -6119,3 +6119,54 @@ CELLBANK10 -- USES 1 AND 2 OF THE ALPHAGENOME 2 DATA IN THE K562 ENGINE (EXAM HA
   Unclassified rows skipped); every annotation now carries a kind (human 1,325 dnase + 353 marks; mouse 305 + 88).
   One truncated download (IncompleteRead) was not retried by the downloader; fixed (retries now cover it) and fetched.
   Every analysis above used the DNase-based annotations only, so none of their numbers depends on the re-pull.
+
+=================================================================================================
+CELLBRAIN -- THE BRAIN CONNECTED TO THE MEMORY BANK, ONE TASK: MAKE AS MANY CONNECTIONS AS IT CAN
+=================================================================================================
+  cellbrain_bank.py: both data groups in the brain's own bank (Nikku03/money brain/bank.py, commit 9d501b9): 75
+  sha-checked LAYER facts (42 datasets as pulled, 33 derived gene-indexed layers), 128,345 facts on 58,763 entities
+  (genes, screens, ENCODE biosamples, CELLxGENE cell types and tissues, complexes, pathways, drugs); check OK.
+  cellbrain.py: nine connection families, declared before running (rem/atlas/cellbrain_ledger.jsonl); each link FOUND
+  on one half (genes by hash; odd chromosomes) and CONFIRMED on the other (BH q < 0.05), with a negative control (link
+  destroyed), planted links and textbook known answers. Confirmed links written back to the bank as derived facts
+  citing their layers (~470,000 facts). Trial runs on subsets first (scratch ledger), as the brain's --trial.
+  CORRECTIONS: C1 withdrawn before any result (the five CC BY knockdown screens were dropped: no stored strength);
+  C2-F2 withdrawn after scoring (pair keys used the number of views, 32, instead of genes; checked directly) and
+  re-tested as C3-F2. Before declaring, trial runs changed F3's negative control (shuffle each unit) and F7's score
+  (exact binomial on each cell type's top-5% genes: the mean-specificity score let one extreme gene carry a set).
+  F1 data <-> data      PASS. 507 of 802 ordered pairs of 32 gene views confirmed; shuffled 0; planted 10/10; known
+                        8/8. Strongest: the same screen reprocessed twice (RPE1, Jurkat; AUROC 0.93-0.96), complexes
+                        <-> drug targets 0.96, K562 genome-wide <-> essential 0.95, complexes <-> knockdowns in every
+                        screen 0.93, ENCODE RNA <-> FANTOM5 CAGE 0.92. (Docstring says 33 views; there are 32.)
+  F2 gene <-> gene      C3: PASS. 9,074 pairs linked by >= 3 independent kinds of data (null FDR 1.5%; 286 by 5
+                        kinds); planted 300/300. Held-out truth: pairs found WITHOUT physical / annotation data are
+                        complex or interaction partners 51.6% of the time vs 0.10% for all pairs (507x).
+  F3 cell type <-> cell type   PASS. 100,440 links among 4,512 units of 8 datasets (CELLxGENE human 841 and mouse 498
+                        cell types, ENCODE 296, GTEx 54, FANTOM5 1,118, HPA 1,206 lines, WGBS 128, promoter chromatin
+                        371); shuffled 11; planted 20/20; known 7/7 (K562 and HepG2 across ENCODE and HPA; GTEx liver
+                        -> hepatocyte; pancreas -> acinar; whole blood -> neutrophil; mouse and WGBS hepatocytes).
+  F4 disease <-> cell type   PASS. 1,507 GWAS traits; 13,052 (trait, annotation) links, 7,426 trait-biosample, 959
+                        traits linked; shifted traits 4; planted 20/20; known 7/8 (lymphocyte count missed again).
+                        e.g. rheumatoid arthritis -> Th1 cells, multiple sclerosis -> CD4 T cells, psoriasis ->
+                        activated CD8 memory T, atopic dermatitis -> Th22, hypothyroidism -> regulatory T cells,
+                        prostate cancer -> prostate gland, luminal A breast cancer -> T47D, bipolar disorder -> DLPFC.
+                        Lung tissue tops several unrelated traits (T2D, childhood height): mixed tissues are a known
+                        confound of this score.
+  F5 disease <-> gene <-> tissue   DESCRIPTIVE. 171,854 links (CLPP >= 0.1) for 1,109 traits and 8,229 genes over GTEx
+                        v11 eQTLs (50 tissues) and IBDverse (72 immune cell types); LDL -> SORT1/CELSR2/PSRC1 in liver.
+  F6 knockdown <-> cell identity   PASS. K562 genome-wide: 5,401 knockdowns x 841 cell types, 75,514 links (shuffled
+                        146, planted 94%); essential screen 32,358 (shuffled 51, planted 96%); 4,632 in both screens.
+                        Known 5/7: GATA1, TAL1, KLF1, LMO2, LDB1 knockdown -> away from erythroid identity (GATA1
+                        knockdown also -> toward monocytes; MYB knockdown -> toward reticulocytes).
+  F7 complex / pathway <-> cell type   FAIL. 10,623 links, 1,412 of 2,335 sets; shuffled 0; known 5/7; but planted
+                        26/30 (87% < 90%). Haemoglobin -> erythrocyte and surfactant -> pneumocyte not found.
+  F8 drug <-> disease   PASS (weak). Drugs whose target is an F5 gene of a disease are more often already indicated
+                        for it: 79 of 35,889 linked pairs vs 9,915 of 5.57M others, OR 1.24, p 0.038 (exact disease-id
+                        matching only, so many true indications are missed, e.g. natalizumab for Crohn's disease).
+                        35,810 linked, not-indicated pairs listed as untested candidates.
+  F9 disease <-> disease   PASS. 9,398 links; shuffled 0; planted 20/20; known 3/4 (LDL-total cholesterol, RBC-
+                        haemoglobin, IBD-Crohn's; lymphocyte-white cell count missed).
+  NOT: correlation, not cause (F6 alone is interventional); one half of a dataset is not an independent cohort;
+  ENCODE and CELLxGENE over-represent some cell types and mixed tissues can top a trait; F5 has no LD and no verdict;
+  F8 matches disease ids exactly; connections built on CC BY-NC-SA or unclear-licence data stay local (F2 entirely;
+  F1 rows flagged); outputs/cellbrain holds the 20,000 strongest public links per family, the bank holds all.

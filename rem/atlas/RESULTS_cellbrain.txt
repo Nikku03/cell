@@ -4,7 +4,7 @@ CELLBRAIN -- the brain connected to the memory bank, one task: make as many conn
   F1 Kinds of gene data that say the same thing: confirmed view pairs, with the contr
      confirmed 507; negative control 0; planted 1.0; known 8/8 -> PASS
   F2 Gene pairs linked by independent kinds of data: support s* at null FDR <= 5%, pl
-     confirmed 0; negative control -; planted 0.0; known -/- -> FAIL
+     confirmed 9074; negative control -; planted 1.0; known -/- -> PASS
   F3 Cell types matched across datasets and modalities: confirmed on EXAM genes, with
      confirmed 100440; negative control 11; planted 1.0; known 7/7 -> PASS
   F4 Diseases' genetics point to cell types: confirmed on the other chromosomes, with
