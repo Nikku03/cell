@@ -6191,3 +6191,33 @@ CELLBRAIN -- THE BRAIN CONNECTED TO THE MEMORY BANK, ONE TASK: MAKE AS MANY CONN
                         Disclosed before testing: the trial showed the IL17RA-low vs keratinocyte-expression answer.
   Licences: OpenCell CC BY-SA 4.0; psoriasis screen CC BY-NC-ND 4.0 (rows kept local; only summary statistics and
   genes the paper itself names are written here).
+
+=================================================================================================
+GENEREG -- ACTIVE GENES PER CELL TYPE, AND WHICH GENE SWITCHES WHICH (G1)
+=================================================================================================
+  genereg.py (source committed before any run; claims declared in rem/atlas/cellbrain_ledger.jsonl after a trial on
+  subsets, with a note on what the trial showed). Inputs through the cellbrain bank: CELLxGENE human aggregates, K562
+  genome-wide Perturb-seq and the independent K562 essential screen (each with non-targeting controls), HPA
+  transcription factors, Reactome. Change made after the trial (disclosed): confirmation standardised within each
+  knockdown's own row (control-scaled confirmation let a strong knockdown's random targets pass: 368 vs 2,347).
+  PART A (descriptive): 49,451 genes x 841 cell types; per cell type a median 1,566 active genes (on in >= 10% of
+  cells) and 136 specific ones; 235 housekeeping genes (active in >= 80% of cell types).
+  G1-R1 who switches whom (K562)   FAIL. 110,034 regulator -> target links confirmed in the second screen (32,558
+         activations, 77,476 repressions) from 1,526 of 5,293 regulators; shuffled 2,804 (2.5%); planted 96.5%;
+         knockdown lowers its own gene in 92.5%. Known 0/6: in this data GATA1 -> ALAS2 (z -1.9) and -> HBG2 (-1.6) are
+         weak, SREBF2 -> HMGCS1 (-3.6, rank 7) and MYC -> NPM1 (-3.6) fall just under the |z| >= 4 cutoff, NFE2L1's
+         knockdown has no phenotype; checked directly, not a bug. GATA1 knockdown strongly raises myeloid genes (LST1,
+         CTSC, CFD), as F6 found. The known answers were poorly chosen for this dataset; the verdict stands.
+  G1-R2 K562 activations across body cell types   FAIL. AUROC 0.524 (p 0.005) vs 0.55 needed: activation pairs
+         are only slightly more co-expressed across cell types than level-matched random pairs (median r 0.180 vs 0.165).
+  G1-R3 co-expression switch map   FAIL. 71,131 TF -> gene links (961 TFs) confirmed across tissue halves (shuffled
+         genes 12,294); they do NOT predict K562 knockdown activation (OR 0.58, p 0.99). What a TF rises and falls with
+         across the body is not what it switches in K562.
+  DESCRIPTIVE, and it reads like the textbook: per cell type, the specific transcription factors and their
+  co-expression programmes -- hepatocyte HNF4A, NR1H4, NR1I3, MLXIPL, NR5A2; B cell PAX5, SPIB, POU2F2, IRF8; T cell
+  TCF7 -> CD3E/CD3D/CD3G/LCK, LEF1; cardiac muscle TBX5, TBX20, GATA4, GATA6; erythroblast KLF1 -> ALAS2, AHSP, HBM,
+  GYPB; keratinocyte IRF6 -> DSP, SFN. Concepts (Reactome): GATA1 -> megakaryocyte development and platelets; PAX5 ->
+  B-cell receptor signalling; TBX21 -> T-helper differentiation; NEUROD1 -> beta-cell development; IRF4 -> MHC class
+  II presentation; HNF4A -> drug metabolism. 31,641 facts written to the bank (influence/*, concepts/*, role/*,
+  active/summary per cell type); outputs/genereg.
+  NOT: K562 is one cancer line; co-expression is not cause; single-cell data misses weakly expressed genes.

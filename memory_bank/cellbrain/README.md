@@ -77,3 +77,16 @@ In total, 44,082 facts and 16 layers were added.
   - ALOX5 and IL17RA (brodalumab) were found.
   - OXTR missed the cutoff.
   - Gene rows stay local (CC BY-NC-ND).
+
+## Active genes per cell type and gene influence (genereg G1, 2026-11-20)
+
+- **Active genes per cell type** (layer `ACTIVE_GENES_CELLTYPE`): 841 cell types × 49,451 genes, with share of cells, level and specificity. Gene facts `role/housekeeping` and `role/marker_of`; per-cell-type facts `active/summary`.
+- **Who switches whom in K562** (layer `GENE_INFLUENCE_K562`): 110,034 links confirmed in two independent screens (32,558 activations, 77,476 repressions). Gene facts `influence/activates`, `represses`, `activated_by`, `repressed_by`.
+- **Co-expression switch map** (layer `GENE_COEXPRESSION_TF`): 71,131 transcription factor → gene links across cell types. Gene fact `influence/coexpressed_targets`.
+- **Concepts per regulator** (Reactome): gene facts `concepts/activates`, `concepts/represses`, `concepts/coexpression`.
+- **Tests:** all 3 FAIL as declared.
+  - The textbook K562 examples were too weak in this data.
+  - Activations are only slightly co-expressed across the body.
+  - The co-expression map does not predict K562 knockdowns.
+
+  The per-cell-type regulators and programmes read like the textbook.

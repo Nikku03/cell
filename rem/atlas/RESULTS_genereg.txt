@@ -1,0 +1,8 @@
+=================================================================================================
+GENEREG -- active genes per cell type, and which gene switches which
+=================================================================================================
+  Part A: 49,451 genes x 841 cell types; median active 1566, specific 136; housekeeping 235
+  G1-R1 who switches whom (K562): 110,034 confirmed (32,558 activations, 77,476 repressions) from 1526 regulators; shuffled 2804; planted 96%; known 0/6 -> FAIL
+  G1-R2 K562 activations across body cell types: AUROC 0.524, p 0.00498 -> FAIL
+  G1-R3 co-expression switch map: 71,131 TF->gene links (961 TFs); predicts K562 activation OR 0.58, p 0.989 (shuffled OR 0.32) -> FAIL
+  Concepts: 750 regulators with enriched activated pathways, 925 repressed, 798 co-expression TFs; facts written 31,641
