@@ -50,3 +50,21 @@ The bank itself lives in `rem/atlas/_cache/cellbrain/bank`, which is local and g
 | F9 disease <-> disease | 9,398 | PASS |
 
 The strongest 20,000 public links per family are in `outputs/cellbrain/F*_connections.json`. Every link is in the bank: `python3 -P rem/atlas/cellbrain.py card ENSG00000102145`.
+
+## Added from Biohub (2026-11-20; `rem/atlas/biohubbank.py`, `outputs/cellbrain/biohub_report.json`)
+
+- **OpenCell** (CC BY-SA 4.0), human proteins tagged in HEK293T cells:
+  - where 1,310 proteins sit in the cell (17 compartments);
+  - 29,922 protein-protein interactions from 1,260 pull-downs;
+  - RNA and absolute protein amounts for 19,255 genes;
+  - library metadata.
+
+  Gene facts: `opencell/localization`, `opencell/interactors`, `opencell/abundance_hek293t`. Layers: `SETS_OPENCELL_LOCATION`, `PPI_OPENCELL`, `EXPR_OPENCELL_HEK293T`.
+- **Psoriasis CRISPR screen** (Zhao, Shih et al. 2026; CC BY-NC-ND, **local only**):
+  - genome-wide knockout in primary human skin cells (keratinocytes), sorted on IL17RA, with results for 18,785 genes;
+  - protein profiles of the ALOX5 and OXTR knockouts;
+  - mouse skin proteomics under three treatments.
+
+  Gene fact: `screen/psoriasis_il17ra`. Entity: `SCREEN-PSORIASIS_IL17RA`.
+
+In total, 44,082 facts and 16 layers were added.
