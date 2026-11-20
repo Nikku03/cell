@@ -61,6 +61,10 @@ THE FAMILIES
   F9 disease <-> disease   F4 cell-type profiles (residual, per half): carry DEV r >= 0.5 (top 20 per trait); confirm
                         EXAM r against 200 annotation permutations. Known: LDL<->total cholesterol, RBC<->haemoglobin,
                         lymphocyte<->white cell count, IBD<->Crohn's (>= 3 of 4).
+C4 (2026-11-20, after Biohub data joined the bank): F1 and F2 re-run with two more views, OpenCell interactions (PHYS) and
+OpenCell locations (ANNOT), 34 views in all; F1 known answers 8 of 10 (adds OpenCell interactions -> complexes and OpenCell
+locations -> HPA locations). New F10: the psoriasis CRISPR screen's hits against keratinocyte expression, psoriasis genetics
+(F5) and IL17RA's network (see run_f10). F3-F9 read neither dataset; their C2 results stand.
 NOT: correlation, not cause (F6 is the only family made of interventions); one half of a sample is not an independent
 cohort; ENCODE and CELLxGENE over-represent some cell types; F5 has no LD and no verdict; the GWAS study per disease is
 chosen by size; the reprocessed screens (CC BY-NC-SA) and any connection built on them stay local.
@@ -96,14 +100,15 @@ t2c = _imp("trait2cell")
 e2 = t2c.e2
 from brain.bank import Fact  # noqa: E402  (imported by cellbrain_bank from the brain checkout)
 
-FAM_VERSION = {"F2": "C3"}   # F2's C2 result was withdrawn (pair-key bug); re-declared and re-tested as C3-F2
+FAM_VERSION = {"F1": "C4", "F2": "C4", "F10": "C4"}   # C4: re-run with OpenCell; F10 new (psoriasis screen). F2 was C3 (C2 withdrawn).
+# F3-F9 do not read OpenCell or the psoriasis screen, so their C2 results stand and they are not re-run.
 VERSION = "C2"   # C1 withdrawn before any result: the five CC BY screens (K562 GW/essential, RPE1, HepG2, Jurkat) were dropped
 TRIAL = "--trial" in sys.argv
 LEDGER = os.path.join(cbb.HOME, "trial_ledger.jsonl") if TRIAL else os.path.join(HERE, "cellbrain_ledger.jsonl")
 RUN = os.path.join(cbb.HOME, "trial" if TRIAL else "run")
 OUTD = os.path.join(RUN, "out") if TRIAL else R("outputs", "cellbrain")
 RES = os.path.join(RUN, "RESULTS.txt") if TRIAL else os.path.join(HERE, "RESULTS_cellbrain.txt")
-FAMILIES = ["F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9"]
+FAMILIES = ["F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10"]
 GATE = {"q": 0.05, "neg_share": 0.05, "planted": 0.90}
 USED = collections.defaultdict(set)          # family -> layer fact refs it read
 FAM = [None]
@@ -342,6 +347,17 @@ def gene_views():
         if a != b:
             nb[str(a)].add(str(b)); nb[str(b)].add(str(a))
     V["PPI"] = ppi_view(nb)
+    z = npz("PPI_OPENCELL"); nb2 = collections.defaultdict(set)                  # C4: OpenCell IP-MS interactions (Biohub)
+    for a, b in zip(z["a"], z["b"]):
+        a, b = str(a), str(b)
+        if a != b and a.startswith("ENSG") and b.startswith("ENSG"):
+            nb2[a].add(b); nb2[b].add(a)
+    V["OPENCELL_PPI"] = ppi_view(nb2, "OPENCELL_PPI")
+    S = json.load(open(L("SETS_OPENCELL_LOCATION")[1])); m2 = collections.defaultdict(list)   # C4: OpenCell locations (grades 3+2)
+    for comp, d in S.items():
+        for g in d["members"]:
+            m2[g].append(comp)
+    V["OPENCELL_LOC"] = View("OPENCELL_LOC", "ANNOT", list(m2), sets=m2)
     for k, kind in (("SETS_COMPLEX", "PHYS"), ("SETS_PATHWAY", "ANNOT"), ("SETS_LOCATION", "ANNOT"), ("SETS_DRUGTARGET", "ANNOT")):
         S = json.load(open(L(k)[1])); m = collections.defaultdict(list)
         for sid, d in S.items():
@@ -352,8 +368,8 @@ def gene_views():
     if TRIAL:
         keep = set(sorted({g for v in V.values() for g in v.genes}, key=lambda g: hashlib.sha256(g.encode()).hexdigest())[:3000])
         for n, v in list(V.items()):
-            if n == "PPI":
-                V[n] = ppi_view({g: {h for h in s if h in keep} for g, s in v.nb.items() if g in keep}); continue
+            if n in ("PPI", "OPENCELL_PPI"):
+                V[n] = ppi_view({g: {h for h in s if h in keep} for g, s in v.nb.items() if g in keep}, n); continue
             ix = [i for i, g in enumerate(v.genes) if g in keep]
             V[n] = View(n, v.kind, [v.genes[i] for i in ix], X=v.X[ix] if v.X is not None else None, level=v.level[ix], local=v.local,
                         sets=None if v.M is None else {v.genes[i]: list(v.M[i].indices) for i in ix if v.M[i].nnz})
@@ -362,8 +378,8 @@ def gene_views():
     return V
 
 
-def ppi_view(nb):
-    v = View("PPI", "PHYS", list(nb), sets={g: [g] for g in nb})          # placeholder incidence, replaced below
+def ppi_view(nb, name="PPI"):
+    v = View(name, "PHYS", list(nb), sets={g: [g] for g in nb})          # placeholder incidence, replaced below
     import scipy.sparse as sp
     r, c = [], []
     for g, s in nb.items():
@@ -386,7 +402,9 @@ KINDS = ["KO", "EXPR", "CHROM", "ESS", "PHYS", "ANNOT"]
 
 
 # ------------------------------------------------------------------------------------------------ F1 data <-> data
-F1_KNOWN = [("COMPLEX", "KO_K562_GW"), ("PPI", "COMPLEX"), ("RNA_GTEX", "CX_HUMAN"), ("PROMOTER_OPEN", "RNA_ENCODE"),
+F1_NEED = 8   # C4: 8 of 10 (C2: 6 of 8, before the two OpenCell pairs were added)
+F1_KNOWN = [("OPENCELL_PPI", "COMPLEX"), ("OPENCELL_LOC", "LOCATION"),
+            ("COMPLEX", "KO_K562_GW"), ("PPI", "COMPLEX"), ("RNA_GTEX", "CX_HUMAN"), ("PROMOTER_OPEN", "RNA_ENCODE"),
             ("DEP_DEPMAP", "COMPLEX"), ("KO_K562_GW", "KO_K562_ESS"), ("CX_MOUSE", "CX_HUMAN"), ("METH", "PROMOTER_OPEN")]
 
 
@@ -439,7 +457,8 @@ def run_f1():
     rng = np.random.default_rng(11); V = gene_views(); hv = {n: half(v.genes) for n, v in V.items()}
     res = f1_pairs(V, hv, rng); car, q, conf = f1_decide(res)
     neg = f1_pairs(V, hv, np.random.default_rng(12), shuffle=True); _, _, nconf = f1_decide(neg)
-    rp = np.random.default_rng(13); plant = rp.choice([n for n in V if V[n].X is not None and len(V[n].genes) >= 1000], 10, replace=False)
+    big = [n for n in V if V[n].X is not None and len(V[n].genes) >= 1000]
+    rp = np.random.default_rng(13); plant = rp.choice(big, min(10, len(big)), replace=False)        # trial subsets may hold fewer
     PV = {}
     for n in plant:                                     # planted view: X's own structure plus noise
         v = V[n]; X = unit(v.X + rp.normal(0, 1.0 / math.sqrt(v.X.shape[1]), v.X.shape)).astype(np.float32)
@@ -453,9 +472,9 @@ def run_f1():
     rows = [dict(x=k[0], y=k[1], dev_auroc=res[k][0][0], exam_auroc=res[k][1][0], exam_p=res[k][1][2], q=q[k], genes=res[k][1][3],
                  local=V[k[0]].local or V[k[1]].local) for k in conf]
     facts = [_fact(f"LAYER-{_lname(r['x'])}", f"link/F1/{_lname(r['y'])}", r, "F1") for r in rows]
-    gate = _gate(len(conf), len(nconf), pr, sum(k[2] for k in known), 6)
+    gate = _gate(len(conf), len(nconf), pr, sum(k[2] for k in known), F1_NEED)
     return dict(tested=len(res), carried=len(car), confirmed=len(conf), negative_confirmed=len(nconf), planted_recovered=pr,
-                known=[list(k) for k in known], known_needed=6, gate=gate, rows=rows,
+                known=[list(k) for k in known], known_needed=F1_NEED, gate=gate, rows=rows,
                 matrix={f"{k[0]}|{k[1]}": [res[k].get(0, (None,))[0], res[k].get(1, (None,))[0]] for k in res}), facts
 
 
@@ -463,7 +482,7 @@ def _lname(view):
     return {"COMPLEX": "SETS_COMPLEX", "PATHWAY": "SETS_PATHWAY", "LOCATION": "SETS_LOCATION", "DRUGTARGET": "SETS_DRUGTARGET",
             "PPI": "PPI_HPA", "CX_HUMAN": "CX_HUMAN", "CX_MOUSE": "CX_MOUSE", "RNA_ENCODE": "RNA_ENCODE_HUMAN", "RNA_GTEX": "RNA_GTEX_V8",
             "CAGE_FANTOM5": "CAGE_FANTOM5_HUMAN", "EXPR_HPA": "EXPR_HPA_CELLLINES", "PROMOTER_OPEN": "PROMOTER_OPEN_HUMAN",
-            "METH": "METH_PROMOTER"}.get(view, view)
+            "METH": "METH_PROMOTER", "OPENCELL_PPI": "PPI_OPENCELL", "OPENCELL_LOC": "SETS_OPENCELL_LOCATION"}.get(view, view)
 
 
 # ------------------------------------------------------------------------------------------------ F2 gene <-> gene
@@ -1001,6 +1020,84 @@ def run_f9():
                 known_needed=3, gate=gate, rows=rows), facts
 
 
+# ------------------------------------------------------------------------------------------------ F10 psoriasis screen <-> the bank
+def run_f10():
+    """C4. The Biohub psoriasis screen (keratinocytes, IL17RA readout; CC BY-NC-ND, rows kept local): do its hits connect to the
+    rest of the bank? Hits: FDR < 0.05 in IL17RA-low or IL17RA-high cells. Three questions per direction, each a permutation test
+    (2,000 random gene sets of the same size from the screened genes): (1) expressed in keratinocytes (CELLxGENE keratinocyte
+    mean expression >= 0.05); (2) psoriasis genetics (F5 shared-causal-variant genes of psoriasis traits); (3) network neighbours
+    of IL17RA (HPA and OpenCell interactions, complex mates, this run's F2 gene links). BH over the six; connected if q < 0.05 and
+    fold > 1. Positive control: 10 planted sets (200 random + 100 keratinocyte-expressed genes) must test significant on (1) in
+    >= 9. Negative: 10 random sets; at most 10% of their tests significant. Known: ALOX5 and OXTR among the hits and both drug
+    targets. Output: hits that drugs already act on (untested ideas)."""
+    import pandas as pd
+    FAM[0] = "F10"; rng = np.random.default_rng(101); NP = 2000
+    z = npz("SCREEN_PSORIASIS_IL17RA"); ok = np.array([str(r).startswith("ENSG") for r in z["rows"]])
+    genes, X, sym = z["rows"][ok].astype(str), z["X"][ok], z["symbols"][ok].astype(str)
+    uni = np.array(sorted(set(genes.tolist()))); pos = {x: i for i, x in enumerate(uni)}
+    hits = {"IL17RA-low": sorted(set(genes[X[:, 0] < 0.05].tolist())), "IL17RA-high": sorted(set(genes[X[:, 2] < 0.05].tolist()))}
+    g, cls, names, Xc = cx_cl(); kj = cls.index("CL:0000312")
+    S = {"expressed in keratinocytes": {x for x, v in zip(g, Xc[:, kj]) if v >= 0.05}}
+    for lay in ("GWAS_OPENTARGETS", "QTL_GTEX_V11", "SCEQTL_IBDVERSE"):
+        L(lay)
+    traits = json.load(open(os.path.join(RUN, "f4_traits.json"))); best = pd.read_parquet(os.path.join(RUN, "f5_links.parquet"))
+    ps = [i for i, t in enumerate(traits) if "EFO_0000676" in t["diseaseIds"] or re.search(r"psoria", t["trait"] or "", re.I)]
+    S["psoriasis genetics"] = set(best[best.trait.isin(ps)].gene)
+    il = cbb.to_ens("IL17RA"); nb = set()
+    for lay in ("PPI_HPA", "PPI_OPENCELL"):
+        e = npz(lay)
+        for a, b in zip(e["a"].astype(str), e["b"].astype(str)):
+            if a == il:
+                nb.add(b)
+            if b == il:
+                nb.add(a)
+    for sid, d in json.load(open(L("SETS_COMPLEX")[1])).items():
+        if il in d["members"]:
+            nb |= set(d["members"])
+    for r in json.load(open(os.path.join(RUN, "F2_connections.json"))):
+        if r["a"] == il:
+            nb.add(r["b"])
+        if r["b"] == il:
+            nb.add(r["a"])
+    nb.discard(il); S["network neighbours of IL17RA"] = nb
+
+    def perm(hs, St):
+        hi = np.array([pos[h] for h in hs if h in pos]); inS = np.array([u in St for u in uni]); n = len(hi); obs = int(inS[hi].sum())
+        null = np.array([inS[rng.choice(len(uni), n, replace=False)].sum() for _ in range(NP)])
+        return obs, n, float(null.mean()), float((1 + (null >= obs).sum()) / (1 + NP))
+    tests = []
+    for hn, hs in hits.items():
+        for qn, St in S.items():
+            o, n, ex, p = perm(hs, St); tests.append(dict(hits=hn, question=qn, overlap=o, hits_n=n, set_size_in_screen=int(sum(u in St for u in uni)),
+                                                         expected=round(ex, 2), fold=(o / ex if ex else float("nan")), p=p))
+    for t_, q_ in zip(tests, bh([t_["p"] for t_ in tests])):
+        t_["q"] = float(q_); t_["connected"] = bool(q_ < GATE["q"] and t_["fold"] > 1)
+    eu = [u for u in uni if u in S["expressed in keratinocytes"]]
+    pos_ok = [perm(list(rng.choice(uni, 200, replace=False)) + list(rng.choice(eu, 100, replace=False)), S["expressed in keratinocytes"])[3] < 0.05 for _ in range(10)]
+    neg = [perm(list(rng.choice(uni, len(hits["IL17RA-low"]), replace=False)), St)[3] < 0.05 for _ in range(10) for St in S.values()]
+    tg = json.load(open(L("SETS_DRUGTARGET")[1])); dr = json.load(open(L("OT_DRUGS")[1])); by = collections.defaultdict(list)
+    for c, d in tg.items():
+        for x in d["members"]:
+            by[x].append(c)
+    rk = {"APPROVAL": 4, "PHASE_3": 3, "PHASE_2": 2, "PHASE_1": 1}
+    fdr = dict(zip(genes, zip(X[:, 0], X[:, 2]))); s_of = dict(zip(genes, sym)); rows = []
+    for hn, hs in hits.items():
+        for h in hs:
+            if h in by:
+                ds = sorted(by[h], key=lambda c: -rk.get((dr.get(c) or {}).get("max_stage"), 0))
+                rows.append(dict(gene=h, symbol=s_of[h], direction=hn, fdr=float(fdr[h][0 if hn == "IL17RA-low" else 1]), local=True,
+                                 drugs=[(dr.get(c) or {}).get("name") or c for c in ds[:6]], best_stage=(dr.get(ds[0]) or {}).get("max_stage")))
+    known = [(s_, any(r["symbol"] == s_ for r in rows)) for s_ in ("ALOX5", "OXTR")]
+    ctrl = dict(positive=float(np.mean(pos_ok)), negative_share=float(np.mean(neg)))
+    ok_ = ctrl["positive"] >= GATE["planted"] and ctrl["negative_share"] <= 0.10 and all(k[1] for k in known) and any(t_["connected"] for t_ in tests)
+    facts = [_fact("SCREEN-PSORIASIS_IL17RA", f"link/F10/{t_['hits']}/{t_['question']}", {k: t_[k] for k in ("overlap", "hits_n", "expected", "fold", "p", "q", "connected")}, "F10")
+             for t_ in tests]
+    facts += [_fact(r["gene"], "link/F10/SCREEN-PSORIASIS_IL17RA", {k: r[k] for k in ("direction", "fdr", "drugs", "best_stage")}, "F10") for r in rows]
+    return dict(hits={k: len(v) for k, v in hits.items()}, sets={k: len(v) for k, v in S.items()}, tests=tests, confirmed=sum(t_["connected"] for t_ in tests),
+                planted_recovered=ctrl["positive"], negative_confirmed=int(sum(neg)), negative_share=ctrl["negative_share"], known=[list(k) for k in known],
+                known_needed=2, druggable_hits=len(rows), gate=dict(passed=bool(ok_), verdict="PASS" if ok_ else "FAIL"), rows=rows), facts
+
+
 # ------------------------------------------------------------------------------------------------ gate, facts, ledger
 def _gate(conf, neg, planted, known, need):
     ok = dict(confirmed=conf >= 1, negative=neg <= max(1, GATE["neg_share"] * conf), planted=planted >= GATE["planted"], known=known >= need)
@@ -1013,9 +1110,9 @@ def _fact(entity, attr, value, fam):
                 inputs=tuple(sorted(USED[fam])))
 
 
-RUNNERS = {"F1": run_f1, "F2": run_f2, "F3": run_f3, "F4": run_f4, "F5": run_f5, "F6": run_f6, "F7": run_f7, "F8": run_f8, "F9": run_f9}
+RUNNERS = {"F1": run_f1, "F2": run_f2, "F3": run_f3, "F4": run_f4, "F5": run_f5, "F6": run_f6, "F7": run_f7, "F8": run_f8, "F9": run_f9, "F10": run_f10}
 CLAIMS = {
-    "F1": "Kinds of gene data that say the same thing: confirmed view pairs, with the controls and >= 6 of 8 known pairs.",
+    "F1": "Kinds of gene data that say the same thing: confirmed view pairs, with the controls and >= 8 of 10 known pairs (C4, OpenCell added).",
     "F2": "Gene pairs linked by independent kinds of data: support s* at null FDR <= 5%, planted >= 90%, held-out truth enrichment >= 10x.",
     "F3": "Cell types matched across datasets and modalities: confirmed on EXAM genes, with the controls and >= 5 of 7 known matches.",
     "F4": "Diseases' genetics point to cell types: confirmed on the other chromosomes, with the controls and >= 6 of 8 known answers.",
@@ -1024,6 +1121,7 @@ CLAIMS = {
     "F7": "Complexes and pathways specific to cell types: confirmed on EXAM members, with the controls and >= 5 of 7 known pairs.",
     "F8": "Genetic links (F5 genes) predict a drug's existing indication: Fisher OR > 1, p < 0.05.",
     "F9": "Diseases sharing cell-type patterns: confirmed on the other chromosomes, with the controls and >= 3 of 4 known pairs.",
+    "F10": "The psoriasis screen's hits connect to the rest of the bank (keratinocyte expression, psoriasis genetics, IL17RA's network): >= 1 connection at BH q < 0.05, controls, ALOX5 and OXTR found as druggable hits.",
 }
 
 
