@@ -31,7 +31,7 @@ THE FAMILIES
                         pair are neighbours. Null: every view's genes permuted within level deciles (3 draws). A pair is
                         CONFIRMED at the smallest support s* whose null-estimated FDR is <= 5%. Held-out truth: pairs
                         found WITHOUT the physical and annotation kinds (support >= 3 of the other 4) share a complex
-                        or an interaction >= 10x more often than all pairs. Positive: 300 pairs planted in 3 kinds.
+                        or an interaction >= 10x more often than all pairs. Positive: 300 pairs planted in 4 kinds.
   F3 cell type <-> cell type   Units: CELLxGENE human and mouse cell types, ENCODE biosamples, GTEx tissues, FANTOM5
                         samples, HPA cell lines (RNA), WGBS cell types (promoter methylation, sign flipped), ENCODE
                         promoter chromatin (per biosample). Profiles z-scored per gene within each dataset; similarity
@@ -51,9 +51,10 @@ THE FAMILIES
                         level-matched gene-permutation null. Carry |z_DEV| >= 4 (top 20 per knockdown); confirm EXAM z,
                         same sign. Known: GATA1, TAL1, KLF1, LMO2, LDB1, ZFPM1, NFE2 knockdown -> away from an
                         erythroid cell type (>= 4 of 7).
-  F7 complex / pathway <-> cell type   Mean CELLxGENE specificity of a set's DEV members vs level-matched random
-                        sets (z); carry z >= 4 (top 10 per set), confirm on EXAM members. Known: 7 pathway <-> cell
-                        type pairs (>= 5).
+  F7 complex / pathway <-> cell type   How many of a set's DEV members are among a CELLxGENE cell type's 5% most
+                        specific genes (exact binomial, p0 = 0.05; one extreme gene counts once), >= 5 members per
+                        half; carry z >= 3 (top 10 per set), confirm on EXAM members. Positive: 30 planted sets (12 of
+                        the cell type's 200 most specific genes + 8 random). Known: 7 pathway <-> cell type pairs (>= 5).
   F8 drug <-> disease   Through F5 genes: (trait, drug) pairs where a drug target is a trait gene are more often
                         already indicated for that disease than other pairs (Fisher, OR > 1, p < 0.05; the known answer
                         from Nelson 2015 / Minikel 2024). The linked, not-yet-indicated pairs are listed, untested.
@@ -149,7 +150,8 @@ def zsf(z):
 
 def pca(X, k=50, seed=0):
     from sklearn.utils.extmath import randomized_svd
-    X = X - X.mean(0, keepdims=True)
+    X = np.asarray(X, np.float32); mu = np.nan_to_num(np.nanmean(X, 0, keepdims=True))      # missing values -> column mean
+    X = np.nan_to_num(np.where(np.isnan(X), mu, X) - mu)
     k = min(k, min(X.shape) - 1)
     U, S, _ = randomized_svd(X.astype(np.float32), k, random_state=seed)
     return (U * S).astype(np.float32)
@@ -160,6 +162,8 @@ def unit(X):
 
 
 def deciles(level, rng):
+    if not len(level):
+        return np.arange(0)
     q = np.quantile(level, np.linspace(0, 1, 11)); b = np.clip(np.searchsorted(q, level, side="right") - 1, 0, 9)
     perm = np.arange(len(level))
     for k in range(10):
@@ -351,6 +355,7 @@ def gene_views():
             ix = [i for i, g in enumerate(v.genes) if g in keep]
             V[n] = View(n, v.kind, [v.genes[i] for i in ix], X=v.X[ix] if v.X is not None else None, level=v.level[ix], local=v.local,
                         sets=None if v.M is None else {v.genes[i]: list(v.M[i].indices) for i in ix if v.M[i].nnz})
+    V = {n: v for n, v in V.items() if len(v.genes) >= 50}
     print(f"  {len(V)} gene views built ({time.time() - t0:.0f}s): " + ", ".join(f"{n} {len(v.genes)}" for n, v in V.items()), flush=True)
     return V
 
@@ -393,7 +398,7 @@ def f1_pairs(V, hv, rng, shuffle=False, plant=None):
             if len(idx) >= 200:
                 nbr[n] = (idx, v.knn(idx, K))
         for X, (idx, nb) in nbr.items():
-            vx = V[X]
+            vx = V[X]; print(f"      F1 half {h} {X}", flush=True) if not TRIAL else None
             for Y, vy in V.items():
                 if Y == X:
                     continue
@@ -432,7 +437,7 @@ def run_f1():
     rng = np.random.default_rng(11); V = gene_views(); hv = {n: half(v.genes) for n, v in V.items()}
     res = f1_pairs(V, hv, rng); car, q, conf = f1_decide(res)
     neg = f1_pairs(V, hv, np.random.default_rng(12), shuffle=True); _, _, nconf = f1_decide(neg)
-    rp = np.random.default_rng(13); plant = rp.choice([n for n in V if V[n].X is not None], 10, replace=False)
+    rp = np.random.default_rng(13); plant = rp.choice([n for n in V if V[n].X is not None and len(V[n].genes) >= 1000], 10, replace=False)
     PV = {}
     for n in plant:                                     # planted view: X's own structure plus noise
         v = V[n]; X = unit(v.X + rp.normal(0, 1.0 / math.sqrt(v.X.shape[1]), v.X.shape)).astype(np.float32)
@@ -538,7 +543,7 @@ def run_f2():
 
 # ------------------------------------------------------------------------------------------------ F3 cell type <-> cell type
 F3_KNOWN = [("ENC:K562", "HPA:K-562"), ("ENC:HepG2", "HPA:Hep-G2"), ("GTX:Liver", "CXH:hepatocyte"), ("GTX:Pancreas", "CXH:pancreatic acinar cell"),
-            ("CXM:hepatocyte", "CXH:hepatocyte"), ("MET:Liver-Hep", "CXH:hepatocyte"), ("GTX:Whole Blood", "CXH:neutrophil")]
+            ("CXM:hepatocyte", "CXH:hepatocyte"), ("MET:Liver-Hepatocytes", "CXH:hepatocyte"), ("GTX:Whole Blood", "CXH:neutrophil")]
 
 
 def f3_units():
@@ -590,9 +595,9 @@ def _corr(Z, rows):
 
 def f3_run(Z, ds, gh, shuffle_ds=None, rng=None):
     Zs = Z.copy()
-    if shuffle_ds is not None:
-        for d in np.unique(ds):
-            c = ds == d; Zs[:, c] = Zs[rng.permutation(len(Zs))][:, c]
+    if shuffle_ds is not None:                                  # negative: every unit's gene labels shuffled on its own
+        for c in range(Zs.shape[1]):
+            Zs[:, c] = Zs[rng.permutation(len(Zs)), c]
     Sd, Se = _corr(Zs, gh == 0), _corr(Zs, gh == 1); n = len(ds); car = []
     for a in range(n):
         for d in np.unique(ds):
@@ -618,7 +623,7 @@ def run_f3():
     Zp, dsp = Z.copy(), ds.copy(); targets = []
     for a in pl:
         d = rp.choice([x for x in dsets if x != ds[a]]); col = np.where(np.isfinite(Z[:, a]), Z[:, a], 0) + rp.normal(0, 1.0, len(genes))
-        Zp = np.c_[Zp, col]; dsp = np.r_[dsp, d]; targets.append((Zp.shape[1] - 1, a))
+        Zp = np.c_[Zp, col]; dsp = np.append(dsp, d); targets.append((Zp.shape[1] - 1, a))
     _, pconf = f3_run(Zp, dsp, gh); pc = {(x[0][0], x[0][1]) for x in pconf}
     hits = np.mean([(t, a) in pc for t, a in targets])
     cs = {(names[x[0][0]], names[x[0][1]]) for x in conf}
@@ -870,8 +875,12 @@ F7_KNOWN = [(r"Erythrocytes take up oxygen", r"erythro"), (r"Generation of secon
 
 def run_f7():
     import scipy.sparse as sp
-    g, cls, names, X = cx_cl(); FAM[0] = "F7"; Zc = gz(np.log1p(X * 10)); gp = {x: i for i, x in enumerate(g)}; gh = half(g)
-    lev = X.mean(1); rng = np.random.default_rng(71)
+    g, cls, names, X = cx_cl(); FAM[0] = "F7"; gp = {x: i for i, x in enumerate(g)}; gh = half(g)
+    from scipy.stats import binom, norm
+    Zc = gz(np.log1p(X * 10)); rng = np.random.default_rng(71)
+    TOP = np.zeros(Zc.shape, bool)                              # per cell type and half: the 5% most specific genes
+    for h in (0, 1):
+        m = gh == h; TOP[m] = Zc[m] >= np.quantile(Zc[m], 0.95, axis=0)[None, :]
     sets = {}
     for k in ("SETS_COMPLEX", "SETS_PATHWAY"):
         for sid, d in json.load(open(L(k)[1])).items():
@@ -882,41 +891,27 @@ def run_f7():
         sets = dict(list(sets.items())[:200])
     keys = list(sets)
 
-    def score(mem_lists, h):
+    def zscore(mem_lists, h):
+        """exact binomial: how many of the set's members in this half are among the cell type's top 5% (p0 = 0.05)."""
         r, c = [], []
         for i, m in enumerate(mem_lists):
             mm = m[gh[m] == h]; r += [i] * len(mm); c += mm.tolist()
         W = sp.csr_matrix((np.ones(len(r)), (r, c)), shape=(len(mem_lists), len(g))); n = np.asarray(W.sum(1)).ravel()
-        return (W @ Zc) / np.maximum(n, 1)[:, None], n
-
-    qd = np.quantile(lev, np.linspace(0, 1, 11)); dec = np.clip(np.searchsorted(qd, lev, side="right") - 1, 0, 9)
-
-    def null_z(mem_lists, h, nrep=100):
-        """z against random sets with the same number of members per expression-level decile (same half)."""
-        obs, n = score(mem_lists, h); pools = [np.nonzero((dec == k) & (gh == h))[0] for k in range(10)]
-        si = np.concatenate([np.full(int((gh[m] == h).sum()), i) for i, m in enumerate(mem_lists)])
-        md = np.concatenate([dec[m[gh[m] == h]] for m in mem_lists]); S1 = np.zeros_like(obs); S2 = np.zeros_like(obs)
-        for _ in range(nrep):
-            dr_ = np.empty(len(md), np.int64)
-            for k in range(10):
-                w = md == k; dr_[w] = rng.choice(pools[k], int(w.sum()))
-            W = sp.csr_matrix((np.ones(len(si)), (si, dr_)), shape=(len(mem_lists), len(g)))
-            s = (W @ Zc) / np.maximum(n, 1)[:, None]; S1 += s; S2 += s * s
-        mu = S1 / nrep; sd = np.sqrt(np.maximum(S2 / nrep - mu * mu, 1e-12))
-        return (obs - mu) / sd, n
+        k = np.asarray(W @ TOP.astype(np.float32)); p = binom.sf(k - 1, np.maximum(n, 1)[:, None], 0.05)
+        return norm.isf(np.clip(p, 1e-300, 1)), n
 
     def decide(mem_lists):
-        zd, nd = null_z(mem_lists, 0); ze, ne = null_z(mem_lists, 1); car = []
+        zd, nd = zscore(mem_lists, 0); ze, ne = zscore(mem_lists, 1); car = []
         for i in range(len(mem_lists)):
-            if nd[i] >= 3 and ne[i] >= 3:
-                o = np.argsort(-zd[i])[:10]; car += [(i, int(j)) for j in o if zd[i, j] >= 4]
+            if nd[i] >= 5 and ne[i] >= 5:
+                o = np.argsort(-zd[i])[:10]; car += [(i, int(j)) for j in o if zd[i, j] >= 3]
         p = zsf(np.array([ze[i, j] for i, j in car])) if car else np.array([]); q = bh(p)
         return [(i, j, float(zd[i, j]), float(ze[i, j]), float(qq)) for (i, j), qq in zip(car, q) if qq < GATE["q"] and ze[i, j] > 0]
     mem = [sets[k][1] for k in keys]; conf = decide(mem)
     neg = [rng.choice(len(g), len(m), replace=False) for m in mem]; nconf = decide(neg)
     pc = rng.choice(len(cls), 30, replace=False); pl = []
     for j in pc:
-        top = np.argsort(-Zc[:, j])[:200]; pl.append(np.r_[rng.choice(top, 6, replace=False), rng.choice(len(g), 14)])
+        top = np.argsort(-Zc[:, j])[:200]; pl.append(np.r_[rng.choice(top, 12, replace=False), rng.choice(len(g), 8)])
     pconf = decide(pl); pr = np.mean([any(i == k and j == pc[k] for i, j, *_ in pconf) for k in range(30)])
     known = []
     for pat, cpat in F7_KNOWN:
@@ -1081,8 +1076,8 @@ def test(fams):
         res, facts = RUNNERS[fam]()
         res["seconds"] = round(time.time() - t0); rows = res.pop("rows", [])
         json.dump(rows, open(os.path.join(RUN, f"{fam}_connections.json"), "w"), default=float)
-        pub = [r for r in rows if not r.get("local")]
-        json.dump(pub[:50000], open(os.path.join(OUTD, f"{fam}_connections.json"), "w"), default=float, indent=0)
+        pub = sorted((r for r in rows if not r.get("local")), key=lambda r: (r.get("q", 0), -r.get("clpp", 0)))[:20000]   # strongest first
+        json.dump(pub, open(os.path.join(OUTD, f"{fam}_connections.json"), "w"), default=float)
         n = bank.add_many(facts) if bank is not None else 0
         rec = dict(op="result", id=cid, at=cbb.now(), code_sha=code_sha(), facts_written=n, inputs=sorted(USED[fam]), **res)
         with open(LEDGER, "a") as f:
