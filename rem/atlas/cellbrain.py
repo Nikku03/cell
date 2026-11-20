@@ -96,7 +96,7 @@ t2c = _imp("trait2cell")
 e2 = t2c.e2
 from brain.bank import Fact  # noqa: E402  (imported by cellbrain_bank from the brain checkout)
 
-VERSION = "C1"
+VERSION = "C2"   # C1 withdrawn before any result: the five CC BY screens (K562 GW/essential, RPE1, HepG2, Jurkat) were dropped
 TRIAL = "--trial" in sys.argv
 LEDGER = os.path.join(cbb.HOME, "trial_ledger.jsonl") if TRIAL else os.path.join(HERE, "cellbrain_ledger.jsonl")
 RUN = os.path.join(cbb.HOME, "trial" if TRIAL else "run")
@@ -120,7 +120,7 @@ def npz(name):
     return np.load(L(name)[1], allow_pickle=False)
 
 
-def half(keys, salt="c1"):
+def half(keys, salt="c1"):                    # the split salt stays 'c1': halves fixed before any result
     return np.array([int(hashlib.sha256(f"cellbrain-{salt}:{k}".encode()).hexdigest(), 16) % 2 for k in keys], np.int8)
 
 
@@ -241,8 +241,9 @@ def _dedupe(genes, X):
 
 
 def ko_view(name, local, trial_genes=None):
-    z = npz(name); rows, X, st = z["rows"], z["X"].astype(np.float32), z["strength"]
-    ok = np.array([str(r).startswith("ENSG") for r in rows]) & np.isfinite(st)
+    z = npz(name); rows, X = z["rows"], z["X"].astype(np.float32)
+    st = np.linalg.norm(X, axis=1)            # record strength = size of the response (as biobrain); stored only for some screens
+    ok = np.array([str(r).startswith("ENSG") for r in rows]) & (st > 0)
     rows, X, st = rows[ok], X[ok], st[ok]
     keep = st >= np.median(st); rows, X, st = rows[keep], X[keep], st[keep]
     U = unit(X); _, _, Vt = np.linalg.svd(U - U.mean(0), full_matrices=False); P = Vt[:3]
@@ -1043,6 +1044,12 @@ def _git(*a):
     return subprocess.run(["git", "-C", HERE, *a], capture_output=True, text=True)
 
 
+def withdraw(reason):
+    with open(LEDGER, "a") as f:
+        for fam in FAMILIES:
+            f.write(json.dumps(dict(op="withdraw", id=f"C1-{fam}", at=cbb.now(), reason=reason), sort_keys=True) + "\n")
+
+
 def declare():
     have = {r["id"] for r in _read() if r["op"] == "declare"}
     os.makedirs(os.path.dirname(LEDGER), exist_ok=True)
@@ -1112,6 +1119,8 @@ if __name__ == "__main__":
     args = [a for a in sys.argv[1:] if a != "--trial"]
     if args[0] == "declare":
         declare()
+    elif args[0] == "withdraw":
+        withdraw(" ".join(args[1:]))
     elif args[0] == "test":
         test(args[1:] or FAMILIES)
     elif args[0] == "card":
