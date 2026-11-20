@@ -204,6 +204,7 @@ def to_ens(s):
 
 def save_layer(name, **arrays):
     os.makedirs(LAY, exist_ok=True); p = P(LAY, name.lower() + ".npz")
+    arrays = {k: (np.asarray(v).astype(str) if np.asarray(v).dtype == object else v) for k, v in arrays.items()}   # no pickled arrays
     np.savez_compressed(p, **arrays); return p
 
 
