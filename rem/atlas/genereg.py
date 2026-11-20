@@ -16,9 +16,13 @@ CLAIMS (declared before running; rem/atlas/cellbrain_ledger.jsonl, ids G1-*; the
         non-targeting controls. Regulators: knockdowns with a phenotype (energy test p < 0.05). FOUND in the genome-wide
         screen: |z| >= 4, top 300 per regulator, the regulator itself and genes whose TSS is within 50 kb of its TSS
         excluded (CRISPRi can silence neighbours). CONFIRMED in the essential screen (independent experiment, same
-        regulator and target): same sign, BH q < 0.05 over everything testable. Knockdown lowers the target ->
+        regulator and target): the target's effect standardised within that knockdown's own row (median / MAD: its
+        effect beyond the knockdown's overall shift), same sign, BH q < 0.05 over everything testable. (Set after the
+        trial: confirming on control-scaled z let a strong knockdown's random targets pass; shuffled targets confirmed
+        16% as many links as real ones.) Knockdown lowers the target ->
         ACTIVATOR; raises it -> REPRESSOR. Negative: essential-screen target labels shuffled (<= 5% of the real count).
-        Positive: 200 planted pairs (z -6 in both screens), >= 90% confirmed. Known activations (>= 4 of 6; found, and
+        Positive: 200 planted pairs (z -6 in both screens; regulators in both screens with fewer than 300 found targets,
+        so a planted pair is not pushed out of the top 300), >= 90% confirmed. Known activations (>= 4 of 6; found, and
         confirmed where the regulator is in both screens): GATA1->ALAS2, GATA1->HBG2, SREBF2->HMGCS1, SREBF2->LDLR,
         NFE2L1->PSMB1, MYC->NPM1. Descriptive: on-target check (knockdown lowers the regulator's own mRNA).
  G1-R2  DO K562 ACTIVATIONS SHOW ACROSS THE BODY'S CELL TYPES? Correlation across CELLxGENE cell types (log profiles) of
@@ -104,8 +108,8 @@ def cx_celltypes(tissue_half=None):
     W = np.zeros(len(pairs)); co = np.full(len(pairs), -1)
     for i in cols:
         W[i] = pairs[i]["cells"]; co[i] = cp[pairs[i]["cell_type"]]
-    row = np.repeat(np.arange(len(z["genes"])), np.diff(z["indptr"])); col = z["col"]; sel = co[col] >= 0
-    pc = z["pc"][sel] / 255.0; me = z["me"][sel] * 0.04; w = W[col[sel]]; r_, c_ = row[sel], co[col[sel]]
+    row = np.repeat(np.arange(len(z["genes"]), dtype=np.int32), np.diff(z["indptr"])); col = z["col"]; sel = co[col] >= 0
+    pc = z["pc"][sel].astype(np.float32) / 255.0; me = z["me"][sel].astype(np.float32) * 0.04; w = W[col[sel]].astype(np.float32); r_, c_ = row[sel], co[col[sel]]
     PC = np.zeros((len(z["genes"]), len(cls))); MX = np.zeros_like(PC)
     np.add.at(PC, (r_, c_), pc * w); np.add.at(MX, (r_, c_), me * pc * w)
     tot = np.zeros(len(cls)); np.add.at(tot, co[cols], W[cols]); PC /= tot; MX /= tot
@@ -130,9 +134,11 @@ def screen(layer, h5):
     z = npz(layer); lab = z["labels"].astype(str); X = z["X"].astype(np.float32); rows = z["rows"].astype(str); cols = z["cols"].astype(str)
     ctrl = np.array(["non-targeting" in l.lower() for l in lab])
     sd = np.nanstd(X[ctrl], 0); sd = np.where(sd > 0, sd, np.nan); Z = X / sd[None, :]
+    med = np.nanmedian(Z, 1, keepdims=True); mad = np.nanmedian(np.abs(Z - med), 1, keepdims=True) * 1.4826
+    Zrow = (Z - med) / np.where(mad > 0, mad, np.nan)      # a target's effect beyond the knockdown's overall shift
     with h5py.File(L(h5), "r") as f:
         pv = f["obs"]["energy_test_p_value"][:]
-    return dict(Z=Z, rows=rows, cols=cols, ctrl=ctrl, pheno=(pv < 0.05) & ~ctrl)
+    return dict(Z=Z, Zrow=Zrow, rows=rows, cols=cols, ctrl=ctrl, pheno=(pv < 0.05) & ~ctrl)
 
 
 def tss():
@@ -160,7 +166,7 @@ def r1_discover(G, T_, regs):
 
 
 def r1_confirm(G, E, found, Zess=None):
-    Ze = E["Z"] if Zess is None else Zess
+    Ze = E["Zrow"] if Zess is None else Zess
     er = {r: i for i, r in enumerate(E["rows"]) if not E["ctrl"][i]}; ec = {c: j for j, c in enumerate(E["cols"])}
     test, pz = [], []
     for i, j, z in found:
@@ -179,11 +185,12 @@ def run_r1():
     if TRIAL:
         regs = regs[:300]
     found = r1_discover(G, T_, regs); conf, testable = r1_confirm(G, E, found)
-    rng = np.random.default_rng(7); Zs = E["Z"][:, rng.permutation(E["Z"].shape[1])]; nconf, _ = r1_confirm(G, E, found, Zs)
+    rng = np.random.default_rng(7); Zs = E["Zrow"][:, rng.permutation(E["Zrow"].shape[1])]; nconf, _ = r1_confirm(G, E, found, Zs)
     # positive: 200 planted pairs between regulators in both screens and targets measured in both
     er = {r: i for i, r in enumerate(E["rows"]) if not E["ctrl"][i]}; ec = {c: j for j, c in enumerate(E["cols"])}
-    both = [i for i in regs if G["rows"][i] in er]; tcols = [j for j, c in enumerate(G["cols"]) if c in ec]
-    Zg2, Ze2 = G["Z"].copy(), E["Z"].copy(); planted = set()
+    nf = collections.Counter(i for i, _, _ in found)
+    both = [i for i in regs if G["rows"][i] in er and nf[i] < 300]; tcols = [j for j, c in enumerate(G["cols"]) if c in ec]
+    Zg2, Ze2 = G["Z"].copy(), E["Zrow"].copy(); planted = set()
     for _ in range(200):
         i = int(rng.choice(both)); j = int(rng.choice(tcols)); planted.add((i, j))
         Zg2[i, j] = -6.0; Ze2[er[G["rows"][i]], ec[G["cols"][j]]] = -6.0
@@ -196,10 +203,10 @@ def run_r1():
         ea, eb = cbb.to_ens(a), cbb.to_ens(b); f_ = fset.get((ea, eb))
         ok = f_ is not None and f_ < 0 and ((ea, eb) in cset or ea not in er)
         known.append((a, b, bool(ok)))
-    own = [G["Z"][i, list(G["cols"]).index(G["rows"][i])] for i in regs if G["rows"][i] in set(G["cols"])]
+    cpos = {c: j for j, c in enumerate(G["cols"])}; own = [G["Z"][i, cpos[G["rows"][i]]] for i in regs if G["rows"][i] in cpos]
     edges = [dict(regulator=G["rows"][i], regulator_symbol=sym(G["rows"][i]), target=G["cols"][j], target_symbol=sym(G["cols"][j]),
                   z_gw=round(z, 2), z_ess=round(ze, 2), q=q, kind="activates" if z < 0 else "represses") for i, j, z, ze, q in conf]
-    gate = dict(confirmed=len(conf) >= 1, negative=len(nconf) <= max(1, 0.05 * len(conf)), planted=pr >= 0.9, known=sum(k[2] for k in known) >= 4)
+    gate = dict(confirmed=bool(len(conf) >= 1), negative=bool(len(nconf) <= max(1, 0.05 * len(conf))), planted=bool(pr >= 0.9), known=bool(sum(k[2] for k in known) >= 4))
     gate["verdict"] = "PASS" if all(gate.values()) else "FAIL"
     res = dict(regulators=int(len(regs)), found=len(found), testable=testable, confirmed=len(conf), activations=sum(e["kind"] == "activates" for e in edges),
                repressions=sum(e["kind"] == "represses" for e in edges), negative_confirmed=len(nconf), planted_recovered=float(pr), known=[list(k) for k in known],
@@ -222,9 +229,13 @@ def run_r2(A, edges):
     pools = [np.nonzero(dec == k)[0] for k in range(10)]
     corr = lambda a, b: (Zc[a] * Zc[b]).sum(1) / n
 
+    ra = np.array([a for a, _ in ed]); db = dec[np.array([b for _, b in ed])]
+
     def draw(k):
-        r = np.array([a for a, _ in ed] * k); t = np.array([rng.choice(pools[dec[b]]) for _, b in ed] * 1 for _ in range(k)).ravel() if False else \
-            np.concatenate([np.array([rng.choice(pools[dec[b]]) for _, b in ed]) for _ in range(k)])
+        """random partners for the same regulators, matched on the target's expression decile"""
+        r = np.tile(ra, k); t = np.empty(len(r), np.int64); dk = np.tile(db, k)
+        for d in range(10):
+            w = dk == d; t[w] = rng.choice(pools[d], int(w.sum()))
         return corr(r, t)
     from scipy.stats import rankdata
 
@@ -232,7 +243,7 @@ def run_r2(A, edges):
         rk = rankdata(np.r_[pos, neg]); n1 = len(pos); return float((rk[:n1].sum() - n1 * (n1 + 1) / 2) / (n1 * len(neg)))
     obs_c = corr(np.array([a for a, _ in ed]), np.array([b for _, b in ed])); ref = draw(5); obs = auroc(obs_c, ref)
     null = [auroc(draw(1), ref) for _ in range(200)]; p = (1 + sum(x >= obs for x in null)) / 201
-    ok = obs >= 0.55 and p < 0.05
+    ok = bool(obs >= 0.55 and p < 0.05)
     return dict(edges=len(ed), auroc=obs, null_mean=float(np.mean(null)), p=p, median_r_edges=float(np.median(obs_c)), median_r_random=float(np.median(ref)),
                 gate=dict(verdict="PASS" if ok else "FAIL")), []
 
@@ -294,7 +305,7 @@ def run_r3(A, found_rows, G_regs_cols):
     t = table(cset); OR, p = fisher_exact(t, alternative="greater") if t[0][0] + t[0][1] and t[1][0] + t[1][1] else (float("nan"), 1.0)
     perm = dict(zip([genes[i] for i in ti], rng.permutation([genes[i] for i in ti])))
     tn = table({(perm.get(a, a), b) for a, b in cset}); ORn, pn = fisher_exact(tn) if tn[0][0] + tn[0][1] else (float("nan"), 1.0)
-    ok = OR >= 1.5 and p < 0.05 and (np.isnan(ORn) or 0.67 <= ORn <= 1.5)
+    ok = bool(OR >= 1.5 and p < 0.05 and (np.isnan(ORn) or 0.67 <= ORn <= 1.5))
     H = cbb.hgnc()
     edges = [dict(tf=genes[i], tf_symbol=H["e2s"].get(genes[i], genes[i]), gene=genes[j], gene_symbol=H["e2s"].get(genes[j], genes[j]), r_found=round(ra, 3), r_confirmed=round(rb, 3))
              for i, j, ra, rb in conf]
@@ -356,10 +367,10 @@ def test():
             raise SystemExit("G1 already tested")
     t0 = time.time(); os.makedirs(RUN, exist_ok=True); os.makedirs(OUTD, exist_ok=True)
     A = part_a(); print(f"part A: {len(A['genes'])} genes x {len(A['cls'])} cell types ({time.time() - t0:.0f}s)", flush=True)
-    r1, e1, found = run_r1(); print("G1-R1", json.dumps(r1)[:900], f"({time.time() - t0:.0f}s)", flush=True)
-    r2, _ = run_r2(A, e1); print("G1-R2", json.dumps(r2), flush=True)
+    r1, e1, found = run_r1(); print("G1-R1", json.dumps(r1, default=float)[:900], f"({time.time() - t0:.0f}s)", flush=True)
+    r2, _ = run_r2(A, e1); print("G1-R2", json.dumps(r2, default=float), flush=True)
     G = screen("KO_K562_GENESPACE", "GWPS_K562_H5AD"); regs = set(G["rows"][G["pheno"]])
-    r3, e3 = run_r3(A, found, (regs, set(G["cols"]), None)); print("G1-R3", json.dumps(r3), f"({time.time() - t0:.0f}s)", flush=True)
+    r3, e3 = run_r3(A, found, (regs, set(G["cols"]), None)); print("G1-R3", json.dumps(r3, default=float), f"({time.time() - t0:.0f}s)", flush=True)
     H = cbb.hgnc(); sym = lambda e: H["e2s"].get(e, e)
     act_by, rep_by = collections.defaultdict(list), collections.defaultdict(list)
     for e in e1:
@@ -370,15 +381,20 @@ def test():
     con_act = concepts(act_by, G["cols"]); con_rep = concepts(rep_by, G["cols"]); con_co = concepts(co_by, A["genes"], min_n=20)
     # per cell type
     gi = {g: i for i, g in enumerate(A["genes"])}; tfs = tf_list(); per_ct = {}
+    ix = lambda g: gi.get(g, -1)
+    r1a = np.array([ix(e["regulator"]) for e in e1], np.int64); r1b = np.array([ix(e["target"]) for e in e1], np.int64); ok1 = (r1a >= 0) & (r1b >= 0)
+    r3a = np.array([ix(e["tf"]) for e in e3], np.int64); r3b = np.array([ix(e["gene"]) for e in e3], np.int64); ok3 = (r3a >= 0) & (r3b >= 0)
     for k, cl in enumerate(A["cls"]):
-        on = A["act"][:, k]; ong = {A["genes"][i] for i in np.nonzero(on)[0]}
+        on = A["act"][:, k]
         spec_i = np.nonzero(A["specific"][:, k])[0]; spec_i = spec_i[np.argsort(-A["spec"][spec_i, k])]
-        regs_on = [A["genes"][i] for i in spec_i if A["genes"][i] in tfs]
-        e1_on = [e for e in e1 if e["regulator"] in ong and e["target"] in ong]; e3_on = [e for e in e3 if e["tf"] in ong and e["gene"] in ong]
-        top_reg = collections.Counter(e["tf"] for e in e3_on if e["tf"] in set(regs_on)).most_common(5)
+        regs_on = [A["genes"][i] for i in spec_i if A["genes"][i] in tfs]; rset = set(regs_on)
+        m1 = ok1.copy(); m1[ok1] = on[r1a[ok1]] & on[r1b[ok1]]
+        m3 = ok3.copy(); m3[ok3] = on[r3a[ok3]] & on[r3b[ok3]]
+        e3_on = [e3[i] for i in np.nonzero(m3)[0]]
+        top_reg = collections.Counter(e["tf"] for e in e3_on if e["tf"] in rset).most_common(5)
         per_ct[cl] = dict(name=A["names"][k], active_genes=int(on.sum()), specific_genes=int(len(spec_i)),
                           top_specific=[sym(A["genes"][i]) for i in spec_i[:25]], specific_regulators=[sym(x) for x in regs_on[:15]],
-                          k562_links_active=len(e1_on), coexpression_links_active=len(e3_on),
+                          k562_links_active=int(m1.sum()), coexpression_links_active=int(m3.sum()),
                           programmes=[dict(regulator=sym(r), targets=[sym(e["gene"]) for e in e3_on if e["tf"] == r][:15]) for r, _ in top_reg])
     out = dict(part_a=dict(genes=len(A["genes"]), cell_types=len(A["cls"]), housekeeping=int(A["hk"].sum()),
                            median_active=float(np.median(A["act"].sum(0))), median_specific=float(np.median(A["specific"].sum(0)))),
