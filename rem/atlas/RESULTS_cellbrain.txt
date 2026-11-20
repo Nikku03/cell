@@ -2,9 +2,9 @@
 CELLBRAIN -- the brain connected to the memory bank, one task: make as many connections as it can
 =================================================================================================
   F1 Kinds of gene data that say the same thing: confirmed view pairs, with the contr
-     confirmed 507; negative control 0; planted 1.0; known 8/8 -> PASS
+     confirmed 551; negative control 0; planted 1.0; known 9/10 -> PASS
   F2 Gene pairs linked by independent kinds of data: support s* at null FDR <= 5%, pl
-     confirmed 9074; negative control -; planted 1.0; known -/- -> PASS
+     confirmed 9408; negative control -; planted 1.0; known -/- -> PASS
   F3 Cell types matched across datasets and modalities: confirmed on EXAM genes, with
      confirmed 100440; negative control 11; planted 1.0; known 7/7 -> PASS
   F4 Diseases' genetics point to cell types: confirmed on the other chromosomes, with
@@ -19,3 +19,5 @@ CELLBRAIN -- the brain connected to the memory bank, one task: make as many conn
      confirmed 35810; negative control -; planted -; known -/- -> PASS
   F9 Diseases sharing cell-type patterns: confirmed on the other chromosomes, with th
      confirmed 9398; negative control 0; planted 1.0; known 3/4 -> PASS
+  F10 The psoriasis screen's hits connect to the rest of the bank (keratinocyte expres
+     confirmed 0; negative control 1; planted 1.0; known 1/2 -> FAIL

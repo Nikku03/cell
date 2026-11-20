@@ -6170,3 +6170,24 @@ CELLBRAIN -- THE BRAIN CONNECTED TO THE MEMORY BANK, ONE TASK: MAKE AS MANY CONN
   ENCODE and CELLxGENE over-represent some cell types and mixed tissues can top a trait; F5 has no LD and no verdict;
   F8 matches disease ids exactly; connections built on CC BY-NC-SA or unclear-licence data stay local (F2 entirely;
   F1 rows flagged); outputs/cellbrain holds the 20,000 strongest public links per family, the bank holds all.
+
+  CELLBRAIN C4 (2026-11-20): RE-RUN WITH THE BIOHUB DATA (OpenCell; the 2026 psoriasis CRISPR screen)
+  Declared before running (rem/atlas/cellbrain_ledger.jsonl); F3-F9 read neither dataset, so their C2 results stand.
+  C4-F1 data <-> data   PASS. 34 views (OpenCell interactions and locations added): 551 of 898 pairs confirmed;
+                        shuffled 0; planted 10/10; known 9/10. OpenCell interactions agree with HPA interactions
+                        (AUROC 0.82), with knockdown responses (HepG2 0.78, K562 essential 0.74, RPE1 0.74) and with
+                        complexes (0.69). The miss: OpenCell locations vs HPA locations (not confirmed; HPA's location
+                        view keeps only sets of <= 500 genes, so the big compartments are absent).
+  C4-F2 gene <-> gene   PASS. 9,408 pairs from >= 3 kinds (C3: 9,074), null FDR 1.9%; planted 300/300; held-out
+                        precision 51.6% vs 0.10% (507x).
+  C4-F10 psoriasis screen <-> the bank   FAIL. Hits (FDR < 0.05): 306 IL17RA-low, 402 IL17RA-high. None of the six
+                        questions connected: keratinocyte-expressed fold 1.01 (low) and 0.90 (high); psoriasis genetics
+                        1 of 49 (fold 1.25) and 1 (0.96); IL17RA network neighbours 0 of 10. Controls fine (planted
+                        10/10; random sets 3% significant). Known: ALOX5 found as a druggable hit; OXTR missed (FDR 0.068,
+                        just above the declared 0.05 cutoff; the paper validated it by other means). IL17RA itself is an
+                        IL17RA-low hit (FDR 0.022), and the bank pairs it with brodalumab, an approved psoriasis drug.
+                        Reading: at FDR < 0.05 the screen's hit list is mostly genes keratinocytes barely express, so most
+                        are likely noise; the readout gene and ALOX5 stand out. 67 druggable hits listed, local only.
+                        Disclosed before testing: the trial showed the IL17RA-low vs keratinocyte-expression answer.
+  Licences: OpenCell CC BY-SA 4.0; psoriasis screen CC BY-NC-ND 4.0 (rows kept local; only summary statistics and
+  genes the paper itself names are written here).

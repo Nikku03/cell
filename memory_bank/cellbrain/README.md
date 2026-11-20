@@ -68,3 +68,12 @@ The strongest 20,000 public links per family are in `outputs/cellbrain/F*_connec
   Gene fact: `screen/psoriasis_il17ra`. Entity: `SCREEN-PSORIASIS_IL17RA`.
 
 In total, 44,082 facts and 16 layers were added.
+
+## Connections re-run with the Biohub data (C4, 2026-11-20)
+
+- **Data ↔ data:** PASS. 551 view pairs; OpenCell interactions agree with HPA interactions, knockdowns and complexes.
+- **Gene ↔ gene:** PASS. 9,408 gene pairs.
+- **New F10, psoriasis screen ↔ the bank:** FAIL. No link to skin-cell expression, psoriasis genetics or IL17RA's network.
+  - ALOX5 and IL17RA (brodalumab) were found.
+  - OXTR missed the cutoff.
+  - Gene rows stay local (CC BY-NC-ND).
