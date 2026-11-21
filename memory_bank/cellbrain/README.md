@@ -90,3 +90,17 @@ In total, 44,082 facts and 16 layers were added.
   - The co-expression map does not predict K562 knockdowns.
 
   The per-cell-type regulators and programmes read like the textbook.
+
+## Influence across cell types, and its level (generegx G2, 2026-11-21)
+
+- **New data** (`xcellbank.py`): the same ~2,400 knockdowns read out gene by gene in K562, RPE1, HepG2 and Jurkat, plus the K562 genome-wide screen (Nadig 2025, CC BY 4.0). Layers `XCELL_K562ESS`, `XCELL_RPE1ESS`, `XCELL_HEPG2ESS`, `XCELL_JURKATESS`, `XCELL_K562GW`. CollecTRI TF → target (`REG_COLLECTRI`, local only).
+- **Results:**
+  - **Influence changes with cell type:** PASS. Agreement with K562: second K562 experiment 1.12, Jurkat 0.78, HepG2 0.49, RPE1 0.41.
+  - **Follows the gene's own expression:** FAIL.
+  - **Effect per unit of knockdown as the level:** PASS, but weak (raw effect is still the steadier measure).
+  - **Direct vs through another gene:** FAIL (does not match curated TF targets).
+- **Gene facts:**
+  - `xcell/influence_by_cell_type` (reach and expression per line, agreement with K562);
+  - `xcell/targets_*` and `xcell/regulators_*` (everywhere, flips_sign, only_<line>, with log2 fold change and effect per unit of knockdown);
+  - `xcell/k562_direct_targets`, `k562_indirect_targets` (with the middle gene);
+  - `xcell/tf_hierarchy_k562`.

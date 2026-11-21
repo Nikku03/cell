@@ -6221,3 +6221,51 @@ GENEREG -- ACTIVE GENES PER CELL TYPE, AND WHICH GENE SWITCHES WHICH (G1)
   II presentation; HNF4A -> drug metabolism. 31,641 facts written to the bank (influence/*, concepts/*, role/*,
   active/summary per cell type); outputs/genereg.
   NOT: K562 is one cancer line; co-expression is not cause; single-cell data misses weakly expressed genes.
+
+=================================================================================================
+GENEREGX -- HOW GENE-TO-GENE INFLUENCE CHANGES WITH CELL TYPE, AND AT WHAT LEVEL (G2)
+=================================================================================================
+  The user's two goals: (1) how one gene's influence on another changes with cell type; (2) which gene influences
+  which, and at what level. New data (xcellbank.py, committed before it ran): the same ~2,400 CRISPRi knockdowns read
+  out gene by gene in K562, RPE1, HepG2 and Jurkat, plus the K562 genome-wide screen as a second K562 experiment, all
+  from one DESeq2 pipeline (Nadig 2025, CC BY 4.0; md5-checked); CollecTRI curated TF -> target (local only).
+  Data check before the claims: the K562 genome-wide p column does not match its lfc/lfcSE (none above 0.32), the four
+  essential ones do exactly; links use the Wald p from lfc/lfcSE in all five. generegx.py committed before any run;
+  a trial on subsets showed controls only; the L2 control was redesigned after it (one shuffle swung 0.7-1.9 with 81
+  curated links) and disclosed in the ledger before declaring.
+  G2-X1 influence changes with cell type, beyond experiment noise   PASS. 167 knockdowns with clear effects in all
+         five screens, 6,546 shared target genes. Noise-corrected agreement of a knockdown's effects with K562: the
+         second K562 experiment 1.12 (as close as noise allows; raw r 0.56), Jurkat 0.78, HepG2 0.49, RPE1 0.41; gap
+         positive for 167/167 (RPE1, HepG2) and 166/167 (Jurkat). Controls: noise-only copies 0/3 passed (gaps 0.002,
+         -0.002, 0.001); half-rewired copies 3/3 passed. Jurkat (another blood line, screened by the other team) is
+         closest, so cell type outweighs lab. Most changed: ribosome-making knockdowns (POLR1E, POLR1A, NOL11, WDR12,
+         RRP12, RPL3); most kept: mRNA decay and processing (SMG5, UPF2, METTL3, CHERP), POLRMT, EXOSC9. A possible
+         reason, NOT tested: K562 and Jurkat lack working p53, RPE1 and HepG2 have it, and ribosome stress acts
+         through p53.
+  G2-X2 a gene influences more where it is more expressed   FAIL. 763 knockdowns whose RNA level varies across the
+         four lines: mean Spearman -0.04 (p 0.97); negative 0.02, planted 0.44. How much a gene moves others in a cell
+         type does not follow how much of it that cell line makes.
+  G2-L1 level = effect per unit of knockdown   PASS (BETTER rule), weak. 391,395 links in >= 2 cell types (300,000
+         tested): spread of log2 effect across cell types per unit of the gene's own knockdown 0.359 vs 0.395 with a
+         random gene's knockdown (gain median 0.031, 54% of links; negative 0.000, planted 0.193). But the raw effect
+         spreads less (0.345): a deeper knockdown gives a somewhat bigger effect, far from proportional. Raw strength
+         stays the best level to compare across cell types; per-unit values are stored alongside.
+  G2-L2 direct or through another gene (K562 genome-wide)   FAIL. 20,120 links from 761 TFs: 14,837 not explained
+         by any measured middle gene, 5,283 explained. Curated TF targets: 1.0% of direct vs 1.3% of indirect, MH OR
+         0.87, p 0.42; shuffled middle genes OR 1.02 (20 shuffles), planted 100%. Sign agreement with curated
+         activation/repression 98/149 direct, 34/67 indirect (descriptive). Found after the run (disclosed, verdict
+         unchanged): 760 indirect calls name a middle gene within 1 Mb of the target (CRISPRi reaching neighbours and
+         a TSS quirk: GENCODE gives HBG2 a readthrough-extended TSS 250 kb away, so HBG1/HBD escaped the 50 kb
+         exclusion; 791 calls go via haemoglobin genes). POST HOC with those set aside: OR 1.31, p 0.17 -- still no.
+         "Direct" here only means "not explained by a measured middle gene".
+  DESCRIPTIVE. 2,321,183 links seen in at least one line: 26,760 in every line where both genes are measured;
+         417,219 in some; 223,221 in one line only (K562 49,480, RPE1 121,841 -- RPE1 has the most links overall --
+         HepG2 32,216, Jurkat 19,684); 48,566 flip sign. Flip rate between two lines 7.9% vs 0.5% between the two K562
+         experiments (many flips are mitochondrial transcripts). K562-only examples fit its cancer: BCR knockdown (the
+         BCR-ABL driver) -> SLC25A37 up, GAB2 (BCR-ABL's partner) -> BLVRB up. Conserved: TFAM -> mitochondrial genes
+         down in all four. K562 TF ladder from links not explained by a middle gene: top DNMT1, KAT8, CXXC1, TFDP1,
+         ETV4, MAX, TAL1, GFI1B; bottom (moved by many, move few) JUN, DDIT3, YBX1, HMGA1, TSC22D1, BHLHE40 -- stress
+         responders. GATA1 knockdown raises myeloid genes (TYROBP, LST1, CSF3R, CTSC, CFD), as G1 found. 23,162 facts
+         written (xcell/*); outputs/genereg/xcell_*, k562_direct_indirect.json.gz, tf_hierarchy_k562.json.
+  NOT: four cell lines, not body cell types; essential-gene knockdowns (few cell-type TFs); DESeq2 calls many small
+  effects; gene-level TSS can be wrong for genes with readthrough annotations.
