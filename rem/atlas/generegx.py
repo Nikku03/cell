@@ -44,9 +44,12 @@ CLAIMS (declared before running; rem/atlas/cellbrain_ledger.jsonl, ids G2-*; the
         measured, each link r -> t is INDIRECT if some mediator m explains it: m knocked down in the screen (own
         knockdown usable), r -> m and m -> t both links, and the predicted effect lfc(m | r) x lfc(t | m) / own(m) has
         the same sign as lfc(t | r) and >= half its size; otherwise DIRECT. CLAIM: direct links are more often curated
-        TF -> target interactions (CollecTRI) than indirect ones, Mantel-Haenszel odds ratio over deciles of |lfc/lfcSE|
-        >= 1.5, CMH p < 0.05. Negative (must stay within 0.67-1.5): mediators' effects on targets shuffled between
-        mediators. Planted (>= 90%): 200 links set to a mediator's predicted effect are called indirect.
+        TF -> target interactions (CollecTRI) than indirect ones: Mantel-Haenszel odds ratio over 25 strata (quintiles of
+        |lfc/lfcSE| x quintiles of |lfc|, so link strength cannot drive it) >= 1.5, CMH p < 0.05, and above all 20
+        shuffled-mediator odds ratios (empirical p < 0.05). Negative: mediators' effects on targets shuffled between
+        mediators, 20 times; their geometric-mean odds ratio must stay within 0.67-1.5. Planted (>= 90%): 200 links set
+        to a mediator's predicted effect are called indirect. (Changed after the trial, before declaring: one shuffle and
+        |z| deciles alone; the trial's 81 curated links made one shuffle's odds ratio swing 0.7-1.9.)
 DESCRIPTIVE: per link, the pattern across the four cell types (everywhere / shared / one cell type only / flips sign /
 only measurable in one) with the K562 two-experiment flip rate as the noise baseline; per knockdown, reach in each
 cell type with its expression; per link, strength (lfc, z), level (effect per unit of own knockdown) and, in K562,
@@ -433,7 +436,7 @@ def run_l2(G, rng):
     lfc, sig, own, ci, ri = G["lfc"], G["sig"], G["own"], G["ci"], G["ri"]
     med_cols = np.array([ci[m] for m in G["cols"] if m in ri and np.isfinite(own[ci[m]]) and own[ci[m]] <= KD_MIN])
     med_rows = np.array([ri[G["cols"][j]] for j in med_cols])
-    recs = []; sh = rng.permutation(len(med_cols)); plant_tot = plant_ok = 0
+    NSH = 20; recs = []; shs = [rng.permutation(len(med_cols)) for _ in range(NSH)]; ind_sh = []; plant_tot = plant_ok = 0
 
     def explain(e, tt, j, perm):
         sel = sig[med_rows, j] & (med_cols != j)
@@ -452,9 +455,9 @@ def run_l2(G, rng):
         if not len(tt):
             continue
         e = lfc[tt, j]; zz = np.abs(e / G["se"][tt, j])
-        ind, best = explain(e, tt, j, None); ind_n, _ = explain(e, tt, j, sh)
-        for t, x, b, bn, zv, ev in zip(tt, ind, best, ind_n, zz, e):
-            recs.append((r, rows[t], bool(x), bool(bn), float(zv), float(ev), G["cols"][b] if b >= 0 else ""))
+        ind, best = explain(e, tt, j, None); ind_sh.append(np.stack([explain(e, tt, j, sh)[0] for sh in shs]))
+        for t, x, b, zv, ev in zip(tt, ind, best, zz, e):
+            recs.append((r, rows[t], bool(x), False, float(zv), float(ev), G["cols"][b] if b >= 0 else ""))
         # planted: links set to a mediator's predicted effect must be called indirect
         sel = np.nonzero(sig[med_rows, j] & (med_cols != j))[0]
         if len(sel) and plant_tot < 200:
@@ -466,10 +469,13 @@ def run_l2(G, rng):
                 if np.isfinite(pe) and pe != 0:
                     x, _ = explain(np.array([pe], np.float32), np.array([t]), j, None); plant_tot += 1; plant_ok += int(x[0])
     regs = np.array([x[0] for x in recs]); tg = np.array([x[1] for x in recs])
-    ind = np.array([x[2] for x in recs]); ind_n = np.array([x[3] for x in recs]); zz = np.array([x[4] for x in recs])
+    ind = np.array([x[2] for x in recs]); zz = np.array([x[4] for x in recs]); aa = np.abs(np.array([x[5] for x in recs]))
+    IS = np.concatenate(ind_sh, 1)                                               # shuffles x links
     inct = np.array([(a, b) in ct for a, b in zip(regs, tg)])
-    strata = np.searchsorted(np.quantile(zz, np.linspace(0.1, 0.9, 9)), zz)
-    OR, p = cmh(~ind, inct, strata); ORn, pn = cmh(~ind_n, inct, strata)
+    q5 = lambda v: np.searchsorted(np.quantile(v, [0.2, 0.4, 0.6, 0.8]), v)
+    strata = q5(zz) * 5 + q5(aa)
+    OR, p = cmh(~ind, inct, strata); sh_or = [cmh(~IS[b], inct, strata)[0] for b in range(NSH)]
+    ORn = float(np.exp(np.mean(np.log(np.clip(sh_or, 1e-6, 1e6))))); pn = (1 + sum(x >= OR for x in sh_or)) / (1 + NSH)
     ev = np.array([x[5] for x in recs]); cs = np.array([ctsign.get((a, b), 0) for a, b in zip(regs, tg)])
 
     def agree(m):     # curated activation <-> knockdown lowers the target
@@ -477,10 +483,10 @@ def run_l2(G, rng):
     out = dict(tfs=len(tfs), links=int(len(recs)), direct=int((~ind).sum()), indirect=int(ind.sum()),
                collectri_share_direct=float(inct[~ind].mean()) if (~ind).any() else None,
                collectri_share_indirect=float(inct[ind].mean()) if ind.any() else None,
-               mh_odds_ratio=OR, cmh_p=p, negative_mh_odds_ratio=ORn, negative_p=pn,
+               mh_odds_ratio=OR, cmh_p=p, negative_mh_odds_ratio=ORn, shuffled_odds_ratios=[float(x) for x in sh_or], empirical_p=pn,
                planted_indirect=plant_ok / max(1, plant_tot), planted_n=plant_tot,
                sign_agreement_direct=agree(~ind), sign_agreement_indirect=agree(ind))
-    out["gate"] = dict(real=bool(OR >= 1.5 and p < 0.05), controls_ok=bool(0.67 <= ORn <= 1.5 and out["planted_indirect"] >= 0.9))
+    out["gate"] = dict(real=bool(OR >= 1.5 and p < 0.05 and pn < 0.05), controls_ok=bool(0.67 <= ORn <= 1.5 and out["planted_indirect"] >= 0.9))
     out["gate"]["verdict"] = "PASS" if out["gate"]["real"] and out["gate"]["controls_ok"] else "FAIL"
     return out, recs
 
@@ -524,7 +530,7 @@ def show(cid, r):
     """In a trial only the controls are shown (the real outcome stays unseen until the declared run)."""
     if not TRIAL:
         return json.dumps(r, default=float)[:1500]
-    keep = {k: v for k, v in r.items() if k in ("negative", "planted", "negative_mh_odds_ratio", "negative_p", "planted_indirect", "planted_n",
+    keep = {k: v for k, v in r.items() if k in ("negative", "planted", "negative_mh_odds_ratio", "shuffled_odds_ratios", "planted_indirect", "planted_n",
                                                 "knockdowns_common", "targets_common", "knockdowns_eligible", "knockdowns", "variable", "links_total",
                                                 "links_tested", "tfs", "links")}
     keep["controls_ok"] = r["gate"]["controls_ok"]
