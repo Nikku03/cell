@@ -1,0 +1,632 @@
+{
+  "test": "physics_reduce_unknown",
+  "n_points": 2500,
+  "systems": [
+    {
+      "name": "generic",
+      "npair": 43938,
+      "nnz": 813384,
+      "t_setup": 6.48482608795166,
+      "reductions": [
+        {
+          "name": "linearity -> superposition",
+          "quantity": 1.5748463458309425e-15,
+          "threshold": 1e-08,
+          "direction": "below",
+          "verdict": "HOLDS",
+          "margin": 1.5748463458309426e-07,
+          "speedup": 278.0862663003184,
+          "note": "add 27 us against solve 8 ms",
+          "detail": {}
+        },
+        {
+          "name": "reusable factorisation",
+          "quantity": 696.0053429957625,
+          "threshold": 10.0,
+          "direction": "above",
+          "verdict": "HOLDS",
+          "margin": 69.60053429957625,
+          "speedup": 696.0053429957625,
+          "note": "setup 6.5 s, each solve 9 ms",
+          "detail": {}
+        },
+        {
+          "name": "locality (norm) -> truncate",
+          "quantity": 0.7952,
+          "threshold": 0.25,
+          "direction": "below",
+          "verdict": "FAILS",
+          "margin": 3.1808,
+          "speedup": 1.2575452716297786,
+          "note": "80% of atoms carry 90% of the norm (R=10)",
+          "detail": {
+            "rows": [
+              {
+                "R": 10.0,
+                "atoms": 1988,
+                "frac": 0.7952,
+                "norm_in": 0.9837023918215752,
+                "peak_in": 1.0
+              },
+              {
+                "R": 20.0,
+                "atoms": 2500,
+                "frac": 1.0,
+                "norm_in": 1.0,
+                "peak_in": 1.0
+              },
+              {
+                "R": 30.0,
+                "atoms": 2500,
+                "frac": 1.0,
+                "norm_in": 1.0,
+                "peak_in": 1.0
+              },
+              {
+                "R": 50.0,
+                "atoms": 2500,
+                "frac": 1.0,
+                "norm_in": 1.0,
+                "peak_in": 1.0
+              },
+              {
+                "R": 70.0,
+                "atoms": 2500,
+                "frac": 1.0,
+                "norm_in": 1.0,
+                "peak_in": 1.0
+              },
+              {
+                "R": 100.0,
+                "atoms": 2500,
+                "frac": 1.0,
+                "norm_in": 1.0,
+                "peak_in": 1.0
+              }
+            ]
+          }
+        },
+        {
+          "name": "modal truncation",
+          "quantity": 0.6245680151083087,
+          "threshold": 0.9,
+          "direction": "above",
+          "verdict": "FAILS",
+          "margin": 3.7543198489169134,
+          "speedup": 227.27272727272728,
+          "note": "33 of 7500 dimensions capture 62.5% of a real response",
+          "detail": {
+            "n_modes": 33
+          }
+        },
+        {
+          "name": "conserved directions (null space)",
+          "quantity": 7.0,
+          "threshold": 1.0,
+          "direction": "above",
+          "verdict": "HOLDS",
+          "margin": 7.0,
+          "speedup": 1.000934205258241,
+          "note": "7 directions at numerical zero, gap 5.1e+12 to the first real mode; zero calibrated against rigid translation at 1.3e-18 relative",
+          "detail": {
+            "n_null": 7,
+            "gap": 5132830205749.56
+          }
+        },
+        {
+          "name": "timescale separation -> event stepping",
+          "quantity": 877.4105993854562,
+          "threshold": 1000.0,
+          "direction": "above",
+          "verdict": "MARGINAL",
+          "margin": 0.8774105993854562,
+          "speedup": 877.4105993854562,
+          "note": "lambda spans 9.62e-02 to 8.44e+01",
+          "detail": {}
+        }
+      ],
+      "n_null": 7,
+      "fill_in": 13.517714880056651
+    },
+    {
+      "name": "disordered",
+      "npair": 43938,
+      "nnz": 813384,
+      "t_setup": 7.3007283210754395,
+      "reductions": [
+        {
+          "name": "linearity -> superposition",
+          "quantity": 3.9114106041293633e-14,
+          "threshold": 1e-08,
+          "direction": "below",
+          "verdict": "HOLDS",
+          "margin": 3.911410604129363e-06,
+          "speedup": 282.7226611226611,
+          "note": "add 29 us against solve 8 ms",
+          "detail": {}
+        },
+        {
+          "name": "reusable factorisation",
+          "quantity": 696.6170428642276,
+          "threshold": 10.0,
+          "direction": "above",
+          "verdict": "HOLDS",
+          "margin": 69.66170428642276,
+          "speedup": 696.6170428642276,
+          "note": "setup 7.3 s, each solve 10 ms",
+          "detail": {}
+        },
+        {
+          "name": "locality (norm) -> truncate",
+          "quantity": 0.9468,
+          "threshold": 0.25,
+          "direction": "below",
+          "verdict": "FAILS",
+          "margin": 3.7872,
+          "speedup": 1.0561892691170258,
+          "note": "95% of atoms carry 90% of the norm (R=10)",
+          "detail": {
+            "rows": [
+              {
+                "R": 10.0,
+                "atoms": 2367,
+                "frac": 0.9468,
+                "norm_in": 0.9933986871655202,
+                "peak_in": 1.0
+              },
+              {
+                "R": 20.0,
+                "atoms": 2500,
+                "frac": 1.0,
+                "norm_in": 1.0,
+                "peak_in": 1.0
+              },
+              {
+                "R": 30.0,
+                "atoms": 2500,
+                "frac": 1.0,
+                "norm_in": 1.0,
+                "peak_in": 1.0
+              },
+              {
+                "R": 50.0,
+                "atoms": 2500,
+                "frac": 1.0,
+                "norm_in": 1.0,
+                "peak_in": 1.0
+              },
+              {
+                "R": 70.0,
+                "atoms": 2500,
+                "frac": 1.0,
+                "norm_in": 1.0,
+                "peak_in": 1.0
+              },
+              {
+                "R": 100.0,
+                "atoms": 2500,
+                "frac": 1.0,
+                "norm_in": 1.0,
+                "peak_in": 1.0
+              }
+            ]
+          }
+        },
+        {
+          "name": "modal truncation",
+          "quantity": 0.6101758612958788,
+          "threshold": 0.9,
+          "direction": "above",
+          "verdict": "FAILS",
+          "margin": 3.8982413870412134,
+          "speedup": 227.27272727272728,
+          "note": "33 of 7500 dimensions capture 61.0% of a real response",
+          "detail": {
+            "n_modes": 33
+          }
+        },
+        {
+          "name": "conserved directions (null space)",
+          "quantity": 7.0,
+          "threshold": 1.0,
+          "direction": "above",
+          "verdict": "HOLDS",
+          "margin": 7.0,
+          "speedup": 1.000934205258241,
+          "note": "7 directions at numerical zero, gap 8.9e+09 to the first real mode; zero calibrated against rigid translation at 8.6e-20 relative",
+          "detail": {
+            "n_null": 7,
+            "gap": 8864873355.007446
+          }
+        },
+        {
+          "name": "timescale separation -> event stepping",
+          "quantity": 508027.52019311994,
+          "threshold": 1000.0,
+          "direction": "above",
+          "verdict": "HOLDS",
+          "margin": 508.0275201931199,
+          "speedup": 508027.52019311994,
+          "note": "lambda spans 6.42e-02 to 3.26e+04",
+          "detail": {}
+        }
+      ],
+      "n_null": 7,
+      "fill_in": 14.187472337788794
+    },
+    {
+      "name": "diluted",
+      "npair": 18503,
+      "nnz": 355536,
+      "t_setup": 10.413993835449219,
+      "reductions": [
+        {
+          "name": "linearity -> superposition",
+          "quantity": 2.4907728119325213e-12,
+          "threshold": 1e-08,
+          "direction": "below",
+          "verdict": "HOLDS",
+          "margin": 0.0002490772811932521,
+          "speedup": 233.996815971774,
+          "note": "add 28 us against solve 6 ms",
+          "detail": {}
+        },
+        {
+          "name": "reusable factorisation",
+          "quantity": 1319.6290007794607,
+          "threshold": 10.0,
+          "direction": "above",
+          "verdict": "HOLDS",
+          "margin": 131.96290007794607,
+          "speedup": 1319.6290007794607,
+          "note": "setup 10.4 s, each solve 8 ms",
+          "detail": {}
+        },
+        {
+          "name": "locality (norm) -> truncate",
+          "quantity": 0.6328,
+          "threshold": 0.25,
+          "direction": "below",
+          "verdict": "MARGINAL",
+          "margin": 2.5312,
+          "speedup": 1.5802781289506953,
+          "note": "63% of atoms carry 90% of the norm (R=10)",
+          "detail": {
+            "rows": [
+              {
+                "R": 10.0,
+                "atoms": 1582,
+                "frac": 0.6328,
+                "norm_in": 0.9971250761493707,
+                "peak_in": 1.0
+              },
+              {
+                "R": 20.0,
+                "atoms": 2500,
+                "frac": 1.0,
+                "norm_in": 1.0,
+                "peak_in": 1.0
+              },
+              {
+                "R": 30.0,
+                "atoms": 2500,
+                "frac": 1.0,
+                "norm_in": 1.0,
+                "peak_in": 1.0
+              },
+              {
+                "R": 50.0,
+                "atoms": 2500,
+                "frac": 1.0,
+                "norm_in": 1.0,
+                "peak_in": 1.0
+              },
+              {
+                "R": 70.0,
+                "atoms": 2500,
+                "frac": 1.0,
+                "norm_in": 1.0,
+                "peak_in": 1.0
+              },
+              {
+                "R": 100.0,
+                "atoms": 2500,
+                "frac": 1.0,
+                "norm_in": 1.0,
+                "peak_in": 1.0
+              }
+            ]
+          }
+        },
+        {
+          "name": "modal truncation",
+          "quantity": 0.999999784289218,
+          "threshold": 0.9,
+          "direction": "above",
+          "verdict": "HOLDS",
+          "margin": 2.157107820144333e-06,
+          "speedup": 441.1764705882353,
+          "note": "17 of 7500 dimensions capture 100.0% of a real response",
+          "detail": {
+            "n_modes": 17
+          }
+        },
+        {
+          "name": "conserved directions (null space)",
+          "quantity": 23.0,
+          "threshold": 1.0,
+          "direction": "above",
+          "verdict": "HOLDS",
+          "margin": 23.0,
+          "speedup": 1.0030761000401232,
+          "note": "23 directions at numerical zero, gap 2.7e+07 to the first real mode; zero calibrated against rigid translation at 8.5e-19 relative",
+          "detail": {
+            "n_null": 23,
+            "gap": 26570513.941271763
+          }
+        },
+        {
+          "name": "timescale separation -> event stepping",
+          "quantity": 169496142.8794605,
+          "threshold": 1000.0,
+          "direction": "above",
+          "verdict": "HOLDS",
+          "margin": 169496.1428794605,
+          "speedup": 169496142.8794605,
+          "note": "lambda spans 2.51e-07 to 4.26e+01",
+          "detail": {}
+        }
+      ],
+      "n_null": 23,
+      "fill_in": 24.684524211331624
+    },
+    {
+      "name": "long-range",
+      "npair": 244650,
+      "nnz": 4410000,
+      "t_setup": 2.9294092655181885,
+      "reductions": [
+        {
+          "name": "linearity -> superposition",
+          "quantity": 1.630275896470269e-15,
+          "threshold": 1e-08,
+          "direction": "below",
+          "verdict": "HOLDS",
+          "margin": 1.6302758964702688e-07,
+          "speedup": 202.7039708054566,
+          "note": "add 14 us against solve 3 ms",
+          "detail": {}
+        },
+        {
+          "name": "reusable factorisation",
+          "quantity": 877.3677182559518,
+          "threshold": 10.0,
+          "direction": "above",
+          "verdict": "HOLDS",
+          "margin": 87.73677182559518,
+          "speedup": 877.3677182559518,
+          "note": "setup 2.9 s, each solve 3 ms",
+          "detail": {}
+        },
+        {
+          "name": "locality (norm) -> truncate",
+          "quantity": 0.7957142857142857,
+          "threshold": 0.25,
+          "direction": "below",
+          "verdict": "FAILS",
+          "margin": 3.182857142857143,
+          "speedup": 1.2567324955116697,
+          "note": "80% of atoms carry 90% of the norm (R=10)",
+          "detail": {
+            "rows": [
+              {
+                "R": 10.0,
+                "atoms": 557,
+                "frac": 0.7957142857142857,
+                "norm_in": 0.9984588067711336,
+                "peak_in": 1.0
+              },
+              {
+                "R": 20.0,
+                "atoms": 700,
+                "frac": 1.0,
+                "norm_in": 1.0,
+                "peak_in": 1.0
+              },
+              {
+                "R": 30.0,
+                "atoms": 700,
+                "frac": 1.0,
+                "norm_in": 1.0,
+                "peak_in": 1.0
+              },
+              {
+                "R": 50.0,
+                "atoms": 700,
+                "frac": 1.0,
+                "norm_in": 1.0,
+                "peak_in": 1.0
+              },
+              {
+                "R": 70.0,
+                "atoms": 700,
+                "frac": 1.0,
+                "norm_in": 1.0,
+                "peak_in": 1.0
+              },
+              {
+                "R": 100.0,
+                "atoms": 700,
+                "frac": 1.0,
+                "norm_in": 1.0,
+                "peak_in": 1.0
+              }
+            ]
+          }
+        },
+        {
+          "name": "modal truncation",
+          "quantity": 0.2805312926528776,
+          "threshold": 0.9,
+          "direction": "above",
+          "verdict": "FAILS",
+          "margin": 7.194687073471226,
+          "speedup": 61.76470588235294,
+          "note": "34 of 2100 dimensions capture 28.1% of a real response",
+          "detail": {
+            "n_modes": 34
+          }
+        },
+        {
+          "name": "conserved directions (null space)",
+          "quantity": 6.0,
+          "threshold": 1.0,
+          "direction": "above",
+          "verdict": "HOLDS",
+          "margin": 6.0,
+          "speedup": 1.002865329512894,
+          "note": "6 directions at numerical zero, gap 1.6e+13 to the first real mode; zero calibrated against rigid translation at 4.3e-18 relative",
+          "detail": {
+            "n_null": 6,
+            "gap": 15693521893275.578
+          }
+        },
+        {
+          "name": "timescale separation -> event stepping",
+          "quantity": 286.9718892927543,
+          "threshold": 1000.0,
+          "direction": "above",
+          "verdict": "FAILS",
+          "margin": 0.2869718892927543,
+          "speedup": 286.9718892927543,
+          "note": "lambda spans 1.26e+00 to 3.62e+02",
+          "detail": {}
+        }
+      ],
+      "n_null": 6,
+      "fill_in": 1.0004761904761905
+    }
+  ],
+  "n_moved": 4,
+  "n_reductions": 6,
+  "spreads": {
+    "conserved directions (null space)": 3.8333333333333335,
+    "linearity -> superposition": 1581.5973529902085,
+    "locality (norm) -> truncate": 1.4962073324905183,
+    "modal truncation": 3.5646639447335837,
+    "reusable factorisation": 1.8960041241917522,
+    "timescale separation -> event stepping": 590636.7459794957
+  },
+  "predictions": [
+    {
+      "claim": "disorder worsens modal truncation",
+      "held": true,
+      "note": "0.6246 -> 0.6102"
+    },
+    {
+      "claim": "disorder improves locality",
+      "held": false,
+      "note": "0.7952 -> 0.9468"
+    },
+    {
+      "claim": "dilution grows the null space",
+      "held": true,
+      "note": "7 -> 23"
+    },
+    {
+      "claim": "long-range explodes absolute factor cost",
+      "held": false,
+      "note": "1.1e+07 -> 4.412e+06"
+    }
+  ],
+  "log": [
+    "====================================================================================================",
+    "DOES THE REDUCER DISCRIMINATE? -- four structures, predictions written down first",
+    "====================================================================================================",
+    "  A tool that reports the same verdicts for every system is measuring its probes, not the",
+    "  system. Identical geometry throughout, so ONLY the coupling structure differs.",
+    "  geometry: 2500 points in a 10.0^3 box, cutoff 1.6",
+    "\n  GENERIC  --  43938 couplings, 813384 nonzeros (1.45e-02 dense fraction)",
+    "    null space DISCOVERED: 7 directions",
+    "    linearity -> superposition            HOLDS     q 1.575e-15  x278",
+    "      add 27 us against solve 8 ms",
+    "    reusable factorisation                HOLDS     q 696  x696",
+    "      setup 6.5 s, each solve 9 ms",
+    "    locality (norm) -> truncate           FAILS     q 0.7952  x1.26",
+    "      80% of atoms carry 90% of the norm (R=10)",
+    "    modal truncation                      FAILS     q 0.6246  x227",
+    "      33 of 7500 dimensions capture 62.5% of a real response",
+    "    conserved directions (null space)     HOLDS     q 7  x1",
+    "      7 directions at numerical zero, gap 5.1e+12 to the first real mode; zero calibrated against rigid translation at 1.3e-18 relative",
+    "    timescale separation -> event steppingMARGINAL  q 877.4  x877",
+    "      lambda spans 9.62e-02 to 8.44e+01",
+    "    factorisation 6.5 s, fill-in 13.5x",
+    "\n  DISORDERED  --  43938 couplings, 813384 nonzeros (1.45e-02 dense fraction)",
+    "    null space DISCOVERED: 7 directions",
+    "    linearity -> superposition            HOLDS     q 3.911e-14  x283",
+    "      add 29 us against solve 8 ms",
+    "    reusable factorisation                HOLDS     q 696.6  x697",
+    "      setup 7.3 s, each solve 10 ms",
+    "    locality (norm) -> truncate           FAILS     q 0.9468  x1.06",
+    "      95% of atoms carry 90% of the norm (R=10)",
+    "    modal truncation                      FAILS     q 0.6102  x227",
+    "      33 of 7500 dimensions capture 61.0% of a real response",
+    "    conserved directions (null space)     HOLDS     q 7  x1",
+    "      7 directions at numerical zero, gap 8.9e+09 to the first real mode; zero calibrated against rigid translation at 8.6e-20 relative",
+    "    timescale separation -> event steppingHOLDS     q 5.08e+05  x5.08e+05",
+    "      lambda spans 6.42e-02 to 3.26e+04",
+    "    factorisation 7.3 s, fill-in 14.2x",
+    "\n  DILUTED  --  18503 couplings, 355536 nonzeros (6.32e-03 dense fraction)",
+    "    null space DISCOVERED: 23 directions",
+    "    linearity -> superposition            HOLDS     q 2.491e-12  x234",
+    "      add 28 us against solve 6 ms",
+    "    reusable factorisation                HOLDS     q 1320  x1.32e+03",
+    "      setup 10.4 s, each solve 8 ms",
+    "    locality (norm) -> truncate           MARGINAL  q 0.6328  x1.58",
+    "      63% of atoms carry 90% of the norm (R=10)",
+    "    modal truncation                      HOLDS     q 1  x441",
+    "      17 of 7500 dimensions capture 100.0% of a real response",
+    "    conserved directions (null space)     HOLDS     q 23  x1",
+    "      23 directions at numerical zero, gap 2.7e+07 to the first real mode; zero calibrated against rigid translation at 8.5e-19 relative",
+    "    timescale separation -> event steppingHOLDS     q 1.695e+08  x1.69e+08",
+    "      lambda spans 2.51e-07 to 4.26e+01",
+    "    factorisation 10.4 s, fill-in 24.7x",
+    "\n  LONG-RANGE  --  244650 couplings, 4410000 nonzeros (1.00e+00 dense fraction)",
+    "    null space DISCOVERED: 6 directions",
+    "    linearity -> superposition            HOLDS     q 1.63e-15  x203",
+    "      add 14 us against solve 3 ms",
+    "    reusable factorisation                HOLDS     q 877.4  x877",
+    "      setup 2.9 s, each solve 3 ms",
+    "    locality (norm) -> truncate           FAILS     q 0.7957  x1.26",
+    "      80% of atoms carry 90% of the norm (R=10)",
+    "    modal truncation                      FAILS     q 0.2805  x61.8",
+    "      34 of 2100 dimensions capture 28.1% of a real response",
+    "    conserved directions (null space)     HOLDS     q 6  x1",
+    "      6 directions at numerical zero, gap 1.6e+13 to the first real mode; zero calibrated against rigid translation at 4.3e-18 relative",
+    "    timescale separation -> event steppingFAILS     q 287  x287",
+    "      lambda spans 1.26e+00 to 3.62e+02",
+    "    factorisation 2.9 s, fill-in 1.0x",
+    "\n  DOES THE MEASUREMENT MOVE?  -- spread of the QUANTITY, not whether a binary flipped.",
+    "  The first version asked only whether verdicts changed, which collapsed six orders of",
+    "  magnitude in timescale separation into 'did not move' and then blamed the systems.",
+    "    reduction                                   generic   disordered      diluted   long-range    spread",
+    "    conserved directions (null space)               H 7          H 7         H 23          H 6      3.83x",
+    "    linearity -> superposition               H 1.57e-15   H 3.91e-14   H 2.49e-12   H 1.63e-15  1.58e+03x",
+    "    locality (norm) -> truncate                 F 0.795      F 0.947      M 0.633      F 0.796       1.5x",
+    "    modal truncation                            F 0.625       F 0.61          H 1      F 0.281      3.56x",
+    "    reusable factorisation                        H 696        H 697   H 1.32e+03        H 877       1.9x",
+    "    timescale separation -> event stepping        M 877   H 5.08e+05   H 1.69e+08        F 287  5.91e+05x",
+    "\n    4 of 6 measurements vary by more than 2x across the four systems",
+    "\n  AGAINST THE PREDICTIONS I WROTE FIRST",
+    "    as predicted      disorder worsens modal truncation        0.6246 -> 0.6102",
+    "    NOT as predicted  disorder improves locality               0.7952 -> 0.9468",
+    "    as predicted      dilution grows the null space            7 -> 23",
+    "    NOT as predicted  long-range explodes absolute factor cost 1.1e+07 -> 4.412e+06",
+    "\n  READING",
+    "  THE MEASUREMENTS MOVE. 4 of 6 vary by more than 2x with the coupling",
+    "  while the geometry is held fixed, so the tool is reading the system rather than its own",
+    "  probes. That is the property a checklist does not have.",
+    "  Of my written predictions, 2 of 4 testable came out as stated -- and those that",
+    "  did NOT are the informative rows, because they are the tool disagreeing with me."
+  ]
+}

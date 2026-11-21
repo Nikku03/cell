@@ -1,0 +1,93 @@
+{
+ "test": "state-dependent noise on sci-Plex single cells, against counting statistics",
+ "V1": {
+  "n_estimable": 286619,
+  "n_positive": 225024,
+  "median_phi": 0.7891129851341248,
+  "poisson_share": 0.8462159037590027
+ },
+ "V2": {
+  "r": 0.588377024095555,
+  "n_obs": 225024
+ },
+ "V3": {
+  "across": 0.6011307835578918,
+  "within": 0.6767191886901855,
+  "delta": -0.0755884051322937,
+  "z": -30.21094889942412
+ },
+ "V4": {
+  "fraction_exceeding": 0.26478554530805365,
+  "median_excess": 0.0,
+  "n": 29167
+ },
+ "V5": {
+  "real": 0.588377024095555,
+  "shuffled": 0.5525507579331577,
+  "fraction": 0.9391100184146908
+ },
+ "gates": {
+  "V1": true,
+  "V2": true,
+  "V3": false,
+  "V4": false,
+  "V5": false
+ },
+ "void": [],
+ "seconds": 28.17826008796692,
+ "log": [
+  "========================================================================================================",
+  "LOOP 246 -- STATE-DEPENDENT NOISE, AGAINST THE COUNTING STATISTICS THAT GIVE IT FOR FREE",
+  "========================================================================================================",
+  "     In count data Var = mu holds for a Poisson variable before any biology, so 'noise",
+  "     depends on state' is true by construction of the measurement. Every gate here is",
+  "     about the OVERDISPERSION phi in Var = mu + phi*mu^2 -- the part counting cannot",
+  "     produce -- and never about Var itself.",
+  "     M is not estimated here: memory needs a timecourse and sci-Plex is one timepoint.",
+  "     The dexamethasone WITHDRAWAL series is the instrument for it, and is the next loop.",
+  "     excluded 529 cells labelled 'control' -- loop 244 established they",
+  "     are 100 uM vorinostat from one well (top_oligo SAHA_100_E09)",
+  "     23,733 cells x 14,672 genes detected in 300+ cells",
+  "     29 conditions with 200+ cells",
+  "V1 HOW MUCH OF THE VARIANCE IS COUNTING, AND HOW MUCH IS LEFT?",
+  "     286,619 (gene, condition) cells with mean >= 0.05 and phi estimable",
+  "     median Poisson share of the total variance: 84.6%",
+  "     median overdispersion phi: 0.7891   strictly positive in 225,024",
+  "     V1 PASS -- 225,024 cells carry positive overdispersion; counting explains 85% of the variance and there is a Sigma left over",
+  "V2 DOES SIGMA DEPEND ON STATE, BEYOND WHAT COUNTING REQUIRES?",
+  "     225,024 (gene, condition) observations, 7 state features",
+  "     log phi from state, held out BY GENE, 10 folds: r = 0.5884",
+  "     V2 PASS -- state predicts the overdispersion at 0.5884",
+  "V3 SAME GENE, SAME MEAN, DIFFERENT CONDITION -- DIFFERENT NOISE?",
+  "     the proposal's actual content: Sigma varies with the CONDITION, not just the gene.",
+  "     |log phi ratio| across conditions at matched mean (within 10%): 0.6011  (n=678,526)",
+  "     the same statistic from splitting ONE condition's cells in half: 0.6767  (n=164,734)",
+  "     difference -0.0756  (-30.2 se)",
+  "     V3 FAIL -- -0.0756 (-30.2 se); the apparent condition dependence is within what splitting one condition already gives",
+  "V4 IS THERE A JUMP COMPONENT BEYOND A CONTINUOUS MODEL?",
+  "     bursting predicts the observed far tail to EXCEED a negative binomial with the same",
+  "     mean and dispersion. The sign is stated before the number.",
+  "     29,167 well-measured (gene, condition) cells; observed 99th percentile exceeds the",
+  "     negative binomial's in 26.5%, median relative excess +0.0000",
+  "     V4 FAIL -- 26% exceed (bar 60%), median excess +0.000",
+  "V5 CONTROL: CELLS REASSIGNED TO THE WRONG CONDITIONS",
+  "     cell-to-condition labels permuted: r = 0.5526 against a real 0.5884 (94%)",
+  "     V5 FAIL -- 94% survives; V2 is reading the gene, not the condition",
+  "V6 WHAT THIS CANNOT SHOW",
+  "     One cell line, one timepoint, four compounds; M is not estimated at all.",
+  "     Overdispersion is not bursting. Doublets, ambient RNA, cell-cycle phase and",
+  "     unmodelled substructure all inflate phi and none of them is Sigma in the intended",
+  "     sense. V3 controls for the gene and the mean, not for cell-cycle composition.",
+  "     Method-of-moments phi is biased at low mean, hence the stated mean floor.",
+  "     A jump process is ONE explanation of a heavy tail. Zero-inflation and a two-state",
+  "     mixture produce the same V4 signature and this loop cannot separate them.",
+  "========================================================================================================",
+  "  V1  PASS",
+  "  V2  PASS",
+  "  V3  FAIL",
+  "  V4  FAIL",
+  "  V5  FAIL",
+  "  2/5   [28s]",
+  "========================================================================================================"
+ ]
+}

@@ -1,0 +1,37 @@
+{
+ "verdicts": {
+  "X1": {
+   "better": 626,
+   "worse": 555,
+   "p": 0.04161308491943103,
+   "median_diff": 0.0018078908324241638,
+   "verdict": "NO DIFFERENCE"
+  },
+  "X2": {
+   "better": 800,
+   "worse": 381,
+   "p": 9.577908411980281e-35,
+   "median_diff": 0.023753374814987183,
+   "verdict": "BETTER"
+  },
+  "X3": {
+   "better": 627,
+   "worse": 554,
+   "p": 0.036116347976486815,
+   "median_diff": 0.0008438974618911743,
+   "verdict": "NO DIFFERENCE"
+  },
+  "X4": {
+   "better": 657,
+   "worse": 524,
+   "p": 0.00012065774728037539,
+   "median_diff": 0.006023711524903774,
+   "verdict": "NO DIFFERENCE"
+  },
+  "X5": {
+   "rho": 0.4808864405978307,
+   "p": 2.2520546241617734e-69,
+   "verdict": "CALIBRATED"
+  }
+ }
+}

@@ -1,0 +1,439 @@
+{
+ "model": "ptm-sites-v1",
+ "sources": {
+  "uniprot": "UniProtKB/Swiss-Prot 2026_02 (10-June-2026), human, reviewed, MOD_RES + CARBOHYD + LIPID features",
+  "iptmnet": "iPTMnet 6.2 (PIR); enzyme-substrate rows, human"
+ },
+ "occupancy_measured": false,
+ "n_proteins": 20431,
+ "n_proteins_with_site": 12883,
+ "n_sites": 74862,
+ "n_enzyme_substrate_pairs_accession": 5570,
+ "n_enzyme_substrate_pairs_gene": 5136,
+ "join": {
+  "uniprot": {
+   "joined": 19388,
+   "of": 20431,
+   "rate": 0.9489501248103372,
+   "via": "uniprot",
+   "label": "UniProt reviewed accessions -> gene"
+  },
+  "iptmnet": {
+   "joined": 2143,
+   "of": 2232,
+   "rate": 0.9601254480286738,
+   "via": "uniprot",
+   "label": "iPTMnet enzyme/substrate accessions -> gene"
+  },
+  "note": "both joins go through UniProt ACCESSION, the strong key. The UniProt 'by X' free-text enzyme labels are the only symbol-keyed join here and are recorded via=symbol."
+ },
+ "confounds": {
+  "rho_sites_pubs": 0.43831352974283105,
+  "rho_sites_length": 0.4590080248483462,
+  "rho_sites_mrna": 0.12265980570781475,
+  "rho_mrna_responsiveness": 0.5199657780069463
+ },
+ "column_z_is_degenerate": {
+  "mean": 0.901534236564259,
+  "sd": 0.0459933545782655,
+  "note": "robust z is normalised per gene column, so mean |z| per column is near-constant by construction and cannot serve as a gene-level outcome"
+ },
+ "test_a_gene_level": {
+  "raw mean |lfc| | pubs x length (d10)": {
+   "label": "raw mean |lfc| | pubs x length (d10)",
+   "n_per_arm": 792,
+   "n_hi_pool": 1734,
+   "n_lo_pool": 2672,
+   "bins": 10,
+   "n_draws": 20,
+   "raw_hi": 0.07882967500376024,
+   "raw_lo": 0.07863066325545649,
+   "ratio": 1.0025334507211023,
+   "ratio_sd": 0.0019747023287208796,
+   "p_median": 0.008918218875150687,
+   "frac_draws_p05": 0.9,
+   "residual": {
+    "pubs": 0.8301038643125805,
+    "length": 0.8478364888888509
+   },
+   "min_detectable_ratio_80pct": 1.0169635559972827
+  },
+  "raw mean |lfc| | pubs x length x mRNA (q5)": {
+   "label": "raw mean |lfc| | pubs x length x mRNA (q5)",
+   "n_per_arm": 804,
+   "n_hi_pool": 1734,
+   "n_lo_pool": 2672,
+   "bins": 5,
+   "n_draws": 20,
+   "raw_hi": 0.07838117078668111,
+   "raw_lo": 0.07899575828574955,
+   "ratio": 0.9922227729751738,
+   "ratio_sd": 0.0021401798994556153,
+   "p_median": 0.7759210802740193,
+   "frac_draws_p05": 0.0,
+   "residual": {
+    "pubs": 0.3901677808309322,
+    "length": 0.19144495950935783,
+    "mRNA": 0.6573006110685683
+   },
+   "min_detectable_ratio_80pct": 1.0167586731126097
+  },
+  "frac pert |z|>=5 | pubs x length (d10)": {
+   "label": "frac pert |z|>=5 | pubs x length (d10)",
+   "n_per_arm": 792,
+   "n_hi_pool": 1734,
+   "n_lo_pool": 2672,
+   "bins": 10,
+   "n_draws": 20,
+   "raw_hi": 0.005604411961501786,
+   "raw_lo": 0.0055306096395823165,
+   "ratio": 1.0134522570311146,
+   "ratio_sd": 0.012275443600177629,
+   "p_median": 0.005139944166503295,
+   "frac_draws_p05": 0.85,
+   "residual": {
+    "pubs": 0.8301038643125805,
+    "length": 0.8478364888888509
+   },
+   "min_detectable_ratio_80pct": 1.1129142294409435
+  },
+  "frac pert |z|>=5 | pubs x length x mRNA (q5)": {
+   "label": "frac pert |z|>=5 | pubs x length x mRNA (q5)",
+   "n_per_arm": 804,
+   "n_hi_pool": 1734,
+   "n_lo_pool": 2672,
+   "bins": 5,
+   "n_draws": 20,
+   "raw_hi": 0.005487667277443405,
+   "raw_lo": 0.005700812054381147,
+   "ratio": 0.9627655016433765,
+   "ratio_sd": 0.0157941605497749,
+   "p_median": 0.2539352815173781,
+   "frac_draws_p05": 0.1,
+   "residual": {
+    "pubs": 0.3901677808309322,
+    "length": 0.19144495950935783,
+    "mRNA": 0.6573006110685683
+   },
+   "min_detectable_ratio_80pct": 1.108722523616603
+  },
+  "mean |z| (degenerate) | pubs x length (d10)": {
+   "label": "mean |z| (degenerate) | pubs x length (d10)",
+   "n_per_arm": 792,
+   "n_hi_pool": 1734,
+   "n_lo_pool": 2672,
+   "bins": 10,
+   "n_draws": 20,
+   "raw_hi": 0.8998068435941873,
+   "raw_lo": 0.8989968865543204,
+   "ratio": 1.0009014164641832,
+   "ratio_sd": 0.000776330433957898,
+   "p_median": 0.0026686186761012143,
+   "frac_draws_p05": 1.0,
+   "residual": {
+    "pubs": 0.8301038643125805,
+    "length": 0.8478364888888509
+   },
+   "min_detectable_ratio_80pct": 1.007108068885102
+  },
+  "mean |z| (degenerate) | pubs x length x mRNA (q5)": {
+   "label": "mean |z| (degenerate) | pubs x length x mRNA (q5)",
+   "n_per_arm": 804,
+   "n_hi_pool": 1734,
+   "n_lo_pool": 2672,
+   "bins": 5,
+   "n_draws": 20,
+   "raw_hi": 0.8981158779370129,
+   "raw_lo": 0.900713621920967,
+   "ratio": 0.9971164441837826,
+   "ratio_sd": 0.0009032907953756493,
+   "p_median": 0.460432219706855,
+   "frac_draws_p05": 0.0,
+   "residual": {
+    "pubs": 0.3901677808309322,
+    "length": 0.19144495950935783,
+    "mRNA": 0.6573006110685683
+   },
+   "min_detectable_ratio_80pct": 1.007041377873057
+  }
+ },
+ "test_a_partial_spearman": {
+  "raw mean |lfc|": -0.004077210308652086,
+  "frac pert |z|>=5": 0.0074167763099577755,
+  "mean |z| (degenerate)": 0.007081193672801034
+ },
+ "test_a_non_htp_sites": {
+  "label": "raw mean |lfc| | curated (non-HTP) sites | pubs x length (d10)",
+  "n_per_arm": 692,
+  "n_hi_pool": 734,
+  "n_lo_pool": 4919,
+  "bins": 10,
+  "n_draws": 20,
+  "raw_hi": 0.07915251489176217,
+  "raw_lo": 0.07886998369650895,
+  "ratio": 1.0035938556610742,
+  "ratio_sd": 0.0035210053322895668,
+  "p_median": 0.07403169739398445,
+  "frac_draws_p05": 0.35,
+  "residual": {
+   "pubs": 0.48374055442369424,
+   "length": 0.7631013217545627
+  },
+  "min_detectable_ratio_80pct": 1.0188630662689984
+ },
+ "test_b_pair_level": {
+  "all enzyme->substrate": {
+   "label": "all enzyme->substrate",
+   "n_linked": 2810,
+   "n_pool": 2810,
+   "n_draws": 20,
+   "capped_to": null,
+   "bins": 10,
+   "raw_mean_abs_z_linked": 0.889887809753418,
+   "raw_mean_abs_z_matched": 0.89690682888031,
+   "ratio": 0.992362642288208,
+   "ratio_sd": 0.0136863700668706,
+   "ratio_min": 0.967473566532135,
+   "ratio_max": 1.0215890407562256,
+   "ratio_ci95": [
+    0.9428504005074501,
+    1.0423276722431183
+   ],
+   "min_detectable_ratio_80pct": 1.0745376297689349,
+   "p_median": 0.6941152215003967,
+   "frac_draws_p05": 0.0,
+   "residual_pert_strength_p": 0.6021944201536358,
+   "residual_gene_responsiveness_p": 0.9087266994319568
+  },
+  "excl SIGNOR-sourced": {
+   "label": "excl SIGNOR-sourced",
+   "n_linked": 2003,
+   "n_pool": 2003,
+   "n_draws": 20,
+   "capped_to": null,
+   "bins": 10,
+   "raw_mean_abs_z_linked": 0.8859950304031372,
+   "raw_mean_abs_z_matched": 0.8831293463706971,
+   "ratio": 1.0036517262458802,
+   "ratio_sd": 0.020285450101281334,
+   "ratio_min": 0.9690845012664795,
+   "ratio_max": 1.0494203567504883,
+   "ratio_ci95": [
+    0.943143680691719,
+    1.064038446545601
+   ],
+   "min_detectable_ratio_80pct": 1.0885204735787437,
+   "p_median": 0.7240893244743347,
+   "frac_draws_p05": 0.0,
+   "residual_pert_strength_p": 0.6003113714483849,
+   "residual_gene_responsiveness_p": 0.9496759088010313
+  },
+  "SIGNOR-sourced only": {
+   "label": "SIGNOR-sourced only",
+   "n_linked": 1776,
+   "n_pool": 1776,
+   "n_draws": 20,
+   "capped_to": null,
+   "bins": 10,
+   "raw_mean_abs_z_linked": 0.9012765884399414,
+   "raw_mean_abs_z_matched": 0.8840577751398087,
+   "ratio": 1.0200213104486466,
+   "ratio_sd": 0.023667988263051585,
+   "ratio_min": 0.9851929545402527,
+   "ratio_max": 1.0758988857269287,
+   "ratio_ci95": [
+    0.9574032038450241,
+    1.0828872680664063
+   ],
+   "min_detectable_ratio_80pct": 1.0963845646592483,
+   "p_median": 0.6625382602214813,
+   "frac_draws_p05": 0.0,
+   "residual_pert_strength_p": 0.6252620889884756,
+   "residual_gene_responsiveness_p": 0.9361753395891658
+  },
+  "substrate is a TF": {
+   "label": "substrate is a TF",
+   "n_linked": 776,
+   "n_pool": 776,
+   "n_draws": 20,
+   "capped_to": null,
+   "bins": 10,
+   "raw_mean_abs_z_linked": 0.8424237370491028,
+   "raw_mean_abs_z_matched": 0.8680984735488891,
+   "ratio": 0.9713198333978653,
+   "ratio_sd": 0.02941414455619823,
+   "ratio_min": 0.9036933779716492,
+   "ratio_max": 1.0313818454742432,
+   "ratio_ci95": [
+    0.8716023519635201,
+    1.0838558852672577
+   ],
+   "min_detectable_ratio_80pct": 1.1461083745926575,
+   "p_median": 0.5056274235248566,
+   "frac_draws_p05": 0.0,
+   "residual_pert_strength_p": 0.9157581889372901,
+   "residual_gene_responsiveness_p": 0.9039988380568893
+  },
+  "substrate is not a TF": {
+   "label": "substrate is not a TF",
+   "n_linked": 2034,
+   "n_pool": 2034,
+   "n_draws": 20,
+   "capped_to": null,
+   "bins": 10,
+   "raw_mean_abs_z_linked": 0.9079959988594055,
+   "raw_mean_abs_z_matched": 0.9004569947719574,
+   "ratio": 1.008953446149826,
+   "ratio_sd": 0.024307237597631363,
+   "ratio_min": 0.9739463329315186,
+   "ratio_max": 1.0548596382141113,
+   "ratio_ci95": [
+    0.954430490732193,
+    1.0722542494535445
+   ],
+   "min_detectable_ratio_80pct": 1.0892129326395377,
+   "p_median": 0.5972359478473663,
+   "frac_draws_p05": 0.0,
+   "residual_pert_strength_p": 0.5410006793605916,
+   "residual_gene_responsiveness_p": 0.897342380477754
+  },
+  "UniProt 'by X' edges (via=symbol)": {
+   "label": "UniProt 'by X' edges (via=symbol)",
+   "n_linked": 612,
+   "n_pool": 612,
+   "n_draws": 20,
+   "capped_to": null,
+   "bins": 10,
+   "raw_mean_abs_z_linked": 0.9930219650268555,
+   "raw_mean_abs_z_matched": 0.9664836376905441,
+   "ratio": 1.0287332892417909,
+   "ratio_sd": 0.03574123816413752,
+   "ratio_min": 0.9319098591804504,
+   "ratio_max": 1.0968642234802246,
+   "ratio_ci95": [
+    0.9072757601737976,
+    1.163699933886528
+   ],
+   "min_detectable_ratio_80pct": 1.1808190704499868,
+   "p_median": 0.6869492530822754,
+   "frac_draws_p05": 0.0,
+   "residual_pert_strength_p": 0.9185717959944372,
+   "residual_gene_responsiveness_p": 0.9186740209841588
+  },
+  "REVERSED (perturb substrate)": {
+   "label": "REVERSED (perturb substrate)",
+   "n_linked": 3385,
+   "n_pool": 3385,
+   "n_draws": 20,
+   "capped_to": null,
+   "bins": 10,
+   "raw_mean_abs_z_linked": 0.9234731197357178,
+   "raw_mean_abs_z_matched": 0.8869038909673691,
+   "ratio": 1.0414398431777954,
+   "ratio_sd": 0.014642792379537974,
+   "ratio_min": 1.0072859525680542,
+   "ratio_max": 1.0648263692855835,
+   "ratio_ci95": [
+    0.9890900805592537,
+    1.0958423405885696
+   ],
+   "min_detectable_ratio_80pct": 1.0717735516913984,
+   "p_median": 0.14844054728746414,
+   "frac_draws_p05": 0.1,
+   "residual_pert_strength_p": 0.8257518151285261,
+   "residual_gene_responsiveness_p": 0.4225890818065533
+  },
+  "SHAM (random pairs, same n)": {
+   "label": "SHAM (random pairs, same n)",
+   "n_linked": 2810,
+   "n_pool": 2810,
+   "n_draws": 20,
+   "capped_to": null,
+   "bins": 10,
+   "raw_mean_abs_z_linked": 0.8973145604133606,
+   "raw_mean_abs_z_matched": 0.9012008547782898,
+   "ratio": 0.9958559334278106,
+   "ratio_sd": 0.02025057982902599,
+   "ratio_min": 0.9682865738868713,
+   "ratio_max": 1.0364760160446167,
+   "ratio_ci95": [
+    0.9418918892741204,
+    1.0488536655902863
+   ],
+   "min_detectable_ratio_80pct": 1.075733353473662,
+   "p_median": 0.44648438692092896,
+   "frac_draws_p05": 0.0,
+   "residual_pert_strength_p": 0.9266714265992364,
+   "residual_gene_responsiveness_p": 0.9317840057248439
+  }
+ },
+ "test_b_power_control": {
+  "full": {
+   "label": "BioPlex 3.0, all pairs",
+   "n_linked": 75639,
+   "n_pool": 75639,
+   "n_draws": 20,
+   "capped_to": null,
+   "bins": 10,
+   "raw_mean_abs_z_linked": 1.0709879398345947,
+   "raw_mean_abs_z_matched": 0.9840171813964844,
+   "ratio": 1.0883904218673706,
+   "ratio_sd": 0.002770588657864139,
+   "ratio_min": 1.0833653211593628,
+   "ratio_max": 1.0941193103790283,
+   "ratio_ci95": [
+    1.077653929591179,
+    1.101348450779915
+   ],
+   "min_detectable_ratio_80pct": 1.017054387944897,
+   "p_median": 5.847295217464854e-11,
+   "frac_draws_p05": 1.0,
+   "residual_pert_strength_p": 0.28698435611928763,
+   "residual_gene_responsiveness_p": 0.8801051067995436
+  },
+  "capped": {
+   "label": "BioPlex 3.0 subsampled to n=2,810",
+   "n_linked": 2810,
+   "n_pool": 75639,
+   "n_draws": 20,
+   "capped_to": 2810,
+   "bins": 10,
+   "raw_mean_abs_z_linked": 1.0710578620433808,
+   "raw_mean_abs_z_matched": 0.9833812862634659,
+   "ratio": 1.0894313216209413,
+   "ratio_sd": 0.021488545347816995,
+   "ratio_min": 1.0559128522872925,
+   "ratio_max": 1.1324717998504639,
+   "ratio_ci95": [
+    1.024427554011345,
+    1.1512956738471984
+   ],
+   "min_detectable_ratio_80pct": 1.0871731270871459,
+   "p_median": 0.2655510678887367,
+   "frac_draws_p05": 0.2,
+   "residual_pert_strength_p": 0.869727084111369,
+   "residual_gene_responsiveness_p": 0.928539547019923
+  }
+ },
+ "coverage": {
+  "gwps_genes": 8248,
+  "gwps_genes_with_reviewed_uniprot": 7872,
+  "gwps_genes_testable_in_test_a": 7043,
+  "frac_testable_genes_with_zero_annotated_phosphosites": 0.3793837853187562,
+  "missingness_is_biased": true
+ },
+ "limits": [
+  "A SITE ANNOTATION IS NOT AN OCCUPIED SITE. UniProt MOD_RES says the residue is modified somewhere in some experiment; 15,980 of 74,862 sites carry ECO:0000250 (by similarity, usually from a mouse ortholog) and 32,090 carry ECO:0007744 (proteome-wide MS, mostly not K562), against only 14,489 with direct manual experimental evidence. Nothing here measures phosphorylation IN K562, so no site can be called active, and site count must never be read as pathway activity.",
+  "SITE COUNT IS PARTLY A MEASURE OF STUDY EFFORT. rho 0.44 with publication count and 0.46 with protein length. Every gene-level number here is matched on both; the unmatched correlation is meaningless and is not reported as a result.",
+  "PERTURB-SEQ IS A TRANSCRIPTIONAL READOUT AND PTM IS POST-TRANSLATIONAL. A null in Test B is consistent with the edges being correct and the assay being blind to them. This module cannot distinguish 'these edges are wrong' from 'mRNA does not see them'; that would take a K562 phosphoproteome after perturbation, which does not exist at this scale.",
+  "ENZYME COVERAGE IS THIN AND BIASED. 5,136 enzyme->substrate gene pairs from 386 enzymes, of which only 261 are also Perturb-seq perturbations -- kinases studied since the 1990s. hprd (2009) and SIGNOR contribute most enzyme rows, so the edge set reflects two decades of kinase literature, not a survey.",
+  "THE UNIPROT 'by X' LABELS ARE MOSTLY NOT GENES. 629 free-text strings covering 4,363 annotations; only 1,990 of those annotations use a string that is itself a gene symbol. The commonest (PKA, CK2, PKC, GSK3-beta, AMPK) name FAMILIES with several catalytic subunit genes, and 639 say only 'autocatalysis'. They are stored as text and are resolved into edges only where the string is itself a symbol, recorded via=symbol.",
+  "ABSENCE IS UNKNOWN. A gene with no reviewed UniProt entry is excluded, not scored as zero sites; a reviewed protein with no MOD_RES is scored as zero ANNOTATED sites, which is a statement about UniProt, not about the protein. Missingness is biased toward the unpublished and the short.",
+  "ISOFORMS ARE COLLAPSED. Positions are on the canonical UniProt sequence; iPTMnet isoform accessions are truncated to the canonical accession, so a site position is only valid against the canonical sequence of that release.",
+  "ONE RELEASE EACH, AND THE RESULTS ARE NOT PORTABLE ACROSS RELEASES. UniProt 2026_02 and iPTMnet 6.2 are asserted at runtime; site counts grow every release, so the HIGH/LOW cut at 5 sites is release-specific.",
+  "TEST A IS A GENE-LEVEL RATIO AND IS NOT COMPARABLE TO THE PAIR-LEVEL REFERENCE NUMBERS (PPI 1.208x etc.). Only Test B is.",
+  "TEST B IS UNDERPOWERED FOR SMALL EFFECTS AND ITS p-VALUES ARE NOT THE EVIDENCE. 2,810 testable pairs against PPI's 94,368. The bootstrap 95% CI on the ratio is [0.943, 1.042]: a PPI- or CORUM-sized effect (1.21x) is excluded, a co-dependency-sized one (1.07x) is not. The BioPlex-at-the-same-n control returns the correct point estimate and loses significance, which is why effect sizes and intervals are reported here rather than p-values.",
+  "TEST A's MATCHED DRAWS OVERLAP. Only ~800 genes per arm survive matching out of pools of 1,734 and 2,672, so the 20 draws share most of their members and the fraction of draws reaching p<0.05 is not 20 independent tests. It is reported as a stability check on the draw, not as replication."
+ ],
+ "verdict": "BOTH TESTS ARE NULL, AND TEST A IS NULL WITH REAL POWER BEHIND IT: AN ANNOTATED PTM SITE SAYS NOTHING ABOUT HOW A TRANSCRIPT MOVES IN THIS CELL. Test A: genes with >= 5 annotated phosphosites (1,734 of 7,043 testable) reach raw mean |lfc| 0.07883 against 0.07863 for zero-site genes matched on publication-count and protein-length deciles over 20 draws -- a ratio of 1.0025 on a design that would have caught 1.0170 at 80% power, and it falls to 0.9922 once K562 mRNA abundance is matched too. Several of those rows do reach p<0.05 in most draws; at a ratio of 1.002 that is a shape difference, not an effect, and reporting it as one would be this project's recurring error. The partial Spearman of site count against responsiveness, controlling log pubs, log length and log mRNA, is -0.0041. Test B: 2,810 testable (P,G) cells from 5,136 iPTMnet enzyme->substrate gene pairs give raw mean |z| 0.8899 against 0.8969 matched on perturbation-strength x gene-responsiveness deciles -- 0.9924x. The arm where a transcriptional effect is actually predicted, enzyme -> TF-substrate, gives 0.9713x on 776 pairs; the direction control, perturbing the SUBSTRATE and reading the ENZYME's transcript, gives 1.0414x, i.e. if anything the edges run backwards in this assay, which is what a set of edges with no transcriptional content looks like. WHAT TEST B CAN AND CANNOT EXCLUDE, stated rather than implied. Only 2,810 (P,G) cells are testable against PPI's 94,368, so its p-values are weak evidence and its interval is the real answer: the ratio's bootstrap 95% CI is [0.943, 1.042], which excludes a PPI-sized (1.208x) or CORUM-sized effect but does NOT exclude a co-dependency-sized 1.07x one. The power control makes that concrete: BioPlex 3.0 through this identical machinery scores 1.088x on 75,639 pairs, and subsampled to exactly 2,810 pairs it still returns the same point estimate (1.089x) but reaches p<0.05 in only 20% of draws -- so at this n the design recovers a real effect's SIZE and loses its SIGNIFICANCE, and a null p here would have proved nothing on its own. The sham arm, random pairs redrawn every draw at the same n, sits at 0.996x [0.942, 1.049] as it must. THE HONEST READING IS NOT THAT THE 74,862 POSITIONED SITES OR THE 5,136 ENZYME EDGES ARE WRONG. Site existence is a property of the protein and of the literature -- rho 0.44 with publication count and 0.46 with protein length -- and phosphorylation is post-translational, so a transcriptional readout is close to blind to it by construction. The layer earns its place on capability, not on this score: positions, residues, evidence codes and named enzymes are what an activity model needs, and the field it replaces (8,425 bare counts with no site and no enzyme) could not support a single one of those questions. But it must not be wired into a transcript-level predictor as a feature, and site count must never be used as a proxy for pathway activity. What would overturn this is a K562 phosphoproteome measured after perturbation -- the occupancy this layer explicitly does not have; nothing here substitutes for one."
+}

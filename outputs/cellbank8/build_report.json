@@ -1,0 +1,140 @@
+{
+ "screens": {
+  "RPE1": {
+   "name": "RPE1",
+   "cell": "RPE1",
+   "design": "essential",
+   "perturbations": 2204,
+   "kept": 1884,
+   "genes_measured": 8749,
+   "genes_mapped": 7095,
+   "mb_fetched": 106,
+   "seconds": 23,
+   "records": 1884
+  },
+  "HepG2": {
+   "name": "HepG2",
+   "cell": "HepG2",
+   "design": "essential",
+   "perturbations": 2160,
+   "kept": 1859,
+   "genes_measured": 9623,
+   "genes_mapped": 7429,
+   "mb_fetched": 119,
+   "seconds": 23,
+   "records": 1859
+  },
+  "Jurkat": {
+   "name": "Jurkat",
+   "cell": "Jurkat",
+   "design": "essential",
+   "perturbations": 2270,
+   "kept": 1956,
+   "genes_measured": 8881,
+   "genes_mapped": 7358,
+   "mb_fetched": 120,
+   "seconds": 24,
+   "records": 1956
+  },
+  "HCT116": {
+   "name": "HCT116",
+   "cell": "HCT116",
+   "design": "genome-wide",
+   "perturbations": 17768,
+   "kept": 4693,
+   "genes_measured": 32393,
+   "genes_mapped": 7962,
+   "mb_fetched": 2673,
+   "seconds": 240,
+   "records": 4693
+  },
+  "HEK293T": {
+   "name": "HEK293T",
+   "cell": "HEK293T",
+   "design": "genome-wide",
+   "perturbations": 17978,
+   "kept": 4740,
+   "genes_measured": 34775,
+   "genes_mapped": 7975,
+   "mb_fetched": 2730,
+   "seconds": 258,
+   "records": 4740
+  },
+  "iPSC-N": {
+   "name": "iPSC-N",
+   "cell": "iPSC",
+   "design": "genome-wide",
+   "perturbations": 11364,
+   "kept": 4281,
+   "genes_measured": 32470,
+   "genes_mapped": 7962,
+   "mb_fetched": 1685,
+   "seconds": 163,
+   "records": 4281
+  },
+  "iPSC-Fsf": {
+   "name": "iPSC-Fsf",
+   "cell": "iPSC",
+   "design": "genome-wide sub-screen",
+   "perturbations": 1886,
+   "kept": 1392,
+   "genes_measured": 24990,
+   "genes_mapped": 8203,
+   "mb_fetched": 221,
+   "seconds": 40,
+   "records": 1392
+  },
+  "iPSC-Fsnf": {
+   "name": "iPSC-Fsnf",
+   "cell": "iPSC",
+   "design": "genome-wide sub-screen",
+   "perturbations": 2876,
+   "kept": 1173,
+   "genes_measured": 25895,
+   "genes_mapped": 8207,
+   "mb_fetched": 363,
+   "seconds": 45,
+   "records": 1173
+  },
+  "iPSC-Fts": {
+   "name": "iPSC-Fts",
+   "cell": "iPSC",
+   "design": "targeted",
+   "perturbations": 444,
+   "kept": 358,
+   "genes_measured": 27598,
+   "genes_mapped": 8217,
+   "mb_fetched": 57,
+   "seconds": 25,
+   "records": 358
+  },
+  "hESC-P": {
+   "name": "hESC-P",
+   "cell": "H1 hESC",
+   "design": "growth / pluripotency",
+   "perturbations": 2975,
+   "kept": 2214,
+   "genes_measured": 29923,
+   "genes_mapped": 7957,
+   "mb_fetched": 431,
+   "seconds": 51,
+   "records": 2214
+  },
+  "hESC-V": {
+   "name": "hESC-V",
+   "cell": "H1 hESC",
+   "design": "effect strength",
+   "perturbations": 300,
+   "kept": 183,
+   "genes_measured": 16717,
+   "genes_mapped": 7562,
+   "mb_fetched": 23,
+   "seconds": 15,
+   "records": 183
+  }
+ },
+ "records": 37234,
+ "test_genes_with_any_record_before": 1007,
+ "test_genes_with_any_record_now": 2512,
+ "bytes": 7026376
+}

@@ -1,0 +1,122 @@
+{
+ "n_drugs": 47,
+ "profile_spearman_24_vs_72_median": 0.062,
+ "mover_jaccard_24_72_median": 0.128,
+ "frac_movers_transient_only24_mean": 0.77,
+ "frac_movers_adaptive_only72_mean": 0.773,
+ "example_big_reshape": [
+  {
+   "drug": "FLLL32",
+   "n24": 480,
+   "n72": 494,
+   "spearman_24_72": -0.03871053191445212,
+   "jaccard": 0.12211981566820276,
+   "transient_only24": 374,
+   "adaptive_only72": 388
+  },
+  {
+   "drug": "Rucaparib (AG-014699,PF-01367338) ph",
+   "n24": 442,
+   "n72": 491,
+   "spearman_24_72": -0.027735113607538792,
+   "jaccard": 0.1419828641370869,
+   "transient_only24": 326,
+   "adaptive_only72": 375
+  },
+  {
+   "drug": "Resveratrol",
+   "n24": 457,
+   "n72": 492,
+   "spearman_24_72": -0.02738987584921582,
+   "jaccard": 0.1461352657004831,
+   "transient_only24": 336,
+   "adaptive_only72": 371
+  },
+  {
+   "drug": "TMP195",
+   "n24": 471,
+   "n72": 464,
+   "spearman_24_72": -0.0218444078054578,
+   "jaccard": 0.13196125907990314,
+   "transient_only24": 362,
+   "adaptive_only72": 355
+  },
+  {
+   "drug": "Roxadustat (FG-4592)",
+   "n24": 467,
+   "n72": 465,
+   "spearman_24_72": -0.017692367688543757,
+   "jaccard": 0.13381995133819952,
+   "transient_only24": 357,
+   "adaptive_only72": 355
+  },
+  {
+   "drug": "MC1568",
+   "n24": 474,
+   "n72": 473,
+   "spearman_24_72": -0.015118231994225398,
+   "jaccard": 0.13822115384615385,
+   "transient_only24": 359,
+   "adaptive_only72": 358
+  }
+ ],
+ "example_stable": [
+  {
+   "drug": "Quisinostat (JNJ-26481585) 2HCl",
+   "n24": 414,
+   "n72": 407,
+   "spearman_24_72": 0.5321007439818236,
+   "jaccard": 0.14664804469273743,
+   "transient_only24": 309,
+   "adaptive_only72": 302
+  },
+  {
+   "drug": "Abexinostat (PCI-24781)",
+   "n24": 453,
+   "n72": 431,
+   "spearman_24_72": 0.4478143361589128,
+   "jaccard": 0.12755102040816327,
+   "transient_only24": 353,
+   "adaptive_only72": 331
+  },
+  {
+   "drug": "Panobinostat (LBH589)",
+   "n24": 451,
+   "n72": 405,
+   "spearman_24_72": 0.4276121146676811,
+   "jaccard": 0.09044585987261146,
+   "transient_only24": 380,
+   "adaptive_only72": 334
+  },
+  {
+   "drug": "Hesperadin",
+   "n24": 483,
+   "n72": 421,
+   "spearman_24_72": 0.3726614230090759,
+   "jaccard": 0.15012722646310434,
+   "transient_only24": 365,
+   "adaptive_only72": 303
+  },
+  {
+   "drug": "Pracinostat (SB939)",
+   "n24": 460,
+   "n72": 410,
+   "spearman_24_72": 0.32680190802723574,
+   "jaccard": 0.11538461538461539,
+   "transient_only24": 370,
+   "adaptive_only72": 320
+  },
+  {
+   "drug": "Dacinostat (LAQ824)",
+   "n24": 447,
+   "n72": 434,
+   "spearman_24_72": 0.3161579666758861,
+   "jaccard": 0.09305210918114144,
+   "transient_only24": 372,
+   "adaptive_only72": 359
+  }
+ ],
+ "verdict": "TIME MATTERS -- the response RESHAPES between 24h and 72h (A549, 47 drugs; the closest available time test). The 24h and 72h profiles correlate at only Spearman 0.062 (mover Jaccard 0.128): 77% of 24h movers are TRANSIENT (gone by 72h) and 77% of 72h movers are ADAPTIVE (new by 72h). A single steady-state snapshot genuinely MISSES a large amount of time-specific structure -- direct support for the transient hypothesis behind the compensation wall. NOISE CAVEAT (honest): for weakly-responding drugs the 24h/72h mover sets are near-noise, so the ~77% transient/adaptive fraction is likely INFLATED by the same per-drug pseudobulk noise seen in the saturation test; but the near-zero profile correlation even over the union of movers, plus the biology (24h=acute response, 72h=adapted survivor state for cytotoxic drugs), support a genuine large reshape for responding drugs. SECOND CAVEAT: this is 24h-vs-72h CHEMICAL perturbation (A549), NOT the 2-12h GENETIC window where paralog compensation is expected -- so it shows time-resolution matters and transient/adaptive movers are real and large, but it is a proxy, not the exact experiment. The exact test (sub-24h genetic perturb-seq) remains unavailable as a clean h5ad (would need GEO MTX assembly) and is the real highest-value next fetch.",
+ "note": "TIME MATTERS -- the response RESHAPES between 24h and 72h (A549, 47 drugs; the closest available time test). The 24h and 72h profiles correlate at only Spearman 0.062 (mover Jaccard 0.128): 77% of 24h movers are TRANSIENT (gone by 72h) and 77% of 72h movers are ADAPTIVE (new by 72h). A single steady-state snapshot genuinely MISSES a large amount of time-specific structure -- direct support for the transient hypothesis behind the compensation wall. NOISE CAVEAT (honest): for weakly-responding drugs the 24h/72h mover sets are near-noise, so the ~77% transient/adaptive fraction is likely INFLATED by the same per-drug pseudobulk noise seen in the saturation test; but the near-zero profile correlation even over the union of movers, plus the biology (24h=acute response, 72h=adapted survivor state for cytotoxic drugs), support a genuine large reshape for responding drugs. SECOND CAVEAT: this is 24h-vs-72h CHEMICAL perturbation (A549), NOT the 2-12h GENETIC window where paralog compensation is expected -- so it shows time-resolution matters and transient/adaptive movers are real and large, but it is a proxy, not the exact experiment. The exact test (sub-24h genetic perturb-seq) remains unavailable as a clean h5ad (would need GEO MTX assembly) and is the real highest-value next fetch.",
+ "cell_line": "A549"
+}

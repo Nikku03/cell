@@ -1,0 +1,495 @@
+{
+ "n_panel": 60,
+ "per_ko": [
+  {
+   "ko": "TMA16",
+   "actual_movers": 1,
+   "pred_magnitude": 4.0,
+   "top10_hits": 1,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "RBM25",
+   "actual_movers": 82,
+   "pred_magnitude": 4.0,
+   "top10_hits": 10,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "URM1",
+   "actual_movers": 0,
+   "pred_magnitude": 1.0,
+   "top10_hits": 0,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "SRP19",
+   "actual_movers": 0,
+   "pred_magnitude": 7.0,
+   "top10_hits": 0,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "C1D",
+   "actual_movers": 0,
+   "pred_magnitude": 1.0,
+   "top10_hits": 0,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "EIF2S3",
+   "actual_movers": 201,
+   "pred_magnitude": 22.0,
+   "top10_hits": 9,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "POLR2F",
+   "actual_movers": 7,
+   "pred_magnitude": 20.0,
+   "top10_hits": 5,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "PELP1",
+   "actual_movers": 13,
+   "pred_magnitude": 5.0,
+   "top10_hits": 3,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "CDC123",
+   "actual_movers": 2,
+   "pred_magnitude": 8.0,
+   "top10_hits": 1,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "COPS6",
+   "actual_movers": 0,
+   "pred_magnitude": 8.0,
+   "top10_hits": 0,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "SLC39A7",
+   "actual_movers": 3,
+   "pred_magnitude": 2.0,
+   "top10_hits": 1,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "RPL27A",
+   "actual_movers": 84,
+   "pred_magnitude": 32.0,
+   "top10_hits": 10,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "PKM",
+   "actual_movers": 0,
+   "pred_magnitude": 1.0,
+   "top10_hits": 0,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "NXF1",
+   "actual_movers": 17,
+   "pred_magnitude": 8.0,
+   "top10_hits": 0,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "SBDS",
+   "actual_movers": 0,
+   "pred_magnitude": 3.0,
+   "top10_hits": 0,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "CDK9",
+   "actual_movers": 4,
+   "pred_magnitude": 14.0,
+   "top10_hits": 3,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "SYMPK",
+   "actual_movers": 53,
+   "pred_magnitude": 7.0,
+   "top10_hits": 7,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "KCTD10",
+   "actual_movers": 5,
+   "pred_magnitude": 0.0,
+   "top10_hits": 1,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "SF3A2",
+   "actual_movers": 0,
+   "pred_magnitude": 17.0,
+   "top10_hits": 0,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "CEP97",
+   "actual_movers": 0,
+   "pred_magnitude": 1.0,
+   "top10_hits": 0,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "EXOC8",
+   "actual_movers": 2,
+   "pred_magnitude": 1.0,
+   "top10_hits": 0,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "TOP2A",
+   "actual_movers": 2,
+   "pred_magnitude": 3.0,
+   "top10_hits": 0,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "ILF2",
+   "actual_movers": 3,
+   "pred_magnitude": 4.0,
+   "top10_hits": 1,
+   "is_tf": 1,
+   "regulon_hits_of10": 0
+  },
+  {
+   "ko": "COX17",
+   "actual_movers": 0,
+   "pred_magnitude": 1.0,
+   "top10_hits": 0,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "HAPLN2",
+   "actual_movers": 0,
+   "pred_magnitude": 1.0,
+   "top10_hits": 0,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "OR4N2",
+   "actual_movers": 0,
+   "pred_magnitude": 0.0,
+   "top10_hits": 0,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "CCT4",
+   "actual_movers": 8,
+   "pred_magnitude": 12.0,
+   "top10_hits": 1,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "ZMAT2",
+   "actual_movers": 0,
+   "pred_magnitude": 32.0,
+   "top10_hits": 0,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "CENPW",
+   "actual_movers": 0,
+   "pred_magnitude": 2.0,
+   "top10_hits": 0,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "ORC6",
+   "actual_movers": 3,
+   "pred_magnitude": 3.0,
+   "top10_hits": 1,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "HAUS1",
+   "actual_movers": 0,
+   "pred_magnitude": 7.0,
+   "top10_hits": 0,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "URB1",
+   "actual_movers": 0,
+   "pred_magnitude": 4.0,
+   "top10_hits": 0,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "DRAP1",
+   "actual_movers": 2,
+   "pred_magnitude": 1.0,
+   "top10_hits": 2,
+   "is_tf": 1,
+   "regulon_hits_of10": 0
+  },
+  {
+   "ko": "GPKOW",
+   "actual_movers": 3,
+   "pred_magnitude": 12.0,
+   "top10_hits": 0,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "GEMIN4",
+   "actual_movers": 5,
+   "pred_magnitude": 5.0,
+   "top10_hits": 0,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "SCAF1",
+   "actual_movers": 5,
+   "pred_magnitude": 1.0,
+   "top10_hits": 3,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "PSMB5",
+   "actual_movers": 25,
+   "pred_magnitude": 7.0,
+   "top10_hits": 3,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "MRPS12",
+   "actual_movers": 3,
+   "pred_magnitude": 8.0,
+   "top10_hits": 2,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "XRCC1",
+   "actual_movers": 0,
+   "pred_magnitude": 1.0,
+   "top10_hits": 0,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "ZNF335",
+   "actual_movers": 1,
+   "pred_magnitude": 2.0,
+   "top10_hits": 0,
+   "is_tf": 1,
+   "regulon_hits_of10": 0
+  },
+  {
+   "ko": "LRR1",
+   "actual_movers": 0,
+   "pred_magnitude": 4.0,
+   "top10_hits": 0,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "ERAL1",
+   "actual_movers": 1,
+   "pred_magnitude": 1.0,
+   "top10_hits": 1,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "CHMP1A",
+   "actual_movers": 7,
+   "pred_magnitude": 1.0,
+   "top10_hits": 1,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "SNRNP48",
+   "actual_movers": 8,
+   "pred_magnitude": 2.0,
+   "top10_hits": 3,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "NFS1",
+   "actual_movers": 3,
+   "pred_magnitude": 4.0,
+   "top10_hits": 1,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "SSBP1",
+   "actual_movers": 15,
+   "pred_magnitude": 1.0,
+   "top10_hits": 10,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "CKAP5",
+   "actual_movers": 0,
+   "pred_magnitude": 7.0,
+   "top10_hits": 0,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "CCT7",
+   "actual_movers": 26,
+   "pred_magnitude": 15.0,
+   "top10_hits": 2,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "RPL27",
+   "actual_movers": 129,
+   "pred_magnitude": 25.0,
+   "top10_hits": 10,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "OGT",
+   "actual_movers": 25,
+   "pred_magnitude": 11.0,
+   "top10_hits": 4,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "CTR9",
+   "actual_movers": 80,
+   "pred_magnitude": 30.0,
+   "top10_hits": 9,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "TFDP1",
+   "actual_movers": 1,
+   "pred_magnitude": 1.0,
+   "top10_hits": 1,
+   "is_tf": 1,
+   "regulon_hits_of10": 0
+  },
+  {
+   "ko": "C9orf78",
+   "actual_movers": 0,
+   "pred_magnitude": 0.0,
+   "top10_hits": 0,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "DDX23",
+   "actual_movers": 9,
+   "pred_magnitude": 16.0,
+   "top10_hits": 4,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "CUL3",
+   "actual_movers": 1,
+   "pred_magnitude": 4.0,
+   "top10_hits": 1,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "GTF3C1",
+   "actual_movers": 0,
+   "pred_magnitude": 2.0,
+   "top10_hits": 0,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "PNISR",
+   "actual_movers": 0,
+   "pred_magnitude": 1.0,
+   "top10_hits": 0,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "ZNF676",
+   "actual_movers": 0,
+   "pred_magnitude": 0.0,
+   "top10_hits": 0,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "RAD21",
+   "actual_movers": 11,
+   "pred_magnitude": 8.0,
+   "top10_hits": 2,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  },
+  {
+   "ko": "HBS1L",
+   "actual_movers": 83,
+   "pred_magnitude": 2.0,
+   "top10_hits": 8,
+   "is_tf": 0,
+   "regulon_hits_of10": null
+  }
+ ],
+ "magnitude_spearman_panel": 0.459,
+ "mean_top10_hits_deployment": 2.02,
+ "top10_STRONG_KOs (>=50 movers)": 9.0,
+ "n_strong": 7,
+ "top10_WEAK_KOs (<15 movers)": 0.81,
+ "n_weak": 48,
+ "n_TF_in_panel": 4,
+ "mean_regulon_hits_of10_for_TFs": 0.0,
+ "verdict": "FULL STACK on 60 held-out knockouts at honest deployment -- and it REFINES my own over-correction from before. (1) MAGNITUDE: predicted response size correlates with actual at Spearman 0.459 -- a usable order-of-magnitude 'how disruptive is this knockout'. (2) IDENTITY -- and here is the nuance I got wrong last turn: the top-10 deployment precision SCALES WITH KNOCKOUT STRENGTH. STRONG knockouts (>=50 genes move) get 9.0/10 in the top-10 on REAL full-universe deployment (RPL27 10/10, RBM25 10/10, EIF2S3 9/10) -- so the '9/10' is REAL, not a pure subsampling artifact; but WEAK knockouts get only 0.81/10, and the average is 2.02/10. The subsampling in the earlier eval inflated the AVERAGE to look uniformly 9/10; the truth is 9/10 for STRONG knockouts, ~1/10 for weak, ~2/10 on average -- and in all cases the hits are the GENERIC usual-suspect genes (a strong knockout moves so much of the transcriptome that predicting the usual movers lands), not protein-specific. (3) NEAR-FIELD: only 4 panel KOs are curated TFs and their regulon top-10 got 0.0/10 (too small a sample to conclude). BOTTOM LINE, measured at scale: the stack tells you HOW BIG the response is (Spearman 0.459), and WHICH genes with a precision that scales from ~9/10 for strong knockouts down to ~1/10 for weak ones -- but always the generic stress genes, never protein-unique. That is the honest, complete deployment picture, and it corrects both the inflated 9/10 AND my too-harsh 'it's just 1/10' retraction.",
+ "note": "Full-stack run on 60 held-out knockouts at honest deployment (train on rest, score every gene). MAGNITUDE Spearman 0.459 (usable order-of-magnitude). IDENTITY: top-10 deployment precision SCALES with knockout strength -- STRONG KOs (>=50 movers) get 9.0/10, WEAK (<15) 0.81/10, average 2.02/10. So the '9/10' is REAL for strong knockouts (not a pure subsampling artifact), ~1/10 for weak; the subsampling had inflated the AVERAGE to look uniformly 9/10; and in all cases the hits are generic usual-suspect genes, not protein-specific. NEAR-FIELD regulon top-10 0.0/10 for the 4 TF panel KOs (small sample). Corrects both the inflated 9/10 and the too-harsh 1/10 retraction: the honest deployment number scales from ~9/10 (strong) to ~1/10 (weak), always generic."
+}

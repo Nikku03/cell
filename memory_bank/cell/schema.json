@@ -1,0 +1,10 @@
+{
+ "state": "gene -> direction in {+1,-1}; absent means unknown",
+ "journal": "append-only ops: set | conflict | downgrade; replayable to state",
+ "edge_confidence": "the bank's own revised belief per edge, negative = contradicted",
+ "gates": {
+  "protein_present": "a regulator with no protein may not act",
+  "dbd_intact": "a regulator whose every isoform has a disrupted DBD may not act"
+ },
+ "carries_no_magnitude": true
+}

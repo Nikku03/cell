@@ -1,0 +1,190 @@
+{
+ "test": "loop_tf_network",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+    "bytes": 38524393,
+    "hash": "b857a72939e09be8",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/collectri_refs.tsv",
+    "bytes": 17027304,
+    "hash": "727afde23ff825e2",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/dorothea_ABCD.tsv",
+    "bytes": 27024514,
+    "hash": "3e5ecc1c18c2a16a",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/pert/knocktf_human_index.json",
+    "bytes": 1037070,
+    "hash": "8f59b3c937e7c541",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/pert/knocktf_deg",
+    "kind": "directory",
+    "files": 364,
+    "bytes": 102055888,
+    "hash": "2bb38950b461c02c",
+    "method": "sha256:tree"
+   }
+  ],
+  "coverage": {
+   "available": 612133,
+   "used": 612133,
+   "selection": "all",
+   "fraction": 1.0
+  },
+  "seed": 7601,
+  "controls": [
+   "block boundaries predeclared before the run",
+   "containment measured in both directions",
+   "block 3 left labelled UNIDENTIFIED rather than absorbed",
+   "KnockTF filtered on on-target log2FC BEFORE scoring",
+   "unit of analysis is the TF, not the edge",
+   "composition-matched null per TF",
+   "target-shuffle empirical null within TF (a SIGN permutation is inert in a single-sign arm)",
+   "constant-ACTIVATING sham predictor run as a mandatory guard",
+   "PMID leakage between curated edge and scoring dataset excluded"
+  ],
+  "note": "the curated network was already inside `reg`; what was missing was the block label, not the data",
+  "warnings": []
+ },
+ "gates": {
+  "G1 three blocks, two identified": false,
+  "G2 curated core separable and carries the signs": true,
+  "G3 activating signs agree with measured knockdowns": true,
+  "G4 repressing signs agree": false,
+  "G5 constant-activating guard fails as it must": false,
+  "G6 leakage measured and write additive": true
+ },
+ "n_reg": 612133,
+ "blocks": {
+  "1 CollecTRI": {
+   "rows": 55716,
+   "pairs": 53839,
+   "signed": 53124,
+   "sources": 1177
+  },
+  "2 DoRothEA": {
+   "rows": 222689,
+   "pairs": 222689,
+   "signed": 370,
+   "sources": 472
+  },
+  "3 UNIDENTIFIED": {
+   "rows": 333728,
+   "pairs": 333728,
+   "signed": 634,
+   "sources": 1212
+  }
+ },
+ "collectri_containment": 0.999839556258452,
+ "dorothea_containment": 0.999995924372659,
+ "block1_coverage": 0.8102305020524155,
+ "block2_coverage": 0.9980645653804184,
+ "signed_share_curated": 0.9814513745196571,
+ "ctcf_edges": 12122,
+ "ctcf_frac_binding_block": 0.9619699719518231,
+ "activating": {
+  "n_tf": 193,
+  "n_edges": 15692,
+  "mean_delta": 0.036684548393957066,
+  "sd": 0.12767519347541656,
+  "frac_positive": 0.6269430051813472,
+  "p": 0.00012508216233933533,
+  "leaked": 30,
+  "perm_mean": -0.0011159177444405803
+ },
+ "repressing": {
+  "n_tf": 114,
+  "n_edges": 2099,
+  "mean_delta": -0.00450171963439696,
+  "sd": 0.17875011607586255,
+  "frac_positive": 0.5350877192982456,
+  "p": 0.3903148818093376,
+  "leaked": 30,
+  "perm_mean": -0.01073109164373408
+ },
+ "guard_constant_activating": {
+  "n_tf": 209,
+  "n_edges": 18001,
+  "mean_delta": 0.028854747589695827,
+  "sd": 0.12416131709139305,
+  "frac_positive": 0.6172248803827751,
+  "p": 0.0019777544479957516,
+  "leaked": 30,
+  "perm_mean": -0.0002516802065314607
+ },
+ "n_knocktf": 364,
+ "bytes": 9647752,
+ "existing_fields_changed": [],
+ "seconds": 22.902019023895264,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 76 -- the TF layer: separate curated causal edges from the binding backbone,",
+  "  then test the signs against measured knockdowns",
+  "====================================================================================================",
+  "",
+  "     `reg` holds 612,133 rows over 16,492 genes",
+  "G1 THE 612k EDGES ARE THREE CONCATENATED BLOCKS, AND TWO ARE IDENTIFIED",
+  "     CollecTRI (OmniPath, fresh): 62,411 pairs, 57,753 signed",
+  "     DoRothEA A-D (OmniPath, fresh): 276,562 pairs",
+  "       block 1 CollecTRI       55,716 rows   53,839 pairs  1,177 sources  53,124 signed (95.3%)",
+  "       block 2 DoRothEA       222,689 rows  222,689 pairs    472 sources     370 signed ( 0.2%)",
+  "       block 3 UNIDENTIFIED   333,728 rows  333,728 pairs  1,212 sources     634 signed ( 0.2%)",
+  "     CollecTRI in-universe pairs present in `reg`: 0.9998  (block 1 covered by CollecTRI: 0.8102)",
+  "     DoRothEA  in-universe pairs present in `reg`: 1.0000  (block 2 covered by DoRothEA:  0.9981)",
+  "     block 3 is NOT IDENTIFIED. Fingerprint: 1,212 sources, max targets per source 370, median 335",
+  "       a hard cap near 370 targets/source is not reproduced by CollecTRI, DoRothEA A-E, ChEA3, TFLink, GTRD or ReMap.",
+  "       best remaining candidate is ENCODE TF ChIP (roster match only, edge set untested); hTFtarget could not be reached (DNS).",
+  "       It is left LABELLED UNIDENTIFIED rather than absorbed into a neighbour.",
+  "     G1 FAIL",
+  "",
+  "G2 THE CURATED CORE IS SEPARABLE AND CARRIES THE SIGNS",
+  "     54,128 signed rows in `reg`; 53,124 (98.1%) are in the curated block",
+  "     so `reg` is 9.1% curated-causal and 90.9% binding-or-unknown by row count",
+  "     CTCF, the largest 'regulator': 12,122 edges, 96.2% in the DoRothEA binding block, only 425 curated",
+  "     G2 PASS",
+  "",
+  "G3/G4/G5 SIGNS VERSUS MEASURED KNOCKDOWNS",
+  "     KnockTF datasets available: 364 (on-target <= -0.5, >= 8,000 genes, one per TF, filter fixed before scoring)",
+  "     G3 ACTIVATING arm",
+  "       193 TFs, 15,692 edges;  mean per-TF delta +0.0367  sd 0.1277  0.63 of TFs positive",
+  "       one-sided paired p 1.25e-04   target-shuffle null delta -0.00112   PMID-leaked edges excluded 30",
+  "     G4 REPRESSING arm",
+  "       114 TFs, 2,099 edges;  mean per-TF delta -0.0045  sd 0.1788  0.54 of TFs positive",
+  "       one-sided paired p 3.90e-01   target-shuffle null delta -0.01073   PMID-leaked edges excluded 30",
+  "     G5 GUARD: every edge relabelled ACTIVATING",
+  "       209 TFs, 18,001 edges;  mean per-TF delta +0.0289  sd 0.1242  0.62 of TFs positive",
+  "       one-sided paired p 1.98e-03   target-shuffle null delta -0.00025   PMID-leaked edges excluded 30",
+  "     G3 PASS   G4 FAIL (failure was predeclared)   G5 FAIL",
+  "     G5 FAILED, AND THAT REWRITES G3. A network carrying NO sign information -- every",
+  "     edge called activating -- clears the same bar. So G3 is measuring the global",
+  "     down-shift of a knockdown across a TF's regulon, not whether the signs are right.",
+  "     G3's PASS is therefore NOT evidence that the signs are correct. The only arm that",
+  "     can carry sign information is G4, because a repressing call predicts the OPPOSITE",
+  "     direction to the down-shift, and G4 is where the answer actually is.",
+  "",
+  "G6 LEAKAGE AND THE WRITE",
+  "     tiers: curated_causal 55,716, binding_hts 222,689, unidentified 333,728",
+  "     DoRothEA confidence levels available for the binding tier: {'A': 6077, 'D': 244276, 'C': 17166, 'B': 9029, 'A;D': 3, 'B;D': 8, 'C;D': 3}",
+  "     wrote 9.6 MB; cell_complete.json fields changed: 0",
+  "     G6 PASS",
+  "",
+  "  FAIL  G1 three blocks, two identified",
+  "  PASS  G2 curated core separable and carries the signs",
+  "  PASS  G3 activating signs agree with measured knockdowns",
+  "  FAIL  G4 repressing signs agree",
+  "  FAIL  G5 constant-activating guard fails as it must",
+  "  PASS  G6 leakage measured and write additive",
+  "    manifest: 5 inputs, coverage 612133/612133 (100.0%) by 'all', seed 7601, controls 9"
+ ]
+}

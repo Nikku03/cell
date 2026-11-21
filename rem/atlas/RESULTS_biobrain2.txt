@@ -1,0 +1,11 @@
+=================================================================================================
+BIOBRAIN B2 -- use 5: new claims on the AlphaGenome 2 data, the brain's neuro rules (declared before they ran)
+=================================================================================================
+  claim         threshold    dev  pass/qualify  controls +/-        p        q  verdict (expected)
+  coexpressed        0.64  0.726     10/10        10/10        0.00098   0.0059  PASS (pass)
+  module_alike       0.51  0.518      8/10        10/10          0.055    0.082  FAIL (uncertain (small dev effect))
+  promoter           0.59  0.645      7/10        10/10           0.17     0.21  FAIL (pass)
+  per subject (measure, null p):
+    coexpressed   lung 0.733 (p 0.005); brain 0.753 (p 0.005); small intestine 0.707 (p 0.005); colon 0.745 (p 0.005); liver 0.715 (p 0.005); kidney 0.742 (p 0.005); bone marrow 0.721 (p 0.005); skin of body 0.696 (p 0.005); eye 0.761 (p 0.005); lymph node 0.708 (p 0.005)
+    module_alike  K562-A 0.520 (p 0.005); K562-ess 0.490 (p 1.000); RPE1 0.553 (p 0.005); HepG2 0.575 (p 0.005); Jurkat 0.498 (p 0.910); HCT116 0.513 (p 0.005); HEK293T 0.520 (p 0.005); iPSC-N 0.513 (p 0.005); iPSC-Fsf 0.511 (p 0.025); hESC-P 0.519 (p 0.005)
+    promoter      CD4-positive, alpha-beta T cell 0.685 (p 0.078); dorsolateral prefrontal cortex 0.725 (p 0.009); CD8-positive, alpha-beta T cell 0.694 (p 0.088); T-cell 0.670 (p 0.106); A549 0.698 (p 0.005); CD14-positive monocyte 0.667 (p 0.009); HCT116 0.700 (p 0.005); inflammatory macrophage 0.707 (p 0.005); GM12878 0.791 (p 0.005); HepG2 0.742 (p 0.005)

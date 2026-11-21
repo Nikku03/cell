@@ -1,0 +1,113 @@
+{
+ "n_same_slot": 55791,
+ "n_diff_slot": 20214,
+ "codep_same_slot_median": 0.009213479235768318,
+ "codep_diff_slot_median": 0.007105955854058266,
+ "diff_minus_same": -0.0021075233817100525,
+ "mwu_less_p": 0.999999980751256,
+ "mwu_not_both_ess_p": 0.9999578842223994,
+ "shuffle_gap_mean": 1.764849293977022e-05,
+ "shuffle_gap_sd": 0.0004962875427145473,
+ "domain_gate_real": false,
+ "demo_SDHB": {
+  "knockout": "SDHB",
+  "layers": [
+   {
+    "level": 1,
+    "n_affected": 18,
+    "disrupted": 3,
+    "edges": [
+     [
+      "SDHB",
+      "ACAD11",
+      "freed(competition)"
+     ],
+     [
+      "SDHB",
+      "ACSF3",
+      "freed(competition)"
+     ],
+     [
+      "SDHB",
+      "CHCHD4",
+      "freed(competition)"
+     ],
+     [
+      "SDHB",
+      "D2HGDH",
+      "freed(competition)"
+     ],
+     [
+      "SDHB",
+      "HARS2",
+      "freed(competition)"
+     ],
+     [
+      "SDHB",
+      "PAPLN",
+      "freed(competition)"
+     ],
+     [
+      "SDHB",
+      "POLG",
+      "freed(competition)"
+     ],
+     [
+      "SDHB",
+      "PREPL",
+      "freed(competition)"
+     ]
+    ]
+   },
+   {
+    "level": 2,
+    "n_affected": 25,
+    "disrupted": 0,
+    "edges": [
+     [
+      "SDHA",
+      "ASS1",
+      "freed(competition)"
+     ],
+     [
+      "SDHA",
+      "CHCHD4",
+      "freed(competition)"
+     ],
+     [
+      "SDHA",
+      "GDF15",
+      "freed(competition)"
+     ],
+     [
+      "SDHA",
+      "KIF2C",
+      "freed(competition)"
+     ],
+     [
+      "SDHA",
+      "NDUFS8",
+      "freed(competition)"
+     ],
+     [
+      "SDHA",
+      "PDP1",
+      "freed(competition)"
+     ],
+     [
+      "SDHA",
+      "PDSS1",
+      "freed(competition)"
+     ],
+     [
+      "SDHA",
+      "PDSS2",
+      "freed(competition)"
+     ]
+    ]
+   }
+  ]
+ },
+ "verdict": "DOMAIN-GATED KNOCKOUT PROPAGATION -- the user's algorithm, built with the data we have (domains + DDI-inferred slots + obligate propagation). THE DECISIVE TEST (does the DOMAIN same-slot/different-slot gate carry the competition signal the crude 'never-co-complex' proxy in competitive_codep MISSED?): among hub partner-pairs, SAME-slot (competitive) co-dependency median 0.009 vs DIFFERENT-slot (simultaneous) 0.007 (delta +0.002, MWU-less p=1.0e+00); shuffle control real gap -0.002 vs shuffled +0.000. RESULT / HONEST NEGATIVE: the DOMAIN same-slot vs different-slot gate does NOT separate co-dependency beyond the shuffle/essentiality baseline (real gap indistinguishable from the shuffled control). So the DDI-inferred domain slot -- our best no-GPU proxy for 'which part binds what' -- is too noisy to call competition, same wall competitive_codep hit with the cruder proxy. The propagate_ko(A) tool still runs (it highlights the direct+obligate-propagated affected PPIs), but the SAME-vs-DIFFERENT-slot GATE that would decide 'can the next PPI still form' is not reliable from inferred domains -- it needs residue-level interfaces (GPU/Interactome3D), the same gap every version of this idea reaches. HONEST BOUND: domain slots are INFERRED from DDI co-occurrence (a ~0.6-quality proxy), assembly ORDER and A-induced conformational dependence are absent, and the readout is protein co-dependency (functional), not residue-level interface energy.",
+ "note": "DOMAIN-GATED KNOCKOUT PROPAGATION -- the user's algorithm, built with the data we have (domains + DDI-inferred slots + obligate propagation). THE DECISIVE TEST (does the DOMAIN same-slot/different-slot gate carry the competition signal the crude 'never-co-complex' proxy in competitive_codep MISSED?): among hub partner-pairs, SAME-slot (competitive) co-dependency median 0.009 vs DIFFERENT-slot (simultaneous) 0.007 (delta +0.002, MWU-less p=1.0e+00); shuffle control real gap -0.002 vs shuffled +0.000. RESULT / HONEST NEGATIVE: the DOMAIN same-slot vs different-slot gate does NOT separate co-dependency beyond the shuffle/essentiality baseline (real gap indistinguishable from the shuffled control). So the DDI-inferred domain slot -- our best no-GPU proxy for 'which part binds what' -- is too noisy to call competition, same wall competitive_codep hit with the cruder proxy. The propagate_ko(A) tool still runs (it highlights the direct+obligate-propagated affected PPIs), but the SAME-vs-DIFFERENT-slot GATE that would decide 'can the next PPI still form' is not reliable from inferred domains -- it needs residue-level interfaces (GPU/Interactome3D), the same gap every version of this idea reaches. HONEST BOUND: domain slots are INFERRED from DDI co-occurrence (a ~0.6-quality proxy), assembly ORDER and A-induced conformational dependence are absent, and the readout is protein co-dependency (functional), not residue-level interface energy."
+}

@@ -1,0 +1,13 @@
+=================================================================================================
+CELLBANK10 -- THE EXAM HALF, THIRD READ (scored once for these gates)
+=================================================================================================
+  EXAM genes 1181; ceiling 0.458; arms: median r | specific r | fraction of ceiling
+     M2   cellbank8 model, rerun              +0.269 | +0.106 | 59%
+     M10a + K562 context (use 1)              +0.270 | +0.103 | 59%
+     M10b context-aware translation (use 2)   +0.270 | +0.107 | 59%
+     M10  both                                +0.272 | +0.106 | 59%
+  U1 use 1, M10a vs M2, r: better 639 / worse 542, median +0.0009, p 0.0052 -> NO DIFFERENCE
+  U2 use 1, confidence Spearman: base +0.481, + context +0.484, gain +0.003, bootstrap 2.5% -0.008 -> NO IMPROVEMENT
+  U3 use 1, off -> no effect: 3/5 screens -> FAIL  (HepG2 rho +0.14 n 1854; Jurkat rho +0.10 n 1949; HCT116 rho +0.21 n 4690; iPSC-N rho +0.29 n 4279; hESC-P rho +0.05 n 2211)
+  U4 use 2, M10b vs M2, r: better 611 / worse 570, median +0.0003, p 0.24 -> NO DIFFERENCE
+  (descriptive) M10 vs M2: better 635 / worse 546, median +0.0007, p 0.01

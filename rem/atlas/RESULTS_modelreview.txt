@@ -1,0 +1,39 @@
+=================================================================================================
+POST-HOC MODEL REVIEW (descriptive; nothing here was predeclared)
+=================================================================================================
+R1 THE CEILING OF THE REPRESENTATION (a perfect prediction inside the 128 components)
+   all 2,525 TEST knockdowns: median r 0.451   [the engine's best overall figure in the ledger: 0.26]
+      weakest quarter    of responses: ceiling 0.438
+      2nd quarter        of responses: ceiling 0.423
+      3rd quarter        of responses: ceiling 0.451
+      strongest quarter  of responses: ceiling 0.608
+   how much of it the first k components give (a perfect prediction of only those):
+      k=1: 0.176   k=2: 0.273   k=3: 0.296   k=5: 0.333   k=10: 0.360   k=20: 0.389   k=50: 0.426   k=128: 0.451
+   two different genes' measured responses: mean r +0.067, mean |r| 0.269 (800 random TEST genes)
+
+R2 TRIVIAL BASELINES, SCORED LIKE THE ENGINE (median r on the same TEST genes and measured answers)
+   ridge map: 991 TRAIN genes, lambda 1 chosen by 5-fold CV inside TRAIN
+   has an RPE1 record (n 980); engine in the ledger: E2 0.350 (cellbank4 post-hoc)
+      ceiling 0.592 | copy RPE1 0.186 | copy HepG2 0.188 | copy Jurkat 0.266 | average of own records 0.254 | ridge from own records (a constant guess where there are none) 0.378
+      partners' mean 0.267 | co-essential mean 0.236 | the gene's K562-essential replicate, bank record 0.437 | ridge from the RPE1 record alone 0.350
+   has a HepG2 or Jurkat record (n 922); engine in the ledger: E3 0.377, E2 0.355 (cellbank5 G5)
+      ceiling 0.601 | copy RPE1 0.203 | copy HepG2 0.189 | copy Jurkat 0.266 | average of own records 0.272 | ridge from own records (a constant guess where there are none) 0.400
+      partners' mean 0.280 | co-essential mean 0.248 | the gene's K562-essential replicate, bank record 0.449 | ridge from the RPE1 record alone 0.369
+   has all three (RPE1, HepG2, Jurkat) (n 668); engine in the ledger: E3 0.430, E2 0.419 (cellbank5)
+      ceiling 0.629 | copy RPE1 0.222 | copy HepG2 0.193 | copy Jurkat 0.281 | average of own records 0.305 | ridge from own records (a constant guess where there are none) 0.454
+      partners' mean 0.341 | co-essential mean 0.291 | the gene's K562-essential replicate, bank record 0.479 | ridge from the RPE1 record alone 0.418
+   has none (unmeasured elsewhere) (n 1,518); engine in the ledger: E3 0.217 (cellbank5)
+      ceiling 0.406 | copy RPE1 - | copy HepG2 - | copy Jurkat - | average of own records - | ridge from own records (a constant guess where there are none) 0.131
+      partners' mean 0.057 | co-essential mean 0.112 | the gene's K562-essential replicate, bank record 0.308 | ridge from the RPE1 record alone -
+   all TEST genes (n 2,525); engine in the ledger: E3 0.255-0.259 (three identical reruns)
+      ceiling 0.451 | copy RPE1 0.186 | copy HepG2 0.189 | copy Jurkat 0.266 | average of own records 0.251 | ridge from own records (a constant guess where there are none) 0.187
+      partners' mean 0.127 | co-essential mean 0.141 | the gene's K562-essential replicate, bank record 0.431 | ridge from the RPE1 record alone 0.350
+
+R3 HOW CONCENTRATED THE ENGINE'S RECALL IS (its 3 top recalled experiments per gene, as stored)
+   full-bank engine (cellbank4, 50 random TEST genes): 150 recalls use 12 distinct records of ~8,500; top 4 = 86%: YWHAE x46, DECR1 x41, YWHAZ x22, PTEN [RPE1] x20, RAN [RPE1] x7, RAN [K562-ess] x6
+   screen-A engine (claudeloop, 100 random TEST genes; first 3 listed memories): 300 use 26 distinct of 2,527; top 4 = 69%: M-RBAK x65, M-RB1 x63, M-TCF15 x54, M-ZNF300 x26, M-DMRT2 x21, M-CDKN1B x15
+
+R4 HOW ALIKE THE ENGINE'S TOP PREDICTIONS ARE ACROSS GENES (stored prompts)
+   50 genes: 33 are predicted as 'mitochondrial RNA processing up, lysosome (MITF) genes down'; 17 distinct (top rise, top fall) pairs
+   most common predicted rises: tRNA processing in the mitochondrion x35; FASTK family proteins regulate processing and x35; Mitochondrial RNA degradation x22
+   most common predicted falls: Regulation of MITF-M-dependent genes involved x38; ROS and RNS production in phagocytes x31; Glycosphingolipid catabolism x18

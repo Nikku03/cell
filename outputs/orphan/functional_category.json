@@ -1,0 +1,25 @@
+{
+ "n_spec": 14551,
+ "enrichment_by_cat": {
+  "aminoacyl_tRNA": 0.17,
+  "ribosome_translation": 4.51,
+  "RNA_polymerase_transcr": 0.91,
+  "DNA_pol_replication": 0.47,
+  "transporter_channel": 1.08,
+  "mito_import": 0.42,
+  "nuclear_transport": 0.58,
+  "proteostasis": 0.92,
+  "coenzyme_biosynth": 3.57,
+  "metabolic_enzyme": 0.98
+ },
+ "enriched_categories": [
+  "ribosome_translation",
+  "coenzyme_biosynth"
+ ],
+ "frac_in_enriched_machinery": 0.1499,
+ "frac_in_any_machinery": 0.3528,
+ "any_enrichment": 1.358,
+ "ko_profile_mean_corr": 0.153,
+ "verdict": "FUNCTIONAL CATEGORY (functional_category.py): are the tide-removed SPECIFIC movers the functional MACHINERY (tRNA/ribosome, RNA/DNA-pol, transporter, import, metabolic enzyme, coenzyme, proteostasis)? K562, 14,551 pooled specific movers. HONEST answer: mostly NO. Of the 10 machinery categories, only 2 are genuinely enriched (>=1.5x): ribosome_translation 4.5x, coenzyme_biosynth 3.6x. The big categories are at BACKGROUND -- metabolic_enzyme 0.98x (18% of the genome, so 18% of movers is just chance), transporter 1.08x, RNA-pol 0.91x. So the '35% fall in some machine' is inflated by that background; only ~15% sit in a genuinely-enriched machine, and that is almost entirely RIBOSOME/TRANSLATION (4.5x). KO-to-KO category-profile correlation +0.15 (low), so what enrichment there is is somewhat knockout-specific. READING: the idea labels a real but NARROW slice -- the translation-machinery response (a known growth/stress module) -- not the broad tRNA/pol/transporter/coenzyme machinery hypothesized; metabolic enzymes and transporters move only at chance. The specific residue is not, in general, 'the cell's machines'; it stays idiosyncratic. Deterministic.",
+ "note": "FUNCTIONAL CATEGORY (functional_category.py): are the tide-removed SPECIFIC movers the functional MACHINERY (tRNA/ribosome, RNA/DNA-pol, transporter, import, metabolic enzyme, coenzyme, proteostasis)? K562, 14,551 pooled specific movers. HONEST answer: mostly NO. Of the 10 machinery categories, only 2 are genuinely enriched (>=1.5x): ribosome_translation 4.5x, coenzyme_biosynth 3.6x. The big categories are at BACKGROUND -- metabolic_enzyme 0.98x (18% of the genome, so 18% of movers is just chance), transporter 1.08x, RNA-pol 0.91x. So the '35% fall in some machine' is inflated by that background; only ~15% sit in a genuinely-enriched machine, and that is almost entirely RIBOSOME/TRANSLATION (4.5x). KO-to-KO category-profile correlation +0.15 (low), so what enrichment there is is somewhat knockout-specific. READING: the idea labels a real but NARROW slice -- the translation-machinery response (a known growth/stress module) -- not the broad tRNA/pol/transporter/coenzyme machinery hypothesized; metabolic enzymes and transporters move only at chance. The specific residue is not, in general, 'the cell's machines'; it stays idiosyncratic. Deterministic."
+}

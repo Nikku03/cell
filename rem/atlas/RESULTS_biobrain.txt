@@ -1,0 +1,14 @@
+=================================================================================================
+BIOBRAIN -- the brain's neuro engine pointed at the cell: claims declared before they ran
+=================================================================================================
+  dev subject K562-A TRAIN genes (thresholds set there only); verdict on 10 screens nothing looked at
+  claim     threshold    dev  pass/qualify  controls +/-        p        q  verdict (expected)
+  alike          0.75  0.913      9/10        10/10          0.011    0.016  PASS (pass)
+  rebuild        0.40  0.645      9/10        10/10          0.011    0.016  PASS (pass)
+  transfer       0.30    -        5/10        10/10           0.62     0.62  FAIL (pass)
+  per subject (measure, null p):
+    alike     K562-A +0.907 (p 0.005); K562-ess +0.899 (p 0.005); RPE1 +0.935 (p 0.005); HepG2 +0.862 (p 0.005); Jurkat +0.895 (p 0.005); HCT116 +0.848 (p 0.005); HEK293T +0.861 (p 0.005); iPSC-N +0.739 (p 0.005); iPSC-Fsf +0.809 (p 0.005); hESC-P +0.866 (p 0.005)
+    rebuild   K562-A +0.629 (p 0.005); K562-ess +0.853 (p 0.005); RPE1 +0.789 (p 0.005); HepG2 +0.677 (p 0.005); Jurkat +0.714 (p 0.005); HCT116 +0.560 (p 0.005); HEK293T +0.498 (p 0.005); iPSC-N +0.133 (p 0.005); iPSC-Fsf +0.456 (p 0.005); hESC-P +0.524 (p 0.005)
+    transfer  K562-A +0.657 (p 0.005); K562-ess +0.638 (p 0.005); RPE1 +0.438 (p 0.005); HepG2 +0.340 (p 0.005); Jurkat +0.361 (p 0.005); HCT116 +0.279 (p 0.005); HEK293T +0.279 (p 0.005); iPSC-N +0.117 (p 0.005); iPSC-Fsf +0.264 (p 0.005); hESC-P +0.280 (p 0.005)
+  descriptive, no verdict -- pathway-only pairs (same Reactome pathway, no shared complex), AUROC (null p):
+    K562-A 0.568 (0.005); K562-ess 0.545 (0.005); RPE1 0.580 (0.005); HepG2 0.557 (0.005); Jurkat 0.508 (0.692); HCT116 0.562 (0.005); HEK293T 0.580 (0.005); iPSC-N 0.546 (0.005); iPSC-Fsf 0.551 (0.005); hESC-P 0.573 (0.005)

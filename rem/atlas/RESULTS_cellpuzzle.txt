@@ -1,0 +1,6 @@
+=================================================================================================
+THE JIGSAW AND THE MAZE: ONE DIRECT MAP FROM EVERY KNOCKDOWN, THEN EVERY KNOCKDOWN RUN THROUGH IT
+=================================================================================================
+  P0 fake cell (600 genes, 300 knockdowns): direct edges AUROC 0.806 (sources never knocked down 0.657); direction right 71.9%; maze for never-knocked-down genes median r +0.087 -> FAIL
+     reported: on knocked-down sources, direct map AUROC 0.987 vs noisy total effects 0.996
+  P0 FAILED: the method does not recover a known map; nothing on real data is run.

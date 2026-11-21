@@ -1,0 +1,2679 @@
+{
+  "A549 lung (KRAS G12S)": {
+    "panel": [
+      [
+        "KRAS",
+        12
+      ],
+      [
+        "STK11",
+        50
+      ],
+      [
+        "CDKN2A",
+        58
+      ],
+      [
+        "TTN",
+        15000
+      ]
+    ],
+    "layers_active": {
+      "ddg": "on",
+      "emask": true,
+      "cellgraph": true,
+      "depmap": true
+    },
+    "A_molecular": [
+      {
+        "gene": "KRAS",
+        "role": "oncogene",
+        "effect": "GOF (activated)",
+        "clamp": 1,
+        "in_domain": null,
+        "selective_dep_rank": 5,
+        "ddg": -0.25,
+        "ddg_note": "stability-neutral"
+      },
+      {
+        "gene": "STK11",
+        "role": "suppressor",
+        "effect": "LOF (lost)",
+        "clamp": -1,
+        "in_domain": [
+          "Protein kinase"
+        ],
+        "selective_dep_rank": 10790,
+        "ddg": null
+      },
+      {
+        "gene": "CDKN2A",
+        "role": "suppressor",
+        "effect": "LOF (lost)",
+        "clamp": -1,
+        "in_domain": null,
+        "selective_dep_rank": 12801,
+        "ddg": 0.56,
+        "ddg_note": "stability-neutral"
+      },
+      {
+        "gene": "TTN",
+        "role": "unknown",
+        "effect": "LOF? (disease-linked)",
+        "clamp": -1,
+        "in_domain": [
+          "Fibronectin type-III 8"
+        ],
+        "selective_dep_rank": 3097,
+        "ddg": null
+      }
+    ],
+    "B_pathway": {
+      "up": [
+        {
+          "pathway": "RAS GTPase cycle mutants",
+          "delta": 0.332,
+          "n_perturbed": 3,
+          "score": 0.575
+        },
+        {
+          "pathway": "Signaling by RAS GAP mutants",
+          "delta": 0.332,
+          "n_perturbed": 3,
+          "score": 0.575
+        },
+        {
+          "pathway": "Signaling by RAS GTPase mutants",
+          "delta": 0.332,
+          "n_perturbed": 3,
+          "score": 0.575
+        },
+        {
+          "pathway": "Activation of RAS in B cells",
+          "delta": 0.249,
+          "n_perturbed": 4,
+          "score": 0.498
+        },
+        {
+          "pathway": "RAS signaling downstream of NF1 loss-of-function variants",
+          "delta": 0.199,
+          "n_perturbed": 5,
+          "score": 0.445
+        },
+        {
+          "pathway": "Estrogen-stimulated signaling through PRKCZ",
+          "delta": 0.169,
+          "n_perturbed": 6,
+          "score": 0.415
+        }
+      ],
+      "lost": [
+        {
+          "pathway": "Diseases of Cellular Senescence",
+          "delta": -0.278,
+          "n_perturbed": 3,
+          "score": -0.482
+        },
+        {
+          "pathway": "Diseases of cellular response to stress",
+          "delta": -0.278,
+          "n_perturbed": 3,
+          "score": -0.482
+        },
+        {
+          "pathway": "Evasion of Oncogene Induced Senescence Due to Defective p16INK4A binding to CDK4 and CDK6",
+          "delta": -0.278,
+          "n_perturbed": 3,
+          "score": -0.482
+        },
+        {
+          "pathway": "Evasion of Oncogene Induced Senescence Due to p16INK4A Defects",
+          "delta": -0.278,
+          "n_perturbed": 3,
+          "score": -0.482
+        },
+        {
+          "pathway": "Evasion of Oxidative Stress Induced Senescence Due to Defective p16INK4A binding to CDK4 and CDK6",
+          "delta": -0.278,
+          "n_perturbed": 3,
+          "score": -0.482
+        },
+        {
+          "pathway": "Evasion of Oxidative Stress Induced Senescence Due to p16INK4A Defects",
+          "delta": -0.278,
+          "n_perturbed": 3,
+          "score": -0.482
+        }
+      ],
+      "n_genes_perturbed": 77
+    },
+    "C_regulatory": [],
+    "D_complexes_disrupted": [
+      {
+        "complex": "LKB1-STRAD-MO25 serine/threonine protein kinase complex, CAB39L-STRADA variant",
+        "lost_subunits": [
+          "STK11"
+        ]
+      },
+      {
+        "complex": "LKB1-STRAD-MO25 serine/threonine protein kinase complex, CAB39-STRADA variant",
+        "lost_subunits": [
+          "STK11"
+        ]
+      },
+      {
+        "complex": "LKB1-STRAD-MO25 serine/threonine protein kinase complex, CAB39-STRADB variant",
+        "lost_subunits": [
+          "STK11"
+        ]
+      },
+      {
+        "complex": "LKB1-STRAD-MO25 serine/threonine protein kinase complex, CAB39L-STRADB variant",
+        "lost_subunits": [
+          "STK11"
+        ]
+      },
+      {
+        "complex": "Titin-Telethonin complex",
+        "lost_subunits": [
+          "TTN"
+        ]
+      }
+    ],
+    "E_metabolic_genes_hit": [],
+    "F_dependency": {
+      "coessential_with_driver": {
+        "KRAS": [
+          [
+            0.421,
+            "DOCK5"
+          ],
+          [
+            0.394,
+            "RAF1"
+          ],
+          [
+            0.322,
+            "TCF7L2"
+          ],
+          [
+            0.3,
+            "FERMT1"
+          ],
+          [
+            0.283,
+            "RAB10"
+          ]
+        ]
+      },
+      "synthetic_lethal_of_lost_suppressors": [],
+      "context_selective_dependencies_genomewide": [
+        [
+          "PAX8",
+          -6.9
+        ],
+        [
+          "SOX10",
+          -7.2
+        ],
+        [
+          "HNF1B",
+          -5.7
+        ],
+        [
+          "EBF1",
+          -7.3
+        ],
+        [
+          "BRAF",
+          -6.6
+        ],
+        [
+          "KRAS",
+          -6.4
+        ],
+        [
+          "IRF4",
+          -8.3
+        ],
+        [
+          "PAX5",
+          -11.3
+        ],
+        [
+          "TCF7L2",
+          -6.1
+        ],
+        [
+          "MYB",
+          -6.2
+        ],
+        [
+          "CCND2",
+          -8.4
+        ],
+        [
+          "SMARCA2",
+          -8.7
+        ]
+      ]
+    },
+    "G_cellgraph_perturbation": {
+      "n_affected": 14889,
+      "top_down": [
+        [
+          "TP53",
+          -20.375
+        ],
+        [
+          "CDKN1A",
+          -18.875
+        ],
+        [
+          "TRIP12",
+          -16.875
+        ],
+        [
+          "MUC1",
+          -15.875
+        ],
+        [
+          "CHD1L",
+          -15.375
+        ],
+        [
+          "PLEKHA1",
+          -14.875
+        ],
+        [
+          "MARCHF7",
+          -14.5
+        ],
+        [
+          "TGIF1",
+          -14.0
+        ]
+      ],
+      "top_up": [
+        [
+          "BCL2",
+          7.875
+        ],
+        [
+          "BIRC5",
+          7.125
+        ],
+        [
+          "ABCB1",
+          6.5
+        ],
+        [
+          "PCK1",
+          6.125
+        ],
+        [
+          "CCNE1",
+          5.875
+        ],
+        [
+          "MUC4",
+          5.625
+        ],
+        [
+          "CDK4",
+          5.625
+        ],
+        [
+          "PPARG",
+          5.375
+        ]
+      ]
+    },
+    "H_tissue_baseline": {
+      "tissue_types_matched": [
+        "kidney distal convoluted tubule epithelial cell",
+        "kidney loop of Henle thick ascending limb epithelial cell",
+        "epithelial cell of proximal tubule",
+        "choroid plexus epithelial cell",
+        "epithelial cell of lower respiratory tract",
+        "epithelial cell of lung"
+      ],
+      "n_types": 14
+    },
+    "conclusion": {
+      "driver": "KRAS",
+      "phenotype_pathways_up": [
+        "RAS GTPase cycle mutants",
+        "Signaling by RAS GAP mutants",
+        "Signaling by RAS GTPase mutants",
+        "Activation of RAS in B cells"
+      ],
+      "phenotype_pathways_lost": [
+        "Diseases of Cellular Senescence",
+        "Diseases of cellular response to stress",
+        "Evasion of Oncogene Induced Senescence Due to Defective p16INK4A binding to CDK4 and CDK6",
+        "Evasion of Oncogene Induced Senescence Due to p16INK4A Defects"
+      ],
+      "dependency_targets": {
+        "coessential_with_driver": {
+          "KRAS": [
+            [
+              0.421,
+              "DOCK5"
+            ],
+            [
+              0.394,
+              "RAF1"
+            ],
+            [
+              0.322,
+              "TCF7L2"
+            ],
+            [
+              0.3,
+              "FERMT1"
+            ],
+            [
+              0.283,
+              "RAB10"
+            ]
+          ]
+        },
+        "synthetic_lethal_of_lost_suppressors": [],
+        "context_selective_dependencies_genomewide": [
+          [
+            "PAX8",
+            -6.9
+          ],
+          [
+            "SOX10",
+            -7.2
+          ],
+          [
+            "HNF1B",
+            -5.7
+          ],
+          [
+            "EBF1",
+            -7.3
+          ],
+          [
+            "BRAF",
+            -6.6
+          ],
+          [
+            "KRAS",
+            -6.4
+          ],
+          [
+            "IRF4",
+            -8.3
+          ],
+          [
+            "PAX5",
+            -11.3
+          ],
+          [
+            "TCF7L2",
+            -6.1
+          ],
+          [
+            "MYB",
+            -6.2
+          ],
+          [
+            "CCND2",
+            -8.4
+          ],
+          [
+            "SMARCA2",
+            -8.7
+          ]
+        ]
+      }
+    }
+  },
+  "HEL (JAK2 V617F)": {
+    "panel": [
+      [
+        "JAK2",
+        617
+      ],
+      [
+        "TP53",
+        248
+      ],
+      [
+        "TTN",
+        7000
+      ]
+    ],
+    "layers_active": {
+      "ddg": "on",
+      "emask": true,
+      "cellgraph": true,
+      "depmap": true
+    },
+    "A_molecular": [
+      {
+        "gene": "JAK2",
+        "role": "oncogene",
+        "effect": "GOF (activated)",
+        "clamp": 1,
+        "in_domain": [
+          "Protein kinase 1"
+        ],
+        "selective_dep_rank": 3297,
+        "ddg": null
+      },
+      {
+        "gene": "TP53",
+        "role": "suppressor",
+        "effect": "LOF (lost)",
+        "clamp": -1,
+        "in_domain": null,
+        "selective_dep_rank": null,
+        "ddg": 0.73,
+        "ddg_note": "mildly destabilizing"
+      },
+      {
+        "gene": "TTN",
+        "role": "unknown",
+        "effect": "LOF? (disease-linked)",
+        "clamp": -1,
+        "in_domain": [
+          "Ig-like 51"
+        ],
+        "selective_dep_rank": 3097,
+        "ddg": null
+      }
+    ],
+    "B_pathway": {
+      "up": [
+        {
+          "pathway": "Erythropoietin activates STAT5",
+          "delta": 0.156,
+          "n_perturbed": 7,
+          "score": 0.413
+        },
+        {
+          "pathway": "Interleukin-23 signaling",
+          "delta": 0.152,
+          "n_perturbed": 7,
+          "score": 0.401
+        },
+        {
+          "pathway": "Erythropoietin activates Phospholipase C gamma (PLCG)",
+          "delta": 0.15,
+          "n_perturbed": 7,
+          "score": 0.398
+        },
+        {
+          "pathway": "IFNG signaling activates MAPKs",
+          "delta": 0.137,
+          "n_perturbed": 8,
+          "score": 0.388
+        },
+        {
+          "pathway": "Interleukin-27 signaling",
+          "delta": 0.135,
+          "n_perturbed": 8,
+          "score": 0.381
+        },
+        {
+          "pathway": "MAPK1 (ERK2) activation",
+          "delta": 0.133,
+          "n_perturbed": 8,
+          "score": 0.376
+        }
+      ],
+      "lost": [
+        {
+          "pathway": "Transcriptional  activation of  cell cycle inhibitor p21",
+          "delta": -0.334,
+          "n_perturbed": 3,
+          "score": -0.578
+        },
+        {
+          "pathway": "Transcriptional activation of p53 responsive genes",
+          "delta": -0.334,
+          "n_perturbed": 3,
+          "score": -0.578
+        },
+        {
+          "pathway": "Activation of NOXA and translocation to mitochondria",
+          "delta": -0.25,
+          "n_perturbed": 4,
+          "score": -0.501
+        },
+        {
+          "pathway": "Negative transcriptional regulation of urea cycle enzymes",
+          "delta": -0.25,
+          "n_perturbed": 4,
+          "score": -0.5
+        },
+        {
+          "pathway": "Striated Muscle Contraction",
+          "delta": -0.116,
+          "n_perturbed": 13,
+          "score": -0.418
+        },
+        {
+          "pathway": "RUNX3 regulates CDKN1A transcription",
+          "delta": -0.143,
+          "n_perturbed": 7,
+          "score": -0.378
+        }
+      ],
+      "n_genes_perturbed": 57
+    },
+    "C_regulatory": [
+      {
+        "tf": "TP53",
+        "effect": "LOF (lost)",
+        "n_targets": 3150
+      }
+    ],
+    "D_complexes_disrupted": [
+      {
+        "complex": "TP53-MDM4 transcription regulation complex",
+        "lost_subunits": [
+          "TP53"
+        ]
+      },
+      {
+        "complex": "TP53-MDM2 transcription regulation complex",
+        "lost_subunits": [
+          "TP53"
+        ]
+      },
+      {
+        "complex": "TP53-MDM2-MDM4 transcription regulation complex",
+        "lost_subunits": [
+          "TP53"
+        ]
+      },
+      {
+        "complex": "Titin-Telethonin complex",
+        "lost_subunits": [
+          "TTN"
+        ]
+      }
+    ],
+    "E_metabolic_genes_hit": [],
+    "F_dependency": {
+      "coessential_with_driver": {
+        "JAK2": [
+          [
+            0.376,
+            "CSF2RB"
+          ],
+          [
+            0.328,
+            "RUNX1"
+          ],
+          [
+            0.297,
+            "ZNF732"
+          ],
+          [
+            0.265,
+            "ZNF626"
+          ],
+          [
+            0.255,
+            "GLRA2"
+          ]
+        ]
+      },
+      "synthetic_lethal_of_lost_suppressors": [
+        [
+          "TP53",
+          "TP53BP1",
+          0.69
+        ],
+        [
+          "TP53",
+          "CDKN1A",
+          0.68
+        ],
+        [
+          "TP53",
+          "USP28",
+          0.65
+        ],
+        [
+          "TP53",
+          "CHEK2",
+          0.63
+        ],
+        [
+          "TP53",
+          "ATM",
+          0.58
+        ],
+        [
+          "TP53",
+          "XPO7",
+          0.44
+        ]
+      ],
+      "context_selective_dependencies_genomewide": [
+        [
+          "PAX8",
+          -6.9
+        ],
+        [
+          "SOX10",
+          -7.2
+        ],
+        [
+          "HNF1B",
+          -5.7
+        ],
+        [
+          "EBF1",
+          -7.3
+        ],
+        [
+          "BRAF",
+          -6.6
+        ],
+        [
+          "KRAS",
+          -6.4
+        ],
+        [
+          "IRF4",
+          -8.3
+        ],
+        [
+          "PAX5",
+          -11.3
+        ],
+        [
+          "TCF7L2",
+          -6.1
+        ],
+        [
+          "MYB",
+          -6.2
+        ],
+        [
+          "CCND2",
+          -8.4
+        ],
+        [
+          "SMARCA2",
+          -8.7
+        ]
+      ]
+    },
+    "G_cellgraph_perturbation": {
+      "n_affected": 15844,
+      "top_down": [
+        [
+          "ZMYND8",
+          -1113.125
+        ],
+        [
+          "ACBD5",
+          -1107.375
+        ],
+        [
+          "NKIRAS1",
+          -1101.75
+        ],
+        [
+          "DPP9",
+          -1087.25
+        ],
+        [
+          "TGIF1",
+          -1085.5
+        ],
+        [
+          "MAP4",
+          -1078.125
+        ],
+        [
+          "MBNL1",
+          -1076.0
+        ],
+        [
+          "CYRIB",
+          -1075.5
+        ]
+      ],
+      "top_up": [
+        [
+          "GAS6",
+          52.75
+        ],
+        [
+          "CLDN7",
+          32.625
+        ],
+        [
+          "ANOS1",
+          32.0
+        ],
+        [
+          "HR",
+          24.875
+        ],
+        [
+          "AFP",
+          23.75
+        ],
+        [
+          "KIF2C",
+          21.375
+        ],
+        [
+          "SMO",
+          18.625
+        ],
+        [
+          "BHMT",
+          18.125
+        ]
+      ]
+    },
+    "H_tissue_baseline": {
+      "tissue_types_matched": [
+        "erythroid progenitor cell",
+        "hematopoietic multipotent progenitor cell",
+        "erythrocyte",
+        "blood cell",
+        "blood vessel endothelial cell",
+        "erythroblast"
+      ],
+      "n_types": 9
+    },
+    "conclusion": {
+      "driver": "JAK2",
+      "phenotype_pathways_up": [
+        "Erythropoietin activates STAT5",
+        "Interleukin-23 signaling",
+        "Erythropoietin activates Phospholipase C gamma (PLCG)",
+        "IFNG signaling activates MAPKs"
+      ],
+      "phenotype_pathways_lost": [
+        "Transcriptional  activation of  cell cycle inhibitor p21",
+        "Transcriptional activation of p53 responsive genes",
+        "Activation of NOXA and translocation to mitochondria",
+        "Negative transcriptional regulation of urea cycle enzymes"
+      ],
+      "dependency_targets": {
+        "coessential_with_driver": {
+          "JAK2": [
+            [
+              0.376,
+              "CSF2RB"
+            ],
+            [
+              0.328,
+              "RUNX1"
+            ],
+            [
+              0.297,
+              "ZNF732"
+            ],
+            [
+              0.265,
+              "ZNF626"
+            ],
+            [
+              0.255,
+              "GLRA2"
+            ]
+          ]
+        },
+        "synthetic_lethal_of_lost_suppressors": [
+          [
+            "TP53",
+            "TP53BP1",
+            0.69
+          ],
+          [
+            "TP53",
+            "CDKN1A",
+            0.68
+          ],
+          [
+            "TP53",
+            "USP28",
+            0.65
+          ],
+          [
+            "TP53",
+            "CHEK2",
+            0.63
+          ],
+          [
+            "TP53",
+            "ATM",
+            0.58
+          ],
+          [
+            "TP53",
+            "XPO7",
+            0.44
+          ]
+        ],
+        "context_selective_dependencies_genomewide": [
+          [
+            "PAX8",
+            -6.9
+          ],
+          [
+            "SOX10",
+            -7.2
+          ],
+          [
+            "HNF1B",
+            -5.7
+          ],
+          [
+            "EBF1",
+            -7.3
+          ],
+          [
+            "BRAF",
+            -6.6
+          ],
+          [
+            "KRAS",
+            -6.4
+          ],
+          [
+            "IRF4",
+            -8.3
+          ],
+          [
+            "PAX5",
+            -11.3
+          ],
+          [
+            "TCF7L2",
+            -6.1
+          ],
+          [
+            "MYB",
+            -6.2
+          ],
+          [
+            "CCND2",
+            -8.4
+          ],
+          [
+            "SMARCA2",
+            -8.7
+          ]
+        ]
+      }
+    }
+  },
+  "786-O renal (VHL loss)": {
+    "panel": [
+      [
+        "VHL",
+        167
+      ],
+      [
+        "PBRM1",
+        300
+      ],
+      [
+        "TTN",
+        8500
+      ]
+    ],
+    "layers_active": {
+      "ddg": "on",
+      "emask": true,
+      "cellgraph": true,
+      "depmap": true
+    },
+    "A_molecular": [
+      {
+        "gene": "VHL",
+        "role": "suppressor",
+        "effect": "LOF (lost)",
+        "clamp": -1,
+        "in_domain": null,
+        "selective_dep_rank": null,
+        "ddg": -0.23,
+        "ddg_note": "stability-neutral"
+      },
+      {
+        "gene": "PBRM1",
+        "role": "suppressor",
+        "effect": "LOF (lost)",
+        "clamp": -1,
+        "in_domain": null,
+        "selective_dep_rank": 12705,
+        "ddg": null
+      },
+      {
+        "gene": "TTN",
+        "role": "unknown",
+        "effect": "LOF? (disease-linked)",
+        "clamp": -1,
+        "in_domain": [
+          "Ig-like 67"
+        ],
+        "selective_dep_rank": 3097,
+        "ddg": null
+      }
+    ],
+    "B_pathway": {
+      "up": [
+        {
+          "pathway": "E2F-enabled inhibition of pre-replication complex formation",
+          "delta": 0.008,
+          "n_perturbed": 5,
+          "score": 0.017
+        },
+        {
+          "pathway": "Regulation of CDH11 gene transcription",
+          "delta": 0.006,
+          "n_perturbed": 9,
+          "score": 0.017
+        },
+        {
+          "pathway": "Activation of NIMA Kinases NEK9, NEK6, NEK7",
+          "delta": 0.006,
+          "n_perturbed": 6,
+          "score": 0.016
+        },
+        {
+          "pathway": "CLEC7A (Dectin-1) signaling",
+          "delta": 0.002,
+          "n_perturbed": 51,
+          "score": 0.016
+        },
+        {
+          "pathway": "Condensation of Prometaphase Chromosomes",
+          "delta": 0.006,
+          "n_perturbed": 6,
+          "score": 0.015
+        },
+        {
+          "pathway": "G2/M DNA replication checkpoint",
+          "delta": 0.006,
+          "n_perturbed": 6,
+          "score": 0.015
+        }
+      ],
+      "lost": [
+        {
+          "pathway": "RHOBTB3 ATPase cycle",
+          "delta": -0.167,
+          "n_perturbed": 6,
+          "score": -0.408
+        },
+        {
+          "pathway": "Striated Muscle Contraction",
+          "delta": -0.108,
+          "n_perturbed": 14,
+          "score": -0.402
+        },
+        {
+          "pathway": "Formation of the polybromo-BAF (pBAF) complex",
+          "delta": -0.118,
+          "n_perturbed": 10,
+          "score": -0.372
+        },
+        {
+          "pathway": "SWI/SNF chromatin remodelers",
+          "delta": -0.091,
+          "n_perturbed": 13,
+          "score": -0.326
+        },
+        {
+          "pathway": "RUNX1 interacts with co-factors whose precise effect on RUNX1 targets is not known",
+          "delta": -0.056,
+          "n_perturbed": 21,
+          "score": -0.256
+        },
+        {
+          "pathway": "SUMOylation of ubiquitinylation proteins",
+          "delta": -0.056,
+          "n_perturbed": 18,
+          "score": -0.236
+        }
+      ],
+      "n_genes_perturbed": 58
+    },
+    "C_regulatory": [
+      {
+        "tf": "VHL",
+        "effect": "LOF (lost)",
+        "n_targets": 25
+      },
+      {
+        "tf": "PBRM1",
+        "effect": "LOF (lost)",
+        "n_targets": 9
+      }
+    ],
+    "D_complexes_disrupted": [
+      {
+        "complex": "VHL-Elongin C-Elongin B E3 ubiquitin ligase complex",
+        "lost_subunits": [
+          "VHL"
+        ]
+      },
+      {
+        "complex": "Polybromo-associated SWI/SNF ATP-dependent chromatin remodeling complex, ACTL6B variant",
+        "lost_subunits": [
+          "PBRM1"
+        ]
+      },
+      {
+        "complex": "Polybromo-associated SWI/SNF ATP-dependent chromatin remodeling complex, ACTL6A variant",
+        "lost_subunits": [
+          "PBRM1"
+        ]
+      },
+      {
+        "complex": "Titin-Telethonin complex",
+        "lost_subunits": [
+          "TTN"
+        ]
+      }
+    ],
+    "E_metabolic_genes_hit": [],
+    "F_dependency": {
+      "coessential_with_driver": {},
+      "synthetic_lethal_of_lost_suppressors": [
+        [
+          "PBRM1",
+          "ARID2",
+          0.61
+        ],
+        [
+          "PBRM1",
+          "BRD7",
+          0.49
+        ]
+      ],
+      "context_selective_dependencies_genomewide": [
+        [
+          "PAX8",
+          -6.9
+        ],
+        [
+          "SOX10",
+          -7.2
+        ],
+        [
+          "HNF1B",
+          -5.7
+        ],
+        [
+          "EBF1",
+          -7.3
+        ],
+        [
+          "BRAF",
+          -6.6
+        ],
+        [
+          "KRAS",
+          -6.4
+        ],
+        [
+          "IRF4",
+          -8.3
+        ],
+        [
+          "PAX5",
+          -11.3
+        ],
+        [
+          "TCF7L2",
+          -6.1
+        ],
+        [
+          "MYB",
+          -6.2
+        ],
+        [
+          "CCND2",
+          -8.4
+        ],
+        [
+          "SMARCA2",
+          -8.7
+        ]
+      ]
+    },
+    "G_cellgraph_perturbation": {
+      "n_affected": 14768,
+      "top_down": [
+        [
+          "TGIF1",
+          -61.125
+        ],
+        [
+          "NKIRAS1",
+          -60.375
+        ],
+        [
+          "CHD1L",
+          -60.125
+        ],
+        [
+          "MAP4",
+          -59.875
+        ],
+        [
+          "TRIP12",
+          -59.875
+        ],
+        [
+          "MFSD11",
+          -59.75
+        ],
+        [
+          "MBNL1",
+          -59.625
+        ],
+        [
+          "CDKN1A",
+          -59.25
+        ]
+      ],
+      "top_up": [
+        [
+          "IRS1",
+          4.125
+        ],
+        [
+          "SNAI2",
+          3.75
+        ],
+        [
+          "BAD",
+          3.5
+        ],
+        [
+          "RGR",
+          3.125
+        ],
+        [
+          "ENPP1",
+          3.0
+        ],
+        [
+          "HOXB13",
+          2.75
+        ],
+        [
+          "GAS6",
+          2.75
+        ],
+        [
+          "DLK1",
+          2.625
+        ]
+      ]
+    },
+    "H_tissue_baseline": {
+      "tissue_types_matched": [
+        "kidney distal convoluted tubule epithelial cell",
+        "kidney loop of Henle thick ascending limb epithelial cell",
+        "kidney collecting duct principal cell",
+        "kidney collecting duct intercalated cell"
+      ],
+      "n_types": 4
+    },
+    "conclusion": {
+      "driver": null,
+      "phenotype_pathways_up": [
+        "E2F-enabled inhibition of pre-replication complex formation",
+        "Regulation of CDH11 gene transcription",
+        "Activation of NIMA Kinases NEK9, NEK6, NEK7",
+        "CLEC7A (Dectin-1) signaling"
+      ],
+      "phenotype_pathways_lost": [
+        "RHOBTB3 ATPase cycle",
+        "Striated Muscle Contraction",
+        "Formation of the polybromo-BAF (pBAF) complex",
+        "SWI/SNF chromatin remodelers"
+      ],
+      "dependency_targets": {
+        "coessential_with_driver": {},
+        "synthetic_lethal_of_lost_suppressors": [
+          [
+            "PBRM1",
+            "ARID2",
+            0.61
+          ],
+          [
+            "PBRM1",
+            "BRD7",
+            0.49
+          ]
+        ],
+        "context_selective_dependencies_genomewide": [
+          [
+            "PAX8",
+            -6.9
+          ],
+          [
+            "SOX10",
+            -7.2
+          ],
+          [
+            "HNF1B",
+            -5.7
+          ],
+          [
+            "EBF1",
+            -7.3
+          ],
+          [
+            "BRAF",
+            -6.6
+          ],
+          [
+            "KRAS",
+            -6.4
+          ],
+          [
+            "IRF4",
+            -8.3
+          ],
+          [
+            "PAX5",
+            -11.3
+          ],
+          [
+            "TCF7L2",
+            -6.1
+          ],
+          [
+            "MYB",
+            -6.2
+          ],
+          [
+            "CCND2",
+            -8.4
+          ],
+          [
+            "SMARCA2",
+            -8.7
+          ]
+        ]
+      }
+    }
+  },
+  "U87 glioma (IDH1 R132H)": {
+    "panel": [
+      [
+        "IDH1",
+        132
+      ],
+      [
+        "CDKN2A",
+        58
+      ],
+      [
+        "PTEN",
+        130
+      ]
+    ],
+    "layers_active": {
+      "ddg": "on",
+      "emask": true,
+      "cellgraph": true,
+      "depmap": true
+    },
+    "A_molecular": [
+      {
+        "gene": "IDH1",
+        "role": "oncogene",
+        "effect": "GOF (activated)",
+        "clamp": 1,
+        "in_domain": null,
+        "selective_dep_rank": 11525,
+        "ddg": 0.72,
+        "ddg_note": "mildly destabilizing"
+      },
+      {
+        "gene": "CDKN2A",
+        "role": "suppressor",
+        "effect": "LOF (lost)",
+        "clamp": -1,
+        "in_domain": null,
+        "selective_dep_rank": 12801,
+        "ddg": 0.56,
+        "ddg_note": "stability-neutral"
+      },
+      {
+        "gene": "PTEN",
+        "role": "suppressor",
+        "effect": "LOF (lost)",
+        "clamp": -1,
+        "in_domain": [
+          "Phosphatase tensin-type"
+        ],
+        "selective_dep_rank": 12488,
+        "ddg": 0.61,
+        "ddg_note": "mildly destabilizing"
+      }
+    ],
+    "B_pathway": {
+      "up": [
+        {
+          "pathway": "NFE2L2 regulating TCA cycle genes",
+          "delta": 0.333,
+          "n_perturbed": 3,
+          "score": 0.577
+        },
+        {
+          "pathway": "Metabolism of cofactors",
+          "delta": 0.113,
+          "n_perturbed": 9,
+          "score": 0.338
+        },
+        {
+          "pathway": "Peroxisomal protein import",
+          "delta": 0.042,
+          "n_perturbed": 24,
+          "score": 0.204
+        },
+        {
+          "pathway": "Protein localization",
+          "delta": 0.019,
+          "n_perturbed": 53,
+          "score": 0.137
+        },
+        {
+          "pathway": "PTK6 Regulates Cell Cycle",
+          "delta": 0.047,
+          "n_perturbed": 6,
+          "score": 0.114
+        },
+        {
+          "pathway": "Metabolism of vitamins and cofactors",
+          "delta": 0.012,
+          "n_perturbed": 86,
+          "score": 0.11
+        }
+      ],
+      "lost": [
+        {
+          "pathway": "Diseases of Cellular Senescence",
+          "delta": -0.277,
+          "n_perturbed": 3,
+          "score": -0.479
+        },
+        {
+          "pathway": "Diseases of cellular response to stress",
+          "delta": -0.277,
+          "n_perturbed": 3,
+          "score": -0.479
+        },
+        {
+          "pathway": "Evasion of Oncogene Induced Senescence Due to Defective p16INK4A binding to CDK4 and CDK6",
+          "delta": -0.277,
+          "n_perturbed": 3,
+          "score": -0.479
+        },
+        {
+          "pathway": "Evasion of Oncogene Induced Senescence Due to p16INK4A Defects",
+          "delta": -0.277,
+          "n_perturbed": 3,
+          "score": -0.479
+        },
+        {
+          "pathway": "Evasion of Oxidative Stress Induced Senescence Due to Defective p16INK4A binding to CDK4 and CDK6",
+          "delta": -0.277,
+          "n_perturbed": 3,
+          "score": -0.479
+        },
+        {
+          "pathway": "Evasion of Oxidative Stress Induced Senescence Due to p16INK4A Defects",
+          "delta": -0.277,
+          "n_perturbed": 3,
+          "score": -0.479
+        }
+      ],
+      "n_genes_perturbed": 46
+    },
+    "C_regulatory": [],
+    "D_complexes_disrupted": [],
+    "E_metabolic_genes_hit": [
+      "IDH1",
+      "PTEN"
+    ],
+    "F_dependency": {
+      "coessential_with_driver": {
+        "IDH1": [
+          [
+            0.218,
+            "NDUFB1"
+          ],
+          [
+            0.216,
+            "KLHDC7B"
+          ]
+        ]
+      },
+      "synthetic_lethal_of_lost_suppressors": [
+        [
+          "PTEN",
+          "PLEKHA1",
+          0.49
+        ],
+        [
+          "PTEN",
+          "TSC1",
+          0.41
+        ]
+      ],
+      "context_selective_dependencies_genomewide": [
+        [
+          "PAX8",
+          -6.9
+        ],
+        [
+          "SOX10",
+          -7.2
+        ],
+        [
+          "HNF1B",
+          -5.7
+        ],
+        [
+          "EBF1",
+          -7.3
+        ],
+        [
+          "BRAF",
+          -6.6
+        ],
+        [
+          "KRAS",
+          -6.4
+        ],
+        [
+          "IRF4",
+          -8.3
+        ],
+        [
+          "PAX5",
+          -11.3
+        ],
+        [
+          "TCF7L2",
+          -6.1
+        ],
+        [
+          "MYB",
+          -6.2
+        ],
+        [
+          "CCND2",
+          -8.4
+        ],
+        [
+          "SMARCA2",
+          -8.7
+        ]
+      ]
+    },
+    "G_cellgraph_perturbation": {
+      "n_affected": 15307,
+      "top_down": [
+        [
+          "CDKN1B",
+          -4.0
+        ],
+        [
+          "APOD",
+          -2.875
+        ],
+        [
+          "DKK1",
+          -2.875
+        ],
+        [
+          "NDN",
+          -2.75
+        ],
+        [
+          "SCN5A",
+          -2.625
+        ],
+        [
+          "CDKN2A",
+          -2.625
+        ],
+        [
+          "BECN1",
+          -2.625
+        ],
+        [
+          "SCN11A",
+          -2.5
+        ]
+      ],
+      "top_up": [
+        [
+          "PTK2",
+          24.25
+        ],
+        [
+          "ACBD5",
+          22.625
+        ],
+        [
+          "CCND1",
+          21.75
+        ],
+        [
+          "ZBTB8OS",
+          21.375
+        ],
+        [
+          "VEZT",
+          21.25
+        ],
+        [
+          "MAP4",
+          21.25
+        ],
+        [
+          "PPP6R3",
+          21.0
+        ],
+        [
+          "BCL2",
+          20.625
+        ]
+      ]
+    },
+    "H_tissue_baseline": {
+      "tissue_types_matched": [
+        "astrocyte",
+        "microglial cell",
+        "glial cell",
+        "neural progenitor cell",
+        "neural cell",
+        "radial glial cell"
+      ],
+      "n_types": 9
+    },
+    "conclusion": {
+      "driver": "IDH1",
+      "phenotype_pathways_up": [
+        "NFE2L2 regulating TCA cycle genes",
+        "Metabolism of cofactors",
+        "Peroxisomal protein import",
+        "Protein localization"
+      ],
+      "phenotype_pathways_lost": [
+        "Diseases of Cellular Senescence",
+        "Diseases of cellular response to stress",
+        "Evasion of Oncogene Induced Senescence Due to Defective p16INK4A binding to CDK4 and CDK6",
+        "Evasion of Oncogene Induced Senescence Due to p16INK4A Defects"
+      ],
+      "dependency_targets": {
+        "coessential_with_driver": {
+          "IDH1": [
+            [
+              0.218,
+              "NDUFB1"
+            ],
+            [
+              0.216,
+              "KLHDC7B"
+            ]
+          ]
+        },
+        "synthetic_lethal_of_lost_suppressors": [
+          [
+            "PTEN",
+            "PLEKHA1",
+            0.49
+          ],
+          [
+            "PTEN",
+            "TSC1",
+            0.41
+          ]
+        ],
+        "context_selective_dependencies_genomewide": [
+          [
+            "PAX8",
+            -6.9
+          ],
+          [
+            "SOX10",
+            -7.2
+          ],
+          [
+            "HNF1B",
+            -5.7
+          ],
+          [
+            "EBF1",
+            -7.3
+          ],
+          [
+            "BRAF",
+            -6.6
+          ],
+          [
+            "KRAS",
+            -6.4
+          ],
+          [
+            "IRF4",
+            -8.3
+          ],
+          [
+            "PAX5",
+            -11.3
+          ],
+          [
+            "TCF7L2",
+            -6.1
+          ],
+          [
+            "MYB",
+            -6.2
+          ],
+          [
+            "CCND2",
+            -8.4
+          ],
+          [
+            "SMARCA2",
+            -8.7
+          ]
+        ]
+      }
+    }
+  },
+  "HGSOC ovarian (BRCA1)": {
+    "panel": [
+      [
+        "BRCA1",
+        1775
+      ],
+      [
+        "TP53",
+        273
+      ],
+      [
+        "MUC16",
+        5000
+      ]
+    ],
+    "layers_active": {
+      "ddg": "on",
+      "emask": true,
+      "cellgraph": true,
+      "depmap": true
+    },
+    "A_molecular": [
+      {
+        "gene": "BRCA1",
+        "role": "suppressor",
+        "effect": "LOF (lost)",
+        "clamp": -1,
+        "in_domain": [
+          "BRCT 2"
+        ],
+        "selective_dep_rank": 3706,
+        "ddg": -0.52,
+        "ddg_note": "stability-neutral"
+      },
+      {
+        "gene": "TP53",
+        "role": "suppressor",
+        "effect": "LOF (lost)",
+        "clamp": -1,
+        "in_domain": null,
+        "selective_dep_rank": null,
+        "ddg": 0.73,
+        "ddg_note": "mildly destabilizing"
+      },
+      {
+        "gene": "MUC16",
+        "role": "unknown",
+        "effect": "neutral / passenger",
+        "clamp": 0,
+        "in_domain": null,
+        "selective_dep_rank": 11748,
+        "ddg": null
+      }
+    ],
+    "B_pathway": {
+      "up": [
+        {
+          "pathway": "Cyclin A/B1/B2 associated events during G2/M transition",
+          "delta": 0.003,
+          "n_perturbed": 21,
+          "score": 0.012
+        },
+        {
+          "pathway": "ATF6B (ATF6-beta) activates chaperones",
+          "delta": 0.006,
+          "n_perturbed": 3,
+          "score": 0.011
+        },
+        {
+          "pathway": "Chk1/Chk2(Cds1) mediated inactivation of Cyclin B:Cdk1 complex",
+          "delta": 0.003,
+          "n_perturbed": 14,
+          "score": 0.011
+        },
+        {
+          "pathway": "Formation of intermediate mesoderm",
+          "delta": 0.004,
+          "n_perturbed": 7,
+          "score": 0.011
+        },
+        {
+          "pathway": "AKT-mediated inactivation of FOXO1A",
+          "delta": 0.005,
+          "n_perturbed": 4,
+          "score": 0.01
+        },
+        {
+          "pathway": "KSRP (KHSRP) binds and destabilizes mRNA",
+          "delta": 0.004,
+          "n_perturbed": 8,
+          "score": 0.01
+        }
+      ],
+      "lost": [
+        {
+          "pathway": "Transcriptional  activation of  cell cycle inhibitor p21",
+          "delta": -0.339,
+          "n_perturbed": 3,
+          "score": -0.587
+        },
+        {
+          "pathway": "Transcriptional activation of p53 responsive genes",
+          "delta": -0.339,
+          "n_perturbed": 3,
+          "score": -0.587
+        },
+        {
+          "pathway": "Activation of NOXA and translocation to mitochondria",
+          "delta": -0.253,
+          "n_perturbed": 4,
+          "score": -0.505
+        },
+        {
+          "pathway": "Negative transcriptional regulation of urea cycle enzymes",
+          "delta": -0.25,
+          "n_perturbed": 4,
+          "score": -0.501
+        },
+        {
+          "pathway": "Regulation of MITF-M-dependent genes involved in DNA replication, damage repair and senescence",
+          "delta": -0.167,
+          "n_perturbed": 6,
+          "score": -0.41
+        },
+        {
+          "pathway": "RUNX3 regulates CDKN1A transcription",
+          "delta": -0.145,
+          "n_perturbed": 7,
+          "score": -0.383
+        }
+      ],
+      "n_genes_perturbed": 35
+    },
+    "C_regulatory": [
+      {
+        "tf": "TP53",
+        "effect": "LOF (lost)",
+        "n_targets": 3150
+      },
+      {
+        "tf": "BRCA1",
+        "effect": "LOF (lost)",
+        "n_targets": 416
+      }
+    ],
+    "D_complexes_disrupted": [
+      {
+        "complex": "BRCA1-BARD1 complex",
+        "lost_subunits": [
+          "BRCA1"
+        ]
+      },
+      {
+        "complex": "BRCA1-PALB2-BRCA2 homologous recombination DNA repair complex",
+        "lost_subunits": [
+          "BRCA1"
+        ]
+      },
+      {
+        "complex": "BRCC E3 ubiquitin ligase complex",
+        "lost_subunits": [
+          "BRCA1"
+        ]
+      },
+      {
+        "complex": "TP53-MDM4 transcription regulation complex",
+        "lost_subunits": [
+          "TP53"
+        ]
+      },
+      {
+        "complex": "TP53-MDM2 transcription regulation complex",
+        "lost_subunits": [
+          "TP53"
+        ]
+      },
+      {
+        "complex": "TP53-MDM2-MDM4 transcription regulation complex",
+        "lost_subunits": [
+          "TP53"
+        ]
+      }
+    ],
+    "E_metabolic_genes_hit": [],
+    "F_dependency": {
+      "coessential_with_driver": {},
+      "synthetic_lethal_of_lost_suppressors": [
+        [
+          "TP53",
+          "TP53BP1",
+          0.69
+        ],
+        [
+          "TP53",
+          "CDKN1A",
+          0.68
+        ],
+        [
+          "TP53",
+          "USP28",
+          0.65
+        ],
+        [
+          "TP53",
+          "CHEK2",
+          0.63
+        ],
+        [
+          "TP53",
+          "ATM",
+          0.58
+        ],
+        [
+          "TP53",
+          "XPO7",
+          0.44
+        ]
+      ],
+      "context_selective_dependencies_genomewide": [
+        [
+          "PAX8",
+          -6.9
+        ],
+        [
+          "SOX10",
+          -7.2
+        ],
+        [
+          "HNF1B",
+          -5.7
+        ],
+        [
+          "EBF1",
+          -7.3
+        ],
+        [
+          "BRAF",
+          -6.6
+        ],
+        [
+          "KRAS",
+          -6.4
+        ],
+        [
+          "IRF4",
+          -8.3
+        ],
+        [
+          "PAX5",
+          -11.3
+        ],
+        [
+          "TCF7L2",
+          -6.1
+        ],
+        [
+          "MYB",
+          -6.2
+        ],
+        [
+          "CCND2",
+          -8.4
+        ],
+        [
+          "SMARCA2",
+          -8.7
+        ]
+      ]
+    },
+    "G_cellgraph_perturbation": {
+      "n_affected": 15872,
+      "top_down": [
+        [
+          "ZMYND8",
+          -1714.875
+        ],
+        [
+          "ACBD5",
+          -1695.5
+        ],
+        [
+          "NKIRAS1",
+          -1680.625
+        ],
+        [
+          "DPP9",
+          -1680.125
+        ],
+        [
+          "MAP4",
+          -1659.125
+        ],
+        [
+          "TGIF1",
+          -1657.875
+        ],
+        [
+          "MBNL1",
+          -1656.75
+        ],
+        [
+          "CYRIB",
+          -1646.625
+        ]
+      ],
+      "top_up": [
+        [
+          "GAS6",
+          66.75
+        ],
+        [
+          "ANOS1",
+          43.125
+        ],
+        [
+          "CLDN7",
+          40.125
+        ],
+        [
+          "BAD",
+          26.25
+        ],
+        [
+          "HR",
+          25.875
+        ],
+        [
+          "KIF2C",
+          22.5
+        ],
+        [
+          "BHMT",
+          22.125
+        ],
+        [
+          "GSTA2",
+          21.875
+        ]
+      ]
+    },
+    "H_tissue_baseline": {
+      "tissue_types_matched": [
+        "kidney distal convoluted tubule epithelial cell",
+        "kidney loop of Henle thick ascending limb epithelial cell",
+        "epithelial cell of proximal tubule",
+        "choroid plexus epithelial cell",
+        "epithelial cell of lower respiratory tract",
+        "epithelial cell of lung"
+      ],
+      "n_types": 11
+    },
+    "conclusion": {
+      "driver": null,
+      "phenotype_pathways_up": [
+        "Cyclin A/B1/B2 associated events during G2/M transition",
+        "ATF6B (ATF6-beta) activates chaperones",
+        "Chk1/Chk2(Cds1) mediated inactivation of Cyclin B:Cdk1 complex",
+        "Formation of intermediate mesoderm"
+      ],
+      "phenotype_pathways_lost": [
+        "Transcriptional  activation of  cell cycle inhibitor p21",
+        "Transcriptional activation of p53 responsive genes",
+        "Activation of NOXA and translocation to mitochondria",
+        "Negative transcriptional regulation of urea cycle enzymes"
+      ],
+      "dependency_targets": {
+        "coessential_with_driver": {},
+        "synthetic_lethal_of_lost_suppressors": [
+          [
+            "TP53",
+            "TP53BP1",
+            0.69
+          ],
+          [
+            "TP53",
+            "CDKN1A",
+            0.68
+          ],
+          [
+            "TP53",
+            "USP28",
+            0.65
+          ],
+          [
+            "TP53",
+            "CHEK2",
+            0.63
+          ],
+          [
+            "TP53",
+            "ATM",
+            0.58
+          ],
+          [
+            "TP53",
+            "XPO7",
+            0.44
+          ]
+        ],
+        "context_selective_dependencies_genomewide": [
+          [
+            "PAX8",
+            -6.9
+          ],
+          [
+            "SOX10",
+            -7.2
+          ],
+          [
+            "HNF1B",
+            -5.7
+          ],
+          [
+            "EBF1",
+            -7.3
+          ],
+          [
+            "BRAF",
+            -6.6
+          ],
+          [
+            "KRAS",
+            -6.4
+          ],
+          [
+            "IRF4",
+            -8.3
+          ],
+          [
+            "PAX5",
+            -11.3
+          ],
+          [
+            "TCF7L2",
+            -6.1
+          ],
+          [
+            "MYB",
+            -6.2
+          ],
+          [
+            "CCND2",
+            -8.4
+          ],
+          [
+            "SMARCA2",
+            -8.7
+          ]
+        ]
+      }
+    }
+  },
+  "SK-BR-3 breast (HER2amp)": {
+    "panel": [
+      [
+        "ERBB2",
+        310
+      ],
+      [
+        "TP53",
+        175
+      ],
+      [
+        "MYC",
+        100
+      ]
+    ],
+    "layers_active": {
+      "ddg": "on",
+      "emask": true,
+      "cellgraph": true,
+      "depmap": true
+    },
+    "A_molecular": [
+      {
+        "gene": "ERBB2",
+        "role": "oncogene",
+        "effect": "GOF (activated)",
+        "clamp": 1,
+        "in_domain": null,
+        "selective_dep_rank": 88,
+        "ddg": -0.56,
+        "ddg_note": "stability-neutral"
+      },
+      {
+        "gene": "TP53",
+        "role": "suppressor",
+        "effect": "LOF (lost)",
+        "clamp": -1,
+        "in_domain": null,
+        "selective_dep_rank": null,
+        "ddg": 0.73,
+        "ddg_note": "mildly destabilizing"
+      },
+      {
+        "gene": "MYC",
+        "role": "oncogene",
+        "effect": "GOF (activated)",
+        "clamp": 1,
+        "in_domain": null,
+        "selective_dep_rank": null,
+        "ddg": null
+      }
+    ],
+    "B_pathway": {
+      "up": [
+        {
+          "pathway": "PLCG1 events in ERBB2 signaling",
+          "delta": 0.271,
+          "n_perturbed": 4,
+          "score": 0.543
+        },
+        {
+          "pathway": "GRB7 events in ERBB2 signaling",
+          "delta": 0.26,
+          "n_perturbed": 4,
+          "score": 0.521
+        },
+        {
+          "pathway": "Drug resistance in ERBB2 KD mutants",
+          "delta": 0.25,
+          "n_perturbed": 4,
+          "score": 0.5
+        },
+        {
+          "pathway": "Drug resistance in ERBB2 TMD/JMD mutants",
+          "delta": 0.25,
+          "n_perturbed": 4,
+          "score": 0.5
+        },
+        {
+          "pathway": "Drug-mediated inhibition of ERBB2 signaling",
+          "delta": 0.25,
+          "n_perturbed": 4,
+          "score": 0.5
+        },
+        {
+          "pathway": "Resistance of ERBB2 KD mutants to AEE788",
+          "delta": 0.25,
+          "n_perturbed": 4,
+          "score": 0.5
+        }
+      ],
+      "lost": [
+        {
+          "pathway": "Transcriptional  activation of  cell cycle inhibitor p21",
+          "delta": -0.332,
+          "n_perturbed": 3,
+          "score": -0.575
+        },
+        {
+          "pathway": "Transcriptional activation of p53 responsive genes",
+          "delta": -0.332,
+          "n_perturbed": 3,
+          "score": -0.575
+        },
+        {
+          "pathway": "Activation of NOXA and translocation to mitochondria",
+          "delta": -0.251,
+          "n_perturbed": 4,
+          "score": -0.501
+        },
+        {
+          "pathway": "Negative transcriptional regulation of urea cycle enzymes",
+          "delta": -0.25,
+          "n_perturbed": 4,
+          "score": -0.501
+        },
+        {
+          "pathway": "PI5P Regulates TP53 Acetylation",
+          "delta": -0.143,
+          "n_perturbed": 7,
+          "score": -0.379
+        },
+        {
+          "pathway": "Zygotic genome activation (ZGA)",
+          "delta": -0.143,
+          "n_perturbed": 7,
+          "score": -0.378
+        }
+      ],
+      "n_genes_perturbed": 35
+    },
+    "C_regulatory": [
+      {
+        "tf": "TP53",
+        "effect": "LOF (lost)",
+        "n_targets": 3150
+      },
+      {
+        "tf": "MYC",
+        "effect": "GOF (activated)",
+        "n_targets": 1860
+      }
+    ],
+    "D_complexes_disrupted": [
+      {
+        "complex": "TP53-MDM4 transcription regulation complex",
+        "lost_subunits": [
+          "TP53"
+        ]
+      },
+      {
+        "complex": "TP53-MDM2 transcription regulation complex",
+        "lost_subunits": [
+          "TP53"
+        ]
+      },
+      {
+        "complex": "TP53-MDM2-MDM4 transcription regulation complex",
+        "lost_subunits": [
+          "TP53"
+        ]
+      }
+    ],
+    "E_metabolic_genes_hit": [],
+    "F_dependency": {
+      "coessential_with_driver": {
+        "ERBB2": [
+          [
+            0.647,
+            "ERBB3"
+          ],
+          [
+            0.443,
+            "GRHL2"
+          ],
+          [
+            0.441,
+            "MIEN1"
+          ],
+          [
+            0.393,
+            "TCAP"
+          ],
+          [
+            0.383,
+            "FOXA1"
+          ]
+        ],
+        "MYC": [
+          [
+            0.352,
+            "MAX"
+          ],
+          [
+            0.294,
+            "TFAP4"
+          ],
+          [
+            0.283,
+            "POU5F1B"
+          ],
+          [
+            0.283,
+            "C1orf109"
+          ],
+          [
+            0.273,
+            "SP1"
+          ]
+        ]
+      },
+      "synthetic_lethal_of_lost_suppressors": [
+        [
+          "TP53",
+          "TP53BP1",
+          0.69
+        ],
+        [
+          "TP53",
+          "CDKN1A",
+          0.68
+        ],
+        [
+          "TP53",
+          "USP28",
+          0.65
+        ],
+        [
+          "TP53",
+          "CHEK2",
+          0.63
+        ],
+        [
+          "TP53",
+          "ATM",
+          0.58
+        ],
+        [
+          "TP53",
+          "XPO7",
+          0.44
+        ]
+      ],
+      "context_selective_dependencies_genomewide": [
+        [
+          "PAX8",
+          -6.9
+        ],
+        [
+          "SOX10",
+          -7.2
+        ],
+        [
+          "HNF1B",
+          -5.7
+        ],
+        [
+          "EBF1",
+          -7.3
+        ],
+        [
+          "BRAF",
+          -6.6
+        ],
+        [
+          "KRAS",
+          -6.4
+        ],
+        [
+          "IRF4",
+          -8.3
+        ],
+        [
+          "PAX5",
+          -11.3
+        ],
+        [
+          "TCF7L2",
+          -6.1
+        ],
+        [
+          "MYB",
+          -6.2
+        ],
+        [
+          "CCND2",
+          -8.4
+        ],
+        [
+          "SMARCA2",
+          -8.7
+        ]
+      ]
+    },
+    "G_cellgraph_perturbation": {
+      "n_affected": 15844,
+      "top_down": [
+        [
+          "ZMYND8",
+          -1113.125
+        ],
+        [
+          "ACBD5",
+          -1107.375
+        ],
+        [
+          "NKIRAS1",
+          -1101.75
+        ],
+        [
+          "DPP9",
+          -1087.25
+        ],
+        [
+          "TGIF1",
+          -1085.5
+        ],
+        [
+          "MAP4",
+          -1078.125
+        ],
+        [
+          "MBNL1",
+          -1076.0
+        ],
+        [
+          "CYRIB",
+          -1075.5
+        ]
+      ],
+      "top_up": [
+        [
+          "GAS6",
+          52.75
+        ],
+        [
+          "CLDN7",
+          32.625
+        ],
+        [
+          "ANOS1",
+          32.0
+        ],
+        [
+          "HR",
+          24.875
+        ],
+        [
+          "AFP",
+          23.75
+        ],
+        [
+          "KIF2C",
+          21.375
+        ],
+        [
+          "SMO",
+          18.625
+        ],
+        [
+          "BHMT",
+          18.125
+        ]
+      ]
+    },
+    "H_tissue_baseline": {
+      "tissue_types_matched": [
+        "luminal adaptive secretory precursor cell of mammary gland",
+        "basal-myoepithelial cell of mammary gland",
+        "luminal hormone-sensing cell of mammary gland",
+        "luminal epithelial cell of mammary gland",
+        "mammary gland epithelial cell",
+        "fibroblast of mammary gland"
+      ],
+      "n_types": 6
+    },
+    "conclusion": {
+      "driver": "ERBB2",
+      "phenotype_pathways_up": [
+        "PLCG1 events in ERBB2 signaling",
+        "GRB7 events in ERBB2 signaling",
+        "Drug resistance in ERBB2 KD mutants",
+        "Drug resistance in ERBB2 TMD/JMD mutants"
+      ],
+      "phenotype_pathways_lost": [
+        "Transcriptional  activation of  cell cycle inhibitor p21",
+        "Transcriptional activation of p53 responsive genes",
+        "Activation of NOXA and translocation to mitochondria",
+        "Negative transcriptional regulation of urea cycle enzymes"
+      ],
+      "dependency_targets": {
+        "coessential_with_driver": {
+          "ERBB2": [
+            [
+              0.647,
+              "ERBB3"
+            ],
+            [
+              0.443,
+              "GRHL2"
+            ],
+            [
+              0.441,
+              "MIEN1"
+            ],
+            [
+              0.393,
+              "TCAP"
+            ],
+            [
+              0.383,
+              "FOXA1"
+            ]
+          ],
+          "MYC": [
+            [
+              0.352,
+              "MAX"
+            ],
+            [
+              0.294,
+              "TFAP4"
+            ],
+            [
+              0.283,
+              "POU5F1B"
+            ],
+            [
+              0.283,
+              "C1orf109"
+            ],
+            [
+              0.273,
+              "SP1"
+            ]
+          ]
+        },
+        "synthetic_lethal_of_lost_suppressors": [
+          [
+            "TP53",
+            "TP53BP1",
+            0.69
+          ],
+          [
+            "TP53",
+            "CDKN1A",
+            0.68
+          ],
+          [
+            "TP53",
+            "USP28",
+            0.65
+          ],
+          [
+            "TP53",
+            "CHEK2",
+            0.63
+          ],
+          [
+            "TP53",
+            "ATM",
+            0.58
+          ],
+          [
+            "TP53",
+            "XPO7",
+            0.44
+          ]
+        ],
+        "context_selective_dependencies_genomewide": [
+          [
+            "PAX8",
+            -6.9
+          ],
+          [
+            "SOX10",
+            -7.2
+          ],
+          [
+            "HNF1B",
+            -5.7
+          ],
+          [
+            "EBF1",
+            -7.3
+          ],
+          [
+            "BRAF",
+            -6.6
+          ],
+          [
+            "KRAS",
+            -6.4
+          ],
+          [
+            "IRF4",
+            -8.3
+          ],
+          [
+            "PAX5",
+            -11.3
+          ],
+          [
+            "TCF7L2",
+            -6.1
+          ],
+          [
+            "MYB",
+            -6.2
+          ],
+          [
+            "CCND2",
+            -8.4
+          ],
+          [
+            "SMARCA2",
+            -8.7
+          ]
+        ]
+      }
+    }
+  }
+}

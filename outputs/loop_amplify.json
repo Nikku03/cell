@@ -1,0 +1,115 @@
+{
+  "test": "loop_amplify",
+  "manifest": {
+    "manifest_version": 1,
+    "inputs": [
+      {
+        "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+        "bytes": 38524393,
+        "hash": "b857a72939e09be8",
+        "method": "sha256:full"
+      },
+      {
+        "path": "/home/user/cell/outputs/orphan/rnadecay/AvgKdegs.csv",
+        "bytes": 21962834,
+        "hash": "b8869c749b2b4a24",
+        "method": "sha256:full"
+      }
+    ],
+    "coverage": {
+      "available": 16492,
+      "used": 10136,
+      "selection": "filtered",
+      "fraction": 0.6146010186757216
+    },
+    "seed": 1904,
+    "controls": [
+      "2000 bootstrap resamples of the slope",
+      "200 shuffles per candidate",
+      "slope re-fitted within abundance strata as the assay control",
+      "gene length as a nuisance that should not explain it"
+    ],
+    "note": "tests a specific declared assumption of cell_loop -- one k_dp for every gene -- rather than the model as a whole",
+    "warnings": []
+  },
+  "gates": {
+    "A1 slope really above 1": true,
+    "A2 a single power law fits": false,
+    "A3 something nameable explains it": true,
+    "A4 the uniform constant is implicated": true
+  },
+  "slope": 1.2977041583377038,
+  "slope_ci": [
+    1.265813765393534,
+    1.3301654134847603
+  ],
+  "residual_correlations": {
+    "mRNA stability (-log kdeg)": {
+      "rho": 0.2867561529188541,
+      "null_p95": 0.020452937027430847,
+      "beats": true
+    },
+    "gene length (NUISANCE)": {
+      "rho": 0.1592554464420917,
+      "null_p95": 0.022002165534963057,
+      "beats": true
+    },
+    "mRNA abundance": {
+      "rho": 0.055346369364144055,
+      "null_p95": 0.01957360834516618,
+      "beats": true
+    }
+  },
+  "slope_by_stratum": {
+    "low-mRNA third": 0.6095763382135367,
+    "middle third": 1.4728311939880585,
+    "high-mRNA third": 1.4844927172397022
+  },
+  "slope_spread": 0.8749163790261655,
+  "n": 10136,
+  "log": [
+    "====================================================================================================",
+    "WHY THE SLOPE IS 1.3",
+    "====================================================================================================",
+    "  loop 22 passed its proportionality gate by 0.0023 and said so. cell_loop assumes ONE protein",
+    "  degradation constant for every gene, under which the slope MUST be 1. A measured 1.2977",
+    "  falsifies something; this finds out what.",
+    "\n  10,136 genes with protein, mRNA and decay rate",
+    "\n  A1 THE SLOPE IS REALLY ABOVE 1 -- 1.2977, 95% bootstrap [1.2658, 1.3302] over 2,000 resamples   A1 PASS",
+    "    Proportionality is excluded. A tenfold change in transcript goes with a 20-fold change in protein, and cell_loop's uniform k_dp cannot produce that.",
+    "\n  what the residual from a slope-1.30 fit correlates with:",
+    "    mRNA stability (-log kdeg)                +0.2868   |null| 95th 0.0205   SIGNIFICANT",
+    "    gene length (NUISANCE)                    +0.1593   |null| 95th 0.0220   SIGNIFICANT",
+    "    mRNA abundance                            +0.0553   |null| 95th 0.0196   SIGNIFICANT",
+    "\n  A2 IS THE RELATIONSHIP LINEAR -- the slope fitted within mRNA-abundance thirds:",
+    "    low-mRNA third               0.6096",
+    "    middle third                 1.4728",
+    "    high-mRNA third              1.4845",
+    "    spread across strata 0.8749",
+    "    Compression flattens the extremes, so a compressed assay gives DIFFERENT slopes in",
+    "    A2 FAIL  (gate: spread < 0.3)",
+    "    The slope MOVES across the mRNA range, so the relationship is not a single power law.",
+    "    A model with one slope -- which is what cell_loop's balance is -- cannot be right",
+    "    everywhere, and the single fitted 1.2977 is an average over genuinely different",
+    "    regimes rather than one amplification factor.",
+    "\n  residual-correlation caveat: an OLS residual is orthogonal to the PREDICTOR, not to the",
+    "  target, so every rho below is measured against a structurally non-zero baseline. They are",
+    "  reported for RANKING the candidates against each other, not as effect sizes.",
+    "  A3 SOMETHING NAMEABLE EXPLAINS IT -- PASS",
+    "  A4 IT IS THE UNIFORM CONSTANT -- mRNA stability rho +0.2868   A4 PASS",
+    "\n====================================================================================================",
+    "  A1 slope really above 1                   PASS",
+    "  A2 a single power law fits                FAIL",
+    "  A3 something nameable explains it         PASS",
+    "  A4 the uniform constant is implicated     PASS",
+    "  THE RELATIONSHIP IS NOT A SINGLE POWER LAW.  The slope is above 1 overall, and it MOVES",
+    "  across the mRNA range by 0.87 -- from 0.61 to 1.48. cell_loop's balance has exactly one slope by construction, so",
+    "  it cannot be right across the whole range, and the fitted 1.2977 is an average over",
+    "  different regimes rather than one amplification factor.",
+    "  mRNA stability is also implicated (rho +0.2868), which points at the uniform k_dp --",
+    "  but the non-linearity is the larger and more specific defect, and it is the one to",
+    "  fix first.",
+    "====================================================================================================",
+    "    manifest: 2 inputs, coverage 10136/16492 (61.5%) by 'filtered', seed 1904, controls 4"
+  ]
+}

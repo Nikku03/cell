@@ -1,0 +1,98 @@
+{
+ "added": "2026-11-21",
+ "facts_written": 13,
+ "layers": {
+  "NADIG2025_DE_RAW": "LAYER-NADIG2025_DE_RAW/0669d2ba0dbb9d8dbd3a",
+  "COLLECTRI_RAW": "LAYER-COLLECTRI_RAW/bd1fb42300714d169a64",
+  "XCELL_K562ESS": "LAYER-XCELL_K562ESS/8eb950789a7cc5e1c4e6",
+  "XCELL_RPE1ESS": "LAYER-XCELL_RPE1ESS/7be277e6c3928fba6f38",
+  "XCELL_HEPG2ESS": "LAYER-XCELL_HEPG2ESS/e411070bbac0ea728dc9",
+  "XCELL_JURKATESS": "LAYER-XCELL_JURKATESS/e00b1c35f8342084ea7a",
+  "XCELL_K562GW": "LAYER-XCELL_K562GW/a99551a7a3a84ff64105",
+  "REG_COLLECTRI": "LAYER-REG_COLLECTRI/bb447b3be684e8ecfcc4"
+ },
+ "build": {
+  "K562ESS": {
+   "cell": "K562",
+   "design": "essential-gene library (Replogle 2022 data, reanalysed)",
+   "measured_genes": 8563,
+   "knockdowns": 2057,
+   "mapped_knockdowns": 2056,
+   "nan_lfc": 24957,
+   "wald_check": {
+    "spearman": 0.999454885597971,
+    "median_ratio": 1.0027895892461893,
+    "n": 202102
+   },
+   "duplicate_knockdown_symbols": 0
+  },
+  "RPE1ESS": {
+   "cell": "RPE1",
+   "design": "essential-gene library (Replogle 2022 data, reanalysed)",
+   "measured_genes": 8749,
+   "knockdowns": 2393,
+   "mapped_knockdowns": 2391,
+   "nan_lfc": 149750,
+   "wald_check": {
+    "spearman": 0.9986936473380966,
+    "median_ratio": 0.9985702711568578,
+    "n": 201764
+   },
+   "duplicate_knockdown_symbols": 0
+  },
+  "HEPG2ESS": {
+   "cell": "HepG2",
+   "design": "essential-gene library (Nadig 2025)",
+   "measured_genes": 9624,
+   "knockdowns": 2393,
+   "mapped_knockdowns": 2391,
+   "nan_lfc": 169629,
+   "wald_check": {
+    "spearman": 0.9987355644414756,
+    "median_ratio": 1.0024737532499102,
+    "n": 200511
+   },
+   "duplicate_knockdown_symbols": 0
+  },
+  "JURKATESS": {
+   "cell": "Jurkat",
+   "design": "essential-gene library (Nadig 2025)",
+   "measured_genes": 8882,
+   "knockdowns": 2392,
+   "mapped_knockdowns": 2390,
+   "nan_lfc": 113076,
+   "wald_check": {
+    "spearman": 0.9991083787347766,
+    "median_ratio": 1.0034574466540787,
+    "n": 201250
+   },
+   "duplicate_knockdown_symbols": 0
+  },
+  "K562GW": {
+   "cell": "K562",
+   "design": "genome-wide library (Replogle 2022 data, reanalysed); independent experiment",
+   "measured_genes": 8248,
+   "knockdowns": 9866,
+   "mapped_knockdowns": 9862,
+   "nan_lfc": 82981,
+   "wald_check": {
+    "spearman": 0.9999999999991965,
+    "median_ratio": 0.43383449273116304,
+    "n": 200221
+   },
+   "duplicate_knockdown_symbols": 0
+  },
+  "collectri": {
+   "rows": 64516,
+   "mapped": 47479,
+   "tfs": 1176,
+   "targets": 6623,
+   "activating": 37852,
+   "repressing": 8057
+  }
+ },
+ "licences": {
+  "nadig2025_de": "CC BY 4.0",
+  "collectri": "mixed, academic (local only)"
+ }
+}

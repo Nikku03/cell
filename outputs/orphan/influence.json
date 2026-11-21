@@ -1,0 +1,153 @@
+{
+ "n_knockouts": 9871,
+ "n_measured": 8202,
+ "n_dual": 7651,
+ "validation": {
+  "n_effects": 4981,
+  "direct_frac": 0.0124,
+  "direct_x_chance": 6.5,
+  "mediated_frac": 0.1431,
+  "unresolved_frac": 0.8444,
+  "explained_frac": 0.1556,
+  "placebo_mediated_frac": 0.0033
+ },
+ "verdict": "The perturbation data is now ONE directed network: KO(X) -> the gene-products it measurably moves (the ends). That network is 100% real data. Reconstructing the ROUTE of each effect works for a validated MINORITY and is honestly flagged for the rest: 1% of strong effects are a DIRECT contact (PPI / curated causal / same complex; 6.5x chance), 14% are MEDIATED by a specific non-hub MEASURED stepping stone (another knockout in the data \u2014 43x a placebo), and 84% stay UNRESOLVED \u2014 distal/regulatory/diffuse, the far-field that does not compose. The confound that had to be controlled: pan-hub mediators (whose knockout moves everything) are excluded, and PPI/pathway structure is used only to name the direct entry point \u2014 as a mediator filter it just re-selects hubs and does not help. So the honest product is a real measured influence network with a per-effect route: direct, measured-mediated, or explicitly unresolved.",
+ "example_cascade_GATA1": {
+  "status": "ok",
+  "gene": "GATA1",
+  "n_affected": 400,
+  "stage1_direct": [
+   {
+    "gene": "FCER1G",
+    "via": "curated causal edge",
+    "value": 5.5
+   },
+   {
+    "gene": "DPYSL2",
+    "via": "curated causal edge",
+    "value": 4.45
+   },
+   {
+    "gene": "BST2",
+    "via": "curated causal edge",
+    "value": 3.04
+   },
+   {
+    "gene": "HLA-E",
+    "via": "curated causal edge",
+    "value": 2.82
+   },
+   {
+    "gene": "YBX1",
+    "via": "curated causal edge",
+    "value": -2.56
+   },
+   {
+    "gene": "TIMP1",
+    "via": "curated causal edge",
+    "value": 2.08
+   },
+   {
+    "gene": "HDAC1",
+    "via": "curated causal edge",
+    "value": 2.07
+   },
+   {
+    "gene": "HOXB2",
+    "via": "curated causal edge",
+    "value": 2.01
+   },
+   {
+    "gene": "SPI1",
+    "via": "physical PPI",
+    "value": 1.85
+   },
+   {
+    "gene": "GP1BB",
+    "via": "curated causal edge",
+    "value": -1.47
+   }
+  ],
+  "n_direct": 10,
+  "stage2_mediated": [
+   {
+    "gene": "LST1",
+    "via": "STXBP3",
+    "value": 18.84
+   },
+   {
+    "gene": "CTSC",
+    "via": "SDHC",
+    "value": 17.89
+   },
+   {
+    "gene": "S100A4",
+    "via": "N4BP1",
+    "value": 10.53
+   },
+   {
+    "gene": "TMSB4X",
+    "via": "CBL",
+    "value": 10.37
+   },
+   {
+    "gene": "LGALS1",
+    "via": "TUT4",
+    "value": 8.31
+   },
+   {
+    "gene": "EGLN3",
+    "via": "SORT1",
+    "value": 7.31
+   },
+   {
+    "gene": "SAT1",
+    "via": "AGO1",
+    "value": 7.16
+   },
+   {
+    "gene": "AIF1",
+    "via": "STXBP3",
+    "value": 7.1
+   },
+   {
+    "gene": "S100A13",
+    "via": "OGA",
+    "value": 6.92
+   },
+   {
+    "gene": "CFD",
+    "via": "RLF",
+    "value": 6.79
+   },
+   {
+    "gene": "ATF7IP2",
+    "via": "ARGLU1",
+    "value": 6.52
+   },
+   {
+    "gene": "ARL6IP5",
+    "via": "MAVS",
+    "value": 6.26
+   },
+   {
+    "gene": "PLD3",
+    "via": "MAVS",
+    "value": 5.93
+   },
+   {
+    "gene": "FUCA1",
+    "via": "ABHD3",
+    "value": 5.54
+   },
+   {
+    "gene": "H19",
+    "via": "GALNT7",
+    "value": 5.2
+   }
+  ],
+  "n_mediated": 172,
+  "n_unresolved": 218,
+  "explained_frac": 0.455
+ }
+}

@@ -1,0 +1,110 @@
+{
+ "test": "two-tower factorization on LINCS, held out by cell line",
+ "arms": {
+  "two_tower": 0.3025401216995891,
+  "additive": 0.45179227675988715,
+  "linear_twin": 0.4023571923257473,
+  "line_ablated": 0.35437391109264443
+ },
+ "H1": {
+  "additive": 0.45179227675988715,
+  "loop252": 0.4477
+ },
+ "H2": {
+  "delta": -0.15169191802308077,
+  "se": 0.0004839978361202987,
+  "z": -313.41445498813636
+ },
+ "H3": {
+  "delta": -0.10225683358894086,
+  "se": 0.0004713051086260814,
+  "z": -216.9652560886375
+ },
+ "H4": {
+  "delta": -0.05427355235583807,
+  "se": 0.0003891369000162948,
+  "z": -139.47161616789725
+ },
+ "H5": {
+  "seed_sd": 0.0029181749596742623,
+  "per_seed": [
+   0.3001003587368064,
+   0.30174719106621534,
+   0.30577281529574557
+  ]
+ },
+ "gates": {
+  "H1": true,
+  "H2": false,
+  "H3": false,
+  "H4": false,
+  "H5": false,
+  "H6": false
+ },
+ "void": [
+  "H5",
+  "H6"
+ ],
+ "seconds": 5816.10501909256,
+ "log": [
+  "========================================================================================================",
+  "LOOP 256 -- LEARN THE REPRESENTATION, HELD TO THE SAME BAR",
+  "========================================================================================================",
+  "     Loop 255's seven nulls were partly MY defect: hand-written per-pair scalars cannot",
+  "     express a gene x line interaction, because a within-profile correlation ignores",
+  "     offset and scale. So the representation is learned here, and the target is the RAW",
+  "     response rather than the residual, which loop 255 showed is blind to per-line",
+  "     directions. Loop 252's additive baseline reached 0.4477 on this target.",
+  "     Line identity is NOT an input: loop 255 proved its out-of-sample coefficient is",
+  "     exactly zero. The line tower reads measured properties only.",
+  "     33,197 (gene, line) pairs, 3,801 genes, 978 landmarks",
+  "     line-tower basis fitted on the FULL DepMap panel -- 1,076 lines of expression, 1,178 of dependency -- so it never sees a LINCS response",
+  "     line tower input: 101 measured dims (50 expression + 50 dependency + 1 mutation burden)",
+  "     training: 9 leave-one-cell-line-out folds x 3 seeds ...",
+  "       seed 0: two-tower 0.3001   additive 0.4518   [1283s]",
+  "       seed 1: two-tower 0.3017   additive 0.4518   [2498s]",
+  "       seed 2: two-tower 0.3058   additive 0.4518   [3695s]",
+  "       linear twin (same tower inputs) 0.4024",
+  "       line tower ablated              0.3544",
+  "H1 DOES THE HARNESS REPRODUCE LOOP 252?",
+  "     A3_ADDITIVE here 0.4518 against loop 252's 0.4477",
+  "     H1 PASS -- reproduces to 0.0041",
+  "H2 DOES THE TWO-TOWER MODEL BEAT THE ADDITIVE BASELINE?",
+  "     two-tower 0.3001 vs additive 0.4518",
+  "     paired over 33,197 pairs: -0.1517 +/- 0.0005 (-313.4 se)",
+  "     H2 FAIL -- the two-tower model adds -0.1517 against a 0.02 bar",
+  "H3 DID THE NETWORK HELP, OR THE FEATURES?",
+  "     two-tower 0.3001 vs its LINEAR TWIN on identical tower inputs 0.4024",
+  "     paired -0.1023 +/- 0.0005  (-217.0 se)",
+  "     loop 241's MLPs lost this by -0.0155 and -0.0170; loop 251's by -0.0088",
+  "     H3 FAIL -- the network is -0.1023 against a linear model given the identical tower inputs",
+  "H4 DOES THE LINE TOWER DO ANYTHING?",
+  "     full 0.3001 vs line embedding zeroed 0.3544",
+  "     paired -0.0543 +/- 0.0004  (-139.5 se)",
+  "     H4 FAIL -- zeroing the line embedding costs -0.0543; the gain is the gene tower and the cell line is still decoration",
+  "H5 IS THE ADVANTAGE LARGER THAN THE SEED NOISE?",
+  "     across 3 seeds: 0.3001, 0.3017, 0.3058   sd 0.00292",
+  "     H5 VOID -- H2 did not pass, so there is nothing here to test",
+  "H6 CONTROL: THE WRONG CELL LINE",
+  "     H6 VOID -- H4 did not pass, so there is nothing here to test",
+  "H7 WHAT THIS CANNOT SHOW",
+  "     Nine cell lines is nine points for the line tower to generalise over. Almost any",
+  "     positive here should be suspected of memorising the eight training lines, which is",
+  "     what H6 catches and why H5 uses three seeds.",
+  "     978 landmarks, not a transcriptome, and shRNA rather than a clean knockout.",
+  "     The gene tower reads the gene's own response in other lines, so this cannot predict",
+  "     a gene never perturbed anywhere: it generalises across CONTEXTS, not across genes.",
+  "     Beating the additive baseline would show the interaction is partly learnable. It",
+  "     would NOT say what the interaction is, and nothing here recovers the mechanism",
+  "     loops 253 and 255 failed to find.",
+  "========================================================================================================",
+  "  H1  PASS",
+  "  H2  FAIL",
+  "  H3  FAIL",
+  "  H4  FAIL",
+  "  H5  VOID",
+  "  H6  VOID",
+  "  1/4   [5816s]   (2 VOID: H5, H6)",
+  "========================================================================================================"
+ ]
+}

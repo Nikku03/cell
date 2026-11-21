@@ -1,0 +1,61 @@
+{
+ "n": 820,
+ "power_cols": [
+  "PowerAtEffectSize10",
+  "PowerAtEffectSize15",
+  "PowerAtEffectSize20",
+  "PowerAtEffectSize25",
+  "PowerAtEffectSize50"
+ ],
+ "marginal_spearman_ae_power": -0.05824232113250032,
+ "protocols": {
+  "P1 stratified": {
+   "per_stratum_net": [
+    -0.1412443602610911,
+    -2.0915971796684613e-05,
+    0.041151789854040846,
+    -0.0027188094837243514
+   ],
+   "n_per": [
+    197,
+    172,
+    159,
+    292
+   ],
+   "macro_net": -0.025708073965642824
+  },
+  "P2 residualised": {
+   "r2": -0.008194465561103481,
+   "permuted": -0.00360884633666938,
+   "net": -0.004585619224434101,
+   "resid_vs_power": 0.127851884952999,
+   "power_still_adds": -0.03572216214361491
+  },
+  "P3 rank-in-stratum": {
+   "r2": 0.03780070818311239,
+   "permuted": -0.003190866000715949,
+   "net": 0.04099157418382834,
+   "rank_vs_power": 6.701429983591382e-05,
+   "power_still_adds": 0.022114707867391496
+  }
+ },
+ "naive": {
+  "r2": -0.011621843588686986,
+  "permuted": -0.002681396729690914,
+  "net": -0.008940446858996072
+ },
+ "with_power": {
+  "r2": 0.16762936497540007,
+  "permuted": -0.004012469156258369,
+  "net": 0.17164183413165843
+ },
+ "control_global_rank": {
+  "r2": 0.019627767854482704,
+  "permuted": -0.0029440135006611654,
+  "net": 0.02257178135514387,
+  "rank_vs_power": -0.05824232113250032
+ },
+ "rank_transform_vs_conditioning": 0.01841979282868447,
+ "verdict": "UNSTABLE ACROSS PROTOCOLS -- NOT BENCHMARKABLE AS THINGS STAND. Only 1 of 3 power-conditioning protocols give a positive net (P1 stratified -0.0257, P2 residualised -0.0046, P3 rank-in-stratum +0.0410), so they disagree about whether anything survives. And the one that is positive, P3 rank-in-stratum, gains mostly from replacing a heavy-tailed target with a uniform one rather than from removing power: a GLOBAL rank, which conditions on nothing, scores +0.0226, leaving only +0.0184 attributable to the conditioning itself. The recommendation is therefore the rank-based target for VARIANCE reasons, with power-conditioning on top, and a measured floor near zero for biology -- not a claim that magnitude has become predictable.",
+ "recommended_protocol": "P3 rank-in-stratum"
+}

@@ -1,0 +1,50 @@
+{
+ "n_sources": 336,
+ "self_depth_median": 0.37874937057495117,
+ "mapping_valid": true,
+ "n_down_calls": 3179,
+ "down_median_fraction_remaining": 0.030793726444244385,
+ "frac_fully_off": 0.5193457061969172,
+ "frac_lost_half": 0.8804655552060396,
+ "down_bands": [
+  {
+   "band": "fully off (<=5% left)",
+   "n": 1651,
+   "frac": 0.5193
+  },
+  {
+   "band": "severe (5-25% left)",
+   "n": 596,
+   "frac": 0.1875
+  },
+  {
+   "band": "strong (25-50% left)",
+   "n": 552,
+   "frac": 0.1736
+  },
+  {
+   "band": "moderate (50-75% left)",
+   "n": 276,
+   "frac": 0.0868
+  },
+  {
+   "band": "mild (>75% left)",
+   "n": 79,
+   "frac": 0.0249
+  }
+ ],
+ "up": {
+  "median_fold": 1.793,
+  "p90": 2.867,
+  "frac_over_2x": 0.3655,
+  "frac_over_5x": 0.0114
+ },
+ "beyond_k562": {
+  "rpe1_sources": 855,
+  "rpe1_down_median_z": -4.48,
+  "k562_down_median_z": -4.77,
+  "note": "RPE1 has no relative-expression matrix on disk, so only the z distribution is compared; depth in fraction-remaining units is measurable for K562 only"
+ },
+ "verdict": "SHUTDOWN DEPTH (K562): corrects an earlier limitation and answers how deep 'down-regulated' actually goes. Magnitude was previously withheld because the z-score parquet is in SD units and the first-order conversion broke outside a narrow range. That was a limitation of that file, not of the data: the Replogle genome-wide matrix is RELATIVE EXPRESSION, (perturbed/control)-1, so fraction remaining is simply 1+x and needs no modelling. Its shape confirms the reading -- median +0.002, sd 0.105, floor at -1 because a gene cannot lose more than all of it, only 0.003% of values below -1. POSITIVE CONTROL: the targeted genes themselves retain a median 37.9% of control expression, which is what CRISPRi should do and validates the perturbation-to-row mapping. RESULT over 3179 down-regulated calls across 336 knockouts: median 3.1% of control expression remains; 51.9% are essentially switched OFF (<=5% left) and 88.0% have lost at least half. Up-regulated genes move by a median 1.79x with 36.6% exceeding 2x. SO THE ANSWER IS THE OPPOSITE OF A GRADUAL DIMMING: among genes called down at |z|>=4.2, most are switched off rather than turned down -- 52% retain 5% or less and only 3% are mild reductions. THE SELECTION EFFECT MUST BE STATED WITH IT: these are genes already selected for an extreme z, so this is the depth distribution OF STRONGLY-CALLED MOVERS, not of every gene the knockout touches. It is also why the down targets look deeper (median 3.1% left) than the CRISPRi-targeted genes themselves (median 37.9% left) -- the targeted genes are an unselected set whose knockdown efficiency is whatever the guide achieved, while the down-regulated set is the tail of a distribution. Asymmetry with the up direction is real and large: induction is mostly modest, median 1.79x with only 1.1% above 5x, so this knockout switches things OFF hard and turns things UP gently. STILL NOT AVAILABLE, so this correction is not overstated: this is mRNA ABUNDANCE and not transcription RATE, and nothing here says how far a given gene may fall before its function fails -- depth of knockdown is measurable, tolerance to it is not. Deterministic.",
+ "note": "SHUTDOWN DEPTH (K562): corrects an earlier limitation and answers how deep 'down-regulated' actually goes. Magnitude was previously withheld because the z-score parquet is in SD units and the first-order conversion broke outside a narrow range. That was a limitation of that file, not of the data: the Replogle genome-wide matrix is RELATIVE EXPRESSION, (perturbed/control)-1, so fraction remaining is simply 1+x and needs no modelling. Its shape confirms the reading -- median +0.002, sd 0.105, floor at -1 because a gene cannot lose more than all of it, only 0.003% of values below -1. POSITIVE CONTROL: the targeted genes themselves retain a median 37.9% of control expression, which is what CRISPRi should do and validates the perturbation-to-row mapping. RESULT over 3179 down-regulated calls across 336 knockouts: median 3.1% of control expression remains; 51.9% are essentially switched OFF (<=5% left) and 88.0% have lost at least half. Up-regulated genes move by a median 1.79x with 36.6% exceeding 2x. SO THE ANSWER IS THE OPPOSITE OF A GRADUAL DIMMING: among genes called down at |z|>=4.2, most are switched off rather than turned down -- 52% retain 5% or less and only 3% are mild reductions. THE SELECTION EFFECT MUST BE STATED WITH IT: these are genes already selected for an extreme z, so this is the depth distribution OF STRONGLY-CALLED MOVERS, not of every gene the knockout touches. It is also why the down targets look deeper (median 3.1% left) than the CRISPRi-targeted genes themselves (median 37.9% left) -- the targeted genes are an unselected set whose knockdown efficiency is whatever the guide achieved, while the down-regulated set is the tail of a distribution. Asymmetry with the up direction is real and large: induction is mostly modest, median 1.79x with only 1.1% above 5x, so this knockout switches things OFF hard and turns things UP gently. STILL NOT AVAILABLE, so this correction is not overstated: this is mRNA ABUNDANCE and not transcription RATE, and nothing here says how far a given gene may fall before its function fails -- depth of knockdown is measurable, tolerance to it is not. Deterministic."
+}

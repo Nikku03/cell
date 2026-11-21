@@ -1,0 +1,10 @@
+{
+  "id": "zhao_2026_psoriasis_crispr",
+  "type": "paper",
+  "citation": "Zhao C, Shih M, et al. AI-guided CRISPR screening reveals therapeutic targets in psoriasis. Nature Communications (2026). doi:10.1038/s41467-026-75249-5; PMC13473102.",
+  "url": "https://doi.org/10.1038/s41467-026-75249-5",
+  "organism": "human (primary keratinocytes, two donors); mouse (imiquimod skin model)",
+  "authority": "primary",
+  "licence": "CC BY-NC-ND 4.0 -- kept local only; nothing derived from it is committed or published",
+  "notes": "Biohub. Genome-wide CRISPR knockout (~77,000 guides, ~19,000 genes) sorted on IL17RA; MAGeCK FDR/LFC for 18,785 genes (Supplementary Data 1), VirtualCRISPR top 10, ALOX5 and OXTR knockout proteomics (Data 2-3), mouse skin proteomics under anti-IL17RA, zileuton, cligosiban (Data 4-6). Supplementary files from Europe PMC, pulled by rem/atlas/biohubbank.py. Raw data PRIDE PXD071833, BioProject PRJNA1451949 (not pulled). Code: github.com/czbiohub-chi/immune-llm-acl (MIT)."
+}

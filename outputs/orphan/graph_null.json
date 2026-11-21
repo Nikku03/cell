@@ -1,0 +1,163 @@
+{
+ "real_recall": 0.47251001183112373,
+ "real_per_split": [
+  0.4623271829921131,
+  0.4649502190878002,
+  0.433973356195707,
+  0.49258874703388017,
+  0.5087105538461186
+ ],
+ "config": [
+  2,
+  0.5,
+  2.0
+ ],
+ "n_scorable": 378,
+ "n_ppi_pairs": 191447,
+ "n_complex_pairs": 13576,
+ "ppi_degree_median": 74.0,
+ "complex_degree_median": 6.0,
+ "n_zero_complex": 97,
+ "frac_zero_complex": 0.2566137566137566,
+ "nulls": {
+  "A_binomial": {
+   "mean": 0.12735825991472519,
+   "sd": 0.008137718620830599,
+   "min": 0.11443336944096898,
+   "max": 0.14532639369162154,
+   "n_ge_real": 0,
+   "p_empirical": 0.047619047619047616,
+   "p_note": "<= 0.048 is the floor at R=20",
+   "z": 42.41382234977912,
+   "edge_retention": 1.0,
+   "values": [
+    0.12351717866866059,
+    0.11443336944096898,
+    0.12470779688511469,
+    0.1318960014772203,
+    0.1274971313096717,
+    0.1311901158797713,
+    0.12768889890613097,
+    0.14532639369162154,
+    0.12325209706801817,
+    0.1281817945694021,
+    0.11558413090304794,
+    0.12657992034317408,
+    0.11813135539039668,
+    0.12421739486053815,
+    0.12582245753523963,
+    0.12124707836344699,
+    0.1288062767977401,
+    0.12618153722468556,
+    0.14452636149711132,
+    0.13837790748254267
+   ]
+  },
+  "B_degree_preserving": {
+   "mean": 0.15160781895570682,
+   "sd": 0.006958883089001066,
+   "min": 0.14088868156216355,
+   "max": 0.16267375958227293,
+   "n_ge_real": 0,
+   "p_empirical": 0.047619047619047616,
+   "p_note": "<= 0.048 is the floor at R=20",
+   "z": 46.11403709061044,
+   "edge_retention": 0.9909021468406511,
+   "values": [
+    0.15396109817770687,
+    0.14862715494982517,
+    0.14088868156216355,
+    0.16267375958227293,
+    0.14136712983421953,
+    0.16149830687814695,
+    0.145134197639555,
+    0.15407030692934015,
+    0.15435246596552799,
+    0.15894705138078574,
+    0.14910225138812822,
+    0.158539148601836,
+    0.14122720303232783,
+    0.14936980707962194,
+    0.15468991706627655,
+    0.15419981038352354,
+    0.14805821504276614,
+    0.15006556969327345,
+    0.1438711350133559,
+    0.16151316891348313
+   ]
+  },
+  "C_complex_only_rewired": {
+   "mean": 0.3615943377474805,
+   "sd": 0.008886240713905747,
+   "min": 0.3374355945794696,
+   "max": 0.37356408565732063,
+   "n_ge_real": 0,
+   "p_empirical": 0.047619047619047616,
+   "p_note": "<= 0.048 is the floor at R=20",
+   "z": 12.481731888049737,
+   "edge_retention": 0.9893046552740131,
+   "values": [
+    0.3374355945794696,
+    0.3588602720743828,
+    0.37356408565732063,
+    0.36577710840112776,
+    0.3607118229730709,
+    0.36708832878350944,
+    0.37060575055940104,
+    0.369206110502542,
+    0.3453532691990418,
+    0.36578123499996773,
+    0.35799371348094067,
+    0.3538028896815879,
+    0.3680252882841678,
+    0.3543441842545646,
+    0.3593236977887058,
+    0.36658375077474475,
+    0.3671890872337086,
+    0.36401562349393596,
+    0.35774480904618733,
+    0.3684801331812314
+   ]
+  }
+ },
+ "layer_ablation": {
+  "ppi_only": 0.4728722908630859,
+  "complex_only": 0.4005114504151724,
+  "both": 0.47251001183112373
+ },
+ "by_complex_presence": {
+  "has complex edges": {
+   "n": 281,
+   "recall": 0.521167984854978
+  },
+  "ZERO complex edges": {
+   "n": 97,
+   "recall": 0.3304324954726789
+  }
+ },
+ "by_ppi_degree_quartile": {
+  "degree Q1": {
+   "n": 103,
+   "recall": 0.38183328504100067
+  },
+  "Q2": {
+   "n": 88,
+   "recall": 0.4352563276770365
+  },
+  "Q3": {
+   "n": 95,
+   "recall": 0.5433889831788334
+  },
+  "Q4": {
+   "n": 92,
+   "recall": 0.5490542333533567
+  }
+ },
+ "beats_binomial": true,
+ "beats_degree_preserving": true,
+ "complex_wiring_matters_over_ppi_only": false,
+ "complex_layer_redundant_given_ppi": true,
+ "null_C_vs_ppi_only": -0.1112779531156054,
+ "verdict": "IS THE PROTEIN CHAIN WIRING, OR JUST DEGREE? The prompt for this was a fair objection to a number I reported: '99% of scorable knockouts are a node in the protein chain' says nothing about whether those nodes have edges. Measured properly the two layers differ sharply -- PPI degree among the 378 scorable knockouts has median 74 with only 3 at zero, but COMPLEX degree has median 6 and 97 knockouts (26%) have NO complex edge at all. The complex layer -- the ingredient credited for the ensemble gain and weighted 2x above PPI by the pre-registered config -- is missing for a quarter of knockouts, and '99% coverage' concealed it. THE DECISIVE TEST IS NOT COVERAGE BUT A DEGREE-PRESERVING NULL, because a walk on any realistic graph drifts to hubs and hubs are the well-studied, frequently-moving genes; this project already measured a PPI enrichment at 35x against a uniform null that collapsed against a degree-matched one. Three nulls were run with the identical pipeline, 20 resampled graphs each. REAL graph MARKOV-P recall@50 = 0.4725. NULL A (binomial, same edge count, degree and wiring both destroyed): 0.1274 +- 0.0081, z=+42.4. NULL B (degree-preserving configuration model, every node keeps its exact degree): 0.1516 +- 0.0070, z=+46.1, p<=0.048. NULL C (complex layer rewired, real PPI kept): 0.3616 +- 0.0089, z=+12.5. THE WIRING IS REAL: the chain beats the DEGREE-PRESERVING null by +0.3209 (+46.1 sd), so holding hubness exactly fixed and randomising only who-binds-whom destroys the advantage. That is the control this project's own history demanded, and it passes. It also clears the binomial null comfortably (+42.4 sd), as any working method must. NOW THE CORRECTION, AND IT OVERTURNS WHAT THIS PROJECT CREDITED FOR THE GAIN. The layer ablation reads: PPI alone 0.4729, complex alone 0.4005, BOTH 0.4725. PPI ALONE IS AS GOOD AS BOTH (0.4729 versus 0.4725) -- the complex co-membership layer, which the previous module called 'the new ingredient' and whose weight the pre-registered config set to 2x PPI, ADDS NOTHING once PPI is present. NULL C must be read against PPI-ONLY, not against the full graph: rewiring the complex layer scores 0.3616, which is BELOW PPI-only's 0.4729, so what NULL C shows is that INJECTING WRONG complex edges actively harms, NOT that real complex edges help. Those are different claims and conflating them would have turned a redundancy into a discovery. The honest attribution is that the working ingredient is the TWO-STEP WALK ON PPI; the complex layer's apparent benefit in the earlier train-set sweep (0.4909 without, 0.4996 with) did not replicate here. Knockouts has complex edges: n=281, recall 0.5212. Knockouts ZERO complex edges: n=97, recall 0.3304. BY PPI DEGREE QUARTILE: degree Q1 0.382 (n=103), Q2 0.435 (n=88), Q3 0.543 (n=95), Q4 0.549 (n=92). WHAT BOUNDS THIS: stub matching preserves degree exactly only before cleanup; dropping self-loops and duplicate pairs retained 99.1% of edges, which slightly LOWERS null degrees and therefore biases in the real graph's favour -- so a real-graph win over NULL B is an upper bound on the wiring effect. Degree-preserving rewiring also cannot destroy the coarse component structure or the fact that a knockout gene is its own node, so those are shared between real and null and are not what is being tested. With R=20 replicates the smallest attainable empirical p is 0.048, so p is reported as a bound. Deterministic given seed 0.",
+ "note": "IS THE PROTEIN CHAIN WIRING, OR JUST DEGREE? The prompt for this was a fair objection to a number I reported: '99% of scorable knockouts are a node in the protein chain' says nothing about whether those nodes have edges. Measured properly the two layers differ sharply -- PPI degree among the 378 scorable knockouts has median 74 with only 3 at zero, but COMPLEX degree has median 6 and 97 knockouts (26%) have NO complex edge at all. The complex layer -- the ingredient credited for the ensemble gain and weighted 2x above PPI by the pre-registered config -- is missing for a quarter of knockouts, and '99% coverage' concealed it. THE DECISIVE TEST IS NOT COVERAGE BUT A DEGREE-PRESERVING NULL, because a walk on any realistic graph drifts to hubs and hubs are the well-studied, frequently-moving genes; this project already measured a PPI enrichment at 35x against a uniform null that collapsed against a degree-matched one. Three nulls were run with the identical pipeline, 20 resampled graphs each. REAL graph MARKOV-P recall@50 = 0.4725. NULL A (binomial, same edge count, degree and wiring both destroyed): 0.1274 +- 0.0081, z=+42.4. NULL B (degree-preserving configuration model, every node keeps its exact degree): 0.1516 +- 0.0070, z=+46.1, p<=0.048. NULL C (complex layer rewired, real PPI kept): 0.3616 +- 0.0089, z=+12.5. THE WIRING IS REAL: the chain beats the DEGREE-PRESERVING null by +0.3209 (+46.1 sd), so holding hubness exactly fixed and randomising only who-binds-whom destroys the advantage. That is the control this project's own history demanded, and it passes. It also clears the binomial null comfortably (+42.4 sd), as any working method must. NOW THE CORRECTION, AND IT OVERTURNS WHAT THIS PROJECT CREDITED FOR THE GAIN. The layer ablation reads: PPI alone 0.4729, complex alone 0.4005, BOTH 0.4725. PPI ALONE IS AS GOOD AS BOTH (0.4729 versus 0.4725) -- the complex co-membership layer, which the previous module called 'the new ingredient' and whose weight the pre-registered config set to 2x PPI, ADDS NOTHING once PPI is present. NULL C must be read against PPI-ONLY, not against the full graph: rewiring the complex layer scores 0.3616, which is BELOW PPI-only's 0.4729, so what NULL C shows is that INJECTING WRONG complex edges actively harms, NOT that real complex edges help. Those are different claims and conflating them would have turned a redundancy into a discovery. The honest attribution is that the working ingredient is the TWO-STEP WALK ON PPI; the complex layer's apparent benefit in the earlier train-set sweep (0.4909 without, 0.4996 with) did not replicate here. Knockouts has complex edges: n=281, recall 0.5212. Knockouts ZERO complex edges: n=97, recall 0.3304. BY PPI DEGREE QUARTILE: degree Q1 0.382 (n=103), Q2 0.435 (n=88), Q3 0.543 (n=95), Q4 0.549 (n=92). WHAT BOUNDS THIS: stub matching preserves degree exactly only before cleanup; dropping self-loops and duplicate pairs retained 99.1% of edges, which slightly LOWERS null degrees and therefore biases in the real graph's favour -- so a real-graph win over NULL B is an upper bound on the wiring effect. Degree-preserving rewiring also cannot destroy the coarse component structure or the fact that a knockout gene is its own node, so those are shared between real and null and are not what is being tested. With R=20 replicates the smallest attainable empirical p is 0.048, so p is reported as a bound. Deterministic given seed 0."
+}

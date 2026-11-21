@@ -1,0 +1,9 @@
+{
+  "id": "donnelly_2026_genomics_alphagenome2_commentary",
+  "type": "commentary",
+  "citation": "Donnelly, P. AlphaGenome 2: a step change in predicting what DNA does, and what it might add to drug discovery. Genomics plc newsroom (11 Nov 2026).",
+  "url": "https://www.genomics.com/newsroom/alphagenome-2-a-step-change-in-predicting-what-dna-does-and-what-it-might-add-to-drug-discovery---by-professor-sir-peter-donnelly-ceo-genomics",
+  "authority": "secondary",
+  "read_on": "2026-11-17",
+  "notes": "Commentary on AlphaGenome 2 by Genomics plc's CEO. Names no datasets of its own beyond 'tens of thousands of GWAS' plus transcriptomic and proteomic data in Genomics' Mystra platform (sources not named); plans an AG2 evaluation across that GWAS data."
+}

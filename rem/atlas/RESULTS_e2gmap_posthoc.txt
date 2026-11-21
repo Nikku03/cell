@@ -1,0 +1,8 @@
+=================================================================================================
+E2GMAP POST HOC -- corrected co-activity (mark-only cCRE annotations no longer read as inactive); descriptive
+=================================================================================================
+  EXAM AUPRC corrected: final 0.443, abc 0.339, distance 0.327, coact alone 0.139  (as scored: final 0.415, abc 0.339, distance 0.327)
+  final-dist  bootstrap mean +0.115, 95% interval [+0.068, +0.161]
+  final-abc   bootstrap mean +0.104, 95% interval [+0.072, +0.136]
+  by cell type: GM12878 final 0.85 / dist 0.88; HCT116 final 0.40 / dist 0.31; Jurkat final 0.69 / dist 0.58; K562 final 0.53 / dist 0.37; WTC11 final 0.44 / dist 0.46
+  DEV (in sample): final 0.521; coact alone 0.130; coef {'log_abc': 0.83, 'log_dist': 0.623, 'activity': 1.758, 'coact': 1.615, 'coact_x_activity': 1.62}

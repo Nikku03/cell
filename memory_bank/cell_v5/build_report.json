@@ -1,0 +1,37 @@
+{
+ "records": {
+  "D": 1631,
+  "E": 1563
+ },
+ "kept": {
+  "D": {
+   "perturbations": 2393,
+   "with_features": 2051,
+   "kept": 1631,
+   "measured_genes_mapped": 7427
+  },
+  "E": {
+   "perturbations": 2392,
+   "with_features": 2051,
+   "kept": 1563,
+   "measured_genes_mapped": 7355
+  }
+ },
+ "h2": {
+  "D": {
+   "n": 654,
+   "median_r": 0.45911046862602234,
+   "shuffled": -0.01178339309990406,
+   "passed": true
+  },
+  "E": {
+   "n": 609,
+   "median_r": 0.5736654996871948,
+   "shuffled": -0.006651889532804489,
+   "passed": true
+  }
+ },
+ "total_records": 11749,
+ "bytes_bank": 3662356,
+ "seconds": 68.15518689155579
+}

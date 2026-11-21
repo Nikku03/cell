@@ -1,0 +1,787 @@
+{
+  "id": "alphagenome2_datasets",
+  "paper": "gayoso_2026_alphagenome2",
+  "recorded": "2026-11-17",
+  "what": "Catalogue of every dataset AlphaGenome 2 (Google DeepMind, 2026) was trained or evaluated on: type and location only. No data files are stored here.",
+  "how_to_read": "Each entry: role (training / evaluation / model output), data types, species, scale as the paper states it, where it lives (repository, accession, URL), and the memory_bank/sources id to cite. Licences are on the source records; 'not checked' means exactly that.",
+  "summary": {
+    "reference_conditions": "A 'condition' is one tissue, cell line or cell type (ontology-indexed: UBERON + CL / CLO / EFO).",
+    "single_cell_expression_conditions": 1943,
+    "single_cell_tracks": 3977,
+    "single_cell_studies": {
+      "total": 36,
+      "human": 30,
+      "mouse": 7,
+      "note": "one study covers both species"
+    },
+    "expression_encoder_cells": "107 million human single cells, 68 tissues (CZ CELLxGENE Discover, 16 March 2026 snapshot)",
+    "methylation": {
+      "profiles": 190,
+      "bulk_wgbs": 75,
+      "single_nucleus_pseudobulks": 115,
+      "human_conditions": 185
+    },
+    "contact_maps": {
+      "maps": 77,
+      "human_conditions": 73,
+      "mouse_conditions": 4
+    },
+    "approx_conditions_per_modality_from_chart": {
+      "note": "read off Supplementary Figure 1 bars; approximate",
+      "human": {
+        "single_cell_RNA": "~1,850",
+        "single_cell_accessibility": "~650",
+        "bulk_RNA": "~500",
+        "bulk_accessibility": "~450",
+        "histone_ChIP": "~200",
+        "TF_ChIP": "~150",
+        "splicing": "~250",
+        "methylation": "185 (exact)",
+        "contact_maps": "73 (exact)"
+      },
+      "mouse": {
+        "single_cell_RNA": "~320",
+        "single_cell_accessibility": "~370",
+        "bulk_RNA": "~150",
+        "splicing": "~30"
+      }
+    },
+    "single_cell_tissues": {
+      "human": [
+        "eye",
+        "brain",
+        "kidney",
+        "heart",
+        "thymus",
+        "blood",
+        "intestine",
+        "lung",
+        "muscle",
+        "skin",
+        "liver",
+        "uterus",
+        "adipose",
+        "spleen",
+        "lymph node",
+        "pancreas",
+        "esophagus",
+        "placenta",
+        "stomach",
+        "bone marrow",
+        "yolk sac",
+        "breast",
+        "bladder",
+        "adrenal gland",
+        "prostate",
+        "ovary",
+        "thyroid",
+        "cell lines",
+        "other"
+      ],
+      "mouse": [
+        "intestine",
+        "kidney",
+        "adipose",
+        "lung",
+        "heart",
+        "liver",
+        "brain",
+        "stomach",
+        "muscle",
+        "eye",
+        "adrenal gland",
+        "embryo",
+        "blood",
+        "cell lines"
+      ]
+    },
+    "model_outputs": "enhancer-gene links across 640 human conditions; variant scores (6,822,130 SNVs) across 510 human conditions"
+  },
+  "datasets": [
+    {
+      "id": "ref_genomes",
+      "name": "Reference genomes and gene annotation",
+      "role": "training",
+      "data_types": [
+        "genome sequence",
+        "gene annotation"
+      ],
+      "species": [
+        "human",
+        "mouse"
+      ],
+      "where": {
+        "repository": "GENCODE / Ensembl",
+        "detail": "GRCh38 (p13, p14) with GENCODE v46 (alignment v32/v44); GRCm38.p6 with GENCODE vM23; T2T-CHM13v2.0 for the Parkinson's evaluation"
+      },
+      "source": "gayoso_2026_alphagenome2",
+      "paper_section": "Methods; Data availability"
+    },
+    {
+      "id": "bulk_rna",
+      "name": "Bulk RNA-seq (coverage and gene TPM)",
+      "role": "training",
+      "data_types": [
+        "RNA-seq"
+      ],
+      "species": [
+        "human",
+        "mouse"
+      ],
+      "where": {
+        "repository": "ENCODE; GTEx Portal (v8 gene TPM); recount3 (coverage incl. GTEx)"
+      },
+      "source": [
+        "encode_portal",
+        "gtex_portal",
+        "wilks_2021_recount3"
+      ],
+      "scale": "~500 human, ~150 mouse conditions (chart)",
+      "paper_section": "Bulk transcriptomic and epigenomic data",
+      "relevance_to_this_project": "ENCODE K562 RNA-seq"
+    },
+    {
+      "id": "splicing",
+      "name": "RNA splicing (junctions, splice-site usage)",
+      "role": "training",
+      "data_types": [
+        "RNA-seq derived splicing"
+      ],
+      "species": [
+        "human",
+        "mouse"
+      ],
+      "where": {
+        "repository": "ENCODE and GTEx paired-end RNA-seq, realigned with STAR"
+      },
+      "source": [
+        "encode_portal",
+        "gtex_portal"
+      ],
+      "paper_section": "RNA splicing"
+    },
+    {
+      "id": "bulk_accessibility",
+      "name": "Bulk ATAC-seq and DNase-seq",
+      "role": "training",
+      "data_types": [
+        "ATAC-seq",
+        "DNase-seq"
+      ],
+      "species": [
+        "human",
+        "mouse"
+      ],
+      "where": {
+        "repository": "ENCODE (via the AlphaGenome 1 corpus)"
+      },
+      "source": [
+        "encode_portal"
+      ],
+      "scale": "~450 human conditions (chart)",
+      "paper_section": "ATAC-seq and DNase-seq",
+      "relevance_to_this_project": "ENCODE K562 ATAC/DNase"
+    },
+    {
+      "id": "chip",
+      "name": "Histone and transcription-factor ChIP-seq",
+      "role": "training",
+      "data_types": [
+        "ChIP-seq (histone)",
+        "ChIP-seq (TF)"
+      ],
+      "species": [
+        "human",
+        "mouse"
+      ],
+      "where": {
+        "repository": "ENCODE (fold-change-over-control tracks)"
+      },
+      "source": [
+        "encode_portal"
+      ],
+      "scale": "~200 histone, ~150 TF conditions (chart)",
+      "paper_section": "Transcription factor and histone ChIP-seq",
+      "relevance_to_this_project": "ENCODE K562 has hundreds of TF ChIP-seq experiments"
+    },
+    {
+      "id": "cage",
+      "name": "CAGE (transcription start sites)",
+      "role": "training",
+      "data_types": [
+        "CAGE"
+      ],
+      "species": [
+        "human",
+        "mouse"
+      ],
+      "where": {
+        "repository": "FANTOM5 (via the AlphaGenome 1 corpus)"
+      },
+      "source": [
+        "fantom5_cage"
+      ],
+      "paper_section": "CAGE"
+    },
+    {
+      "id": "procap",
+      "name": "PRO-cap",
+      "role": "training",
+      "data_types": [
+        "PRO-cap"
+      ],
+      "species": [
+        "human"
+      ],
+      "where": {
+        "repository": "AlphaGenome 1 corpus (source in Avsec et al. 2026)"
+      },
+      "source": "gayoso_2026_alphagenome2",
+      "paper_section": "Methods (ablation note)"
+    },
+    {
+      "id": "contact_maps",
+      "name": "3D genome contact maps",
+      "role": "training",
+      "data_types": [
+        "Intact Hi-C",
+        "Micro-C"
+      ],
+      "species": [
+        "human",
+        "mouse"
+      ],
+      "where": {
+        "repository": "ENCODE (Intact Hi-C); 4D Nucleome Data Portal (Micro-C)"
+      },
+      "source": [
+        "encode_portal",
+        "fourdn_data_portal"
+      ],
+      "scale": "77 maps: 73 human, 4 mouse conditions",
+      "paper_section": "Contact map data"
+    },
+    {
+      "id": "methylation_wgbs",
+      "name": "DNA methylation, bulk WGBS of sorted cell types",
+      "role": "training",
+      "data_types": [
+        "WGBS (CpG methylation)"
+      ],
+      "species": [
+        "human"
+      ],
+      "where": {
+        "repository": "GEO",
+        "accession": "GSE186458"
+      },
+      "source": "loyfer_2023_methylation_atlas",
+      "scale": "75 profiles",
+      "paper_section": "CpG methylation data"
+    },
+    {
+      "id": "methylation_snm3c",
+      "name": "DNA methylation, single-nucleus snm3C-seq",
+      "role": "training",
+      "data_types": [
+        "snm3C-seq (CpG methylation + 3D genome)"
+      ],
+      "species": [
+        "human"
+      ],
+      "where": {
+        "repository": "Hugging Face",
+        "url": "https://huggingface.co/datasets/zhoujt1994/HumanCellEpigenomeAtlas_sc_allc"
+      },
+      "source": "zhou_2026_snm3c_atlas",
+      "scale": "115 pseudobulks",
+      "paper_section": "CpG methylation data"
+    },
+    {
+      "id": "single_cell_corpus",
+      "name": "Single-cell RNA-seq, ATAC-seq and Multiome (36 studies)",
+      "role": "training",
+      "data_types": [
+        "scRNA-seq",
+        "snRNA-seq",
+        "scATAC-seq",
+        "10x Multiome"
+      ],
+      "species": [
+        "human",
+        "mouse"
+      ],
+      "where": {
+        "repository": "ENCODE; CZ CELLxGENE Discover; GEO; ArrayExpress; Zenodo; consortium portals",
+        "accession": "per study in the paper's Supplementary Table 3 (not in the PDF)"
+      },
+      "source": [
+        "encode_portal",
+        "cellxgene_discover"
+      ],
+      "scale": "3,977 pseudobulk tracks; 1,943 expression conditions; healthy, unperturbed samples only",
+      "paper_section": "Single-cell RNA-seq and ATAC-seq data; Supplementary Table 1",
+      "relevance_to_this_project": "includes K562 Multiome (Xu et al. 2022)"
+    },
+    {
+      "id": "expression_encoder_cells",
+      "name": "Single cells for the expression encoder and post-training",
+      "role": "training",
+      "data_types": [
+        "scRNA-seq / snRNA-seq (individual cells)"
+      ],
+      "species": [
+        "human"
+      ],
+      "where": {
+        "repository": "CZ CELLxGENE Discover (snapshot 16 March 2026) + the pre-training corpus; HMBA basal ganglia snMultiome (autoencoder only)"
+      },
+      "source": [
+        "cellxgene_discover",
+        "johansen_2025_hmba_basal_ganglia"
+      ],
+      "scale": "107 million cells, 68 tissues; disease samples kept",
+      "paper_section": "Single-cell RNA-seq data processing for cell encoder training"
+    },
+    {
+      "id": "gtex_expression_eval",
+      "name": "Held-out gene expression across GTEx tissues",
+      "role": "evaluation",
+      "data_types": [
+        "RNA-seq"
+      ],
+      "species": [
+        "human"
+      ],
+      "where": {
+        "repository": "GTEx"
+      },
+      "source": "gtex_portal",
+      "scale": "52 tissues, 1,885 genes",
+      "paper_section": "Results; Fig. 2a"
+    },
+    {
+      "id": "gtex_v11_eqtl",
+      "name": "Fine-mapped bulk tissue eQTLs",
+      "role": "evaluation",
+      "data_types": [
+        "eQTL (SuSiE fine-mapped)"
+      ],
+      "species": [
+        "human"
+      ],
+      "where": {
+        "repository": "GTEx Analysis v11 release"
+      },
+      "source": "gtex_portal",
+      "scale": "49 tissues; 33,837 causal variant-tissue-gene sets",
+      "paper_section": "Bulk tissue eQTLs (GTEx v11)"
+    },
+    {
+      "id": "ag1_qtl_benchmarks",
+      "name": "AlphaGenome 1 QTL benchmarks (caQTL, DNase QTL, polyadenylation QTL, sQTL)",
+      "role": "evaluation",
+      "data_types": [
+        "QTLs"
+      ],
+      "species": [
+        "human"
+      ],
+      "where": {
+        "repository": "as in Avsec et al. 2026 (AlphaGenome 1)"
+      },
+      "source": "gayoso_2026_alphagenome2",
+      "paper_section": "Results"
+    },
+    {
+      "id": "tenk10k",
+      "name": "TenK10K single-cell immune QTLs",
+      "role": "evaluation",
+      "data_types": [
+        "sc-eQTL",
+        "sc-caQTL"
+      ],
+      "species": [
+        "human"
+      ],
+      "where": {
+        "repository": "TenK10K study"
+      },
+      "source": "cuomo_2026_tenk10k",
+      "scale": "28 PBMC cell types (eQTL; 6,346 causal), 24 (caQTL)",
+      "paper_section": "Single-cell eQTLs"
+    },
+    {
+      "id": "ibdverse",
+      "name": "IBDverse single-cell gut QTLs",
+      "role": "evaluation",
+      "data_types": [
+        "sc-eQTL"
+      ],
+      "species": [
+        "human"
+      ],
+      "where": {
+        "repository": "eQTL Catalogue",
+        "accession": "release r8, study QTS000045"
+      },
+      "source": "alegbe_2026_ibdverse",
+      "scale": "47 intestinal cell types; 3,524 causal",
+      "paper_section": "Single-cell eQTLs"
+    },
+    {
+      "id": "parkinsons",
+      "name": "Parkinson's disease brain multiome QTLs",
+      "role": "evaluation",
+      "data_types": [
+        "snMultiome",
+        "caQTL-ASCA",
+        "eQTL"
+      ],
+      "species": [
+        "human"
+      ],
+      "where": {
+        "repository": "Sigalova et al. 2026 (bioRxiv)"
+      },
+      "source": "sigalova_2026_parkinsons_multiome",
+      "scale": "substantia nigra and cingulate cortex cell types",
+      "paper_section": "Parkinson's disease cohort sc-eQTL and caQTL evaluations"
+    },
+    {
+      "id": "covid_vaccine",
+      "name": "SARS-CoV-2 mRNA vaccination PBMC atlas",
+      "role": "evaluation",
+      "data_types": [
+        "CITE-seq",
+        "ASAP-seq"
+      ],
+      "species": [
+        "human"
+      ],
+      "where": {
+        "repository": "Zhang et al. 2023 (Nature Immunology)"
+      },
+      "source": "zhang_2023_sarscov2_vaccine_atlas",
+      "scale": "113,897 cells, 6 donors, 30 level-2 cell types",
+      "paper_section": "Imputing accessibility ... vaccine-induced CD8+ T cells"
+    },
+    {
+      "id": "cellxgene_heldout",
+      "name": "Held-out CELLxGENE datasets (temporal split)",
+      "role": "evaluation",
+      "data_types": [
+        "scRNA-seq"
+      ],
+      "species": [
+        "human"
+      ],
+      "where": {
+        "repository": "CZ CELLxGENE Discover"
+      },
+      "source": "cellxgene_discover",
+      "scale": "16 test datasets",
+      "paper_section": "Results; Fig. 3"
+    },
+    {
+      "id": "imputation_heldout",
+      "name": "Held-out ENCODE bulk tracks and PBMC Mint-ChIP H3K27ac",
+      "role": "evaluation",
+      "data_types": [
+        "ATAC/DNase",
+        "RNA-seq",
+        "ChIP-seq",
+        "Mint-ChIP H3K27ac"
+      ],
+      "species": [
+        "human"
+      ],
+      "where": {
+        "repository": "ENCODE"
+      },
+      "source": "encode_portal",
+      "scale": "184 test tracks across 30 conditions",
+      "paper_section": "Imputation"
+    },
+    {
+      "id": "encode_re2g_crispri",
+      "name": "ENCODE-rE2G CRISPRi enhancer-gene benchmarks",
+      "role": "evaluation",
+      "data_types": [
+        "CRISPRi enhancer screens"
+      ],
+      "species": [
+        "human"
+      ],
+      "where": {
+        "repository": "Gschwind et al. 2026 (Nature)"
+      },
+      "source": "gschwind_2026_encode_re2g",
+      "scale": "held-out: 5 cell lines, 4,378 pairs; K562: 10,353 pairs",
+      "paper_section": "Enhancer-gene linking benchmarks",
+      "relevance_to_this_project": "K562 enhancer-gene ground truth"
+    },
+    {
+      "id": "astrocyte_crispri",
+      "name": "Astrocyte CRISPRi enhancer screen",
+      "role": "evaluation",
+      "data_types": [
+        "CRISPRi enhancer screen"
+      ],
+      "species": [
+        "human"
+      ],
+      "where": {
+        "repository": "Green et al. 2026 (Nature Neuroscience)"
+      },
+      "source": "green_2026_astrocyte_crispri",
+      "paper_section": "Enhancer-gene linking benchmarks"
+    },
+    {
+      "id": "encode_ccres",
+      "name": "ENCODE candidate cis-regulatory elements",
+      "role": "evaluation",
+      "data_types": [
+        "regulatory element annotation"
+      ],
+      "species": [
+        "human"
+      ],
+      "where": {
+        "repository": "ENCODE SCREEN"
+      },
+      "source": "moore_2026_encode_ccres",
+      "paper_section": "eQTL stratification"
+    },
+    {
+      "id": "hudep2_bcl11a",
+      "name": "HUDEP-2 BCL11A enhancer case study",
+      "role": "evaluation",
+      "data_types": [
+        "ATAC-seq",
+        "Capture-Pore-C"
+      ],
+      "species": [
+        "human"
+      ],
+      "where": {
+        "repository": "GEO",
+        "accession": "GSE292669; GSE292694"
+      },
+      "source": "wang_2026_hudep2_bcl11a",
+      "paper_section": "BCL11A case study",
+      "relevance_to_this_project": "erythroid cells, close to K562"
+    },
+    {
+      "id": "traitgym",
+      "name": "TraitGym complex-trait variants",
+      "role": "evaluation",
+      "data_types": [
+        "fine-mapped GWAS variants vs controls"
+      ],
+      "species": [
+        "human"
+      ],
+      "where": {
+        "repository": "TraitGym (Benegas et al. 2025)"
+      },
+      "source": "benegas_2025_traitgym",
+      "scale": "11,400 variants",
+      "paper_section": "Complex trait variant prioritization"
+    },
+    {
+      "id": "gwas_panel",
+      "name": "GWAS panel: Open Targets credible sets + gnomAD common variants",
+      "role": "evaluation",
+      "data_types": [
+        "GWAS credible sets (SuSiE)",
+        "population variants"
+      ],
+      "species": [
+        "human"
+      ],
+      "where": {
+        "repository": "Open Targets Platform release 26.03; gnomAD v4.1"
+      },
+      "source": [
+        "open_targets_platform",
+        "gnomad_v4"
+      ],
+      "scale": "6,822,130 SNVs scored across 510 conditions",
+      "paper_section": "GWAS panel; GWAS analysis",
+      "relevance_to_this_project": "Open Targets already in cell_v6/v7 (release 26.09)"
+    },
+    {
+      "id": "ag2_predictions",
+      "name": "AlphaGenome 2 precomputed predictions",
+      "role": "model output",
+      "data_types": [
+        "enhancer-gene links",
+        "variant effect scores"
+      ],
+      "species": [
+        "human"
+      ],
+      "where": {
+        "url": "https://deepmind.google.com/science/alphagenome/downloads"
+      },
+      "source": "alphagenome2_predictions",
+      "scale": "640 conditions (links); 510 conditions (variant scores)",
+      "paper_section": "Data availability"
+    }
+  ],
+  "single_cell_studies": [
+    {
+      "study": "ENCODE Multiome",
+      "doi": "10.1038/s41586-025-09909-9"
+    },
+    {
+      "study": "ENCODE Single-Cell (Unpaired)",
+      "doi": "10.1038/s41586-025-09909-9"
+    },
+    {
+      "study": "Bone Marrow Multiome",
+      "doi": "openreview.net/forum?id=gN35BGa1Rt; 10.1038/s41592-025-02854-5"
+    },
+    {
+      "study": "K562 Multiome / ISSAAC-seq",
+      "doi": "10.1038/s41592-022-01601-4"
+    },
+    {
+      "study": "WTC11 iPSC Differentiation",
+      "doi": "10.1016/j.stem.2018.09.009"
+    },
+    {
+      "study": "E2G Primary Astrocytes",
+      "doi": "10.1038/s41593-025-02154-3"
+    },
+    {
+      "study": "mESC Multiome",
+      "doi": "10.1016/j.celrep.2025.116089"
+    },
+    {
+      "study": "Human Developmental Multiomic Atlas (HDMA)",
+      "doi": "10.1038/s41586-026-10326-9"
+    },
+    {
+      "study": "Mouse Gastrulation Multiome",
+      "doi": "10.1101/2022.06.15.496239"
+    },
+    {
+      "study": "Human Gut Cell Atlas",
+      "doi": "10.1038/s41586-021-03852-1"
+    },
+    {
+      "study": "Human CNS Glia Atlas",
+      "doi": "10.1186/s40478-023-01568-z"
+    },
+    {
+      "study": "Cross-Tissue Immune Atlas",
+      "doi": "10.1126/science.abl5197"
+    },
+    {
+      "study": "Developing Human Immune Atlas",
+      "doi": "10.1126/science.abo0510"
+    },
+    {
+      "study": "Developing Human Cerebral Cortex Multiome",
+      "doi": "10.1126/sciadv.adg3754"
+    },
+    {
+      "study": "Human Breast Multiome",
+      "doi": "10.1038/s41591-024-03011-9"
+    },
+    {
+      "study": "Human Early Pregnancy Multiome",
+      "doi": "10.1038/s41586-023-05869-0"
+    },
+    {
+      "study": "Human Heart Multiome",
+      "doi": "10.1038/s41586-023-06311-1"
+    },
+    {
+      "study": "Human Liver Atlas",
+      "doi": "10.1016/j.cell.2021.12.018"
+    },
+    {
+      "study": "Human Lung Cell Atlas",
+      "doi": "10.1038/s41588-022-01243-4"
+    },
+    {
+      "study": "SEA-AD Human Brain Cortex",
+      "doi": "10.1038/s41593-024-01774-5"
+    },
+    {
+      "study": "Human Subcutaneous & Visceral Adipose Atlas",
+      "doi": "10.1038/s41588-024-02048-3"
+    },
+    {
+      "study": "Tabula Sapiens v2 Bladder",
+      "doi": "10.1101/2024.12.03.626516"
+    },
+    {
+      "study": "Single-Nucleus Cross-Tissue GTEx Atlas",
+      "doi": "10.1126/science.abl4290"
+    },
+    {
+      "study": "KPMP Human Kidney Atlas",
+      "doi": "10.1101/2025.09.26.678707"
+    },
+    {
+      "study": "Asian Immune Diversity Atlas PBMC",
+      "doi": "10.1016/j.cell.2025.02.017"
+    },
+    {
+      "study": "PBMC snATAC-seq",
+      "doi": "10.1371/journal.pgen.1010759"
+    },
+    {
+      "study": "Human Retina Multi-Omics Atlas",
+      "doi": "10.1101/2023.11.07.566105"
+    },
+    {
+      "study": "Mouse Retina Atlas",
+      "doi": "10.1016/j.isci.2024.109916"
+    },
+    {
+      "study": "Human First-Trimester Neurodevelopment",
+      "doi": "10.1038/s41586-024-07234-1"
+    },
+    {
+      "study": "Human Thymus Cell Atlas",
+      "doi": "10.1038/s41586-024-07944-6"
+    },
+    {
+      "study": "Mammalian Neocortex Multiome",
+      "doi": "10.1038/s41586-023-06819-6"
+    },
+    {
+      "study": "Human Skeletal Muscle Aging Atlas",
+      "doi": "10.1038/s43587-024-00613-3"
+    },
+    {
+      "study": "PanSci Mouse Aging scRNA Atlas",
+      "doi": "10.1126/science.adn3949"
+    },
+    {
+      "study": "Mouse Aging EasySci-ATAC Atlas",
+      "doi": "10.1126/science.adw6273"
+    },
+    {
+      "study": "Mouse Brain Aging EasySci Atlas",
+      "doi": "10.1038/s41588-023-01572-y"
+    },
+    {
+      "study": "ChromBPNet Reference scATAC (Microglia & Coronary Artery SMC)",
+      "doi": "10.1101/2024.12.25.630221; 10.1038/s41588-020-00721-x; 10.1038/s41588-022-01069-0"
+    }
+  ],
+  "genomics_plc_data": {
+    "source": "donnelly_2026_genomics_alphagenome2_commentary",
+    "items": [
+      "tens of thousands of GWAS (sources not named), in the Mystra platform",
+      "transcriptomic and proteomic data in Mystra (sources not named)",
+      "planned: AG2 evaluation across their GWAS data; AG2 predictions offered in Mystra (not done yet)"
+    ]
+  }
+}

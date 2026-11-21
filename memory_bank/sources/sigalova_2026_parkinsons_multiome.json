@@ -1,0 +1,10 @@
+{
+  "id": "sigalova_2026_parkinsons_multiome",
+  "type": "preprint",
+  "citation": "Sigalova, O. M. et al. Modeling cis-regulatory variation in human brain enhancers across a large Parkinson's Disease cohort. bioRxiv (2026).",
+  "doi": "10.64898/2026.03.15.711881",
+  "organism": "human",
+  "authority": "primary",
+  "licence": "not checked (verify before redistributing or commercial use)",
+  "notes": "Single-nucleus multiome of substantia nigra and cingulate cortex; caQTL-ASCA and eQTLs on T2T-CHM13v2.0; AG2 evaluation only."
+}

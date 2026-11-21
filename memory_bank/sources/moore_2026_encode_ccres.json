@@ -1,0 +1,11 @@
+{
+  "id": "moore_2026_encode_ccres",
+  "type": "peer_reviewed_paper",
+  "citation": "Moore, J. E. et al. An expanded registry of candidate cis-regulatory elements. Nature (2026).",
+  "doi": "10.1038/s41586-025-09909-9",
+  "url": "https://screen.encodeproject.org",
+  "organism": "human, mouse",
+  "authority": "primary",
+  "licence": "open access (ENCODE)",
+  "notes": "ENCODE cCREs; AG2 used them as a proxy for accessible chromatin in eQTL stratification; also the ENCODE Multiome datasets."
+}

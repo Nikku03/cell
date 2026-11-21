@@ -1,0 +1,60 @@
+{
+ "screens": {
+  "LINCS-sh": {
+   "name": "LINCS-sh",
+   "cell": "LINCS lines",
+   "design": "trt_sh.cgs exemplar, mean over lines/times/doses",
+   "signatures": 11807,
+   "kept": 1668,
+   "genes_mapped": 5945,
+   "median_signatures_per_gene": 7.0,
+   "median_lines_per_gene": 7.0,
+   "gb_fetched": 1.88,
+   "seconds": 106,
+   "records": 1668
+  },
+  "LINCS-xpr": {
+   "name": "LINCS-xpr",
+   "cell": "LINCS lines",
+   "design": "trt_xpr exemplar, mean over lines/times/doses",
+   "signatures": 25011,
+   "kept": 1254,
+   "genes_mapped": 5945,
+   "median_signatures_per_gene": 20.0,
+   "median_lines_per_gene": 10.0,
+   "gb_fetched": 4.98,
+   "seconds": 572,
+   "records": 1254
+  }
+ },
+ "neighbour_sources": {
+  "Tahoe": {
+   "conditions": 65218,
+   "genes": 159,
+   "seconds": 114,
+   "test_genes": 82
+  },
+  "Geneformer": {
+   "model": "Geneformer-V2-104M",
+   "dim": 768,
+   "vocabulary": 20275,
+   "genes": 4967,
+   "mb_fetched": 66,
+   "seconds": 5,
+   "test_genes": 2480
+  },
+  "ARCHS4": {
+   "samples_read": 10000,
+   "samples_kept": 6244,
+   "genes": 4985,
+   "gb_fetched": 1.48,
+   "seconds": 205,
+   "test_genes": 2489
+  }
+ },
+ "records": 40156,
+ "test_genes": 2525,
+ "test_genes_with_record_elsewhere_v8": 2512,
+ "test_genes_with_record_elsewhere_v9": 2515,
+ "bytes": 7412080
+}

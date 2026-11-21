@@ -1,0 +1,187 @@
+{
+ "test": "loop_human_state",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/_mathieson2018.json",
+    "bytes": 486479,
+    "hash": "f54c8c875686c40e",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/itzhak_supp1.xlsx",
+    "bytes": 1653563,
+    "hash": "ce542f6561706a9a",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/AvgKdegs_genes_v1.csv",
+    "bytes": 24937650,
+    "hash": "a2ada15037c16822",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/human_proteome.fasta.gz",
+    "bytes": 7507899,
+    "hash": "b12dcc9f8f5f588e",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+    "bytes": 38524393,
+    "hash": "b857a72939e09be8",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 16492,
+   "used": 5595,
+   "selection": "filtered",
+   "fraction": 0.3392553965559059
+  },
+  "seed": 12900,
+  "controls": [
+   "Schwanhausser's self-consistent build as the baseline every human source had to agree with",
+   "the DERIVED rate compared, not only the inputs",
+   "the ribosome budget recomputed from human numbers",
+   "publication count of gained versus existing genes",
+   "the mRNA gap stated rather than filled by a quotient"
+  ],
+  "note": "loop 92's rule stands: no rate is formed by dividing two abundance datasets from different cells, which is why the mRNA arm is left empty",
+  "warnings": []
+ },
+ "gates": {
+  "H1": true,
+  "H2": false,
+  "H3": true,
+  "H4": true,
+  "H5": true,
+  "H6": true
+ },
+ "h1": {
+  "Itzhak vs Schwanhausser protein copies": {
+   "rho": 0.7721743393847313,
+   "n": 4144
+  },
+  "Mathieson vs Schwanhausser protein half-life": {
+   "rho": 0.635828386026814,
+   "n": 4033
+  },
+  "AvgKdegs-HeLa vs Schwanhausser mRNA half-life": {
+   "rho": 0.5402862653229933,
+   "n": 3707
+  }
+ },
+ "h2": {
+  "n": 3838,
+  "median_ratio": 5.064633012202519,
+  "spearman": 0.7518331580545435,
+  "p10": 1.0705260738327678,
+  "p90": 31.606167167980182
+ },
+ "h3": {
+  "protein_state": 5595,
+  "current": 4190,
+  "gained": 2607,
+  "same_cell_line": 6807,
+  "mass_new": 0.9052582940189413,
+  "mass_old": 0.7988921728251261
+ },
+ "h4": {
+  "ribosomes": 11822642.039511448,
+  "demand_gcodons_h": 83.68381898158819,
+  "capacity_gcodons_h": 255.36906805344728,
+  "utilisation": 0.32769755405174467
+ },
+ "h5": {
+  "hela_ntpm": 14640,
+  "rho_vs_schwan": 0.5932096656148368,
+  "n_overlap": 3643,
+  "full_four_field": 5329,
+  "total_mrna_swept": [
+   100000.0,
+   200000.0,
+   400000.0
+  ]
+ },
+ "h6": {
+  "n_gained": 2607,
+  "pubs_gained": 72.0,
+  "pubs_current": 88.0,
+  "log10_diff": -0.0860671465244569,
+  "p": 0.0
+ },
+ "seconds": 34.87984824180603,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 128 -- rebuild the state vector on human data, and price the mixing",
+  "====================================================================================================",
+  "",
+  "  Schwanhausser (mouse, self-consistent): 4,190 genes with all four fields",
+  "  Mathieson protein half-lives 8,804 | Itzhak HeLa copies 8,469 | AvgKdegs HeLa mRNA half-lives 9,967",
+  "",
+  "H1 THE SOURCES AGREE PAIRWISE WHERE THEY OVERLAP",
+  "     Itzhak vs Schwanhausser protein copies           rho +0.7722   n=4,144   ok",
+  "     Mathieson vs Schwanhausser protein half-life     rho +0.6358   n=4,033   ok",
+  "     AvgKdegs-HeLa vs Schwanhausser mRNA half-life    rho +0.5403   n=3,707   ok",
+  "     gate: every pair >= 0.3",
+  "     H1 PASS",
+  "",
+  "H2 THE DERIVED RATE AGREES, NOT JUST THE INPUTS",
+  "     protein production rate P*b on 3,838 shared genes",
+  "     median human/mouse ratio 5.065   (loop 92's failure was 12x on this quantity)",
+  "     Spearman +0.7518   10th-90th ratio 1.07-31.61",
+  "     gate: median ratio within 2.0x AND Spearman >= 0.5",
+  "     H2 FAIL -- the human build DOES NOT reproduce the validated rate and is unusable for dynamics",
+  "",
+  "H3 THE COVERAGE GAIN, THREE DENOMINATORS",
+  "     protein-side human state     5,595   against the current 4,190   (+2,607 outright)",
+  "     same-cell-line (HeLa) pair   6,807   mRNA half-life + protein copies",
+  "     by mass: human build 90.53% of measured proteome, current 79.89%",
+  "     against 16,492: 33.9% vs 25.4%",
+  "     H3 PASS",
+  "",
+  "H4 THE BUDGETS STILL CLOSE ON HUMAN DATA",
+  "     ribosomes from ITZHAK HeLa copies (median RPL/RPS): 11,822,642",
+  "     codon demand 83.68 Gcodons/h over 5,595 genes",
+  "     capacity 255.37 Gcodons/h -> utilisation 32.8%",
+  "     cell_run on the mouse build: 18.3%",
+  "     H4 PASS -- the ribosome budget still closes",
+  "",
+  "H5 THE mRNA ARM",
+  "     nTPM is relative, and converting it needs a total-mRNA-per-cell constant. That is a",
+  "     UNIFORM SCALING, not the per-gene cross-dataset quotient loop 92 forbids -- every",
+  "     gene is multiplied by the same number -- so it is testable rather than forbidden.",
+  "     HPA HeLa nTPM: 14,640 genes with a positive value",
+  "     against Schwanhausser mRNA copies on 3,643 shared genes: rho +0.5932   gate >= 0.4",
+  "       total 100,000 mRNA/cell -> median 3.7 copies/gene (Schwanhausser median 17.7)",
+  "       total 200,000 mRNA/cell -> median 7.3 copies/gene (Schwanhausser median 17.7)",
+  "       total 400,000 mRNA/cell -> median 14.6 copies/gene (Schwanhausser median 17.7)",
+  "     -> A FULL FOUR-FIELD HUMAN STATE IS AVAILABLE for 5,329 genes against the mouse build's 4,190",
+  "     the scaling constant remains swept, not chosen, because no measurement of total HeLa mRNA was fetched",
+  "     H5 PASS",
+  "",
+  "H6 FAME, AND THE COST OF MIXING",
+  "     genes gained 2,607 (median 72 publications), already present 4,190 (median 88)",
+  "     log10 difference -0.086, permutation p = 0.0000",
+  "     the gain is NOT biased toward better-studied genes",
+  "     THE COST OF MIXING, as a number: the human protein production rate differs from the",
+  "     self-consistent mouse one by a median factor of 5.06, with the",
+  "     middle 80% spanning 1.07 to 31.61. That spread is the price of",
+  "     taking half-lives from primary cells and copies from HeLa, and it is carried into",
+  "     anything built on this state.",
+  "     H6 PASS",
+  "",
+  "====================================================================================================",
+  "  H1  PASS",
+  "  H2  FAIL",
+  "  H3  PASS",
+  "  H4  PASS",
+  "  H5  PASS",
+  "  H6  PASS",
+  "  5/6",
+  "====================================================================================================",
+  "    manifest: 5 inputs, coverage 5595/16492 (33.9%) by 'filtered', seed 12900, controls 5"
+ ]
+}

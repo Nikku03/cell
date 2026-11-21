@@ -1,0 +1,169 @@
+{
+ "test": "loop 136 -- active-site pooling",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "colab/data/ml/kcat_records.tsv",
+    "bytes": 1376344,
+    "hash": "130cb6f337cb17e6",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/uniprot_sites.tsv.gz",
+    "bytes": 90568754,
+    "hash": "fd65f4eee91a5f9f",
+    "method": "sha256:ends8M"
+   },
+   {
+    "path": "colab/data/ml/sequences.json",
+    "bytes": 3310515,
+    "hash": "47bffec241c1becf",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 17004,
+   "used": 7935,
+   "selection": "all",
+   "fraction": 0.46665490472829924
+  },
+  "seed": 13600,
+  "controls": [
+   "random positions, same count per protein -- the control that separates 'the right residues' from 'fewer residues'",
+   "within-EC-class permutation rerun on the new readout",
+   "readout difference checked by cosine before any score is read",
+   "coverage reported before any model is fitted"
+  ],
+  "note": "P1 and M2. The comparison is on the ANNOTATED SUBSET with its own recomputed baseline; comparing against loop 132's full-data RMSE would be comparing two different problems.",
+  "warnings": []
+ },
+ "gates": {
+  "H1": true,
+  "H2": true,
+  "H3": true,
+  "H5": false,
+  "H4": true,
+  "H6": true
+ },
+ "h1": {
+  "records": 7935,
+  "sequences": 2662,
+  "clusters": 2482,
+  "record_fraction": 0.46665490472829924
+ },
+ "h2": {
+  "site_vs_mean": 0.08461424708366394,
+  "rand_vs_mean": 0.008879214525222778,
+  "bar": 0.01
+ },
+ "h3": {
+  "mean": 1.2878493110606433,
+  "site": 1.2733415018083851,
+  "gain": 0.014507809252258141,
+  "boot": [
+   0.014869136930433407,
+   0.001661142976020292,
+   0.029479521785270437
+  ]
+ },
+ "h5": {
+  "random": 1.2777676318265112,
+  "boot_site_minus_random": [
+   0.00442718569876908,
+   -0.013057995647366165,
+   0.02061206157173224
+  ]
+ },
+ "h4": {
+  "moved": 0.4557025834908633,
+  "permuted": 1.27250947747675,
+  "cost": -0.000832024331635095,
+  "c3_mean_pooled_cost": 0.0046
+ },
+ "h6": {
+  "unannotated_records": 9069,
+  "annotated_fraction": 0.46665490472829924
+ },
+ "seconds": 1012.6740791797638,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 136 -- P1 and M2: pooling over catalytic residues",
+  "====================================================================================================",
+  "",
+  "  parsing UniProt annotations for our sequences ...",
+  "  sequences with at least one annotated position: 2,662 of 7,856",
+  "  with a true ACTIVE SITE (not merely a binding site): 1,577",
+  "",
+  "H1 HOW MUCH OF THE DATA DOES THIS EVEN APPLY TO?",
+  "     records covered   7,935 of 17,004  (46.7%)",
+  "     sequences covered 2,662 of 7,856  (33.9%)",
+  "     clusters covered  2,482 of 3,006",
+  "     fetch_web G2 headlined 33.9% -- that was the SEQUENCE MATCH rate, not the",
+  "     annotation rate, and P1 needs the second. The bar passed either way, barely.",
+  "     H1 PASS",
+  "",
+  "  computing per-residue ESM2-8M and the three readouts ...",
+  "     device cpu",
+  "     400/2,662",
+  "     800/2,662",
+  "     1,200/2,662",
+  "     1,600/2,662",
+  "     2,000/2,662",
+  "     2,400/2,662",
+  "     done 2,662 sequences",
+  "",
+  "H2 ARE THE TWO READOUTS ACTUALLY DIFFERENT?",
+  "     cosine distance, site-pooled vs mean-pooled : median 0.0846",
+  "     cosine distance, RANDOM-pooled vs mean-pooled: median 0.0089",
+  "     the bar declared in the docstring was 0.01",
+  "     H2 PASS -- the readouts differ enough for a difference in score to mean something",
+  "",
+  "H3 P1: SITE POOLING AGAINST MEAN POOLING, on the annotated subset",
+  "     mean pooling  RMSE 1.2878",
+  "     site pooling  RMSE 1.2733   gain +0.0145",
+  "     cluster bootstrap on the paired difference: +0.0149 [+0.0017, +0.0295]",
+  "     H3 PASS -- site pooling beats mean pooling",
+  "",
+  "H5 THE CONTROL: RANDOM POSITIONS, SAME COUNT",
+  "     random-position pooling RMSE 1.2778  (same number of residues per protein)",
+  "     site pooling            RMSE 1.2733",
+  "     site MINUS random: +0.0044 [-0.0131, +0.0206]",
+  "     H5 FAIL -- pooling over random positions does as well. Whatever H3 found is",
+  "     'pool over fewer residues', not 'pool over catalytic residues', and P1 is",
+  "     REFUTED regardless of H3's verdict.",
+  "",
+  "H4 M2: WHAT IS PROTEIN IDENTITY WORTH TO THE NEW READOUT?",
+  "     records that received a different sequence: 45.6%",
+  "     site-pooled, real            RMSE 1.2733",
+  "     site-pooled, permuted in-EC  RMSE 1.2725",
+  "     destroying protein identity costs -0.0008 under the NEW readout",
+  "     loop 134 C3 measured +0.0046 under mean pooling, interval 0.0488",
+  "     H4 PASS -- probe ran on a control that moved",
+  "     THE VERDICT THIS PROBE EXISTS FOR: identity is still worth less than the",
+  "     interval under a readout built specifically to expose it. P1's premise fails",
+  "     and P5 (650M) inherits that failure -- a bigger encoder feeding a readout that",
+  "     has nothing to extract.",
+  "",
+  "H6 DOES THE ANSWER SURVIVE OUTSIDE THE ANNOTATED SET?",
+  "     records with NO annotated protein: 9,069 (53.3%)",
+  "     site pooling cannot be applied there at all -- there are no positions to pool over.",
+  "     Any deployment would be a HYBRID: site pooling on 46.7% of records and",
+  "     mean pooling on the rest, which is two models wearing one name.",
+  "     And the annotated set is not a random sample: curators annotate enzymes that have",
+  "     been crystallised, which is a fame confound of exactly the kind that beat the",
+  "     biology in seven earlier loops.",
+  "     H6 PASS -- stated",
+  "",
+  "====================================================================================================",
+  "  H1  PASS",
+  "  H2  PASS",
+  "  H3  PASS",
+  "  H4  PASS",
+  "  H5  FAIL",
+  "  H6  PASS",
+  "  5/6",
+  "====================================================================================================",
+  "    manifest: 3 inputs, coverage 7935/17004 (46.7%) by 'all', seed 13600, controls 4"
+ ]
+}

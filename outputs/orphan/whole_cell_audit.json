@@ -1,0 +1,1881 @@
+{
+  "summary": {
+    "n_flags": 275,
+    "by_tier": {
+      "hard_constraints": 17,
+      "cross_layer": 58,
+      "learned": 200
+    },
+    "by_kind": {
+      "provable": 17,
+      "model_vs_literature": 58,
+      "completion": 150,
+      "prediction_vs_measured": 50
+    },
+    "relations": [
+      "ppi",
+      "reg",
+      "sig"
+    ],
+    "n_verified_fixes": 167
+  },
+  "top_by_kind": {
+    "provable": [
+      {
+        "tier": "hard_constraints",
+        "evidence": "provable",
+        "entity": "ATP2A2",
+        "odd": "kcat/Km 1.2e+10 M^-1 s^-1 exceeds the diffusion limit (~1e9) -> kcat or Km is wrong",
+        "confidence": 1.0,
+        "challenges": "predicted",
+        "suggest": "re-check kcat/Km source",
+        "detail": {
+          "kcat_per_km": 11993411774.4,
+          "kcat": 29103.435,
+          "km_uM": 2.426618509190916
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "hard_constraints",
+        "evidence": "provable",
+        "entity": "GPI",
+        "odd": "kcat/Km 1.1e+10 M^-1 s^-1 exceeds the diffusion limit (~1e9) -> kcat or Km is wrong",
+        "confidence": 1.0,
+        "challenges": "measured",
+        "suggest": "re-check the measurement source; a round placeholder kcat is the usual cause",
+        "detail": {
+          "kcat_per_km": 11000763697.3,
+          "kcat": 1000000.0,
+          "km_uM": 90.9027797995955
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "hard_constraints",
+        "evidence": "provable",
+        "entity": "ATP2A1",
+        "odd": "kcat/Km 1.8e+10 M^-1 s^-1 exceeds the diffusion limit (~1e9) -> kcat or Km is wrong",
+        "confidence": 1.0,
+        "challenges": "predicted",
+        "suggest": "re-check kcat/Km source",
+        "detail": {
+          "kcat_per_km": 17509102410.8,
+          "kcat": 55332.9364,
+          "km_uM": 3.160238320721573
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "hard_constraints",
+        "evidence": "provable",
+        "entity": "ATP2B1",
+        "odd": "kcat/Km 8.4e+09 M^-1 s^-1 exceeds the diffusion limit (~1e9) -> kcat or Km is wrong",
+        "confidence": 0.97,
+        "challenges": "predicted",
+        "suggest": "re-check kcat/Km source",
+        "detail": {
+          "kcat_per_km": 8354014719.1,
+          "kcat": 12539.7328,
+          "km_uM": 1.5010426988321535
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "hard_constraints",
+        "evidence": "provable",
+        "entity": "ATP2B3",
+        "odd": "kcat/Km 7.8e+09 M^-1 s^-1 exceeds the diffusion limit (~1e9) -> kcat or Km is wrong",
+        "confidence": 0.96,
+        "challenges": "predicted",
+        "suggest": "re-check kcat/Km source",
+        "detail": {
+          "kcat_per_km": 7758808656.9,
+          "kcat": 14032.3419,
+          "km_uM": 1.808569139998062
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "hard_constraints",
+        "evidence": "provable",
+        "entity": "ACHE",
+        "odd": "kcat/Km 7.1e+09 M^-1 s^-1 exceeds the diffusion limit (~1e9) -> kcat or Km is wrong",
+        "confidence": 0.94,
+        "challenges": "measured",
+        "suggest": "re-check the measurement source; a round placeholder kcat is the usual cause",
+        "detail": {
+          "kcat_per_km": 7054292912.1,
+          "kcat": 1000000.0,
+          "km_uM": 141.75765203782314
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "hard_constraints",
+        "evidence": "provable",
+        "entity": "ATP2A3",
+        "odd": "kcat/Km 7.1e+09 M^-1 s^-1 exceeds the diffusion limit (~1e9) -> kcat or Km is wrong",
+        "confidence": 0.94,
+        "challenges": "predicted",
+        "suggest": "re-check kcat/Km source",
+        "detail": {
+          "kcat_per_km": 7144922775.8,
+          "kcat": 17993.9559,
+          "km_uM": 2.518425526023913
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "hard_constraints",
+        "evidence": "provable",
+        "entity": "ATP2B2",
+        "odd": "kcat/Km 6.4e+09 M^-1 s^-1 exceeds the diffusion limit (~1e9) -> kcat or Km is wrong",
+        "confidence": 0.92,
+        "challenges": "predicted",
+        "suggest": "re-check kcat/Km source",
+        "detail": {
+          "kcat_per_km": 6424357252.4,
+          "kcat": 11082.0018,
+          "km_uM": 1.7249977491200763
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "hard_constraints",
+        "evidence": "provable",
+        "entity": "ATP2B4",
+        "odd": "kcat/Km 4.0e+09 M^-1 s^-1 exceeds the diffusion limit (~1e9) -> kcat or Km is wrong",
+        "confidence": 0.84,
+        "challenges": "predicted",
+        "suggest": "re-check kcat/Km source",
+        "detail": {
+          "kcat_per_km": 3964010489.1,
+          "kcat": 7276.9494,
+          "km_uM": 1.8357543250594794
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "hard_constraints",
+        "evidence": "provable",
+        "entity": "ATP2C2",
+        "odd": "kcat/Km 2.9e+09 M^-1 s^-1 exceeds the diffusion limit (~1e9) -> kcat or Km is wrong",
+        "confidence": 0.79,
+        "challenges": "predicted",
+        "suggest": "re-check kcat/Km source",
+        "detail": {
+          "kcat_per_km": 2939649967.8,
+          "kcat": 11173.2797,
+          "km_uM": 3.8008878004424025
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "hard_constraints",
+        "evidence": "provable",
+        "entity": "ALDH2",
+        "odd": "kcat/Km 2.7e+09 M^-1 s^-1 exceeds the diffusion limit (~1e9) -> kcat or Km is wrong",
+        "confidence": 0.77,
+        "challenges": "measured",
+        "suggest": "re-check kcat/Km source",
+        "detail": {
+          "kcat_per_km": 2710753112.5,
+          "kcat": 11400.0,
+          "km_uM": 4.2054733599156
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "hard_constraints",
+        "evidence": "provable",
+        "entity": "ATP2C1",
+        "odd": "kcat/Km 1.7e+09 M^-1 s^-1 exceeds the diffusion limit (~1e9) -> kcat or Km is wrong",
+        "confidence": 0.69,
+        "challenges": "predicted",
+        "suggest": "re-check kcat/Km source",
+        "detail": {
+          "kcat_per_km": 1668035791.5,
+          "kcat": 9068.1813,
+          "km_uM": 5.436442878718282
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "hard_constraints",
+        "evidence": "provable",
+        "entity": "ABCB6",
+        "odd": "kcat/Km 1.3e+09 M^-1 s^-1 exceeds the diffusion limit (~1e9) -> kcat or Km is wrong",
+        "confidence": 0.65,
+        "challenges": "measured",
+        "suggest": "re-check kcat/Km source",
+        "detail": {
+          "kcat_per_km": 1321614706.3,
+          "kcat": 432.0,
+          "km_uM": 0.3268728760029269
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "hard_constraints",
+        "evidence": "provable",
+        "entity": "SLC24A3",
+        "odd": "kcat/Km 1.3e+09 M^-1 s^-1 exceeds the diffusion limit (~1e9) -> kcat or Km is wrong",
+        "confidence": 0.65,
+        "challenges": "predicted",
+        "suggest": "re-check kcat/Km source",
+        "detail": {
+          "kcat_per_km": 1340443058.8,
+          "kcat": 17557.4317,
+          "km_uM": 13.098230159582396
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "hard_constraints",
+        "evidence": "provable",
+        "entity": "SULT2B1",
+        "odd": "kcat/Km 1.1e+09 M^-1 s^-1 exceeds the diffusion limit (~1e9) -> kcat or Km is wrong",
+        "confidence": 0.62,
+        "challenges": "measured",
+        "suggest": "re-check kcat/Km source",
+        "detail": {
+          "kcat_per_km": 1148660825.5,
+          "kcat": 13080.0,
+          "km_uM": 11.387173401730097
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "hard_constraints",
+        "evidence": "provable",
+        "entity": "SLC24A2",
+        "odd": "kcat/Km 1.1e+09 M^-1 s^-1 exceeds the diffusion limit (~1e9) -> kcat or Km is wrong",
+        "confidence": 0.61,
+        "challenges": "predicted",
+        "suggest": "re-check kcat/Km source",
+        "detail": {
+          "kcat_per_km": 1074788945.8,
+          "kcat": 15729.0805,
+          "km_uM": 14.634575989675067
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "hard_constraints",
+        "evidence": "provable",
+        "entity": "LDHA",
+        "odd": "kcat/Km 1.0e+09 M^-1 s^-1 exceeds the diffusion limit (~1e9) -> kcat or Km is wrong",
+        "confidence": 0.6,
+        "challenges": "measured",
+        "suggest": "re-check the measurement source; a round placeholder kcat is the usual cause",
+        "detail": {
+          "kcat_per_km": 1001938469.1,
+          "kcat": 1000000.0,
+          "km_uM": 998.0652812591445
+        },
+        "action": "flag_for_review"
+      }
+    ],
+    "model_vs_literature": [
+      {
+        "tier": "cross_layer",
+        "evidence": "model_vs_literature",
+        "entity": "AKAP6",
+        "odd": "localization disagreement: model ['cytosolic'] vs UniProt ['nuclear', 'secretory']",
+        "confidence": 0.2,
+        "challenges": "predicted",
+        "suggest": "curated UniProt location outranks the model's compartment label; review the model field",
+        "detail": {
+          "model_comp": "cytoplasm",
+          "hard": false,
+          "uniprot_location": "SUBCELLULAR LOCATION: Sarcoplasmic reticulum. Nucleus membrane. Note=I"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "cross_layer",
+        "evidence": "model_vs_literature",
+        "entity": "ANKS4B",
+        "odd": "localization disagreement: model ['cytosolic'] vs UniProt ['secretory']",
+        "confidence": 0.2,
+        "challenges": "predicted",
+        "suggest": "curated UniProt location outranks the model's compartment label; review the model field",
+        "detail": {
+          "model_comp": "cytoplasm",
+          "hard": false,
+          "uniprot_location": "SUBCELLULAR LOCATION: Cell projection, microvillus. Note=Localizes at "
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "cross_layer",
+        "evidence": "model_vs_literature",
+        "entity": "C22orf39",
+        "odd": "localization disagreement: model ['cytosolic'] vs UniProt ['secretory']",
+        "confidence": 0.2,
+        "challenges": "predicted",
+        "suggest": "curated UniProt location outranks the model's compartment label; review the model field",
+        "detail": {
+          "model_comp": "cytoplasm",
+          "hard": false,
+          "uniprot_location": "SUBCELLULAR LOCATION: Synapse. Synaptic cleft. Note=Detected in both t"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "cross_layer",
+        "evidence": "model_vs_literature",
+        "entity": "CCDC42",
+        "odd": "localization disagreement: model ['nuclear'] vs UniProt ['cytosolic']",
+        "confidence": 0.2,
+        "challenges": "predicted",
+        "suggest": "curated UniProt location outranks the model's compartment label; review the model field",
+        "detail": {
+          "model_comp": "nucleus",
+          "hard": false,
+          "uniprot_location": "SUBCELLULAR LOCATION: Cytoplasm, perinuclear region. Cytoplasm, cytosk"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "cross_layer",
+        "evidence": "model_vs_literature",
+        "entity": "CDKN3",
+        "odd": "localization disagreement: model ['nuclear'] vs UniProt ['cytosolic']",
+        "confidence": 0.2,
+        "challenges": "predicted",
+        "suggest": "curated UniProt location outranks the model's compartment label; review the model field",
+        "detail": {
+          "model_comp": "nucleus",
+          "hard": false,
+          "uniprot_location": "SUBCELLULAR LOCATION: Cytoplasm, perinuclear region."
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "cross_layer",
+        "evidence": "model_vs_literature",
+        "entity": "CFDP1",
+        "odd": "localization disagreement: model ['cytosolic'] vs UniProt ['nuclear']",
+        "confidence": 0.2,
+        "challenges": "predicted",
+        "suggest": "curated UniProt location outranks the model's compartment label; review the model field",
+        "detail": {
+          "model_comp": "cytoplasm",
+          "hard": false,
+          "uniprot_location": "SUBCELLULAR LOCATION: Chromosome, centromere, kinetochore. Nucleus. Ch"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "cross_layer",
+        "evidence": "model_vs_literature",
+        "entity": "CLDN24",
+        "odd": "localization disagreement: model ['cytosolic'] vs UniProt ['secretory']",
+        "confidence": 0.2,
+        "challenges": "predicted",
+        "suggest": "curated UniProt location outranks the model's compartment label; review the model field",
+        "detail": {
+          "model_comp": "cytoplasm",
+          "hard": false,
+          "uniprot_location": "SUBCELLULAR LOCATION: Cell junction, tight junction. Cell membrane; Mu"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "cross_layer",
+        "evidence": "model_vs_literature",
+        "entity": "CLDN25",
+        "odd": "localization disagreement: model ['cytosolic'] vs UniProt ['secretory']",
+        "confidence": 0.2,
+        "challenges": "predicted",
+        "suggest": "curated UniProt location outranks the model's compartment label; review the model field",
+        "detail": {
+          "model_comp": "cytoplasm",
+          "hard": false,
+          "uniprot_location": "SUBCELLULAR LOCATION: Cell junction, tight junction. Cell membrane; Mu"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "cross_layer",
+        "evidence": "model_vs_literature",
+        "entity": "CLDN34",
+        "odd": "localization disagreement: model ['cytosolic'] vs UniProt ['secretory']",
+        "confidence": 0.2,
+        "challenges": "predicted",
+        "suggest": "curated UniProt location outranks the model's compartment label; review the model field",
+        "detail": {
+          "model_comp": "cytoplasm",
+          "hard": false,
+          "uniprot_location": "SUBCELLULAR LOCATION: Cell junction, tight junction. Cell membrane; Mu"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "cross_layer",
+        "evidence": "model_vs_literature",
+        "entity": "CLDND1",
+        "odd": "localization disagreement: model ['cytosolic'] vs UniProt ['secretory']",
+        "confidence": 0.2,
+        "challenges": "predicted",
+        "suggest": "curated UniProt location outranks the model's compartment label; review the model field",
+        "detail": {
+          "model_comp": "cytoplasm",
+          "hard": false,
+          "uniprot_location": "SUBCELLULAR LOCATION: Cell junction, tight junction. Cell membrane; Mu"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "cross_layer",
+        "evidence": "model_vs_literature",
+        "entity": "CNP",
+        "odd": "localization disagreement: model ['cytosolic'] vs UniProt ['mitochondrial', 'secretory']",
+        "confidence": 0.2,
+        "challenges": "predicted",
+        "suggest": "curated UniProt location outranks the model's compartment label; review the model field",
+        "detail": {
+          "model_comp": "cytoplasm",
+          "hard": false,
+          "uniprot_location": "SUBCELLULAR LOCATION: Melanosome. Mitochondrion. Note=Firmly bound to "
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "cross_layer",
+        "evidence": "model_vs_literature",
+        "entity": "CPLX3",
+        "odd": "localization disagreement: model ['cytosolic'] vs UniProt ['secretory']",
+        "confidence": 0.2,
+        "challenges": "predicted",
+        "suggest": "curated UniProt location outranks the model's compartment label; review the model field",
+        "detail": {
+          "model_comp": "cytoplasm",
+          "hard": false,
+          "uniprot_location": "SUBCELLULAR LOCATION: Synapse. Cell membrane; Lipid-anchor. Note=Enric"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "cross_layer",
+        "evidence": "model_vs_literature",
+        "entity": "CPLX4",
+        "odd": "localization disagreement: model ['cytosolic'] vs UniProt ['secretory']",
+        "confidence": 0.2,
+        "challenges": "predicted",
+        "suggest": "curated UniProt location outranks the model's compartment label; review the model field",
+        "detail": {
+          "model_comp": "cytoplasm",
+          "hard": false,
+          "uniprot_location": "SUBCELLULAR LOCATION: Synapse. Cell membrane; Lipid-anchor. Note=Enric"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "cross_layer",
+        "evidence": "model_vs_literature",
+        "entity": "CTIF",
+        "odd": "localization disagreement: model ['nuclear'] vs UniProt ['cytosolic']",
+        "confidence": 0.2,
+        "challenges": "predicted",
+        "suggest": "curated UniProt location outranks the model's compartment label; review the model field",
+        "detail": {
+          "model_comp": "nucleus",
+          "hard": false,
+          "uniprot_location": "SUBCELLULAR LOCATION: Cytoplasm, perinuclear region."
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "cross_layer",
+        "evidence": "model_vs_literature",
+        "entity": "CYLC2",
+        "odd": "localization disagreement: model ['nuclear'] vs UniProt ['cytosolic']",
+        "confidence": 0.2,
+        "challenges": "predicted",
+        "suggest": "curated UniProt location outranks the model's compartment label; review the model field",
+        "detail": {
+          "model_comp": "nucleus",
+          "hard": false,
+          "uniprot_location": "SUBCELLULAR LOCATION: Cytoplasm, cytoskeleton, perinuclear theca, caly"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "cross_layer",
+        "evidence": "model_vs_literature",
+        "entity": "ERVFRD-1",
+        "odd": "localization disagreement: model ['cytosolic'] vs UniProt ['secretory']",
+        "confidence": 0.2,
+        "challenges": "predicted",
+        "suggest": "curated UniProt location outranks the model's compartment label; review the model field",
+        "detail": {
+          "model_comp": "cytoplasm",
+          "hard": false,
+          "uniprot_location": "SUBCELLULAR LOCATION: Virion.; SUBCELLULAR LOCATION: [Surface protein]"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "cross_layer",
+        "evidence": "model_vs_literature",
+        "entity": "FAM168B",
+        "odd": "localization disagreement: model ['nuclear'] vs UniProt ['cytosolic', 'secretory']",
+        "confidence": 0.2,
+        "challenges": "predicted",
+        "suggest": "curated UniProt location outranks the model's compartment label; review the model field",
+        "detail": {
+          "model_comp": "nucleus",
+          "hard": false,
+          "uniprot_location": "SUBCELLULAR LOCATION: Cytoplasm, perinuclear region. Cell membrane; Mu"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "cross_layer",
+        "evidence": "model_vs_literature",
+        "entity": "FHDC1",
+        "odd": "localization disagreement: model ['cytosolic'] vs UniProt ['secretory']",
+        "confidence": 0.2,
+        "challenges": "predicted",
+        "suggest": "curated UniProt location outranks the model's compartment label; review the model field",
+        "detail": {
+          "model_comp": "cytoplasm",
+          "hard": false,
+          "uniprot_location": "SUBCELLULAR LOCATION: Cell projection, cilium. Golgi apparatus. Note=A"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "cross_layer",
+        "evidence": "model_vs_literature",
+        "entity": "FXR2",
+        "odd": "localization disagreement: model ['nuclear'] vs UniProt ['cytosolic', 'secretory']",
+        "confidence": 0.2,
+        "challenges": "predicted",
+        "suggest": "curated UniProt location outranks the model's compartment label; review the model field",
+        "detail": {
+          "model_comp": "nucleus",
+          "hard": false,
+          "uniprot_location": "SUBCELLULAR LOCATION: Cytoplasm, Cytoplasmic ribonucleoprotein granule"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "cross_layer",
+        "evidence": "model_vs_literature",
+        "entity": "GSDMA",
+        "odd": "localization disagreement: model ['nuclear'] vs UniProt ['cytosolic', 'secretory']",
+        "confidence": 0.2,
+        "challenges": "predicted",
+        "suggest": "curated UniProt location outranks the model's compartment label; review the model field",
+        "detail": {
+          "model_comp": "nucleus",
+          "hard": false,
+          "uniprot_location": "SUBCELLULAR LOCATION: [Gasdermin-A]: Cytoplasm, perinuclear region. Cy"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "cross_layer",
+        "evidence": "model_vs_literature",
+        "entity": "HEATR5B",
+        "odd": "localization disagreement: model ['nuclear'] vs UniProt ['cytosolic']",
+        "confidence": 0.2,
+        "challenges": "predicted",
+        "suggest": "curated UniProt location outranks the model's compartment label; review the model field",
+        "detail": {
+          "model_comp": "nucleus",
+          "hard": false,
+          "uniprot_location": "SUBCELLULAR LOCATION: Cytoplasm, perinuclear region. Cytoplasmic vesic"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "cross_layer",
+        "evidence": "model_vs_literature",
+        "entity": "HPF1",
+        "odd": "localization disagreement: model ['cytosolic'] vs UniProt ['nuclear']",
+        "confidence": 0.2,
+        "challenges": "predicted",
+        "suggest": "curated UniProt location outranks the model's compartment label; review the model field",
+        "detail": {
+          "model_comp": "cytoplasm",
+          "hard": false,
+          "uniprot_location": "SUBCELLULAR LOCATION: Chromosome. Nucleus. Note=Localizes to DNA damag"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "cross_layer",
+        "evidence": "model_vs_literature",
+        "entity": "IRAG1",
+        "odd": "localization disagreement: model ['nuclear'] vs UniProt ['cytosolic', 'secretory']",
+        "confidence": 0.2,
+        "challenges": "predicted",
+        "suggest": "curated UniProt location outranks the model's compartment label; review the model field",
+        "detail": {
+          "model_comp": "nucleus",
+          "hard": false,
+          "uniprot_location": "SUBCELLULAR LOCATION: Cytoplasm, perinuclear region. Sarcoplasmic reti"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "cross_layer",
+        "evidence": "model_vs_literature",
+        "entity": "IRGC",
+        "odd": "localization disagreement: model ['cytosolic'] vs UniProt ['mitochondrial']",
+        "confidence": 0.2,
+        "challenges": "predicted",
+        "suggest": "curated UniProt location outranks the model's compartment label; review the model field",
+        "detail": {
+          "model_comp": "cytoplasm",
+          "hard": false,
+          "uniprot_location": "SUBCELLULAR LOCATION: Cell projection, cilium, flagellum. Lipid drople"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "cross_layer",
+        "evidence": "model_vs_literature",
+        "entity": "LDAH",
+        "odd": "localization disagreement: model ['cytosolic'] vs UniProt ['secretory']",
+        "confidence": 0.2,
+        "challenges": "predicted",
+        "suggest": "curated UniProt location outranks the model's compartment label; review the model field",
+        "detail": {
+          "model_comp": "cytoplasm",
+          "hard": false,
+          "uniprot_location": "SUBCELLULAR LOCATION: Lipid droplet. Endoplasmic reticulum. Note=Local"
+        },
+        "action": "flag_for_review"
+      }
+    ],
+    "completion": [
+      {
+        "tier": "learned",
+        "evidence": "completion",
+        "entity": "CPSF6\u2014SNRPA",
+        "odd": "missing-edge candidate: 169 shared partners (triadic closure)",
+        "confidence": 0.9,
+        "challenges": "none",
+        "suggest": "propose as a confidence-tagged predicted edge; does not touch measured data",
+        "detail": {
+          "shared_partners": 169,
+          "jaccard": 0.511,
+          "relation": "ppi"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "learned",
+        "evidence": "completion",
+        "entity": "NBPF19\u2014NOTCH2NLA",
+        "odd": "missing-edge candidate: 158 shared partners (triadic closure)",
+        "confidence": 0.9,
+        "challenges": "none",
+        "suggest": "propose as a confidence-tagged predicted edge; does not touch measured data",
+        "detail": {
+          "shared_partners": 158,
+          "jaccard": 1.0,
+          "relation": "ppi"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "learned",
+        "evidence": "completion",
+        "entity": "CPSF6\u2014SNRPB",
+        "odd": "missing-edge candidate: 156 shared partners (triadic closure)",
+        "confidence": 0.9,
+        "challenges": "none",
+        "suggest": "propose as a confidence-tagged predicted edge; does not touch measured data",
+        "detail": {
+          "shared_partners": 156,
+          "jaccard": 0.415,
+          "relation": "ppi"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "learned",
+        "evidence": "completion",
+        "entity": "PSPC1\u2014SRP9",
+        "odd": "missing-edge candidate: 152 shared partners (triadic closure)",
+        "confidence": 0.9,
+        "challenges": "none",
+        "suggest": "propose as a confidence-tagged predicted edge; does not touch measured data",
+        "detail": {
+          "shared_partners": 152,
+          "jaccard": 0.414,
+          "relation": "ppi"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "learned",
+        "evidence": "completion",
+        "entity": "CPSF6\u2014TOP1",
+        "odd": "missing-edge candidate: 152 shared partners (triadic closure)",
+        "confidence": 0.9,
+        "challenges": "none",
+        "suggest": "propose as a confidence-tagged predicted edge; does not touch measured data",
+        "detail": {
+          "shared_partners": 152,
+          "jaccard": 0.455,
+          "relation": "ppi"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "learned",
+        "evidence": "completion",
+        "entity": "CAPZB\u2014PSPC1",
+        "odd": "missing-edge candidate: 147 shared partners (triadic closure)",
+        "confidence": 0.9,
+        "challenges": "none",
+        "suggest": "propose as a confidence-tagged predicted edge; does not touch measured data",
+        "detail": {
+          "shared_partners": 147,
+          "jaccard": 0.195,
+          "relation": "ppi"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "learned",
+        "evidence": "completion",
+        "entity": "RBM8A\u2014SRP9",
+        "odd": "missing-edge candidate: 146 shared partners (triadic closure)",
+        "confidence": 0.9,
+        "challenges": "none",
+        "suggest": "propose as a confidence-tagged predicted edge; does not touch measured data",
+        "detail": {
+          "shared_partners": 146,
+          "jaccard": 0.377,
+          "relation": "ppi"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "learned",
+        "evidence": "completion",
+        "entity": "PSPC1\u2014RBM8A",
+        "odd": "missing-edge candidate: 144 shared partners (triadic closure)",
+        "confidence": 0.9,
+        "challenges": "none",
+        "suggest": "propose as a confidence-tagged predicted edge; does not touch measured data",
+        "detail": {
+          "shared_partners": 144,
+          "jaccard": 0.365,
+          "relation": "ppi"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "learned",
+        "evidence": "completion",
+        "entity": "RACK1\u2014RBM8A",
+        "odd": "missing-edge candidate: 144 shared partners (triadic closure)",
+        "confidence": 0.9,
+        "challenges": "none",
+        "suggest": "propose as a confidence-tagged predicted edge; does not touch measured data",
+        "detail": {
+          "shared_partners": 144,
+          "jaccard": 0.384,
+          "relation": "ppi"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "learned",
+        "evidence": "completion",
+        "entity": "CAPZB\u2014RBM8A",
+        "odd": "missing-edge candidate: 143 shared partners (triadic closure)",
+        "confidence": 0.9,
+        "challenges": "none",
+        "suggest": "propose as a confidence-tagged predicted edge; does not touch measured data",
+        "detail": {
+          "shared_partners": 143,
+          "jaccard": 0.185,
+          "relation": "ppi"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "learned",
+        "evidence": "completion",
+        "entity": "SNRPB\u2014TOP1",
+        "odd": "missing-edge candidate: 141 shared partners (triadic closure)",
+        "confidence": 0.9,
+        "challenges": "none",
+        "suggest": "propose as a confidence-tagged predicted edge; does not touch measured data",
+        "detail": {
+          "shared_partners": 141,
+          "jaccard": 0.327,
+          "relation": "ppi"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "learned",
+        "evidence": "completion",
+        "entity": "CPSF6\u2014SSRP1",
+        "odd": "missing-edge candidate: 141 shared partners (triadic closure)",
+        "confidence": 0.9,
+        "challenges": "none",
+        "suggest": "propose as a confidence-tagged predicted edge; does not touch measured data",
+        "detail": {
+          "shared_partners": 141,
+          "jaccard": 0.332,
+          "relation": "ppi"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "learned",
+        "evidence": "completion",
+        "entity": "DRG1\u2014SRP68",
+        "odd": "missing-edge candidate: 141 shared partners (triadic closure)",
+        "confidence": 0.9,
+        "challenges": "none",
+        "suggest": "propose as a confidence-tagged predicted edge; does not touch measured data",
+        "detail": {
+          "shared_partners": 141,
+          "jaccard": 0.566,
+          "relation": "ppi"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "learned",
+        "evidence": "completion",
+        "entity": "PSPC1\u2014RACK1",
+        "odd": "missing-edge candidate: 135 shared partners (triadic closure)",
+        "confidence": 0.9,
+        "challenges": "none",
+        "suggest": "propose as a confidence-tagged predicted edge; does not touch measured data",
+        "detail": {
+          "shared_partners": 135,
+          "jaccard": 0.365,
+          "relation": "ppi"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "learned",
+        "evidence": "completion",
+        "entity": "RACK1\u2014SRP72",
+        "odd": "missing-edge candidate: 135 shared partners (triadic closure)",
+        "confidence": 0.9,
+        "challenges": "none",
+        "suggest": "propose as a confidence-tagged predicted edge; does not touch measured data",
+        "detail": {
+          "shared_partners": 135,
+          "jaccard": 0.489,
+          "relation": "ppi"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "learned",
+        "evidence": "completion",
+        "entity": "RBM39\u2014SNRPA",
+        "odd": "missing-edge candidate: 135 shared partners (triadic closure)",
+        "confidence": 0.9,
+        "challenges": "none",
+        "suggest": "propose as a confidence-tagged predicted edge; does not touch measured data",
+        "detail": {
+          "shared_partners": 135,
+          "jaccard": 0.351,
+          "relation": "ppi"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "learned",
+        "evidence": "completion",
+        "entity": "CAPZB\u2014SRP9",
+        "odd": "missing-edge candidate: 133 shared partners (triadic closure)",
+        "confidence": 0.9,
+        "challenges": "none",
+        "suggest": "propose as a confidence-tagged predicted edge; does not touch measured data",
+        "detail": {
+          "shared_partners": 133,
+          "jaccard": 0.174,
+          "relation": "ppi"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "learned",
+        "evidence": "completion",
+        "entity": "SNRPB\u2014SSRP1",
+        "odd": "missing-edge candidate: 132 shared partners (triadic closure)",
+        "confidence": 0.9,
+        "challenges": "none",
+        "suggest": "propose as a confidence-tagged predicted edge; does not touch measured data",
+        "detail": {
+          "shared_partners": 132,
+          "jaccard": 0.254,
+          "relation": "ppi"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "learned",
+        "evidence": "completion",
+        "entity": "RBM39\u2014SNRPB",
+        "odd": "missing-edge candidate: 132 shared partners (triadic closure)",
+        "confidence": 0.9,
+        "challenges": "none",
+        "suggest": "propose as a confidence-tagged predicted edge; does not touch measured data",
+        "detail": {
+          "shared_partners": 132,
+          "jaccard": 0.314,
+          "relation": "ppi"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "learned",
+        "evidence": "completion",
+        "entity": "DRG1\u2014RACK1",
+        "odd": "missing-edge candidate: 132 shared partners (triadic closure)",
+        "confidence": 0.9,
+        "challenges": "none",
+        "suggest": "propose as a confidence-tagged predicted edge; does not touch measured data",
+        "detail": {
+          "shared_partners": 132,
+          "jaccard": 0.454,
+          "relation": "ppi"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "learned",
+        "evidence": "completion",
+        "entity": "ADARB1\u2014RPL36",
+        "odd": "missing-edge candidate: 130 shared partners (triadic closure)",
+        "confidence": 0.9,
+        "challenges": "none",
+        "suggest": "propose as a confidence-tagged predicted edge; does not touch measured data",
+        "detail": {
+          "shared_partners": 130,
+          "jaccard": 0.387,
+          "relation": "ppi"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "learned",
+        "evidence": "completion",
+        "entity": "NPM1\u2014RPS16",
+        "odd": "missing-edge candidate: 128 shared partners (triadic closure)",
+        "confidence": 0.9,
+        "challenges": "none",
+        "suggest": "propose as a confidence-tagged predicted edge; does not touch measured data",
+        "detail": {
+          "shared_partners": 128,
+          "jaccard": 0.233,
+          "relation": "ppi"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "learned",
+        "evidence": "completion",
+        "entity": "PSPC1\u2014RBM42",
+        "odd": "missing-edge candidate: 125 shared partners (triadic closure)",
+        "confidence": 0.9,
+        "challenges": "none",
+        "suggest": "propose as a confidence-tagged predicted edge; does not touch measured data",
+        "detail": {
+          "shared_partners": 125,
+          "jaccard": 0.353,
+          "relation": "ppi"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "learned",
+        "evidence": "completion",
+        "entity": "RBM42\u2014RPL5",
+        "odd": "missing-edge candidate: 125 shared partners (triadic closure)",
+        "confidence": 0.9,
+        "challenges": "none",
+        "suggest": "propose as a confidence-tagged predicted edge; does not touch measured data",
+        "detail": {
+          "shared_partners": 125,
+          "jaccard": 0.326,
+          "relation": "ppi"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "learned",
+        "evidence": "completion",
+        "entity": "RBM42\u2014SRP9",
+        "odd": "missing-edge candidate: 123 shared partners (triadic closure)",
+        "confidence": 0.9,
+        "challenges": "none",
+        "suggest": "propose as a confidence-tagged predicted edge; does not touch measured data",
+        "detail": {
+          "shared_partners": 123,
+          "jaccard": 0.35,
+          "relation": "ppi"
+        },
+        "action": "flag_for_review"
+      }
+    ],
+    "prediction_vs_measured": [
+      {
+        "tier": "learned",
+        "evidence": "prediction_vs_measured",
+        "entity": "CLEC4F\u2014ITGAV",
+        "odd": "known edge the link model scores very low \u2014 candidate database false positive",
+        "confidence": 0.65,
+        "challenges": "measured",
+        "suggest": "FLAG ONLY: a measured/curated edge is a fact; the model may be wrong. Human/experiment adjudicates",
+        "detail": {
+          "score": -0.631,
+          "relation": "ppi"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "learned",
+        "evidence": "prediction_vs_measured",
+        "entity": "NOTCH2\u2014NTN5",
+        "odd": "known edge the link model scores very low \u2014 candidate database false positive",
+        "confidence": 0.65,
+        "challenges": "measured",
+        "suggest": "FLAG ONLY: a measured/curated edge is a fact; the model may be wrong. Human/experiment adjudicates",
+        "detail": {
+          "score": -0.621,
+          "relation": "ppi"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "learned",
+        "evidence": "prediction_vs_measured",
+        "entity": "MUCL1\u2014SEPTIN8",
+        "odd": "known edge the link model scores very low \u2014 candidate database false positive",
+        "confidence": 0.65,
+        "challenges": "measured",
+        "suggest": "FLAG ONLY: a measured/curated edge is a fact; the model may be wrong. Human/experiment adjudicates",
+        "detail": {
+          "score": -0.62,
+          "relation": "ppi"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "learned",
+        "evidence": "prediction_vs_measured",
+        "entity": "MS4A10\u2014NEDD4L",
+        "odd": "known edge the link model scores very low \u2014 candidate database false positive",
+        "confidence": 0.65,
+        "challenges": "measured",
+        "suggest": "FLAG ONLY: a measured/curated edge is a fact; the model may be wrong. Human/experiment adjudicates",
+        "detail": {
+          "score": -0.598,
+          "relation": "ppi"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "learned",
+        "evidence": "prediction_vs_measured",
+        "entity": "ADAM10\u2014LDLRAD1",
+        "odd": "known edge the link model scores very low \u2014 candidate database false positive",
+        "confidence": 0.64,
+        "challenges": "measured",
+        "suggest": "FLAG ONLY: a measured/curated edge is a fact; the model may be wrong. Human/experiment adjudicates",
+        "detail": {
+          "score": -0.591,
+          "relation": "ppi"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "learned",
+        "evidence": "prediction_vs_measured",
+        "entity": "EGFR\u2014SCGB1D4",
+        "odd": "known edge the link model scores very low \u2014 candidate database false positive",
+        "confidence": 0.64,
+        "challenges": "measured",
+        "suggest": "FLAG ONLY: a measured/curated edge is a fact; the model may be wrong. Human/experiment adjudicates",
+        "detail": {
+          "score": -0.589,
+          "relation": "ppi"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "learned",
+        "evidence": "prediction_vs_measured",
+        "entity": "CELA2B\u2014RAD50",
+        "odd": "known edge the link model scores very low \u2014 candidate database false positive",
+        "confidence": 0.64,
+        "challenges": "measured",
+        "suggest": "FLAG ONLY: a measured/curated edge is a fact; the model may be wrong. Human/experiment adjudicates",
+        "detail": {
+          "score": -0.585,
+          "relation": "ppi"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "learned",
+        "evidence": "prediction_vs_measured",
+        "entity": "HLA-DQA1\u2014VWC2",
+        "odd": "known edge the link model scores very low \u2014 candidate database false positive",
+        "confidence": 0.64,
+        "challenges": "measured",
+        "suggest": "FLAG ONLY: a measured/curated edge is a fact; the model may be wrong. Human/experiment adjudicates",
+        "detail": {
+          "score": -0.581,
+          "relation": "ppi"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "learned",
+        "evidence": "prediction_vs_measured",
+        "entity": "MAP2K7\u2014PCDHB6",
+        "odd": "known edge the link model scores very low \u2014 candidate database false positive",
+        "confidence": 0.64,
+        "challenges": "measured",
+        "suggest": "FLAG ONLY: a measured/curated edge is a fact; the model may be wrong. Human/experiment adjudicates",
+        "detail": {
+          "score": -0.579,
+          "relation": "ppi"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "learned",
+        "evidence": "prediction_vs_measured",
+        "entity": "EMD\u2014TMEM200A",
+        "odd": "known edge the link model scores very low \u2014 candidate database false positive",
+        "confidence": 0.64,
+        "challenges": "measured",
+        "suggest": "FLAG ONLY: a measured/curated edge is a fact; the model may be wrong. Human/experiment adjudicates",
+        "detail": {
+          "score": -0.576,
+          "relation": "ppi"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "learned",
+        "evidence": "prediction_vs_measured",
+        "entity": "MAP2K1\u2014RNASE9",
+        "odd": "known edge the link model scores very low \u2014 candidate database false positive",
+        "confidence": 0.64,
+        "challenges": "measured",
+        "suggest": "FLAG ONLY: a measured/curated edge is a fact; the model may be wrong. Human/experiment adjudicates",
+        "detail": {
+          "score": -0.576,
+          "relation": "ppi"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "learned",
+        "evidence": "prediction_vs_measured",
+        "entity": "DMD\u2014WDR54",
+        "odd": "known edge the link model scores very low \u2014 candidate database false positive",
+        "confidence": 0.64,
+        "challenges": "measured",
+        "suggest": "FLAG ONLY: a measured/curated edge is a fact; the model may be wrong. Human/experiment adjudicates",
+        "detail": {
+          "score": -0.573,
+          "relation": "ppi"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "learned",
+        "evidence": "prediction_vs_measured",
+        "entity": "DIABLO\u2014SLC66A2",
+        "odd": "known edge the link model scores very low \u2014 candidate database false positive",
+        "confidence": 0.64,
+        "challenges": "measured",
+        "suggest": "FLAG ONLY: a measured/curated edge is a fact; the model may be wrong. Human/experiment adjudicates",
+        "detail": {
+          "score": -0.569,
+          "relation": "ppi"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "learned",
+        "evidence": "prediction_vs_measured",
+        "entity": "FAM163B\u2014PPP3CA",
+        "odd": "known edge the link model scores very low \u2014 candidate database false positive",
+        "confidence": 0.64,
+        "challenges": "measured",
+        "suggest": "FLAG ONLY: a measured/curated edge is a fact; the model may be wrong. Human/experiment adjudicates",
+        "detail": {
+          "score": -0.565,
+          "relation": "ppi"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "learned",
+        "evidence": "prediction_vs_measured",
+        "entity": "CPA5\u2014SEL1L",
+        "odd": "known edge the link model scores very low \u2014 candidate database false positive",
+        "confidence": 0.64,
+        "challenges": "measured",
+        "suggest": "FLAG ONLY: a measured/curated edge is a fact; the model may be wrong. Human/experiment adjudicates",
+        "detail": {
+          "score": -0.562,
+          "relation": "ppi"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "learned",
+        "evidence": "prediction_vs_measured",
+        "entity": "ITGA2\u2014TMED6",
+        "odd": "known edge the link model scores very low \u2014 candidate database false positive",
+        "confidence": 0.64,
+        "challenges": "measured",
+        "suggest": "FLAG ONLY: a measured/curated edge is a fact; the model may be wrong. Human/experiment adjudicates",
+        "detail": {
+          "score": -0.561,
+          "relation": "ppi"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "learned",
+        "evidence": "prediction_vs_measured",
+        "entity": "CALM1\u2014TCEAL8",
+        "odd": "known edge the link model scores very low \u2014 candidate database false positive",
+        "confidence": 0.64,
+        "challenges": "measured",
+        "suggest": "FLAG ONLY: a measured/curated edge is a fact; the model may be wrong. Human/experiment adjudicates",
+        "detail": {
+          "score": -0.56,
+          "relation": "ppi"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "learned",
+        "evidence": "prediction_vs_measured",
+        "entity": "ITGAV\u2014LYZL2",
+        "odd": "known edge the link model scores very low \u2014 candidate database false positive",
+        "confidence": 0.64,
+        "challenges": "measured",
+        "suggest": "FLAG ONLY: a measured/curated edge is a fact; the model may be wrong. Human/experiment adjudicates",
+        "detail": {
+          "score": -0.559,
+          "relation": "ppi"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "learned",
+        "evidence": "prediction_vs_measured",
+        "entity": "P4HB\u2014PLCXD3",
+        "odd": "known edge the link model scores very low \u2014 candidate database false positive",
+        "confidence": 0.64,
+        "challenges": "measured",
+        "suggest": "FLAG ONLY: a measured/curated edge is a fact; the model may be wrong. Human/experiment adjudicates",
+        "detail": {
+          "score": -0.559,
+          "relation": "ppi"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "learned",
+        "evidence": "prediction_vs_measured",
+        "entity": "KLRG2\u2014PPP3CA",
+        "odd": "known edge the link model scores very low \u2014 candidate database false positive",
+        "confidence": 0.64,
+        "challenges": "measured",
+        "suggest": "FLAG ONLY: a measured/curated edge is a fact; the model may be wrong. Human/experiment adjudicates",
+        "detail": {
+          "score": -0.558,
+          "relation": "ppi"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "learned",
+        "evidence": "prediction_vs_measured",
+        "entity": "RIPPLY1\u2014TRAF3",
+        "odd": "known edge the link model scores very low \u2014 candidate database false positive",
+        "confidence": 0.64,
+        "challenges": "measured",
+        "suggest": "FLAG ONLY: a measured/curated edge is a fact; the model may be wrong. Human/experiment adjudicates",
+        "detail": {
+          "score": -0.555,
+          "relation": "ppi"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "learned",
+        "evidence": "prediction_vs_measured",
+        "entity": "SMIM1\u2014STING1",
+        "odd": "known edge the link model scores very low \u2014 candidate database false positive",
+        "confidence": 0.63,
+        "challenges": "measured",
+        "suggest": "FLAG ONLY: a measured/curated edge is a fact; the model may be wrong. Human/experiment adjudicates",
+        "detail": {
+          "score": -0.552,
+          "relation": "ppi"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "learned",
+        "evidence": "prediction_vs_measured",
+        "entity": "EIF2AK3\u2014TSPAN16",
+        "odd": "known edge the link model scores very low \u2014 candidate database false positive",
+        "confidence": 0.63,
+        "challenges": "measured",
+        "suggest": "FLAG ONLY: a measured/curated edge is a fact; the model may be wrong. Human/experiment adjudicates",
+        "detail": {
+          "score": -0.552,
+          "relation": "ppi"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "learned",
+        "evidence": "prediction_vs_measured",
+        "entity": "SNX21\u2014TUBA1A",
+        "odd": "known edge the link model scores very low \u2014 candidate database false positive",
+        "confidence": 0.63,
+        "challenges": "measured",
+        "suggest": "FLAG ONLY: a measured/curated edge is a fact; the model may be wrong. Human/experiment adjudicates",
+        "detail": {
+          "score": -0.55,
+          "relation": "ppi"
+        },
+        "action": "flag_for_review"
+      },
+      {
+        "tier": "learned",
+        "evidence": "prediction_vs_measured",
+        "entity": "BTRC\u2014C1orf210",
+        "odd": "known edge the link model scores very low \u2014 candidate database false positive",
+        "confidence": 0.63,
+        "challenges": "measured",
+        "suggest": "FLAG ONLY: a measured/curated edge is a fact; the model may be wrong. Human/experiment adjudicates",
+        "detail": {
+          "score": -0.55,
+          "relation": "ppi"
+        },
+        "action": "flag_for_review"
+      }
+    ]
+  },
+  "verified_fixes": [
+    {
+      "flag": "ATP2A2",
+      "kind": "kcat_correction",
+      "challenges": "predicted",
+      "proposed": {
+        "old_kcat": 29103.435,
+        "corrected_kcat": 2426.6,
+        "km_uM": 2.426618509190916
+      },
+      "verified": true,
+      "verification": "physics restored (kcat/Km now at the diffusion limit)",
+      "flux_ok": null,
+      "action": "apply-pending-review"
+    },
+    {
+      "flag": "GPI",
+      "kind": "kcat_correction",
+      "challenges": "measured",
+      "proposed": {
+        "old_kcat": 1000000.0,
+        "corrected_kcat": 90902.8,
+        "km_uM": 90.9027797995955
+      },
+      "verified": true,
+      "verification": "physics restored (kcat/Km now at the diffusion limit)",
+      "flux_ok": null,
+      "action": "ESCALATE: corrects a MEASURED value \u2014 needs human/experiment sign-off"
+    },
+    {
+      "flag": "ATP2A1",
+      "kind": "kcat_correction",
+      "challenges": "predicted",
+      "proposed": {
+        "old_kcat": 55332.9364,
+        "corrected_kcat": 3160.2,
+        "km_uM": 3.160238320721573
+      },
+      "verified": true,
+      "verification": "physics restored (kcat/Km now at the diffusion limit)",
+      "flux_ok": null,
+      "action": "apply-pending-review"
+    },
+    {
+      "flag": "ATP2B1",
+      "kind": "kcat_correction",
+      "challenges": "predicted",
+      "proposed": {
+        "old_kcat": 12539.7328,
+        "corrected_kcat": 1501.0,
+        "km_uM": 1.5010426988321535
+      },
+      "verified": true,
+      "verification": "physics restored (kcat/Km now at the diffusion limit)",
+      "flux_ok": null,
+      "action": "apply-pending-review"
+    },
+    {
+      "flag": "ATP2B3",
+      "kind": "kcat_correction",
+      "challenges": "predicted",
+      "proposed": {
+        "old_kcat": 14032.3419,
+        "corrected_kcat": 1808.6,
+        "km_uM": 1.808569139998062
+      },
+      "verified": true,
+      "verification": "physics restored (kcat/Km now at the diffusion limit)",
+      "flux_ok": null,
+      "action": "apply-pending-review"
+    },
+    {
+      "flag": "ACHE",
+      "kind": "kcat_correction",
+      "challenges": "measured",
+      "proposed": {
+        "old_kcat": 1000000.0,
+        "corrected_kcat": 141757.7,
+        "km_uM": 141.75765203782314
+      },
+      "verified": true,
+      "verification": "physics restored (kcat/Km now at the diffusion limit)",
+      "flux_ok": null,
+      "action": "ESCALATE: corrects a MEASURED value \u2014 needs human/experiment sign-off"
+    },
+    {
+      "flag": "ATP2A3",
+      "kind": "kcat_correction",
+      "challenges": "predicted",
+      "proposed": {
+        "old_kcat": 17993.9559,
+        "corrected_kcat": 2518.4,
+        "km_uM": 2.518425526023913
+      },
+      "verified": true,
+      "verification": "physics restored (kcat/Km now at the diffusion limit)",
+      "flux_ok": null,
+      "action": "apply-pending-review"
+    },
+    {
+      "flag": "ATP2B2",
+      "kind": "kcat_correction",
+      "challenges": "predicted",
+      "proposed": {
+        "old_kcat": 11082.0018,
+        "corrected_kcat": 1725.0,
+        "km_uM": 1.7249977491200763
+      },
+      "verified": true,
+      "verification": "physics restored (kcat/Km now at the diffusion limit)",
+      "flux_ok": null,
+      "action": "apply-pending-review"
+    },
+    {
+      "flag": "ATP2B4",
+      "kind": "kcat_correction",
+      "challenges": "predicted",
+      "proposed": {
+        "old_kcat": 7276.9494,
+        "corrected_kcat": 1835.8,
+        "km_uM": 1.8357543250594794
+      },
+      "verified": true,
+      "verification": "physics restored (kcat/Km now at the diffusion limit)",
+      "flux_ok": null,
+      "action": "apply-pending-review"
+    },
+    {
+      "flag": "ATP2C2",
+      "kind": "kcat_correction",
+      "challenges": "predicted",
+      "proposed": {
+        "old_kcat": 11173.2797,
+        "corrected_kcat": 3800.9,
+        "km_uM": 3.8008878004424025
+      },
+      "verified": true,
+      "verification": "physics restored (kcat/Km now at the diffusion limit)",
+      "flux_ok": null,
+      "action": "apply-pending-review"
+    },
+    {
+      "flag": "ALDH2",
+      "kind": "kcat_correction",
+      "challenges": "measured",
+      "proposed": {
+        "old_kcat": 11400.0,
+        "corrected_kcat": 4205.5,
+        "km_uM": 4.2054733599156
+      },
+      "verified": true,
+      "verification": "physics restored (kcat/Km now at the diffusion limit)",
+      "flux_ok": null,
+      "action": "ESCALATE: corrects a MEASURED value \u2014 needs human/experiment sign-off"
+    },
+    {
+      "flag": "ATP2C1",
+      "kind": "kcat_correction",
+      "challenges": "predicted",
+      "proposed": {
+        "old_kcat": 9068.1813,
+        "corrected_kcat": 5436.4,
+        "km_uM": 5.436442878718282
+      },
+      "verified": true,
+      "verification": "physics restored (kcat/Km now at the diffusion limit)",
+      "flux_ok": null,
+      "action": "apply-pending-review"
+    },
+    {
+      "flag": "ABCB6",
+      "kind": "kcat_correction",
+      "challenges": "measured",
+      "proposed": {
+        "old_kcat": 432.0,
+        "corrected_kcat": 326.9,
+        "km_uM": 0.3268728760029269
+      },
+      "verified": true,
+      "verification": "physics restored (kcat/Km now at the diffusion limit)",
+      "flux_ok": null,
+      "action": "ESCALATE: corrects a MEASURED value \u2014 needs human/experiment sign-off"
+    },
+    {
+      "flag": "SLC24A3",
+      "kind": "kcat_correction",
+      "challenges": "predicted",
+      "proposed": {
+        "old_kcat": 17557.4317,
+        "corrected_kcat": 13098.2,
+        "km_uM": 13.098230159582396
+      },
+      "verified": true,
+      "verification": "physics restored (kcat/Km now at the diffusion limit)",
+      "flux_ok": null,
+      "action": "apply-pending-review"
+    },
+    {
+      "flag": "SULT2B1",
+      "kind": "kcat_correction",
+      "challenges": "measured",
+      "proposed": {
+        "old_kcat": 13080.0,
+        "corrected_kcat": 11387.2,
+        "km_uM": 11.387173401730097
+      },
+      "verified": true,
+      "verification": "physics restored (kcat/Km now at the diffusion limit)",
+      "flux_ok": null,
+      "action": "ESCALATE: corrects a MEASURED value \u2014 needs human/experiment sign-off"
+    },
+    {
+      "flag": "SLC24A2",
+      "kind": "kcat_correction",
+      "challenges": "predicted",
+      "proposed": {
+        "old_kcat": 15729.0805,
+        "corrected_kcat": 14634.6,
+        "km_uM": 14.634575989675067
+      },
+      "verified": true,
+      "verification": "physics restored (kcat/Km now at the diffusion limit)",
+      "flux_ok": null,
+      "action": "apply-pending-review"
+    },
+    {
+      "flag": "LDHA",
+      "kind": "kcat_correction",
+      "challenges": "measured",
+      "proposed": {
+        "old_kcat": 1000000.0,
+        "corrected_kcat": 998065.3,
+        "km_uM": 998.0652812591445
+      },
+      "verified": true,
+      "verification": "physics restored (kcat/Km now at the diffusion limit)",
+      "flux_ok": null,
+      "action": "ESCALATE: corrects a MEASURED value \u2014 needs human/experiment sign-off"
+    },
+    {
+      "flag": "CPSF6\u2014SNRPA",
+      "kind": "edge_completion",
+      "challenges": "none",
+      "proposed": {
+        "add_edge": "CPSF6\u2014SNRPA (predicted PPI, confidence 0.9)"
+      },
+      "verified": true,
+      "verification": "169 shared partners (>=20 = strong)",
+      "action": "propose-as-predicted-edge (never touches measured data)"
+    },
+    {
+      "flag": "NBPF19\u2014NOTCH2NLA",
+      "kind": "edge_completion",
+      "challenges": "none",
+      "proposed": {
+        "add_edge": "NBPF19\u2014NOTCH2NLA (predicted PPI, confidence 0.9)"
+      },
+      "verified": true,
+      "verification": "158 shared partners (>=20 = strong)",
+      "action": "propose-as-predicted-edge (never touches measured data)"
+    },
+    {
+      "flag": "CPSF6\u2014SNRPB",
+      "kind": "edge_completion",
+      "challenges": "none",
+      "proposed": {
+        "add_edge": "CPSF6\u2014SNRPB (predicted PPI, confidence 0.9)"
+      },
+      "verified": true,
+      "verification": "156 shared partners (>=20 = strong)",
+      "action": "propose-as-predicted-edge (never touches measured data)"
+    },
+    {
+      "flag": "PSPC1\u2014SRP9",
+      "kind": "edge_completion",
+      "challenges": "none",
+      "proposed": {
+        "add_edge": "PSPC1\u2014SRP9 (predicted PPI, confidence 0.9)"
+      },
+      "verified": true,
+      "verification": "152 shared partners (>=20 = strong)",
+      "action": "propose-as-predicted-edge (never touches measured data)"
+    },
+    {
+      "flag": "CPSF6\u2014TOP1",
+      "kind": "edge_completion",
+      "challenges": "none",
+      "proposed": {
+        "add_edge": "CPSF6\u2014TOP1 (predicted PPI, confidence 0.9)"
+      },
+      "verified": true,
+      "verification": "152 shared partners (>=20 = strong)",
+      "action": "propose-as-predicted-edge (never touches measured data)"
+    },
+    {
+      "flag": "CAPZB\u2014PSPC1",
+      "kind": "edge_completion",
+      "challenges": "none",
+      "proposed": {
+        "add_edge": "CAPZB\u2014PSPC1 (predicted PPI, confidence 0.9)"
+      },
+      "verified": true,
+      "verification": "147 shared partners (>=20 = strong)",
+      "action": "propose-as-predicted-edge (never touches measured data)"
+    },
+    {
+      "flag": "RBM8A\u2014SRP9",
+      "kind": "edge_completion",
+      "challenges": "none",
+      "proposed": {
+        "add_edge": "RBM8A\u2014SRP9 (predicted PPI, confidence 0.9)"
+      },
+      "verified": true,
+      "verification": "146 shared partners (>=20 = strong)",
+      "action": "propose-as-predicted-edge (never touches measured data)"
+    },
+    {
+      "flag": "PSPC1\u2014RBM8A",
+      "kind": "edge_completion",
+      "challenges": "none",
+      "proposed": {
+        "add_edge": "PSPC1\u2014RBM8A (predicted PPI, confidence 0.9)"
+      },
+      "verified": true,
+      "verification": "144 shared partners (>=20 = strong)",
+      "action": "propose-as-predicted-edge (never touches measured data)"
+    },
+    {
+      "flag": "RACK1\u2014RBM8A",
+      "kind": "edge_completion",
+      "challenges": "none",
+      "proposed": {
+        "add_edge": "RACK1\u2014RBM8A (predicted PPI, confidence 0.9)"
+      },
+      "verified": true,
+      "verification": "144 shared partners (>=20 = strong)",
+      "action": "propose-as-predicted-edge (never touches measured data)"
+    },
+    {
+      "flag": "CAPZB\u2014RBM8A",
+      "kind": "edge_completion",
+      "challenges": "none",
+      "proposed": {
+        "add_edge": "CAPZB\u2014RBM8A (predicted PPI, confidence 0.9)"
+      },
+      "verified": true,
+      "verification": "143 shared partners (>=20 = strong)",
+      "action": "propose-as-predicted-edge (never touches measured data)"
+    },
+    {
+      "flag": "SNRPB\u2014TOP1",
+      "kind": "edge_completion",
+      "challenges": "none",
+      "proposed": {
+        "add_edge": "SNRPB\u2014TOP1 (predicted PPI, confidence 0.9)"
+      },
+      "verified": true,
+      "verification": "141 shared partners (>=20 = strong)",
+      "action": "propose-as-predicted-edge (never touches measured data)"
+    },
+    {
+      "flag": "CPSF6\u2014SSRP1",
+      "kind": "edge_completion",
+      "challenges": "none",
+      "proposed": {
+        "add_edge": "CPSF6\u2014SSRP1 (predicted PPI, confidence 0.9)"
+      },
+      "verified": true,
+      "verification": "141 shared partners (>=20 = strong)",
+      "action": "propose-as-predicted-edge (never touches measured data)"
+    },
+    {
+      "flag": "DRG1\u2014SRP68",
+      "kind": "edge_completion",
+      "challenges": "none",
+      "proposed": {
+        "add_edge": "DRG1\u2014SRP68 (predicted PPI, confidence 0.9)"
+      },
+      "verified": true,
+      "verification": "141 shared partners (>=20 = strong)",
+      "action": "propose-as-predicted-edge (never touches measured data)"
+    },
+    {
+      "flag": "PSPC1\u2014RACK1",
+      "kind": "edge_completion",
+      "challenges": "none",
+      "proposed": {
+        "add_edge": "PSPC1\u2014RACK1 (predicted PPI, confidence 0.9)"
+      },
+      "verified": true,
+      "verification": "135 shared partners (>=20 = strong)",
+      "action": "propose-as-predicted-edge (never touches measured data)"
+    },
+    {
+      "flag": "RACK1\u2014SRP72",
+      "kind": "edge_completion",
+      "challenges": "none",
+      "proposed": {
+        "add_edge": "RACK1\u2014SRP72 (predicted PPI, confidence 0.9)"
+      },
+      "verified": true,
+      "verification": "135 shared partners (>=20 = strong)",
+      "action": "propose-as-predicted-edge (never touches measured data)"
+    },
+    {
+      "flag": "RBM39\u2014SNRPA",
+      "kind": "edge_completion",
+      "challenges": "none",
+      "proposed": {
+        "add_edge": "RBM39\u2014SNRPA (predicted PPI, confidence 0.9)"
+      },
+      "verified": true,
+      "verification": "135 shared partners (>=20 = strong)",
+      "action": "propose-as-predicted-edge (never touches measured data)"
+    },
+    {
+      "flag": "CAPZB\u2014SRP9",
+      "kind": "edge_completion",
+      "challenges": "none",
+      "proposed": {
+        "add_edge": "CAPZB\u2014SRP9 (predicted PPI, confidence 0.9)"
+      },
+      "verified": true,
+      "verification": "133 shared partners (>=20 = strong)",
+      "action": "propose-as-predicted-edge (never touches measured data)"
+    },
+    {
+      "flag": "SNRPB\u2014SSRP1",
+      "kind": "edge_completion",
+      "challenges": "none",
+      "proposed": {
+        "add_edge": "SNRPB\u2014SSRP1 (predicted PPI, confidence 0.9)"
+      },
+      "verified": true,
+      "verification": "132 shared partners (>=20 = strong)",
+      "action": "propose-as-predicted-edge (never touches measured data)"
+    },
+    {
+      "flag": "RBM39\u2014SNRPB",
+      "kind": "edge_completion",
+      "challenges": "none",
+      "proposed": {
+        "add_edge": "RBM39\u2014SNRPB (predicted PPI, confidence 0.9)"
+      },
+      "verified": true,
+      "verification": "132 shared partners (>=20 = strong)",
+      "action": "propose-as-predicted-edge (never touches measured data)"
+    },
+    {
+      "flag": "DRG1\u2014RACK1",
+      "kind": "edge_completion",
+      "challenges": "none",
+      "proposed": {
+        "add_edge": "DRG1\u2014RACK1 (predicted PPI, confidence 0.9)"
+      },
+      "verified": true,
+      "verification": "132 shared partners (>=20 = strong)",
+      "action": "propose-as-predicted-edge (never touches measured data)"
+    },
+    {
+      "flag": "ADARB1\u2014RPL36",
+      "kind": "edge_completion",
+      "challenges": "none",
+      "proposed": {
+        "add_edge": "ADARB1\u2014RPL36 (predicted PPI, confidence 0.9)"
+      },
+      "verified": true,
+      "verification": "130 shared partners (>=20 = strong)",
+      "action": "propose-as-predicted-edge (never touches measured data)"
+    },
+    {
+      "flag": "NPM1\u2014RPS16",
+      "kind": "edge_completion",
+      "challenges": "none",
+      "proposed": {
+        "add_edge": "NPM1\u2014RPS16 (predicted PPI, confidence 0.9)"
+      },
+      "verified": true,
+      "verification": "128 shared partners (>=20 = strong)",
+      "action": "propose-as-predicted-edge (never touches measured data)"
+    },
+    {
+      "flag": "PSPC1\u2014RBM42",
+      "kind": "edge_completion",
+      "challenges": "none",
+      "proposed": {
+        "add_edge": "PSPC1\u2014RBM42 (predicted PPI, confidence 0.9)"
+      },
+      "verified": true,
+      "verification": "125 shared partners (>=20 = strong)",
+      "action": "propose-as-predicted-edge (never touches measured data)"
+    }
+  ],
+  "hierarchy": "hard_constraints > measured > predicted; nothing auto-applied"
+}

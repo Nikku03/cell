@@ -1,0 +1,77 @@
+{
+  "test": "nexus_pocket_modes",
+  "n": 207,
+  "n_proteins": 909,
+  "arms": {
+    "llm": {
+      "@1": 0.7632850241545893,
+      "@3": 0.9082125603864735,
+      "@5": 0.927536231884058,
+      "@1_obscure": 0.62,
+      "@5_obscure": 0.9
+    },
+    "hinge_pocket": {
+      "@1": 0.4830917874396135,
+      "@3": 0.7777777777777778,
+      "@5": 0.893719806763285,
+      "@1_obscure": 0.26,
+      "@5_obscure": 0.86
+    },
+    "pocket_only": {
+      "@1": 0.5748792270531401,
+      "@3": 0.8888888888888888,
+      "@5": 0.9178743961352657,
+      "@1_obscure": 0.36,
+      "@5_obscure": 0.9
+    },
+    "ec_annotation": {
+      "@1": 0.748792270531401,
+      "@3": 0.8888888888888888,
+      "@5": 0.9323671497584541,
+      "@1_obscure": 0.6,
+      "@5_obscure": 0.9
+    },
+    "random_rerank": {
+      "@1": 0.45893719806763283,
+      "@3": 0.8115942028985508,
+      "@5": 0.9227053140096618,
+      "@1_obscure": 0.38,
+      "@5_obscure": 0.9
+    }
+  },
+  "log": [
+    "====================================================================================================",
+    "POCKETS FROM SPHERES, HINGES FROM SLOW MODES -- the chromatin machinery on candidate enzymes",
+    "====================================================================================================",
+    "  The shortlist holds the true gene in its top-50 for 80.8% of obscure reactions but ranks it",
+    "  first only 42.5% of the time, so ranking is the bottleneck. Sphere filling finds cavities",
+    "  without a pose, and the slowest modes say which cavity is at a hinge, where active sites sit.",
+    "  STATED BEFORE THE NUMBERS: with no substrate 3D structure this is a PER-PROTEIN prior, not a",
+    "  pair score. It should down-rank non-enzymes and stay silent between two enzymes -- and 68.5%",
+    "  of the ranking errors are enzyme-vs-enzyme. The EC-annotation arm is the control that decides",
+    "  whether the physics beat a free lookup.",
+    "\n  283 reactions | 1997 candidate genes with a local AlphaFold structure",
+    "  scoring the top-10 of each list -> 909 distinct proteins to characterise",
+    "    200/909 at 99s",
+    "    400/909 at 189s",
+    "    600/909 at 277s",
+    "    800/909 at 397s",
+    "  characterised 909 proteins (0 failed or too small) at 457s",
+    "  pocket volume  median 475 A^3 | hinge score median +0.001",
+    "  EC annotation available for 4613 genes",
+    "\n  207 reactions scored (50 obscure); candidates must have >=5 of top-10 characterised",
+    "    arm                   @1      @3      @5   @1 obs   @5 obs",
+    "    llm                0.763   0.908   0.928    0.620    0.900",
+    "    hinge_pocket       0.483   0.778   0.894    0.260    0.860",
+    "    pocket_only        0.575   0.889   0.918    0.360    0.900",
+    "    ec_annotation      0.749   0.889   0.932    0.600    0.900",
+    "    random_rerank      0.459   0.812   0.923    0.380    0.900",
+    "\n  READING",
+    "  RE-RANKING FAILS AGAIN: 0.483 against 0.763 for the list as given. That is the third",
+    "  time a structural prior has failed to improve a confidence-ordered shortlist here, after",
+    "  ESM-as-reranker (0.122 vs 0.675) and the rank-prior fusion (0.643). The consistent",
+    "  finding is that the language model's own ordering already carries what these signals",
+    "  know, and the shortlist should go to a curator unmodified.",
+    "  random_rerank sits at 0.459; any arm not clearly above it has only shuffled the order."
+  ]
+}

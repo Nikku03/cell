@@ -1,0 +1,280 @@
+{
+ "model": "context-tests-v1",
+ "lines": [
+  "K562",
+  "RPE1",
+  "HepG2",
+  "Jurkat"
+ ],
+ "n_perturbations": 1397,
+ "n_genes": 5693,
+ "rectangle_note": "4 cell lines x ~1,398 shared perturbations -- the TRANSPOSE of what this task wants; tests B and C fit a cell encoder from 3 points and are DESCRIPTIVE",
+ "accessibility": "ABSENT for these lines; tests D and E run on RNA only, not substituted",
+ "folds": {
+  "K562": {
+   "tide": 0.029921259842519685,
+   "random": 0.008976377952755906,
+   "n_scorable": 1397,
+   "arms": {
+    "A no context": {
+     "recall": 0.07192555476020045,
+     "delta_vs_tide": 0.04200429491768076
+    },
+    "B cell-line token": {
+     "recall": 0.05271295633500359,
+     "delta_vs_tide": 0.022791696492483908
+    },
+    "C global baseline": {
+     "recall": 0.054516821760916254,
+     "delta_vs_tide": 0.02459556191839657
+    },
+    "D gene-specific context": {
+     "recall": 0.07560486757337151,
+     "delta_vs_tide": 0.045683607730851825
+    },
+    "E context-gated neighbours": {
+     "recall": 0.0709663564781675,
+     "delta_vs_tide": 0.041045096635647815
+    }
+   },
+   "swap": {
+    "gene": {
+     "correct": 0.07560486757337151,
+     "swapped:RPE1": 0.07570508231925555,
+     "swapped:HepG2": 0.0756335003579098,
+     "swapped:Jurkat": 0.07523264137437366,
+     "shuffled": 0.0761059413027917,
+     "drop_when_swapped": 8.112622285851023e-05,
+     "uses_context": false
+    },
+    "gate": {
+     "correct": 0.0709663564781675,
+     "swapped:RPE1": 0.07126700071581961,
+     "swapped:HepG2": 0.07053686471009306,
+     "swapped:Jurkat": 0.07059413027916965,
+     "shuffled": 0.06695776664280602,
+     "drop_when_swapped": 0.00016702457647338464,
+     "uses_context": false
+    }
+   }
+  },
+  "RPE1": {
+   "tide": 0.0,
+   "random": 0.009162491052254832,
+   "n_scorable": 1397,
+   "arms": {
+    "A no context": {
+     "recall": 0.049720830350751616,
+     "delta_vs_tide": 0.049720830350751616
+    },
+    "B cell-line token": {
+     "recall": 0.04171796707229778,
+     "delta_vs_tide": 0.04171796707229778
+    },
+    "C global baseline": {
+     "recall": 0.03451682176091625,
+     "delta_vs_tide": 0.03451682176091625
+    },
+    "D gene-specific context": {
+     "recall": 0.051510379384395136,
+     "delta_vs_tide": 0.051510379384395136
+    },
+    "E context-gated neighbours": {
+     "recall": 0.05168217609162492,
+     "delta_vs_tide": 0.05168217609162492
+    }
+   },
+   "swap": {
+    "gene": {
+     "correct": 0.051510379384395136,
+     "swapped:K562": 0.05119541875447388,
+     "swapped:HepG2": 0.05148174659985684,
+     "swapped:Jurkat": 0.050565497494631344,
+     "shuffled": 0.051152469577666435,
+     "drop_when_swapped": 0.0004294917680744484,
+     "uses_context": false
+    },
+    "gate": {
+     "correct": 0.05168217609162492,
+     "swapped:K562": 0.05221188260558339,
+     "swapped:HepG2": 0.05236936292054402,
+     "swapped:Jurkat": 0.0524838940586972,
+     "shuffled": 0.05176807444523981,
+     "drop_when_swapped": -0.0006728704366499444,
+     "uses_context": false
+    }
+   }
+  },
+  "HepG2": {
+   "tide": 0.0,
+   "random": 0.008532569792412311,
+   "n_scorable": 1397,
+   "arms": {
+    "A no context": {
+     "recall": 0.07109520400858983,
+     "delta_vs_tide": 0.07109520400858983
+    },
+    "B cell-line token": {
+     "recall": 0.06017179670722978,
+     "delta_vs_tide": 0.06017179670722978
+    },
+    "C global baseline": {
+     "recall": 0.06286327845382964,
+     "delta_vs_tide": 0.06286327845382964
+    },
+    "D gene-specific context": {
+     "recall": 0.07467430207587689,
+     "delta_vs_tide": 0.07467430207587689
+    },
+    "E context-gated neighbours": {
+     "recall": 0.06997852541159628,
+     "delta_vs_tide": 0.06997852541159628
+    }
+   },
+   "swap": {
+    "gene": {
+     "correct": 0.07467430207587689,
+     "swapped:K562": 0.074588403722262,
+     "swapped:RPE1": 0.07471725125268432,
+     "swapped:Jurkat": 0.07448818897637796,
+     "shuffled": 0.07390121689334288,
+     "drop_when_swapped": 7.635409210213218e-05,
+     "uses_context": false
+    },
+    "gate": {
+     "correct": 0.06997852541159628,
+     "swapped:K562": 0.06994989262705799,
+     "swapped:RPE1": 0.07039370078740158,
+     "swapped:Jurkat": 0.06969219756621332,
+     "shuffled": 0.06773085182534001,
+     "drop_when_swapped": -3.3404915294674153e-05,
+     "uses_context": false
+    }
+   }
+  },
+  "Jurkat": {
+   "tide": 0.11299928418038656,
+   "random": 0.008904795991410166,
+   "n_scorable": 1397,
+   "arms": {
+    "A no context": {
+     "recall": 0.10382247673586258,
+     "delta_vs_tide": -0.009176807444523982
+    },
+    "B cell-line token": {
+     "recall": 0.0781245526127416,
+     "delta_vs_tide": -0.034874731567644965
+    },
+    "C global baseline": {
+     "recall": 0.07165354330708662,
+     "delta_vs_tide": -0.04134574087329994
+    },
+    "D gene-specific context": {
+     "recall": 0.10618468146027203,
+     "delta_vs_tide": -0.0068146027201145265
+    },
+    "E context-gated neighbours": {
+     "recall": 0.09852541159627773,
+     "delta_vs_tide": -0.01447387258410883
+    }
+   },
+   "swap": {
+    "gene": {
+     "correct": 0.10618468146027203,
+     "swapped:K562": 0.1062992125984252,
+     "swapped:RPE1": 0.10632784538296351,
+     "swapped:HepG2": 0.10641374373657839,
+     "shuffled": 0.10632784538296348,
+     "drop_when_swapped": -0.0001622524457170066,
+     "uses_context": false
+    },
+    "gate": {
+     "correct": 0.09852541159627773,
+     "swapped:K562": 0.09896921975662132,
+     "swapped:RPE1": 0.09882605583392985,
+     "swapped:HepG2": 0.09853972798854688,
+     "shuffled": 0.09924123120973513,
+     "drop_when_swapped": -0.0002529229300882868,
+     "uses_context": false
+    }
+   }
+  }
+ },
+ "swap": {},
+ "verdict": "ACROSS 4 LEAVE-ONE-CELL-LINE-OUT FOLDS, the best context arm is 'D gene-specific context' at +0.0413 against the held-out cell's own tide, and the cell-blind arm is at +0.0384. THE SWAP SAYS THE CONTEXT CHANNEL IS IGNORED: no fold degrades materially when handed another cell's baseline, so the context arms are not failing to help -- they are not being used at all, which accuracy alone could never have distinguished from a null. Tests B and C are reported but are NOT identifiable at this rectangle: leave-one-cell-out fits a cell encoder from 3 training points. Accessibility is absent for all four lines, so D and E are RNA-only.",
+ "mean_delta_vs_tide": {
+  "A no context": 0.03841088045812456,
+  "B cell-line token": 0.022451682176091625,
+  "C global baseline": 0.02015748031496063,
+  "D gene-specific context": 0.04126342161775233,
+  "E context-gated neighbours": 0.037057981388690056
+ },
+ "limits": [
+  "4 cell lines is 4 folds. Every aggregate here is a mean over 4 numbers",
+  "tests B and C are unidentifiable at this rectangle and are descriptive only",
+  "accessibility and protein are absent for these lines; the context is RNA baseline alone",
+  "the shared-perturbation set is ~1,398 knockouts common to all lines, which is a biased subset -- the perturbations chosen to be screened everywhere are not a random sample of perturbations",
+  "the tide reference is computed FROM the held-out cell. It is a scoring reference only and never an input, but it means the bar each fold must clear is that cell's own answer"
+ ],
+ "log": [
+  "====================================================================================================",
+  "CONTEXT TESTS -- leave-one-CELL-LINE-out, and a counterfactual swap that can falsify the rest",
+  "====================================================================================================",
+  "  baseline state: 4 lines, derivations {'K562': 'var/mean, all cells', 'RPE1': 'all-cell mean over 247,914 cells; control-only r 0.9962', 'HepG2': 'all-cell mean over 145,473 cells; control-only r 0.9968', 'Jurkat': 'all-cell mean over 262,956 cells; control-only r 0.9993'}",
+  "  rectangle: 4 cell lines x 1,397 shared perturbations x 5,693 shared genes",
+  "    K562     1,397 x 5,693; 5,653 non-tide genes",
+  "    RPE1     1,397 x 5,693; 5,571 non-tide genes",
+  "    HepG2    1,397 x 5,693; 5,640 non-tide genes",
+  "    Jurkat   1,397 x 5,693; 5,677 non-tide genes",
+  "  DepMap profile -> 48 components/token; 18,443 genes",
+  "  tokens: 1,397 perturbations x up to 16 (mean 12.7); 67% resolve a baseline",
+  "\n  ===== HELD-OUT CELL LINE: K562 (train on RPE1, HepG2, Jurkat) =====",
+  "    reference: that cell line own tide     0.0299  (1397 scorable)",
+  "    reference: random                      0.0090",
+  "    A no context                           0.0719   vs tide +0.0420",
+  "    B cell-line token                      0.0527   vs tide +0.0228",
+  "    C global baseline                      0.0545   vs tide +0.0246",
+  "    D gene-specific context                0.0756   vs tide +0.0457",
+  "    E context-gated neighbours             0.0710   vs tide +0.0410",
+  "    F swap [gene]  correct 0.0756 | RPE1 0.0757 | HepG2 0.0756 | Jurkat 0.0752 | shuffled 0.0761 | drop +0.0001 -> IGNORES context",
+  "    F swap [gate]  correct 0.0710 | RPE1 0.0713 | HepG2 0.0705 | Jurkat 0.0706 | shuffled 0.0670 | drop +0.0002 -> IGNORES context",
+  "\n  ===== HELD-OUT CELL LINE: RPE1 (train on K562, HepG2, Jurkat) =====",
+  "    reference: that cell line own tide     0.0000  (1397 scorable)",
+  "    reference: random                      0.0092",
+  "    A no context                           0.0497   vs tide +0.0497",
+  "    B cell-line token                      0.0417   vs tide +0.0417",
+  "    C global baseline                      0.0345   vs tide +0.0345",
+  "    D gene-specific context                0.0515   vs tide +0.0515",
+  "    E context-gated neighbours             0.0517   vs tide +0.0517",
+  "    F swap [gene]  correct 0.0515 | K562 0.0512 | HepG2 0.0515 | Jurkat 0.0506 | shuffled 0.0512 | drop +0.0004 -> IGNORES context",
+  "    F swap [gate]  correct 0.0517 | K562 0.0522 | HepG2 0.0524 | Jurkat 0.0525 | shuffled 0.0518 | drop -0.0007 -> IGNORES context",
+  "\n  ===== HELD-OUT CELL LINE: HepG2 (train on K562, RPE1, Jurkat) =====",
+  "    reference: that cell line own tide     0.0000  (1397 scorable)",
+  "    reference: random                      0.0085",
+  "    A no context                           0.0711   vs tide +0.0711",
+  "    B cell-line token                      0.0602   vs tide +0.0602",
+  "    C global baseline                      0.0629   vs tide +0.0629",
+  "    D gene-specific context                0.0747   vs tide +0.0747",
+  "    E context-gated neighbours             0.0700   vs tide +0.0700",
+  "    F swap [gene]  correct 0.0747 | K562 0.0746 | RPE1 0.0747 | Jurkat 0.0745 | shuffled 0.0739 | drop +0.0001 -> IGNORES context",
+  "    F swap [gate]  correct 0.0700 | K562 0.0699 | RPE1 0.0704 | Jurkat 0.0697 | shuffled 0.0677 | drop -0.0000 -> IGNORES context",
+  "\n  ===== HELD-OUT CELL LINE: Jurkat (train on K562, RPE1, HepG2) =====",
+  "    reference: that cell line own tide     0.1130  (1397 scorable)",
+  "    reference: random                      0.0089",
+  "    A no context                           0.1038   vs tide -0.0092",
+  "    B cell-line token                      0.0781   vs tide -0.0349",
+  "    C global baseline                      0.0717   vs tide -0.0413",
+  "    D gene-specific context                0.1062   vs tide -0.0068",
+  "    E context-gated neighbours             0.0985   vs tide -0.0145",
+  "    F swap [gene]  correct 0.1062 | K562 0.1063 | RPE1 0.1063 | HepG2 0.1064 | shuffled 0.1063 | drop -0.0002 -> IGNORES context",
+  "    F swap [gate]  correct 0.0985 | K562 0.0990 | RPE1 0.0988 | HepG2 0.0985 | shuffled 0.0992 | drop -0.0003 -> IGNORES context",
+  "\n====================================================================================================",
+  "  MEAN DELTA VS THE HELD-OUT CELL'S OWN TIDE, over 4 leave-one-cell-out folds",
+  "    A no context                           +0.0384",
+  "    B cell-line token                      +0.0225",
+  "    C global baseline                      +0.0202",
+  "    D gene-specific context                +0.0413",
+  "    E context-gated neighbours             +0.0371",
+  "\n  VERDICT: ACROSS 4 LEAVE-ONE-CELL-LINE-OUT FOLDS, the best context arm is 'D gene-specific context' at +0.0413 against the held-out cell's own tide, and the cell-blind arm is at +0.0384. THE SWAP SAYS THE CONTEXT CHANNEL IS IGNORED: no fold degrades materially when handed another cell's baseline, so the context arms are not failing to help -- they are not being used at all, which accuracy alone could never have distinguished from a null. Tests B and C are reported but are NOT identifiable at this rectangle: leave-one-cell-out fits a cell encoder from 3 training points. Accessibility is absent for all four lines, so D and E are RNA-only."
+ ]
+}

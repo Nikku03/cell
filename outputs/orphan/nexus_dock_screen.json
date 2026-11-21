@@ -1,0 +1,60 @@
+{
+  "test": "nexus_dock_screen",
+  "n": 80,
+  "arms": {
+    "llm": {
+      "@1": 0.825,
+      "@3": 0.925,
+      "@5": 0.9375,
+      "@1_obscure": 0.7916666666666666
+    },
+    "dock": {
+      "@1": 0.6,
+      "@3": 0.8375,
+      "@5": 0.925,
+      "@1_obscure": 0.625
+    },
+    "dock_random_sub": {
+      "@1": 0.475,
+      "@3": 0.7625,
+      "@5": 0.9,
+      "@1_obscure": 0.4166666666666667
+    },
+    "random_rerank": {
+      "@1": 0.5125,
+      "@3": 0.7125,
+      "@5": 0.8875,
+      "@1_obscure": 0.4166666666666667
+    }
+  },
+  "log": [
+    "====================================================================================================",
+    "DOCK THE ACTUAL SUBSTRATE -- the last untested version of structure-based re-ranking",
+    "====================================================================================================",
+    "  Three re-rankers failed as PER-PROTEIN priors because 68.5% of the ranking errors are",
+    "  enzyme-against-enzyme. This makes the score pair-specific: the reaction's own substrate,",
+    "  into each candidate's pocket. Scores are Z-SCORES against decoy ligands in the SAME pocket,",
+    "  because raw binding energy is always negative and says only 'this pocket is sticky'.",
+    "  MEASURES BINDING PLAUSIBILITY, NOT CATALYSIS -- albumin binds most of the metabolome.",
+    "\n  89 held-out reactions have a resolvable main substrate AND >=5 cached structures",
+    "  11 decoy ligands built for pocket normalisation",
+    "    10/89 reactions at 104s",
+    "    20/89 reactions at 162s",
+    "    30/89 reactions at 238s",
+    "    40/89 reactions at 322s",
+    "    50/89 reactions at 389s",
+    "    60/89 reactions at 455s",
+    "    80/89 reactions at 588s",
+    "  scored 80 reactions at 651s",
+    "\n  80 reactions (24 obscure)",
+    "    arm                     @1      @3      @5   @1 obs",
+    "    llm                  0.825   0.925   0.938    0.792",
+    "    dock                 0.600   0.838   0.925    0.625",
+    "    dock_random_sub      0.475   0.762   0.900    0.417",
+    "    random_rerank        0.512   0.713   0.887    0.417",
+    "\n  READING",
+    "  It beats the random-substrate control (0.600 vs 0.475) but not the shortlist",
+    "  (0.825). So substrate identity IS being read, but the language model's ordering",
+    "  already contains more than the docking adds."
+  ]
+}

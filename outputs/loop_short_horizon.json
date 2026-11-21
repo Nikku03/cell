@@ -1,0 +1,197 @@
+{
+ "test": "short horizon",
+ "shift": {
+  "one_step": {
+   "180": {
+    "w1": 0.27862926349238826,
+    "outside": 0.013333333333333334
+   },
+   "240": {
+    "w1": 0.16293519438950638,
+    "outside": 0.0033333333333333335
+   },
+   "420": {
+    "w1": 0.0931126767585217,
+    "outside": 0.0
+   },
+   "480": {
+    "w1": 0.2948056806682439,
+    "outside": 0.0016666666666666668
+   },
+   "600": {
+    "w1": 0.35182192843151544,
+    "outside": 0.0016666666666666668
+   },
+   "720": {
+    "w1": 0.41518442005034256,
+    "outside": 0.0016666666666666668
+   }
+  },
+  "long_w1": 0.40702901799282776,
+  "long_outside": 0.0022222222222222222,
+  "median_one_step": 0.28671747208031606
+ },
+ "one_step": [
+  {
+   "score_min": 180,
+   "persistence": -0.09302417729361068,
+   "relaxation": -0.1684810803065262,
+   "markov": -3.996960002129743,
+   "gene_mean": -2.548314035396629,
+   "var": 0.0299400282300063
+  },
+  {
+   "score_min": 240,
+   "persistence": -0.12979694955173637,
+   "relaxation": -0.07647084740478793,
+   "markov": -2.749542760330154,
+   "gene_mean": -1.9860641049613905,
+   "var": 0.028216770836545012
+  },
+  {
+   "score_min": 420,
+   "persistence": -0.031029880847211366,
+   "relaxation": -0.04511959267602528,
+   "markov": -0.8217937356592793,
+   "gene_mean": 0.06359124732137644,
+   "var": 0.11473653350830498
+  },
+  {
+   "score_min": 480,
+   "persistence": -0.036286259426923984,
+   "relaxation": -0.04632240058911563,
+   "markov": -2.581394513476628,
+   "gene_mean": -0.17660781531380376,
+   "var": 0.04398087557258078
+  },
+  {
+   "score_min": 600,
+   "persistence": -0.017078377604261785,
+   "relaxation": -0.08789009711805362,
+   "markov": -2.068575706421378,
+   "gene_mean": 0.058820463300145676,
+   "var": 0.05458333257180583
+  },
+  {
+   "score_min": 720,
+   "persistence": -0.18783852060431117,
+   "relaxation": -0.15371482197060127,
+   "markov": -2.2396760264147964,
+   "gene_mean": -0.7063829141534408,
+   "var": 0.04301425824219854
+  }
+ ],
+ "wins": {
+  "relaxation": 2,
+  "markov": 0,
+  "gene_mean": 2
+ },
+ "horizon": {
+  "1": {
+   "score_min": 240,
+   "persistence": -0.12979694955173637,
+   "best": -0.0234114045987579,
+   "margin": 0.10638554495297847
+  },
+  "2": {
+   "score_min": 420,
+   "persistence": -0.031029880847211366,
+   "best": 0.06359124732137644,
+   "margin": 0.09462112816858781
+  },
+  "3": {
+   "score_min": 480,
+   "persistence": -0.036286259426923984,
+   "best": -0.06582128552716737,
+   "margin": -0.02953502610024339
+  }
+ },
+ "shuffle_control": {
+  "real": 0.028746120946424408,
+  "shuffled": -0.00011426764609293964,
+  "compare": {
+   "real": 0.028746120946424408,
+   "control": -0.00011426764609293964,
+   "ratio": 0.003975063150464927,
+   "weakened": true
+  }
+ },
+ "gates": {
+  "H1": true,
+  "H2": false,
+  "H3": false,
+  "H4": false,
+  "H5": true,
+  "H6": false
+ },
+ "void": [
+  "H4",
+  "H6"
+ ],
+ "seconds": 31.188199043273926,
+ "log": [
+  "========================================================================================================",
+  "LOOP 215 -- ONE STEP AHEAD: DOES THE DISTRIBUTION SHIFT EXPLAIN EVERYTHING SINCE 198?",
+  "========================================================================================================",
+  "     grid [30, 60, 120, 180, 240, 420, 480, 600, 720] minutes, 600 genes",
+  "     set point: persisted three-block stack, |r| 0.4587",
+  "H1 IS THE ROLLING SPLIT HONEST?",
+  "       train intervals ending [60, 120]  ->  score interval 120-180 min",
+  "       train intervals ending [60, 120, 180]  ->  score interval 180-240 min",
+  "       train intervals ending [60, 120, 180, 240]  ->  score interval 240-420 min",
+  "       train intervals ending [60, 120, 180, 240, 420]  ->  score interval 420-480 min",
+  "       train intervals ending [60, 120, 180, 240, 420, 480]  ->  score interval 480-600 min",
+  "       train intervals ending [60, 120, 180, 240, 420, 480, 600]  ->  score interval 600-720 min",
+  "     H1 PASS -- 6 rolling splits, training always strictly earlier",
+  "H2 IS THE DISTRIBUTION SHIFT REAL, AND DOES IT GROW WITH HORIZON?",
+  "       score 180 min   W1 0.2786   outside training range 1.333%",
+  "       score 240 min   W1 0.1629   outside training range 0.333%",
+  "       score 420 min   W1 0.0931   outside training range 0.000%",
+  "       score 480 min   W1 0.2948   outside training range 0.167%",
+  "       score 600 min   W1 0.3518   outside training range 0.167%",
+  "       score 720 min   W1 0.4152   outside training range 0.167%",
+  "     loop 198's split (train <=240, score 480-720)   W1 0.4070   outside 0.222%",
+  "     median one-step shift                           W1 0.2867   ratio 1.42x",
+  "     H2 FAIL -- long split 0.4070 against a median one-step 0.2867, ratio 1.42x. The long split was not the problem and loop 214's explanation is wrong",
+  "H3 DOES ANY MODEL BEAT PERSISTENCE ONE STEP AHEAD?",
+  "        score   persistence  relaxation    markov    per-gene mean   var(dY)",
+  "        180    -0.09302   -0.16848   -3.99696   -2.54831   0.0299",
+  "        240    -0.12980   -0.07647   -2.74954   -1.98606   0.0282",
+  "        420    -0.03103   -0.04512   -0.82179   +0.06359   0.1147",
+  "        480    -0.03629   -0.04632   -2.58139   -0.17661   0.0440",
+  "        600    -0.01708   -0.08789   -2.06858   +0.05882   0.0546",
+  "        720    -0.18784   -0.15371   -2.23968   -0.70638   0.0430",
+  "     splits beaten (of 6): relaxation 2  markov 0  gene_mean 2",
+  "     H3 FAIL -- the best arm (relaxation) beats persistence on only 2 of 6 one-step splits. Shortening the horizon removes the distribution shift and does not produce a model",
+  "H4 DOES PERFORMANCE DEGRADE WITH HORIZON?",
+  "       horizon 1 (score 240 min)   best -0.02341   persistence -0.12980   margin +0.10639",
+  "       horizon 2 (score 420 min)   best +0.06359   persistence -0.03103   margin +0.09462",
+  "       horizon 3 (score 480 min)   best -0.06582   persistence -0.03629   margin -0.02954",
+  "     H4 VOID -- H2 did not pass, so there is nothing here to test",
+  "H5 IS THE ONE-STEP RESULT JUST AN EASIER TARGET?",
+  "     median one-step var(dY) 0.0435   long-split var(dY) 0.0479   ratio 0.909",
+  "     H5 PASS -- one-step changes carry 91% of the long split's variance, so a win there is worth having",
+  "H6 IS IT THE SET POINT OR THE SPLIT?",
+  "     mean margin, real set point     +0.02875",
+  "     mean margin, shuffled set point -0.00011   delta +0.02886",
+  "     H6 VOID -- H3 did not pass, so there is nothing here to test",
+  "H7 WHAT THIS CANNOT SHOW",
+  "     A one-step model is not a simulator. Predicting the next sixty minutes from the",
+  "     previous four intervals is interpolation inside a course that has already been",
+  "     measured; it says nothing about running forward from an unmeasured state.",
+  "     The set point is the persisted THREE-block stack, not loop 213's ten-block 0.5474.",
+  "     The grid is irregular -- 30, 60, 120, 180, 240, 420, 480, 600, 720 -- so 'one step'",
+  "     means anything from 30 to 180 minutes and the horizons are not comparable in time.",
+  "     Loop 197 established there is no second densely-sampled matched course in ENCODE,",
+  "     so none of this can be replicated on another target.",
+  "========================================================================================================",
+  "  H1  PASS",
+  "  H2  FAIL",
+  "  H3  FAIL",
+  "  H4  VOID",
+  "  H5  PASS",
+  "  H6  VOID",
+  "  2/4   [31s]   (2 VOID: H4, H6)",
+  "========================================================================================================"
+ ]
+}

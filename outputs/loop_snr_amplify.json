@@ -1,0 +1,141 @@
+{
+ "test": "snr amplification",
+ "snr": {
+  "frac_gt1": 0.5016666666666667,
+  "p50": 1.0069814761950449,
+  "p90": 3.67444988718742,
+  "p99": 12.63652581295493
+ },
+ "optimistic_ceiling": {
+  "0.1": 0.32067607173004586,
+  "0.25": -0.10622331711419153,
+  "0.5": -0.45140044992145967,
+  "1.0": -0.9714814885652434
+ },
+ "honest": {
+  "0.1": {
+   "model": -0.5150889454715211,
+   "persistence": -0.19649919523649784,
+   "margin": -0.31858975023502323,
+   "n": 60
+  },
+  "0.25": {
+   "model": -0.13780475900220646,
+   "persistence": -0.0637142853495114,
+   "margin": -0.07409047365269505,
+   "n": 150
+  },
+  "0.5": {
+   "model": -0.05852597537181592,
+   "persistence": -0.06183508792157921,
+   "margin": 0.0033091125497632934,
+   "n": 300
+  },
+  "1.0": {
+   "model": -0.018832791964162432,
+   "persistence": -0.03546467920283214,
+   "margin": 0.016631887238669707,
+   "n": 600
+  }
+ },
+ "projection": {
+  "agree": [
+   0.4201737060842067,
+   0.18732067164581137,
+   0.24256438643456718,
+   0.12432875105634361,
+   0.06670693471856656,
+   0.12889626879078864,
+   0.06317874914007343,
+   0.07959985465602064
+  ],
+  "kept": 0,
+  "raw": 0.23502247073230864,
+  "projected": NaN
+ },
+ "magnitude_control": {
+  "slope": 2.527694700169632,
+  "model": -0.1693716406536856,
+  "persistence": -0.07502486445987633,
+  "margin": -0.09434677619380927
+ },
+ "gates": {
+  "L1": true,
+  "L2": true,
+  "L3": true,
+  "L4": true,
+  "L5": false,
+  "L6": false
+ },
+ "void": [
+  "L5"
+ ],
+ "seconds": 29.510682821273804,
+ "log": [
+  "========================================================================================================",
+  "LOOP 217 -- WHERE IS THE INTERVAL CHANGE MEASURABLE, AND DOES THE MODEL WORK THERE?",
+  "========================================================================================================",
+  "     NOTE ON THE METHOD. Amplitude amplification needs an oracle that recognises the",
+  "     answer and gives a quadratic speedup for SEARCH; it does not raise the",
+  "     signal-to-noise of a measurement, and there is no oracle here -- if we could",
+  "     recognise the true change we would not be estimating it. The goal is kept and the",
+  "     method is per-gene variance decomposition followed by selection.",
+  "     600 genes x 8 intervals x 3 replicates",
+  "L1 IS THE PER-GENE DECOMPOSITION SOUND?",
+  "     pooled: total 0.069429  noise 0.098377  signal 0.036637",
+  "     loop 216 recorded signal 0.036637  noise 0.098377",
+  "     genes with a non-negative signal component before truncation: 83.3%",
+  "     L1 PASS -- the per-gene decomposition pools to loop 216's aggregate",
+  "L2 HOW MANY GENES CARRY MORE SIGNAL THAN NOISE?",
+  "       50th percentile SNR 1.0070",
+  "       75th percentile SNR 2.0701",
+  "       90th percentile SNR 3.6744",
+  "       95th percentile SNR 5.0674",
+  "       99th percentile SNR 12.6365",
+  "     genes with SNR > 1: 301 of 600 = 50.2%",
+  "     L2 PASS -- 50.2% of genes carry more signal than noise",
+  "L3 DOES THE CEILING RISE WITH SELECTION?  (optimistic, circular by construction)",
+  "       top  10% by SNR(1,2)   rep1 predicts rep2   R2 +0.32068   n 60",
+  "       top  25% by SNR(1,2)   rep1 predicts rep2   R2 -0.10622   n 150",
+  "       top  50% by SNR(1,2)   rep1 predicts rep2   R2 -0.45140   n 300",
+  "       top 100% by SNR(1,2)   rep1 predicts rep2   R2 -0.97148   n 600",
+  "     L3 PASS -- the top decile reaches +0.3207, so selection could in principle buy a measurable target",
+  "L4 THE HONEST VERSION: SELECT ON REPLICATES 1+2, SCORE ON REPLICATE 3",
+  "       top  10%   model -0.51509   persistence -0.19650   margin -0.31859   n 60",
+  "       top  25%   model -0.13780   persistence -0.06371   margin -0.07409   n 150",
+  "       top  50%   model -0.05853   persistence -0.06184   margin +0.00331   n 300",
+  "       top 100%   model -0.01883   persistence -0.03546   margin +0.01663   n 600",
+  "     L4 PASS -- on the top 100% by SNR the model beats persistence by +0.01663, scored on a replicate that never touched the selection",
+  "L5 DOES CROSS-REPLICATE PROJECTION HELP?",
+  "     |cosine| between replicate-1 and replicate-2 right singular vectors, by component:",
+  "       0.420  0.187  0.243  0.124  0.067  0.129  0.063  0.080",
+  "     components with |cosine| > 0.5: 0 of 8",
+  "     replicate ceiling  raw +0.23502   projected +nan   delta +nan",
+  "     L5 VOID -- the statistic is undefined (nan), so this gate could not pass or fail; that is not the same as failing",
+  "L6 IS THE SELECTION READING SIGNAL OR JUST AMPLITUDE?",
+  "     log SNR on log |change| slope +2.5277  (a large mover has a large signal component almost by construction)",
+  "     magnitude-controlled top 25%: model -0.16937   persistence -0.07502   margin -0.09435",
+  "     L6 FAIL -- -0.09435 once magnitude is controlled; the selection was finding big movers and L4 restates loop 215b",
+  "L7 WHAT THIS CANNOT SHOW",
+  "     Selecting genes by measurability changes the question. A model that works only on",
+  "     the genes whose change is reproducible is a model of those genes, and loop 216",
+  "     measured that they are a minority.",
+  "     Replicate 3 is used as the honest scorer throughout, but loop 216 measured that",
+  "     replicate 1 is the outlier -- it agrees with 2 and 3 at pearson +0.12 while they",
+  "     agree with each other at +0.60. Selecting on 1+2 therefore inherits replicate 1's",
+  "     idiosyncrasy, and selecting on 2+3 would not be independent of the scorer.",
+  "     With three replicates there is no split that is both clean and balanced, and no",
+  "     amount of method fixes that -- it needs a fourth replicate.",
+  "     The SVD projection is fitted on 8 intervals. Eight points is very few for a",
+  "     subspace estimate and L5's cosines should be read as indicative.",
+  "========================================================================================================",
+  "  L1  PASS",
+  "  L2  PASS",
+  "  L3  PASS",
+  "  L4  PASS",
+  "  L5  VOID",
+  "  L6  FAIL",
+  "  4/5   [30s]   (1 VOID: L5)",
+  "========================================================================================================"
+ ]
+}

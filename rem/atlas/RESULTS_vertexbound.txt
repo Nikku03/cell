@@ -1,0 +1,80 @@
+=================================================================================================
+THE AFFINE MINORANT OF THE SUM, NOT THE SUM OF PER-TARGET MINORANTS
+=================================================================================================
+  The per-target chord lets every target be worst at its own x. The sum is worst at ONE x.
+  That is the same decoupling error as the old box bound, one level down.
+
+=================================================================================================
+W0  THE CEILING GATE: IS F CONCAVE? THE VERTEX ARGUMENT NEEDS IT
+=================================================================================================
+  chord test over 4,000 random secants of the box: 0 violations of concavity
+  (log sigma is concave, an affine argument preserves it, and a sum of concave functions
+   is concave -- so this is a check on the implementation, not on the mathematics.)
+
+  W0: PASS -- F is concave, so vertex feasibility implies feasibility on the whole box.
+
+=================================================================================================
+W1  THE VERTEX-LP MINORANT AGAINST THE PER-TARGET CHORD
+=================================================================================================
+  MY FIRST MAJORANT WAS INVALID AND W1 CAUGHT IT. A minorant's slack F - affine is concave,
+  so its minimum over the box is at a vertex and vertex feasibility suffices. A majorant's
+  slack is CONVEX, its minimum is interior, and vertices prove nothing -- the mirrored LP
+  produced 2,380 violations in 4,000 interior points, exactly as that error predicts. The
+  upper bound reverts to the tangent, whose 0.70-order gap was never the problem.
+
+    lower bound                         mean gap, orders   gap at centre  violations
+    per-target chord                               3.997           4.694           0
+    vertex LP, mean objective                      3.013           3.712           0
+    vertex LP, anchored at centre                  3.013           3.712           0
+
+  W1: the anchored LP's lower gap is 1.33x better than the chord's, with zero
+  violations at interior points -- validity checked independently of the LP that produced it.
+
+=================================================================================================
+W2/W3  CONTAINMENT AND WIDTH TOGETHER, AND THE TARGET-COUNT LAW
+=================================================================================================
+
+     nCtrl   L  targets      exact tail  chord width  vertex width  contains  seconds
+         3   3      200    6.973226e-99        4.982         4.165       yes     0.00
+         3   4      200    5.977817e-99        4.984         4.148       yes     0.00
+         4   3      200   1.503368e-102        4.626         3.488       yes     0.00
+         4   4      200   1.187971e-102        4.628         3.475       yes     0.00
+         3   5      200    5.363614e-99        4.986         4.139       yes     0.00
+
+  W2: containment holds everywhere; widest vertex interval 4.165 orders. FAIL on width.
+
+  THE TARGET-COUNT LAW, which is the test of whether the coupling was really exploited:
+
+     targets  chord width  vertex width    ratio
+          10        0.217         0.099      2.2x
+          25        0.672         0.339      2.0x
+          50        1.185         0.596      2.0x
+         100        2.423         1.409      1.7x
+         200        4.628         3.475      1.3x
+
+    vertex width ~ targets^1.160
+  W3: the exponent is still near one, so the width remains a sum of per-target gaps and the coupling was NOT exploited -- the change is a better constant, not a better law.
+  one-order gate met below about 71 targets (fastverify's chord version: 42).
+
+=================================================================================================
+W4  THE COST, INCLUDING THE 2^k VERTEX TERM
+=================================================================================================
+
+     nCtrl   L  2^k vertices          paths         work   work/paths   seconds    width
+         4   4            16      1.049e+06        6,560    6.256e-03      0.00    3.475
+         6   4            64      1.074e+09       49,440    4.604e-05      0.01    3.594
+         8   5           256      2.815e+14      727,840    2.586e-09      0.17    3.079
+        10   6         1,024      1.181e+21   12,911,392    1.094e-14      1.26    3.088
+
+  The vertex term is 2^nCtrl, which is the STATE COUNT -- the same exponential the engine
+  already pays per level, not a new one. It does not grow with depth.
+
+=================================================================================================
+W5  WHAT THIS DOES NOT SETTLE
+=================================================================================================
+  1. 2^k vertices is fine at ten controllers and is exponential in width like everything
+     else here. It does not make the method scale in nCtrl; it removes the DEPTH cost only.
+  2. Rigour is modulo floating point, and the LP adds a solver whose tolerances are not
+     enclosed. The margin covers the arithmetic, not the optimiser.
+  3. Containment is observed only where exact enumeration runs.
+  4. One term of one calculation, as before.

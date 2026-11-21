@@ -1,0 +1,481 @@
+{
+ "turn": 1,
+ "track": "cell",
+ "fingerprint": "575904808907e69b",
+ "fingerprint_files": {
+  "cell_run.json": "093ccfb37eae5baf",
+  "cell_model_audit.json": "4330ced2ff9220f7",
+  "capability_audit.json": "92eb44584d7d60d4",
+  "loop_b4_fix.json": "b20eaea39cf215da",
+  "cell_record_fix.json": "2777fa6fc702d308",
+  "cell_layers.json": "f33e057e84e53d48",
+  "colab/cell_assembled.py": "1a10a15ac041d424"
+ },
+ "check_source_hash": "aa6bb3d2acb28162",
+ "stalled": false,
+ "n_measured": 2,
+ "answers": {
+  "question": "does the whole-cell model run, and which of its layers survive their gates",
+  "n_runs": 1,
+  "layer_counts": {
+   "RUNS": 12,
+   "CLOSES": 10,
+   "FAILED": 14,
+   "STATIC": 11
+  },
+  "n_layers": 47,
+  "Q1_previous": {
+   "recorded_at_last_cell_run": {
+    "RUNS": 11,
+    "CLOSES": 9,
+    "FAILED": 12,
+    "STATIC": 10
+   },
+   "note": "cell_run.json records only the four counts, not per-layer status, so a layer that changed status between runs is invisible here. That is a gap in the ARTEFACT and it is named rather than filled by reading the table twice"
+  },
+  "Q2_new": {
+   "counts": {
+    "RUNS": 12,
+    "CLOSES": 10,
+    "FAILED": 14,
+    "STATIC": 11
+   },
+   "n_failed": 14,
+   "rmse": null,
+   "note": "there is no scalar metric with a sampling distribution on this track; see TRACKS['cell']['why_not_t2']"
+  },
+  "Q3_changed_and_why": [
+   {
+    "what": "the kcat layer's verdict is now backed by a decisive control",
+    "why": "layer 'what the kcat model actually learned' cited loop 133 B4, whose residual leaked and whose baseline was in-sample. Loop 134 C3 reaches the same conclusion by within-class permutation: +0.0046 against a 0.0488 interval",
+    "verdict": "SAME STATUS, MUCH BETTER EVIDENCE -- and the layer's prose still cites the broken test, so the record is now behind the measurement"
+   },
+   {
+    "what": "nothing else moved",
+    "why": "no loop since cell_run.json has changed a layer's status",
+    "verdict": "the counts are unchanged at 14 FAILED, 12 RUNS, 11 STATIC, 10 CLOSES"
+   }
+  ],
+  "Q4_flat": [
+   {
+    "what": "the transcription -> protein axis",
+    "evidence": "three separate FAILED layers say the same thing: 'protein dynamics from transcription alone' (p=2e-67 the wrong way), 'TF network as a predictor of transcript dynamics', and 'CollecTRI as a replacement network'. Two independent networks were tried and both failed",
+    "verdict": "FLAT ACROSS THREE ATTEMPTS -- the wall is not the network, it is that protein dynamics has a non-transcriptional source"
+   },
+   {
+    "what": "the count of FAILED layers",
+    "evidence": "14 of 47, unchanged since cell_run.json",
+    "verdict": "FLAT -- and it should be, because a FAILED layer is a recorded negative and not a defect to be cleared"
+   }
+  ],
+  "Q5_cost": {
+   "cell_run_seconds": 11.305814266204834,
+   "note": "the model runs; the cost is not the binding constraint on this track"
+  },
+  "Q6_same_data": {
+   "IMPLICIT -- same inputs, used differently": [
+    {
+     "change": "correct the kcat layer's prose to cite loop 134 C3 rather than the leaking B4 residual",
+     "deficit": "record_behind_measurement",
+     "cost": "free"
+    },
+    {
+     "change": "record per-layer status in cell_run.json, not only the four counts",
+     "deficit": "artefact_cannot_show_change",
+     "cost": "free"
+    }
+   ],
+   "EXPLICIT -- new information": [
+    {
+     "change": "a measurement of the non-transcriptional source of protein dynamics",
+     "deficit": "three FAILED layers point at it",
+     "cost": "unknown; no dataset identified"
+    }
+   ]
+  },
+  "failed_layers": [
+   {
+    "layer": "protein dynamics from transcription alone",
+    "source": "loop_cellcycle_axis/119",
+    "evidence": "dP/dt = k_sp*M - b*P is a first-order filter, so protein swing is FORCED below mRNA swing -- measured at 100.0000% of 4,190 genes, median attenuation 0.16, 81.9% damped below a tenth of the drive. Protein oscillation can only ever be RARER than transcript oscillation here"
+   },
+   {
+    "layer": "chromatin->transcription",
+    "source": "loop_chromatin_to_rate",
+    "evidence": "forward emission fails held-out prediction, fails fame, fails its own null"
+   },
+   {
+    "layer": "regulation->transcription",
+    "source": "loop_tf_rate/loop_perturb",
+    "evidence": "network loses to fame 2:1; perturbation no better than shuffled edge signs"
+   },
+   {
+    "layer": "TF network as a predictor of transcript dynamics",
+    "source": "loop_tf_cellcycle/120",
+    "evidence": "on 273 genes with a measured CCD-transcript call, a signed regulator and an mRNA state: real edge signs AUC 0.5465 against SHUFFLED signs 0.5494 +/- 0.0079 -- signs carry nothing; CCD-regulator enrichment +9.9 points against an out-degree-preserving null at +4.9 +/- 7.9, z = 0.63; the gene's own pub"
+   },
+   {
+    "layer": "CollecTRI as a replacement network",
+    "source": "loop_collectri/130",
+    "evidence": "loop 120's protocol run unchanged on literature-curated CollecTRI. Marginally better on identical genes -- AUC 0.5717 against the existing network's 0.5610 -- and it is the first network in this arc to beat fame (0.5717 against the gene's own publication count 0.5586). That is the whole of the good "
+   },
+   {
+    "layer": "reaction+graph fusion",
+    "source": "loop_fusion_linear",
+    "evidence": "combined 0.166 BELOW graph-only; 90% of what remains survives degree-preserving rewiring"
+   },
+   {
+    "layer": "cell cycle as a process",
+    "source": "loop_cellcycle/99",
+    "evidence": "canonical phase order recovered but 176/500 shuffles do it too"
+   },
+   {
+    "layer": "degron motifs as the mechanism",
+    "source": "loop_degron/121",
+    "evidence": "D-box R..L and D-box+ do not clear z=2 against either a label shuffle or a composition-preserving sequence shuffle. KEN-box clears both at z +2.6 -- and is one of the two motif densities that FAILED the fame check (rho +0.2429 with publication count)"
+   },
+   {
+    "layer": "regulated translation k_sp(t)",
+    "source": "loop_utr5/122",
+    "evidence": "5' UTR built by subtracting the CDS from the MANE Select cDNA -- exact, 19,293 genes, median 133 nt, validated by 71.6% 5'TOP in ribosomal proteins (16.3x) and 86.1% Kozak -3 purine. U3: no feature survives Bonferroni. U4: the predicted direction fails on all five surviving features (best p = 0.12)."
+   },
+   {
+    "layer": "relocalisation, RETIRED",
+    "source": "loop_ms_cellcycle/123 V4",
+    "evidence": "predicted: dual localisation higher in the MS-disconfirmed imaging calls. Measured: disconfirmed 88.6% (n=273) vs confirmed 88.1% (n=42), difference +0.5%, permutation p 1.0000"
+   },
+   {
+    "layer": "replication as process",
+    "source": "loop_replication_time",
+    "evidence": "a Gaussian blur of the origin map (R2 0.320) beats the fork simulation (0.153)"
+   },
+   {
+    "layer": "expression noise",
+    "source": "loop_noise",
+    "evidence": "predicted CV tracks measured at +0.4837 but is cross-dataset abundance agreement to 0.8%"
+   },
+   {
+    "layer": "replicate count as a quality signal",
+    "source": "loop_kcat_floor/127",
+    "evidence": "spread RISES with the number of measurements behind an EC: 1.54x at 3-4 records, 2.24x at 5-9, 2.55x at 10-19, 2.62x at 20+"
+   },
+   {
+    "layer": "what the kcat model actually learned",
+    "source": "loop_ml_probe/133 B3-B4",
+    "evidence": "the ESM embedding is a FAMILY DETECTOR, not a catalysis model. Same 320 numbers, same folds: EC top-level class accuracy 0.779 against a 0.394 majority, log10 sequence length R2 +0.7631, log10 kcat R2 +0.1381. loop 133's B4 reached this by refitting on the EC-median residual (RMSE 1.5386 vs a residu"
+   }
+  ],
+  "static_layers": [
+   {
+    "layer": "signalling stoichiometry",
+    "source": "loop_signalling_cost"
+   },
+   {
+    "layer": "complex stoichiometry",
+    "source": "loop_complex_stoich"
+   },
+   {
+    "layer": "cell cycle (measured layer)",
+    "source": "loop_cellcycle_axis/119"
+   },
+   {
+    "layer": "cell cycle, measured without a camera",
+    "source": "loop_ms_cellcycle/123"
+   },
+   {
+    "layer": "relocalisation as the mechanism",
+    "source": "loop_degron/121 post-hoc"
+   },
+   {
+    "layer": "the cell-cycle signal, decomposed",
+    "source": "loop_utr5/122 post-hoc"
+   },
+   {
+    "layer": "compartments (gene labels)",
+    "source": "loop_compartment_mass"
+   },
+   {
+    "layer": "protein structure",
+    "source": "struct/fold + the nexus arm"
+   },
+   {
+    "layer": "spatial organisation",
+    "source": "loop_geometry/116 + loop_spatial_proteome/118"
+   },
+   {
+    "layer": "enzyme kinetics",
+    "source": "kinetics_bundle + loop_kcat_audit/124"
+   },
+   {
+    "layer": "what a kcat model would need instead",
+    "source": "loop_ml_probe/133 B1, B5, B6"
+   }
+  ],
+  "audit": {},
+  "all_scores": {
+   "n_failed": 14,
+   "n_static": 11
+  },
+  "parts": {
+   "genes": 16492,
+   "human_protein_coding": 19900,
+   "gene_coverage": 0.8287437185929648,
+   "genes_with_reaction": 2549,
+   "humangem_reactions": 13078,
+   "ppi": 191447,
+   "reg": 612133,
+   "complexes": 2039
+  },
+  "cell_deficits": {
+   "record_behind_measurement": {
+    "holds": true,
+    "evidence": "layer cites the B4 residual (True); loop_b4_fix.json present (True)"
+   },
+   "artefact_cannot_show_change": {
+    "holds": true,
+    "evidence": "cell_run.json['layers'] = {'RUNS': 11, 'CLOSES': 9, 'FAILED': 12, 'STATIC': 10}; per-layer status present: False"
+   },
+   "three_failed_layers": {
+    "holds": true,
+    "evidence": "5 FAILED layers on that axis: ['protein dynamics from transcription alone', 'chromatin->transcription', 'regulation->transcription', 'TF network as a predictor of transcript dynamics', 'CollecTRI as a replacement network']"
+   }
+  },
+  "track": "cell"
+ },
+ "plan": [
+  {
+   "id": "C1",
+   "change": "correct the kcat layer to cite loop 134 C3, not the leaking B4",
+   "kind": "record",
+   "depends_on": [],
+   "needs_files": [
+    "colab/cell_assembled.py",
+    "outputs/loop_b4_fix.json"
+   ],
+   "targets_layer": "what the kcat model actually learned",
+   "gate": "the layer's evidence field must cite a test whose control was shown capable of moving before its result was read -- loop 134 C4 then C3",
+   "mechanism": "the layer currently asserts 'EVERYTHING THE MODEL KNOWS IS ALREADY IN THE EC NUMBER' on the strength of a residual that leaked and a baseline that was in-sample. The conclusion survived; the evidence for it did not",
+   "cites": "record_behind_measurement",
+   "derivation": null,
+   "predicted_gain": 0.0,
+   "nearest_refuted": "650M with mean pooling",
+   "distinguisher": "this corrects a record rather than proposing a model change",
+   "falsifier": "loop 134 C3 does not in fact support the layer's claim, in which case the layer's STATUS is wrong too and not merely its citation",
+   "cost_min": 5,
+   "promised_rmse": null,
+   "layer_exists": true,
+   "deficit_evidence": "layer cites the B4 residual (True); loop_b4_fix.json present (True)",
+   "missing_inputs": [],
+   "blockers": [],
+   "checks": {
+    "T1_cites_measured_deficit": true,
+    "T2_gain_exceeds_noise": null,
+    "T3_has_falsifier": true,
+    "T4_not_already_refuted": true,
+    "T5_not_circular": true,
+    "T6_respects_bounds": null,
+    "T7_gain_is_derived": null,
+    "T8_inputs_exist": true,
+    "T10_names_layer_and_gate": true
+   },
+   "checks_not_applicable": [
+    "T2_gain_exceeds_noise",
+    "T6_respects_bounds",
+    "T7_gain_is_derived"
+   ],
+   "observed": {
+    "value": {
+     "before": "FAILED",
+     "after": "FAILED"
+    },
+    "ci": null,
+    "what": "status unchanged by the correction, G2",
+    "from": "cell_record_fix.json"
+   },
+   "rejected_on": [],
+   "verdict": "MEASURED",
+   "blocked_on": [],
+   "measured_note": "{'before': 'FAILED', 'after': 'FAILED'} (status unchanged by the correction, G2)"
+  },
+  {
+   "id": "C2",
+   "change": "record per-layer status in cell_run.json, not only four counts",
+   "kind": "record",
+   "depends_on": [],
+   "needs_files": [
+    "colab/cell_assembled.py"
+   ],
+   "targets_layer": null,
+   "gate": "a rerun must be able to show WHICH layer changed status, not only that a count moved",
+   "mechanism": "cell_run.json stores {'RUNS': 11, 'CLOSES': 9, 'FAILED': 12, 'STATIC': 10}. Two layers swapping status is invisible to that artefact, so the improver's Q3 on this track cannot answer 'what changed' from the record",
+   "cites": "artefact_cannot_show_change",
+   "derivation": null,
+   "predicted_gain": 0.0,
+   "nearest_refuted": "more kcat records",
+   "distinguisher": "changes what is RECORDED, not what is measured",
+   "falsifier": "the counts already differ from the current table, which would mean the artefact is not merely coarse but stale",
+   "cost_min": 5,
+   "promised_rmse": null,
+   "layer_exists": true,
+   "deficit_evidence": "cell_run.json['layers'] = {'RUNS': 11, 'CLOSES': 9, 'FAILED': 12, 'STATIC': 10}; per-layer status present: False",
+   "missing_inputs": [],
+   "blockers": [],
+   "checks": {
+    "T1_cites_measured_deficit": true,
+    "T2_gain_exceeds_noise": null,
+    "T3_has_falsifier": true,
+    "T4_not_already_refuted": true,
+    "T5_not_circular": true,
+    "T6_respects_bounds": null,
+    "T7_gain_is_derived": null,
+    "T8_inputs_exist": true,
+    "T10_names_layer_and_gate": true
+   },
+   "checks_not_applicable": [
+    "T2_gain_exceeds_noise",
+    "T6_respects_bounds",
+    "T7_gain_is_derived"
+   ],
+   "observed": {
+    "value": 47,
+    "ci": null,
+    "what": "per-layer artefact written, G4",
+    "from": "cell_record_fix.json"
+   },
+   "rejected_on": [],
+   "verdict": "MEASURED",
+   "blocked_on": [],
+   "measured_note": "47 (per-layer artefact written, G4)"
+  },
+  {
+   "id": "C3",
+   "change": "find the non-transcriptional source of protein dynamics",
+   "kind": "explicit",
+   "depends_on": [],
+   "needs_files": [
+    "colab/data/protein_dynamics_source.tsv.gz"
+   ],
+   "targets_layer": "protein dynamics from transcription alone",
+   "gate": "a candidate mechanism must predict, on held-out genes, which of the 362 proteins that oscillate without their transcript will do so",
+   "mechanism": "three FAILED layers converge on this and none of them names a replacement. Loops 121, 122 and 123 eliminated degrons, translation control and relocalisation in turn",
+   "cites": "three_failed_layers",
+   "derivation": null,
+   "predicted_gain": 0.0,
+   "nearest_refuted": "predict kcat/KM instead",
+   "distinguisher": "different subsystem entirely",
+   "falsifier": "no dataset distinguishes the 362 from the 38, in which case this is not a plan but a wish",
+   "cost_min": 240,
+   "promised_rmse": null,
+   "layer_exists": true,
+   "deficit_evidence": "5 FAILED layers on that axis: ['protein dynamics from transcription alone', 'chromatin->transcription', 'regulation->transcription', 'TF network as a predictor of transcript dynamics', 'CollecTRI as a replacement network']",
+   "missing_inputs": [],
+   "blockers": [],
+   "checks": {
+    "T1_cites_measured_deficit": true,
+    "T2_gain_exceeds_noise": null,
+    "T3_has_falsifier": true,
+    "T4_not_already_refuted": true,
+    "T5_not_circular": true,
+    "T6_respects_bounds": null,
+    "T7_gain_is_derived": null,
+    "T8_inputs_exist": true,
+    "T10_names_layer_and_gate": true
+   },
+   "checks_not_applicable": [
+    "T2_gain_exceeds_noise",
+    "T6_respects_bounds",
+    "T7_gain_is_derived"
+   ],
+   "observed": null,
+   "rejected_on": [],
+   "verdict": "ACCEPT",
+   "blocked_on": []
+  }
+ ],
+ "bundle": null,
+ "whole_picture": {
+  "result": {
+   "counts": {
+    "RUNS": 12,
+    "CLOSES": 10,
+    "FAILED": 14,
+    "STATIC": 11
+   },
+   "n_failed": 14,
+   "metric_note": "there is no scalar metric with a sampling distribution on this track; see TRACKS['cell']['why_not_t2']"
+  },
+  "what_the_model_needs_it_for": "the layer table IS the model's honesty ledger: a FAILED layer is a recorded negative, and the count is not a defect budget to be driven to zero",
+  "dataset": {
+   "layers": 47,
+   "parts": {
+    "genes": 16492,
+    "human_protein_coding": 19900,
+    "gene_coverage": 0.8287437185929648,
+    "genes_with_reaction": 2549,
+    "humangem_reactions": 13078,
+    "ppi": 191447,
+    "reg": 612133,
+    "complexes": 2039
+   }
+  },
+  "verified_deficits": {
+   "record_behind_measurement": "layer cites the B4 residual (True); loop_b4_fix.json present (True)",
+   "artefact_cannot_show_change": "cell_run.json['layers'] = {'RUNS': 11, 'CLOSES': 9, 'FAILED': 12, 'STATIC': 10}; per-layer status present: False",
+   "three_failed_layers": "5 FAILED layers on that axis: ['protein dynamics from transcription alone', 'chromatin->transcription', 'regulation->transcription', 'TF network as a predictor of transcript dynamics', 'CollecTRI as a replacement network']"
+  },
+  "bounds_that_cap_any_plan": {
+   "no_scalar_metric": "the metric is a count of judged layers, not a sample; a bootstrap over it would have no referent, and the count is gameable by relabelling",
+   "relabelling": "splitting one FAILED layer into two RUNS layers improves the count without touching the model, which is why T10 asks for a gate"
+  },
+  "the_uncomfortable_reading": "three FAILED layers converge on the same wall -- protein dynamics has a source that is not transcription, and loops 121, 122 and 123 eliminated degrons, translation control and relocalisation in turn without naming a replacement. The cell track's real deficit is not a number, it is that NO DATASET on disk distinguishes the 362 proteins that oscillate without their transcript from the 38 that do the reverse.",
+  "what_the_first_run_of_this_file_got_wrong": "it had no cell track at all, and when one was added the first thing it found was that cell_run.json's stored counts are STALE, not merely coarse"
+ },
+ "upgrades": [
+  {
+   "change": "order probes first, then by cost",
+   "why": "1 schedulable, 2 already measured. No scalar metric on this track, so no gain arithmetic is emitted",
+   "new_order": [
+    "C3"
+   ]
+  },
+  {
+   "change": "the stopping rule here is a GATE, not a metric",
+   "why": "each item names the gate that would have to pass; a count of layers can be improved by relabelling and so cannot be the rule"
+  }
+ ],
+ "noise": null,
+ "noise_source": "no scalar metric on this track; T2 does not apply",
+ "n_rejected": 0,
+ "n_blocked": 0,
+ "n_executable": 0,
+ "execute_order": [
+  "C3"
+ ],
+ "executed": [],
+ "reflection": {
+  "R1_fingerprint": {
+   "changed": true,
+   "moved_artefacts": [],
+   "why": "first turn"
+  },
+  "R2_predictions_measured": [],
+  "R2_note": "no prediction has been measured yet; every predicted_gain in this track is still an unfalsified opinion",
+  "R3_plan_changed": {
+   "changed": true,
+   "detail": "first turn"
+  },
+  "R4_drift": {
+   "events": [],
+   "n_rejected": 0,
+   "n_blocked": 0,
+   "check_source_hash": "aa6bb3d2acb28162",
+   "verdict": "no drift detected"
+  },
+  "R5_waiting_on": [],
+  "R6_finished": {
+   "stalled": false,
+   "executable_remaining": 0,
+   "verdict": "0 executable item(s) remain"
+  }
+ }
+}

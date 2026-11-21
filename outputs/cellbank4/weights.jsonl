@@ -1,0 +1,50 @@
+{"n": 1, "gene": "STK32C", "w": {"S0": 3, "S1": 1, "S2": 1, "S3": 1, "S4": 0}, "why": "A weak, non-essential kinase: trust the engine and the generic recalls; the co-essential link (r 0.27) is too weak."}
+{"n": 2, "gene": "MOK", "w": {"S0": 3, "S1": 1, "S2": 1, "S3": 0, "S4": 0}, "why": "Barely expressed (2.8 nTPM); the engine plus generic K562 responses; an RPE1 PTEN record says nothing about MOK."}
+{"n": 3, "gene": "HHEX", "w": {"S0": 3, "S1": 1, "S2": 1, "S3": 0, "S4": 1}, "why": "A haematopoietic transcription factor expressed in K562; LMO2 (same blood-programme family) adds a little."}
+{"n": 4, "gene": "TCTEX1D2", "w": {"S0": 3, "S1": 1, "S2": 1, "S3": 1, "S4": 0, "S5": 0, "S6": 0}, "why": "A cilia dynein-2 light chain, likely mild in K562; the essential DYNLL1/2 partners overstate it."}
+{"n": 5, "gene": "NDUFB8", "w": {"S0": 2, "S1": 0, "S2": 0, "S3": 0, "S4": 1, "S5": 3, "S6": 1}, "why": "Complex I subunit: NDUFS5 (same complex, r 0.79) is the best guide; RAN and 14-3-3 recalls are unrelated."}
+{"n": 6, "gene": "NSMCE4A", "w": {"S0": 2, "S1": 0, "S2": 0, "S3": 0, "S4": 2, "S5": 2}, "why": "SMC5/6 complex: NSMCE1 and SMC6 knockdowns are the same machine; RAN and YWHAE are unrelated."}
+{"n": 7, "gene": "SH3BGR", "w": {"S0": 3, "S1": 1, "S2": 1, "S3": 1, "S4": 0}, "why": "Weak, non-essential; the co-essential link is negligible."}
+{"n": 8, "gene": "GAPVD1", "w": {"S0": 3, "S1": 1, "S2": 0, "S3": 1, "S4": 0, "S5": 1}, "why": "Endocytic GEF: SH3GL1 (endocytosis) and its partner YWHAE help a little; CK1-alpha loss is far stronger than GAPVD1's."}
+{"n": 9, "gene": "GALNT11", "w": {"S0": 3, "S1": 1, "S2": 1, "S3": 1, "S4": 0}, "why": "A non-essential glycosyltransferase; keep the engine and generic responses."}
+{"n": 10, "gene": "MRPS27", "w": {"S0": 2, "S1": 0, "S2": 0, "S3": 0, "S4": 0, "S5": 0, "S6": 3, "S7": 2}, "why": "Mitoribosome small subunit: MRPS14 (same subunit, r 0.62) and its own RPE1 knockdown; cytosolic ribosome partners and spliceosome recalls are the wrong machine."}
+{"n": 11, "gene": "CT45A5", "w": {"S0": 3, "S1": 0, "S2": 1, "S3": 1, "S4": 0, "S5": 0}, "why": "A weakly expressed cancer-testis antigen: its partner SUPT5H is an essential elongation factor whose loss is far stronger, and its RPE1 record is noise."}
+{"n": 12, "gene": "AURKB", "w": {"S0": 2, "S1": 0, "S2": 0, "S3": 0, "S4": 0, "S5": 2, "S6": 2}, "why": "Mitotic kinase: MAD2L1 (spindle checkpoint) and AURKB's own RPE1 knockdown are the closest guides; RAN, SNRPD3 and PTGES3 are unrelated."}
+{"n": 13, "gene": "NPW", "w": {"S0": 3, "S1": 1, "S2": 0, "S3": 1, "S4": 0}, "why": "A neuropeptide barely expressed in K562; no specific effect expected."}
+{"n": 14, "gene": "YBEY", "w": {"S0": 3, "S1": 0, "S2": 0, "S3": 0, "S4": 2}, "why": "YBEY matures the mitochondrial small-subunit rRNA; FOXRED1 (respiratory chain, r 0.61) shares the mitochondrial programme, the 14-3-3 recalls do not."}
+{"n": 15, "gene": "TGFBRAP1", "w": {"S0": 2, "S1": 0, "S2": 0, "S3": 0, "S4": 1, "S5": 2, "S6": 2}, "why": "TGFBRAP1 is the CORVET VPS3 subunit acting with RAB5: VPS16 (shared core) and RAB5C (r 0.35) both raised cholesterol synthesis."}
+{"n": 16, "gene": "PGM2L1", "w": {"S0": 3, "S1": 1, "S2": 1, "S3": 1, "S4": 0}, "why": "Barely expressed (1.4 nTPM); no specific effect expected."}
+{"n": 17, "gene": "PRKCI", "w": {"S0": 3, "S1": 1, "S2": 0, "S3": 1, "S4": 0, "S5": 0}, "why": "aPKC is not needed for K562 growth; HNF1B is not expressed in K562, so its co-essential link is meaningless here."}
+{"n": 18, "gene": "GEN1", "w": {"S0": 3, "S1": 1, "S2": 1, "S3": 1, "S4": 0}, "why": "A redundant Holliday-junction resolvase; little effect expected; RMI1 (r 0.22) is a weak link."}
+{"n": 19, "gene": "ZNF324", "w": {"S0": 3, "S1": 1, "S2": 0, "S3": 1, "S4": 0, "S5": 0}, "why": "A low-expressed KRAB zinc finger; TRIM28 loss affects hundreds of such factors at once and overstates it."}
+{"n": 20, "gene": "RAD51", "w": {"S0": 2, "S1": 0, "S2": 0, "S3": 0, "S4": 2, "S5": 1, "S6": 1}, "why": "Essential recombinase: RAD51C (same HR step) is the best guide; RPE1 adds a p53 response that p53-null K562 lacks, so it counts less."}
+{"n": 21, "gene": "CCDC127", "w": {"S0": 3, "S1": 1, "S2": 0, "S3": 1, "S4": 0}, "why": "Uncharacterised and weakly expressed; FOXH1 (r 0.23) is not expressed in K562."}
+{"n": 22, "gene": "RAB24", "w": {"S0": 3, "S1": 1, "S2": 1, "S3": 1, "S4": 1, "S5": 0, "S6": 0}, "why": "A non-essential Rab; the GDI2 partner hints at trafficking (cholesterol), but GDIs serve all Rabs, so only a little weight."}
+{"n": 23, "gene": "PSMC6", "w": {"S0": 3, "S1": 0, "S2": 0, "S3": 0, "S4": 3, "S5": 3, "S6": 3, "S7": 2}, "why": "Proteasome ATPase: PSMD2, PSMC4 and PSMC1 knockdowns are the same machine, giving the proteasome bounce-back and ribosomal mRNA fall; RAN and YWHAE are unrelated."}
+{"n": 24, "gene": "PAN3", "w": {"S0": 3, "S1": 1, "S2": 1, "S3": 1, "S4": 0, "S5": 1, "S6": 2}, "why": "PAN2-PAN3 deadenylase: PAN2 is the same complex; PABPC1 loss is far broader."}
+{"n": 25, "gene": "TRAK1", "w": {"S0": 3, "S1": 1, "S2": 1, "S3": 0, "S4": 0, "S5": 0, "S6": 0}, "why": "A mitochondrial transport adaptor with little growth role; the OGT and DYNLL2 partners act far more broadly."}
+{"n": 26, "gene": "CD99", "w": {"S0": 3, "S1": 1, "S2": 1, "S3": 1}, "why": "A surface adhesion protein; no specific source, keep the engine."}
+{"n": 27, "gene": "GAK", "w": {"S0": 3, "S1": 0, "S2": 0, "S3": 0, "S4": 1, "S5": 3, "S6": 1}, "why": "GAK uncoats clathrin vesicles: CLTC loss (r 0.31) raised cholesterol synthesis (blocked LDL uptake), which the engine also predicts."}
+{"n": 28, "gene": "ARFIP2", "w": {"S0": 3, "S1": 1, "S2": 1, "S3": 1, "S4": 0, "S5": 0}, "why": "Non-essential; no informative partner or co-essential record."}
+{"n": 29, "gene": "PLEKHA5", "w": {"S0": 3, "S1": 1, "S2": 0, "S3": 1, "S4": 1, "S5": 0}, "why": "Weakly expressed; keep the engine and generic K562 responses."}
+{"n": 30, "gene": "TUBA4A", "w": {"S0": 3, "S1": 1, "S2": 1, "S3": 1, "S4": 0, "S5": 0, "S6": 0}, "why": "A minor tubulin isoform covered by TUBA1A/1B; chaperonin (CCT) loss is far stronger and unrelated in effect."}
+{"n": 31, "gene": "ASCC3", "w": {"S0": 2, "S1": 0, "S2": 0, "S3": 0, "S4": 3, "S5": 1}, "why": "ASCC3 works with ASCC2 in ribosome quality control and repair, so ASCC2's knockdown is the best guide."}
+{"n": 32, "gene": "RPL36A", "w": {"S0": 2, "S1": 0, "S2": 0, "S3": 0, "S4": 2, "S5": 1}, "why": "A large-subunit ribosomal protein: RPL6 gives the ribosomal-loss signature; RPL36AL may soften it, so keep the engine too."}
+{"n": 33, "gene": "TROAP", "w": {"S0": 3, "S1": 1, "S2": 0, "S3": 1, "S4": 0, "S5": 1, "S6": 0}, "why": "A modest mitotic/adhesion protein; BYSL and USP5 losses are far stronger and unrelated."}
+{"n": 34, "gene": "CUL7", "w": {"S0": 3, "S1": 1, "S2": 0, "S3": 1, "S4": 0, "S5": 0, "S6": 0, "S7": 2}, "why": "The 3M-complex cullin; SF3B3 and SKP1 are broad essential partners; its own RPE1 knockdown matches the engine."}
+{"n": 35, "gene": "ARF5", "w": {"S0": 3, "S1": 1, "S2": 1, "S3": 0, "S4": 0}, "why": "ARF4 covers for ARF5; BUB1 (r 0.17) is a chance link."}
+{"n": 36, "gene": "QSER1", "w": {"S0": 3, "S1": 1, "S2": 0, "S3": 1, "S4": 0}, "why": "A chromatin protein with a modest K562 role; the co-essential link (r 0.19) is weak."}
+{"n": 37, "gene": "AK3", "w": {"S0": 3, "S1": 1, "S2": 1, "S3": 1, "S4": 0}, "why": "A non-essential mitochondrial nucleotide kinase; keep the engine."}
+{"n": 38, "gene": "RPF1", "w": {"S0": 3, "S1": 1, "S2": 2, "S3": 1, "S4": 3, "S5": 1}, "why": "60S ribosome biogenesis: PWP1 (r 0.31, same process) and the ribosomal-protein recalls (RPL15, RPSA) carry the ribosome-loss signature."}
+{"n": 39, "gene": "FERMT2", "w": {"S0": 3, "S1": 1, "S2": 1, "S3": 1, "S4": 0}, "why": "Not expressed in K562 (1.9 nTPM); its ELMO2 co-essentiality comes from adherent cells."}
+{"n": 40, "gene": "MRPL3", "w": {"S0": 3, "S1": 0, "S2": 0, "S3": 0, "S4": 3, "S5": 3, "S6": 3, "S7": 2}, "why": "Mitoribosome large subunit: MRPL37, MRPL10 and MRPL15 share the MT-ND-up signature, as does its own RPE1 knockdown."}
+{"n": 41, "gene": "FAF2", "w": {"S0": 2, "S1": 0, "S2": 0, "S3": 0, "S4": 1, "S5": 3, "S6": 2}, "why": "An ERAD adaptor: UBE2G2 (ERAD E2, r 0.46) and its own RPE1 knockdown both raise ER chaperones (HSPA5, SDF2L1, CALR); VCP is broader."}
+{"n": 42, "gene": "ATXN2L", "w": {"S0": 2, "S1": 1, "S2": 0, "S3": 1, "S4": 1, "S5": 2}, "why": "LSM12 binds ATXN2L directly, so it is the best partner guide; DDX6 is a broader P-body helicase."}
+{"n": 43, "gene": "PIP4P1", "w": {"S0": 3, "S1": 1, "S2": 1, "S3": 1, "S4": 1, "S5": 1, "S6": 0}, "why": "A lysosomal lipid phosphatase with a mild role; LAMTOR1 and BLOC1S2 hint at lysosome and lipid genes but act more strongly."}
+{"n": 44, "gene": "AC015871.1", "w": {"S0": 3, "S1": 1, "S2": 1, "S3": 0}, "why": "Uncharacterised locus; keep the engine."}
+{"n": 45, "gene": "BLCAP", "w": {"S0": 3, "S1": 1, "S2": 0, "S3": 1, "S4": 0}, "why": "No informative source; keep the engine."}
+{"n": 46, "gene": "ZIK1", "w": {"S0": 3, "S1": 1, "S2": 1, "S3": 0, "S4": 0}, "why": "Not expressed in K562 (0.2 nTPM)."}
+{"n": 47, "gene": "DLAT", "w": {"S0": 3, "S1": 1, "S2": 1, "S3": 1, "S4": 0, "S5": 2}, "why": "Pyruvate dehydrogenase E2: citrate synthase (TCA, r 0.32) is the closest metabolic guide; STAT5A is not a functional partner."}
+{"n": 48, "gene": "LMX1B", "w": {"S0": 3, "S1": 1, "S2": 0, "S3": 1, "S4": 0}, "why": "Not expressed in K562 (0 nTPM)."}
+{"n": 49, "gene": "PHTF1", "w": {"S0": 3, "S1": 1, "S2": 1, "S3": 0, "S4": 0}, "why": "Weak gene; RTCA (r 0.28) is a loose link."}
+{"n": 50, "gene": "RHOT2", "w": {"S0": 3, "S1": 1, "S2": 1, "S3": 1, "S4": 0, "S5": 0}, "why": "Miro2 is covered by Miro1 (RHOT1); IPO5 and MRPL18 are unrelated."}

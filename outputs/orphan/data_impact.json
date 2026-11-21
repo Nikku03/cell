@@ -1,0 +1,41 @@
+{
+ "matrix": {
+  "localization": {
+   "essentiality_reason": {
+    "base": 0.799,
+    "with": 0.858,
+    "lift": 0.059
+   },
+   "disease_reason": {
+    "base": 0.646,
+    "with": 0.656,
+    "lift": 0.01
+   }
+  },
+  "string_ppi": {
+   "essentiality_reason": {
+    "base": 0.799,
+    "with": 0.847,
+    "lift": 0.048
+   },
+   "disease_reason": {
+    "base": 0.646,
+    "with": 0.645,
+    "lift": -0.001
+   },
+   "pathway_tier_propagation": {
+    "spearman": 0.22,
+    "reach_genes": 2469,
+    "note": "undirected \u2192 weak; not wired as trustworthy"
+   }
+  }
+ },
+ "core_lines": [
+  "shock",
+  "fba",
+  "loeuf",
+  "complex",
+  "hub"
+ ],
+ "verdict": "A layer that wins one engine is NOT a win for the cell. localization & STRING lift ESSENTIALITY reasoning strongly but the DISEASE axis barely (they are essentiality-correlated), and STRING's undirected network recovers pathway tier only weakly. Score every new layer across all engines."
+}

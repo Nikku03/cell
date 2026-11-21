@@ -1,0 +1,10 @@
+{
+  "id": "wang_2026_hudep2_bcl11a",
+  "type": "dataset",
+  "citation": "Wang, K. et al. Silencing of BCL11A by disrupting enhancer-dependent epigenetic insulation. Blood 147, 1470-1484 (2026).",
+  "accession": "GEO GSE292669 (ATAC-seq), GEO GSE292694 (enhancer-probe Capture-Pore-C)",
+  "organism": "human",
+  "authority": "primary",
+  "licence": "not checked (verify before redistributing or commercial use)",
+  "notes": "HUDEP-2 erythroid cells, wild-type and +58 kb enhancer-edited; AG2 BCL11A case study."
+}

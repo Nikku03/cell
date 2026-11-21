@@ -1,0 +1,13 @@
+{
+ "n_pairs": 25121,
+ "n_knockouts": 237,
+ "base_rate": 0.0766,
+ "plain_graph_mechanism": 1.01,
+ "enriched_conditional_dynamic_mechanism": 3.64,
+ "Gspecific_relational_only": 1.12,
+ "generic_perJ_only": 3.62,
+ "prior_only": 8.65,
+ "full": 8.83,
+ "verdict": "BOUNDED -- the enriched network's apparent boost (3.64x vs plain 1.01x) is DRIVEN BY THE GENERIC per-gene features (half-life+expressed alone = 3.62x). The purely G-SPECIFIC relational part -- conditioned/weighted edges, coexpr, codep -- gives only 1.12x, barely above the plain graph (1.01x). So conditioning/weighting/rating sharpens edge quality and re-imports the generic half-life prior, but it does NOT manufacture the measured per-edge TRANSMISSION coefficient. Same lesson, controlled honestly: the boost is generic, not transmission; the far-field wall is a measurement gap, not a graph-richness gap.",
+ "note": "Boosted the interconnections with WEIGHTS (reg-sign, coexpression, co-dependency, signaling), CONDITIONS (gate every edge on both endpoints expressed in K562 -- removes edges that can't fire), and RATES (target mRNA half-life as response time), then weighted-RWR propagation vs the plain binary graph in the cascade_all held-out protocol. Measures whether enriching the edges we have adds G-specific TRANSMISSION or only refines the generic axis. Result in the json: the enriched conditional-dynamic mechanism vs plain vs prior. Conditioning/weighting sharpens edge quality but the per-edge transmission coefficient remains unmeasured -- graph richness is not the wall."
+}

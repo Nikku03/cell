@@ -1,0 +1,75 @@
+{
+  "test": "cell_orphan_candidates",
+  "n_steps": 28528,
+  "n_orphan": 17551,
+  "orphan_by_category": {
+    "binding": 5677,
+    "transition": 4037,
+    "omitted": 1835,
+    "uncertain": 488,
+    "dissociation": 365,
+    "metabolic": 5149
+  },
+  "n_noncatalytic": 6042,
+  "n_abstract": 2323,
+  "n_real_pool": 9186,
+  "n_vocab": 5282,
+  "n_eval": 1500,
+  "recall": {
+    "cand_chem": {
+      "1": 0.276,
+      "5": 0.44333333333333336,
+      "20": 0.552,
+      "100": 0.596
+    },
+    "cand_freq": {
+      "1": 0.019333333333333334,
+      "5": 0.07333333333333333,
+      "20": 0.16933333333333334,
+      "100": 0.304
+    },
+    "cand_rand": {
+      "1": 0.0,
+      "5": 0.0033333333333333335,
+      "20": 0.016666666666666666,
+      "100": 0.062
+    }
+  },
+  "chem_beats_freq": true,
+  "orphans_with_candidate": 6603,
+  "orphans_without": 2583,
+  "decomposable_2step": 0,
+  "log": [
+    "====================================================================================================",
+    "WHO COULD DO THIS?  Candidate catalysts for orphan reactions, with a held-out recovery test",
+    "====================================================================================================",
+    "  PREDECLARED: cand_chem > cand_freq at every k => the enumeration is informative.",
+    "               cand_chem ~ cand_freq => the candidates are just busy enzymes. Approach dead.",
+    "\n  orphans 17,551",
+    "    physically uncatalysed (binding/dissociation) :  6,042 -- no enzyme is missing",
+    "    curator-flagged abstract (omitted/uncertain)  :  2,323 -- not a real single step",
+    "    CANDIDATE MISSING ENZYMES                     :  9,186  <- the only pool worth guessing",
+    "  5,282 distinct known catalysts form the candidate vocabulary",
+    "\n  VALIDATION on 1,500 reactions whose catalyst is known and hidden from the generator",
+    "    candidate list length: median 20, p90 101, empty for 192",
+    "\n    arm             recall@1    recall@5   recall@20  recall@100",
+    "    cand_chem          0.276       0.443       0.552       0.596",
+    "    cand_freq          0.019       0.073       0.169       0.304",
+    "    cand_rand          0.000       0.003       0.017       0.062",
+    "\n  APPLYING to the 9,186 candidate-missing-enzyme reactions",
+    "    orphans with >=1 candidate : 6,603 (71.9%)",
+    "    candidate list length      : median 8, p90 68",
+    "    NO candidate at all        : 2,583 -> these go to the recursion",
+    "\n  RECURSION -- for orphans with no candidate, are substrates and products joined by TWO",
+    "  catalysed steps through an intermediate? If so it is a lumped step, not a missing enzyme.",
+    "    of 2,583 checked, 0 have a 2-step route through an",
+    "    intermediate (0.0%). e.g. []",
+    "    This 0% is structural, not a null: a reaction only lands here when no catalysed reaction shares",
+    "    ANY non-currency participant with it, so no catalysed intermediate can exist. Verified directly",
+    "    -- 0 of these share a participant with any catalysed reaction. They are isolated islands, and",
+    "    external knowledge, not more graph search, is what they need.",
+    "\n  READING",
+    "  Chemistry-based enumeration beats guessing the busiest enzymes at every k. The candidate",
+    "  lists carry real information, and the orphan lists are worth reading as hypotheses."
+  ]
+}

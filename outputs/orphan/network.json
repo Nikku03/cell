@@ -1,0 +1,403 @@
+{
+ "n_nodes": 16509,
+ "interconnected_edges": 208735,
+ "interdependent_edges": 922265,
+ "layers": {
+  "interconnected": [
+   "ppi",
+   "complex",
+   "ligand_receptor"
+  ],
+  "interdependent": [
+   "causal",
+   "regulatory",
+   "signaling",
+   "codependency",
+   "coexpression",
+   "synthetic_lethal"
+  ],
+  "directed": [
+   "causal",
+   "ligand_receptor",
+   "regulatory",
+   "signaling"
+  ]
+ },
+ "validation": {
+  "edge_counts": {
+   "ppi": 191944,
+   "complex": 15843,
+   "ligand_receptor": 948,
+   "causal": 56883,
+   "regulatory": 610256,
+   "signaling": 17432,
+   "codependency": 65571,
+   "coexpression": 170867,
+   "synthetic_lethal": 1256
+  },
+  "nodes_touched": {
+   "interconnected": 14324,
+   "interdependent": 16433
+  },
+  "redundancy_with_ppi": {
+   "codependency": {
+    "physical_overlap": 0.0649,
+    "fold_over_chance": 45.7
+   },
+   "causal": {
+    "physical_overlap": 0.0802,
+    "fold_over_chance": 56.5
+   },
+   "coexpression": {
+    "physical_overlap": 0.0206,
+    "fold_over_chance": 14.5
+   },
+   "regulatory": {
+    "physical_overlap": 0.0057,
+    "fold_over_chance": 4.1
+   },
+   "signaling": {
+    "physical_overlap": 0.1967,
+    "fold_over_chance": 138.7
+   },
+   "synthetic_lethal": {
+    "physical_overlap": 0.3041,
+    "fold_over_chance": 214.4
+   },
+   "_chance_physical": 0.00142
+  },
+  "coherence_pathway_share": {
+   "ppi": 0.4005,
+   "complex": 0.879,
+   "codependency": 0.2115,
+   "coexpression": 0.2003,
+   "causal": 0.581,
+   "_random_pair": 0.2472
+  },
+  "giant_component_frac": {
+   "interconnected": 0.9967,
+   "interdependent": 1.0
+  }
+ },
+ "verdict": "The complete-cell database is now ONE queryable network of 16,509 genes with 208,735 interconnected (physical) and 922,265 interdependent (functional) edges \u2014 one giant component per family. The two families are both COMPLEMENTARY and COHERENT, which is the whole point of keeping both. Complementary: only ~6% of a functional layer's edges are also physical, so the interdependent graph says who NEEDS whom, which is mostly NOT who touches whom. Coherent: that same overlap is 46x the chance rate \u2014 co-dependency and causal edges recover real physical complexes far above random even though they aren't literature pathways, and physical PPI partners share a pathway 2x more than a random pair. So the object supports honest queries \u2014 wire(gene), link(a,b), depends_on, controls, path, hubs \u2014 over a network whose two halves reinforce each other. What it does NOT claim: an edge is an observed/curated relationship, not a computed prediction; co-dependency/co-expression partners do not map onto curated pathways (they track physical modules instead); and (as the dependency and causal engines already showed) these edges do not let you PROPAGATE an unmeasured knockout's far-field effect \u2014 the structure is wired and real; long-range dynamics are not.",
+ "example_wire_TP53": {
+  "status": "ok",
+  "gene": "TP53",
+  "interconnected": {
+   "ppi": [
+    {
+     "gene": "PPID",
+     "w": 1.0
+    },
+    {
+     "gene": "ESR1",
+     "w": 1.0
+    },
+    {
+     "gene": "HSP90AB1",
+     "w": 1.0
+    },
+    {
+     "gene": "HSPA8",
+     "w": 1.0
+    }
+   ],
+   "complex": [
+    {
+     "gene": "MDM4",
+     "w": 1.0
+    },
+    {
+     "gene": "MDM2",
+     "w": 1.0
+    }
+   ]
+  },
+  "interdependent": {
+   "causal": {
+    "controls": [
+     {
+      "gene": "BIRC5",
+      "w": -1.0
+     },
+     {
+      "gene": "BCL2",
+      "w": -1.0
+     },
+     {
+      "gene": "BAX",
+      "w": 1.0
+     },
+     {
+      "gene": "G6PD",
+      "w": -1.0
+     }
+    ],
+    "depends_on": [
+     {
+      "gene": "SRC",
+      "w": -1.0
+     },
+     {
+      "gene": "CDK5",
+      "w": 1.0
+     },
+     {
+      "gene": "MAPK14",
+      "w": 1.0
+     },
+     {
+      "gene": "NUMB",
+      "w": 1.0
+     }
+    ]
+   },
+   "regulatory": {
+    "controls": [
+     {
+      "gene": "IGF1R",
+      "w": -1.0
+     },
+     {
+      "gene": "POLI",
+      "w": 1.0
+     },
+     {
+      "gene": "RB1",
+      "w": 1.0
+     },
+     {
+      "gene": "CDKN1A",
+      "w": 1.0
+     }
+    ],
+    "depends_on": [
+     {
+      "gene": "MYC",
+      "w": 1.0
+     },
+     {
+      "gene": "NR0B2",
+      "w": 1.0
+     },
+     {
+      "gene": "RELA",
+      "w": 1.0
+     },
+     {
+      "gene": "JUNB",
+      "w": -1.0
+     }
+    ]
+   },
+   "signaling": {
+    "controls": [
+     {
+      "gene": "TBXAS1",
+      "w": -1.0
+     },
+     {
+      "gene": "CTSD",
+      "w": 1.0
+     },
+     {
+      "gene": "FASLG",
+      "w": 1.0
+     },
+     {
+      "gene": "THBS1",
+      "w": 1.0
+     }
+    ],
+    "depends_on": [
+     {
+      "gene": "PINK1",
+      "w": 1.0
+     },
+     {
+      "gene": "CDK1",
+      "w": 1.0
+     },
+     {
+      "gene": "AURKB",
+      "w": -1.0
+     },
+     {
+      "gene": "CDK2",
+      "w": 1.0
+     }
+    ]
+   },
+   "codependency": [
+    {
+     "gene": "TP53BP1",
+     "w": 0.693
+    },
+    {
+     "gene": "CDKN1A",
+     "w": 0.678
+    },
+    {
+     "gene": "USP28",
+     "w": 0.645
+    },
+    {
+     "gene": "CHEK2",
+     "w": 0.632
+    }
+   ],
+   "coexpression": [
+    {
+     "gene": "GEMIN4",
+     "w": 0.602
+    },
+    {
+     "gene": "PTBP1",
+     "w": 0.593
+    },
+    {
+     "gene": "FOXM1",
+     "w": 0.582
+    },
+    {
+     "gene": "TIMELESS",
+     "w": 0.576
+    }
+   ],
+   "synthetic_lethal": [
+    {
+     "gene": "TP53BP1",
+     "w": 0.693
+    },
+    {
+     "gene": "CDKN1A",
+     "w": 0.678
+    },
+    {
+     "gene": "USP28",
+     "w": 0.645
+    },
+    {
+     "gene": "CHEK2",
+     "w": 0.632
+    }
+   ]
+  },
+  "degree": {
+   "interconnected": {
+    "ppi": 219,
+    "complex": 2,
+    "ligand_receptor": 0
+   },
+   "interdependent": {
+    "causal": 1165,
+    "regulatory": 3657,
+    "signaling": 183,
+    "codependency": 43,
+    "coexpression": 13,
+    "synthetic_lethal": 6
+   },
+   "total": 5288
+  }
+ },
+ "example_hubs_interconnected": [
+  {
+   "gene": "CAPZB",
+   "degree": 641
+  },
+  {
+   "gene": "CANX",
+   "degree": 469
+  },
+  {
+   "gene": "RPS16",
+   "degree": 452
+  },
+  {
+   "gene": "RPS27A",
+   "degree": 425
+  },
+  {
+   "gene": "SNRPB",
+   "degree": 414
+  },
+  {
+   "gene": "MEOX2",
+   "degree": 398
+  },
+  {
+   "gene": "YWHAG",
+   "degree": 392
+  },
+  {
+   "gene": "YWHAZ",
+   "degree": 375
+  },
+  {
+   "gene": "SNRPF",
+   "degree": 365
+  },
+  {
+   "gene": "UBA52",
+   "degree": 360
+  },
+  {
+   "gene": "PICK1",
+   "degree": 354
+  },
+  {
+   "gene": "RPS6",
+   "degree": 351
+  }
+ ],
+ "example_hubs_interdependent": [
+  {
+   "gene": "CTCF",
+   "degree": 12323
+  },
+  {
+   "gene": "STAT1",
+   "degree": 9948
+  },
+  {
+   "gene": "EGR1",
+   "degree": 9930
+  },
+  {
+   "gene": "TFAP2C",
+   "degree": 9830
+  },
+  {
+   "gene": "CEBPA",
+   "degree": 9281
+  },
+  {
+   "gene": "HNF4A",
+   "degree": 8969
+  },
+  {
+   "gene": "FOXA1",
+   "degree": 8859
+  },
+  {
+   "gene": "ETS1",
+   "degree": 8846
+  },
+  {
+   "gene": "FOS",
+   "degree": 8133
+  },
+  {
+   "gene": "ESR1",
+   "degree": 6826
+  },
+  {
+   "gene": "GATA3",
+   "degree": 6745
+  },
+  {
+   "gene": "E2F4",
+   "degree": 6022
+  }
+ ]
+}

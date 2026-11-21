@@ -1,0 +1,133 @@
+{
+ "global_hubs": [
+  "SP1",
+  "NFKB1",
+  "RELA",
+  "TP53",
+  "JUN",
+  "MYC",
+  "E2F1",
+  "STAT3",
+  "AR",
+  "SP3"
+ ],
+ "levels": [
+  {
+   "threshold": 2,
+   "filtered": {
+    "nodes": 609,
+    "edges": 1074,
+    "self_top10_share": 0.5009310986964618,
+    "global_top10_share": 0.4795158286778399,
+    "gini": 0.5375594842927994,
+    "max_over_mean": 27.587768969422427
+   },
+   "stats": {
+    "self_top10_share": {
+     "filtered": 0.5009310986964618,
+     "control_min": 0.2569832402234637,
+     "control_median": 0.297951582867784,
+     "control_max": 0.32774674115456237,
+     "verdict": "MORE than every control",
+     "n_above": 50,
+     "n_control": 50
+    },
+    "global_top10_share": {
+     "filtered": 0.4795158286778399,
+     "control_min": 0.2579143389199255,
+     "control_median": 0.29329608938547486,
+     "control_max": 0.3221601489757914,
+     "verdict": "MORE than every control",
+     "n_above": 50,
+     "n_control": 50
+    },
+    "gini": {
+     "filtered": 0.5375594842927994,
+     "control_min": 0.4494267244303589,
+     "control_median": 0.4602727401963677,
+     "control_max": 0.4696257822966946,
+     "verdict": "MORE than every control",
+     "n_above": 50,
+     "n_control": 50
+    },
+    "max_over_mean": {
+     "filtered": 27.587768969422427,
+     "control_min": 23.260623229461757,
+     "control_median": 28.102649006622514,
+     "control_max": 38.89491046182846,
+     "verdict": "inside control range (percentile 40)",
+     "n_above": 20,
+     "n_control": 50
+    },
+    "nodes": {
+     "filtered": 609,
+     "control_min": 919.0,
+     "control_median": 952.5,
+     "control_max": 982.0,
+     "verdict": "LESS than every control",
+     "n_above": 50,
+     "n_control": 50
+    }
+   }
+  },
+  {
+   "threshold": 3,
+   "filtered": {
+    "nodes": 239,
+    "edges": 374,
+    "self_top10_share": 0.6283422459893048,
+    "global_top10_share": 0.606951871657754,
+    "gini": 0.475316663572622,
+    "max_over_mean": 16.721843003412967
+   },
+   "stats": {
+    "self_top10_share": {
+     "filtered": 0.6283422459893048,
+     "control_min": 0.26737967914438504,
+     "control_median": 0.3048128342245989,
+     "control_max": 0.3449197860962567,
+     "verdict": "MORE than every control",
+     "n_above": 50,
+     "n_control": 50
+    },
+    "global_top10_share": {
+     "filtered": 0.606951871657754,
+     "control_min": 0.22727272727272727,
+     "control_median": 0.2914438502673797,
+     "control_max": 0.32887700534759357,
+     "verdict": "MORE than every control",
+     "n_above": 50,
+     "n_control": 50
+    },
+    "gini": {
+     "filtered": 0.475316663572622,
+     "control_min": 0.2960114499565614,
+     "control_median": 0.3317227898189762,
+     "control_max": 0.34680481054204326,
+     "verdict": "MORE than every control",
+     "n_above": 50,
+     "n_control": 50
+    },
+    "max_over_mean": {
+     "filtered": 16.721843003412967,
+     "control_min": 11.002680965147453,
+     "control_median": 14.147888560737481,
+     "control_max": 20.518817204301072,
+     "verdict": "inside control range (percentile 76)",
+     "n_above": 38,
+     "n_control": 50
+    },
+    "nodes": {
+     "filtered": 239,
+     "control_min": 439.0,
+     "control_median": 459.0,
+     "control_max": 494.0,
+     "verdict": "LESS than every control",
+     "n_above": 50,
+     "n_control": 50
+    }
+   }
+  }
+ ],
+ "conclusion": "STAR ARTEFACT -- the filtered graph is more hub-concentrated on both readings, so the small knot is what a star does under kernelization and replication tracks fame."
+}

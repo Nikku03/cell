@@ -1,0 +1,19 @@
+{
+ "sciplex": {
+  "cells": 173652,
+  "vehicle_cells": 3935,
+  "genes_kept": 5924
+ },
+ "compounds": 188,
+ "matched_to_chembl": 144,
+ "with_lof_target": 90,
+ "drugs": 13128,
+ "drugs_with_mechanism": 5052,
+ "target_genes": 17095,
+ "stopped_trial_records": 20433,
+ "warnings": 3019,
+ "drug_records": 752,
+ "total_records": 12501,
+ "bytes_bank": 3761620,
+ "seconds": 144.70864510536194
+}

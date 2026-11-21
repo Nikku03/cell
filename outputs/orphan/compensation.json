@@ -1,0 +1,45 @@
+{
+ "n_kos_with_paralog": 123,
+ "paralog_map_genes": 10627,
+ "all": {
+  "n_kos_with_paralog": 123,
+  "mean_paralogs_per_ko": 1.2,
+  "paralog_signed_z": 0.012,
+  "paralog_z_above_KO_bias": -0.001,
+  "best_paralog_signed_z": 0.032,
+  "paralog_mover_frac": 0.0,
+  "base_mover_rate": 0.004,
+  "mover_lift": 0.0,
+  "paralog_upmover_frac": 0.0,
+  "base_upmover_rate": 0.003,
+  "upmover_lift": 0.0
+ },
+ "weak_KOs": {
+  "n_kos_with_paralog": 79,
+  "mean_paralogs_per_ko": 1.2,
+  "paralog_signed_z": 0.02,
+  "paralog_z_above_KO_bias": 0.017,
+  "best_paralog_signed_z": 0.033,
+  "paralog_mover_frac": 0.0,
+  "base_mover_rate": 0.001,
+  "mover_lift": 0.0,
+  "paralog_upmover_frac": 0.0,
+  "base_upmover_rate": 0.0,
+  "upmover_lift": 0.0
+ },
+ "strong_KOs": {
+  "n_kos_with_paralog": 21,
+  "mean_paralogs_per_ko": 1.2,
+  "paralog_signed_z": 0.044,
+  "paralog_z_above_KO_bias": 0.001,
+  "best_paralog_signed_z": 0.096,
+  "paralog_mover_frac": 0.0,
+  "base_mover_rate": 0.017,
+  "mover_lift": 0.0,
+  "paralog_upmover_frac": 0.0,
+  "base_upmover_rate": 0.014,
+  "upmover_lift": 0.0
+ },
+ "verdict": "COMPENSATION SIGNAL IS ABSENT / AT CHANCE in this data (measured with a CURATED Ensembl paralog map -- an honest NEGATIVE on mechanism 1). Across the 123 knockouts that have >=1 measured paralog, LITERALLY ZERO paralogs crossed the mover threshold (mover lift 0.0x, up-mover lift 0.0x), and paralog upregulation above the knockout's own drift is -0.001 (~0) -- no better for the WEAK knockouts we needed to crack (79 of them: mover lift 0.0x, upregulation +0.017). (Method note: I first tried the on-hand ESM matrix as the 'continuous structural field' but a positive control showed it was per-dimension STANDARDISED -- known paralogs RPL7/RPL7A scored at chance -- so that route was invalid and I switched to the curated map, which is correct where present.) So even with real paralogs, knocking a gene down does NOT light up its paralog here. THREE reasons this is expected and important: (1) K562 Perturb-seq is CRISPRi knockDOWN (dCas9-KRAB transcriptional repression), and the classic paralog/genetic-compensation pathway (transcriptional adaptation) is triggered by mutant-mRNA DEGRADATION, which CRISPRi does NOT produce -- the mechanism the engine models is largely absent from the measurement. (2) It is a single STEADY-STATE snapshot (~days post-perturbation): a transient compensatory paralog that fired early and returned to baseline cannot be in the data -- the calm-lake problem. (3) COVERAGE CEILING: only ~123 of ~1123 knockouts (~11%) even HAVE a measured paralog, so paralog compensation -- even if it worked perfectly -- could touch at most ~11% of knockouts and structurally CANNOT lift the global average from ~2/10 to 6-7/10; the weak set is dominated by genes without a clean paralog. BOTTOM LINE: the Structural Compensation Engine is biologically reasonable but has NO signal to learn or be validated against in THIS data, and too little reach to move the average even in principle. The weak-knockout ceiling is a DATA/measurement limit (knockdown modality + steady-state timing), not an architecture we can out-engineer here. Cracking weak knockouts needs time-resolved and/or true-knockout Perturb-seq we do not have -- and even the metric is capped: a weak KO with 5 real movers can never exceed 5/10 on a top-10 list. The honest fix is a better METRIC (recall of the true movers, k=n_movers) plus new DATA, not a bigger model on this data.",
+ "note": "COMPENSATION SIGNAL IS ABSENT / AT CHANCE in this data (measured with a CURATED Ensembl paralog map -- an honest NEGATIVE on mechanism 1). Across the 123 knockouts that have >=1 measured paralog, LITERALLY ZERO paralogs crossed the mover threshold (mover lift 0.0x, up-mover lift 0.0x), and paralog upregulation above the knockout's own drift is -0.001 (~0) -- no better for the WEAK knockouts we needed to crack (79 of them: mover lift 0.0x, upregulation +0.017). (Method note: I first tried the on-hand ESM matrix as the 'continuous structural field' but a positive control showed it was per-dimension STANDARDISED -- known paralogs RPL7/RPL7A scored at chance -- so that route was invalid and I switched to the curated map, which is correct where present.) So even with real paralogs, knocking a gene down does NOT light up its paralog here. THREE reasons this is expected and important: (1) K562 Perturb-seq is CRISPRi knockDOWN (dCas9-KRAB transcriptional repression), and the classic paralog/genetic-compensation pathway (transcriptional adaptation) is triggered by mutant-mRNA DEGRADATION, which CRISPRi does NOT produce -- the mechanism the engine models is largely absent from the measurement. (2) It is a single STEADY-STATE snapshot (~days post-perturbation): a transient compensatory paralog that fired early and returned to baseline cannot be in the data -- the calm-lake problem. (3) COVERAGE CEILING: only ~123 of ~1123 knockouts (~11%) even HAVE a measured paralog, so paralog compensation -- even if it worked perfectly -- could touch at most ~11% of knockouts and structurally CANNOT lift the global average from ~2/10 to 6-7/10; the weak set is dominated by genes without a clean paralog. BOTTOM LINE: the Structural Compensation Engine is biologically reasonable but has NO signal to learn or be validated against in THIS data, and too little reach to move the average even in principle. The weak-knockout ceiling is a DATA/measurement limit (knockdown modality + steady-state timing), not an architecture we can out-engineer here. Cracking weak knockouts needs time-resolved and/or true-knockout Perturb-seq we do not have -- and even the metric is capped: a weak KO with 5 real movers can never exceed 5/10 on a top-10 list. The honest fix is a better METRIC (recall of the true movers, k=n_movers) plus new DATA, not a bigger model on this data."
+}

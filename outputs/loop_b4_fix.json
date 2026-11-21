@@ -1,0 +1,159 @@
+{
+ "test": "loop 134 -- B4 corrected",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "colab/data/ml/kcat_records.tsv",
+    "bytes": 1376344,
+    "hash": "130cb6f337cb17e6",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/ml/esm2_8M_mean.npy",
+    "bytes": 5027968,
+    "hash": "077dfe7c9708fafc",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/ml/substrate_ecfp.npy",
+    "bytes": 692608,
+    "hash": "83d31b1f0980aa4c",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 17004,
+   "used": 17004,
+   "selection": "all",
+   "fraction": 1.0
+  },
+  "seed": 13400,
+  "controls": [
+   "EC-median residual built BOTH leaky and clean, both scored",
+   "embedding permuted within EC class -- destroys sequence, keeps EC",
+   "the permutation itself checked against gate_guard's achievable bound before its result is allowed to mean anything",
+   "five nested feature sets on identical folds"
+  ],
+  "note": "loop 133's B4 concluded the sequence adds nothing beyond the EC number, and improver.py made that the stopping rule for a 4-hour run. This retests it without a residual.",
+  "warnings": []
+ },
+ "gates": {
+  "C1": true,
+  "C2": true,
+  "C4": true,
+  "C3": false,
+  "C5": true,
+  "C6": true
+ },
+ "c1": {
+  "constant": 1.5068949644405327,
+  "ec_median": 1.5015377566146224,
+  "variance_share": 0.007097621488407202
+ },
+ "c2": {
+  "leaky_model": 1.531529967431412,
+  "leaky_baseline": 1.4848906482578186,
+  "clean_model": 1.5003648677328385,
+  "clean_baseline": 1.4873237151393461
+ },
+ "c4": {
+  "moved": 0.7343566219713009,
+  "alone_in_class": 0.024935309338979063,
+  "achievable": 0.9996827513871533
+ },
+ "c3": {
+  "real": 1.3768959983604854,
+  "permuted": 1.3815070713978406,
+  "cost": 0.004611073037355196,
+  "paired_ci": 0.0488
+ },
+ "c5": {
+  "constant": 1.5068949644405327,
+  "EC only": 1.4707310450281916,
+  "sequence only": 1.3890410815484358,
+  "sequence + substrate": 1.3768959983604854,
+  "sequence + substrate + EC": 1.372793032450061
+ },
+ "c6": {
+  "P1_active_site_pooling": {
+   "from": "loop 133 B1 irreducible_rmse",
+   "value": 0.9473651091817341,
+   "max_gain": 0.37772537218785873,
+   "argument": "the ABSOLUTE ceiling if active-site pooling resolved every point-mutant pair perfectly. It will not; this is the number a promise may not exceed"
+  },
+  "P4_explicit_EC": {
+   "from": "C5, this loop",
+   "value": 1.372793032450061,
+   "max_gain": 0.004102965910424361,
+   "argument": "not a ceiling but the MEASURED value, because C5 just ran it"
+  },
+  "P2_mutant_flag": {
+   "from": "loop 133 B1",
+   "value": 0.9473651091817341,
+   "max_gain": 0.37772537218785873,
+   "argument": "shares P1's ceiling: a flag and a pooling change attack the SAME variance component, so their gains may not be added"
+  }
+ },
+ "seconds": 584.3241896629333,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 134 -- B4 was the stopping rule, and B4 is wrong",
+  "====================================================================================================",
+  "",
+  "  17,004 records | ESM (7856, 320) | paired interval 0.0488",
+  "",
+  "C1 HOW MUCH DOES THE EC NUMBER ACTUALLY EXPLAIN?",
+  "     out-of-fold constant         RMSE 1.5069",
+  "     out-of-fold EC-median        RMSE 1.5015",
+  "     the EC number explains 0.7% of the variance in log10 kcat",
+  "     loop 133's B4 asserted that everything the model knows is already in the EC number.",
+  "     A predictor worth 0.7% of the variance cannot contain a model that beats it.",
+  "     C1 PASS -- measured",
+  "",
+  "C2 DOES B4's RESIDUAL LEAK, AND HOW MUCH IS IT WORTH?",
+  "     loop 133's residual, loop 133's baseline   model 1.5315  vs sd 1.4849   -> LOSES",
+  "     clean residual, out-of-fold baseline       model 1.5004  vs const 1.4873   -> LOSES",
+  "     the leak was worth +0.0312 and the in-sample baseline -0.0024",
+  "     C2 PASS -- both constructions reported",
+  "",
+  "C4 IS THE PERMUTATION CONTROL EVEN CAPABLE OF MOVING?",
+  "     records whose EC class has only one record (cannot move): 2.5%",
+  "     records that actually received a DIFFERENT sequence: 73.4%",
+  "     gate_guard achievable bound for this vector: 0.9997",
+  "     C4 PASS -- the control can move",
+  "",
+  "C3 THE TEST B4 SHOULD HAVE BEEN: WITHIN-CLASS PERMUTATION",
+  "     real embedding                        RMSE 1.3769",
+  "     embedding permuted WITHIN EC class    RMSE 1.3815",
+  "     destroying sequence identity while keeping EC costs +0.0046",
+  "     the paired interval is 0.0488",
+  "     C3 FAIL -- the sequence adds nothing beyond EC; B4 SURVIVES on better evidence",
+  "",
+  "C5 WHAT THE SEQUENCE ADDS, PRICED AGAINST WHAT EC ADDS",
+  "     constant                     RMSE 1.5069",
+  "     EC only                      RMSE 1.4707",
+  "     sequence only                RMSE 1.3890",
+  "     sequence + substrate         RMSE 1.3769",
+  "     sequence + substrate + EC    RMSE 1.3728",
+  "     C5 PASS -- the nested decomposition B4 was reaching for, with no residual involved",
+  "",
+  "C6 THE GROUNDED MAXIMA THE IMPROVER ASKED FOR",
+  "     P1_active_site_pooling     max gain +0.3777   (loop 133 B1 irreducible_rmse)",
+  "     P4_explicit_EC             max gain +0.0041   (C5, this loop)",
+  "     P2_mutant_flag             max gain +0.3777   (loop 133 B1)",
+  "     P2 and P1 cite the same deficit, so the improver's bundle arithmetic must treat",
+  "     them as OVERLAPPING rather than independent.",
+  "",
+  "====================================================================================================",
+  "  C1  PASS",
+  "  C2  PASS",
+  "  C3  FAIL",
+  "  C4  PASS",
+  "  C5  PASS",
+  "  C6  PASS",
+  "  5/6",
+  "====================================================================================================",
+  "    manifest: 3 inputs, coverage 17004/17004 (100.0%) by 'all', seed 13400, controls 4"
+ ]
+}

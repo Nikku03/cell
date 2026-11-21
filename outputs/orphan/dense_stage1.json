@@ -1,0 +1,184 @@
+{
+ "model": "dense-stage1-v1",
+ "n_knockouts": 10337,
+ "n_genes": 8175,
+ "density": 1.0,
+ "replaces": "nlz benches at 3.5% density, 1,385 usable knockouts",
+ "metric": {
+  "primary": "recall@50 against the top-50 non-tide genes by train-centred |z|",
+  "secondary": "cosine to the full centred profile, threshold-free",
+  "target": "S = |z| - per-gene mean |z| over TRAINING knockouts, refit per split",
+  "random_floor_recall": 0.0061162079510703364,
+  "why_redefined": "the bench's |z|>=1 rule gives a median of 2,328 true specific movers on dense data, capping recall@50 at 0.021 by arithmetic",
+  "why_centred": "with an uncentred |z| target every arm scored cosine ~0.77 and the ORACLE scored BELOW the tide floor -- a target dominated by a shared component, which also left the training Gram matrix near-constant"
+ },
+ "arms": {
+  "TIDE-null (floor)": {
+   "recall_mean": 0.008297213622291022,
+   "recall_sd": 0.0001899047081483791,
+   "cosine_mean": -0.15545134711650443,
+   "cosine_sd": 0.006791694067656349,
+   "recall_per_seed": [
+    0.008312693498452012,
+    0.008521671826625388,
+    0.008057275541795667
+   ],
+   "cosine_per_seed": [
+    -0.1628616637542017,
+    -0.14645411283828427,
+    -0.1570382647570273
+   ]
+  },
+  "self-only (no neighbourhood)": {
+   "recall_mean": 0.02518059855521156,
+   "recall_sd": 0.0008293981600745507,
+   "cosine_mean": 0.08007659255153807,
+   "cosine_sd": 0.0036609597693180694,
+   "recall_per_seed": [
+    0.024837461300309602,
+    0.02632352941176471,
+    0.024380804953560372
+   ],
+   "cosine_per_seed": [
+    0.07493971665563956,
+    0.08208528129542282,
+    0.0832047797035518
+   ]
+  },
+  "FULL (real neighbours)": {
+   "recall_mean": 0.03528895768833849,
+   "recall_sd": 0.001175525347644224,
+   "cosine_mean": 0.10036061571176917,
+   "cosine_sd": 0.004802108749994361,
+   "recall_per_seed": [
+    0.03411764705882353,
+    0.03689628482972136,
+    0.03485294117647059
+   ],
+   "cosine_per_seed": [
+    0.09692653733449033,
+    0.10715167716525806,
+    0.09700363263555914
+   ]
+  },
+  "random partners (CONTROL)": {
+   "recall_mean": 0.01670536635706914,
+   "recall_sd": 0.0006307403188642221,
+   "cosine_mean": 0.07628897651919501,
+   "cosine_sd": 0.0037940513483854495,
+   "recall_per_seed": [
+    0.01643188854489164,
+    0.016106811145510838,
+    0.017577399380804954
+   ],
+   "cosine_per_seed": [
+    0.08066800492396296,
+    0.07678466642896987,
+    0.07141425820465219
+   ]
+  },
+  "wrong-knockout (CONTROL)": {
+   "recall_mean": 0.009058307533539733,
+   "recall_sd": 0.00022630404808656696,
+   "cosine_mean": 0.03495049083344476,
+   "cosine_sd": 0.002626704430195417,
+   "recall_per_seed": [
+    0.009226006191950464,
+    0.009210526315789475,
+    0.008738390092879258
+   ],
+   "cosine_per_seed": [
+    0.03178720169911599,
+    0.03484555138702117,
+    0.03821871941419711
+   ]
+  },
+  "ORACLE (dense ceiling)": {
+   "recall_mean": 0.05257223942208463,
+   "recall_sd": 0.0010152669531026072,
+   "cosine_mean": 0.34209229730141605,
+   "cosine_sd": 0.0021656975577258957,
+   "recall_per_seed": [
+    0.05164860681114551,
+    0.05398606811145511,
+    0.05208204334365325
+   ],
+   "cosine_per_seed": [
+    0.34515285545052804,
+    0.34066255045670835,
+    0.3404614859970119
+   ]
+  }
+ },
+ "real_vs_random": {
+  "rec": {
+   "sd": 0.0006778565893200917,
+   "mde": 0.0011740820529477496,
+   "gap": 0.018583591331269352,
+   "passed": true
+  },
+  "cos": {
+   "sd": 0.003973535987212591,
+   "mde": 0.006882366215555565,
+   "gap": 0.024071639192574157,
+   "passed": true
+  }
+ },
+ "stage1_passed": true,
+ "metrics_agree": true,
+ "dense_oracle_recall": 0.05257223942208463,
+ "truncated_oracle_quoted_previously": 0.607,
+ "limits": [
+  "absolute recall is not comparable between the truncated and dense targets: different truth set definitions AND different censoring. Only the between-arm gap is like-for-like",
+  "K562 only. Stage 6 is the cross-cell test and this is not it",
+  "TRUTH_N = 50 is a choice. It is matched to K so the metric is on a [0,1] scale, but no threshold on dense data reproduces the bench's truth-set sizes and the |z| threshold TAU is used only for the scorability filter, which at this density passes every knockout",
+  "the encoder here is a single attention block, smaller than cellformer_v1's, chosen so the 8x larger knockout set fits the compute budget. A capacity difference is therefore confounded with the target change for the ABSOLUTE numbers, though not for the real-vs-random gap, which is measured within one architecture"
+ ],
+ "verdict": "STAGE 1 PASSES: on an UNTRUNCATED target the real-neighbour arm beats random partners by +0.0186 recall@50 against a 0.0012 minimum detectable increment, on 10,337 knockouts at 100% density. The threshold-free cosine metric AGREES (+0.0241 against 0.0069). STAGE 2, the ceiling: the dense ORACLE is 0.0526 and the tide floor is 0.0083. NEITHER absolute number is comparable to the 0.335 gap and 0.607 oracle this project quoted from the truncated bench: that bench's truth sets were variable-sized AND 96.5% censored, and the truth set here is a fixed top-50. The like-for-like quantity across the two targets is the gap between arms measured inside one target, and that is what stage 1 is graded on.",
+ "log": [
+  "====================================================================================================",
+  "STAGE 1+2 -- the confirmed win, and the real ceiling, on an UNTRUNCATED target",
+  "====================================================================================================",
+  "  dense K562: 11,258 perturbations x 8,248 genes, 100.0% finite",
+  "  the bench this replaces: 1,400 x 7,223 at 3.5% density",
+  "  after dropping genes with an undefined z: 8,175 genes; 409 tide, 7,766 non-tide",
+  "  scorable knockouts (>= 5 specific movers): 11,258/11,258",
+  "  specific movers per knockout at |z| >= 1.0: median 2,328  q25 1,689  q75 3,246",
+  "  ^ THIS is why the bench's threshold rule cannot be carried over: recall@50 against a truth set of 2,328 is capped at 0.0215.",
+  "  truth is therefore the top 50 non-tide genes by TRAIN-CENTRED |z|; random floor = 0.0061",
+  "  usable: 10,337 knockouts with a DepMap profile AND >= 5 specific movers (the bench gave 1,385)",
+  "  tokens per knockout: mean 11.9 real, 11.9 random",
+  "\n  SPLIT 0: 7,753 train / 2,584 test; train-only centring, target Gram off-diagonal mean 0.0273 (it was 0.77 uncentred, which is what left nothing to learn)",
+  "    TIDE-null (floor)                  recall@50 0.0083   cosine -0.1629  (n=2584)",
+  "    self-only (no neighbourhood)       recall@50 0.0248   cosine 0.0749  (n=2584)",
+  "    FULL (real neighbours)             recall@50 0.0341   cosine 0.0969  (n=2584)",
+  "    random partners (CONTROL)          recall@50 0.0164   cosine 0.0807  (n=2584)",
+  "    wrong-knockout (CONTROL)           recall@50 0.0092   cosine 0.0318  (n=2584)",
+  "    ORACLE (dense ceiling)             recall@50 0.0516   cosine 0.3452  (n=2584)",
+  "\n  SPLIT 1: 7,753 train / 2,584 test; train-only centring, target Gram off-diagonal mean 0.0233 (it was 0.77 uncentred, which is what left nothing to learn)",
+  "    TIDE-null (floor)                  recall@50 0.0085   cosine -0.1465  (n=2584)",
+  "    self-only (no neighbourhood)       recall@50 0.0263   cosine 0.0821  (n=2584)",
+  "    FULL (real neighbours)             recall@50 0.0369   cosine 0.1072  (n=2584)",
+  "    random partners (CONTROL)          recall@50 0.0161   cosine 0.0768  (n=2584)",
+  "    wrong-knockout (CONTROL)           recall@50 0.0092   cosine 0.0348  (n=2584)",
+  "    ORACLE (dense ceiling)             recall@50 0.0540   cosine 0.3407  (n=2584)",
+  "\n  SPLIT 2: 7,753 train / 2,584 test; train-only centring, target Gram off-diagonal mean 0.0400 (it was 0.77 uncentred, which is what left nothing to learn)",
+  "    TIDE-null (floor)                  recall@50 0.0081   cosine -0.1570  (n=2584)",
+  "    self-only (no neighbourhood)       recall@50 0.0244   cosine 0.0832  (n=2584)",
+  "    FULL (real neighbours)             recall@50 0.0349   cosine 0.0970  (n=2584)",
+  "    random partners (CONTROL)          recall@50 0.0176   cosine 0.0714  (n=2584)",
+  "    wrong-knockout (CONTROL)           recall@50 0.0087   cosine 0.0382  (n=2584)",
+  "    ORACLE (dense ceiling)             recall@50 0.0521   cosine 0.3405  (n=2584)",
+  "\n  arm                                 recall@50      sd      cosine      sd",
+  "  TIDE-null (floor)                      0.0083  0.0002     -0.1555  0.0068",
+  "  self-only (no neighbourhood)           0.0252  0.0008      0.0801  0.0037",
+  "  FULL (real neighbours)                 0.0353  0.0012      0.1004  0.0048",
+  "  random partners (CONTROL)              0.0167  0.0006      0.0763  0.0038",
+  "  wrong-knockout (CONTROL)               0.0091  0.0002      0.0350  0.0026",
+  "  ORACLE (dense ceiling)                 0.0526  0.0010      0.3421  0.0022",
+  "  rec: pooled seed sd 0.0007 -> MDE +0.0012 at 3 seeds; FULL - random = +0.0186 -> PASS",
+  "  cos: pooled seed sd 0.0040 -> MDE +0.0069 at 3 seeds; FULL - random = +0.0241 -> PASS",
+  "\n====================================================================================================",
+  "  VERDICT: STAGE 1 PASSES: on an UNTRUNCATED target the real-neighbour arm beats random partners by +0.0186 recall@50 against a 0.0012 minimum detectable increment, on 10,337 knockouts at 100% density. The threshold-free cosine metric AGREES (+0.0241 against 0.0069). STAGE 2, the ceiling: the dense ORACLE is 0.0526 and the tide floor is 0.0083. NEITHER absolute number is comparable to the 0.335 gap and 0.607 oracle this project quoted from the truncated bench: that bench's truth sets were variable-sized AND 96.5% censored, and the truth set here is a fixed top-50. The like-for-like quantity across the two targets is the gap between arms measured inside one target, and that is what stage 1 is graded on."
+ ]
+}

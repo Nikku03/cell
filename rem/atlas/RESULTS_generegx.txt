@@ -1,0 +1,9 @@
+=================================================================================================
+GENEREGX -- how gene-to-gene influence changes with cell type, and at what level
+=================================================================================================
+  G2-X1 influence changes with cell type: 167 knockdowns, noise-corrected agreement with K562 (K562 second experiment 1.12; RPE1 0.41, HepG2 0.49, Jurkat 0.78); negative passed 0/3, planted 3/3 -> PASS
+  G2-X2 more expressed -> more influence: 763 knockdowns, mean Spearman -0.040, p 0.97 (negative 0.021, planted 0.435) -> FAIL
+  G2-L1 level = effect per unit of knockdown: 300,000 links, spread across cell types raw 0.345, per unit 0.359, random dose 0.395; gain median 0.031, p 0 -> PASS
+  G2-L2 direct vs via another gene (K562): 20,120 links from 761 TFs, 14,837 direct, 5,283 indirect; CollecTRI share direct 0.010 vs indirect 0.013, MH OR 0.87, p 0.417 (shuffled mediators OR 1.02; planted 100%) -> FAIL
+  Links across the four cell types: everywhere 26,760; shared by some 417,219; one cell type only 223,221 {"K562": 49480, "RPE1": 121841, "HepG2": 32216, "Jurkat": 19684}; flips 48,566 (flip rate across cell types 0.079 vs K562 two experiments 0.005)
+  Facts written 23,162

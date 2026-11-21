@@ -1,0 +1,770 @@
+{
+ "built": "2026-11-20",
+ "brain_commit": "9d501b9ac6fbd0a7bc9a8e6aa21f848df68a45e7",
+ "bank_dir": "rem/atlas/_cache/cellbrain/bank",
+ "facts_written": 128345,
+ "facts_total": 128345,
+ "layers": {
+  "CX_HUMAN": {
+   "path": "rem/atlas/_cache/ag2bank/cellxgene/cellxgene_human.npz",
+   "sha256": "4c79b1afe83fb21abae7d3fdf91b965acfe2a06350b63baeebf89aa02257d2ec",
+   "bytes": 202751246,
+   "group": 2,
+   "licence": "CC BY 4.0",
+   "local_only": false,
+   "rows": "60,810 genes (Ensembl)",
+   "cols": "6,790 tissue x cell type pairs (pairs.json)"
+  },
+  "CX_HUMAN_PAIRS": {
+   "path": "rem/atlas/_cache/ag2bank/cellxgene/cellxgene_human_pairs.json",
+   "sha256": "76d82b8c3e48be8bd64c167ff672f3bf9cd205438a8a71b2bd038118fa0f5eeb",
+   "bytes": 1267458,
+   "group": 2,
+   "licence": "CC BY 4.0",
+   "local_only": false,
+   "rows": "pairs",
+   "cols": "-"
+  },
+  "CX_MOUSE": {
+   "path": "rem/atlas/_cache/ag2bank/cellxgene/cellxgene_mouse.npz",
+   "sha256": "9e80b530145a8c3e47d5fa3d1279faf552dcf28e503d1aae7c3cc53d90d959ba",
+   "bytes": 45218374,
+   "group": 2,
+   "licence": "CC BY 4.0",
+   "local_only": false,
+   "rows": "49,413 genes (Ensembl mouse)",
+   "cols": "2,044 pairs"
+  },
+  "CX_MOUSE_PAIRS": {
+   "path": "rem/atlas/_cache/ag2bank/cellxgene/cellxgene_mouse_pairs.json",
+   "sha256": "0634f488cfb7a5297bdc6a1cbf9257db2327ae9653db11e3590483014d7eb88f",
+   "bytes": 377951,
+   "group": 2,
+   "licence": "CC BY 4.0",
+   "local_only": false,
+   "rows": "pairs",
+   "cols": "-"
+  },
+  "RNA_ENCODE_HUMAN": {
+   "path": "rem/atlas/_cache/ag2bank/bulk/encode_rna_human.npz",
+   "sha256": "c81bb686912f29290fbf53c92786e7b9b218d02f4bc79d0c7ffb2f22b72a13ec",
+   "bytes": 81192330,
+   "group": 2,
+   "licence": "ENCODE data use: free",
+   "local_only": false,
+   "rows": "1,517 experiments",
+   "cols": "58,735 genes (Ensembl)"
+  },
+  "RNA_ENCODE_HUMAN_META": {
+   "path": "rem/atlas/_cache/ag2bank/bulk/encode_rna_human_meta.json",
+   "sha256": "20a541873ea479798138b3782c5da5ec82793ade8aba64a4f517795f4766ba26",
+   "bytes": 165135,
+   "group": 2,
+   "licence": "ENCODE data use: free",
+   "local_only": false,
+   "rows": "experiments",
+   "cols": "-"
+  },
+  "RNA_ENCODE_MOUSE": {
+   "path": "rem/atlas/_cache/ag2bank/bulk/encode_rna_mouse.npz",
+   "sha256": "0efce12b4de0819a536831978b780e24c74663a73442ec103848d1479e26678f",
+   "bytes": 23014819,
+   "group": 2,
+   "licence": "ENCODE data use: free",
+   "local_only": false,
+   "rows": "452 experiments",
+   "cols": "genes (Ensembl mouse)"
+  },
+  "RNA_ENCODE_MOUSE_META": {
+   "path": "rem/atlas/_cache/ag2bank/bulk/encode_rna_mouse_meta.json",
+   "sha256": "51b7b8c5adac4ac8d374e90d07b51731f6ee5eceb3d494042cbae2cdb549ea92",
+   "bytes": 47441,
+   "group": 2,
+   "licence": "ENCODE data use: free",
+   "local_only": false,
+   "rows": "experiments",
+   "cols": "-"
+  },
+  "RNA_GTEX_V8": {
+   "path": "rem/atlas/_cache/ag2bank/bulk/gtex_v8_tissue_median.npz",
+   "sha256": "9ec6f159cc4b4addf39fc545886f3d5ec031fb9b07054a0435450b415c0d3ee9",
+   "bytes": 3334809,
+   "group": 2,
+   "licence": "GTEx open access",
+   "local_only": false,
+   "rows": "54 tissues",
+   "cols": "56,200 genes (Ensembl)"
+  },
+  "CAGE_FANTOM5_HUMAN": {
+   "path": "rem/atlas/_cache/ag2bank/bulk/fantom5_cage_human.npz",
+   "sha256": "738477bc58e36ecc10500b5cd07ea3ab7afe2d6291cc7dd809b2b64c4bd25eef",
+   "bytes": 48787083,
+   "group": 2,
+   "licence": "CC BY 4.0",
+   "local_only": false,
+   "rows": "1,829 samples",
+   "cols": "23,274 genes (symbols)"
+  },
+  "CAGE_FANTOM5_HUMAN_META": {
+   "path": "rem/atlas/_cache/ag2bank/bulk/fantom5_cage_human_meta.json",
+   "sha256": "65f255a90eb832956b4f6b2e0d6dd18e03c3c8f180ef871afc11b7f306027637",
+   "bytes": 126854,
+   "group": 2,
+   "licence": "CC BY 4.0",
+   "local_only": false,
+   "rows": "samples",
+   "cols": "-"
+  },
+  "CAGE_FANTOM5_MOUSE": {
+   "path": "rem/atlas/_cache/ag2bank/bulk/fantom5_cage_mouse.npz",
+   "sha256": "46e7fbd4363290d218ac4a59262a3a41c631a23e3700eb1106a41ab6ee9a1b2b",
+   "bytes": 28818143,
+   "group": 2,
+   "licence": "CC BY 4.0",
+   "local_only": false,
+   "rows": "1,073 samples",
+   "cols": "genes (symbols)"
+  },
+  "METH_PROMOTER": {
+   "path": "rem/atlas/_cache/ag2bank/methylation/loyfer2023_promoter_beta.npz",
+   "sha256": "621d066d8570ef95ec74d7c53b37a2efc4c9df8bd139a8f39d96e4814959f4df",
+   "bytes": 9654023,
+   "group": 2,
+   "licence": "GEO public",
+   "local_only": false,
+   "rows": "253 samples",
+   "cols": "39,323 genes (Ensembl)"
+  },
+  "CCRE_HUMAN": {
+   "path": "rem/atlas/_cache/ag2bank/ccre/human",
+   "sha256": "b7464b0291b36cb6810d7dc0663d3b10b136399e3d837e2a8c394644a048ec0b",
+   "bytes": 378455708,
+   "group": 2,
+   "licence": "ENCODE data use: free",
+   "local_only": false,
+   "rows": "2,348,854 registry elements",
+   "cols": "1,678 annotations (1,325 DNase, 353 mark-only)"
+  },
+  "CCRE_MOUSE": {
+   "path": "rem/atlas/_cache/ag2bank/ccre/mouse",
+   "sha256": "fa716a4a95ffb41eb0a360ac31947e6e7399f50f10bdf8ff78f1704c7a846455",
+   "bytes": 63526160,
+   "group": 2,
+   "licence": "ENCODE data use: free",
+   "local_only": false,
+   "rows": "926,843 elements",
+   "cols": "393 annotations"
+  },
+  "QTL_GTEX_V11": {
+   "path": "rem/atlas/_cache/ag2bank/genetics/gtex_v11",
+   "sha256": "7f3beb6915a4a7ba5bdcb0e5f0ceca304d45760812376920b9b024e33d9006ef",
+   "bytes": 391915520,
+   "group": 2,
+   "licence": "GTEx open access",
+   "local_only": false,
+   "rows": "eQTL, sQTL, apaQTL SuSiE tars",
+   "cols": "50 tissues"
+  },
+  "SCEQTL_IBDVERSE": {
+   "path": "rem/atlas/_cache/ag2bank/genetics/ibdverse",
+   "sha256": "8985ade8f7b77e49bdccae12f708b13e90789c22b8efc96da88174db406b9961",
+   "bytes": 182960808,
+   "group": 2,
+   "licence": "CC BY 4.0",
+   "local_only": false,
+   "rows": "72 cell-type datasets",
+   "cols": "-"
+  },
+  "GWAS_OPENTARGETS": {
+   "path": "rem/atlas/_cache/ag2bank/genetics/opentargets_26.03",
+   "sha256": "76253a93c58d0cb144ce48d0972046984249b35c99f2bae73e12e7f390c9fb01",
+   "bytes": 947065819,
+   "group": 2,
+   "licence": "CC0",
+   "local_only": false,
+   "rows": "credible sets (200 parts) + study table",
+   "cols": "-"
+  },
+  "TRAITGYM": {
+   "path": "rem/atlas/_cache/ag2bank/genetics/traitgym",
+   "sha256": "16fecd403dba4cccf4c6776417f59894c77b7d6fd877b373096406e6def0a888",
+   "bytes": 258239310,
+   "group": 2,
+   "licence": "see source",
+   "local_only": true,
+   "rows": "variants",
+   "cols": "-"
+  },
+  "E2G_BENCHMARKS": {
+   "path": "rem/atlas/_cache/ag2bank/enhancer_gene",
+   "sha256": "19b9d4a969623197912bb58635a574897ce70b3542646f51c1cfae373cd0c2a4",
+   "bytes": 1370654,
+   "group": 2,
+   "licence": "MIT",
+   "local_only": false,
+   "rows": "CRISPRi enhancer-gene pairs",
+   "cols": "-"
+  },
+  "E2G_MAP": {
+   "path": "rem/atlas/_cache/ag2bank/e2g_map",
+   "sha256": "326c55d605daa3e5ec684c1919bab8739f17aced5a5b008b7cdf647c7db931a3",
+   "bytes": 6945406,
+   "group": 2,
+   "licence": "derived",
+   "local_only": false,
+   "rows": "10 cell lines",
+   "cols": "-"
+  },
+  "TSS_GENCODE46": {
+   "path": "rem/atlas/_cache/ag2bank/raw/gencode46_tss.json",
+   "sha256": "e72517fa78bc5bd7b8778ec95e34f50e1d1367ef0bd5918668b1369be48096d9",
+   "bytes": 2636931,
+   "group": 2,
+   "licence": "open",
+   "local_only": false,
+   "rows": "39,323 genes",
+   "cols": "-"
+  },
+  "KO_RECORDS_V8": {
+   "path": "rem/atlas/_cache/cell_v8/records.npz",
+   "sha256": "571738b997ff72018c3c1b1ea50bae452a75af218923dd69013a310a57fc6aae",
+   "bytes": 6014783,
+   "group": 1,
+   "licence": "CC BY 4.0",
+   "local_only": false,
+   "rows": "37,234 records",
+   "cols": "128 components (+ basis 8,248 K562 genes x 128)"
+  },
+  "KO_RECORDS_V8_META": {
+   "path": "rem/atlas/_cache/cell_v8/records_meta.json",
+   "sha256": "21b6b857e4568348dc5c369a70508c30f395bea75e794cc30ab10f2e5889fcab",
+   "bytes": 2494525,
+   "group": 1,
+   "licence": "CC BY 4.0",
+   "local_only": false,
+   "rows": "records",
+   "cols": "-"
+  },
+  "GWPS_K562_H5AD": {
+   "path": "rem/atlas/_cache/perturbseq/K562_gwps_normalized_bulk_01.h5ad",
+   "sha256": "37e48c474d8b5dead4151f96ea8f5fe7bbe6beb10eeea48685b740c3f74490a2",
+   "bytes": 374587922,
+   "group": 1,
+   "licence": "CC BY 4.0",
+   "local_only": false,
+   "rows": "11,258 knockdowns",
+   "cols": "8,248 genes"
+  },
+  "ESS_K562_H5AD": {
+   "path": "rem/atlas/_cache/cellbank4/data/ess.h5ad",
+   "sha256": "c1ca6456c9c9f1aa2b02c496eb64d1dc3e6a852edbd744d682b8d2c95fd36829",
+   "bytes": 79766954,
+   "group": 1,
+   "licence": "CC BY 4.0",
+   "local_only": false,
+   "rows": "2,285 knockdowns",
+   "cols": "8,563 genes"
+  },
+  "DEPMAP_CSV": {
+   "path": "rem/atlas/_cache/cellbank4/data/CRISPRGeneEffect.csv",
+   "sha256": "3d8f3ec6dbf2db7ff834b79b508622ec0b226f3518003fe96ecf5a4fcf167e3b",
+   "bytes": 428678699,
+   "group": 1,
+   "licence": "CC BY 4.0",
+   "local_only": false,
+   "rows": "cell lines",
+   "cols": "genes"
+  },
+  "HPA_PROTEINATLAS": {
+   "path": "rem/atlas/_cache/cellbank4/data/proteinatlas.tsv.zip",
+   "sha256": "10a737f01ee0bf87bed25a7aefa50d979ea450b4ba87275e0231621783eea064",
+   "bytes": 7225618,
+   "group": 1,
+   "licence": "CC BY-SA 3.0",
+   "local_only": false,
+   "rows": "genes",
+   "cols": "annotations"
+  },
+  "HPA_RNA_CELLLINE": {
+   "path": "rem/atlas/_cache/cellbank4/data/rna_celline.tsv.zip",
+   "sha256": "e5b11779308c2720cfe89d9cb19932ad4c0c3fea0fa37e8c61a14d501995852a",
+   "bytes": 205861141,
+   "group": 1,
+   "licence": "CC BY-SA 3.0",
+   "local_only": false,
+   "rows": "gene x cell line",
+   "cols": "-"
+  },
+  "HPA_LOCATION": {
+   "path": "rem/atlas/_cache/cellbank4/data/subcellular_location.tsv.zip",
+   "sha256": "f01de8b4102bc0b8922d40cd036719830d3274392add11ea558229d652af3d08",
+   "bytes": 255142,
+   "group": 1,
+   "licence": "CC BY-SA 3.0",
+   "local_only": false,
+   "rows": "genes",
+   "cols": "-"
+  },
+  "HPA_INTERACTIONS": {
+   "path": "rem/atlas/_cache/cellbank4/data/interaction_consensus.tsv.zip",
+   "sha256": "016c82fc9819a2841a9aaec8a8f350a8c8152db9f766fde69e6846703bbe59fb",
+   "bytes": 263117,
+   "group": 1,
+   "licence": "CC BY-SA 3.0",
+   "local_only": false,
+   "rows": "gene pairs",
+   "cols": "-"
+  },
+  "REACTOME_GMT": {
+   "path": "rem/atlas/_cache/cellbank4/data/ReactomePathways.gmt.zip",
+   "sha256": "6056fcd95dc8f09740c8bb64c2765bea1386ce91b9b19cd10bcd45d30451805c",
+   "bytes": 300128,
+   "group": 1,
+   "licence": "CC BY 4.0",
+   "local_only": false,
+   "rows": "pathways",
+   "cols": "genes (symbols)"
+  },
+  "COMPLEX_PORTAL": {
+   "path": "outputs/orphan/science_data/complex_members.parquet",
+   "sha256": "37c0f1f687937251966df4f98f86579d3bf9b307678b459d226b5b797230d1d0",
+   "bytes": 146227,
+   "group": 1,
+   "licence": "CC0",
+   "local_only": false,
+   "rows": "complex members",
+   "cols": "-"
+  },
+  "OT_DRUGS": {
+   "path": "memory_bank/cell_v6/drugs.json",
+   "sha256": "59eed58fcf459a0e8ef83909fe61c6250fab2cd095de7bb8443f6a78fec7acf9",
+   "bytes": 13469656,
+   "group": 1,
+   "licence": "CC0",
+   "local_only": false,
+   "rows": "13,128 drugs",
+   "cols": "-"
+  },
+  "OT_TARGETS": {
+   "path": "memory_bank/cell_v6/targets.json",
+   "sha256": "76715849c80b7c826b0f8ceea21a07ba1bc61593088b07a81bc73b4abea816a4",
+   "bytes": 5199221,
+   "group": 1,
+   "licence": "CC0",
+   "local_only": false,
+   "rows": "17,095 genes",
+   "cols": "-"
+  },
+  "SCIPLEX_COMPOUNDS": {
+   "path": "memory_bank/cell_v6/sciplex_compounds.json",
+   "sha256": "5ddb042fc881de5a66e405924bfabd2618bd2adc230e6353ce7a5cecf2729acf",
+   "bytes": 78382,
+   "group": 1,
+   "licence": "CC BY 4.0",
+   "local_only": false,
+   "rows": "188 compounds",
+   "cols": "-"
+  },
+  "LINCS_SH_SRC": {
+   "path": "rem/atlas/_cache/cellbank9/src_LINCS-sh.npz",
+   "sha256": "824f35d269960fd1a3167302598b36b2290154afc30d1d088668ab9ca9426ae5",
+   "bytes": 21773247,
+   "group": 1,
+   "licence": "CC BY 4.0",
+   "local_only": false,
+   "rows": "1,668 genes",
+   "cols": "8,248 K562 genes"
+  },
+  "LINCS_XPR_SRC": {
+   "path": "rem/atlas/_cache/cellbank9/src_LINCS-xpr.npz",
+   "sha256": "291c5768799dc391486c3cb0049808e908d3d2b56d3a8ba8fedba8ddb1fb7abd",
+   "bytes": 16378875,
+   "group": 1,
+   "licence": "CC BY 4.0",
+   "local_only": false,
+   "rows": "genes",
+   "cols": "8,248 K562 genes"
+  },
+  "GENEFORMER_SRC": {
+   "path": "rem/atlas/_cache/cellbank9/nb_Geneformer.npz",
+   "sha256": "31c3c61f3e5b792b27f51536df9047cb420d51da49721d68d1e0240dab4b3059",
+   "bytes": 7052230,
+   "group": 1,
+   "licence": "Apache-2.0",
+   "local_only": false,
+   "rows": "4,967 genes",
+   "cols": "768"
+  },
+  "ARCHS4_SRC": {
+   "path": "rem/atlas/_cache/cellbank9/nb_ARCHS4.npz",
+   "sha256": "2a3cbea6c25136b9fb94e9a06993612efbf25b0b6e3a6b8e2450a2852ba64879",
+   "bytes": 57392458,
+   "group": 1,
+   "licence": "see source",
+   "local_only": true,
+   "rows": "4,985 genes",
+   "cols": "6,244 samples"
+  },
+  "TAHOE_SRC": {
+   "path": "rem/atlas/_cache/cellbank9/nb_Tahoe.npz",
+   "sha256": "e1c2f8901e6e8f4d2a7f689fd04d4d00a7aa5f00dea5ef1c77050b5f92623152",
+   "bytes": 19291332,
+   "group": 1,
+   "licence": "see source",
+   "local_only": true,
+   "rows": "159 genes",
+   "cols": "65,218 conditions"
+  },
+  "HGNC": {
+   "path": "rem/atlas/hgnc_complete_set.txt",
+   "sha256": "6f43d6ff43aa9fdfa5fb2f20a20a7cace66e6e02e2a0dcf19d9b726e2e248d20",
+   "bytes": 16903161,
+   "group": 1,
+   "licence": "CC0",
+   "local_only": false,
+   "rows": "genes",
+   "cols": "-"
+  },
+  "KO_K562_GW": {
+   "path": "rem/atlas/_cache/cellbrain/layers/ko_k562_gw.npz",
+   "sha256": "4e28f639c2d9a3f4ca58c60b51a1cf92183348e7c0e45f971299ca7aa7ab6d2e",
+   "bytes": 1088746,
+   "group": 1,
+   "licence": "CC BY 4.0",
+   "local_only": false,
+   "rows": "5052 records (Ensembl rows; drug|dose for sci-Plex)",
+   "cols": "128 components"
+  },
+  "KO_K562_ESS": {
+   "path": "rem/atlas/_cache/cellbrain/layers/ko_k562_ess.npz",
+   "sha256": "8bfdc42dff92069df9c9e5832dd2e26ecdaa0f21e4a065b9493ac05db93000fc",
+   "bytes": 322873,
+   "group": 1,
+   "licence": "CC BY 4.0",
+   "local_only": false,
+   "rows": "1550 records (Ensembl rows; drug|dose for sci-Plex)",
+   "cols": "128 components"
+  },
+  "KO_RPE1": {
+   "path": "rem/atlas/_cache/cellbrain/layers/ko_rpe1.npz",
+   "sha256": "248441fa4820d88dde7756c6ce5e0e5f58eb7b89edb24611b867af4197dc8884",
+   "bytes": 427819,
+   "group": 1,
+   "licence": "CC BY 4.0",
+   "local_only": false,
+   "rows": "1953 records (Ensembl rows; drug|dose for sci-Plex)",
+   "cols": "128 components"
+  },
+  "KO_HEPG2": {
+   "path": "rem/atlas/_cache/cellbrain/layers/ko_hepg2.npz",
+   "sha256": "d16b0c2e115b6558514defed84006241f044ef4ac97001d69fad9fed9244cd5c",
+   "bytes": 373641,
+   "group": 1,
+   "licence": "CC BY 4.0",
+   "local_only": false,
+   "rows": "1631 records (Ensembl rows; drug|dose for sci-Plex)",
+   "cols": "128 components"
+  },
+  "KO_JURKAT": {
+   "path": "rem/atlas/_cache/cellbrain/layers/ko_jurkat.npz",
+   "sha256": "ddd56e8ab4a3647b591be675124ed9ad1a86c6cd90b33a51ae323a2f8f2c21b9",
+   "bytes": 350178,
+   "group": 1,
+   "licence": "CC BY 4.0",
+   "local_only": false,
+   "rows": "1563 records (Ensembl rows; drug|dose for sci-Plex)",
+   "cols": "128 components"
+  },
+  "DRUG_K562_SCIPLEX": {
+   "path": "rem/atlas/_cache/cellbrain/layers/drug_k562_sciplex.npz",
+   "sha256": "aea187063e7ae37a007a5f88ff9a2ed4017e4b4a52e6ccac00c7c93b346297f3",
+   "bytes": 181708,
+   "group": 1,
+   "licence": "CC BY 4.0",
+   "local_only": false,
+   "rows": "752 records (Ensembl rows; drug|dose for sci-Plex)",
+   "cols": "128 components"
+  },
+  "KO_RPE1_X": {
+   "path": "rem/atlas/_cache/cellbrain/layers/ko_rpe1_x.npz",
+   "sha256": "77d506bb2e1a694b9884e595f9c0266388b25402ec36862fbe13ffa0525e96a7",
+   "bytes": 416900,
+   "group": 1,
+   "licence": "CC BY-NC-SA 4.0",
+   "local_only": true,
+   "rows": "1884 records (Ensembl rows; drug|dose for sci-Plex)",
+   "cols": "128 components"
+  },
+  "KO_HEPG2_X": {
+   "path": "rem/atlas/_cache/cellbrain/layers/ko_hepg2_x.npz",
+   "sha256": "e2ac466503997ebf9190b3854bf31eadcd2cc820d658a0af462e5a2780887f23",
+   "bytes": 418097,
+   "group": 1,
+   "licence": "CC BY-NC-SA 4.0",
+   "local_only": true,
+   "rows": "1859 records (Ensembl rows; drug|dose for sci-Plex)",
+   "cols": "128 components"
+  },
+  "KO_JURKAT_X": {
+   "path": "rem/atlas/_cache/cellbrain/layers/ko_jurkat_x.npz",
+   "sha256": "7e35949dae2aa83013eefc6c88cc47267014dc819580174859386b9ff19cb076",
+   "bytes": 435529,
+   "group": 1,
+   "licence": "CC BY-NC-SA 4.0",
+   "local_only": true,
+   "rows": "1956 records (Ensembl rows; drug|dose for sci-Plex)",
+   "cols": "128 components"
+  },
+  "KO_HCT116": {
+   "path": "rem/atlas/_cache/cellbrain/layers/ko_hct116.npz",
+   "sha256": "024860581102a4fbb1e0315c66e0604e042da109dc39b0291f9b5ee96035a52f",
+   "bytes": 1105128,
+   "group": 1,
+   "licence": "CC BY-NC-SA 4.0",
+   "local_only": true,
+   "rows": "4693 records (Ensembl rows; drug|dose for sci-Plex)",
+   "cols": "128 components"
+  },
+  "KO_HEK293T": {
+   "path": "rem/atlas/_cache/cellbrain/layers/ko_hek293t.npz",
+   "sha256": "3b7eb2d3cf2db01a7bebdff3d58202f05cc6dd6f59c86894c849c25e7be83061",
+   "bytes": 1123813,
+   "group": 1,
+   "licence": "CC BY-NC-SA 4.0",
+   "local_only": true,
+   "rows": "4740 records (Ensembl rows; drug|dose for sci-Plex)",
+   "cols": "128 components"
+  },
+  "KO_IPSC_N": {
+   "path": "rem/atlas/_cache/cellbrain/layers/ko_ipsc_n.npz",
+   "sha256": "6cc70d8407f5f48d30814c6b88f45eccc47956741be937941c70083933faa3ab",
+   "bytes": 1036049,
+   "group": 1,
+   "licence": "CC BY-NC-SA 4.0",
+   "local_only": true,
+   "rows": "4281 records (Ensembl rows; drug|dose for sci-Plex)",
+   "cols": "128 components"
+  },
+  "KO_IPSC_FSF": {
+   "path": "rem/atlas/_cache/cellbrain/layers/ko_ipsc_fsf.npz",
+   "sha256": "8a71b44d936896c7a728e05ca5d24744c4f94934eafc7df56915a506d702e95b",
+   "bytes": 335019,
+   "group": 1,
+   "licence": "CC BY-NC-SA 4.0",
+   "local_only": true,
+   "rows": "1392 records (Ensembl rows; drug|dose for sci-Plex)",
+   "cols": "128 components"
+  },
+  "KO_IPSC_FSNF": {
+   "path": "rem/atlas/_cache/cellbrain/layers/ko_ipsc_fsnf.npz",
+   "sha256": "a87c3c5b1a4127e06ae59bcb0cd85560beea4feea1131c8b20507246a360662b",
+   "bytes": 284627,
+   "group": 1,
+   "licence": "CC BY-NC-SA 4.0",
+   "local_only": true,
+   "rows": "1173 records (Ensembl rows; drug|dose for sci-Plex)",
+   "cols": "128 components"
+  },
+  "KO_IPSC_FTS": {
+   "path": "rem/atlas/_cache/cellbrain/layers/ko_ipsc_fts.npz",
+   "sha256": "097f6cf0cff08206f5a9edef2ab728acd79921c885cf6f197308885afe68c777",
+   "bytes": 86956,
+   "group": 1,
+   "licence": "CC BY-NC-SA 4.0",
+   "local_only": true,
+   "rows": "358 records (Ensembl rows; drug|dose for sci-Plex)",
+   "cols": "128 components"
+  },
+  "KO_HESC_P": {
+   "path": "rem/atlas/_cache/cellbrain/layers/ko_hesc_p.npz",
+   "sha256": "1802fb123e5a5bb70bffe82e51d82984dc7ad294771e0f0fd4e4fc7f430497b8",
+   "bytes": 524605,
+   "group": 1,
+   "licence": "CC BY-NC-SA 4.0",
+   "local_only": true,
+   "rows": "2214 records (Ensembl rows; drug|dose for sci-Plex)",
+   "cols": "128 components"
+  },
+  "KO_HESC_V": {
+   "path": "rem/atlas/_cache/cellbrain/layers/ko_hesc_v.npz",
+   "sha256": "82cc82d0896ba3bd7c25eb807f04f492b31ea7c9b62dd1e9511c39d07df9fab3",
+   "bytes": 44761,
+   "group": 1,
+   "licence": "CC BY-NC-SA 4.0",
+   "local_only": true,
+   "rows": "183 records (Ensembl rows; drug|dose for sci-Plex)",
+   "cols": "128 components"
+  },
+  "KO_BASIS": {
+   "path": "rem/atlas/_cache/cellbrain/layers/ko_basis.npz",
+   "sha256": "3bf345a19e49012999ef8362d1217e590fd8c5bf6aad84bdf079e378a9aa0f85",
+   "bytes": 2001748,
+   "group": 1,
+   "licence": "CC BY 4.0",
+   "local_only": false,
+   "rows": "5052 records (Ensembl rows; drug|dose for sci-Plex)",
+   "cols": "128"
+  },
+  "KO_K562_GENESPACE": {
+   "path": "rem/atlas/_cache/cellbrain/layers/ko_k562_genespace.npz",
+   "sha256": "db94f0566fc8101de12bd9ac9b577c5dfdecaa9102a0825c4ca7d08376a09469",
+   "bytes": 171916509,
+   "group": 1,
+   "licence": "CC BY 4.0",
+   "local_only": false,
+   "rows": "knockdowns (Ensembl)",
+   "cols": "measured genes (Ensembl)"
+  },
+  "KO_K562ESS_GENESPACE": {
+   "path": "rem/atlas/_cache/cellbrain/layers/ko_k562ess_genespace.npz",
+   "sha256": "45bdc757bcc980a528bde4bfe1f028669a8343593d15d52bafc062da3f054912",
+   "bytes": 36284960,
+   "group": 1,
+   "licence": "CC BY 4.0",
+   "local_only": false,
+   "rows": "knockdowns (Ensembl)",
+   "cols": "measured genes (Ensembl)"
+  },
+  "LINCS_SH": {
+   "path": "rem/atlas/_cache/cellbrain/layers/lincs_sh.npz",
+   "sha256": "cab462bacf26fdf332b960313601cf7ac27fa14f0780a25c234fc7ac1a647bfb",
+   "bytes": 21806073,
+   "group": 1,
+   "licence": "CC BY 4.0",
+   "local_only": false,
+   "rows": "1668 genes (Ensembl)",
+   "cols": "features"
+  },
+  "LINCS_XPR": {
+   "path": "rem/atlas/_cache/cellbrain/layers/lincs_xpr.npz",
+   "sha256": "3abb914b683d4b64c504abf036638e8e707c106ec6fd80d175847d1eab5ae4a0",
+   "bytes": 16409723,
+   "group": 1,
+   "licence": "CC BY 4.0",
+   "local_only": false,
+   "rows": "1254 genes (Ensembl)",
+   "cols": "features"
+  },
+  "EMB_GENEFORMER": {
+   "path": "rem/atlas/_cache/cellbrain/layers/emb_geneformer.npz",
+   "sha256": "89bb4898f6286ca39377d793c3a529e075e38ec9484e802959ed5238b3d0777a",
+   "bytes": 7076299,
+   "group": 1,
+   "licence": "Apache-2.0",
+   "local_only": false,
+   "rows": "4967 genes (Ensembl)",
+   "cols": "features"
+  },
+  "EXPR_ARCHS4": {
+   "path": "rem/atlas/_cache/cellbrain/layers/expr_archs4.npz",
+   "sha256": "e7fb7a8c1fce51e7b5b60dc65a38761b4b92a77dc6fdde5dba28571cdb1c96f2",
+   "bytes": 57410805,
+   "group": 1,
+   "licence": "see source",
+   "local_only": true,
+   "rows": "4985 genes (Ensembl)",
+   "cols": "features"
+  },
+  "PERT_TAHOE": {
+   "path": "rem/atlas/_cache/cellbrain/layers/pert_tahoe.npz",
+   "sha256": "989c5547a45039d64f0e5634946e066448dfc493f8b2188f6cb278a3c2e22a95",
+   "bytes": 19292120,
+   "group": 1,
+   "licence": "see source",
+   "local_only": true,
+   "rows": "159 genes (Ensembl)",
+   "cols": "features"
+  },
+  "DEP_DEPMAP": {
+   "path": "rem/atlas/_cache/cellbrain/layers/dep_depmap.npz",
+   "sha256": "e5608d0c52def8fc5b5d6f7d5ca6544ec58ece8495a36abc14e8ac211f88c9be",
+   "bytes": 38723076,
+   "group": 1,
+   "licence": "CC BY 4.0",
+   "local_only": false,
+   "rows": "genes (Ensembl, via Entrez)",
+   "cols": "cell lines (ModelID)"
+  },
+  "EXPR_HPA_CELLLINES": {
+   "path": "rem/atlas/_cache/cellbrain/layers/expr_hpa_celllines.npz",
+   "sha256": "7efd902dd1b84260a695a232bc1700475545bdade603e188e23ef3b7fc74757f",
+   "bytes": 26795128,
+   "group": 1,
+   "licence": "CC BY-SA 3.0",
+   "local_only": false,
+   "rows": "genes (Ensembl)",
+   "cols": "cell lines"
+  },
+  "PPI_HPA": {
+   "path": "rem/atlas/_cache/cellbrain/layers/ppi_hpa.npz",
+   "sha256": "4fcb6fee2d3f207bacc4333f0cebbb7797444a82450d1d509e6e52aa70bbaa44",
+   "bytes": 328405,
+   "group": 1,
+   "licence": "CC BY-SA 3.0",
+   "local_only": false,
+   "rows": "interaction edges (Ensembl a, b)",
+   "cols": "-"
+  },
+  "SETS_COMPLEX": {
+   "path": "rem/atlas/_cache/cellbrain/layers/sets_complex.json",
+   "sha256": "a7131d3e3cc20fc5da6a2fce05facb61bb47ebbb5747ac4cde2c96e09a6a6ae0",
+   "bytes": 270188,
+   "group": 1,
+   "licence": "CC0",
+   "local_only": false,
+   "rows": "2143 sets",
+   "cols": "members (Ensembl)"
+  },
+  "SETS_PATHWAY": {
+   "path": "rem/atlas/_cache/cellbrain/layers/sets_pathway.json",
+   "sha256": "6206f8bff218a03595678d132095027529b372998d768b9eceaf41fa37b2eed1",
+   "bytes": 2111714,
+   "group": 1,
+   "licence": "CC BY 4.0",
+   "local_only": false,
+   "rows": "2180 sets",
+   "cols": "members (Ensembl)"
+  },
+  "SETS_LOCATION": {
+   "path": "rem/atlas/_cache/cellbrain/layers/sets_location.json",
+   "sha256": "5cd7407c0fce13673f0a437a229c059a30351e5ef328552facfaf3cfb45e302d",
+   "bytes": 537562,
+   "group": 1,
+   "licence": "CC BY-SA 3.0",
+   "local_only": false,
+   "rows": "49 sets",
+   "cols": "members (Ensembl)"
+  },
+  "SETS_DRUGTARGET": {
+   "path": "rem/atlas/_cache/cellbrain/layers/sets_drugtarget.json",
+   "sha256": "16b5cf447bf87350775ff98cde5980a0cb194f6005ac97f73629db8ab77e2b43",
+   "bytes": 562738,
+   "group": 1,
+   "licence": "CC0",
+   "local_only": false,
+   "rows": "5052 sets",
+   "cols": "members (Ensembl)"
+  },
+  "PROMOTER_OPEN_HUMAN": {
+   "path": "rem/atlas/_cache/cellbrain/layers/promoter_open_human.npz",
+   "sha256": "0bd49821c49e9d2d1ab7092d680ed077715b54212a8ec6a32659da25329cc6b7",
+   "bytes": 2563093,
+   "group": 2,
+   "licence": "ENCODE data use: free",
+   "local_only": false,
+   "rows": "39,323 GENCODE 46 genes (Ensembl)",
+   "cols": "1,325 DNase-based cCRE annotations"
+  }
+ },
+ "entities": {
+  "GENE": 109359,
+  "SCREEN": 17,
+  "BIO": 496,
+  "CT": 883,
+  "TISSUE": 64,
+  "COMPLEX": 2143,
+  "PATHWAY": 2180,
+  "DRUG": 13128
+ },
+ "seconds": 52
+}

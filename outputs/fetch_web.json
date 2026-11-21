@@ -1,0 +1,119 @@
+{
+ "test": "fetch_web",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "colab/data/ml/sequences.json",
+    "bytes": 3310515,
+    "hash": "47bffec241c1becf",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 7856,
+   "used": 2662,
+   "selection": "all",
+   "fraction": 0.3388492871690428
+  },
+  "seed": 0,
+  "controls": [
+   "the sequence-match bar was declared at 20% BEFORE downloading",
+   "SABIO-RK probed rather than assumed absent",
+   "the ubiquitin annotation checked for variation before use"
+  ],
+  "note": "fetches what improver_loop.py's R5 named; records what cannot be got",
+  "warnings": []
+ },
+ "gates": {
+  "G1": true,
+  "G2": true,
+  "G3": true,
+  "G4": true,
+  "G5": true
+ },
+ "g1": {
+  "rows": 257249,
+  "distinct_sequences": 219408,
+  "bytes": 90568754
+ },
+ "g2": {
+  "n_sequences": 7856,
+  "matched": 2662,
+  "fraction": 0.3388492871690428,
+  "with_active_site": 1577,
+  "bar": 0.2
+ },
+ "g3": {
+  "probes": [
+   {
+    "url": "https://sabiork.h-its.org/sabioRestWebServices/kineticlawsExportTsv",
+    "result": "200 https://sabiork.h-its.org/ui/404"
+   },
+   {
+    "url": "https://sabiork.h-its.org/sabioRestWebServices/searchKineticLaws/entryIDs?q=ECNumber:1.1.1.1",
+    "result": "200 https://sabiork.h-its.org/ui/404"
+   }
+  ],
+  "api_retired": true
+ },
+ "g4": {
+  "rows": 20431,
+  "with_ubiquitin_annotation": 3228,
+  "genes": 20190
+ },
+ "g5": {
+  "annotated_fraction": 0.15973254086181277,
+  "achievable": 0.26843611250328414
+ },
+ "seconds": 1455.945820093155,
+ "log": [
+  "====================================================================================================",
+  "  FETCH -- the four files improver_loop.py stalled on",
+  "====================================================================================================",
+  "",
+  "G1 DO THE ANNOTATIONS DOWNLOAD AT ALL?",
+  "     streaming reviewed entries with an active site or a binding site ...",
+  "     curl ok=True http=200 size=90.6 MB",
+  "     rows parsed: 257,249   distinct sequences: 219,408",
+  "     G1 PASS",
+  "",
+  "G2 DO THEY MATCH THE SEQUENCES WE ACTUALLY HAVE?",
+  "     the bar was set at 20% in the docstring, before the download",
+  "     our sequences: 7,856   exact matches in UniProt: 2,662 (33.9%)",
+  "     of those, carrying an ACTIVE SITE annotation: 1,577",
+  "     G2 PASS -- P1 and M2 are now executable",
+  "",
+  "G3 IS THE CONDITIONS SOURCE REALLY GONE?",
+  "     https://sabiork.h-its.org/sabioRestWebServices/kineticlawsExportTs\n        -> 200 https://sabiork.h-its.org/ui/404",
+  "     https://sabiork.h-its.org/sabioRestWebServices/searchKineticLaws/e\n        -> 200 https://sabiork.h-its.org/ui/404",
+  "     SABIO-RK REST appears RETIRED -- redirects to a UI 404",
+  "     G3 PASS -- P3 is blocked by a retired API, which is a measured absence and not an",
+  "     unexamined one. The 0.5137 missing-conditions floor stands unrelieved.",
+  "",
+  "G4 DOES THE CELL TRACK GET A DATASET THAT IS NOT A MOTIF SEARCH?",
+  "     curl ok=True http=200",
+  "     human reviewed entries: 20,431",
+  "     carrying an annotated ubiquitin cross-link or the Ubl-conjugation keyword: 3,228",
+  "     genes indexed: 20,190",
+  "     these are CURATOR annotations of observed modifications, not motif predictions --",
+  "     which is the distinction loop 121's failure turns on",
+  "     G4 PASS",
+  "",
+  "G5 IS THE NEW DATA CAPABLE OF SEPARATING THE 362 FROM THE 38?",
+  "     annotated fraction across all human genes: 0.160",
+  "     gate_guard achievable-change bound for that binary vector: 0.2684",
+  "     G5 PASS -- the annotation VARIES and can therefore separate groups",
+  "     wrote colab/data/protein_dynamics_source.tsv.gz -- 20,190 genes",
+  "",
+  "====================================================================================================",
+  "  G1  PASS",
+  "  G2  PASS",
+  "  G3  PASS",
+  "  G4  PASS",
+  "  G5  PASS",
+  "  5/5",
+  "====================================================================================================",
+  "    manifest: 1 inputs, coverage 2662/7856 (33.9%) by 'all', seed 0, controls 3"
+ ]
+}

@@ -1,0 +1,141 @@
+=================================================================================================
+WHY GREEDY FAILED H6, AND WHETHER ANYTHING CHEAP FIXES IT
+=================================================================================================
+  Y_true = 1.723690e-02;  |S| ranking: ['k_kill', 'a_on', 'd_death', 'kd_kill', 'b_on', 'mu', 'b_off', 'a_off']
+    ... eps=1.0: 200/600, 58s
+    ... eps=1.0: 400/600, 114s
+    ... eps=2.0: 200/600, 57s
+    ... eps=2.0: 400/600, 115s
+
+=================================================================================================
+W1  IT REPRODUCES
+=================================================================================================
+  hybrid.py recorded, tolerance x2: greedy 0.9600 at eps=1 m=6, 0.8600 at eps=2 m=6.
+  recomputed at eps=1.0, m=6: 0.9600
+  recomputed at eps=2.0, m=6: 0.8600
+  PASS -- the failure is real and reproducible
+
+=================================================================================================
+W5  IS THE OPTIMUM REACHABLE BY ANY RANKING AT ALL?
+=================================================================================================
+  A ranking gives a NESTED chain of subsets. If the exhaustive best subsets are not
+  themselves nested, no ranking rule can match them at every size, and W4's bar is
+  unreachable in principle. Checked before W4 is read.
+  eps=1.0 x2: best-subset chain nested? yes
+  eps=1.0 x10: best-subset chain nested? yes
+  eps=2.0 x2: best-subset chain nested? NO, breaks at m = [1]
+  eps=2.0 x10: best-subset chain nested? NO, breaks at m = [1]
+  At least one chain is NOT nested: no ranking rule can be optimal at every size.
+
+=================================================================================================
+W2  WHAT THE BEST SUBSET KNOWS THAT GREEDY DOES NOT
+=================================================================================================
+  eps=1.0 x2 m=6: shortfall 0.0400 (5.0 se)
+      best measures instead: ['b_off']   greedy wasted its budget on: ['mu']
+  eps=2.0 x2 m=6: shortfall 0.1400 (9.9 se)
+      best measures instead: ['b_off']   greedy wasted its budget on: ['mu']
+  rates greedy under-rates: ['b_off']
+      b_off: |S| = 0.0484, rank 7 of 8, base value 0.03
+
+=================================================================================================
+W3  IS THE LOCAL DERIVATIVE THE CULPRIT?
+=================================================================================================
+  Realised damage: perturb ONE rate by the actual draws and take sd of log10(Y_hat/Y_true).
+
+  eps = 1.0 kcal/mol
+       rate   |S| local  |S| rank   realised sd  damage rank
+     k_kill      1.9685         1        0.9914            1
+       a_on      1.6757         2        0.8039            2
+    d_death      0.9434         3        0.6833            3
+    kd_kill      0.9126         4        0.6688            4
+       b_on      0.1435         5        0.2102            5
+      b_off      0.0484         7        0.1062            6
+         mu      0.1324         6        0.0607            7
+      a_off      0.0078         8        0.0084            8
+  |S| order      : ['k_kill', 'a_on', 'd_death', 'kd_kill', 'b_on', 'mu', 'b_off', 'a_off']
+  damage order   : ['k_kill', 'a_on', 'd_death', 'kd_kill', 'b_on', 'b_off', 'mu', 'a_off']
+  rates whose rank MOVED: ['mu', 'b_off']
+  every rate W2 blamed also moved rank: True   -> local-derivative explanation CONFIRMED
+
+  eps = 2.0 kcal/mol
+       rate   |S| local  |S| rank   realised sd  damage rank
+     k_kill      1.9685         1        1.3078            1
+       a_on      1.6757         2        1.0507            2
+    d_death      0.9434         3        0.9145            3
+    kd_kill      0.9126         4        0.9013            4
+       b_on      0.1435         5        0.4870            5
+      b_off      0.0484         7        0.2834            6
+         mu      0.1324         6        0.0766            7
+      a_off      0.0078         8        0.0133            8
+  |S| order      : ['k_kill', 'a_on', 'd_death', 'kd_kill', 'b_on', 'mu', 'b_off', 'a_off']
+  damage order   : ['k_kill', 'a_on', 'd_death', 'kd_kill', 'b_on', 'b_off', 'mu', 'a_off']
+  rates whose rank MOVED: ['mu', 'b_off']
+  every rate W2 blamed also moved rank: True   -> local-derivative explanation CONFIRMED
+
+=================================================================================================
+W4  DOES THE FIX CLOSE THE GAP?
+=================================================================================================
+
+  eps = 1.0 kcal/mol, tolerance x2
+    m  greedy |S|  greedy damage     best  shortfall |S|  shortfall damage
+    0      0.1000         0.1000   0.1000         0.0000            0.0000
+    1      0.1050         0.1050   0.1250         0.0200            0.0200
+    2      0.2167         0.2167   0.2167         0.0000            0.0000
+    3      0.3700         0.3700   0.3700         0.0000            0.0000
+    4      0.7900         0.7900   0.7900         0.0000            0.0000
+    5      0.9133         0.9133   0.9133         0.0000            0.0000
+    6      0.9600         1.0000   1.0000         0.0400            0.0000
+    7      1.0000         1.0000   1.0000         0.0000            0.0000
+    8      1.0000         1.0000   1.0000         0.0000            0.0000
+  m* by |S| = 5, m* by realised damage = 5
+
+  eps = 1.0 kcal/mol, tolerance x10
+    m  greedy |S|  greedy damage     best  shortfall |S|  shortfall damage
+    0      0.3567         0.3567   0.3567         0.0000            0.0000
+    1      0.4817         0.4817   0.4817         0.0000            0.0000
+    2      0.6600         0.6600   0.6600         0.0000            0.0000
+    3      0.8183         0.8183   0.8250         0.0067            0.0067
+    4      0.9783         0.9783   0.9783         0.0000            0.0000
+    5      0.9950         0.9950   0.9950         0.0000            0.0000
+    6      1.0000         1.0000   1.0000         0.0000            0.0000
+    7      1.0000         1.0000   1.0000         0.0000            0.0000
+    8      1.0000         1.0000   1.0000         0.0000            0.0000
+  m* by |S| = 4, m* by realised damage = 4
+
+  eps = 2.0 kcal/mol, tolerance x2
+    m  greedy |S|  greedy damage     best  shortfall |S|  shortfall damage
+    0      0.0417         0.0417   0.0417         0.0000            0.0000
+    1      0.0467         0.0467   0.0550         0.0083            0.0083
+    2      0.0967         0.0967   0.0967         0.0000            0.0000
+    3      0.1933         0.1933   0.1933         0.0000            0.0000
+    4      0.5633         0.5633   0.5633         0.0000            0.0000
+    5      0.7733         0.7733   0.7733         0.0000            0.0000
+    6      0.8600         1.0000   1.0000         0.1400            0.0000
+    7      1.0000         1.0000   1.0000         0.0000            0.0000
+    8      1.0000         1.0000   1.0000         0.0000            0.0000
+  m* by |S| = 7, m* by realised damage = 6
+
+  eps = 2.0 kcal/mol, tolerance x10
+    m  greedy |S|  greedy damage     best  shortfall |S|  shortfall damage
+    0      0.1800         0.1800   0.1800         0.0000            0.0000
+    1      0.1883         0.1883   0.2150         0.0267            0.0267
+    2      0.3467         0.3467   0.3467         0.0000            0.0000
+    3      0.5783         0.5783   0.5783         0.0000            0.0000
+    4      0.8350         0.8350   0.8350         0.0000            0.0000
+    5      0.9550         0.9550   0.9550         0.0000            0.0000
+    6      1.0000         1.0000   1.0000         0.0000            0.0000
+    7      1.0000         1.0000   1.0000         0.0000            0.0000
+    8      1.0000         1.0000   1.0000         0.0000            0.0000
+  m* by |S| = 5, m* by realised damage = 5
+
+  worst shortfall under |S| ranking            : 0.1400   BEYOND the 0.03 band
+  worst shortfall under realised-damage ranking: 0.0267   within the 0.03 band
+  FIX CONFIRMED
+
+=================================================================================================
+W6  THE COST OF THE FIX
+=================================================================================================
+  realised-damage ranking : 8 rates x 400 draws = 3200 evaluations
+  exhaustive enumeration  : 256 subsets x 600 draws = 153600 evaluations
+  ratio 48x, and the cheap one is linear in the number of rates while the
+  dear one is exponential -- 2^n against n. At 20 rates the enumeration is 1e6 subsets.

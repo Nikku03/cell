@@ -1,0 +1,9 @@
+{
+  "id": "gschwind_2026_encode_re2g",
+  "type": "peer_reviewed_paper",
+  "citation": "Gschwind, A. R. et al. An encyclopedia of human enhancer-gene regulatory interactions. Nature 657, 179-190 (2026).",
+  "organism": "human",
+  "authority": "primary",
+  "licence": "not checked (verify before redistributing or commercial use)",
+  "notes": "ENCODE-rE2G CRISPRi enhancer-gene benchmarks: held-out set (K562, WTC11, Jurkat, GM12878, HCT116; 4,378 pairs, 190 positives) and K562 set (10,353 pairs, 471 positives). Directly relevant to this project's K562 work."
+}

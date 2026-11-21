@@ -1,0 +1,65 @@
+========================================================================================================
+LOOP 263 -- DO FUNCTIONALLY RELATED GENES DEVIATE TOGETHER WITHIN A CELL LINE?
+========================================================================================================
+     Across CELL LINES sharing has failed three times (258 J5, 261 M4, 262 N4).
+     Across GENES within a line it WORKS: loop 262's +0.0673 is exactly that -- one
+     operator learned from half a line's genes, applied to genes it never saw.
+     But that operator treats all 3,801 genes as exchangeable. This asks whether
+     knowing WHICH genes are functionally related adds anything on top.
+     CONFOUND DECLARED FIRST: related genes have similar mean profiles, and any
+     operator maps similar inputs to similar outputs. P3, not P2, is the real test.
+     33,197 pairs, 3,801 genes, 978 landmarks, 9 lines
+     co-dependency matrix over 3,566 genes shared with LINCS
+     codep     3,566 genes with neighbours, median degree 25
+     paralog   2,315 genes with neighbours, median degree 4
+     biogrid   3,670 genes with neighbours, median degree 25
+     residuals built for 9 lines   [21s]
+     sampling gene pairs for the co-deviation test ...
+     39,996 related pairs, 39,982 random pairs
+P1 DOES THE OPERATOR ALONE STILL WORK ON A THIRD OF THE GENES?
+     baseline 0.4521   operator alone 0.5095   +0.0574
+     loop 262 got +0.0673 fitting on HALF the genes; this fits on a third
+     P1 PASS -- the operator alone is worth +0.0574 on genes it never saw, so the across-gene axis still carries the signal
+P2 DO RELATED GENES CO-DEVIATE MORE THAN RANDOM PAIRS?
+     related pairs  +0.0065   random pairs -0.0005   +0.0071
+     their MEAN PROFILES: related +0.0110, random -0.0001
+     P2 FAIL -- related genes co-deviate +0.0071 more than random
+P3 DOES THAT SURVIVE MATCHING ON PROFILE SIMILARITY?
+     matched inside 10 bins of corr(x_A, x_B): +0.0051
+     raw was +0.0071, so profile similarity accounts for 28% of it
+     P3 VOID -- P2 did not pass, so there is nothing here to test
+P4 LOAD-BEARING -- DOES THE NEIGHBOUR PREDICTOR ADD OVER THE OPERATOR?
+     operator alone 0.5095   operator + co-dependency neighbours 0.5150   +0.0055
+     scored on genes used neither to fit the operator nor to fit the blend weights
+     P4 PASS -- knowing which genes are related is worth +0.0055 beyond a uniform operator
+P5 CONTROL: A SHUFFLED RELATEDNESS GRAPH
+     random neighbours of the same count: +0.0054 against a real +0.0055 (99%)
+     P5 FAIL -- 99% survives a shuffled graph, so the gain is from averaging other genes at all, not from WHICH genes
+P6 WHICH SOURCE OF RELATEDNESS, IF ANY?
+     paralog   operator 0.5091 -> combined 0.5145   +0.0054
+     biogrid   operator 0.5093 -> combined 0.5148   +0.0055
+     codep     +0.0055
+     P6 PASS -- codep clears the bar at +0.0055
+P7 WHAT THIS CANNOT SHOW
+     The neighbour term is a MEAN over related genes. A gene whose partners deviate in
+     opposing directions averages to nothing, so a real but sign-structured relation
+     would read as a null here.
+     Relatedness is taken from DepMap, Ensembl paralogy and BioGRID, all of which are
+     cell-line agnostic. If the relation that matters is itself line-specific, none of
+     these three can express it -- and loop 262 found the operator IS line-specific.
+     Co-dependency is computed from the same DepMap gene_effect matrix that supplied
+     the annotation which failed in loops 258, 261 and 262. It is a different USE of
+     that data -- gene-to-gene rather than line-to-line -- but not independent of it.
+     P1 fits the operator on a THIRD of each line's genes rather than a half, so its
+     number is not directly comparable to loop 262's +0.0673.
+     978 landmarks and shRNA, under loop 254's construct ceiling of 0.2487.
+========================================================================================================
+  P1  PASS
+  P2  FAIL
+  P3  VOID
+  P4  PASS
+  P5  FAIL
+  P6  PASS
+  3/5   [39s]   (1 VOID: P3)
+========================================================================================================
+     written outputs/loop_gene_neighbours.json

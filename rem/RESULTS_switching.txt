@@ -1,0 +1,48 @@
+  T1 generator: max |row sum| 3.55e-15, min off-diagonal 0.001, 625 states   PASS
+
+  T2 MFPT solver vs the exact birth-death recursion
+         M    N  lambda    closed form   linear solve    rel err      kappa      k*eps
+        40   20     5.0  258986.134999  258986.135016   6.25e-11   1.19e+07   2.65e-09
+        60   30     8.0 29566995.151680 29566995.098732   1.79e-09   2.13e+09   4.73e-07
+        80   25     3.0 23601423.390944 23601423.366318   1.04e-09   6.84e+08   1.52e-07
+      T2  FAIL  (bar 1e-10, fixed in advance)
+      T2b PASS  (bar = kappa * eps, from the system)
+
+  T3 cost vs rarity, with the state-space size HELD FIXED
+      M = 160 for EVERY run, so every solve is exactly 25,921 states; only the barrier moves
+          N     MFPT (gen)   p per generation   seconds
+          5     9.9790e+00         9.5353e-02     0.365
+         12     7.4597e+01         1.3316e-02     0.196
+         20     7.0906e+02         1.4093e-03     0.136
+         28     7.0928e+03         1.4098e-04     0.134
+         36     7.2708e+04         1.3754e-05     0.137
+         44     7.5323e+05         1.3276e-06     0.144
+         52     7.8434e+06         1.2750e-07     0.141
+      probability spans 7.48e+05x while wall-clock spans 2.73x   PASS  (bars: span > 1e4, time ratio < 3)
+
+  T4 POSITIVE CONTROL: a shallow barrier where Gillespie CAN see the event
+      exact MFPT      9.9790 generations  (0.00s)
+      Gillespie MFPT  10.2722 +/- 0.2328  (1,947 switches in 20000 generations, 0s)
+      |difference| 0.2933 vs 3 s.e. 0.6984   PASS
+      -> only with this in hand does a Gillespie zero mean anything.
+
+  T4b THE DEMONSTRATION: a deep barrier, matched wall-clock budget
+      exact:     MFPT 7.8434e+06 generations, p = 1.2750e-07 per generation, in 0.13s
+      Gillespie: 0 switches in 1.495e+05 generations (30s)
+      expected hits in that budget: 1.906e-02
+      generations of simulation needed to expect ONE event: 7.843e+06
+
+  T5 is REM's factorisation doing any work here? (reported, not gated)
+       species   states (M=100)   comment
+             2         1.02e+04   tractable by direct sparse solve
+             3         1.03e+06   needs factorisation -- but see below
+             4         1.04e+08   needs factorisation -- but see below
+             6         1.06e+12   needs factorisation -- but see below
+            10         1.10e+20   needs factorisation -- but see below
+      At 2 species the state space is 10^4 and a sparse solve is trivial, so
+      exactness here comes from the space being SMALL, not from low treewidth.
+      Scaling to many coupled switches hits the SAME obstruction as driven 1D:
+      a master equation's stationary state is a null vector, not a product of
+      local factors, so chain elimination does not apply to it.
+
+  ALL GATES PASS: T1=pass  T2b=pass  T3=pass  T4=pass

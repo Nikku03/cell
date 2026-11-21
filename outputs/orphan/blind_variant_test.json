@@ -1,0 +1,46 @@
+{
+  "results": [
+    {
+      "gene": "PIK3CA",
+      "n_pathogenic": 18,
+      "n_benign": 18,
+      "mean_func_pathogenic": 0.862,
+      "mean_func_benign": 0.24,
+      "AUC_pathogenic_vs_benign": 0.526
+    },
+    {
+      "gene": "PAH",
+      "n_pathogenic": 18,
+      "n_benign": 14,
+      "mean_func_pathogenic": 0.44,
+      "mean_func_benign": 3.401,
+      "AUC_pathogenic_vs_benign": 0.472
+    },
+    {
+      "gene": "GBA",
+      "n_pathogenic": 18,
+      "n_benign": 9,
+      "mean_func_pathogenic": 5.13,
+      "mean_func_benign": 2.149,
+      "AUC_pathogenic_vs_benign": 0.802
+    },
+    {
+      "gene": "TYK2",
+      "n_pathogenic": 7,
+      "n_benign": 18,
+      "mean_func_pathogenic": 3.186,
+      "mean_func_benign": 0.449,
+      "AUC_pathogenic_vs_benign": 0.833
+    },
+    {
+      "gene": "HBB",
+      "n_pathogenic": 18,
+      "n_benign": 18,
+      "mean_func_pathogenic": 0.61,
+      "mean_func_benign": 1.23,
+      "AUC_pathogenic_vs_benign": 0.344
+    }
+  ],
+  "macro_AUC": 0.595,
+  "verdict": "weak/no separation on held-out variants"
+}

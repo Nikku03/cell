@@ -1,0 +1,18 @@
+=================================================================================================
+ENGINE V2 -- DEVELOPMENT SET (open; the EXAM half is untouched)
+=================================================================================================
+  screens added (local only, CC BY-NC-SA): RPE1 1,884, HepG2 1,859, Jurkat 1,956, HCT116 4,693, HEK293T 4,740, iPSC-N 4,281, iPSC-Fsf 1,392, iPSC-Fsnf 1,173, iPSC-Fts 358, hESC-P 2,214, hESC-V 183
+  TEST genes with a record in another cell type: before 1,007, now 2,512 of 2,525
+  TEST genes 2,525: inspected before (excluded) 150; DEV 1194, EXAM 1181
+  any-to-any translator, TEST-split genes, median r predicting each screen from the others: RPE1 0.77, HepG2 0.71, Jurkat 0.71, HCT116 0.41, HEK293T 0.38, iPSC-N 0.09, iPSC-Fsf 0.29, iPSC-Fsnf 0.03, iPSC-Fts 0.55, hESC-P 0.49, hESC-V 0.49
+  DEV (n 1194): median r | specific r | fraction of ceiling (r; ceiling 0.443, specific ceiling 0.322)
+     E3 previous best                   +0.256 | +0.091 | 58%
+     T translator alone                 +0.228 | +0.078 | 52%
+     M2 new model (plain net)           +0.259 | +0.099 | 58%
+     M2e same inputs, snapping engine   +0.258 | +0.099 | 58%
+     DEV genes with a record elsewhere  n 1190: E3 +0.256, T +0.230, M2 +0.259, M2e +0.259
+     DEV genes with none                n    4: E3 +0.060, T +0.053, M2 +0.099, M2e +0.057
+     DEV M2 vs E3   better 621 / worse 573, median +0.0010, p 0.17
+     DEV M2 vs T    better 813 / worse 381, median +0.0202, p 1.8e-36
+     DEV M2 vs M2e  better 622 / worse 572, median +0.0008, p 0.16
+  confidence fitted on DEV (in-sample Spearman +0.49); coefficients saved for the exam

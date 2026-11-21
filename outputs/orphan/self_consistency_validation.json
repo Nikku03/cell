@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "summary": {
+    "n_test_edges": 38325,
+    "n_neg": 38325,
+    "auc_completion_triadic": 0.774,
+    "auc_embedding_only": 0.656,
+    "heldout_with_triadic_evidence": 0.461
+  },
+  "bar": "held-out real edges separate from degree-matched non-edges at triadic-closure AUC >= 0.75",
+  "note": "Tier-3 completions ('this edge is missing') ranked by shared-partner triadic closure recover real edges leakage-free at AUC 0.77; the embedding was tested and dropped (it only diluted the signal). Tier-1 is provable physics (no ML validation needed)."
+}

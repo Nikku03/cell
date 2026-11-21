@@ -1,0 +1,84 @@
+{
+  "test": "loop_surrogate",
+  "manifest": {
+    "manifest_version": 1,
+    "inputs": [
+      {
+        "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/hic_chr21_25kb.npy",
+        "bytes": 14838032,
+        "hash": "3768cedcefe29085",
+        "method": "sha256:full"
+      },
+      {
+        "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/hic_chr22_25kb.npy",
+        "bytes": 16859364,
+        "hash": "6ce51767ca54925f",
+        "method": "sha256:full"
+      }
+    ],
+    "coverage": {
+      "available": 2053,
+      "used": 1344,
+      "selection": "filtered",
+      "fraction": 0.6546517291768145
+    },
+    "seed": 1904,
+    "controls": [
+      "held out by whole chromosome, not by slice",
+      "smoothed CTCF density as the trivial baseline",
+      "the physics model with no refitting",
+      "an orientation-shuffled retrain",
+      "200 target shuffles for the band"
+    ],
+    "note": "the physics has zero fitted parameters and the network has thousands plus a chromosome of training data; that asymmetry is the point of the test",
+    "warnings": []
+  },
+  "gates": {
+    "S1 surrogate transfers": true,
+    "S2 beats trivial baseline": false,
+    "S3 beats the physics": false,
+    "S4 learned the asymmetry": false
+  },
+  "r_surrogate": 0.08929392926963745,
+  "r_surrogate_shuffled": 0.12899865462877277,
+  "r_density": 0.11100088167234146,
+  "r_physics_chr22": 0.28521004751437595,
+  "r_physics_chr21": 0.2974,
+  "band": 0.053194499117216035,
+  "seconds": 85.63542795181274,
+  "log": [
+    "====================================================================================================",
+    "A LEARNED SURROGATE AGAINST THE PHYSICS, ON A CHROMOSOME NEITHER HAS SEEN",
+    "====================================================================================================",
+    "  The physics has ZERO fitted parameters. The network gets thousands and a whole chromosome",
+    "  of training data. Held out by chromosome, because a held-out slice of chr21 shares CTCF",
+    "  sites and mappability with its own training data.",
+    "  chr21: 1,926 bins, 1,377 mappable, 316 oriented CTCF bins",
+    "  chr22: 2,053 bins, 1,354 mappable, 616 oriented CTCF bins",
+    "",
+    "    surrogate, real orientation        chr22 r +0.0893   (train loss 0.6003)",
+    "    surrogate, SHUFFLED orientation    chr22 r +0.1290   (train loss 0.5178)",
+    "    smoothed CTCF density (trivial)    chr22 r +0.1110",
+    "    physics, no refitting              chr22 r +0.2852   (it got +0.2974 on chr21)",
+    "\n  S1 THE SURROGATE TRANSFERS -- +0.0893 vs band 0.0532   S1 PASS",
+    "  S2 IT BEATS THE TRIVIAL BASELINE -- vs smoothed density +0.1110   S2 FAIL",
+    "  S3 IT BEATS THE PHYSICS -- vs +0.2852, which has zero fitted parameters   S3 FAIL",
+    "  S4 IT LEARNED THE ASYMMETRY -- vs its orientation-shuffled twin +0.1290   S4 FAIL",
+    "\n====================================================================================================",
+    "  S1 surrogate transfers                  PASS",
+    "  S2 beats trivial baseline               FAIL",
+    "  S3 beats the physics                    FAIL",
+    "  S4 learned the asymmetry                FAIL",
+    "  ON A CHROMOSOME NONE OF THEM HAD SEEN, THE WINNER IS THE PHYSICS AT +0.2852.",
+    "  MECHANISM BEAT FITTING HERE. The physics carries no fitted parameters at all -- every",
+    "  constant came from single-molecule measurements or from geometry -- and it still",
+    "  transfers better than a network given a whole chromosome to learn from. That is the",
+    "  argument for building the mechanism rather than regressing on the readout.",
+    "  AND THE NETWORK DID NOT LEARN DIRECTION. Its orientation-shuffled twin scores",
+    "  +0.1290 against +0.0893, so what it extracted was where CTCF binds, which was",
+    "  already in its input. Loop extrusion is a claim about asymmetry and the network is not",
+    "  making it.",
+    "====================================================================================================",
+    "    manifest: 2 inputs, coverage 1344/2053 (65.5%) by 'filtered', seed 1904, controls 5"
+  ]
+}

@@ -1,0 +1,91 @@
+{
+ "spectrum": {
+  "n_genes": 8867,
+  "halflife_h": {
+   "median": 3.02,
+   "q10": 0.96,
+   "q90": 8.43
+  },
+  "t90_response_h": {
+   "median": 10.03,
+   "fast_q10": 3.17,
+   "slow_q90": 28.0
+  }
+ },
+ "solver_err": 1e-06,
+ "ieg": {
+  "n_ieg": 13,
+  "ieg_median_halflife_h": 0.47,
+  "genome_median_halflife_h": 3.02,
+  "fold_faster": 6.42,
+  "mannwhitney_p_shorter": 4.114635131271322e-09
+ },
+ "tf": {
+  "n_tf": 686,
+  "tf_median_halflife_h": 1.9,
+  "nontf_median_halflife_h": 3.11,
+  "mannwhitney_p_shorter": 0.0
+ },
+ "nearfield_GATA1": {
+  "tf": "GATA1",
+  "n_regulon_measured": 38,
+  "fastest_targets": [
+   [
+    "NFE2",
+    "0.8h t90 2.6h"
+   ],
+   [
+    "ZNF268",
+    "1.0h t90 3.4h"
+   ],
+   [
+    "RUNX1",
+    "1.0h t90 3.4h"
+   ],
+   [
+    "WT1",
+    "1.0h t90 3.5h"
+   ],
+   [
+    "WT1",
+    "1.0h t90 3.5h"
+   ],
+   [
+    "GFI1B",
+    "1.2h t90 3.8h"
+   ],
+   [
+    "KLF1",
+    "1.2h t90 4.0h"
+   ],
+   [
+    "EPOR",
+    "1.3h t90 4.2h"
+   ],
+   [
+    "EPOR",
+    "1.3h t90 4.2h"
+   ],
+   [
+    "TAL1",
+    "1.4h t90 4.6h"
+   ]
+  ],
+  "slowest_targets": [
+   [
+    "HBA1",
+    "22.0h t90 73.0h"
+   ],
+   [
+    "ALAS2",
+    "24.5h t90 81.3h"
+   ],
+   [
+    "GYPB",
+    "31.4h t90 104.5h"
+   ]
+  ]
+ },
+ "verdict": "BUILT AND VALIDATED (the dynamics half). The ODE runs on MEASURED K562 rates (solver exact), and the response-time interpretation is validated by biology: immediate-early genes turn over 6.42x faster than the genome (p=4e-09) -- they are literally built to respond fast, exactly as tau=1/k_deg predicts. This adds the TIME axis the steady-state models lacked: for the near-field regulon (which we CAN predict, 9.2x), we can now say not just WHICH direct targets move but WHEN (fast, short-half-life targets first). HONEST limit unchanged: this is the DYNAMICS of each gene given a synthesis change; it does NOT supply the TRANSMISSION (which genes' k_syn a knockout actually changes = the far-field wall). Resting-cell kinetics, not a perturbation time-course -- so it strengthens the near-field into a time-resolved readout, and cannot by itself break the far field.",
+ "note": "mRNA dynamics ODE (d[mRNA]/dt = k_syn - k_deg[mRNA]) parameterized with MEASURED K562 SLAM-seq rates (RNAdecayCafe, 10,802 genes). The mRNA half-life IS the response time (tau=1/k_deg). Solver validated (Euler vs analytic). Response-time interpretation validated: immediate-early genes turn over markedly faster than the genome (Mann-Whitney), as fast-response biology requires. Application: time-resolved NEAR-FIELD -- for a TF knockout, its regulon (9.2x, predictable) members move on the timescale set by their measured half-lives (which first). Honest: supplies the DYNAMICS half (how fast) from real rates; does NOT supply the TRANSMISSION half (which genes' k_syn a knockout changes = the far-field wall). Resting-cell labeling kinetics, not a perturbation time-course."
+}

@@ -1,0 +1,203 @@
+{
+ "test": "the enhancer on the ESM half-life track",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/destroyer/rega_4.xlsx",
+    "bytes": 16153680,
+    "hash": "82a6251d8a4ef58e",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/ml/esm2_8M_halflife.npz",
+    "bytes": 2202089,
+    "hash": "1c50253eb6ed37d8",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/human_proteome.fasta.gz",
+    "bytes": 7507899,
+    "hash": "b12dcc9f8f5f588e",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 1839,
+   "used": 1839,
+   "selection": "all",
+   "fraction": 1.0
+  },
+  "seed": 15700,
+  "controls": [
+   "folds, trivial baselines and ceiling fixed once before turn 1 and never recomputed",
+   "every turn scored on the same homology-aware folds",
+   "the bar is T1's own fold-to-fold noise, so a turn must beat the measurement's instability to count",
+   "each turn records what would have falsified it"
+  ],
+  "note": "the improver's discipline applied to a track its ask() cannot read. Five turns fixed in advance: pooling, annotation, scale, and the phase axis, each executed rather than promised.",
+  "warnings": []
+ },
+ "turns": [
+  {
+   "turn": 1,
+   "name": "mean-pooled ESM-2 8M, whole sequence",
+   "spearman": 0.32366372459752646,
+   "fold_sd": 0.03901423455785473,
+   "per_fold": [
+    0.3251120674014689,
+    0.3778073804155907,
+    0.2967821691882415,
+    0.2707971970418285,
+    0.3580182468406706
+   ],
+   "delta_vs_best": null,
+   "clears_noise_bar": null,
+   "note": "the loop 156 baseline, recomputed here on the same folds",
+   "falsifier": "a score at or below the composition bar of +0.2090 would have said the encoder adds nothing",
+   "cost_seconds": 0.3580803871154785,
+   "inside_ceiling": true
+  },
+  {
+   "turn": 2,
+   "name": "+ N-terminal and C-terminal 60-residue windows",
+   "spearman": 0.320861464596628,
+   "fold_sd": 0.036914250836670354,
+   "per_fold": [
+    0.33944662969478956,
+    0.37541282947877025,
+    0.3024153686695302,
+    0.26682317315361953,
+    0.3380451027428223
+   ],
+   "delta_vs_best": -0.002802260000898449,
+   "clears_noise_bar": false,
+   "note": "Koren 2018 doi 10.1016/j.cell.2018.04.028: the proteome is shaped by E3s reading C-terminal degrons; mean pooling over 1022 residues buries a 10-residue terminus",
+   "falsifier": "no gain over T1 would have said the ends carry nothing the mean did not already have",
+   "cost_seconds": 1.9775545597076416,
+   "inside_ceiling": true,
+   "dim": 960
+  },
+  {
+   "turn": 3,
+   "name": "+ Rega's curated annotation channels (degron, UPS, essential)",
+   "spearman": 0.3208928096724082,
+   "fold_sd": 0.03785356000573414,
+   "per_fold": [
+    0.3406799640595137,
+    0.37410569289467555,
+    0.3050082128001813,
+    0.2622415117665076,
+    0.33817279724707294
+   ],
+   "delta_vs_best": -0.002770914925118273,
+   "clears_noise_bar": false,
+   "note": "this session's audit predicts static annotations add little; T3 tests that prediction rather than assuming it",
+   "falsifier": "a large gain would have overturned the audit's central claim that static annotations are the wrong instrument",
+   "cost_seconds": 1.819087028503418,
+   "inside_ceiling": true,
+   "n_annotation_channels": 3
+  },
+  {
+   "turn": 4,
+   "name": "ESM-2 35M mean-pooled, whole sequence (scale instead of readout)",
+   "spearman": 0.3668149413555137,
+   "fold_sd": 0.042560629442918614,
+   "per_fold": [
+    0.3219170042063257,
+    0.43558385283596857,
+    0.36274980173833127,
+    0.33172396281750915,
+    0.40045287851273503
+   ],
+   "delta_vs_best": 0.04315121675798722,
+   "clears_noise_bar": true,
+   "note": "loop 133 recorded a 650M encoder worth less than fixing the pooling; this is the direct test on a new target, deliberately placed AFTER the pooling turn",
+   "falsifier": "a large gain over T1 would have overturned loop 133's finding that scale is the cheaper axis than readout",
+   "cost_seconds": 773.2805869579315,
+   "inside_ceiling": true,
+   "dim": 480
+  },
+  {
+   "turn": 5,
+   "name": "phase axis predicted directly",
+   "auc_direct": 0.7153899758777807,
+   "auc_via_halflife": 0.593878316805146,
+   "auc_measured_halflife": 0.7277191101581345,
+   "detour_cost": 0.12151165907263473,
+   "cost_seconds": 1.557154893875122,
+   "falsifier": "a direct classifier below the detour"
+  }
+ ],
+ "bar_composition": 0.20897981595438556,
+ "ceiling": 0.9785302052098753,
+ "n_clusters": 1826,
+ "best": 0.3668149413555137,
+ "best_turn": "T4",
+ "noise_bar": 0.03901423455785473,
+ "n_substantive": 1,
+ "seconds": 785.4068074226379,
+ "log": [
+  "====================================================================================================",
+  "  THE ENHANCER ON THE ESM HALF-LIFE TRACK -- five turns, measured not promised",
+  "====================================================================================================",
+  "",
+  "  1,839 proteins; 1,826 homology clusters; folds fixed; composition bar +0.2090; measured ceiling 0.9785",
+  "",
+  "  T1 mean-pooled ESM-2 8M, whole sequence",
+  "     Spearman +0.3237   fold sd 0.0390   per-fold [0.325, 0.378, 0.297, 0.271, 0.358]",
+  "     ceiling check 0.3237 <= 0.9785: ok",
+  "     what would have falsified this turn: a score at or below the composition bar of +0.2090 would have said the encoder adds nothing",
+  "     cost 0.4s",
+  "",
+  "  T2 EXECUTING: embedding the terminal windows (this writes a new artefact)",
+  "  T2 + N-terminal and C-terminal 60-residue windows",
+  "     Spearman +0.3209   fold sd 0.0369   per-fold [0.339, 0.375, 0.302, 0.267, 0.338]",
+  "     vs best so far (T1 +0.3237): delta -0.0028   bar = T1 fold sd 0.0390   does NOT clear",
+  "     ceiling check 0.3209 <= 0.9785: ok",
+  "     what would have falsified this turn: no gain over T1 would have said the ends carry nothing the mean did not already have",
+  "     cost 2.0s",
+  "",
+  "  T3 + Rega's curated annotation channels (degron, UPS, essential)",
+  "     Spearman +0.3209   fold sd 0.0379   per-fold [0.341, 0.374, 0.305, 0.262, 0.338]",
+  "     vs best so far (T1 +0.3237): delta -0.0028   bar = T1 fold sd 0.0390   does NOT clear",
+  "     ceiling check 0.3209 <= 0.9785: ok",
+  "     what would have falsified this turn: a large gain would have overturned the audit's central claim that static annotations are the wrong instrument",
+  "     cost 1.8s",
+  "",
+  "  T4 EXECUTING: ESM-2 35M (this writes a new artefact)",
+  "     wrote colab/data/ml/esm2_35M_halflife.npz in 773s",
+  "  T4 ESM-2 35M mean-pooled, whole sequence (scale instead of readout)",
+  "     Spearman +0.3668   fold sd 0.0426   per-fold [0.322, 0.436, 0.363, 0.332, 0.4]",
+  "     vs best so far (T1 +0.3237): delta +0.0432   bar = T1 fold sd 0.0390   CLEARS",
+  "     ceiling check 0.3668 <= 0.9785: ok",
+  "     what would have falsified this turn: a large gain over T1 would have overturned loop 133's finding that scale is the cheaper axis than readout",
+  "     cost 773.3s",
+  "",
+  "  T5 the phase axis, predicted directly instead of through a half-life",
+  "     205 CCD vs 910 Stable",
+  "     measured half-life          AUC 0.7277   <- ceiling for any model",
+  "     via predicted half-life (T2) AUC 0.5939",
+  "     predicted DIRECTLY           AUC 0.7154",
+  "     the detour through a rate costs +0.1215 AUC",
+  "     what would have falsified this turn: a direct classifier scoring BELOW the half-life detour would have said the rate is the better intermediate",
+  "",
+  "====================================================================================================",
+  "  THE LEDGER",
+  "     the bar every turn had to clear: T1's own fold-to-fold sd, 0.0390",
+  "       T1 mean-pooled ESM-2 8M, whole sequence                 +0.3237",
+  "       T2 + N-terminal and C-terminal 60-residue windows       +0.3209   delta -0.0028  noise",
+  "       T3 + Rega's curated annotation channels (degron, UPS, e +0.3209   delta -0.0028  noise",
+  "       T4 ESM-2 35M mean-pooled, whole sequence (scale instead +0.3668   delta +0.0432  CLEARS",
+  "     1 of 3 improvement turns cleared the noise bar",
+  "     best: T4 at +0.3668, against a composition bar of +0.2090 and",
+  "     a measured ceiling of 0.9785",
+  "",
+  "  DRIFT LEDGER -- I proposed these five turns and I wrote the checks that judge them.",
+  "     The sequence was fixed in the docstring BEFORE any turn ran, the folds and baselines",
+  "     were computed once and never touched again, and each turn logged what would have",
+  "     falsified it. That does not remove the conflict; it bounds it.",
+  "====================================================================================================",
+  "    manifest: 3 inputs, coverage 1839/1839 (100.0%) by 'all', seed 15700, controls 4"
+ ]
+}

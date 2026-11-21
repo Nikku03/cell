@@ -1,0 +1,8 @@
+=================================================================================================
+WHAT CLINICAL TRIALS AND DRUG DEVELOPMENT REVEALED ABOUT EACH GENE, USED AS CELL KNOWLEDGE
+=================================================================================================
+  genes with a clinical profile 1,882; knocked down in screen A 509; TEST 271; with patient adverse events 713
+  C1 TRAIN: K562 response size, genes whose drugs cause blood adverse events 9.69 (n 67) vs other drug targets 9.10 (n 10); one-sided p 0.088 -> NOT SHOWN
+  C2 TEST (replication): K562 response size, genes whose drugs cause blood adverse events 10.12 (n 76) vs other drug targets 8.40 (n 15); one-sided p 0.027 -> CONSISTENT
+  G9 PRIMARY, TEST genes with a clinical profile   n   271: E5 +0.288 vs E3 +0.280; better 119 / worse 152, median -0.0020, p 0.052 -> NO DIFFERENCE
+  G10 all TEST genes                               n  2525: E5 +0.260 vs E3 +0.256; better 1241 / worse 1284, median -0.0002, p 0.4 -> NO DIFFERENCE

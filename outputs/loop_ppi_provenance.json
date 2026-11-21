@@ -1,0 +1,748 @@
+{
+ "test": "loop_ppi_provenance",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+    "bytes": 38524393,
+    "hash": "b857a72939e09be8",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/biogrid_hs_edges.tsv.gz",
+    "bytes": 5796005,
+    "hash": "033823bf6cf1408f",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 16492,
+   "used": 16492,
+   "selection": "all",
+   "fraction": 1.0
+  },
+  "seed": 6201,
+  "controls": [
+   "both ppi objects measured against BioGRID separately",
+   "every evidence x throughput x multiplicity filter scored both ways",
+   "rebuild run twice and required identical",
+   "loop 61 folds, baselines and null reused unchanged",
+   "every other layer re-scored under the rebuilt ppi"
+  ],
+  "note": "loop 49's D2 failure is a fact about genes[].ppi; loop 61 flagged D['ppi'], a different object",
+  "warnings": []
+ },
+ "gates": {
+  "Q1 the flag belongs on the record field": true,
+  "Q2 provenance is unrecoverable by filter": true,
+  "Q3 the rebuilt layer is deterministic": true,
+  "Q4 rebuild effect on loop 61 recorded": true,
+  "Q5 downstream layers re-scored": true
+ },
+ "record_vs_biogrid": 0.4740394496108508,
+ "edges_vs_biogrid": 0.7442159577538898,
+ "record_vs_edges": 0.6187349378447359,
+ "filters": {
+  "all": {
+   "n": 676985,
+   "ours_in_it": 0.7846349120122018,
+   "it_in_ours": 0.2218897021352024
+  },
+  "physical": {
+   "n": 664019,
+   "ours_in_it": 0.7838252884610362,
+   "it_in_ours": 0.22598901537456006
+  },
+  "genetic": {
+   "n": 14518,
+   "ours_in_it": 0.0035466734918802594,
+   "it_in_ours": 0.0467695274831244
+  },
+  "low throughput": {
+   "n": 108640,
+   "ours_in_it": 0.09235454198812204,
+   "it_in_ours": 0.16274852724594993
+  },
+  "high throughput": {
+   "n": 595595,
+   "ours_in_it": 0.7490846030494079,
+   "it_in_ours": 0.24078442565837524
+  },
+  "physical + low tp": {
+   "n": 107580,
+   "ours_in_it": 0.09198890554566015,
+   "it_in_ours": 0.16370143149284253
+  },
+  "physical + high tp": {
+   "n": 583403,
+   "ours_in_it": 0.7482436392317456,
+   "it_in_ours": 0.2455403897477387
+  },
+  "seen>=2": {
+   "n": 113236,
+   "ours_in_it": 0.3070667077572383,
+   "it_in_ours": 0.5191546857889717
+  },
+  "seen>=3": {
+   "n": 43755,
+   "ours_in_it": 0.15084070264877486,
+   "it_in_ours": 0.6599931436407268
+  },
+  "seen>=4": {
+   "n": 19958,
+   "ours_in_it": 0.07550392536837872,
+   "it_in_ours": 0.7242709690349735
+  },
+  "seen>=5": {
+   "n": 12233,
+   "ours_in_it": 0.05073466808046091,
+   "it_in_ours": 0.7939998365078067
+  }
+ },
+ "rebuilt_edges": 664019,
+ "ppi_old": {
+  "model": 0.8734201848748581,
+  "pubs": 0.8506851100370136,
+  "best1": 0.7986541521660382,
+  "best1_name": "ppm",
+  "null95": 0.5117726680472943,
+  "margin": 0.022735074837844427,
+  "earned": true
+ },
+ "ppi_new": {
+  "model": 0.8701504070672683,
+  "pubs": 0.7749069130512233,
+  "best1": 0.7194564917992768,
+  "best1_name": "reg_in",
+  "null95": 0.511727895818489,
+  "margin": 0.09524349401604504,
+  "earned": true
+ },
+ "flips": [
+  "loeuf"
+ ],
+ "others": [
+  {
+   "layer": "abund",
+   "old": {
+    "model": 0.9116022084999019,
+    "pubs": 0.8151723789841904,
+    "best1": 0.8451247324855103,
+    "best1_name": "reg_in",
+    "null95": 0.5091789197172784,
+    "margin": 0.06647747601439158,
+    "earned": true
+   },
+   "new": {
+    "model": 0.9132475037913534,
+    "pubs": 0.8151723789841904,
+    "best1": 0.8451247324855103,
+    "best1_name": "reg_in",
+    "null95": 0.511968689294286,
+    "margin": 0.0681227713058431,
+    "earned": true
+   }
+  },
+  {
+   "layer": "biomarkers",
+   "old": {
+    "model": 0.978109344975744,
+    "pubs": 0.6202260169138206,
+    "best1": 0.9638200247124262,
+    "best1_name": "dep_frac",
+    "null95": 0.5204355620280745,
+    "margin": 0.01428932026331775,
+    "earned": false
+   },
+   "new": {
+    "model": 0.9778754141190665,
+    "pubs": 0.6202260169138206,
+    "best1": 0.9638200247124262,
+    "best1_name": "dep_frac",
+    "null95": 0.5201023970087103,
+    "margin": 0.014055389406640306,
+    "earned": false
+   }
+  },
+  {
+   "layer": "codep",
+   "old": {
+    "model": 0.6711779887445611,
+    "pubs": 0.6064935265910044,
+    "best1": 0.6453933505736571,
+    "best1_name": "dep_frac",
+    "null95": 0.511495605702562,
+    "margin": 0.02578463817090404,
+    "earned": true
+   },
+   "new": {
+    "model": 0.6707096538617239,
+    "pubs": 0.6064935265910044,
+    "best1": 0.6453933505736571,
+    "best1_name": "dep_frac",
+    "null95": 0.5101378672576563,
+    "margin": 0.025316303288066777,
+    "earned": true
+   }
+  },
+  {
+   "layer": "cpg",
+   "old": {
+    "model": 0.7469163742812134,
+    "pubs": 0.6047601031986369,
+    "best1": 0.6919460404883977,
+    "best1_name": "model4",
+    "null95": 0.5087600120370784,
+    "margin": 0.054970333792815684,
+    "earned": true
+   },
+   "new": {
+    "model": 0.7523537468768762,
+    "pubs": 0.6047601031986369,
+    "best1": 0.6919460404883977,
+    "best1_name": "model4",
+    "null95": 0.5082385647949541,
+    "margin": 0.06040770638847848,
+    "earned": true
+   }
+  },
+  {
+   "layer": "dark",
+   "old": {
+    "model": 0.9999860519109612,
+    "pubs": 0.7641739454705545,
+    "best1": 0.9985892951442772,
+    "best1_name": "darkfn",
+    "null95": 0.5072942609909376,
+    "margin": 0.0013967567666840486,
+    "earned": false
+   },
+   "new": {
+    "model": 0.99998643452687,
+    "pubs": 0.7641739454705545,
+    "best1": 0.9985892951442772,
+    "best1_name": "darkfn",
+    "null95": 0.5075277540884422,
+    "margin": 0.0013971393825927825,
+    "earned": false
+   }
+  },
+  {
+   "layer": "darkfn",
+   "old": {
+    "model": 0.9994076409991642,
+    "pubs": 0.7628679455525065,
+    "best1": 0.9993670589211887,
+    "best1_name": "dark",
+    "null95": 0.5088048182665751,
+    "margin": 4.0582077975526154e-05,
+    "earned": false
+   },
+   "new": {
+    "model": 0.9993479522518586,
+    "pubs": 0.7628679455525065,
+    "best1": 0.9993670589211887,
+    "best1_name": "dark",
+    "null95": 0.5059996840171422,
+    "margin": -1.9106669330137827e-05,
+    "earned": false
+   }
+  },
+  {
+   "layer": "dep_frac",
+   "old": {
+    "model": 0.7977259980096248,
+    "pubs": 0.6720948078503566,
+    "best1": 0.707131123693102,
+    "best1_name": "model4",
+    "null95": 0.5065690514897382,
+    "margin": 0.0905948743165228,
+    "earned": true
+   },
+   "new": {
+    "model": 0.7986909357315443,
+    "pubs": 0.6720948078503566,
+    "best1": 0.707131123693102,
+    "best1_name": "model4",
+    "null95": 0.509233382406219,
+    "margin": 0.09155981203844221,
+    "earned": true
+   }
+  },
+  {
+   "layer": "drugs",
+   "old": {
+    "model": 0.8355494285357333,
+    "pubs": 0.7886658079265447,
+    "best1": 0.7509365197665796,
+    "best1_name": "go",
+    "null95": 0.5080221530060451,
+    "margin": 0.0468836206091886,
+    "earned": true
+   },
+   "new": {
+    "model": 0.8381208813143606,
+    "pubs": 0.7886658079265447,
+    "best1": 0.7509365197665796,
+    "best1_name": "go",
+    "null95": 0.5084771311378498,
+    "margin": 0.04945507338781585,
+    "earned": true
+   }
+  },
+  {
+   "layer": "emask",
+   "old": {
+    "model": 0.9756522138619181,
+    "pubs": 0.7032935202910057,
+    "best1": 0.9737962736788508,
+    "best1_name": "abund",
+    "null95": 0.506596552102132,
+    "margin": 0.0018559401830673394,
+    "earned": false
+   },
+   "new": {
+    "model": 0.9756917784638544,
+    "pubs": 0.7032935202910057,
+    "best1": 0.9737962736788508,
+    "best1_name": "abund",
+    "null95": 0.5074159390121449,
+    "margin": 0.0018955047850035545,
+    "earned": false
+   }
+  },
+  {
+   "layer": "ess",
+   "old": {
+    "model": 0.9667283785862033,
+    "pubs": 0.7474203134234628,
+    "best1": 0.9713977108075473,
+    "best1_name": "dep_frac",
+    "null95": 0.5134307019953811,
+    "margin": -0.004669332221344025,
+    "earned": false
+   },
+   "new": {
+    "model": 0.9655549167563414,
+    "pubs": 0.7474203134234628,
+    "best1": 0.9713977108075473,
+    "best1_name": "dep_frac",
+    "null95": 0.5144457184174513,
+    "margin": -0.005842794051205913,
+    "earned": false
+   }
+  },
+  {
+   "layer": "gene2cplx",
+   "old": {
+    "model": 0.8153549374750545,
+    "pubs": 0.7241456401074596,
+    "best1": 0.7661183798830775,
+    "best1_name": "ppi_edges",
+    "null95": 0.5093593711559502,
+    "margin": 0.04923655759197698,
+    "earned": true
+   },
+   "new": {
+    "model": 0.7913688908571453,
+    "pubs": 0.7241456401074596,
+    "best1": 0.7386657594540207,
+    "best1_name": "npath",
+    "null95": 0.5083801301407831,
+    "margin": 0.05270313140312466,
+    "earned": true
+   }
+  },
+  {
+   "layer": "generxn",
+   "old": {
+    "model": 0.7332638599451609,
+    "pubs": 0.5856838610441824,
+    "best1": 0.6566394275724453,
+    "best1_name": "npath",
+    "null95": 0.5108531169624735,
+    "margin": 0.07662443237271555,
+    "earned": true
+   },
+   "new": {
+    "model": 0.7303004551935335,
+    "pubs": 0.5856838610441824,
+    "best1": 0.6566394275724453,
+    "best1_name": "npath",
+    "null95": 0.5111159690773738,
+    "margin": 0.07366102762108817,
+    "earned": true
+   }
+  },
+  {
+   "layer": "loeuf",
+   "old": {
+    "model": 0.7852668242744241,
+    "pubs": 0.700126323721309,
+    "best1": 0.7462788446252528,
+    "best1_name": "ppi_edges",
+    "null95": 0.5127003544253687,
+    "margin": 0.03898797964917122,
+    "earned": true
+   },
+   "new": {
+    "model": 0.9022369831365309,
+    "pubs": 0.700126323721309,
+    "best1": 0.903408499476704,
+    "best1_name": "ppi_edges",
+    "null95": 0.5120905055198998,
+    "margin": -0.0011715163401730955,
+    "earned": false
+   }
+  },
+  {
+   "layer": "loops3d",
+   "old": {
+    "model": 0.5071186440677966,
+    "pubs": 0.505713545434383,
+    "best1": 0.5332029275997372,
+    "best1_name": "enh",
+    "null95": 0.5170003710282873,
+    "margin": -0.02608428353194059,
+    "earned": false
+   },
+   "new": {
+    "model": 0.5119615788808212,
+    "pubs": 0.505713545434383,
+    "best1": 0.5332029275997372,
+    "best1_name": "enh",
+    "null95": 0.5174050281587669,
+    "margin": -0.02124134871891603,
+    "earned": false
+   }
+  },
+  {
+   "layer": "lr",
+   "old": {
+    "model": 0.8740599351021187,
+    "pubs": 0.7103632598357645,
+    "best1": 0.7392986841862212,
+    "best1_name": "nichenet",
+    "null95": 0.513194523292018,
+    "margin": 0.1347612509158974,
+    "earned": true
+   },
+   "new": {
+    "model": 0.8783181556030352,
+    "pubs": 0.7103632598357645,
+    "best1": 0.7392986841862212,
+    "best1_name": "nichenet",
+    "null95": 0.5205596734171136,
+    "margin": 0.13901947141681392,
+    "earned": true
+   }
+  },
+  {
+   "layer": "model4",
+   "old": {
+    "model": 0.8439445540810417,
+    "pubs": 0.6836158461647541,
+    "best1": 0.7269019578010707,
+    "best1_name": "ppm",
+    "null95": 0.5079382526027204,
+    "margin": 0.11704259627997105,
+    "earned": true
+   },
+   "new": {
+    "model": 0.8547041584439219,
+    "pubs": 0.6836158461647541,
+    "best1": 0.7709880440305827,
+    "best1_name": "ppi_edges",
+    "null95": 0.5078022715455608,
+    "margin": 0.08371611441333915,
+    "earned": true
+   }
+  },
+  {
+   "layer": "ndis",
+   "old": {
+    "model": 0.804926862592181,
+    "pubs": 0.7267588120471731,
+    "best1": 0.7263181551029316,
+    "best1_name": "dark",
+    "null95": 0.5084536482962887,
+    "margin": 0.07816805054500797,
+    "earned": true
+   },
+   "new": {
+    "model": 0.8044260606619573,
+    "pubs": 0.7267588120471731,
+    "best1": 0.7263181551029316,
+    "best1_name": "dark",
+    "null95": 0.5084611903144317,
+    "margin": 0.07766724861478425,
+    "earned": true
+   }
+  },
+  {
+   "layer": "nichenet",
+   "old": {
+    "model": 0.8239660851814683,
+    "pubs": 0.6559397841838981,
+    "best1": 0.6967733165061215,
+    "best1_name": "model4",
+    "null95": 0.5149489644782266,
+    "margin": 0.1271927686753468,
+    "earned": true
+   },
+   "new": {
+    "model": 0.8297605869611538,
+    "pubs": 0.6559397841838981,
+    "best1": 0.6967733165061215,
+    "best1_name": "model4",
+    "null95": 0.5146180821956776,
+    "margin": 0.13298727045503234,
+    "earned": true
+   }
+  },
+  {
+   "layer": "npath",
+   "old": {
+    "model": 0.9522660965921391,
+    "pubs": 0.7446058669680662,
+    "best1": 0.9095346726812298,
+    "best1_name": "dark",
+    "null95": 0.5061698655219026,
+    "margin": 0.04273142391090934,
+    "earned": true
+   },
+   "new": {
+    "model": 0.9517987365893198,
+    "pubs": 0.7446058669680662,
+    "best1": 0.9095346726812298,
+    "best1_name": "dark",
+    "null95": 0.5066982209924029,
+    "margin": 0.04226406390809001,
+    "earned": true
+   }
+  },
+  {
+   "layer": "ppm",
+   "old": {
+    "model": 0.8990299108631896,
+    "pubs": 0.8114508144531009,
+    "best1": 0.8247215600807039,
+    "best1_name": "ppi_edges",
+    "null95": 0.518637042061784,
+    "margin": 0.07430835078248577,
+    "earned": true
+   },
+   "new": {
+    "model": 0.9030382038949232,
+    "pubs": 0.8114508144531009,
+    "best1": 0.8525869537099846,
+    "best1_name": "ppi_edges",
+    "null95": 0.5171637444041534,
+    "margin": 0.05045125018493857,
+    "earned": true
+   }
+  },
+  {
+   "layer": "ptm",
+   "old": {
+    "model": 0.828119734611354,
+    "pubs": 0.7743603404572755,
+    "best1": 0.7659995166592547,
+    "best1_name": "ppm",
+    "null95": 0.5074234156888581,
+    "margin": 0.05375939415407849,
+    "earned": true
+   },
+   "new": {
+    "model": 0.8322699910504716,
+    "pubs": 0.7743603404572755,
+    "best1": 0.7659995166592547,
+    "best1_name": "ppm",
+    "null95": 0.5064332726766447,
+    "margin": 0.05790965059319608,
+    "earned": true
+   }
+  },
+  {
+   "layer": "reg_in",
+   "old": {
+    "model": 0.9317316010135357,
+    "pubs": 0.8905565851424826,
+    "best1": 0.8610256696378082,
+    "best1_name": "abund",
+    "null95": 0.5166959709390083,
+    "margin": 0.0411750158710531,
+    "earned": true
+   },
+   "new": {
+    "model": 0.9332064654372947,
+    "pubs": 0.8905565851424826,
+    "best1": 0.8610256696378082,
+    "best1_name": "abund",
+    "null95": 0.5142267366551209,
+    "margin": 0.04264988029481209,
+    "earned": true
+   }
+  },
+  {
+   "layer": "reg_out",
+   "old": {
+    "model": 0.9084469394255933,
+    "pubs": 0.5743733555861095,
+    "best1": 0.8825718660254428,
+    "best1_name": "tf",
+    "null95": 0.5093715736429768,
+    "margin": 0.025875073400150495,
+    "earned": true
+   },
+   "new": {
+    "model": 0.9083988472632784,
+    "pubs": 0.5743733555861095,
+    "best1": 0.8825718660254428,
+    "best1_name": "tf",
+    "null95": 0.5094794122146865,
+    "margin": 0.025826981237835556,
+    "earned": true
+   }
+  },
+  {
+   "layer": "sig_in",
+   "old": {
+    "model": 0.8648399314716539,
+    "pubs": 0.8354576507528866,
+    "best1": 0.8072337457889659,
+    "best1_name": "go",
+    "null95": 0.5078079391300051,
+    "margin": 0.029382280718767362,
+    "earned": true
+   },
+   "new": {
+    "model": 0.8648055446877714,
+    "pubs": 0.8354576507528866,
+    "best1": 0.8072337457889659,
+    "best1_name": "go",
+    "null95": 0.5077359888253171,
+    "margin": 0.029347893934884794,
+    "earned": true
+   }
+  },
+  {
+   "layer": "sig_out",
+   "old": {
+    "model": 0.8252659996199762,
+    "pubs": 0.7716077807665546,
+    "best1": 0.7573255944195271,
+    "best1_name": "sig_in",
+    "null95": 0.5084134736146557,
+    "margin": 0.05365821885342159,
+    "earned": true
+   },
+   "new": {
+    "model": 0.8262186010405544,
+    "pubs": 0.7716077807665546,
+    "best1": 0.7573255944195271,
+    "best1_name": "sig_in",
+    "null95": 0.508748074890333,
+    "margin": 0.05461082027399988,
+    "earned": true
+   }
+  },
+  {
+   "layer": "sl",
+   "old": {
+    "model": 0.8226006319969938,
+    "pubs": 0.6061750626233754,
+    "best1": 0.7641676169214312,
+    "best1_name": "codep",
+    "null95": 0.514627884696983,
+    "margin": 0.058433015075562644,
+    "earned": true
+   },
+   "new": {
+    "model": 0.8225851517872913,
+    "pubs": 0.6061750626233754,
+    "best1": 0.7641676169214312,
+    "best1_name": "codep",
+    "null95": 0.5168567245926351,
+    "margin": 0.0584175348658601,
+    "earned": true
+   }
+  },
+  {
+   "layer": "tf",
+   "old": {
+    "model": 0.9269889788109561,
+    "pubs": 0.6503704647588314,
+    "best1": 0.9800774986125323,
+    "best1_name": "reg_out",
+    "null95": 0.5150496353947176,
+    "margin": -0.05308851980157625,
+    "earned": false
+   },
+   "new": {
+    "model": 0.9272869677311724,
+    "pubs": 0.6503704647588314,
+    "best1": 0.9800774986125323,
+    "best1_name": "reg_out",
+    "null95": 0.5124744620220208,
+    "margin": -0.05279053088135999,
+    "earned": false
+   }
+  }
+ ],
+ "seconds": 631.8102376461029,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 62 -- the ppi provenance defect: which object is broken, and what replaces it",
+  "====================================================================================================",
+  "",
+  "Q1 THE TWO PPI OBJECTS ARE DIFFERENT, AND WHICH ONE IS BROKEN",
+  "     record field  mean   9.36  median     1  zeros 41.0%",
+  "     edge list     mean  23.22  median    11  zeros 13.7%",
+  "     they agree with each other at Spearman 0.6187",
+  "     record field vs BioGRID degree   0.4740",
+  "     edge list    vs BioGRID degree   0.7442",
+  "     Q1 PASS  -- the flag belongs on the RECORD FIELD",
+  "",
+  "Q2 NO STATABLE FILTER REPRODUCES THE EDGE LIST",
+  "     all                    n= 676,985  ours-in-it 0.7846  it-in-ours 0.2219",
+  "     physical               n= 664,019  ours-in-it 0.7838  it-in-ours 0.2260",
+  "     genetic                n=  14,518  ours-in-it 0.0035  it-in-ours 0.0468",
+  "     low throughput         n= 108,640  ours-in-it 0.0924  it-in-ours 0.1627",
+  "     high throughput        n= 595,595  ours-in-it 0.7491  it-in-ours 0.2408",
+  "     physical + low tp      n= 107,580  ours-in-it 0.0920  it-in-ours 0.1637",
+  "     physical + high tp     n= 583,403  ours-in-it 0.7482  it-in-ours 0.2455",
+  "     seen >= 2 times        n= 113,236  ours-in-it 0.3071  it-in-ours 0.5192",
+  "     seen >= 3 times        n=  43,755  ours-in-it 0.1508  it-in-ours 0.6600",
+  "     seen >= 4 times        n=  19,958  ours-in-it 0.0755  it-in-ours 0.7243",
+  "     seen >= 5 times        n=  12,233  ours-in-it 0.0507  it-in-ours 0.7940",
+  "     best by the weaker direction: seen>=2 (0.3071 / 0.5192)",
+  "     Q2 PASS  -- provenance is UNRECOVERABLE, rebuild required",
+  "",
+  "Q3 THE REBUILT LAYER IS DECLARED AND DETERMINISTIC",
+  "     ppi_bg = BioGRID physical, deduplicated, mapped to the gene index",
+  "     664,019 edges, degree mean 80.53, median 32, zeros 9.9%",
+  "     rebuilt twice, identical: True",
+  "     Q3 PASS",
+  "",
+  "Q4 DOES THE REBUILT LAYER CHANGE LOOP 61's ANSWER FOR PPI?",
+  "                  model    pubs   best1  null95  margin  verdict",
+  "     old         0.8734  0.8507  0.7987  0.5118 +0.0227  EARNED",
+  "     rebuilt     0.8702  0.7749  0.7195  0.5117 +0.0952  EARNED",
+  "     verdict UNCHANGED, margin moves +0.0725",
+  "     Q4 PASS  (reported either way -- this gate cannot fail, it records what the rebuild did)",
+  "",
+  "Q5 WHAT ELSE LEANED ON THE OLD PPI",
+  "     FLIP  loeuf        +0.0390 -> -0.0012   EARNED -> defer",
+  "     27 other layers re-scored, 1 verdict flips: loeuf",
+  "     Q5 PASS  (records, does not judge)",
+  "",
+  "  PASS  Q1 the flag belongs on the record field",
+  "  PASS  Q2 provenance is unrecoverable by filter",
+  "  PASS  Q3 the rebuilt layer is deterministic",
+  "  PASS  Q4 rebuild effect on loop 61 recorded",
+  "  PASS  Q5 downstream layers re-scored",
+  "    manifest: 2 inputs, coverage 16492/16492 (100.0%) by 'all', seed 6201, controls 5"
+ ]
+}

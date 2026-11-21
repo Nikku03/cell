@@ -1,0 +1,237 @@
+{
+ "test": "restricted chain inside the chemistry shortlist",
+ "gates": {
+  "U1": false,
+  "U2": false,
+  "U3": false,
+  "U4": true,
+  "U5": false,
+  "U6": true
+ },
+ "n": 1500,
+ "recall": {
+  "5": 0.5533333333333333,
+  "10": 0.694,
+  "20": 0.794,
+  "50": 0.9053333333333333,
+  "100": 0.9526666666666667,
+  "500": 0.974
+ },
+ "results": {
+  "blend162": {
+   "hit@1": 0.5073333333333333,
+   "hit@20": 0.9293333333333333,
+   "hit@100": 0.984,
+   "mrr": 0.6209528466095068,
+   "sem1": 0.0129085558764261
+  },
+  "tier_only": {
+   "hit@1": 0.31333333333333335,
+   "hit@20": 0.7993333333333333,
+   "hit@100": 0.9526666666666667,
+   "mrr": 0.4290450747000392,
+   "sem1": 0.01197652023907767
+  },
+  "chain5": {
+   "hit@1": 0.322,
+   "hit@20": 0.7993333333333333,
+   "hit@100": 0.9526666666666667,
+   "mrr": 0.4391895191444836,
+   "sem1": 0.012064161802628476
+  },
+  "chain10": {
+   "hit@1": 0.3606666666666667,
+   "hit@20": 0.7993333333333333,
+   "hit@100": 0.9526666666666667,
+   "mrr": 0.47225010115506566,
+   "sem1": 0.01239855427653354
+  },
+  "chain20": {
+   "hit@1": 0.4073333333333333,
+   "hit@20": 0.7993333333333333,
+   "hit@100": 0.9526666666666667,
+   "mrr": 0.5146683184067968,
+   "sem1": 0.012686288894941892
+  },
+  "chain50": {
+   "hit@1": 0.4713333333333333,
+   "hit@20": 0.856,
+   "hit@100": 0.9526666666666667,
+   "mrr": 0.5817387109371028,
+   "sem1": 0.012888708811002552
+  },
+  "chain100": {
+   "hit@1": 0.5006666666666667,
+   "hit@20": 0.8886666666666667,
+   "hit@100": 0.9526666666666667,
+   "mrr": 0.6120705240987949,
+   "sem1": 0.012909933011846746
+  },
+  "chain500": {
+   "hit@1": 0.5093333333333333,
+   "hit@20": 0.908,
+   "hit@100": 0.9586666666666667,
+   "mrr": 0.6261616297889859,
+   "sem1": 0.012907695092176317
+  },
+  "masked5": {
+   "hit@1": 0.294,
+   "hit@20": 0.7993333333333333,
+   "hit@100": 0.9526666666666667,
+   "mrr": 0.4207339635889281,
+   "sem1": 0.011763332861056002
+  },
+  "masked10": {
+   "hit@1": 0.338,
+   "hit@20": 0.7993333333333333,
+   "hit@100": 0.9526666666666667,
+   "mrr": 0.45782787893284344,
+   "sem1": 0.01221354439410062
+  },
+  "masked20": {
+   "hit@1": 0.39066666666666666,
+   "hit@20": 0.7993333333333333,
+   "hit@100": 0.9526666666666667,
+   "mrr": 0.5071386574932351,
+   "sem1": 0.01259751886212049
+  },
+  "masked50": {
+   "hit@1": 0.456,
+   "hit@20": 0.862,
+   "hit@100": 0.9526666666666667,
+   "mrr": 0.5792606551397786,
+   "sem1": 0.01285986003034248
+  },
+  "masked100": {
+   "hit@1": 0.4846666666666667,
+   "hit@20": 0.9006666666666666,
+   "hit@100": 0.9526666666666667,
+   "mrr": 0.6104119357397205,
+   "sem1": 0.012903872516648865
+  },
+  "masked500": {
+   "hit@1": 0.49866666666666665,
+   "hit@20": 0.9206666666666666,
+   "hit@100": 0.9606666666666667,
+   "mrr": 0.6262255797143074,
+   "sem1": 0.012909898585251609
+  }
+ },
+ "best_N": 500,
+ "u2": [
+  0.002,
+  0.00851127356967086
+ ],
+ "u3": [
+  0.010666666666666666,
+  0.005956484173042324
+ ],
+ "u5": [
+  -0.021333333333333333,
+  0.0042852373632343
+ ],
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "colab/data/rem_bipartite.npz",
+    "bytes": 259723,
+    "hash": "e2ebbd1dc38e146a",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/rem_chem.npz",
+    "bytes": 256207,
+    "hash": "d0d2cbabfb22280d",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 5582,
+   "used": 1500,
+   "selection": "random",
+   "fraction": 0.2687208885704049
+  },
+  "seed": 16600,
+  "controls": [
+   "DEV only; TEST untouched by this loop",
+   "the masked full-graph walk on identical shortlists, so U3 separates restriction from filtering",
+   "the whole N curve reported, not the best point",
+   "hit@20 priced at U5 so a top-of-list gain cannot hide a tail loss",
+   "shortlist recall gated first, so re-ranking is only attempted where it can help"
+  ],
+  "note": "cascade: chemistry shortlists, then a Markov chain restricted to it",
+  "warnings": []
+ },
+ "seconds": 84.04363656044006,
+ "log": [
+  "========================================================================================================",
+  "  THE CHAIN INSIDE THE SHORTLIST -- cascade, not blend. DEV only.",
+  "========================================================================================================",
+  "",
+  "     1,500 DEV reactions sampled at seed 16600 (TEST untouched by this loop)",
+  "     250/1,500 [15s]",
+  "     500/1,500 [29s]",
+  "     750/1,500 [42s]",
+  "     1,000/1,500 [56s]",
+  "     1,250/1,500 [70s]",
+  "     1,500/1,500 [84s]",
+  "",
+  "U1 SHORTLIST RECALL -- is the answer even in the chemistry top-N?",
+  "     top-5    recall 0.5533",
+  "     top-10   recall 0.6940",
+  "     top-20   recall 0.7940",
+  "     top-50   recall 0.9053",
+  "     top-100  recall 0.9527",
+  "     top-500  recall 0.9740",
+  "     the shortlist misses the answer too often for re-ranking to beat scoring the whole space; the rest of this loop is void.",
+  "     U1 FAIL",
+  "",
+  "U4 THE CURVE",
+  "     variant          hit@1  hit@20  hit@100     MRR",
+  "     tier_only       0.3133  0.7993   0.9527  0.4290",
+  "     blend162        0.5073  0.9293   0.9840  0.6210",
+  "     masked5         0.2940  0.7993   0.9527  0.4207",
+  "     masked10        0.3380  0.7993   0.9527  0.4578",
+  "     masked20        0.3907  0.7993   0.9527  0.5071",
+  "     masked50        0.4560  0.8620   0.9527  0.5793",
+  "     masked100       0.4847  0.9007   0.9527  0.6104",
+  "     masked500       0.4987  0.9207   0.9607  0.6262",
+  "     chain5          0.3220  0.7993   0.9527  0.4392",
+  "     chain10         0.3607  0.7993   0.9527  0.4723",
+  "     chain20         0.4073  0.7993   0.9527  0.5147",
+  "     chain50         0.4713  0.8560   0.9527  0.5817",
+  "     chain100        0.5007  0.8887   0.9527  0.6121",
+  "     chain500        0.5093  0.9080   0.9587  0.6262",
+  "     U4 PASS   (n = 1,500)",
+  "",
+  "U2 best restricted chain (N=500) vs loop 162's blend, hit@1: 0.5093 vs 0.5073 = +0.0020 sem 0.0085 (+0.2 sem)",
+  "     MRR +0.0052 (+0.9 sem)",
+  "     the cascade does not beat the one-shot blend at the top of the list.",
+  "     U2 FAIL",
+  "",
+  "U3 restricted chain vs the SAME shortlist re-ranked by the masked full-graph walk: 0.5093 vs 0.4987 = +0.0107 sem 0.0060 (+1.8 sem)",
+  "     restriction adds nothing over masking. The shortlist is doing the work and the honest description is a chemistry shortlist with a cosmetic re-rank.",
+  "     U3 FAIL",
+  "",
+  "U5 THE TAIL: hit@20 0.9080 vs blend 0.9293 = -0.0213 (-5.0 sem)",
+  "     the gain at rank 1 is paid for by losing answers from the top 20.",
+  "     U5 FAIL",
+  "",
+  "U6 WHAT THIS CANNOT SHOW",
+  "     DEV only. TEST was read once by loop 162 and is not read here; a second read would be",
+  "     the second read of a set whose whole value is that it was read once.",
+  "     N is chosen from the curve above, on DEV, so N itself is a fitted quantity.",
+  "     U6 PASS",
+  "",
+  "========================================================================================================",
+  "  U1  FAIL",
+  "  U2  FAIL",
+  "  U3  FAIL",
+  "  U4  PASS",
+  "  U5  FAIL",
+  "  U6  PASS",
+  "  2/6   [84s]",
+  "========================================================================================================"
+ ]
+}

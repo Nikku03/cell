@@ -1,0 +1,39 @@
+=================================================================================================
+DOES THE OPTOGENETIC DATA REPAIR THE WEAK NODE?
+=================================================================================================
+  ORDER read from outputs/opto_units.json: +0
+  two-gate (ORDER +0)         38,217 parameters
+  channel tree                37,537 parameters
+  bump tree                   37,537 parameters
+  G1 gradient / tolerance 0.082   broken copy 5.82e+04 (caught)   not odd 4.48e-01   -> PASS
+  G2 harness 1.000 -> PASS
+
+  mean test accuracy over 10 seeds [min - max]
+        n          two-gate (ORDER +0)                channel tree                   bump tree
+     1500           0.610 [0.50-0.83]          0.614 [0.48-0.84]          0.864 [0.79-0.94]
+     2000           0.646 [0.51-0.78]          0.691 [0.48-0.90]          0.956 [0.91-0.98]
+     2500           0.840 [0.67-0.94]          0.830 [0.72-0.95]          0.981 [0.97-0.99]
+     3000           0.906 [0.85-0.98]          0.879 [0.77-0.96]          0.988 [0.98-0.99]
+     3500           0.927 [0.81-0.99]          0.895 [0.79-0.98]          0.994 [0.99-1.00]
+     4000           0.961 [0.92-0.99]          0.961 [0.89-0.99]          0.996 [0.99-1.00]
+  G5 capped unfitted: two-gate (ORDER +0) 0/60, channel tree 0/60, bump tree 0/60
+
+    seed          two-gate (ORDER +0)                channel tree                   bump tree
+      50                        0.796                       0.807                       0.964
+      51                        0.787                       0.782                       0.959
+      52                        0.889                       0.860                       0.980
+      53                        0.843                       0.823                       0.971
+      54                        0.783                       0.749                       0.957
+      55                        0.795                       0.779                       0.965
+      56                        0.810                       0.861                       0.958
+      57                        0.751                       0.784                       0.966
+      58                        0.839                       0.832                       0.950
+      59                        0.858                       0.842                       0.961
+
+  G0 two-gate vs channel tree (does it help the weak part?)
+     higher on 7/10, lower on 3/10, sign p 0.1719, mean +0.003, t 0.36  -> NO CLEAR EFFECT
+
+  G3 two-gate vs bump tree (does it close the gap?)
+     higher on 0/10, lower on 10/10, sign p 1.0000, mean -0.148, t -12.02  -> HARMS
+
+  artifact: outputs/twogate.json   runtime 430s

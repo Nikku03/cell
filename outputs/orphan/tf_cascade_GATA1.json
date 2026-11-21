@@ -1,0 +1,2959 @@
+{
+ "knockout": "GATA1",
+ "levels": [
+  {
+   "level": "L1 direct targets",
+   "n": 607,
+   "moved": 76,
+   "rate": 0.1252,
+   "expected": 21.0,
+   "fold": 3.62,
+   "p": 0.026,
+   "n_down": 2,
+   "n_up": 74
+  },
+  {
+   "level": "L2 via moved TF targets",
+   "n": 1953,
+   "moved": 208,
+   "rate": 0.1065,
+   "expected": 140.2,
+   "fold": 1.48,
+   "p": 0.024,
+   "n_down": 21,
+   "n_up": 187
+  },
+  {
+   "level": "L3 via moved L2 TFs",
+   "n": 588,
+   "moved": 46,
+   "rate": 0.0782,
+   "expected": 55.9,
+   "fold": 0.82,
+   "p": 0.896,
+   "n_down": 13,
+   "n_up": 33
+  }
+ ],
+ "cascade_coverage": 0.5314,
+ "cascade_genes": 3148,
+ "movers": 621,
+ "L1_tf_moved": [
+  "ABL1",
+  "BHLHE40",
+  "ELF2",
+  "FOXN3",
+  "HDAC1",
+  "HOXB2",
+  "IKZF3",
+  "KAT6B",
+  "MEF2A",
+  "RERE",
+  "SPI1",
+  "TEAD1",
+  "YBX1"
+ ],
+ "magnitude": [
+  {
+   "gene": "LTB",
+   "z": 187.35,
+   "cv": null,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "no control CV available",
+   "halflife_h": null,
+   "direction": "up"
+  },
+  {
+   "gene": "LST1",
+   "z": 102.03,
+   "cv": 0.625,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": null,
+   "direction": "up"
+  },
+  {
+   "gene": "CTSC",
+   "z": 78.64,
+   "cv": 0.161,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 3.73,
+   "direction": "up"
+  },
+  {
+   "gene": "TMSB4X",
+   "z": 37.55,
+   "cv": 0.102,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 8.46,
+   "direction": "up"
+  },
+  {
+   "gene": "S100A4",
+   "z": 36.69,
+   "cv": 0.313,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 7.6,
+   "direction": "up"
+  },
+  {
+   "gene": "LGALS1",
+   "z": 34.02,
+   "cv": 0.269,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 15.16,
+   "direction": "up"
+  },
+  {
+   "gene": "PLD3",
+   "z": 29.06,
+   "cv": 0.161,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 11.17,
+   "direction": "up"
+  },
+  {
+   "gene": "EGLN3",
+   "z": 28.65,
+   "cv": 0.354,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 1.0,
+   "direction": "up"
+  },
+  {
+   "gene": "AIF1",
+   "z": 28.33,
+   "cv": 0.338,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": null,
+   "direction": "up"
+  },
+  {
+   "gene": "CFD",
+   "z": 27.94,
+   "cv": 0.145,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 29.9,
+   "direction": "up"
+  },
+  {
+   "gene": "EML4",
+   "z": 26.73,
+   "cv": 0.159,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 5.0,
+   "direction": "up"
+  },
+  {
+   "gene": "FCER1G",
+   "z": 26.72,
+   "cv": 0.263,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": null,
+   "direction": "up"
+  },
+  {
+   "gene": "SAT1",
+   "z": 25.9,
+   "cv": 0.373,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 1.63,
+   "direction": "up"
+  },
+  {
+   "gene": "S100A13",
+   "z": 23.51,
+   "cv": 0.195,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 8.5,
+   "direction": "up"
+  },
+  {
+   "gene": "FUCA1",
+   "z": 22.57,
+   "cv": 0.207,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 9.29,
+   "direction": "up"
+  },
+  {
+   "gene": "ARL6IP5",
+   "z": 22.46,
+   "cv": 0.153,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 4.29,
+   "direction": "up"
+  },
+  {
+   "gene": "IFNGR1",
+   "z": 21.03,
+   "cv": 0.215,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 0.77,
+   "direction": "up"
+  },
+  {
+   "gene": "ATF7IP2",
+   "z": 20.47,
+   "cv": 0.189,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 1.24,
+   "direction": "up"
+  },
+  {
+   "gene": "GNAI2",
+   "z": 17.09,
+   "cv": 0.132,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 7.37,
+   "direction": "up"
+  },
+  {
+   "gene": "ITM2B",
+   "z": 16.32,
+   "cv": 0.121,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 7.88,
+   "direction": "up"
+  },
+  {
+   "gene": "ZNF217",
+   "z": 16.25,
+   "cv": 0.18,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 0.44,
+   "direction": "up"
+  },
+  {
+   "gene": "ADGRE5",
+   "z": 15.86,
+   "cv": 0.291,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 1.79,
+   "direction": "up"
+  },
+  {
+   "gene": "CYBA",
+   "z": 15.39,
+   "cv": 0.1,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 22.06,
+   "direction": "up"
+  },
+  {
+   "gene": "HIPK2",
+   "z": 15.1,
+   "cv": 0.155,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 2.42,
+   "direction": "up"
+  },
+  {
+   "gene": "ADAM10",
+   "z": 15.01,
+   "cv": 0.159,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 2.97,
+   "direction": "up"
+  },
+  {
+   "gene": "PIM1",
+   "z": 14.64,
+   "cv": 0.162,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 0.49,
+   "direction": "up"
+  },
+  {
+   "gene": "STK17B",
+   "z": 14.56,
+   "cv": 0.215,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 0.7,
+   "direction": "up"
+  },
+  {
+   "gene": "ALDH2",
+   "z": 14.52,
+   "cv": 0.168,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 9.96,
+   "direction": "up"
+  },
+  {
+   "gene": "PYCARD",
+   "z": 14.24,
+   "cv": 0.138,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": null,
+   "direction": "up"
+  },
+  {
+   "gene": "CKLF",
+   "z": 14.17,
+   "cv": 0.155,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 84.93,
+   "direction": "up"
+  },
+  {
+   "gene": "BCL2L11",
+   "z": 13.97,
+   "cv": 0.19,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 0.55,
+   "direction": "up"
+  },
+  {
+   "gene": "PNRC1",
+   "z": 13.92,
+   "cv": 0.253,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 2.13,
+   "direction": "up"
+  },
+  {
+   "gene": "LCP1",
+   "z": 13.75,
+   "cv": 0.106,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 10.37,
+   "direction": "up"
+  },
+  {
+   "gene": "IL6ST",
+   "z": 13.35,
+   "cv": 0.32,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 0.69,
+   "direction": "up"
+  },
+  {
+   "gene": "TXNIP",
+   "z": 13.34,
+   "cv": 0.219,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 0.4,
+   "direction": "up"
+  },
+  {
+   "gene": "TIMP1",
+   "z": 13.19,
+   "cv": 0.199,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 13.08,
+   "direction": "up"
+  },
+  {
+   "gene": "FNBP1",
+   "z": 13.1,
+   "cv": 0.18,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 6.63,
+   "direction": "up"
+  },
+  {
+   "gene": "ARHGAP18",
+   "z": 12.65,
+   "cv": 0.162,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 3.73,
+   "direction": "up"
+  },
+  {
+   "gene": "SOCS1",
+   "z": 12.46,
+   "cv": 0.272,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 0.65,
+   "direction": "up"
+  },
+  {
+   "gene": "HLA-C",
+   "z": 12.41,
+   "cv": 0.298,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": null,
+   "direction": "up"
+  },
+  {
+   "gene": "TNFSF10",
+   "z": 12.25,
+   "cv": 0.673,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": null,
+   "direction": "up"
+  },
+  {
+   "gene": "TPP1",
+   "z": 12.15,
+   "cv": 0.215,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 8.41,
+   "direction": "up"
+  },
+  {
+   "gene": "DPYSL2",
+   "z": 12.01,
+   "cv": 0.32,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 56.3,
+   "direction": "up"
+  },
+  {
+   "gene": "SOCS2",
+   "z": 11.99,
+   "cv": 0.13,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 1.44,
+   "direction": "up"
+  },
+  {
+   "gene": "FMNL1",
+   "z": 11.85,
+   "cv": 0.23,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 4.4,
+   "direction": "up"
+  },
+  {
+   "gene": "STAC3",
+   "z": 11.84,
+   "cv": 0.209,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": null,
+   "direction": "up"
+  },
+  {
+   "gene": "SSH2",
+   "z": 11.81,
+   "cv": 0.21,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 0.69,
+   "direction": "up"
+  },
+  {
+   "gene": "NCKAP1L",
+   "z": 11.8,
+   "cv": 0.152,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 6.7,
+   "direction": "up"
+  },
+  {
+   "gene": "RPS2",
+   "z": -11.79,
+   "cv": 0.086,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 33.16,
+   "direction": "down"
+  },
+  {
+   "gene": "BHLHE40",
+   "z": 11.71,
+   "cv": 0.137,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 0.5,
+   "direction": "up"
+  },
+  {
+   "gene": "N4BP2",
+   "z": 11.31,
+   "cv": 0.13,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 4.4,
+   "direction": "up"
+  },
+  {
+   "gene": "ANXA4",
+   "z": 11.26,
+   "cv": 0.289,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 19.37,
+   "direction": "up"
+  },
+  {
+   "gene": "KTN1",
+   "z": 11.19,
+   "cv": 0.1,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 10.53,
+   "direction": "up"
+  },
+  {
+   "gene": "H19",
+   "z": 11.17,
+   "cv": 0.491,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 29.87,
+   "direction": "up"
+  },
+  {
+   "gene": "SH3BGRL3",
+   "z": 11.11,
+   "cv": 0.24,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 5.92,
+   "direction": "up"
+  },
+  {
+   "gene": "SSBP2",
+   "z": 11.0,
+   "cv": 0.198,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 3.06,
+   "direction": "up"
+  },
+  {
+   "gene": "RAC2",
+   "z": 10.99,
+   "cv": 0.136,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 5.85,
+   "direction": "up"
+  },
+  {
+   "gene": "MARCKSL1",
+   "z": 10.97,
+   "cv": 0.106,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 7.27,
+   "direction": "up"
+  },
+  {
+   "gene": "NAGK",
+   "z": 10.93,
+   "cv": 0.294,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 31.9,
+   "direction": "up"
+  },
+  {
+   "gene": "UGP2",
+   "z": 10.85,
+   "cv": 0.13,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 3.45,
+   "direction": "up"
+  },
+  {
+   "gene": "GNPTAB",
+   "z": 10.76,
+   "cv": 0.149,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 3.91,
+   "direction": "up"
+  },
+  {
+   "gene": "CCNI",
+   "z": 10.73,
+   "cv": 0.08,
+   "est_fold_change": 1.855,
+   "est_rel_change": 0.855,
+   "linear_estimate_valid": true,
+   "note_if_invalid": null,
+   "halflife_h": 10.23,
+   "direction": "up"
+  },
+  {
+   "gene": "SLC5A3",
+   "z": 10.73,
+   "cv": 0.163,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 1.17,
+   "direction": "up"
+  },
+  {
+   "gene": "CTSS",
+   "z": 10.72,
+   "cv": 0.19,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": null,
+   "direction": "up"
+  },
+  {
+   "gene": "COL2A1",
+   "z": 10.68,
+   "cv": 0.192,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": null,
+   "direction": "up"
+  },
+  {
+   "gene": "HLA-E",
+   "z": 10.61,
+   "cv": 0.238,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 3.73,
+   "direction": "up"
+  },
+  {
+   "gene": "RCSD1",
+   "z": 10.59,
+   "cv": 0.149,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 2.61,
+   "direction": "up"
+  },
+  {
+   "gene": "IRF2BP2",
+   "z": 10.56,
+   "cv": 0.19,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 0.84,
+   "direction": "up"
+  },
+  {
+   "gene": "ACTR2",
+   "z": 10.55,
+   "cv": 0.09,
+   "est_fold_change": 1.948,
+   "est_rel_change": 0.948,
+   "linear_estimate_valid": true,
+   "note_if_invalid": null,
+   "halflife_h": 12.38,
+   "direction": "up"
+  },
+  {
+   "gene": "TUT4",
+   "z": 10.48,
+   "cv": 0.107,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 3.08,
+   "direction": "up"
+  },
+  {
+   "gene": "AC025171.2",
+   "z": 10.45,
+   "cv": 0.279,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": null,
+   "direction": "up"
+  },
+  {
+   "gene": "MYH9",
+   "z": 10.41,
+   "cv": 0.177,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 6.41,
+   "direction": "up"
+  },
+  {
+   "gene": "TFAP2A",
+   "z": 10.29,
+   "cv": 0.258,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 1.66,
+   "direction": "up"
+  },
+  {
+   "gene": "USP32",
+   "z": 10.17,
+   "cv": 0.21,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 2.02,
+   "direction": "up"
+  },
+  {
+   "gene": "UCP2",
+   "z": 10.16,
+   "cv": 0.166,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 5.51,
+   "direction": "up"
+  },
+  {
+   "gene": "PIK3R1",
+   "z": 10.07,
+   "cv": 0.212,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 1.02,
+   "direction": "up"
+  },
+  {
+   "gene": "PDE4DIP",
+   "z": 9.94,
+   "cv": 0.108,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 2.49,
+   "direction": "up"
+  },
+  {
+   "gene": "RDH10",
+   "z": 9.85,
+   "cv": 0.248,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 4.2,
+   "direction": "up"
+  },
+  {
+   "gene": "VAMP2",
+   "z": 9.83,
+   "cv": 0.212,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 7.88,
+   "direction": "up"
+  },
+  {
+   "gene": "HOXB2",
+   "z": 9.78,
+   "cv": 0.182,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 0.63,
+   "direction": "up"
+  },
+  {
+   "gene": "TAOK3",
+   "z": 9.76,
+   "cv": 0.13,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 2.16,
+   "direction": "up"
+  },
+  {
+   "gene": "ARPC5",
+   "z": 9.75,
+   "cv": 0.09,
+   "est_fold_change": 1.882,
+   "est_rel_change": 0.882,
+   "linear_estimate_valid": true,
+   "note_if_invalid": null,
+   "halflife_h": 5.32,
+   "direction": "up"
+  },
+  {
+   "gene": "MINDY2",
+   "z": 9.72,
+   "cv": 0.17,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 2.45,
+   "direction": "up"
+  },
+  {
+   "gene": "ARID3A",
+   "z": 9.7,
+   "cv": 0.094,
+   "est_fold_change": 1.911,
+   "est_rel_change": 0.911,
+   "linear_estimate_valid": true,
+   "note_if_invalid": null,
+   "halflife_h": 3.28,
+   "direction": "up"
+  },
+  {
+   "gene": "SERPING1",
+   "z": 9.66,
+   "cv": 0.284,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": null,
+   "direction": "up"
+  },
+  {
+   "gene": "BST2",
+   "z": 9.61,
+   "cv": 0.268,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 2.59,
+   "direction": "up"
+  },
+  {
+   "gene": "VMP1",
+   "z": 9.6,
+   "cv": 0.14,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 2.3,
+   "direction": "up"
+  },
+  {
+   "gene": "SPI1",
+   "z": 9.59,
+   "cv": 0.204,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 5.38,
+   "direction": "up"
+  },
+  {
+   "gene": "PSME1",
+   "z": 9.58,
+   "cv": 0.167,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 11.22,
+   "direction": "up"
+  },
+  {
+   "gene": "METTL9",
+   "z": 9.58,
+   "cv": 0.106,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 7.64,
+   "direction": "up"
+  },
+  {
+   "gene": "DBI",
+   "z": 9.56,
+   "cv": 0.114,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 11.04,
+   "direction": "up"
+  },
+  {
+   "gene": "ZFHX3",
+   "z": 9.53,
+   "cv": 0.35,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": null,
+   "direction": "up"
+  },
+  {
+   "gene": "ACTG1",
+   "z": 9.45,
+   "cv": 0.11,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 6.78,
+   "direction": "up"
+  },
+  {
+   "gene": "ARPC1B",
+   "z": 9.41,
+   "cv": 0.098,
+   "est_fold_change": 1.923,
+   "est_rel_change": 0.923,
+   "linear_estimate_valid": true,
+   "note_if_invalid": null,
+   "halflife_h": 11.94,
+   "direction": "up"
+  },
+  {
+   "gene": "RUFY3",
+   "z": 9.31,
+   "cv": 0.19,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 4.24,
+   "direction": "up"
+  },
+  {
+   "gene": "ADA",
+   "z": 9.29,
+   "cv": 0.172,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 47.78,
+   "direction": "up"
+  },
+  {
+   "gene": "MOB1A",
+   "z": 9.28,
+   "cv": 0.118,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 3.29,
+   "direction": "up"
+  },
+  {
+   "gene": "TLN1",
+   "z": 9.26,
+   "cv": 0.126,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 7.38,
+   "direction": "up"
+  },
+  {
+   "gene": "TPMT",
+   "z": 9.25,
+   "cv": 0.203,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 6.79,
+   "direction": "up"
+  },
+  {
+   "gene": "CCDC18-AS1",
+   "z": 9.21,
+   "cv": 0.246,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 7.5,
+   "direction": "up"
+  },
+  {
+   "gene": "PJA2",
+   "z": 9.2,
+   "cv": 0.135,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 3.16,
+   "direction": "up"
+  },
+  {
+   "gene": "YPEL3",
+   "z": 9.16,
+   "cv": 0.366,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 16.6,
+   "direction": "up"
+  },
+  {
+   "gene": "VAMP8",
+   "z": 9.14,
+   "cv": 0.105,
+   "est_fold_change": 1.964,
+   "est_rel_change": 0.964,
+   "linear_estimate_valid": true,
+   "note_if_invalid": null,
+   "halflife_h": 10.6,
+   "direction": "up"
+  },
+  {
+   "gene": "WIPF1",
+   "z": 9.09,
+   "cv": 0.263,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 8.97,
+   "direction": "up"
+  },
+  {
+   "gene": "LRMDA",
+   "z": 9.06,
+   "cv": 0.224,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": null,
+   "direction": "up"
+  },
+  {
+   "gene": "AL034397.3",
+   "z": 9.06,
+   "cv": 0.166,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": null,
+   "direction": "up"
+  },
+  {
+   "gene": "CD53",
+   "z": 9.04,
+   "cv": 0.16,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 6.19,
+   "direction": "up"
+  },
+  {
+   "gene": "ACTB",
+   "z": 9.03,
+   "cv": 0.088,
+   "est_fold_change": 1.799,
+   "est_rel_change": 0.799,
+   "linear_estimate_valid": true,
+   "note_if_invalid": null,
+   "halflife_h": 10.99,
+   "direction": "up"
+  },
+  {
+   "gene": "PLEKHO1",
+   "z": 8.96,
+   "cv": 0.3,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 11.39,
+   "direction": "up"
+  },
+  {
+   "gene": "NME2",
+   "z": -8.96,
+   "cv": 0.087,
+   "est_fold_change": 0.221,
+   "est_rel_change": -0.779,
+   "linear_estimate_valid": true,
+   "note_if_invalid": null,
+   "halflife_h": 16.18,
+   "direction": "down"
+  },
+  {
+   "gene": "CAPG",
+   "z": 8.95,
+   "cv": 0.194,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 9.1,
+   "direction": "up"
+  },
+  {
+   "gene": "STK10",
+   "z": 8.94,
+   "cv": null,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "no control CV available",
+   "halflife_h": 19.05,
+   "direction": "up"
+  },
+  {
+   "gene": "IKZF3",
+   "z": 8.92,
+   "cv": 0.202,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 3.1,
+   "direction": "up"
+  },
+  {
+   "gene": "PIK3CG",
+   "z": 8.8,
+   "cv": 0.221,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 3.33,
+   "direction": "up"
+  },
+  {
+   "gene": "LCP2",
+   "z": 8.8,
+   "cv": 0.423,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 3.29,
+   "direction": "up"
+  },
+  {
+   "gene": "NIPBL",
+   "z": 8.79,
+   "cv": 0.093,
+   "est_fold_change": 1.82,
+   "est_rel_change": 0.82,
+   "linear_estimate_valid": true,
+   "note_if_invalid": null,
+   "halflife_h": 3.02,
+   "direction": "up"
+  },
+  {
+   "gene": "CELF2",
+   "z": 8.77,
+   "cv": 0.099,
+   "est_fold_change": 1.866,
+   "est_rel_change": 0.866,
+   "linear_estimate_valid": true,
+   "note_if_invalid": null,
+   "halflife_h": 5.06,
+   "direction": "up"
+  },
+  {
+   "gene": "UBE2W",
+   "z": 8.75,
+   "cv": 0.217,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 0.39,
+   "direction": "up"
+  },
+  {
+   "gene": "RPS12",
+   "z": -8.74,
+   "cv": 0.096,
+   "est_fold_change": 0.161,
+   "est_rel_change": -0.839,
+   "linear_estimate_valid": true,
+   "note_if_invalid": null,
+   "halflife_h": 17.89,
+   "direction": "down"
+  },
+  {
+   "gene": "NT5C2",
+   "z": 8.71,
+   "cv": 0.275,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 4.68,
+   "direction": "up"
+  },
+  {
+   "gene": "MACF1",
+   "z": 8.67,
+   "cv": 0.098,
+   "est_fold_change": 1.848,
+   "est_rel_change": 0.848,
+   "linear_estimate_valid": true,
+   "note_if_invalid": null,
+   "halflife_h": 3.49,
+   "direction": "up"
+  },
+  {
+   "gene": "PRKCB",
+   "z": 8.65,
+   "cv": 0.189,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 9.48,
+   "direction": "up"
+  },
+  {
+   "gene": "ABCA7",
+   "z": 8.65,
+   "cv": 0.286,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 2.44,
+   "direction": "up"
+  },
+  {
+   "gene": "GPRC5C",
+   "z": 8.64,
+   "cv": 0.219,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 5.5,
+   "direction": "up"
+  },
+  {
+   "gene": "SH3KBP1",
+   "z": 8.6,
+   "cv": 0.311,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 14.24,
+   "direction": "up"
+  },
+  {
+   "gene": "CAVIN1",
+   "z": 8.57,
+   "cv": 0.197,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 4.1,
+   "direction": "up"
+  },
+  {
+   "gene": "B2M",
+   "z": 8.5,
+   "cv": 0.09,
+   "est_fold_change": 1.767,
+   "est_rel_change": 0.767,
+   "linear_estimate_valid": true,
+   "note_if_invalid": null,
+   "halflife_h": 16.35,
+   "direction": "up"
+  },
+  {
+   "gene": "LNPEP",
+   "z": 8.5,
+   "cv": 0.158,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 3.03,
+   "direction": "up"
+  },
+  {
+   "gene": "CORO1B",
+   "z": 8.48,
+   "cv": 0.121,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 5.15,
+   "direction": "up"
+  },
+  {
+   "gene": "MT-CO1",
+   "z": 8.47,
+   "cv": 0.088,
+   "est_fold_change": 1.744,
+   "est_rel_change": 0.744,
+   "linear_estimate_valid": true,
+   "note_if_invalid": null,
+   "halflife_h": null,
+   "direction": "up"
+  },
+  {
+   "gene": "KAT6B",
+   "z": 8.44,
+   "cv": 0.19,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 1.25,
+   "direction": "up"
+  },
+  {
+   "gene": "HEATR6",
+   "z": 8.39,
+   "cv": 0.269,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 1.72,
+   "direction": "up"
+  },
+  {
+   "gene": "PKIB",
+   "z": 8.36,
+   "cv": 0.188,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 6.42,
+   "direction": "up"
+  },
+  {
+   "gene": "MAP1A",
+   "z": 8.35,
+   "cv": 0.215,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 3.43,
+   "direction": "up"
+  },
+  {
+   "gene": "RNF213",
+   "z": 8.32,
+   "cv": 0.253,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 6.37,
+   "direction": "up"
+  },
+  {
+   "gene": "CCPG1",
+   "z": 8.32,
+   "cv": 0.207,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 2.65,
+   "direction": "up"
+  },
+  {
+   "gene": "CTSV",
+   "z": 8.14,
+   "cv": 0.341,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": null,
+   "direction": "up"
+  },
+  {
+   "gene": "PAPSS1",
+   "z": 8.13,
+   "cv": 0.135,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 7.75,
+   "direction": "up"
+  },
+  {
+   "gene": "GLRX",
+   "z": 8.11,
+   "cv": 0.433,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 12.55,
+   "direction": "up"
+  },
+  {
+   "gene": "RPL21",
+   "z": -8.04,
+   "cv": 0.08,
+   "est_fold_change": 0.359,
+   "est_rel_change": -0.641,
+   "linear_estimate_valid": true,
+   "note_if_invalid": null,
+   "halflife_h": 28.94,
+   "direction": "down"
+  },
+  {
+   "gene": "MRPS6",
+   "z": 8.04,
+   "cv": 0.125,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 7.69,
+   "direction": "up"
+  },
+  {
+   "gene": "SEPTIN9",
+   "z": 8.0,
+   "cv": 0.141,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 5.63,
+   "direction": "up"
+  },
+  {
+   "gene": "B3GNT5",
+   "z": 7.98,
+   "cv": 0.315,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 2.01,
+   "direction": "up"
+  },
+  {
+   "gene": "RABGAP1L",
+   "z": 7.98,
+   "cv": 0.211,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 2.22,
+   "direction": "up"
+  },
+  {
+   "gene": "SMAP2",
+   "z": 7.91,
+   "cv": 0.114,
+   "est_fold_change": 1.905,
+   "est_rel_change": 0.905,
+   "linear_estimate_valid": true,
+   "note_if_invalid": null,
+   "halflife_h": 6.72,
+   "direction": "up"
+  },
+  {
+   "gene": "DDX17",
+   "z": 7.89,
+   "cv": 0.081,
+   "est_fold_change": 1.639,
+   "est_rel_change": 0.639,
+   "linear_estimate_valid": true,
+   "note_if_invalid": null,
+   "halflife_h": 4.97,
+   "direction": "up"
+  },
+  {
+   "gene": "IDH2",
+   "z": 7.88,
+   "cv": 0.136,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 12.76,
+   "direction": "up"
+  },
+  {
+   "gene": "RPS19",
+   "z": -7.86,
+   "cv": 0.083,
+   "est_fold_change": 0.349,
+   "est_rel_change": -0.651,
+   "linear_estimate_valid": true,
+   "note_if_invalid": null,
+   "halflife_h": 12.21,
+   "direction": "down"
+  },
+  {
+   "gene": "TRIM38",
+   "z": 7.82,
+   "cv": 0.219,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 1.44,
+   "direction": "up"
+  },
+  {
+   "gene": "EDEM1",
+   "z": 7.79,
+   "cv": 0.256,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 1.42,
+   "direction": "up"
+  },
+  {
+   "gene": "CASP8",
+   "z": 7.78,
+   "cv": 0.233,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 1.38,
+   "direction": "up"
+  },
+  {
+   "gene": "TACC1",
+   "z": 7.75,
+   "cv": 0.179,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 2.36,
+   "direction": "up"
+  },
+  {
+   "gene": "S100A11",
+   "z": 7.75,
+   "cv": 0.122,
+   "est_fold_change": 1.942,
+   "est_rel_change": 0.942,
+   "linear_estimate_valid": true,
+   "note_if_invalid": null,
+   "halflife_h": 8.86,
+   "direction": "up"
+  },
+  {
+   "gene": "CFLAR",
+   "z": 7.74,
+   "cv": 0.138,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 1.42,
+   "direction": "up"
+  },
+  {
+   "gene": "YBX1",
+   "z": -7.72,
+   "cv": 0.087,
+   "est_fold_change": 0.328,
+   "est_rel_change": -0.672,
+   "linear_estimate_valid": true,
+   "note_if_invalid": null,
+   "halflife_h": 15.0,
+   "direction": "down"
+  },
+  {
+   "gene": "ARPC3",
+   "z": 7.69,
+   "cv": 0.079,
+   "est_fold_change": 1.611,
+   "est_rel_change": 0.611,
+   "linear_estimate_valid": true,
+   "note_if_invalid": null,
+   "halflife_h": 15.31,
+   "direction": "up"
+  },
+  {
+   "gene": "SAMHD1",
+   "z": 7.69,
+   "cv": 0.264,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 6.5,
+   "direction": "up"
+  },
+  {
+   "gene": "OSTF1",
+   "z": 7.65,
+   "cv": 0.177,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 5.28,
+   "direction": "up"
+  },
+  {
+   "gene": "HMGA1",
+   "z": -7.64,
+   "cv": 0.094,
+   "est_fold_change": 0.282,
+   "est_rel_change": -0.718,
+   "linear_estimate_valid": true,
+   "note_if_invalid": null,
+   "halflife_h": 9.71,
+   "direction": "down"
+  },
+  {
+   "gene": "PDCD4",
+   "z": 7.56,
+   "cv": 0.168,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 11.79,
+   "direction": "up"
+  },
+  {
+   "gene": "TMEM158",
+   "z": 7.56,
+   "cv": 0.857,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 3.32,
+   "direction": "up"
+  },
+  {
+   "gene": "CCDC88A",
+   "z": 7.56,
+   "cv": 0.116,
+   "est_fold_change": 1.873,
+   "est_rel_change": 0.873,
+   "linear_estimate_valid": true,
+   "note_if_invalid": null,
+   "halflife_h": 4.92,
+   "direction": "up"
+  },
+  {
+   "gene": "RERE",
+   "z": 7.55,
+   "cv": 0.157,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 1.92,
+   "direction": "up"
+  },
+  {
+   "gene": "PIAS1",
+   "z": 7.52,
+   "cv": 0.148,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 1.16,
+   "direction": "up"
+  },
+  {
+   "gene": "KMT2E",
+   "z": 7.52,
+   "cv": 0.126,
+   "est_fold_change": 1.947,
+   "est_rel_change": 0.947,
+   "linear_estimate_valid": true,
+   "note_if_invalid": null,
+   "halflife_h": 0.73,
+   "direction": "up"
+  },
+  {
+   "gene": "BMPR2",
+   "z": 7.52,
+   "cv": 0.268,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 2.41,
+   "direction": "up"
+  },
+  {
+   "gene": "CALCOCO2",
+   "z": 7.49,
+   "cv": 0.137,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 9.36,
+   "direction": "up"
+  },
+  {
+   "gene": "NME1",
+   "z": -7.48,
+   "cv": 0.102,
+   "est_fold_change": 0.239,
+   "est_rel_change": -0.761,
+   "linear_estimate_valid": true,
+   "note_if_invalid": null,
+   "halflife_h": 9.53,
+   "direction": "down"
+  },
+  {
+   "gene": "C1QBP",
+   "z": -7.44,
+   "cv": 0.103,
+   "est_fold_change": 0.235,
+   "est_rel_change": -0.765,
+   "linear_estimate_valid": true,
+   "note_if_invalid": null,
+   "halflife_h": 11.43,
+   "direction": "down"
+  },
+  {
+   "gene": "EIF5A",
+   "z": -7.44,
+   "cv": 0.096,
+   "est_fold_change": 0.287,
+   "est_rel_change": -0.713,
+   "linear_estimate_valid": true,
+   "note_if_invalid": null,
+   "halflife_h": 9.35,
+   "direction": "down"
+  },
+  {
+   "gene": "AFF1",
+   "z": 7.43,
+   "cv": 0.172,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 1.6,
+   "direction": "up"
+  },
+  {
+   "gene": "NECAP2",
+   "z": 7.41,
+   "cv": 0.159,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 3.55,
+   "direction": "up"
+  },
+  {
+   "gene": "RPLP0",
+   "z": -7.35,
+   "cv": 0.081,
+   "est_fold_change": 0.406,
+   "est_rel_change": -0.594,
+   "linear_estimate_valid": true,
+   "note_if_invalid": null,
+   "halflife_h": 14.8,
+   "direction": "down"
+  },
+  {
+   "gene": "TRANK1",
+   "z": 7.34,
+   "cv": 0.282,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 5.22,
+   "direction": "up"
+  },
+  {
+   "gene": "SQLE",
+   "z": 7.34,
+   "cv": 0.141,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 3.42,
+   "direction": "up"
+  },
+  {
+   "gene": "APOBR",
+   "z": 7.31,
+   "cv": 0.287,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": null,
+   "direction": "up"
+  },
+  {
+   "gene": "AOPEP",
+   "z": 7.29,
+   "cv": null,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "no control CV available",
+   "halflife_h": 1.33,
+   "direction": "up"
+  },
+  {
+   "gene": "MYO9B",
+   "z": 7.27,
+   "cv": 0.218,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 4.19,
+   "direction": "up"
+  },
+  {
+   "gene": "SYNJ2",
+   "z": 7.26,
+   "cv": 0.254,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 1.97,
+   "direction": "up"
+  },
+  {
+   "gene": "TMEM65",
+   "z": 7.26,
+   "cv": 0.242,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 2.29,
+   "direction": "up"
+  },
+  {
+   "gene": "XIST",
+   "z": 7.22,
+   "cv": 0.09,
+   "est_fold_change": 1.648,
+   "est_rel_change": 0.648,
+   "linear_estimate_valid": true,
+   "note_if_invalid": null,
+   "halflife_h": 3.55,
+   "direction": "up"
+  },
+  {
+   "gene": "ZNF207",
+   "z": 7.22,
+   "cv": 0.083,
+   "est_fold_change": 1.596,
+   "est_rel_change": 0.596,
+   "linear_estimate_valid": true,
+   "note_if_invalid": null,
+   "halflife_h": 1.9,
+   "direction": "up"
+  },
+  {
+   "gene": "LACTB",
+   "z": 7.19,
+   "cv": 0.226,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 16.36,
+   "direction": "up"
+  },
+  {
+   "gene": "MPC2",
+   "z": 7.19,
+   "cv": 0.168,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 11.64,
+   "direction": "up"
+  },
+  {
+   "gene": "NFKBIA",
+   "z": 7.17,
+   "cv": 0.293,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 0.35,
+   "direction": "up"
+  },
+  {
+   "gene": "CNTRL",
+   "z": 7.15,
+   "cv": 0.155,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 2.54,
+   "direction": "up"
+  },
+  {
+   "gene": "PFDN5",
+   "z": 7.13,
+   "cv": 0.085,
+   "est_fold_change": 1.609,
+   "est_rel_change": 0.609,
+   "linear_estimate_valid": true,
+   "note_if_invalid": null,
+   "halflife_h": 16.5,
+   "direction": "up"
+  },
+  {
+   "gene": "SNAP29",
+   "z": 7.12,
+   "cv": 0.107,
+   "est_fold_change": 1.76,
+   "est_rel_change": 0.76,
+   "linear_estimate_valid": true,
+   "note_if_invalid": null,
+   "halflife_h": 3.6,
+   "direction": "up"
+  },
+  {
+   "gene": "RAN",
+   "z": -7.08,
+   "cv": 0.093,
+   "est_fold_change": 0.342,
+   "est_rel_change": -0.658,
+   "linear_estimate_valid": true,
+   "note_if_invalid": null,
+   "halflife_h": 6.16,
+   "direction": "down"
+  },
+  {
+   "gene": "ARPC2",
+   "z": 7.08,
+   "cv": 0.094,
+   "est_fold_change": 1.668,
+   "est_rel_change": 0.668,
+   "linear_estimate_valid": true,
+   "note_if_invalid": null,
+   "halflife_h": 10.78,
+   "direction": "up"
+  },
+  {
+   "gene": "RPS17",
+   "z": -7.08,
+   "cv": 0.09,
+   "est_fold_change": 0.363,
+   "est_rel_change": -0.637,
+   "linear_estimate_valid": true,
+   "note_if_invalid": null,
+   "halflife_h": 15.0,
+   "direction": "down"
+  },
+  {
+   "gene": "OSBPL3",
+   "z": 7.06,
+   "cv": 0.253,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 4.39,
+   "direction": "up"
+  },
+  {
+   "gene": "HDAC1",
+   "z": 7.06,
+   "cv": 0.102,
+   "est_fold_change": 1.716,
+   "est_rel_change": 0.716,
+   "linear_estimate_valid": true,
+   "note_if_invalid": null,
+   "halflife_h": 8.79,
+   "direction": "up"
+  },
+  {
+   "gene": "PCM1",
+   "z": 7.04,
+   "cv": 0.102,
+   "est_fold_change": 1.721,
+   "est_rel_change": 0.721,
+   "linear_estimate_valid": true,
+   "note_if_invalid": null,
+   "halflife_h": 6.12,
+   "direction": "up"
+  },
+  {
+   "gene": "FCGRT",
+   "z": 7.01,
+   "cv": 0.214,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": null,
+   "direction": "up"
+  },
+  {
+   "gene": "GOLGB1",
+   "z": 7.01,
+   "cv": 0.124,
+   "est_fold_change": 1.869,
+   "est_rel_change": 0.869,
+   "linear_estimate_valid": true,
+   "note_if_invalid": null,
+   "halflife_h": 2.71,
+   "direction": "up"
+  },
+  {
+   "gene": "CDKN2C",
+   "z": 6.99,
+   "cv": 0.171,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 2.51,
+   "direction": "up"
+  },
+  {
+   "gene": "POLD4",
+   "z": 6.96,
+   "cv": 0.238,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 4.17,
+   "direction": "up"
+  },
+  {
+   "gene": "MANBA",
+   "z": 6.95,
+   "cv": 0.285,
+   "est_fold_change": null,
+   "est_rel_change": null,
+   "linear_estimate_valid": false,
+   "note_if_invalid": "|z*CV| > 1: outside the linear regime, no fold-change reported",
+   "halflife_h": 2.23,
+   "direction": "up"
+  },
+  {
+   "gene": "POLR2J3",
+   "z": 6.94,
+   "cv": 0.105,
+   "est_fold_change": 1.73,
+   "est_rel_change": 0.73,
+   "linear_estimate_valid": true,
+   "note_if_invalid": null,
+   "halflife_h": null,
+   "direction": "up"
+  }
+ ],
+ "decay_source": "K562",
+ "competition": [
+  {
+   "up_gene": "SPI1",
+   "z": 9.6,
+   "shares_ppi_partner_with_down": [],
+   "n_shared_ppi": 0,
+   "regulates_down_genes": [
+    "CCT5",
+    "DDX21",
+    "EIF4A1",
+    "ENO1",
+    "PRDX6",
+    "RPL11"
+   ],
+   "n_regulates_down": 19
+  },
+  {
+   "up_gene": "REL",
+   "z": 5.3,
+   "shares_ppi_partner_with_down": [
+    "EIF5A"
+   ],
+   "n_shared_ppi": 1,
+   "regulates_down_genes": [
+    "EIF5A",
+    "GAPDH",
+    "HSPD1",
+    "NPM1",
+    "PRDX6",
+    "RPL13"
+   ],
+   "n_regulates_down": 11
+  },
+  {
+   "up_gene": "JUN",
+   "z": 5.4,
+   "shares_ppi_partner_with_down": [
+    "HMGA1",
+    "MIF"
+   ],
+   "n_shared_ppi": 2,
+   "regulates_down_genes": [
+    "DDX21",
+    "HMGA1",
+    "LDHA",
+    "NPM1",
+    "RPL17",
+    "TXN"
+   ],
+   "n_regulates_down": 6
+  },
+  {
+   "up_gene": "KTN1",
+   "z": 11.2,
+   "shares_ppi_partner_with_down": [
+    "NPM1",
+    "RPL11",
+    "RPL19",
+    "RPL35",
+    "RPL5",
+    "RPS16"
+   ],
+   "n_shared_ppi": 6,
+   "regulates_down_genes": [],
+   "n_regulates_down": 0
+  },
+  {
+   "up_gene": "CEBPD",
+   "z": 4.3,
+   "shares_ppi_partner_with_down": [],
+   "n_shared_ppi": 0,
+   "regulates_down_genes": [
+    "ANP32B",
+    "GAPDH",
+    "GP1BB",
+    "HMGA1",
+    "MIF"
+   ],
+   "n_regulates_down": 5
+  },
+  {
+   "up_gene": "MRPS6",
+   "z": 8.0,
+   "shares_ppi_partner_with_down": [
+    "RPL11",
+    "RPL23A",
+    "RPL35",
+    "RPL5",
+    "RPS15"
+   ],
+   "n_shared_ppi": 5,
+   "regulates_down_genes": [],
+   "n_regulates_down": 0
+  },
+  {
+   "up_gene": "NFIC",
+   "z": 5.9,
+   "shares_ppi_partner_with_down": [],
+   "n_shared_ppi": 0,
+   "regulates_down_genes": [
+    "GAL",
+    "GAPDH",
+    "HMGA1",
+    "NME1",
+    "RPL17"
+   ],
+   "n_regulates_down": 5
+  },
+  {
+   "up_gene": "PDCD4",
+   "z": 7.6,
+   "shares_ppi_partner_with_down": [
+    "EIF4A1",
+    "NPM1",
+    "RPL11",
+    "RPL5",
+    "RPS16"
+   ],
+   "n_shared_ppi": 5,
+   "regulates_down_genes": [],
+   "n_regulates_down": 0
+  },
+  {
+   "up_gene": "TFAP2A",
+   "z": 10.3,
+   "shares_ppi_partner_with_down": [
+    "NPM1"
+   ],
+   "n_shared_ppi": 1,
+   "regulates_down_genes": [
+    "HMGA1",
+    "NPM1",
+    "PA2G4",
+    "RPL17"
+   ],
+   "n_regulates_down": 4
+  },
+  {
+   "up_gene": "HDAC1",
+   "z": 7.1,
+   "shares_ppi_partner_with_down": [
+    "CCT5",
+    "CCT8",
+    "TCP1"
+   ],
+   "n_shared_ppi": 3,
+   "regulates_down_genes": [
+    "HMGA1"
+   ],
+   "n_regulates_down": 1
+  },
+  {
+   "up_gene": "ACTB",
+   "z": 9.0,
+   "shares_ppi_partner_with_down": [
+    "CCT5",
+    "CCT8",
+    "TCP1"
+   ],
+   "n_shared_ppi": 3,
+   "regulates_down_genes": [],
+   "n_regulates_down": 0
+  },
+  {
+   "up_gene": "ACTG1",
+   "z": 9.4,
+   "shares_ppi_partner_with_down": [
+    "CCT5",
+    "CCT8",
+    "TCP1"
+   ],
+   "n_shared_ppi": 3,
+   "regulates_down_genes": [],
+   "n_regulates_down": 0
+  },
+  {
+   "up_gene": "PFDN5",
+   "z": 7.1,
+   "shares_ppi_partner_with_down": [
+    "CCT5",
+    "CCT8",
+    "TCP1"
+   ],
+   "n_shared_ppi": 3,
+   "regulates_down_genes": [],
+   "n_regulates_down": 0
+  },
+  {
+   "up_gene": "SMARCA1",
+   "z": 5.9,
+   "shares_ppi_partner_with_down": [
+    "HMGA1",
+    "RPS19"
+   ],
+   "n_shared_ppi": 2,
+   "regulates_down_genes": [
+    "NME1"
+   ],
+   "n_regulates_down": 1
+  },
+  {
+   "up_gene": "ZNF652",
+   "z": 4.2,
+   "shares_ppi_partner_with_down": [],
+   "n_shared_ppi": 0,
+   "regulates_down_genes": [
+    "GAPDH",
+    "NPM1",
+    "RPL17"
+   ],
+   "n_regulates_down": 3
+  },
+  {
+   "up_gene": "ACTR2",
+   "z": 10.6,
+   "shares_ppi_partner_with_down": [
+    "GAPDH",
+    "NME2"
+   ],
+   "n_shared_ppi": 2,
+   "regulates_down_genes": [],
+   "n_regulates_down": 0
+  },
+  {
+   "up_gene": "ASH1L",
+   "z": 4.3,
+   "shares_ppi_partner_with_down": [
+    "RPL23A"
+   ],
+   "n_shared_ppi": 1,
+   "regulates_down_genes": [
+    "RPL17"
+   ],
+   "n_regulates_down": 1
+  },
+  {
+   "up_gene": "CC2D1A",
+   "z": 4.4,
+   "shares_ppi_partner_with_down": [],
+   "n_shared_ppi": 0,
+   "regulates_down_genes": [
+    "APOC1",
+    "RPL17"
+   ],
+   "n_regulates_down": 2
+  },
+  {
+   "up_gene": "ELF2",
+   "z": 5.3,
+   "shares_ppi_partner_with_down": [],
+   "n_shared_ppi": 0,
+   "regulates_down_genes": [
+    "RPL32",
+    "RPS19"
+   ],
+   "n_regulates_down": 2
+  },
+  {
+   "up_gene": "GATAD2B",
+   "z": 4.3,
+   "shares_ppi_partner_with_down": [],
+   "n_shared_ppi": 0,
+   "regulates_down_genes": [
+    "HMGA1",
+    "RPL17"
+   ],
+   "n_regulates_down": 2
+  },
+  {
+   "up_gene": "GRSF1",
+   "z": 6.0,
+   "shares_ppi_partner_with_down": [
+    "RAN",
+    "RPL36"
+   ],
+   "n_shared_ppi": 2,
+   "regulates_down_genes": [],
+   "n_regulates_down": 0
+  },
+  {
+   "up_gene": "KDM5B",
+   "z": 6.2,
+   "shares_ppi_partner_with_down": [],
+   "n_shared_ppi": 0,
+   "regulates_down_genes": [
+    "GAPDH",
+    "HMGA1"
+   ],
+   "n_regulates_down": 2
+  },
+  {
+   "up_gene": "KMT2C",
+   "z": 5.7,
+   "shares_ppi_partner_with_down": [
+    "RPS27A"
+   ],
+   "n_shared_ppi": 1,
+   "regulates_down_genes": [
+    "RPL17"
+   ],
+   "n_regulates_down": 1
+  },
+  {
+   "up_gene": "MEF2A",
+   "z": 6.0,
+   "shares_ppi_partner_with_down": [],
+   "n_shared_ppi": 0,
+   "regulates_down_genes": [
+    "HMGA1",
+    "RPL17"
+   ],
+   "n_regulates_down": 2
+  },
+  {
+   "up_gene": "MYH9",
+   "z": 10.4,
+   "shares_ppi_partner_with_down": [
+    "C1QBP",
+    "HSPD1"
+   ],
+   "n_shared_ppi": 2,
+   "regulates_down_genes": [],
+   "n_regulates_down": 0
+  },
+  {
+   "up_gene": "NME3",
+   "z": 5.5,
+   "shares_ppi_partner_with_down": [
+    "NME1",
+    "NME2"
+   ],
+   "n_shared_ppi": 2,
+   "regulates_down_genes": [],
+   "n_regulates_down": 0
+  },
+  {
+   "up_gene": "STAC3",
+   "z": 11.8,
+   "shares_ppi_partner_with_down": [
+    "RPL22",
+    "RPS25"
+   ],
+   "n_shared_ppi": 2,
+   "regulates_down_genes": [],
+   "n_regulates_down": 0
+  },
+  {
+   "up_gene": "TEAD1",
+   "z": 5.3,
+   "shares_ppi_partner_with_down": [],
+   "n_shared_ppi": 0,
+   "regulates_down_genes": [
+    "HMGA1",
+    "RPL17"
+   ],
+   "n_regulates_down": 2
+  },
+  {
+   "up_gene": "ADD1",
+   "z": 6.7,
+   "shares_ppi_partner_with_down": [
+    "GYPC"
+   ],
+   "n_shared_ppi": 1,
+   "regulates_down_genes": [],
+   "n_regulates_down": 0
+  },
+  {
+   "up_gene": "ADD3",
+   "z": 6.8,
+   "shares_ppi_partner_with_down": [
+    "GYPC"
+   ],
+   "n_shared_ppi": 1,
+   "regulates_down_genes": [],
+   "n_regulates_down": 0
+  },
+  {
+   "up_gene": "ALG2",
+   "z": 4.7,
+   "shares_ppi_partner_with_down": [
+    "LDHA"
+   ],
+   "n_shared_ppi": 1,
+   "regulates_down_genes": [],
+   "n_regulates_down": 0
+  },
+  {
+   "up_gene": "ARHGEF2",
+   "z": 4.5,
+   "shares_ppi_partner_with_down": [
+    "RPL35"
+   ],
+   "n_shared_ppi": 1,
+   "regulates_down_genes": [],
+   "n_regulates_down": 0
+  },
+  {
+   "up_gene": "ARID3A",
+   "z": 9.7,
+   "shares_ppi_partner_with_down": [],
+   "n_shared_ppi": 0,
+   "regulates_down_genes": [
+    "HMGA1"
+   ],
+   "n_regulates_down": 1
+  },
+  {
+   "up_gene": "ARID4B",
+   "z": 4.5,
+   "shares_ppi_partner_with_down": [],
+   "n_shared_ppi": 0,
+   "regulates_down_genes": [
+    "HMGA1"
+   ],
+   "n_regulates_down": 1
+  },
+  {
+   "up_gene": "ATRX",
+   "z": 6.8,
+   "shares_ppi_partner_with_down": [],
+   "n_shared_ppi": 0,
+   "regulates_down_genes": [
+    "RPL17"
+   ],
+   "n_regulates_down": 1
+  },
+  {
+   "up_gene": "B2M",
+   "z": 8.5,
+   "shares_ppi_partner_with_down": [
+    "GYPC"
+   ],
+   "n_shared_ppi": 1,
+   "regulates_down_genes": [],
+   "n_regulates_down": 0
+  },
+  {
+   "up_gene": "BHLHE40",
+   "z": 11.7,
+   "shares_ppi_partner_with_down": [],
+   "n_shared_ppi": 0,
+   "regulates_down_genes": [
+    "HMGA1"
+   ],
+   "n_regulates_down": 1
+  },
+  {
+   "up_gene": "CBX5",
+   "z": 6.0,
+   "shares_ppi_partner_with_down": [
+    "HMGA1"
+   ],
+   "n_shared_ppi": 1,
+   "regulates_down_genes": [],
+   "n_regulates_down": 0
+  },
+  {
+   "up_gene": "DAZAP2",
+   "z": 4.7,
+   "shares_ppi_partner_with_down": [
+    "RPS27A"
+   ],
+   "n_shared_ppi": 1,
+   "regulates_down_genes": [],
+   "n_regulates_down": 0
+  },
+  {
+   "up_gene": "DBI",
+   "z": 9.6,
+   "shares_ppi_partner_with_down": [
+    "APOC1"
+   ],
+   "n_shared_ppi": 1,
+   "regulates_down_genes": [],
+   "n_regulates_down": 0
+  },
+  {
+   "up_gene": "DDX17",
+   "z": 7.9,
+   "shares_ppi_partner_with_down": [
+    "DDX21"
+   ],
+   "n_shared_ppi": 1,
+   "regulates_down_genes": [],
+   "n_regulates_down": 0
+  },
+  {
+   "up_gene": "DRAP1",
+   "z": 4.7,
+   "shares_ppi_partner_with_down": [],
+   "n_shared_ppi": 0,
+   "regulates_down_genes": [
+    "RPL17"
+   ],
+   "n_regulates_down": 1
+  },
+  {
+   "up_gene": "FCGRT",
+   "z": 7.0,
+   "shares_ppi_partner_with_down": [
+    "GAL"
+   ],
+   "n_shared_ppi": 1,
+   "regulates_down_genes": [],
+   "n_regulates_down": 0
+  },
+  {
+   "up_gene": "FGFR1",
+   "z": 6.9,
+   "shares_ppi_partner_with_down": [
+    "LDHA"
+   ],
+   "n_shared_ppi": 1,
+   "regulates_down_genes": [],
+   "n_regulates_down": 0
+  },
+  {
+   "up_gene": "GPX4",
+   "z": 5.3,
+   "shares_ppi_partner_with_down": [
+    "PRDX6"
+   ],
+   "n_shared_ppi": 1,
+   "regulates_down_genes": [],
+   "n_regulates_down": 0
+  },
+  {
+   "up_gene": "GSTK1",
+   "z": 6.0,
+   "shares_ppi_partner_with_down": [
+    "HSPD1"
+   ],
+   "n_shared_ppi": 1,
+   "regulates_down_genes": [],
+   "n_regulates_down": 0
+  },
+  {
+   "up_gene": "IKZF3",
+   "z": 8.9,
+   "shares_ppi_partner_with_down": [],
+   "n_shared_ppi": 0,
+   "regulates_down_genes": [
+    "RPL17"
+   ],
+   "n_regulates_down": 1
+  },
+  {
+   "up_gene": "IRS1",
+   "z": 4.3,
+   "shares_ppi_partner_with_down": [
+    "NPM1"
+   ],
+   "n_shared_ppi": 1,
+   "regulates_down_genes": [],
+   "n_regulates_down": 0
+  },
+  {
+   "up_gene": "MPC2",
+   "z": 7.2,
+   "shares_ppi_partner_with_down": [
+    "APOC1"
+   ],
+   "n_shared_ppi": 1,
+   "regulates_down_genes": [],
+   "n_regulates_down": 0
+  },
+  {
+   "up_gene": "MSN",
+   "z": 5.7,
+   "shares_ppi_partner_with_down": [
+    "NPM1"
+   ],
+   "n_shared_ppi": 1,
+   "regulates_down_genes": [],
+   "n_regulates_down": 0
+  },
+  {
+   "up_gene": "MT-CO1",
+   "z": 8.5,
+   "shares_ppi_partner_with_down": [
+    "UQCRH"
+   ],
+   "n_shared_ppi": 1,
+   "regulates_down_genes": [],
+   "n_regulates_down": 0
+  },
+  {
+   "up_gene": "MT-CO2",
+   "z": 4.4,
+   "shares_ppi_partner_with_down": [
+    "UQCRH"
+   ],
+   "n_shared_ppi": 1,
+   "regulates_down_genes": [],
+   "n_regulates_down": 0
+  },
+  {
+   "up_gene": "MYO9B",
+   "z": 7.3,
+   "shares_ppi_partner_with_down": [
+    "NPM1"
+   ],
+   "n_shared_ppi": 1,
+   "regulates_down_genes": [],
+   "n_regulates_down": 0
+  },
+  {
+   "up_gene": "NDUFB1",
+   "z": 4.6,
+   "shares_ppi_partner_with_down": [
+    "UQCRH"
+   ],
+   "n_shared_ppi": 1,
+   "regulates_down_genes": [],
+   "n_regulates_down": 0
+  },
+  {
+   "up_gene": "NFKBIA",
+   "z": 7.2,
+   "shares_ppi_partner_with_down": [
+    "RPS27A"
+   ],
+   "n_shared_ppi": 1,
+   "regulates_down_genes": [],
+   "n_regulates_down": 0
+  },
+  {
+   "up_gene": "OSBPL3",
+   "z": 7.1,
+   "shares_ppi_partner_with_down": [
+    "RPL11"
+   ],
+   "n_shared_ppi": 1,
+   "regulates_down_genes": [],
+   "n_regulates_down": 0
+  },
+  {
+   "up_gene": "OTUD7B",
+   "z": 5.6,
+   "shares_ppi_partner_with_down": [
+    "RPS27A"
+   ],
+   "n_shared_ppi": 1,
+   "regulates_down_genes": [],
+   "n_regulates_down": 0
+  },
+  {
+   "up_gene": "PCYOX1",
+   "z": 6.0,
+   "shares_ppi_partner_with_down": [
+    "APOC1"
+   ],
+   "n_shared_ppi": 1,
+   "regulates_down_genes": [],
+   "n_regulates_down": 0
+  },
+  {
+   "up_gene": "PIK3R1",
+   "z": 10.1,
+   "shares_ppi_partner_with_down": [
+    "NPM1"
+   ],
+   "n_shared_ppi": 1,
+   "regulates_down_genes": [],
+   "n_regulates_down": 0
+  },
+  {
+   "up_gene": "PSIP1",
+   "z": 5.2,
+   "shares_ppi_partner_with_down": [
+    "HMGA1"
+   ],
+   "n_shared_ppi": 1,
+   "regulates_down_genes": [],
+   "n_regulates_down": 0
+  }
+ ],
+ "dosage_proxies": {
+  "down": {
+   "n": 88,
+   "n_essential": 59,
+   "frac_essential": 0.67,
+   "median_loeuf": 0.481
+  },
+  "up": {
+   "n": 533,
+   "n_essential": 23,
+   "frac_essential": 0.043,
+   "median_loeuf": 0.54
+  },
+  "panel": {
+   "n": 8533,
+   "n_essential": 1437,
+   "frac_essential": 0.168,
+   "median_loeuf": 0.62
+  }
+ },
+ "verdict": "TF CASCADE (GATA1, K562): lays the multi-level regulatory network under a TF knockout, puts magnitudes on it, looks for competition and dosage limits, and scores the construction against the measured response. CASCADE: 607 curated direct targets in the panel, of which 76 moved (12.5% vs 21.0 expected from random TF regulons of the same size, 3.62x, p=0.026); 13 of the direct targets are themselves TFs that moved, and expanding through them reaches 1953 more genes. The whole cascade touches 3148 genes and covers 330/621 = 53.1% of the measured movers. TRANSCRIPTION RATE -- three methods weighed, not blended. Perturb-seq z is steady-state ABUNDANCE, not rate, and cannot separate less synthesis from faster decay. Multiplying by measured K562 decay rates converts relative abundance change to relative SYNTHESIS change, but only under the assumption that k_deg is unchanged, which this particular knockout violates for some genes because collapsing the ribosome perturbs nonsense-mediated and co-translational decay; half-lives are therefore reported per gene so long-lived transcripts, whose abundance lags and understates the rate change, can be seen. NEXUS is the wrong tool and is not used: it scores how much a POINT MUTATION impairs a protein via folding and binding, returns activity zero by construction for a full knockout, and its own note states it does not predict the genome-wide cascade. The fold-change conversion is first-order (1 + z*CV) and is emitted ONLY where |z*CV| <= 1; beyond that it is linear extrapolation outside its range and no number is reported (144 of 400 qualify). COMPETITION: 78 up-regulated genes physically bind or transcriptionally regulate a down-regulated gene, which are the displacement candidates. THRESHOLD: not answerable. Nothing in this data gives a transcription rate below which function fails. DepMap essentiality and LOEUF are dosage PROXIES that identify which genes cannot tolerate a drop, not how far a drop may go, and are reported as such. Deterministic.",
+ "note": "TF CASCADE (GATA1, K562): lays the multi-level regulatory network under a TF knockout, puts magnitudes on it, looks for competition and dosage limits, and scores the construction against the measured response. CASCADE: 607 curated direct targets in the panel, of which 76 moved (12.5% vs 21.0 expected from random TF regulons of the same size, 3.62x, p=0.026); 13 of the direct targets are themselves TFs that moved, and expanding through them reaches 1953 more genes. The whole cascade touches 3148 genes and covers 330/621 = 53.1% of the measured movers. TRANSCRIPTION RATE -- three methods weighed, not blended. Perturb-seq z is steady-state ABUNDANCE, not rate, and cannot separate less synthesis from faster decay. Multiplying by measured K562 decay rates converts relative abundance change to relative SYNTHESIS change, but only under the assumption that k_deg is unchanged, which this particular knockout violates for some genes because collapsing the ribosome perturbs nonsense-mediated and co-translational decay; half-lives are therefore reported per gene so long-lived transcripts, whose abundance lags and understates the rate change, can be seen. NEXUS is the wrong tool and is not used: it scores how much a POINT MUTATION impairs a protein via folding and binding, returns activity zero by construction for a full knockout, and its own note states it does not predict the genome-wide cascade. The fold-change conversion is first-order (1 + z*CV) and is emitted ONLY where |z*CV| <= 1; beyond that it is linear extrapolation outside its range and no number is reported (144 of 400 qualify). COMPETITION: 78 up-regulated genes physically bind or transcriptionally regulate a down-regulated gene, which are the displacement candidates. THRESHOLD: not answerable. Nothing in this data gives a transcription rate below which function fails. DepMap essentiality and LOEUF are dosage PROXIES that identify which genes cannot tolerate a drop, not how far a drop may go, and are reported as such. Deterministic."
+}

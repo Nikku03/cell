@@ -1,0 +1,513 @@
+{
+ "knockout": "GATA1",
+ "n_down": 88,
+ "n_up": 533,
+ "groups": {
+  "DOWN": {
+   "n": 88,
+   "internal_ppi_edges": 1130,
+   "ppi_expected": 9.8,
+   "ppi_fold": 115.31,
+   "ppi_p": 0.0,
+   "complexes_with_2plus": 6,
+   "complexes_expected": 2.6,
+   "complex_fold": 2.27,
+   "complex_p": 0.119,
+   "top_complexes": [
+    [
+     "60S cytosolic large ribosomal subunit, striated muscle variant",
+     24
+    ],
+    [
+     "60S cytosolic large ribosomal subunit",
+     23
+    ],
+    [
+     "60S cytosolic large ribosomal subunit, testis-specific variant",
+     22
+    ],
+    [
+     "40S cytosolic small ribosomal subunit",
+     17
+    ],
+    [
+     "Chaperonin-containing T-complex",
+     3
+    ],
+    [
+     "TOM40 mitochondrial outer membrane translocase complex",
+     2
+    ]
+   ],
+   "processes": [
+    [
+     "translation",
+     45
+    ],
+    [
+     "transcription",
+     11
+    ],
+    [
+     "other",
+     10
+    ],
+    [
+     "?",
+     8
+    ],
+    [
+     "metabolism",
+     5
+    ],
+    [
+     "signaling",
+     4
+    ],
+    [
+     "transport/uptake",
+     3
+    ],
+    [
+     "cell-death",
+     1
+    ]
+   ],
+   "compartments": [
+    [
+     "cytoplasm",
+     55
+    ],
+    [
+     "nucleus",
+     12
+    ],
+    [
+     "?",
+     8
+    ],
+    [
+     "mitochondrion",
+     7
+    ],
+    [
+     "extracellular",
+     3
+    ],
+    [
+     "cytoskeleton",
+     1
+    ]
+   ],
+   "top_functions": [
+    [
+     "structural constituent of ribosome",
+     42
+    ],
+    [
+     "cadherin binding",
+     13
+    ],
+    [
+     "mRNA binding",
+     10
+    ],
+    [
+     "ubiquitin ligase inhibitor activity",
+     6
+    ],
+    [
+     "nucleic acid binding",
+     5
+    ],
+    [
+     "ubiquitin protein ligase binding",
+     5
+    ],
+    [
+     "mRNA 5'-UTR binding",
+     5
+    ],
+    [
+     "chromatin binding",
+     4
+    ],
+    [
+     "mRNA 3'-UTR binding",
+     4
+    ],
+    [
+     "rRNA binding",
+     4
+    ]
+   ],
+   "ppi_hubs_within_group": [
+    [
+     "RPS3A",
+     50
+    ],
+    [
+     "RPS2",
+     50
+    ],
+    [
+     "RPS19",
+     50
+    ],
+    [
+     "RPS16",
+     50
+    ],
+    [
+     "RPS7",
+     49
+    ],
+    [
+     "RPS6",
+     49
+    ],
+    [
+     "RPS5",
+     49
+    ],
+    [
+     "RPS26",
+     48
+    ]
+   ],
+   "top_genes": [
+    [
+     "RPS2",
+     -11.8
+    ],
+    [
+     "NME2",
+     -9.0
+    ],
+    [
+     "RPS12",
+     -8.7
+    ],
+    [
+     "RPL21",
+     -8.0
+    ],
+    [
+     "RPS19",
+     -7.9
+    ],
+    [
+     "YBX1",
+     -7.7
+    ],
+    [
+     "HMGA1",
+     -7.6
+    ],
+    [
+     "NME1",
+     -7.5
+    ],
+    [
+     "C1QBP",
+     -7.4
+    ],
+    [
+     "EIF5A",
+     -7.4
+    ],
+    [
+     "RPLP0",
+     -7.3
+    ],
+    [
+     "RAN",
+     -7.1
+    ],
+    [
+     "RPS17",
+     -7.1
+    ],
+    [
+     "MIF",
+     -6.9
+    ],
+    [
+     "RANBP1",
+     -6.9
+    ]
+   ]
+  },
+  "UP": {
+   "n": 533,
+   "internal_ppi_edges": 369,
+   "ppi_expected": 363.1,
+   "ppi_fold": 1.02,
+   "ppi_p": 0.433,
+   "complexes_with_2plus": 35,
+   "complexes_expected": 55.0,
+   "complex_fold": 0.64,
+   "complex_p": 0.9015,
+   "top_complexes": [
+    [
+     "Actin-related protein 2/3 complex, ARPC1B-ACTR3-ARPC5 variant",
+     5
+    ],
+    [
+     "Actin-related protein 2/3 complex, ARPC1B-ACTR3B-ARPC5 variant",
+     5
+    ],
+    [
+     "Actin-related protein 2/3 complex, ARPC1A-ACTR3B-ARPC5 variant",
+     4
+    ],
+    [
+     "Actin-related protein 2/3 complex, ARPC1B-ACTR3-ARPC5L variant",
+     4
+    ],
+    [
+     "Actin-related protein 2/3 complex, ARPC1A-ACTR3-ARPC5 variant",
+     4
+    ],
+    [
+     "Actin-related protein 2/3 complex, ARPC1A-ACTR3-ARPC5L variant",
+     3
+    ],
+    [
+     "Actin-related protein 2/3 complex, ARPC1B-ACTR3B-ARPC5L variant",
+     3
+    ],
+    [
+     "Mitochondrial respiratory chain complex IV",
+     3
+    ]
+   ],
+   "processes": [
+    [
+     "other",
+     127
+    ],
+    [
+     "transport/uptake",
+     76
+    ],
+    [
+     "transcription",
+     72
+    ],
+    [
+     "?",
+     67
+    ],
+    [
+     "signaling",
+     59
+    ],
+    [
+     "trafficking/secretion",
+     53
+    ],
+    [
+     "metabolism",
+     20
+    ],
+    [
+     "degradation",
+     17
+    ]
+   ],
+   "compartments": [
+    [
+     "cytoplasm",
+     115
+    ],
+    [
+     "nucleus",
+     107
+    ],
+    [
+     "?",
+     67
+    ],
+    [
+     "plasma membrane",
+     60
+    ],
+    [
+     "cytoskeleton",
+     40
+    ],
+    [
+     "membrane",
+     34
+    ]
+   ],
+   "top_functions": [
+    [
+     "protein kinase activity",
+     27
+    ],
+    [
+     "DNA-binding transcription factor activity, RNA polymerase II-specific",
+     26
+    ],
+    [
+     "protein serine/threonine kinase activity",
+     25
+    ],
+    [
+     "protein homodimerization activity",
+     24
+    ],
+    [
+     "actin binding",
+     21
+    ],
+    [
+     "RNA polymerase II cis-regulatory region sequence-specific DNA binding",
+     21
+    ],
+    [
+     "DNA-binding transcription factor activity",
+     19
+    ],
+    [
+     "transcription coactivator activity",
+     19
+    ],
+    [
+     "chromatin binding",
+     19
+    ],
+    [
+     "actin filament binding",
+     18
+    ]
+   ],
+   "ppi_hubs_within_group": [
+    [
+     "YWHAZ",
+     23
+    ],
+    [
+     "ACTG1",
+     21
+    ],
+    [
+     "ACTB",
+     20
+    ],
+    [
+     "CALM1",
+     14
+    ],
+    [
+     "HDAC1",
+     13
+    ],
+    [
+     "CDC42",
+     13
+    ],
+    [
+     "TLE5",
+     11
+    ],
+    [
+     "ACTR2",
+     10
+    ]
+   ],
+   "top_genes": [
+    [
+     "LTB",
+     187.3
+    ],
+    [
+     "LST1",
+     102.0
+    ],
+    [
+     "CTSC",
+     78.6
+    ],
+    [
+     "TMSB4X",
+     37.6
+    ],
+    [
+     "S100A4",
+     36.7
+    ],
+    [
+     "LGALS1",
+     34.0
+    ],
+    [
+     "PLD3",
+     29.1
+    ],
+    [
+     "EGLN3",
+     28.7
+    ],
+    [
+     "AIF1",
+     28.3
+    ],
+    [
+     "CFD",
+     27.9
+    ],
+    [
+     "EML4",
+     26.7
+    ],
+    [
+     "FCER1G",
+     26.7
+    ],
+    [
+     "SAT1",
+     25.9
+    ],
+    [
+     "S100A13",
+     23.5
+    ],
+    [
+     "FUCA1",
+     22.6
+    ]
+   ]
+  }
+ },
+ "knockout_gene": {
+  "compartment": "nucleus",
+  "process": "transcription",
+  "complexes": [],
+  "n_complexes": 0,
+  "ppi_partners_total": 33,
+  "ppi_partners_measured": 24,
+  "ppi_partners_moved": 2,
+  "moved_down": [],
+  "moved_up": [
+   "SPI1",
+   "TLE5"
+  ],
+  "expected_rate": 0.0728,
+  "p_partners_enriched": 0.6927829219484175,
+  "moved_partners": [
+   [
+    "SPI1",
+    9.6
+   ],
+   [
+    "TLE5",
+    4.7
+   ]
+  ]
+ },
+ "verdict": "DIRECTION SPLIT (GATA1, K562): the data is signed, so every mover carries up or down -- information every model in this project discarded by ranking on |z|. 88 genes went DOWN and 533 went UP. The two groups are structurally different, and the difference is the result. DOWN (88 genes) contains 1130 internal PPI edges against 9.8 expected for a random set of the same size drawn from the same panel (115.31x, p=0) and 6 complexes holding two or more of its members against 2.6 expected (2.27x, p=0.119). UP (533 genes) gives 369 internal edges against 363.1 expected (1.02x, p=0.433) and 35 shared complexes against 55.0 (0.64x, p=0.901). The DOWN group is the more coherent physical module of the two, which is what a machine being coordinately lost looks like; the UP group is a broader, less wired programme. THE KNOCKED-OUT GENE has 0 curated complexes and 33 PPI partners, 24 of them measured; 2 of those physical partners moved against a 7.3% background rate (p=0.693). That is the most direct mechanistic reading available here, since those are the protein's actual physical collaborators rather than anything inferred. Every count is compared against 2,000 size-matched random gene sets, because both PPI density and complex co-membership scale with set size and with how well-studied the genes are, and movers are biased towards well-studied genes. Deterministic.",
+ "note": "DIRECTION SPLIT (GATA1, K562): the data is signed, so every mover carries up or down -- information every model in this project discarded by ranking on |z|. 88 genes went DOWN and 533 went UP. The two groups are structurally different, and the difference is the result. DOWN (88 genes) contains 1130 internal PPI edges against 9.8 expected for a random set of the same size drawn from the same panel (115.31x, p=0) and 6 complexes holding two or more of its members against 2.6 expected (2.27x, p=0.119). UP (533 genes) gives 369 internal edges against 363.1 expected (1.02x, p=0.433) and 35 shared complexes against 55.0 (0.64x, p=0.901). The DOWN group is the more coherent physical module of the two, which is what a machine being coordinately lost looks like; the UP group is a broader, less wired programme. THE KNOCKED-OUT GENE has 0 curated complexes and 33 PPI partners, 24 of them measured; 2 of those physical partners moved against a 7.3% background rate (p=0.693). That is the most direct mechanistic reading available here, since those are the protein's actual physical collaborators rather than anything inferred. Every count is compared against 2,000 size-matched random gene sets, because both PPI density and complex co-membership scale with set size and with how well-studied the genes are, and movers are biased towards well-studied genes. Deterministic."
+}

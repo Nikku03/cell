@@ -1,0 +1,109 @@
+{
+  "test": "norman_anchor_design",
+  "n_pairs": 131,
+  "n_genes": 73,
+  "anchors": [
+    4,
+    6,
+    8,
+    10,
+    12
+  ],
+  "summary": {
+    "4": {
+      "n_train": 41,
+      "hub": 0.1474127253235231,
+      "hub_warm": 0.6222222222222222,
+      "anchor_random": 0.1654259188527051,
+      "random_pairs": 0.29487192728826167,
+      "random_warm": 0.9022222222222221,
+      "gap": -0.14745920196473858,
+      "ci": [
+        -0.15791665061437926,
+        -0.1365968222513417
+      ]
+    },
+    "6": {
+      "n_train": 56,
+      "hub": 0.16507521606482237,
+      "hub_warm": 0.6266666666666667,
+      "anchor_random": 0.1830308694671562,
+      "random_pairs": 0.3202167173781482,
+      "random_warm": 0.9503999999999999,
+      "gap": -0.15514150131332585,
+      "ci": [
+        -0.16306815654418652,
+        -0.14696673697028528
+      ]
+    },
+    "8": {
+      "n_train": 70,
+      "hub": 0.16668029677645824,
+      "hub_warm": 0.7377049180327869,
+      "anchor_random": 0.1882807977763038,
+      "random_pairs": 0.34129746533017574,
+      "random_warm": 0.9685245901639344,
+      "gap": -0.17461716855371748,
+      "ci": [
+        -0.1845954490109319,
+        -0.16374789161549066
+      ]
+    },
+    "10": {
+      "n_train": 78,
+      "hub": 0.16903536955622425,
+      "hub_warm": 0.6981132075471698,
+      "anchor_random": 0.20349409069162697,
+      "random_pairs": 0.3406803712824768,
+      "random_warm": 0.9584905660377359,
+      "gap": -0.17164500172625252,
+      "ci": [
+        -0.18530989875121584,
+        -0.1575303391368313
+      ]
+    },
+    "12": {
+      "n_train": 82,
+      "hub": 0.1719714836051399,
+      "hub_warm": 0.673469387755102,
+      "anchor_random": 0.20737223014216966,
+      "random_pairs": 0.35152647984935803,
+      "random_warm": 0.9681632653061223,
+      "gap": -0.17955499624421814,
+      "ci": [
+        -0.18781283812083624,
+        -0.1714295570229664
+      ]
+    }
+  },
+  "log": [
+    "====================================================================================================",
+    "ANCHOR-SET SCREEN DESIGN: does WHICH pairs you measure matter, at equal cost?",
+    "====================================================================================================",
+    "  PREDECLARED: real only if anchor_hub beats cost-matched random_pairs at >1 anchor size.",
+    "  named channels: 170 kept of 170 built (120 pathways, 12 compartments, 9 lesion classes, rest structural); mean channels per gene 14.9",
+    "  extra channels: 536 kept of 691 built  (TIER A 527, TIER B 9); 250 GO, 120 complexes, 120 pfam, 120 domains",
+    "  131 pairs over 73 genes; top hub degrees [12, 11, 11, 10, 9, 9]",
+    "\n   anchor design            n_train  n_test     corr  >=1 gene warm",
+    "        4 anchor_hub             41      90   0.1474          62.2%",
+    "          anchor_random         ~41           0.1654          49.9%",
+    "          random_pairs           41      90   0.2949          90.2%",
+    "          anchor_hub - random_pairs  -0.1475 [-0.1579, -0.1366]  RESOLVED",
+    "        6 anchor_hub             56      75   0.1651          62.7%",
+    "          anchor_random         ~56           0.1830          53.5%",
+    "          random_pairs           56      75   0.3202          95.0%",
+    "          anchor_hub - random_pairs  -0.1551 [-0.1631, -0.1470]  RESOLVED",
+    "        8 anchor_hub             70      61   0.1667          73.8%",
+    "          anchor_random         ~70           0.1883          60.0%",
+    "          random_pairs           70      61   0.3413          96.9%",
+    "          anchor_hub - random_pairs  -0.1746 [-0.1846, -0.1637]  RESOLVED",
+    "       10 anchor_hub             78      53   0.1690          69.8%",
+    "          anchor_random         ~78           0.2035          67.2%",
+    "          random_pairs           78      53   0.3407          95.8%",
+    "          anchor_hub - random_pairs  -0.1716 [-0.1853, -0.1575]  RESOLVED",
+    "       12 anchor_hub             82      49   0.1720          67.3%",
+    "          anchor_random         ~82           0.2074          70.5%",
+    "          random_pairs           82      49   0.3515          96.8%",
+    "          anchor_hub - random_pairs  -0.1796 [-0.1878, -0.1714]  RESOLVED"
+  ]
+}

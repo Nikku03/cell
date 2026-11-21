@@ -1,0 +1,69 @@
+{
+  "phenotype": "proliferation",
+  "cell_line": "rpe1",
+  "ranking": [
+    {
+      "target": "CDK1",
+      "reversal": 0.8643,
+      "cosine_with_disease": -0.8643,
+      "drives_disease": true,
+      "n_signature_genes_hit": 32
+    },
+    {
+      "target": "BUB1",
+      "reversal": 0.8629,
+      "cosine_with_disease": -0.8629,
+      "drives_disease": true,
+      "n_signature_genes_hit": 32
+    },
+    {
+      "target": "AURKA",
+      "reversal": 0.8627,
+      "cosine_with_disease": -0.8627,
+      "drives_disease": true,
+      "n_signature_genes_hit": 32
+    },
+    {
+      "target": "MCM6",
+      "reversal": 0.8625,
+      "cosine_with_disease": -0.8625,
+      "drives_disease": true,
+      "n_signature_genes_hit": 32
+    },
+    {
+      "target": "RRM2",
+      "reversal": 0.8531,
+      "cosine_with_disease": -0.8531,
+      "drives_disease": true,
+      "n_signature_genes_hit": 32
+    },
+    {
+      "target": "PLK1",
+      "reversal": 0.7969,
+      "cosine_with_disease": -0.7969,
+      "drives_disease": true,
+      "n_signature_genes_hit": 32
+    },
+    {
+      "target": "MYBL2",
+      "reversal": 0.5205,
+      "cosine_with_disease": -0.5205,
+      "drives_disease": true,
+      "n_signature_genes_hit": 32
+    },
+    {
+      "target": "CCNB1",
+      "reversal": -0.2523,
+      "cosine_with_disease": 0.2523,
+      "drives_disease": false,
+      "n_signature_genes_hit": 32
+    },
+    {
+      "target": "PTEN",
+      "reversal": -0.847,
+      "cosine_with_disease": 0.847,
+      "drives_disease": false,
+      "n_signature_genes_hit": 32
+    }
+  ]
+}

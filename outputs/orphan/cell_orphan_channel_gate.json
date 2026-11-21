@@ -1,0 +1,130 @@
+{
+  "test": "cell_orphan_channel_gate",
+  "n_catalyst_genes": 4771,
+  "bins": [
+    "0-20",
+    "21-50",
+    "51-150",
+    "151-500",
+    "501-+"
+  ],
+  "channels": {
+    "pfam": {
+      "by_bin": [
+        0.715625,
+        0.6307420494699647,
+        0.6004378762999453,
+        0.49872557349192864,
+        0.4095238095238095
+      ],
+      "overall": 0.5776566757493188,
+      "slope_vs_log_lit": -0.16168145124461356,
+      "n_by_bin": [
+        320,
+        1132,
+        1827,
+        1177,
+        315
+      ]
+    },
+    "tf_in": {
+      "by_bin": [
+        0.0,
+        0.00265017667844523,
+        0.012588943623426382,
+        0.07051826677994902,
+        0.18095238095238095
+      ],
+      "overall": 0.03479354433032907,
+      "slope_vs_log_lit": 0.09223151647526245,
+      "n_by_bin": [
+        320,
+        1132,
+        1827,
+        1177,
+        315
+      ]
+    },
+    "position": {
+      "by_bin": [
+        0.953125,
+        0.9955830388692579,
+        0.9967159277504105,
+        0.9983007646559049,
+        1.0
+      ],
+      "overall": 0.9941312093900649,
+      "slope_vs_log_lit": 0.025845486245345106,
+      "n_by_bin": [
+        320,
+        1132,
+        1827,
+        1177,
+        315
+      ]
+    },
+    "enh": {
+      "by_bin": [
+        0.934375,
+        0.9876325088339223,
+        0.9956212370005474,
+        0.9983007646559049,
+        1.0
+      ],
+      "overall": 0.9905680150911759,
+      "slope_vs_log_lit": 0.03420874241974011,
+      "n_by_bin": [
+        320,
+        1132,
+        1827,
+        1177,
+        315
+      ]
+    },
+    "ppi": {
+      "by_bin": [
+        0.43125,
+        0.6060070671378092,
+        0.8226600985221675,
+        0.935429056924384,
+        0.9873015873015873
+      ],
+      "overall": 0.7836931460909663,
+      "slope_vs_log_lit": 0.3095605903379108,
+      "n_by_bin": [
+        320,
+        1132,
+        1827,
+        1177,
+        315
+      ]
+    }
+  },
+  "log": [
+    "====================================================================================================",
+    "ARE THE PROPOSED CHANNELS EVEN VIABLE? -- annotation coverage, stratified by obscurity",
+    "====================================================================================================",
+    "  Every proposed channel rests on an annotation, and annotation is what obscure genes lack.",
+    "  A channel can show a real average lift while contributing nothing on the 9,186 gaps, which",
+    "  are obscure by construction. This costs minutes and decides which channels are worth days.",
+    "\n  prot_pfam: 8609 genes carry domains | tf_core: 9906 edges, 979 distinct targets, 940 distinct regulators",
+    "  4771 distinct annotated catalyst genes in the benchmark's enzyme-shaped population",
+    "\n  COVERAGE BY LITERATURE BIN (fraction of catalyst genes carrying the annotation)",
+    "    channel             0-20       21-50      51-150     151-500       501-+      all    slope",
+    "    pfam               0.716       0.631       0.600       0.499       0.410    0.578   -0.162",
+    "    tf_in              0.000       0.003       0.013       0.071       0.181    0.035    0.092",
+    "    position           0.953       0.996       0.997       0.998       1.000    0.994    0.026",
+    "    enh                0.934       0.988       0.996       0.998       1.000    0.991    0.034",
+    "    ppi                0.431       0.606       0.823       0.935       0.987    0.784    0.310",
+    "    n genes              320        1132        1827        1177         315     4771",
+    "\n  READING -- the gate is the obscure column (0-20 papers), not the average.",
+    "    pfam         obscure coverage 0.716  slope -0.162 (-0.52 of the ppi calibrator)   VIABLE, AND ANTI-CORRELATED WITH FAME -- better where the gaps are",
+    "    tf_in        obscure coverage 0.000  slope +0.092 ( 0.30 of the ppi calibrator)   DEAD for this task: the annotation is absent where the gaps are",
+    "    position     obscure coverage 0.953  slope +0.026 ( 0.08 of the ppi calibrator)   POSITIVE CONTROL -- flat, so the check itself is sound",
+    "    enh          obscure coverage 0.934  slope +0.034 ( 0.11 of the ppi calibrator)   VIABLE: present on obscure genes and not a fame proxy",
+    "    ppi          obscure coverage 0.431  slope +0.310 ( 1.00 of the ppi calibrator)   DEAD for this task: the annotation is absent where the gaps are",
+    "\n  Note on `ppi`: it is included as a CALIBRATOR, not a proposal. Interaction degree is the",
+    "  textbook fame-driven annotation, so its slope is what a contaminated channel looks like on",
+    "  this axis, and the others should be read against it rather than against zero."
+  ]
+}

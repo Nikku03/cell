@@ -1,0 +1,1825 @@
+{
+ "H0": {
+  "identical": true,
+  "extra_kept": [
+   "NONO"
+  ],
+  "own_median_z": {
+   "A": -5.4069390296936035,
+   "B": -7.518532752990723,
+   "C": -6.211897850036621
+  },
+  "no_tss_knockdowns": [
+   "AFG2A",
+   "AFG2B",
+   "AIRIM",
+   "ALG1L1P",
+   "BBLN",
+   "CHLSN",
+   "COXFA4",
+   "CPAP",
+   "CRIPTO",
+   "DNAAF10",
+   "HEMK2",
+   "INTS15",
+   "KRABD5",
+   "MSANTD7",
+   "NOPCHAP1",
+   "NUCLEOLIN",
+   "PHB1",
+   "PRP4K",
+   "RMP64",
+   "RUMY4",
+   "SKIC8",
+   "SLIRP-OT1",
+   "SLX9",
+   "TIMCC",
+   "VMA12",
+   "VMA22",
+   "YJU2B",
+   "ZBTB35"
+  ],
+  "no_tss_genes": 273,
+  "passed": true
+ },
+ "H1": {
+  "bins": {
+   "0-1 kb": [
+    621,
+    1400
+   ],
+   "1-10 kb": [
+    129,
+    1046
+   ],
+   "10-50 kb": [
+    223,
+    7207
+   ],
+   "50-100 kb": [
+    160,
+    8839
+   ],
+   "100-500 kb": [
+    591,
+    52963
+   ],
+   "same chr > 1 Mb": [
+    39726,
+    4017031
+   ],
+   "other chr": [
+    720349,
+    73231449
+   ]
+  },
+  "odds_ratio": 44.51403380939799,
+  "p": 0.0,
+  "passed": true
+ },
+ "H2": {
+  "rows": [
+   {
+    "family": "GATA1",
+    "regulator": "GATA1",
+    "screen": "A",
+    "targets": 6,
+    "z": -3.2417335510253906,
+    "passed": true
+   },
+   {
+    "family": "GATA1",
+    "regulator": "GATA1",
+    "screen": "B",
+    "targets": 6,
+    "z": -6.2818922996521,
+    "passed": true
+   },
+   {
+    "family": "SREBP",
+    "regulator": "SREBF2",
+    "screen": "A",
+    "targets": 21,
+    "z": -9.911420822143555,
+    "passed": true
+   },
+   {
+    "family": "SREBP",
+    "regulator": "SCAP",
+    "screen": "A",
+    "targets": 21,
+    "z": -9.057635307312012,
+    "passed": true
+   },
+   {
+    "family": "SREBP",
+    "regulator": "MBTPS1",
+    "screen": "A",
+    "targets": 21,
+    "z": -9.169111251831055,
+    "passed": true
+   },
+   {
+    "family": "SREBP",
+    "regulator": "MBTPS2",
+    "screen": "A",
+    "targets": 21,
+    "z": -13.626609802246094,
+    "passed": true
+   },
+   {
+    "family": "SREBP",
+    "regulator": "SCAP",
+    "screen": "B",
+    "targets": 21,
+    "z": -9.582022666931152,
+    "passed": true
+   },
+   {
+    "family": "SREBP",
+    "regulator": "MBTPS1",
+    "screen": "B",
+    "targets": 21,
+    "z": -9.59482192993164,
+    "passed": true
+   },
+   {
+    "family": "SREBP",
+    "regulator": "MBTPS2",
+    "screen": "B",
+    "targets": 21,
+    "z": -12.005207061767578,
+    "passed": true
+   },
+   {
+    "family": "SREBP",
+    "regulator": "SCAP",
+    "screen": "C",
+    "targets": 17,
+    "z": -2.024550437927246,
+    "passed": false
+   },
+   {
+    "family": "SREBP",
+    "regulator": "MBTPS1",
+    "screen": "C",
+    "targets": 17,
+    "z": -2.247972011566162,
+    "passed": false
+   },
+   {
+    "family": "SREBP",
+    "regulator": "MBTPS2",
+    "screen": "C",
+    "targets": 17,
+    "z": -0.5120485424995422,
+    "passed": false
+   },
+   {
+    "family": "ATF4",
+    "regulator": "ATF4",
+    "screen": "A",
+    "targets": 22,
+    "z": -6.317919731140137,
+    "passed": true
+   },
+   {
+    "family": "ATF4",
+    "regulator": "ATF4",
+    "screen": "B",
+    "targets": 21,
+    "z": -5.899163246154785,
+    "passed": true
+   },
+   {
+    "family": "ATF4",
+    "regulator": "ATF4",
+    "screen": "C",
+    "targets": 22,
+    "z": -3.915325403213501,
+    "passed": true
+   },
+   {
+    "family": "HSF1",
+    "regulator": "HSF1",
+    "screen": "A",
+    "targets": 6,
+    "z": -2.0226855278015137,
+    "passed": false
+   },
+   {
+    "family": "HSF1",
+    "regulator": "HSF1",
+    "screen": "B",
+    "targets": 6,
+    "z": -1.863365888595581,
+    "passed": false
+   },
+   {
+    "family": "HSF1",
+    "regulator": "HSF1",
+    "screen": "C",
+    "targets": 6,
+    "z": -3.5470407009124756,
+    "passed": true
+   },
+   {
+    "family": "MYC",
+    "regulator": "MYC",
+    "screen": "A",
+    "targets": 18,
+    "z": -4.108098983764648,
+    "passed": true
+   },
+   {
+    "family": "MYC",
+    "regulator": "MYC",
+    "screen": "B",
+    "targets": 18,
+    "z": -6.393552303314209,
+    "passed": true
+   },
+   {
+    "family": "MYC",
+    "regulator": "MYC",
+    "screen": "C",
+    "targets": 18,
+    "z": -5.413071155548096,
+    "passed": true
+   },
+   {
+    "family": "TFAM",
+    "regulator": "TFAM",
+    "screen": "A",
+    "targets": 10,
+    "z": -35.87040710449219,
+    "passed": true
+   },
+   {
+    "family": "TFAM",
+    "regulator": "TFAM",
+    "screen": "B",
+    "targets": 10,
+    "z": -21.022951126098633,
+    "passed": true
+   },
+   {
+    "family": "TFAM",
+    "regulator": "TFAM",
+    "screen": "C",
+    "targets": 10,
+    "z": -12.495538711547852,
+    "passed": true
+   },
+   {
+    "family": "NRF1",
+    "regulator": "NRF1",
+    "screen": "A",
+    "targets": 5,
+    "z": -1.036158561706543,
+    "passed": false
+   },
+   {
+    "family": "NRF1",
+    "regulator": "NRF1",
+    "screen": "B",
+    "targets": 5,
+    "z": -3.1376237869262695,
+    "passed": true
+   },
+   {
+    "family": "NRF1",
+    "regulator": "NRF1",
+    "screen": "C",
+    "targets": 5,
+    "z": -2.182685613632202,
+    "passed": false
+   },
+   {
+    "family": "NFE2L1",
+    "regulator": "NFE2L1",
+    "screen": "A",
+    "targets": 27,
+    "z": -4.560314178466797,
+    "passed": true,
+    "counted": false
+   },
+   {
+    "family": "TP53 (negative)",
+    "regulator": "TP53",
+    "screen": "A",
+    "targets": 9,
+    "z": 0.8375034332275391,
+    "passed": true,
+    "counted": false
+   }
+  ],
+  "families": [
+   [
+    "GATA1",
+    "A",
+    true
+   ],
+   [
+    "GATA1",
+    "B",
+    true
+   ],
+   [
+    "SREBP",
+    "A",
+    true
+   ],
+   [
+    "SREBP",
+    "B",
+    true
+   ],
+   [
+    "SREBP",
+    "C",
+    false
+   ],
+   [
+    "ATF4",
+    "A",
+    true
+   ],
+   [
+    "ATF4",
+    "B",
+    true
+   ],
+   [
+    "ATF4",
+    "C",
+    true
+   ],
+   [
+    "HSF1",
+    "A",
+    false
+   ],
+   [
+    "HSF1",
+    "B",
+    false
+   ],
+   [
+    "HSF1",
+    "C",
+    true
+   ],
+   [
+    "MYC",
+    "A",
+    true
+   ],
+   [
+    "MYC",
+    "B",
+    true
+   ],
+   [
+    "MYC",
+    "C",
+    true
+   ],
+   [
+    "TFAM",
+    "A",
+    true
+   ],
+   [
+    "TFAM",
+    "B",
+    true
+   ],
+   [
+    "TFAM",
+    "C",
+    true
+   ],
+   [
+    "NRF1",
+    "A",
+    false
+   ],
+   [
+    "NRF1",
+    "B",
+    true
+   ],
+   [
+    "NRF1",
+    "C",
+    false
+   ]
+  ],
+  "passed_n": 15,
+  "evaluable": 20,
+  "passed": true
+ },
+ "interpretable": true,
+ "subspace": {
+  "n_learn": 3331,
+  "genes": 7928,
+  "var_axes": 0.14640421723567618,
+  "energy_shared_A": 0.32357282205572435,
+  "energy_shared_B": 0.27767278182199595,
+  "shared": 2025,
+  "pheno_both": 1534
+ },
+ "R_raw": {
+  "median_r": 0.26836233304504953,
+  "null95": 0.026227952389931412,
+  "repeats": true,
+  "n_sig": 1113,
+  "median_r_sig": 0.44969126529473163,
+  "sig_in_group": 885,
+  "interpretable": true
+ },
+ "R_specific": {
+  "median_r": 0.15256128021241316,
+  "null95": 0.0010165008938093606,
+  "repeats": true,
+  "n_sig": 1443,
+  "median_r_sig": 0.23392626955203907,
+  "sig_in_group": 1121,
+  "interpretable": true
+ },
+ "R3_ALL": {
+  "t": 3.0,
+  "table": [
+   [
+    3.0,
+    384319,
+    26414,
+    0.06872936284700991,
+    0.22543564070472705
+   ]
+  ],
+  "interpretable": true
+ },
+ "R3_SPECIFIC": {
+  "t": 5.0,
+  "table": [
+   [
+    3.0,
+    145137,
+    28065,
+    0.19336902374997417,
+    0.159369767874491
+   ],
+   [
+    4.0,
+    58971,
+    6650,
+    0.11276729239795832,
+    0.09312034728934561
+   ],
+   [
+    5.0,
+    28589,
+    1582,
+    0.05533596837944664,
+    0.060836335653573055
+   ]
+  ],
+  "interpretable": true
+ },
+ "R4_ALL": {
+  "n": 342963,
+  "reach": 156111,
+  "same_sign": 132501,
+  "share": 0.8487614581932087,
+  "binom_p": 0.0,
+  "null_mean": 0.6606676271624518,
+  "null_max": 0.6715723654110112,
+  "coverage": 0.45518321218323843,
+  "coverage_null": 0.2383354764216548,
+  "general": true,
+  "interpretable": true
+ },
+ "R4_SPECIFIC": {
+  "n": 23640,
+  "reach": 13576,
+  "same_sign": 11894,
+  "share": 0.8761048909840896,
+  "binom_p": 0.0,
+  "null_mean": 0.5312719538966105,
+  "null_max": 0.5469194312796208,
+  "coverage": 0.5742808798646362,
+  "coverage_null": 0.21916455160744502,
+  "general": true,
+  "interpretable": true
+ },
+ "R5": {
+  "t": 3.0,
+  "table": [
+   [
+    3.0,
+    69185,
+    3143,
+    0.04542892245428923,
+    0.1624730794247308
+   ]
+  ],
+  "n_pathways": 993,
+  "interpretable": true
+ },
+ "R6_ALL": {
+  "n": 384319,
+  "proteins": 1752,
+  "up": 265167,
+  "top_proteins": [
+   [
+    "MED30",
+    2375
+   ],
+   [
+    "MED12",
+    2198
+   ],
+   [
+    "GATA1",
+    2047
+   ],
+   [
+    "MED9",
+    2033
+   ],
+   [
+    "SUPT6H",
+    2015
+   ],
+   [
+    "INTS2",
+    1837
+   ],
+   [
+    "RPS6",
+    1798
+   ],
+   [
+    "RPL17",
+    1661
+   ],
+   [
+    "RPS4X",
+    1633
+   ],
+   [
+    "MED21",
+    1519
+   ],
+   [
+    "MED19",
+    1515
+   ],
+   [
+    "MED7",
+    1502
+   ],
+   [
+    "RPL7A",
+    1496
+   ],
+   [
+    "RPS13",
+    1489
+   ],
+   [
+    "SUPT5H",
+    1468
+   ],
+   [
+    "RPS24",
+    1463
+   ],
+   [
+    "TSR2",
+    1442
+   ],
+   [
+    "DNAJC17",
+    1414
+   ],
+   [
+    "PDCD11",
+    1410
+   ],
+   [
+    "RPL27A",
+    1408
+   ],
+   [
+    "RPS27A",
+    1372
+   ],
+   [
+    "POLR1F",
+    1370
+   ],
+   [
+    "RPS18",
+    1369
+   ],
+   [
+    "NOL6",
+    1368
+   ],
+   [
+    "SNRPD2",
+    1366
+   ],
+   [
+    "FBL",
+    1358
+   ],
+   [
+    "RPL27",
+    1349
+   ],
+   [
+    "MED17",
+    1348
+   ],
+   [
+    "DDX47",
+    1301
+   ],
+   [
+    "HSPA9",
+    1285
+   ]
+  ],
+  "top_genes": [
+   [
+    "PTMA",
+    668
+   ],
+   [
+    "SNHG29",
+    616
+   ],
+   [
+    "RPS18",
+    614
+   ],
+   [
+    "EEF1A1",
+    609
+   ],
+   [
+    "TPT1",
+    603
+   ],
+   [
+    "FTH1",
+    569
+   ],
+   [
+    "RPS3",
+    558
+   ],
+   [
+    "HSPD1",
+    534
+   ],
+   [
+    "BTG1",
+    515
+   ],
+   [
+    "RPL12",
+    511
+   ],
+   [
+    "GAS5",
+    497
+   ],
+   [
+    "RPL13A",
+    483
+   ],
+   [
+    "EEF1B2",
+    482
+   ],
+   [
+    "RPS9",
+    481
+   ],
+   [
+    "RPL9",
+    478
+   ],
+   [
+    "MALAT1",
+    477
+   ],
+   [
+    "RPS23",
+    477
+   ],
+   [
+    "YBX1",
+    477
+   ],
+   [
+    "RPL34",
+    467
+   ],
+   [
+    "RPL18A",
+    465
+   ],
+   [
+    "RPS8",
+    465
+   ],
+   [
+    "RPL26",
+    464
+   ],
+   [
+    "RPS11",
+    464
+   ],
+   [
+    "SNHG5",
+    463
+   ],
+   [
+    "RPS4X",
+    461
+   ],
+   [
+    "RPL17",
+    459
+   ],
+   [
+    "RPS14",
+    449
+   ],
+   [
+    "RPS12",
+    444
+   ],
+   [
+    "RPL3",
+    443
+   ],
+   [
+    "RPS19",
+    443
+   ]
+  ]
+ },
+ "R6_SPECIFIC": {
+  "n": 28589,
+  "proteins": 1277,
+  "up": 21443,
+  "top_proteins": [
+   [
+    "GATA1",
+    393
+   ],
+   [
+    "SUPT6H",
+    356
+   ],
+   [
+    "INTS2",
+    348
+   ],
+   [
+    "DNAJC17",
+    334
+   ],
+   [
+    "CSE1L",
+    289
+   ],
+   [
+    "NUDT21",
+    267
+   ],
+   [
+    "SNRPD2",
+    254
+   ],
+   [
+    "POLR2K",
+    250
+   ],
+   [
+    "POLR3A",
+    233
+   ],
+   [
+    "PSMD2",
+    229
+   ],
+   [
+    "RPL7A",
+    224
+   ],
+   [
+    "SUPT5H",
+    217
+   ],
+   [
+    "INTS8",
+    204
+   ],
+   [
+    "EXOSC2",
+    193
+   ],
+   [
+    "RBM22",
+    192
+   ],
+   [
+    "CPSF6",
+    190
+   ],
+   [
+    "EXOSC3",
+    186
+   ],
+   [
+    "EXOSC4",
+    184
+   ],
+   [
+    "RUVBL2",
+    181
+   ],
+   [
+    "ZNF830",
+    180
+   ],
+   [
+    "DIS3",
+    174
+   ],
+   [
+    "EXOSC5",
+    172
+   ],
+   [
+    "TAF1",
+    170
+   ],
+   [
+    "TAF10",
+    169
+   ],
+   [
+    "SMC1A",
+    168
+   ],
+   [
+    "PSMD14",
+    167
+   ],
+   [
+    "USP39",
+    166
+   ],
+   [
+    "INTS5",
+    164
+   ],
+   [
+    "TAF2",
+    161
+   ],
+   [
+    "EP400",
+    159
+   ]
+  ],
+  "top_genes": [
+   [
+    "FTH1",
+    129
+   ],
+   [
+    "GP1BB",
+    128
+   ],
+   [
+    "FTL",
+    120
+   ],
+   [
+    "OAZ1",
+    106
+   ],
+   [
+    "SNHG29",
+    99
+   ],
+   [
+    "RPLP0",
+    95
+   ],
+   [
+    "APOE",
+    91
+   ],
+   [
+    "SNHG1",
+    86
+   ],
+   [
+    "ACTB",
+    80
+   ],
+   [
+    "PHGDH",
+    77
+   ],
+   [
+    "GAPDH",
+    75
+   ],
+   [
+    "MDK",
+    74
+   ],
+   [
+    "TPT1",
+    73
+   ],
+   [
+    "PRSS57",
+    72
+   ],
+   [
+    "TMSB4X",
+    72
+   ],
+   [
+    "DANCR",
+    71
+   ],
+   [
+    "GSTP1",
+    69
+   ],
+   [
+    "RPS12",
+    69
+   ],
+   [
+    "IGFL2-AS1",
+    67
+   ],
+   [
+    "RPL41",
+    65
+   ],
+   [
+    "EIF1",
+    64
+   ],
+   [
+    "RPS15",
+    63
+   ],
+   [
+    "IGFBP2",
+    62
+   ],
+   [
+    "GAS5",
+    61
+   ],
+   [
+    "RPL12",
+    61
+   ],
+   [
+    "EEF1B2",
+    59
+   ],
+   [
+    "BTG1",
+    58
+   ],
+   [
+    "CPXM1",
+    58
+   ],
+   [
+    "RGS16",
+    57
+   ],
+   [
+    "VIM",
+    57
+   ]
+  ]
+ },
+ "top_specific_gene_effects": [
+  {
+   "protein": "SMG5",
+   "gene": "SNHG12",
+   "zA": 433.8711242675781,
+   "zB": 220.19554138183594,
+   "sA": 432.5299377441406,
+   "sB": 219.22923278808594,
+   "paralog_flag": false,
+   "readout_flag": "",
+   "zC": 442.67828369140625,
+   "sC": 441.3557434082031
+  },
+  {
+   "protein": "ZFC3H1",
+   "gene": "SNHG19",
+   "zA": 217.64602661132812,
+   "zB": 193.55337524414062,
+   "sA": 217.0881805419922,
+   "sB": 192.79554748535156,
+   "paralog_flag": false,
+   "readout_flag": "",
+   "zC": 199.97654724121094,
+   "sC": 198.97268676757812
+  },
+  {
+   "protein": "GATA1",
+   "gene": "LST1",
+   "zA": 213.93580627441406,
+   "zB": 202.72584533691406,
+   "sA": 184.9723663330078,
+   "sB": 159.6499786376953,
+   "paralog_flag": false,
+   "readout_flag": ""
+  },
+  {
+   "protein": "INTS2",
+   "gene": "CLCA1",
+   "zA": 134.5664520263672,
+   "zB": 150.98312377929688,
+   "sA": 125.97960662841797,
+   "sB": 142.2774200439453,
+   "paralog_flag": false,
+   "readout_flag": ""
+  },
+  {
+   "protein": "SMG5",
+   "gene": "ZFAS1",
+   "zA": 158.72763061523438,
+   "zB": 124.97516632080078,
+   "sA": 153.73387145996094,
+   "sB": 121.55577087402344,
+   "paralog_flag": false,
+   "readout_flag": "",
+   "zC": 228.4076385498047,
+   "sC": 224.550537109375
+  },
+  {
+   "protein": "SMG5",
+   "gene": "GAS5",
+   "zA": 116.23025512695312,
+   "zB": 111.60529327392578,
+   "sA": 109.97826385498047,
+   "sB": 107.14297485351562,
+   "paralog_flag": false,
+   "readout_flag": "",
+   "zC": 162.86306762695312,
+   "sC": 157.54019165039062
+  },
+  {
+   "protein": "ZFC3H1",
+   "gene": "SNHG3",
+   "zA": 106.32548522949219,
+   "zB": 107.26055908203125,
+   "sA": 105.98590850830078,
+   "sB": 106.74259185791016,
+   "paralog_flag": false,
+   "readout_flag": "",
+   "zC": 111.1789321899414,
+   "sC": 110.18157196044922
+  },
+  {
+   "protein": "EXOSC2",
+   "gene": "SNHG19",
+   "zA": 107.66224670410156,
+   "zB": 112.92070770263672,
+   "sA": 105.46109771728516,
+   "sB": 111.35820770263672,
+   "paralog_flag": false,
+   "readout_flag": "",
+   "zC": 43.69701385498047,
+   "sC": 41.557228088378906
+  },
+  {
+   "protein": "EXOSC4",
+   "gene": "SNHG19",
+   "zA": 99.5467300415039,
+   "zB": 100.72850799560547,
+   "sA": 97.59246826171875,
+   "sB": 99.13668060302734,
+   "paralog_flag": false,
+   "readout_flag": "",
+   "zC": 66.29070281982422,
+   "sC": 63.16233444213867
+  },
+  {
+   "protein": "EXOSC3",
+   "gene": "SNHG19",
+   "zA": 103.7728271484375,
+   "zB": 96.66649627685547,
+   "sA": 101.94298553466797,
+   "sB": 95.15385437011719,
+   "paralog_flag": false,
+   "readout_flag": "",
+   "zC": 48.70156478881836,
+   "sC": 45.82022476196289
+  },
+  {
+   "protein": "TSG101",
+   "gene": "SOD2",
+   "zA": 94.25466918945312,
+   "zB": 103.3210678100586,
+   "sA": 94.4201889038086,
+   "sB": 103.93346405029297,
+   "paralog_flag": false,
+   "readout_flag": "",
+   "zC": 81.7251205444336,
+   "sC": 82.25000762939453
+  },
+  {
+   "protein": "GATA1",
+   "gene": "CTSC",
+   "zA": 106.4448013305664,
+   "zB": 214.56642150878906,
+   "sA": 93.58036041259766,
+   "sB": 194.9481964111328,
+   "paralog_flag": false,
+   "readout_flag": "",
+   "zC": -0.6984511017799377,
+   "sC": -0.7871088981628418
+  },
+  {
+   "protein": "EXOSC8",
+   "gene": "SNHG19",
+   "zA": 91.26612854003906,
+   "zB": 95.0969467163086,
+   "sA": 89.41297912597656,
+   "sB": 93.6463623046875,
+   "paralog_flag": false,
+   "readout_flag": "",
+   "zC": 52.603126525878906,
+   "sC": 49.87631607055664
+  },
+  {
+   "protein": "PABPN1",
+   "gene": "SNHG19",
+   "zA": 88.86915588378906,
+   "zB": 87.60379028320312,
+   "sA": 87.72679138183594,
+   "sB": 87.09603118896484,
+   "paralog_flag": false,
+   "readout_flag": "",
+   "zC": 86.40719604492188,
+   "sC": 84.51754760742188
+  },
+  {
+   "protein": "EXOSC5",
+   "gene": "SNHG19",
+   "zA": 104.53211975097656,
+   "zB": 88.03227233886719,
+   "sA": 102.73602294921875,
+   "sB": 86.23251342773438,
+   "paralog_flag": false,
+   "readout_flag": "",
+   "zC": 53.07883834838867,
+   "sC": 50.29961013793945
+  },
+  {
+   "protein": "SMG5",
+   "gene": "EPB41L4A-AS1",
+   "zA": 84.76185607910156,
+   "zB": 88.02593994140625,
+   "sA": 83.11512756347656,
+   "sB": 86.88035583496094,
+   "paralog_flag": false,
+   "readout_flag": "",
+   "zC": 86.06730651855469,
+   "sC": 85.12291717529297
+  },
+  {
+   "protein": "INTS8",
+   "gene": "CLCA1",
+   "zA": 86.21509552001953,
+   "zB": 108.14898681640625,
+   "sA": 80.7245101928711,
+   "sB": 102.50791931152344,
+   "paralog_flag": false,
+   "readout_flag": ""
+  },
+  {
+   "protein": "EXOSC2",
+   "gene": "SNHG3",
+   "zA": 82.25543975830078,
+   "zB": 80.43264770507812,
+   "sA": 81.22212982177734,
+   "sB": 79.740234375,
+   "paralog_flag": false,
+   "readout_flag": "",
+   "zC": 14.582538604736328,
+   "sC": 12.516468048095703
+  },
+  {
+   "protein": "EXOSC6",
+   "gene": "SNHG19",
+   "zA": 83.59076690673828,
+   "zB": 78.0085220336914,
+   "sA": 81.65260314941406,
+   "sB": 76.74980163574219,
+   "paralog_flag": false,
+   "readout_flag": "",
+   "zC": 59.837074279785156,
+   "sC": 57.554080963134766
+  },
+  {
+   "protein": "EXOSC5",
+   "gene": "SNHG3",
+   "zA": 76.240478515625,
+   "zB": 81.04521942138672,
+   "sA": 75.28939819335938,
+   "sB": 79.91429138183594,
+   "paralog_flag": false,
+   "readout_flag": "",
+   "zC": 15.78304672241211,
+   "sC": 13.741340637207031
+  },
+  {
+   "protein": "VPS28",
+   "gene": "SOD2",
+   "zA": 82.09632873535156,
+   "zB": 72.46707153320312,
+   "sA": 82.30062103271484,
+   "sB": 73.0458755493164,
+   "paralog_flag": false,
+   "readout_flag": "",
+   "zC": 129.7284698486328,
+   "sC": 130.21188354492188
+  },
+  {
+   "protein": "GATA1",
+   "gene": "TMSB4X",
+   "zA": 84.57122802734375,
+   "zB": 98.04785919189453,
+   "sA": 71.38565826416016,
+   "sB": 79.2094497680664,
+   "paralog_flag": false,
+   "readout_flag": "",
+   "zC": 1.1661090850830078,
+   "sC": 1.0435973405838013
+  },
+  {
+   "protein": "CIAPIN1",
+   "gene": "MT2A",
+   "zA": 120.248046875,
+   "zB": 70.93016052246094,
+   "sA": 118.06902313232422,
+   "sB": 70.12691497802734,
+   "paralog_flag": false,
+   "readout_flag": "",
+   "zC": 5.431009769439697,
+   "sC": 6.111473560333252
+  },
+  {
+   "protein": "SMG5",
+   "gene": "SNHG6",
+   "zA": 73.30904388427734,
+   "zB": 87.165283203125,
+   "sA": 69.80196380615234,
+   "sB": 84.7037582397461,
+   "paralog_flag": false,
+   "readout_flag": "",
+   "zC": 90.53602600097656,
+   "sC": 88.26074981689453
+  },
+  {
+   "protein": "EXOSC9",
+   "gene": "SNHG19",
+   "zA": 71.27696228027344,
+   "zB": 76.87999725341797,
+   "sA": 69.40892028808594,
+   "sB": 75.52943420410156,
+   "paralog_flag": false,
+   "readout_flag": "",
+   "zC": 47.21615219116211,
+   "sC": 43.65402603149414
+  },
+  {
+   "protein": "EXOSC4",
+   "gene": "SNHG3",
+   "zA": 69.92000579833984,
+   "zB": 74.3392105102539,
+   "sA": 69.25206756591797,
+   "sB": 73.55511474609375,
+   "paralog_flag": false,
+   "readout_flag": "",
+   "zC": 20.665977478027344,
+   "sC": 17.919958114624023
+  },
+  {
+   "protein": "SMG5",
+   "gene": "SNHG7",
+   "zA": 80.85950469970703,
+   "zB": 70.70487976074219,
+   "sA": 78.4504165649414,
+   "sB": 69.18913269042969,
+   "paralog_flag": false,
+   "readout_flag": "",
+   "zC": 71.0831527709961,
+   "sC": 68.15050506591797
+  },
+  {
+   "protein": "EXOSC8",
+   "gene": "SNHG3",
+   "zA": 69.62281036376953,
+   "zB": 70.13770294189453,
+   "sA": 69.01473236083984,
+   "sB": 69.13072204589844,
+   "paralog_flag": false,
+   "readout_flag": "",
+   "zC": 16.8034725189209,
+   "sC": 14.40217113494873
+  },
+  {
+   "protein": "HSPA5",
+   "gene": "SDF2L1",
+   "zA": 68.80774688720703,
+   "zB": 120.18230438232422,
+   "sA": 68.25126647949219,
+   "sB": 120.50605010986328,
+   "paralog_flag": false,
+   "readout_flag": "",
+   "zC": 180.53775024414062,
+   "sC": 183.9597625732422
+  },
+  {
+   "protein": "GATA1",
+   "gene": "PRG2",
+   "zA": -1.8564233779907227,
+   "zB": -1.486527681350708,
+   "sA": -67.11648559570312,
+   "sB": -99.94442749023438,
+   "paralog_flag": false,
+   "readout_flag": ""
+  },
+  {
+   "protein": "INTS7",
+   "gene": "CLCA1",
+   "zA": 105.41653442382812,
+   "zB": 68.98008728027344,
+   "sA": 100.58076477050781,
+   "sB": 63.87785339355469,
+   "paralog_flag": false,
+   "readout_flag": ""
+  },
+  {
+   "protein": "EXOSC6",
+   "gene": "SNHG3",
+   "zA": 64.06169128417969,
+   "zB": 64.08183288574219,
+   "sA": 63.83612823486328,
+   "sB": 63.53580856323242,
+   "paralog_flag": false,
+   "readout_flag": "",
+   "zC": 19.091957092285156,
+   "sC": 17.528911590576172
+  },
+  {
+   "protein": "ZFC3H1",
+   "gene": "DANCR",
+   "zA": 63.12788391113281,
+   "zB": 83.79631805419922,
+   "sA": 63.51461410522461,
+   "sB": 84.48694610595703,
+   "paralog_flag": false,
+   "readout_flag": "",
+   "zC": 41.43147277832031,
+   "sC": 41.96062088012695
+  },
+  {
+   "protein": "SMG5",
+   "gene": "SNHG32",
+   "zA": 79.84774017333984,
+   "zB": 65.6821517944336,
+   "sA": 76.5483169555664,
+   "sB": 63.17226028442383,
+   "paralog_flag": false,
+   "readout_flag": "",
+   "zC": 103.21271514892578,
+   "sC": 100.51806640625
+  },
+  {
+   "protein": "ZFC3H1",
+   "gene": "ZNF595",
+   "zA": 62.61493682861328,
+   "zB": 77.41133117675781,
+   "sA": 62.170570373535156,
+   "sB": 76.90996551513672,
+   "paralog_flag": false,
+   "readout_flag": ""
+  },
+  {
+   "protein": "HSPA5",
+   "gene": "HSP90B1",
+   "zA": 59.49018859863281,
+   "zB": 100.25516510009766,
+   "sA": 60.11263656616211,
+   "sB": 102.99698638916016,
+   "paralog_flag": false,
+   "readout_flag": "",
+   "zC": 410.73187255859375,
+   "sC": 416.7319641113281
+  },
+  {
+   "protein": "GATA1",
+   "gene": "S100A4",
+   "zA": 66.81033325195312,
+   "zB": 126.33558654785156,
+   "sA": 59.835269927978516,
+   "sB": 115.49478912353516,
+   "paralog_flag": false,
+   "readout_flag": ""
+  },
+  {
+   "protein": "GATA1",
+   "gene": "SAT1",
+   "zA": 78.90301513671875,
+   "zB": 74.31289672851562,
+   "sA": 68.79607391357422,
+   "sB": 59.470890045166016,
+   "paralog_flag": false,
+   "readout_flag": "",
+   "zC": -2.280963182449341,
+   "sC": -2.6664209365844727
+  },
+  {
+   "protein": "CHMP3",
+   "gene": "SOD2",
+   "zA": 58.30570983886719,
+   "zB": 230.69822692871094,
+   "sA": 57.81468963623047,
+   "sB": 231.10316467285156,
+   "paralog_flag": false,
+   "readout_flag": "",
+   "zC": 25.192649841308594,
+   "sC": 25.58785057067871
+  },
+  {
+   "protein": "INTS2",
+   "gene": "TMEM158",
+   "zA": 73.15009307861328,
+   "zB": 86.11367797851562,
+   "sA": 57.6087760925293,
+   "sB": 69.3885269165039,
+   "paralog_flag": false,
+   "readout_flag": "",
+   "zC": 16.51609230041504,
+   "sC": 12.002350807189941
+  }
+ ],
+ "top_pathway_effects": [
+  {
+   "protein": "SUPT6H",
+   "pathway": "R-HSA-9840310",
+   "name": "Glycosphingolipid catabolism",
+   "top": "Metabolism",
+   "zA": 29.799076080322266,
+   "zB": 30.167367935180664
+  },
+  {
+   "protein": "EP400",
+   "pathway": "R-HSA-189445",
+   "name": "Metabolism of porphyrins",
+   "top": "Metabolism",
+   "zA": 31.32554817199707,
+   "zB": 28.06608772277832
+  },
+  {
+   "protein": "DHDDS",
+   "pathway": "R-HSA-9918432",
+   "name": "Maturation of DENV proteins",
+   "top": "Disease",
+   "zA": 35.41972351074219,
+   "zB": 28.04877281188965
+  },
+  {
+   "protein": "LRPPRC",
+   "pathway": "R-HSA-9633012",
+   "name": "Response of EIF2AK4 (GCN2) to amino acid deficiency",
+   "top": "Cellular responses to stimuli",
+   "zA": 27.899538040161133,
+   "zB": 27.73295783996582
+  },
+  {
+   "protein": "INTS2",
+   "pathway": "R-HSA-2672351",
+   "name": "Stimuli-sensing channels",
+   "top": "Transport of small molecules",
+   "zA": 27.70492172241211,
+   "zB": 27.62913703918457
+  },
+  {
+   "protein": "DHDDS",
+   "pathway": "R-HSA-381119",
+   "name": "Unfolded Protein Response (UPR)",
+   "top": "Cellular responses to stimuli",
+   "zA": 29.03453826904297,
+   "zB": 27.197925567626953
+  },
+  {
+   "protein": "HSPA5",
+   "pathway": "R-HSA-381119",
+   "name": "Unfolded Protein Response (UPR)",
+   "top": "Cellular responses to stimuli",
+   "zA": 27.165908813476562,
+   "zB": 66.22114562988281
+  },
+  {
+   "protein": "DNAJC17",
+   "pathway": "R-HSA-72163",
+   "name": "mRNA Splicing - Major Pathway",
+   "top": "Metabolism of RNA",
+   "zA": 44.62993240356445,
+   "zB": 27.12044906616211
+  },
+  {
+   "protein": "VPS28",
+   "pathway": "R-HSA-9646399",
+   "name": "Aggrephagy",
+   "top": "Autophagy",
+   "zA": 26.498889923095703,
+   "zB": 32.87236785888672
+  },
+  {
+   "protein": "GATA1",
+   "pathway": "R-HSA-2029480",
+   "name": "Fcgamma receptor (FCGR) dependent phagocytosis",
+   "top": "Immune System",
+   "zA": 26.388416290283203,
+   "zB": 29.300745010375977
+  },
+  {
+   "protein": "POLRMT",
+   "pathway": "R-HSA-9633012",
+   "name": "Response of EIF2AK4 (GCN2) to amino acid deficiency",
+   "top": "Cellular responses to stimuli",
+   "zA": 32.20146560668945,
+   "zB": 25.816566467285156
+  },
+  {
+   "protein": "PSMD2",
+   "pathway": "R-HSA-9759194",
+   "name": "Nuclear events mediated by NFE2L2",
+   "top": "Cellular responses to stimuli",
+   "zA": 25.52748680114746,
+   "zB": 27.27215576171875
+  },
+  {
+   "protein": "TSG101",
+   "pathway": "R-HSA-8862803",
+   "name": "Deregulated CDK5 triggers multiple neurodegenerative pathways in Alzheimer's disease models",
+   "top": "Disease",
+   "zA": 24.746641159057617,
+   "zB": 27.25060272216797
+  },
+  {
+   "protein": "PSMD2",
+   "pathway": "R-HSA-450408",
+   "name": "AUF1 (hnRNP D0) binds and destabilizes mRNA",
+   "top": "Metabolism of RNA",
+   "zA": 24.68584632873535,
+   "zB": 28.180221557617188
+  },
+  {
+   "protein": "HSPA5",
+   "pathway": "R-HSA-9918432",
+   "name": "Maturation of DENV proteins",
+   "top": "Disease",
+   "zA": 24.2718563079834,
+   "zB": 55.21727752685547
+  },
+  {
+   "protein": "TSG101",
+   "pathway": "R-HSA-3299685",
+   "name": "Detoxification of Reactive Oxygen Species",
+   "top": "Cellular responses to stimuli",
+   "zA": 24.57819938659668,
+   "zB": 24.175527572631836
+  },
+  {
+   "protein": "PSMD2",
+   "pathway": "R-HSA-5610787",
+   "name": "Hedgehog 'off' state",
+   "top": "Signal Transduction",
+   "zA": 24.167566299438477,
+   "zB": 31.793699264526367
+  },
+  {
+   "protein": "DHDDS",
+   "pathway": "R-HSA-983170",
+   "name": "Antigen Presentation: Folding, assembly and peptide loading of class I MHC",
+   "top": "Immune System",
+   "zA": 26.775453567504883,
+   "zB": 24.1088809967041
+  },
+  {
+   "protein": "TAF1",
+   "pathway": "R-HSA-9633012",
+   "name": "Response of EIF2AK4 (GCN2) to amino acid deficiency",
+   "top": "Cellular responses to stimuli",
+   "zA": -24.390546798706055,
+   "zB": -23.92778205871582
+  },
+  {
+   "protein": "PSMD2",
+   "pathway": "R-HSA-8951664",
+   "name": "Neddylation",
+   "top": "Metabolism of proteins",
+   "zA": 23.758268356323242,
+   "zB": 24.15960121154785
+  },
+  {
+   "protein": "POLRMT",
+   "pathway": "R-HSA-71291",
+   "name": "Metabolism of amino acids and derivatives",
+   "top": "Metabolism",
+   "zA": 26.66897964477539,
+   "zB": 23.447595596313477
+  },
+  {
+   "protein": "PSMD2",
+   "pathway": "R-HSA-9020702",
+   "name": "Interleukin-1 signaling",
+   "top": "Immune System",
+   "zA": 23.057985305786133,
+   "zB": 28.228046417236328
+  },
+  {
+   "protein": "MTPAP",
+   "pathway": "R-HSA-9633012",
+   "name": "Response of EIF2AK4 (GCN2) to amino acid deficiency",
+   "top": "Cellular responses to stimuli",
+   "zA": 24.45773696899414,
+   "zB": 22.810129165649414
+  },
+  {
+   "protein": "PSMD2",
+   "pathway": "R-HSA-1632852",
+   "name": "Macroautophagy",
+   "top": "Autophagy",
+   "zA": 22.729829788208008,
+   "zB": 36.82392120361328
+  },
+  {
+   "protein": "PSMD2",
+   "pathway": "R-HSA-9646399",
+   "name": "Aggrephagy",
+   "top": "Autophagy",
+   "zA": 22.651029586791992,
+   "zB": 50.774147033691406
+  },
+  {
+   "protein": "PSMD13",
+   "pathway": "R-HSA-1236974",
+   "name": "ER-Phagosome pathway",
+   "top": "Immune System",
+   "zA": 23.235179901123047,
+   "zB": 22.471590042114258
+  },
+  {
+   "protein": "LRPPRC",
+   "pathway": "R-HSA-71291",
+   "name": "Metabolism of amino acids and derivatives",
+   "top": "Metabolism",
+   "zA": 22.465675354003906,
+   "zB": 25.881868362426758
+  },
+  {
+   "protein": "PSMD13",
+   "pathway": "R-HSA-9766229",
+   "name": "Degradation of CDH1",
+   "top": "Cell-Cell communication",
+   "zA": 22.732351303100586,
+   "zB": 22.182157516479492
+  },
+  {
+   "protein": "PSMD2",
+   "pathway": "R-HSA-69656",
+   "name": "Cyclin A:Cdk2-associated events at S phase entry",
+   "top": "Cell Cycle",
+   "zA": 22.158424377441406,
+   "zB": 24.00943374633789
+  },
+  {
+   "protein": "SUPT6H",
+   "pathway": "R-HSA-9857377",
+   "name": "Regulation of MITF-M-dependent genes involved in lysosome biogenesis and autophagy",
+   "top": "Developmental Biology",
+   "zA": 22.504287719726562,
+   "zB": 22.033777236938477
+  },
+  {
+   "protein": "PSMD13",
+   "pathway": "R-HSA-9755511",
+   "name": "KEAP1-NFE2L2 pathway",
+   "top": "Cellular responses to stimuli",
+   "zA": 21.967796325683594,
+   "zB": 22.577878952026367
+  },
+  {
+   "protein": "PSMD13",
+   "pathway": "R-HSA-9907900",
+   "name": "Proteasome assembly",
+   "top": "Metabolism of proteins",
+   "zA": 24.298059463500977,
+   "zB": 21.904678344726562
+  },
+  {
+   "protein": "PSMD6",
+   "pathway": "R-HSA-450408",
+   "name": "AUF1 (hnRNP D0) binds and destabilizes mRNA",
+   "top": "Metabolism of RNA",
+   "zA": 21.8931941986084,
+   "zB": 23.7960205078125
+  },
+  {
+   "protein": "PSMD6",
+   "pathway": "R-HSA-9759194",
+   "name": "Nuclear events mediated by NFE2L2",
+   "top": "Cellular responses to stimuli",
+   "zA": 21.85807991027832,
+   "zB": 22.572120666503906
+  },
+  {
+   "protein": "GATA1",
+   "pathway": "R-HSA-877300",
+   "name": "Interferon gamma signaling",
+   "top": "Immune System",
+   "zA": 23.289241790771484,
+   "zB": 21.82454490661621
+  },
+  {
+   "protein": "VPS28",
+   "pathway": "R-HSA-9734009",
+   "name": "Defective Intrinsic Pathway for Apoptosis",
+   "top": "Disease",
+   "zA": 24.429553985595703,
+   "zB": 21.8090877532959
+  },
+  {
+   "protein": "PSMD2",
+   "pathway": "R-HSA-9711123",
+   "name": "Cellular response to chemical stress",
+   "top": "Cellular responses to stimuli",
+   "zA": 21.769006729125977,
+   "zB": 24.728639602661133
+  },
+  {
+   "protein": "PSMD13",
+   "pathway": "R-HSA-382556",
+   "name": "ABC-family protein mediated transport",
+   "top": "Transport of small molecules",
+   "zA": 23.61545181274414,
+   "zB": 21.766298294067383
+  },
+  {
+   "protein": "INTS8",
+   "pathway": "R-HSA-2672351",
+   "name": "Stimuli-sensing channels",
+   "top": "Transport of small molecules",
+   "zA": 21.527090072631836,
+   "zB": 23.23575210571289
+  },
+  {
+   "protein": "DNAJC17",
+   "pathway": "R-HSA-72187",
+   "name": "mRNA 3'-end processing",
+   "top": "Metabolism of RNA",
+   "zA": 33.53571319580078,
+   "zB": 21.379512786865234
+  }
+ ],
+ "files": [
+  "memory_bank/cell_v3/protein_gene_effects_reproduced.tsv.gz",
+  "memory_bank/cell_v3/protein_pathway_effects_reproduced.tsv.gz",
+  "memory_bank/cell_v3/protein_effects_CAVEATS.json"
+ ],
+ "runtime_s": 83.2608528137207
+}

@@ -1,0 +1,181 @@
+{
+ "threshold": 4.200000000000003,
+ "n_train_pairs": 27495,
+ "best_k": 3,
+ "table": [
+  {
+   "method": "learned metric K=1",
+   "all": 0.3444,
+   "in_complex": 0.3937,
+   "no_complex": 0.2129,
+   "n": 293
+  },
+  {
+   "method": "learned metric K=3",
+   "all": 0.4047,
+   "in_complex": 0.462,
+   "no_complex": 0.2523,
+   "n": 293
+  },
+  {
+   "method": "learned metric K=5",
+   "all": 0.3951,
+   "in_complex": 0.4562,
+   "no_complex": 0.2324,
+   "n": 293
+  },
+  {
+   "method": "learned metric K=10",
+   "all": 0.3873,
+   "in_complex": 0.4383,
+   "no_complex": 0.2514,
+   "n": 293
+  },
+  {
+   "method": "learned metric K=25",
+   "all": 0.339,
+   "in_complex": 0.387,
+   "no_complex": 0.2111,
+   "n": 293
+  },
+  {
+   "method": "learned metric K=50",
+   "all": 0.2656,
+   "in_complex": 0.3046,
+   "no_complex": 0.162,
+   "n": 293
+  },
+  {
+   "method": "[ctrl] cosine metric K=1",
+   "all": 0.1535,
+   "in_complex": 0.1653,
+   "no_complex": 0.1221,
+   "n": 293
+  },
+  {
+   "method": "[ctrl] cosine metric K=3",
+   "all": 0.1789,
+   "in_complex": 0.2048,
+   "no_complex": 0.11,
+   "n": 293
+  },
+  {
+   "method": "[ctrl] cosine metric K=5",
+   "all": 0.1863,
+   "in_complex": 0.2143,
+   "no_complex": 0.1116,
+   "n": 293
+  },
+  {
+   "method": "[ctrl] cosine metric K=10",
+   "all": 0.191,
+   "in_complex": 0.2155,
+   "no_complex": 0.1256,
+   "n": 293
+  },
+  {
+   "method": "[ctrl] cosine metric K=25",
+   "all": 0.1728,
+   "in_complex": 0.196,
+   "no_complex": 0.1111,
+   "n": 293
+  },
+  {
+   "method": "[ctrl] cosine metric K=50",
+   "all": 0.1524,
+   "in_complex": 0.1776,
+   "no_complex": 0.0853,
+   "n": 293
+  },
+  {
+   "method": "[pointwise] ridge on programs +dense(PCA)",
+   "all": 0.3685,
+   "in_complex": 0.4528,
+   "no_complex": 0.144,
+   "n": 293
+  },
+  {
+   "method": "[ref] uniform average of all train (= mu)",
+   "all": 0.0755,
+   "in_complex": 0.0812,
+   "no_complex": 0.0602,
+   "n": 293
+  },
+  {
+   "method": "[ref] tide-null",
+   "all": 0.1163,
+   "in_complex": 0.1155,
+   "no_complex": 0.1184,
+   "n": 293
+  },
+  {
+   "method": "[ref] random",
+   "all": 0.0047,
+   "in_complex": 0.0055,
+   "no_complex": 0.0028,
+   "n": 293
+  },
+  {
+   "method": "[oracle] true similarity K=1",
+   "all": 0.5078,
+   "in_complex": 0.5175,
+   "no_complex": 0.4819,
+   "n": 293
+  },
+  {
+   "method": "[oracle] true similarity K=3",
+   "all": 0.5461,
+   "in_complex": 0.5489,
+   "no_complex": 0.5385,
+   "n": 293
+  },
+  {
+   "method": "[oracle] true similarity K=5",
+   "all": 0.548,
+   "in_complex": 0.5487,
+   "no_complex": 0.5462,
+   "n": 293
+  },
+  {
+   "method": "[oracle] true similarity K=10",
+   "all": 0.5234,
+   "in_complex": 0.5246,
+   "no_complex": 0.5202,
+   "n": 293
+  },
+  {
+   "method": "[oracle] true similarity K=25",
+   "all": 0.4782,
+   "in_complex": 0.4846,
+   "no_complex": 0.4612,
+   "n": 293
+  },
+  {
+   "method": "[oracle] true similarity K=50",
+   "all": 0.3796,
+   "in_complex": 0.4001,
+   "no_complex": 0.3247,
+   "n": 293
+  },
+  {
+   "method": "[oracle] best single copy",
+   "all": 0.6317,
+   "in_complex": 0.639,
+   "no_complex": 0.6125,
+   "n": 293
+  }
+ ],
+ "pair_spearman_heldout": 0.5986080177232284,
+ "pair_auc_heldout": 0.8585519725628097,
+ "learned_vs_cosine": 0.2258,
+ "p_vs_cosine": 1.2748464926007193e-22,
+ "p_vs_cosine_no_complex": 0.003612326565609773,
+ "p_vs_tide": 1.6095305522917395e-24,
+ "learning_beats_cosine": true,
+ "beats_pointwise": true,
+ "pointwise_reference": 0.3636,
+ "p_vs_pointwise": 0.005536038402142978,
+ "p_vs_pointwise_no_complex": 0.007242712607499548,
+ "verdict": "PAIR RETRIEVAL (pair_retrieval.py): reposing knockout prediction as retrieval instead of regression. The pointwise framing gives 337 training examples for an 8,533-dim output and is demonstrably variance-limited; the pairwise framing gives 27495 labelled pairs from the SAME data with a one-dimensional target. Pipeline: learn sim_hat(a,b) from annotation-only pair features on pairs whose BOTH members are train sources, score a held-out gene against every train source, and predict its response as the similarity-weighted average of the top-K train sources' measured profiles. Splits are SOURCE-disjoint, so no training pair shares a gene with a test pair. PAIR SIMILARITY IS GENUINELY PREDICTABLE on held-out sources: Spearman 0.599, top-decile AUC 0.859. RESULT at the best K=3: 0.4045 overall (0.4620 in a curated complex, 0.2523 in none), against the best POINTWISE model at 0.3636, tide-null 0.1163 and random 0.0047. It BEATS the pointwise model head-to-head on identical splits by +0.0409 (paired p=0.00554 on 218 unique sources), and on the uncurated genes the pointwise model fails by +0.1210 (p=0.00724, n=56). THE CONTROL THAT DECIDES WHETHER LEARNING MATTERS is the identical retrieve-and-average pipeline driven by a fixed cosine metric on the same features: 0.1787. Learned minus cosine is +0.2258 (paired p=1.27e-22), so learning the metric is doing real work rather than the gain coming from retrieval alone. On the uncurated genes that the pointwise model fails (0.160 there), this scores 0.2523. CEILING FOR THIS ARCHITECTURE: retrieving with the TRUE response similarity gives 0.5461, and the best single measured copy gives 0.6317 -- both are oracles selected by peeking at the answer, so they bound what any similarity model could reach, they are not predictors. Large K degenerates towards the mean response, which is why the uniform average over all train sources scores only 0.0755. Deterministic; tide mask, pair target, feature scaling and regressor all fitted on train sources only.",
+ "note": "PAIR RETRIEVAL (pair_retrieval.py): reposing knockout prediction as retrieval instead of regression. The pointwise framing gives 337 training examples for an 8,533-dim output and is demonstrably variance-limited; the pairwise framing gives 27495 labelled pairs from the SAME data with a one-dimensional target. Pipeline: learn sim_hat(a,b) from annotation-only pair features on pairs whose BOTH members are train sources, score a held-out gene against every train source, and predict its response as the similarity-weighted average of the top-K train sources' measured profiles. Splits are SOURCE-disjoint, so no training pair shares a gene with a test pair. PAIR SIMILARITY IS GENUINELY PREDICTABLE on held-out sources: Spearman 0.599, top-decile AUC 0.859. RESULT at the best K=3: 0.4045 overall (0.4620 in a curated complex, 0.2523 in none), against the best POINTWISE model at 0.3636, tide-null 0.1163 and random 0.0047. It BEATS the pointwise model head-to-head on identical splits by +0.0409 (paired p=0.00554 on 218 unique sources), and on the uncurated genes the pointwise model fails by +0.1210 (p=0.00724, n=56). THE CONTROL THAT DECIDES WHETHER LEARNING MATTERS is the identical retrieve-and-average pipeline driven by a fixed cosine metric on the same features: 0.1787. Learned minus cosine is +0.2258 (paired p=1.27e-22), so learning the metric is doing real work rather than the gain coming from retrieval alone. On the uncurated genes that the pointwise model fails (0.160 there), this scores 0.2523. CEILING FOR THIS ARCHITECTURE: retrieving with the TRUE response similarity gives 0.5461, and the best single measured copy gives 0.6317 -- both are oracles selected by peeking at the answer, so they bound what any similarity model could reach, they are not predictors. Large K degenerates towards the mean response, which is why the uniform average over all train sources scores only 0.0755. Deterministic; tide mask, pair target, feature scaling and regressor all fitted on train sources only."
+}

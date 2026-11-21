@@ -1,0 +1,104 @@
+{
+ "machinery": [
+  {
+   "worker": "RNGTT",
+   "role": "5'-triphosphatase + guanylyltransferase (builds cap core GpppN)",
+   "predicted_class": "hub",
+   "measured_ess": 1,
+   "dep_frac": 1.0,
+   "loeuf": 0.407
+  },
+  {
+   "worker": "RNMT",
+   "role": "cap N7-methyltransferase (+RAMAC activator) -> m7G, eIF4E-competent",
+   "predicted_class": "hub",
+   "measured_ess": 1,
+   "dep_frac": 0.97,
+   "loeuf": 0.761
+  },
+  {
+   "worker": "RAMAC",
+   "role": "RNMT activator (RAM); rheostat on N7-methylation",
+   "predicted_class": "hub",
+   "measured_ess": 1,
+   "dep_frac": null,
+   "loeuf": -1.0
+  },
+  {
+   "worker": "CMTR1",
+   "role": "cap1 2'-O-methyltransferase (first nt); self/non-self mark + translation",
+   "predicted_class": "important",
+   "measured_ess": 1,
+   "dep_frac": 0.85,
+   "loeuf": 0.289
+  },
+  {
+   "worker": "CMTR2",
+   "role": "cap2 2'-O-methyltransferase (second nt); pure refinement",
+   "predicted_class": "modifier",
+   "measured_ess": 0,
+   "dep_frac": 0.04,
+   "loeuf": 1.16
+  }
+ ],
+ "validation": {
+  "dep_frac_by_worker": {
+   "RNGTT": 1.0,
+   "RNMT": 0.97,
+   "CMTR1": 0.85,
+   "CMTR2": 0.04
+  },
+  "tier_mean_dep_frac": {
+   "cap0_hub": 0.985,
+   "cap1_important": 0.85,
+   "cap2_modifier": 0.04
+  },
+  "cbc_reader_ess": {
+   "NCBP1": 1.0,
+   "NCBP2": 1.0
+  },
+  "monotone_cap0_gt_cap1_gt_cap2": true,
+  "cap2_dispensable": true
+ },
+ "demo_cap_status": {
+  "ACTB": {
+   "gene": "ACTB",
+   "ser5p_provenance": 230.8,
+   "is_polII_product": true,
+   "cap0_machinery_intact": true,
+   "capped": true
+  },
+  "GATA1": {
+   "gene": "GATA1",
+   "ser5p_provenance": 31.2,
+   "is_polII_product": true,
+   "cap0_machinery_intact": true,
+   "capped": true
+  }
+ },
+ "demo_mutate": {
+  "RNGTT": {
+   "worker": "RNGTT",
+   "role": "5'-triphosphatase + guanylyltransferase (builds cap core GpppN)",
+   "predicted_class": "hub",
+   "nexus_activity": 0.308,
+   "activity_lost": 0.692,
+   "scope": "GLOBAL / catastrophic",
+   "predicted_effect": "cap0 not formed on the affected fraction -> those Pol II mRNAs lose eIF4E loading + 5'->3' exonuclease protection -> ~69% global loss of cap-dependent translation & stability. Short-half-life / high-turnover / 5'TOP growth transcripts collapse first. (This worker is measured-essential -> full LoF ~lethal.)",
+   "measured_dep_frac": 1.0,
+   "measured_ess": 1
+  },
+  "CMTR2": {
+   "worker": "CMTR2",
+   "role": "cap2 2'-O-methyltransferase (second nt); pure refinement",
+   "predicted_class": "modifier",
+   "nexus_activity": 0.308,
+   "activity_lost": 0.692,
+   "scope": "VIABLE MODIFIER (subset)",
+   "predicted_effect": "cap0 still forms (eIF4E-competent); loses cap1/cap2 2'-O-methyl on ~69% of transcripts -> small global translation penalty + sets an innate-immune 'non-self' flag (IFIT1/RIG-I) + reduced translation of a cap1-sensitive ISG subset. Not lethal.",
+   "measured_dep_frac": 0.04,
+   "measured_ess": 0
+  }
+ },
+ "note": "5' capping as a PROVENANCE-GATED machinery layer (FIRST_PRINCIPLES.md sec1): cap status = Ser5P-Pol II provenance x machinery integrity (a near-constitutive Boolean, NOT sequence-regulated). First-principles hub-vs-modifier prediction VALIDATED vs measured DepMap: RNGTT/RNMT/CMTR1 essential (dep_frac ~0.85-1.0) = lethal cap0 hubs; CMTR2 dispensable (dep_frac 0.04) = viable cap2 modifier. NEXUS on a worker -> hub LoF = global cap-dependent-translation collapse (lethal), modifier LoF = viable subset + innate-immune flag. Measurement-only: per-transcript cap0:cap1:cap2 fractions, decap/recap pool. Direction/essentiality reliable; methylation-state fractions need cap-specific sequencing."
+}

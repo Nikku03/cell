@@ -1,0 +1,69 @@
+{
+ "source": "NeuroMorpho Markram archive (rat somatosensory neocortex)",
+ "n_cells": 389,
+ "per_type_morphometry": {
+  "interneuron_other": {
+   "height": 491.3245,
+   "order": 12.0,
+   "stems": 6.0,
+   "branch": 175.5,
+   "n": 70
+  },
+  "martinotti": {
+   "height": 822.166,
+   "order": 20.0,
+   "stems": 5.0,
+   "branch": 318.5,
+   "n": 70
+  },
+  "pyramidal": {
+   "height": 1253.49,
+   "order": 14.0,
+   "stems": 7.0,
+   "branch": 142.0,
+   "n": 67
+  },
+  "basket": {
+   "height": 602.73,
+   "order": 18.0,
+   "stems": 7.0,
+   "branch": 338.0,
+   "n": 66
+  },
+  "thalamocortical": {
+   "height": 257.87,
+   "order": 8.0,
+   "stems": 9.0,
+   "branch": 165.0,
+   "n": 49
+  },
+  "double bouquet": {
+   "height": 965.62,
+   "order": 22.5,
+   "stems": 4.0,
+   "branch": 229.5,
+   "n": 38
+  },
+  "bitufted": {
+   "height": 822.066,
+   "order": 17.0,
+   "stems": 5.0,
+   "branch": 259.0,
+   "n": 29
+  }
+ },
+ "architecture": {
+  "branching": 4,
+  "depth": 4,
+  "leaves": 256
+ },
+ "sweep": [
+  {
+   "task_depth": 4,
+   "dendritic": 0.5040833333333333,
+   "mlp_equal_params": 1.0,
+   "mlp_equal_depth": 0.9650833333333333
+  }
+ ],
+ "verdict": "FAIL"
+}

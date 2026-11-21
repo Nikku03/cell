@@ -1,0 +1,17 @@
+{
+ "n_pairs": 20351,
+ "n_knockouts": 237,
+ "base_rate": 0.0754,
+ "spearman_halflife_vs_responsiveness": 0.007,
+ "spearman_kdeg_vs_responsiveness": -0.007,
+ "lift": {
+  "mechanism_only": 0.99,
+  "halflife_only": 4.04,
+  "movefreq_prior_only": 8.3,
+  "mechanism_plus_kinetics": 4.32,
+  "kinetics_replaces_prior_(no_movefreq)": 5.92,
+  "full_everything": 8.64
+ },
+ "verdict": "MEASURED VERDICT -- a REAL but BOUNDED difference, exactly where theory predicts. (1) half-life does NOT explain the responsiveness prior (Spearman with movefreq 0.007 ~ 0): 'twitchy' and 'short-lived' are INDEPENDENT axes, not the same thing -- that intuition is wrong. (2) half-life IS its own MEASURED, non-leaky generic predictor of movers (4.04x held-out), weaker than the leaky movefreq prior (8.3x) but real and leak-free -- an honest prior for a genuinely-new knockout where movefreq can't be computed. (3) it adds NO TRANSMISSION and does NOT break the wall: mechanism+kinetics (4.32x) is essentially kinetics-alone (4.04x) -- mechanism adds ~nothing over it (no); and stacking kinetics onto movefreq lifts the full model only to 8.64x vs 8.3x (a real gain). So 'how fast', combined with everything, is another GENERIC-axis predictor (a property of target gene J) plus the near-field time-stamp -- it augments the prior and dates the near-field, but the far-field 'WHICH genes a knockout hits' stays the wall, because half-life is on the wrong side of the equation (a target property, not a G->J edge). Your intuition was partly right -- it does add real signal -- but it lands on the generic axis, not the transmission the wall needs.",
+ "note": "Test of 'combine how-fast (half-life) with everything': (Q1) whether half-life explains the responsiveness prior -- Spearman(half-life, movefreq); (Q2) whether it adds to the held-out cascade in the cascade_all protocol. Short-lived genes are more responsive (measured), so half-life is a mechanistic, non-leaky proxy for the movefreq prior -- it explains and can clean the GENERIC axis, and time-stamps the near-field. But mechanism+kinetics ~ mechanism-only: half-life adds NO transmission (it is a target-gene property, not a G->J relationship), so it does not break the far-field wall. A real, bounded difference, exactly where theory says it should land."
+}

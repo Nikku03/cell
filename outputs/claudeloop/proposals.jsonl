@@ -1,0 +1,100 @@
+{"n": 1, "gene": "VPS33A", "up": [1, 4, 2, 3], "down": [9, 10, 11, 19], "why": "HOPS loss traps lysosomal cholesterol so SREBP targets rise, as in the VPS16/VPS18 partner knockdowns; VPS18 also lowered mitochondrial tRNA processing."}
+{"n": 2, "gene": "MAN1A1", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "A Golgi mannosidase with little growth role in K562; no specific biology beats the engine's generic axes."}
+{"n": 3, "gene": "KIF18B", "up": [1, 2, 3, 16], "down": [9, 10, 11, 12], "why": "A mitotic kinesin: a mitotic delay enriches G2/M cells, so other mitotic kinesins should rise rather than fall."}
+{"n": 4, "gene": "DCPS", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "Scavenger decapping is not limiting in K562; the engine's recurring axes are the best guess."}
+{"n": 5, "gene": "SLC6A19", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "Barely expressed in K562 (1.4 nTPM), so the knockdown should do little; keep the engine's guess."}
+{"n": 6, "gene": "UQCR10", "up": [1, 2, 6, 4], "down": [9, 10, 11, 12], "why": "Complex III loss stresses mitochondria: mitochondrial transcripts and ROS detoxification rise; G1/S transcription is less likely to."}
+{"n": 7, "gene": "MALSU1", "up": [18, 19, 1, 2], "down": [9, 10, 11, 12], "why": "A mitoribosome assembly factor: like its partners MRPL58 and TSFM, failed mitochondrial translation makes mitochondrial mRNAs pile up, and TSFM lowered MHC class I loading."}
+{"n": 8, "gene": "PSMD11", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "Proteasome loss triggers the proteasome bounce-back and lowers ribosomal protein mRNAs, exactly as PSMD2 and PSMD14 did."}
+{"n": 9, "gene": "POLR1E", "up": [1, 4, 20, 6], "down": [9, 10, 11, 12], "why": "Pol I loss starves ribosome biogenesis so ribosomal mRNAs fall; the POLR1D partner raised porphyrin (heme) and ATP-synthesis genes but lowered mitochondrial RNAs."}
+{"n": 10, "gene": "GTF2A2", "up": [1, 3, 4, 17], "down": [10, 11, 16, 14], "why": "TFIIA works with TBP: the TBP knockdown raised heat-shock attenuation and mitochondrial RNA genes and lowered ribosomal protein genes."}
+{"n": 11, "gene": "CCNB1", "up": [1, 2, 3, 17], "down": [9, 10, 11, 12], "why": "Losing cyclin B1 arrests cells in G2, so mitotic (sister-chromatid) genes accumulate; the CDK1 partner raised heme synthesis and translation."}
+{"n": 12, "gene": "ACY1", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "A non-essential metabolic hydrolase; nothing specific beats the engine's guess."}
+{"n": 13, "gene": "TBCD", "up": [1, 2, 3, 5], "down": [9, 10, 11, 12], "why": "Tubulin folding loss perturbs tubulin autoregulation; tubulin-rich sets (kinesins, gap-junction trafficking) move together."}
+{"n": 14, "gene": "MRPL42", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "A mitoribosome subunit: like MRPL13 and MRPL32, mitochondrial mRNAs pile up and proteasome / ODC sets fall."}
+{"n": 15, "gene": "MED25", "up": [2, 6, 3, 1], "down": [9, 10, 11, 12], "why": "The mediator partners MED9 and MED21 raised lysosomal genes (PSAP, glycosphingolipid catabolism) and lowered ribosomal protein genes."}
+{"n": 16, "gene": "REPIN1", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "No clear essential role in K562; its partner IPO8 raised mitochondrial RNAs, matching the engine."}
+{"n": 17, "gene": "ALYREF", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "An essential mRNA-export factor: slower growth lowers ribosomal protein mRNAs; the engine's view fits."}
+{"n": 18, "gene": "PFDN2", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "Prefoldin feeds tubulin and actin to CCT; its partners POLR3A and RUVBL1 both lowered the tubulin-folding sets."}
+{"n": 19, "gene": "SKP2", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "SKP2 loss stabilises p27 and slows G1/S; heme (erythroid) genes may rise as growth slows, as the engine predicts."}
+{"n": 20, "gene": "ERAL1", "up": [1, 2, 3, 4], "down": [9, 10, 11, 14], "why": "A mitochondrial small-subunit rRNA chaperone: like MRPS26, mitochondrial COX transcripts fall and ODC/proteasome sets fall."}
+{"n": 21, "gene": "DSCC1", "up": [1, 2, 3, 4], "down": [9, 11, 12, 16], "why": "DSCC1 works in the CTF18-RFC clamp loader with CHTF8, whose knockdown raised mitochondrial RNAs and lowered ribosomal protein genes; immune DAP12 genes are less certain."}
+{"n": 22, "gene": "FDX2", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "Iron-sulphur cluster loss cripples the respiratory chain; mitochondrial transcripts rise and growth genes fall, as the engine predicts."}
+{"n": 23, "gene": "USP1", "up": [1, 2, 3, 20], "down": [9, 10, 11, 12], "why": "USP1 needs WDR48 (UAF1), whose knockdown raised translation genes and lowered ALAS2 (heme synthesis)."}
+{"n": 24, "gene": "RPS17", "up": [1, 3, 5, 2], "down": [9, 10, 11, 12], "why": "Ribosomal protein loss: like RPS11, RPS8 and RPS16, ribosomal mRNAs fall while CCT chaperones and proteasome assembly rise."}
+{"n": 25, "gene": "SAP18", "up": [1, 2, 3, 4], "down": [9, 10, 11, 16], "why": "A splicing-linked (ASAP) factor whose loss slows the cell cycle; mitotic checkpoint and cohesion genes fall together."}
+{"n": 26, "gene": "SNRPD3", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "A core Sm spliceosome protein; its closest partner SNRPD2 raised translation genes and lowered proteasome sets, matching the engine."}
+{"n": 27, "gene": "ATG16L1", "up": [1, 2, 17, 19], "down": [4, 3, 9, 11], "why": "Its autophagy partners ATG5 and ATG12 both raised mitochondrial RNAs and LOWERED ribosomal translation genes, the opposite of the engine's call on translation."}
+{"n": 28, "gene": "KIFC2", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "Barely expressed in K562 (8 nTPM); little to add to the engine."}
+{"n": 29, "gene": "SNX12", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "A non-essential sorting nexin; the engine's generic axes are the best guess."}
+{"n": 30, "gene": "VAT1", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "A non-essential oxidoreductase; nothing specific to add."}
+{"n": 31, "gene": "DDHD1", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "Barely expressed (4.8 nTPM) lipid hydrolase; little to add to the engine."}
+{"n": 32, "gene": "PRMT7", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "PRMT7 methylates eIF2 alpha; a mild translation-initiation shift fits the engine's call."}
+{"n": 33, "gene": "INTS1", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "Integrator core subunit; INTS14 loss raised mitochondrial RNAs, matching the engine; partner evidence on translation conflicts."}
+{"n": 34, "gene": "TSNARE1", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "Low expression and no clear role in K562; keep the engine's guess."}
+{"n": 35, "gene": "RPL4", "up": [1, 2, 3, 4], "down": [9, 10, 11, 13], "why": "Large-subunit ribosomal protein: like RPL5, RPL11 and RPL23, proteasome sets rise while mitochondrial and ribosomal translation mRNAs fall."}
+{"n": 36, "gene": "CRKL", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "CRKL is the main BCR-ABL adaptor in K562; partial loss of BCR-ABL signalling slows growth, so translation genes fall."}
+{"n": 37, "gene": "GEMIN6", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "SMN complex member: like SNRPD2 and SNRPF (its Sm cargo), translation genes rise and ROS detoxification falls."}
+{"n": 38, "gene": "GTF2H1", "up": [1, 2, 3, 4], "down": [9, 10, 17, 20], "why": "TFIIH: CDK7 and GTF2H4 knockdowns raised mitochondrial RNAs and lowered ribosomal translation and chaperonin genes."}
+{"n": 39, "gene": "SETD7", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "Barely expressed (4.2 nTPM); keep the engine's guess."}
+{"n": 40, "gene": "DDOST", "up": [1, 3, 8, 6], "down": [9, 10, 11, 12], "why": "Losing the OST complex blocks N-glycosylation and triggers the unfolded protein response: ER chaperones (HSPA5, CALR, HSP90B1) rise, as in the DAD1 knockdown."}
+{"n": 41, "gene": "EWSR1", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "An abundant RNA-binding protein with no specific pathway signal here; the engine's view stands."}
+{"n": 42, "gene": "FLI1", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "Not expressed in K562 (0 nTPM), so the knockdown should do nothing specific."}
+{"n": 43, "gene": "DNAJC24", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "DNAJC24 is DPH4 (diphthamide on eEF2); its loss is mild, so keep the engine's guess."}
+{"n": 44, "gene": "PRKACA", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "PKA catalytic subunit; partner signals (AKAP11, GSK3B) are mixed, so keep the engine."}
+{"n": 45, "gene": "MRPL27", "up": [1, 2, 3, 4], "down": [10, 11, 9, 6], "why": "Mitoribosome subunit: like MRPL49 and MRPL13, mitochondrial mRNAs pile up while cytosolic ribosome and ODC/polyamine genes fall."}
+{"n": 46, "gene": "MEPCE", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "Losing the 7SK cap releases P-TEFb; its partner PRPF3 raised ribosomal genes, matching the engine."}
+{"n": 47, "gene": "VPS28", "up": [1, 2, 3, 4], "down": [9, 10, 20, 16], "why": "ESCRT-I: TSG101 and UBAP1 knockdowns lowered replication and G1/S genes as well as respiratory-chain genes."}
+{"n": 48, "gene": "TRMT13", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "A non-essential tRNA methyltransferase; keep the engine's guess."}
+{"n": 49, "gene": "SURF4", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "An ER cargo receptor with little growth role in K562; keep the engine's guess."}
+{"n": 50, "gene": "FAM78A", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "Uncharacterised protein; nothing to add."}
+{"n": 51, "gene": "CHAC2", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "A modestly expressed glutathione-degrading enzyme with no growth role; keep the engine's guess."}
+{"n": 52, "gene": "RBBP4", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "Histone chaperone in NuRD, PRC2 and CAF-1; CHD4 (NuRD) loss raised mitochondrial RNAs, matching the engine."}
+{"n": 53, "gene": "KTI12", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "An Elongator helper for tRNA modification; a mild effect, so keep the engine."}
+{"n": 54, "gene": "DHRS7", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "A non-essential reductase; nothing to add."}
+{"n": 55, "gene": "PLAGL1", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "A lowly expressed transcription factor with no known K562 role; keep the engine."}
+{"n": 56, "gene": "PTDSS1", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "Low expression and PTDSS2 can compensate; keep the engine."}
+{"n": 57, "gene": "PMF1", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "A MIS12 kinetochore subunit: like MIS12 and ZWINT, chromosome missegregation causes protein stress (ER chaperones and MHC class I up) and growth genes fall."}
+{"n": 58, "gene": "INTS2", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "An Integrator subunit; the engine's call of lower ribosomal translation fits a growth defect."}
+{"n": 59, "gene": "DENR", "up": [9, 11, 1, 2], "down": [10, 15, 16, 13], "why": "DENR works with MCTS1, whose knockdown raised mitochondrial RNAs and lowered TFRC and lysosomal genes, the opposite of the engine's mitochondrial call."}
+{"n": 60, "gene": "VDAC3", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "VDAC1 and VDAC2 cover for VDAC3; keep the engine."}
+{"n": 61, "gene": "CUL3", "up": [1, 2, 3, 4], "down": [9, 11, 12, 13], "why": "CUL3 loss frees NRF2 and other substrates; its partner CAND1 raised actin/EPH signalling, so drop the engine's EPHB fall."}
+{"n": 62, "gene": "TMEM8A", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "A non-essential GPI-remodelling enzyme; keep the engine."}
+{"n": 63, "gene": "A1BG", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "Not expressed in K562 (0.1 nTPM); no specific effect expected."}
+{"n": 64, "gene": "EXOC4", "up": [1, 2, 3, 6], "down": [9, 10, 11, 12], "why": "Exocyst: EXOC5 loss raised cholesterol synthesis; the two partner knockdowns disagree on mitochondrial RNAs."}
+{"n": 65, "gene": "NUDC", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "A dynein / HSP90 co-chaperone; its partner DNAJB1 raised mitochondrial RNAs and lowered ribosomal genes, as the engine predicts."}
+{"n": 66, "gene": "PROS1", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "A secreted coagulation protein with no growth role in K562; keep the engine."}
+{"n": 67, "gene": "ZFYVE16", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "Low expression; TOM1 loss raised mitochondrial RNAs, matching the engine."}
+{"n": 68, "gene": "RFC1", "up": [1, 2, 5, 8], "down": [9, 10, 11, 20], "why": "Clamp-loader loss causes replication stress and slows growth: like RFC2, mitochondrial RNAs rise and growth genes fall; RFC3 lowered mitochondrial import."}
+{"n": 69, "gene": "EDEM2", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "An ERAD mannosidase with modest expression; keep the engine."}
+{"n": 70, "gene": "UBA52", "up": [10, 16, 13, 14], "down": [1, 2, 3, 20], "why": "UBA52 makes ribosomal protein eL40: like the RPL5, RPL11, RPL17 and RPL23 knockdowns, mitochondrial RNAs and ribosomal mRNAs fall while lysosome / V-ATPase genes rise, the opposite of the engine."}
+{"n": 71, "gene": "PHACTR2", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "Low expression (9.6 nTPM); keep the engine."}
+{"n": 72, "gene": "ADCK2", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "A mitochondrial lipid kinase with no growth role in K562; keep the engine."}
+{"n": 73, "gene": "THOC2", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "An essential TREX mRNA-export subunit; the engine's growth-related axes fit."}
+{"n": 74, "gene": "RBPMS2", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "Not expressed in K562 (0.8 nTPM); no specific effect expected."}
+{"n": 75, "gene": "ATP6AP1", "up": [1, 4, 7, 2], "down": [9, 10, 11, 12], "why": "V-ATPase loss traps cholesterol in lysosomes, so SREBP raises cholesterol synthesis, exactly as in the ATP6AP2 knockdown."}
+{"n": 76, "gene": "MMACHC", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "Low expression; keep the engine's integrated-stress call."}
+{"n": 77, "gene": "PGRMC2", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "PGRMC2 sits near the translocon but is not part of it, so the strong ER-stress response of RPN1 / SLC35B1 loss is unlikely; keep the engine."}
+{"n": 78, "gene": "PPP6C", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "PP6 restrains Aurora A; mitotic sets (kinesins) rising fits the engine's call."}
+{"n": 79, "gene": "TAB2", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "TAK1 signalling is not needed for K562 growth; keep the engine."}
+{"n": 80, "gene": "MTMR9", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "Low expression (3.4 nTPM); keep the engine."}
+{"n": 81, "gene": "CDK13", "up": [1, 2, 3, 19], "down": [9, 10, 11, 12], "why": "CDK13 shares cyclin K with CDK12, so its loss is milder than CCNK's; CCNK loss raised mitochondrial RNAs."}
+{"n": 82, "gene": "ZCRB1", "up": [1, 2, 3, 4], "down": [9, 10, 11, 5], "why": "A minor-spliceosome (U11/U12) protein; the Sm partner SNRPB lowered cholesterol synthesis and porphyrin genes."}
+{"n": 83, "gene": "FN1", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "A secreted matrix protein not needed for suspension K562 growth; keep the engine."}
+{"n": 84, "gene": "EPS15", "up": [1, 2, 19, 20], "down": [9, 10, 11, 12], "why": "Endocytic adaptor; its partners EPS15L1 and NUMB both raised mitochondrial RNAs and lowered ribosomal genes."}
+{"n": 85, "gene": "SF3B5", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "Core SF3b splicing subunit; Sm/spliceosome knockdowns raised ribosomal translation genes, matching the engine."}
+{"n": 86, "gene": "PTPN12", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "PTPN12 dephosphorylates paxillin and p130Cas, so its loss should act opposite to PXN/BCAR1 knockdown: mitochondrial RNAs up and ribosomal genes down, as the engine says."}
+{"n": 87, "gene": "CRTAP", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "Part of a collagen prolyl-hydroxylation complex with no K562 growth role; keep the engine."}
+{"n": 88, "gene": "XPOT", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "tRNA export; a mild translational stress fits the engine's call."}
+{"n": 89, "gene": "YWHAQ", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "One of seven redundant 14-3-3 proteins; keep the engine."}
+{"n": 90, "gene": "CCDC93", "up": [20, 1, 2, 4], "down": [9, 10, 15, 11], "why": "The Commander/CCC complex recycles LDLR; like VPS29 and VPS35L, its loss lowers cholesterol uptake, so SREBP raises cholesterol synthesis and lipoprotein-clearance genes fall."}
+{"n": 91, "gene": "SETD5", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "A chromatin regulator with no clear K562 growth role; keep the engine."}
+{"n": 92, "gene": "HPCAL1", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "A neuronal calcium sensor with no K562 role; keep the engine."}
+{"n": 93, "gene": "C12orf45", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "NOPCHAP1 helps assemble box C/D snoRNPs with NOP58 and RUVBL1/2; like NOP58 loss, ribosome biogenesis falters and ribosomal mRNAs fall."}
+{"n": 94, "gene": "PRSS57", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "Low expression (5.2 nTPM); keep the engine."}
+{"n": 95, "gene": "ZNF594", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "Barely expressed (2.2 nTPM); keep the engine."}
+{"n": 96, "gene": "LRRC37B", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "Low expression and unknown function; keep the engine."}
+{"n": 97, "gene": "ZSCAN2", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "Low expression; keep the engine."}
+{"n": 98, "gene": "CDC25B", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "CDC25A and CDC25C cover for CDC25B; the 14-3-3 partner knockdowns are not a good guide, so keep the engine."}
+{"n": 99, "gene": "DBF4B", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "DBF4 is the main DDK activator; DBF4B is low and dispensable."}
+{"n": 100, "gene": "IER3", "up": [1, 2, 3, 4], "down": [9, 10, 11, 12], "why": "Not expressed in K562 (0 nTPM); no specific effect expected."}

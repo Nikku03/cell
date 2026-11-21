@@ -1,0 +1,135 @@
+{
+ "door1_reachability": {
+  "oracle_tr": [
+   0.5968,
+   0.0276
+  ],
+  "dep_retrieval": [
+   0.3629,
+   0.0373
+  ],
+  "ctx_retrieval": [
+   0.4688,
+   0.0283
+  ],
+  "best_input_retrieval": [
+   0.5116,
+   0.0376
+  ],
+  "reachable_frac": [
+   0.857,
+   0.0454
+  ],
+  "encoder_headroom_vs_v5": [
+   0.0116,
+   0.0376
+  ],
+  "sep_missed_median": [
+   -0.2568,
+   0.0599
+  ],
+  "n": [
+   112.0,
+   0.0
+  ]
+ },
+ "door2_generation": {
+  "32": {
+   "gen_oracle": [
+    0.5904,
+    0.0224
+   ],
+   "loading_shuffle": [
+    0.1373,
+    0.0267
+   ],
+   "gate_predicted_loading": [
+    0.2864,
+    0.0116
+   ],
+   "mean_loading_baseline": [
+    0.216,
+    0.0085
+   ]
+  },
+  "64": {
+   "gen_oracle": [
+    0.6313,
+    0.0278
+   ],
+   "loading_shuffle": [
+    0.116,
+    0.0035
+   ],
+   "gate_predicted_loading": [
+    0.2795,
+    0.0125
+   ],
+   "mean_loading_baseline": [
+    0.2164,
+    0.0095
+   ]
+  },
+  "128": {
+   "gen_oracle": [
+    0.6599,
+    0.034
+   ],
+   "loading_shuffle": [
+    0.1313,
+    0.0093
+   ],
+   "gate_predicted_loading": [
+    0.2594,
+    0.0046
+   ],
+   "mean_loading_baseline": [
+    0.2122,
+    0.0105
+   ]
+  },
+  "256": {
+   "gen_oracle": [
+    0.6793,
+    0.0319
+   ],
+   "loading_shuffle": [
+    0.1301,
+    0.0043
+   ],
+   "gate_predicted_loading": [
+    0.246,
+    0.0064
+   ],
+   "mean_loading_baseline": [
+    0.2105,
+    0.0114
+   ]
+  }
+ },
+ "door3_crossline": {
+  "crossline_transfer": [
+   0.1835,
+   0.0114
+  ],
+  "k562_oracle_subset": [
+   0.6073,
+   0.0333
+  ],
+  "wrongKO_control": [
+   0.034,
+   0.0032
+  ],
+  "marginal_floor": [
+   0.2498,
+   0.012
+  ],
+  "n": [
+   346.3333,
+   4.9889
+  ]
+ },
+ "doors_open": [],
+ "verdict": "CEILING CARTOGRAPHY (ceiling_cartography.py): training-free test of whether ANY door past the ~0.62 retrieval oracle is open, to decide if v7 should be a model at all. 3 splits, held-out K562. DOOR 1 REACHABILITY: a KO's input features reach 86% of the train-restricted true-profile oracle (0.512 vs 0.597); current v5 (~0.5) sits +0.012 from that input-reachable ceiling. DOOR 2 GENERATION: an NMF program basis reconstructing the TRUE held-out profile recalls 0.679 (best r=256) vs oracle ~0.62; loading-shuffle 0.130; and inputs predict the loadings at 0.246 vs 0.211 mean-baseline -> OPEN-IN-PRINCIPLE-SHUT-IN-PRACTICE (generation ceiling 0.679 > 0.62 and KO-specific, but the true loadings predict from inputs at only 0.246 -- below v5 ~0.50 -- so a decoder would score WORSE than current retrieval; not worth building unless the loadings become far more predictable). DOOR 3 CROSS-LINE: transferring the same KO's other-line |z| to K562 recalls 0.183 vs the same-subset K562 oracle 0.607 (wrong-KO 0.034, marginal 0.250) -> SHUT (the K562-specific residue does not transfer across lines). ALL THREE DOORS SHUT: 0.62 is confirmed a DATA ceiling (the K562-specific residue is idiosyncratic, unreachable from inputs, not low-rank-compositional, and non-transferring across lines). v7 should NOT be a heavier retrieval/generation model -- the honest v7 is a calibrated selective-prediction wrapper on v5 that reports which predictions to trust. Deterministic; no training.",
+ "note": "CEILING CARTOGRAPHY (ceiling_cartography.py): training-free test of whether ANY door past the ~0.62 retrieval oracle is open, to decide if v7 should be a model at all. 3 splits, held-out K562. DOOR 1 REACHABILITY: a KO's input features reach 86% of the train-restricted true-profile oracle (0.512 vs 0.597); current v5 (~0.5) sits +0.012 from that input-reachable ceiling. DOOR 2 GENERATION: an NMF program basis reconstructing the TRUE held-out profile recalls 0.679 (best r=256) vs oracle ~0.62; loading-shuffle 0.130; and inputs predict the loadings at 0.246 vs 0.211 mean-baseline -> OPEN-IN-PRINCIPLE-SHUT-IN-PRACTICE (generation ceiling 0.679 > 0.62 and KO-specific, but the true loadings predict from inputs at only 0.246 -- below v5 ~0.50 -- so a decoder would score WORSE than current retrieval; not worth building unless the loadings become far more predictable). DOOR 3 CROSS-LINE: transferring the same KO's other-line |z| to K562 recalls 0.183 vs the same-subset K562 oracle 0.607 (wrong-KO 0.034, marginal 0.250) -> SHUT (the K562-specific residue does not transfer across lines). ALL THREE DOORS SHUT: 0.62 is confirmed a DATA ceiling (the K562-specific residue is idiosyncratic, unreachable from inputs, not low-rank-compositional, and non-transferring across lines). v7 should NOT be a heavier retrieval/generation model -- the honest v7 is a calibrated selective-prediction wrapper on v5 that reports which predictions to trust. Deterministic; no training."
+}

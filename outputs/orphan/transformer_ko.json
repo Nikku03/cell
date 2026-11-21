@@ -1,0 +1,62 @@
+{
+ "mean_sd": {
+  "TIDE-null": [
+   0.2488,
+   0.0118
+  ],
+  "classical raw-cosine": [
+   0.3697,
+   0.0332
+  ],
+  "MLP-self (feats, no neighbourhood)": [
+   0.4003,
+   0.0248
+  ],
+  "TRANSFORMER self-only (infer)": [
+   0.3324,
+   0.0263
+  ],
+  "TRANSFORMER (self+neighbourhood)": [
+   0.4896,
+   0.0367
+  ],
+  "TRANSFORMER random-partners (ctrl)": [
+   0.1547,
+   0.0038
+  ],
+  "TRANSFORMER shuffle (control)": [
+   0.1166,
+   0.008
+  ],
+  "ORACLE* (ceiling)": [
+   0.607,
+   0.0322
+  ]
+ },
+ "transformer_minus_mlpself": [
+  0.0935,
+  0.1045,
+  0.0701
+ ],
+ "transformer_minus_selfonly": [
+  0.1527,
+  0.1921,
+  0.1268
+ ],
+ "transformer_minus_classical": [
+  0.125,
+  0.1193,
+  0.1153
+ ],
+ "transformer_minus_randompartners": [
+  0.3718,
+  0.3543,
+  0.2787
+ ],
+ "neighbourhood_helps_all_splits": true,
+ "structure_beats_random_all_splits": true,
+ "shuffle_control_passes": true,
+ "headroom_used": 0.672,
+ "verdict": "TRANSFORMER for the KO far-field (transformer_ko.py): a knockout is a SET OF TOKENS -- the perturbed gene + its post-KO partners (DepMap co-dependency, complex co-members, PPI neighbours), each token carrying [DepMap profile | our network-SVD embedding | ESSENTIALITY | log-degree | role]; a 2-layer self-attention encoder pools them into a KO embedding, trained as a LEARNED-RETRIEVAL metric (cosine ~ tide-removed response similarity), scored on held-out K562 across 3 splits (specific-mover recall@50). SCORES (mean+/-sd): TIDE-null 0.249 | classical raw-cosine 0.370 | MLP-self (same features, NO neighbourhood) 0.400 | TRANSFORMER self-only 0.332 | TRANSFORMER (self+neighbourhood) 0.490 | ORACLE* 0.607. THE HONEST BAR (does attending over the post-KO interaction neighbourhood + essentiality beat the plain MLP on the gene's OWN features?): TRANSFORMER - MLP-self = +0.089+/-0.014 (POSITIVE on every split) -- YES: the neighbourhood tokens (the 'other PPI after knockout') + essentiality carry response signal the perturbed gene's own DepMap profile does not, and attention extracts it; the transformer earns its place. THE DECISIVE CONTROL (real vs RANDOM partners -- same token count/roles, random genes): TRANSFORMER - random-partners = +0.335+/-0.040 (POSITIVE every split; random-partner transformer only 0.155) -- so the gain is the REAL interaction structure (the actual co-dependency/complex/PPI partners a knockout touches), NOT extra tokens or capacity. The 'other PPI after knockout' is genuinely informative about the transcriptional response. GENE-IDENTITY control PASSES (wrong-KO 0.117 < transformer). Head-room used 67% of tide->oracle; gap to oracle (0.117) stays representation/data-limited. BOTTOM LINE: the transformer over the knockout's interaction context is the best model built -- and the real-vs-random-partner control confirms the win comes from the actual PPI/co-dependency structure the user asked to include, not architecture alone. Single cell type, steady-state mRNA, magnitude target, CPU; deterministic per split.",
+ "note": "TRANSFORMER for the KO far-field (transformer_ko.py): a knockout is a SET OF TOKENS -- the perturbed gene + its post-KO partners (DepMap co-dependency, complex co-members, PPI neighbours), each token carrying [DepMap profile | our network-SVD embedding | ESSENTIALITY | log-degree | role]; a 2-layer self-attention encoder pools them into a KO embedding, trained as a LEARNED-RETRIEVAL metric (cosine ~ tide-removed response similarity), scored on held-out K562 across 3 splits (specific-mover recall@50). SCORES (mean+/-sd): TIDE-null 0.249 | classical raw-cosine 0.370 | MLP-self (same features, NO neighbourhood) 0.400 | TRANSFORMER self-only 0.332 | TRANSFORMER (self+neighbourhood) 0.490 | ORACLE* 0.607. THE HONEST BAR (does attending over the post-KO interaction neighbourhood + essentiality beat the plain MLP on the gene's OWN features?): TRANSFORMER - MLP-self = +0.089+/-0.014 (POSITIVE on every split) -- YES: the neighbourhood tokens (the 'other PPI after knockout') + essentiality carry response signal the perturbed gene's own DepMap profile does not, and attention extracts it; the transformer earns its place. THE DECISIVE CONTROL (real vs RANDOM partners -- same token count/roles, random genes): TRANSFORMER - random-partners = +0.335+/-0.040 (POSITIVE every split; random-partner transformer only 0.155) -- so the gain is the REAL interaction structure (the actual co-dependency/complex/PPI partners a knockout touches), NOT extra tokens or capacity. The 'other PPI after knockout' is genuinely informative about the transcriptional response. GENE-IDENTITY control PASSES (wrong-KO 0.117 < transformer). Head-room used 67% of tide->oracle; gap to oracle (0.117) stays representation/data-limited. BOTTOM LINE: the transformer over the knockout's interaction context is the best model built -- and the real-vs-random-partner control confirms the win comes from the actual PPI/co-dependency structure the user asked to include, not architecture alone. Single cell type, steady-state mRNA, magnitude target, CPU; deterministic per split."
+}

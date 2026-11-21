@@ -1,0 +1,100 @@
+=================================================================================================
+JOINING THE ENCYCLOPEDIA TO REAL GENE PRODUCTS
+=================================================================================================
+  encyclopedia : 16,492 genes
+  Recon3D      : 10,600 reactions, 5,835 metabolites, 2,248 gene records
+
+=================================================================================================
+J0  PROVENANCE: ARE THESE THE SAME METABOLIC MODEL?
+=================================================================================================
+  generxn writes : chylomicron[e] → chylomicron remnant[e] + 77243 TAG-chylomicron pool[e]
+  Recon3D writes : ['10fthf_c', '10fthf_l', '10fthf_m']
+
+  generxn uses Human-GEM metabolite NAMES with bracket compartments; Recon3D uses BiGG ids.
+  J0: DIFFERENT MODELS. Reaction identifiers cannot be transferred. The join is at the
+      GENE level only, and no gene->reaction-id mapping across the two is emitted.
+
+=================================================================================================
+J2  THE IDENTIFIER JOIN, WITH ITS COLLISIONS
+=================================================================================================
+  Recon3D gene records           2,248
+  ...with a symbol               2,229
+  distinct symbols               1,865
+  symbols held by >1 record        237   (transcript splits: 314_AT1 / 314_AT2)
+  worst collision                   18 records on one symbol
+
+  symbols matching an encyclopedia gene    1,635 / 1,865  = 87.7%
+  UNMATCHED                                  230   e.g. ['ACAD10', 'ACMSD', 'ACPP', 'ACPT', 'ACYP1', 'ACYP2', 'ADO', 'ADSL']
+
+  symbols carrying >=1 GPR reaction        1,865
+  ...that match the encyclopedia           1,635
+
+=================================================================================================
+J1  THE CEILING GATE: WHAT DOES THE JOIN ACTUALLY BUY?
+=================================================================================================
+  generxn genes (reaction STRINGS)         2,549
+  Recon3D GPR genes present here           1,635
+  in BOTH                                  1,576
+  Recon3D ONLY -- gain structured mechanism they did not have       59
+  generxn ONLY -- a string, and Recon3D has no GPR for them        973
+
+  J1 VERDICT: the join adds a balanced, stoichiometric reaction to 59 genes
+  that previously had no structured mechanism anywhere in the encyclopedia.
+  FAIL -- identifiers only; do not report as coverage
+
+=================================================================================================
+J3  DO TWO RECONSTRUCTIONS AGREE ON WHO IS METABOLIC?
+=================================================================================================
+  union of the two metabolic gene sets     2,608
+  intersection                             1,576
+  Jaccard agreement                        0.604
+
+  J3: two independently built human reconstructions agree on 60.4% of the genes
+  they call metabolic. That bounds how firmly ANY of this can be called 'the metabolic
+  genes', and it bounds it the same way whichever direction one prefers.
+
+=================================================================================================
+J4  THE UNIFIED OBJECT
+=================================================================================================
+
+    tier                       genes        %
+    1_balanced_reaction        1,635     9.9%
+    2_signed_action            4,199    25.5%
+    3_complex_only             2,074    12.6%
+    4_product_only             8,184    49.6%
+    5_none                       400     2.4%
+
+  MECHANISTIC (tier 1 + 2): 5,834 = 35.4% of the genome
+  genes with BOTH a reaction and a signed action: 121
+
+  artifact written: outputs/gene_product_join.json  (2.4 MB, 16,492 genes)
+
+  HK1: tier 1_balanced_reaction
+     12 reactions, subsystems ['Fructose and mannose metabolism', 'Glycolysis/gluconeogenesis', 'Aminosugar metabolism']
+     e.g. HEX1: Hexokinase (D-glucose:ATP)
+          {'adp_c': 1.0, 'atp_c': -1.0, 'g6p_c': 1.0, 'glc__D_c': -1.0, 'h_c': 1.0}
+
+  MTOR: tier 2_signed_action
+     37 signed targets | activates ['GRB10', 'RPS6KB1', 'ACLY', 'UVRAG'] | represses ['AKT1S1', 'EIF4EBP1', 'ATG13', 'PRKN']
+
+  NR3C1: tier 2_signed_action
+     350 signed targets | activates ['PER1', 'RXRA', 'CEBPA', 'SGK1'] | represses ['MAPK1', 'MAPK3', 'NR4A1', 'NR4A2']
+
+  TP53: tier 2_signed_action
+     1310 signed targets | activates ['CTSD', 'FASLG', 'THBS1', 'OGG1'] | represses ['TBXAS1', 'HR', 'HK2', 'SLC2A1']
+
+=================================================================================================
+J5  WHAT THIS DOES NOT SETTLE
+=================================================================================================
+  1. The join is gene-level. generxn's Human-GEM strings are left in place and are NOT
+     reconciled to Recon3D reactions; J0 says why that would be unsound.
+  2. A symbol match is not an identity proof. Recon3D symbols come from refseq_name and
+     the encyclopedia's provenance for its own symbols is not recorded anywhere.
+  3. Tier 1 means a mass-balanced reaction EXISTS for that gene in Recon3D. It does not
+     mean the reaction carries flux, and MODELAUDIT M2 found 60 internal reactions that
+     do not conserve elements.
+  4. Tier 2's signs inherit the default-activation problem measured in the graphvalue
+     and encyclopedia censuses: roughly half of the regulatory signs are a rule, not
+     evidence. The 'sig' layer (97.1% signed, 35% repression) is the trustworthy half.
+
+  runtime 3.9s

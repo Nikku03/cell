@@ -1,0 +1,141 @@
+{
+ "n_nodes": 7651,
+ "impact_top": [
+  {
+   "gene": "ZNF774",
+   "genes_perturbed": 3190,
+   "hi_precision": false
+  },
+  {
+   "gene": "LIG1",
+   "genes_perturbed": 2967,
+   "hi_precision": false
+  },
+  {
+   "gene": "POT1",
+   "genes_perturbed": 2823,
+   "hi_precision": true
+  },
+  {
+   "gene": "RBM22",
+   "genes_perturbed": 2362,
+   "hi_precision": true
+  },
+  {
+   "gene": "PSMD14",
+   "genes_perturbed": 2196,
+   "hi_precision": true
+  },
+  {
+   "gene": "GATA1",
+   "genes_perturbed": 2174,
+   "hi_precision": true
+  },
+  {
+   "gene": "OGDH",
+   "genes_perturbed": 2157,
+   "hi_precision": false
+  },
+  {
+   "gene": "POLR3A",
+   "genes_perturbed": 1995,
+   "hi_precision": true
+  },
+  {
+   "gene": "PPP1R10",
+   "genes_perturbed": 1920,
+   "hi_precision": true
+  },
+  {
+   "gene": "RPL7A",
+   "genes_perturbed": 1919,
+   "hi_precision": true
+  },
+  {
+   "gene": "SNRPD2",
+   "genes_perturbed": 1882,
+   "hi_precision": true
+  },
+  {
+   "gene": "SEC62",
+   "genes_perturbed": 1764,
+   "hi_precision": true
+  },
+  {
+   "gene": "UTP14A",
+   "genes_perturbed": 1738,
+   "hi_precision": false
+  },
+  {
+   "gene": "PARK7",
+   "genes_perturbed": 1734,
+   "hi_precision": false
+  },
+  {
+   "gene": "NUP155",
+   "genes_perturbed": 1734,
+   "hi_precision": true
+  },
+  {
+   "gene": "AQR",
+   "genes_perturbed": 1733,
+   "hi_precision": true
+  },
+  {
+   "gene": "POLR2K",
+   "genes_perturbed": 1677,
+   "hi_precision": true
+  },
+  {
+   "gene": "EIF4A3",
+   "genes_perturbed": 1662,
+   "hi_precision": true
+  },
+  {
+   "gene": "RPS8",
+   "genes_perturbed": 1631,
+   "hi_precision": true
+  },
+  {
+   "gene": "PABPC1",
+   "genes_perturbed": 1588,
+   "hi_precision": true
+  },
+  {
+   "gene": "MED9",
+   "genes_perturbed": 1583,
+   "hi_precision": true
+  },
+  {
+   "gene": "DROSHA",
+   "genes_perturbed": 1542,
+   "hi_precision": false
+  },
+  {
+   "gene": "MED27",
+   "genes_perturbed": 1514,
+   "hi_precision": true
+  },
+  {
+   "gene": "MCOLN1",
+   "genes_perturbed": 1475,
+   "hi_precision": false
+  },
+  {
+   "gene": "LRP8",
+   "genes_perturbed": 1471,
+   "hi_precision": false
+  }
+ ],
+ "locality": {
+  "mean_partner_fraction": 0.005,
+  "chance": 0.001,
+  "n": 142
+ },
+ "transitivity": {
+  "mean_spearman": 0.009,
+  "random_baseline": 0.019,
+  "n": 180
+ },
+ "verdict": "THE DIRECT KNOCKOUT EFFECT IS REAL; PROPAGATION IS NOT. For the 7,651 genes that were knocked out and measured, the dependency edges are the actual Perturb-seq blast radius \u2014 removing X and reading who moves is real data (that is what 'knockout GENE' now shows). But the dependencies do NOT chain: only 0% of a knockout's strong responders are the gene's own physical partners (vs 0.1% chance) \u2014 most of the effect is DISTAL/regulatory, not direct binding \u2014 and propagating one step through the graph to predict the 2nd-order effect is Spearman 0.009 (~chance 0.019). So the software can SHOW a measured knockout's effect and rank genes by measured impact, but it cannot COMPUTE an unmeasured knockout's cascade by chaining dependencies \u2014 the same structure(measured)-vs-dynamics(non-composing) split. Use the measured edge; do not trust the propagated one."
+}

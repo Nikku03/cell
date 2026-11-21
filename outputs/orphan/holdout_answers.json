@@ -1,0 +1,1334 @@
+{
+ "0": {
+  "gene": "JAK1",
+  "why": "Receptor-associated Janus kinase transfers the ATP gamma-phosphate onto PTPN11 tyrosines Y546/Y584 in the IL-6 receptor hexamer."
+ },
+ "1": {
+  "gene": "HERC5",
+  "why": "E3 ligase transfers ISG15 from the UBE2L6 (UBCH8) thioester onto lysines of host target proteins, forming an isopeptide bond."
+ },
+ "2": {
+  "gene": "SOS1",
+  "why": "Guanine-nucleotide exchange factor ejects GDP from RAS and lets GTP bind."
+ },
+ "3": {
+  "gene": "PDGFRB",
+  "why": "The autophosphorylated PDGF receptor tyrosine kinase transfers phosphate from ATP onto docked PLC-gamma tyrosines."
+ },
+ "4": {
+  "gene": "BAAT",
+  "why": "Bile acid-CoA:amino acid N-acyltransferase forms the amide bond between choloyl/chenodeoxycholoyl-CoA and glycine or taurine, releasing CoA-SH."
+ },
+ "5": {
+  "gene": "FURIN",
+  "why": "Golgi subtilisin-like proprotein convertase cleaves the dibasic site removing the factor IX propeptide (residues 29-46)."
+ },
+ "6": {
+  "gene": "UCP1",
+  "why": "Uncoupling protein flips the bound fatty acid anion head group from the matrix side to the intermembrane side of the inner membrane."
+ },
+ "7": {
+  "gene": "RGS4",
+  "why": "Regulator of G-protein signalling drives the heterotrimeric G alpha subunit out of its GTP-bound state into the GDP-bound inactive form."
+ },
+ "8": {
+  "gene": "RAPGEF1",
+  "why": "C3G guanine-nucleotide exchange factor releases GDP from RAP1 allowing GTP loading."
+ },
+ "9": {
+  "gene": "PIK3CA",
+  "why": "Class IA PI3K catalytic subunit phosphorylates the 3-OH of the inositol ring of PI(4,5)P2 using ATP."
+ },
+ "10": {
+  "gene": "NUP62",
+  "why": "Nuclear pore channel permits movement of the soluble inositol tetrakisphosphate from cytosol into nucleoplasm."
+ },
+ "11": {
+  "gene": "FGFR2",
+  "why": "Ligand-bound FGFR2c dimer trans-autophosphorylates its own activation-loop and kinase-insert tyrosines using ATP."
+ },
+ "12": {
+  "gene": "FGFR1",
+  "why": "Overexpressed FGFR1b homodimer trans-autophosphorylates its cytoplasmic tyrosines with ATP."
+ },
+ "13": {
+  "gene": "MAPK1",
+  "why": "Nuclear ERK2 phosphorylates serine/threonine residues of p90 ribosomal S6 kinases."
+ },
+ "14": {
+  "gene": "CSK",
+  "why": "C-terminal Src kinase phosphorylates the inhibitory Tyr505 of LCK in the TCR:CD4 complex."
+ },
+ "15": {
+  "gene": "FGFR1",
+  "why": "The FGF-bound FGFR1c P252X mutant dimer trans-autophosphorylates its activation-loop tyrosines using ATP."
+ },
+ "16": {
+  "gene": "MAPK1",
+  "why": "ERK2 phosphorylates the BH3-only proteins BAD (Ser91) and BCL2L11/BIM (Ser69), the canonical ERK site on BimEL."
+ },
+ "17": {
+  "gene": "GZMB",
+  "why": "Granzyme B is an Asp-specific serine protease that cleaves the procaspase-2 and -3 zymogens at their inter-domain aspartate linkers."
+ },
+ "18": {
+  "gene": "CASP3",
+  "why": "Executioner caspase cuts PAK2 after Asp212, splitting it into the regulatory 2-212 and catalytic 213-524 fragments."
+ },
+ "19": {
+  "gene": "FURIN",
+  "why": "Proprotein convertase sheds the ectodomain of transmembrane collagen XXIII at its juxtamembrane dibasic site."
+ },
+ "20": {
+  "gene": "MMP13",
+  "why": "Matrix metalloproteinase hydrolyses peptide bonds in the triple-helical/FACIT domains of extracellular collagen XVI."
+ },
+ "21": {
+  "gene": "MTOR",
+  "why": "The mTORC2 kinase phosphorylates the hydrophobic-motif Ser473 of membrane-bound AKT1 (E17K) using ATP."
+ },
+ "22": {
+  "gene": "AKT1",
+  "why": "AKT transfers phosphate to Ser351 within the RXRXXS consensus of nuclear NR4A1."
+ },
+ "23": {
+  "gene": "TRPV6",
+  "why": "Highly Ca2+-selective TRP channel conducts Ca2+ down its gradient from the extracellular space into the cytosol."
+ },
+ "24": {
+  "gene": "TBK1",
+  "why": "TBK1 phosphorylates optineurin on Ser177, releasing it from RAB8A:GTP on the Golgi membrane."
+ },
+ "25": {
+  "gene": "VAV1",
+  "why": "The phosphorylated VAV1 DH domain in the LAT/SLP-76 signalosome exchanges GDP for GTP on RAC1."
+ },
+ "26": {
+  "gene": "CASP3",
+  "why": "Apoptotic executioner caspase cleaves the tight-junction scaffold ZO-1/TJP1 at an internal DXXD site."
+ },
+ "27": {
+  "gene": "MMP3",
+  "why": "Stromelysin-1 hydrolyses nidogen-1 in the basement membrane, splitting it into N- and C-terminal fragments."
+ },
+ "28": {
+  "gene": "PLK1",
+  "why": "Polo-like kinase 1 phosphorylates the centrosomal protein Nlp (NINL) at the G2/M transition using ATP."
+ },
+ "29": {
+  "gene": "PRKAA1",
+  "why": "AMPK alpha catalytic subunit phosphorylates TSC2 at Ser1387 in the TSC1:TSC2 complex."
+ },
+ "30": {
+  "gene": "IKBKB",
+  "why": "IKK-beta phosphorylates MAP3K8/TPL2 on Ser400, the step that licenses its release from p105."
+ },
+ "31": {
+  "gene": "PIK3CA",
+  "why": "Class IA PI3K p110alpha adds the ATP gamma-phosphate to the 3-position of PI(4,5)P2 making PIP3."
+ },
+ "32": {
+  "gene": "MAP3K14",
+  "why": "NIK trans-autophosphorylates its own activation loop using ATP."
+ },
+ "33": {
+  "gene": "LIMK2",
+  "why": "LIM-domain kinase phosphorylates the regulatory Ser3 of cofilin-1, blocking actin severing."
+ },
+ "34": {
+  "gene": "EPHB2",
+  "why": "EphB receptor tyrosine kinase phosphorylates syndecan-2 on cytoplasmic Tyr179 and Tyr191."
+ },
+ "35": {
+  "gene": "PRKG1",
+  "why": "cGMP-dependent protein kinase I phosphorylates IRAG in the IRAG:ITPR1 complex of the platelet dense tubular network."
+ },
+ "36": {
+  "gene": "ZAP70",
+  "why": "The TCR-proximal Syk-family tyrosine kinase phosphorylates SLP-76/LCP2 at Tyr113, Tyr128 and Tyr145."
+ },
+ "37": {
+  "gene": "MYLK",
+  "why": "Ca2+/calmodulin-dependent myosin light chain kinase phosphorylates Ser19 of the smooth-muscle regulatory light chain."
+ },
+ "38": {
+  "gene": "MAP2K6",
+  "why": "The dual-specificity MAP2K phosphorylates the Thr-Gly-Tyr activation loop of p38 MAPK bound to MAPKAPK2/3."
+ },
+ "39": {
+  "gene": "PIAS4",
+  "why": "PIASy SUMO E3 ligase transfers SUMO2/3 from UBE2I onto PARP1 Lys203 and Lys486, building poly-SUMO chains."
+ },
+ "40": {
+  "gene": "RANBP2",
+  "why": "RanBP2 SUMO E3 ligase transfers SUMO1 from the UBE2I thioester onto a lysine of topoisomerase II alpha."
+ },
+ "41": {
+  "gene": "IKBKB",
+  "why": "IKK-beta phosphorylates the N-terminal serines of NFKBIA in the NF-kB complex, marking it for degradation."
+ },
+ "42": {
+  "gene": "CSNK1A1",
+  "why": "Casein kinase 1 alpha adds the next set of serine phosphates to PKA-primed GLI2 bound to SUFU, before GSK3B acts."
+ },
+ "43": {
+  "gene": "RTEL1",
+  "why": "ATP-dependent helicase unwinds and displaces the extended invading strand from the D-loop so it can reanneal (SDSA)."
+ },
+ "44": {
+  "gene": "PIK3C3",
+  "why": "Class III PI3K (VPS34) phosphorylates the 3-OH of phosphatidylinositol to give PI3P."
+ },
+ "45": {
+  "gene": "NUDT7",
+  "why": "Peroxisomal Nudix CoA diphosphatase hydrolyses the pyrophosphate bond of free CoA into phosphopantetheine and 3'-phospho-AMP."
+ },
+ "46": {
+  "gene": "CHEK2",
+  "why": "Checkpoint kinase 2 phosphorylates CDC25A on Ser124, Ser178 and Ser293 to trigger its degradation."
+ },
+ "47": {
+  "gene": "PDE5A",
+  "why": "cGMP-specific phosphodiesterase hydrolyses the 3'-cyclic phosphodiester bond of cGMP to give 5'-GMP."
+ },
+ "48": {
+  "gene": "INSR",
+  "why": "The insulin-bound receptor tyrosine kinase trans-autophosphorylates six tyrosines of its own beta subunits."
+ },
+ "49": {
+  "gene": "JAK2",
+  "why": "Receptor-bound JAK2 phosphorylates STAT1 on Tyr701 at the activated IFNGR1 docking site."
+ },
+ "50": {
+  "gene": "RIC1",
+  "why": "GDI-displacement/nucleotide exchange loading GTP onto prenylated RAB6 at the trans-Golgi network is done by the RIC1-RGP1 RAB6 GEF, not the DENN-family GEFs used for RAB27."
+ },
+ "51": {
+  "gene": "MTOR",
+  "why": "ATP-dependent phosphorylation of MAF1 on Ser60/Ser68/Ser75, the canonical mTORC1 sites that relieve MAF1 repression of Pol III."
+ },
+ "52": {
+  "gene": "FBXL7",
+  "why": "Transfer of ubiquitin onto cytosolic survivin (BIRC5) by an SCF-type RING E3 whose substrate-recognition F-box subunit for BIRC5 is FBXL7."
+ },
+ "53": {
+  "gene": "PTGS2",
+  "why": "Dioxygenation of n-3 docosapentaenoate followed by peroxidase reduction to a 13(R)-alcohol is the R-stereospecific chemistry of aspirin-acetylated cyclooxygenase-2."
+ },
+ "54": {
+  "gene": "ALOX15",
+  "why": "Intramolecular conversion of the 17(S)-hydroperoxide into the 16(S),17(S)-epoxide is the epoxide-forming (LOX-mediated) step of 15-lipoxygenase, exactly as for 17(S)-Hp-DHA."
+ },
+ "55": {
+  "gene": "PTGS2",
+  "why": "Bis-dioxygenation and cyclization of EPA to the endoperoxide PGH3 is cyclooxygenase chemistry, and EPA is efficiently oxygenated by COX-2."
+ },
+ "56": {
+  "gene": "ATR",
+  "why": "ATP-dependent phosphorylation of H2A.X Ser139 (gamma-H2A.X) on unsynapsed meiotic chromatin is carried out by the PIKK kinase ATR during meiotic silencing."
+ },
+ "57": {
+  "gene": "CAMK2A",
+  "why": "Phosphorylation of GRIA1 Ser849 (mature Ser831) in the AMPA receptor complex is the Ca2+/calmodulin-dependent kinase II site."
+ },
+ "58": {
+  "gene": "SPHK1",
+  "why": "Transfer of the ATP gamma-phosphate to the C1 hydroxyl of sphingosine at the plasma membrane, generating sphingosine-1-phosphate."
+ },
+ "59": {
+  "gene": "PRCP",
+  "why": "FXII-independent proteolytic activation of receptor-bound prekallikrein (KLKB1) to kallikrein is performed by prolylcarboxypeptidase on the endothelial HK complex."
+ },
+ "60": {
+  "gene": "PDGFRA",
+  "why": "Trans-autophosphorylation of eleven cytoplasmic tyrosines within the activated (mutant) PDGF receptor dimer by its own intrinsic tyrosine kinase domain."
+ },
+ "61": {
+  "gene": "SOS1",
+  "why": "Guanine-nucleotide exchange releasing GDP and loading GTP on membrane-anchored p21 RAS, the RasGEF activity of SOS1."
+ },
+ "62": {
+  "gene": "CTSL",
+  "why": "Acidic endosomal proteolysis of the S protein (S3 to S1:S2) that releases ACE2 is performed by the endo/lysosomal cysteine protease cathepsin L."
+ },
+ "63": {
+  "gene": "CANX",
+  "why": "Chaperone-assisted folding of the high-mannose glycosylated Spike glycoprotein in the ER is mediated by the lectin chaperone calnexin."
+ },
+ "64": {
+  "gene": "SRD5A2",
+  "why": "NADPH-dependent reduction of the testosterone delta-4 double bond to give 5alpha-dihydrotestosterone, the steroid 5alpha-reductase reaction."
+ },
+ "65": {
+  "gene": "PRKCZ",
+  "why": "Phosphorylation of NFE2L2 on Ser40, releasing it from KEAP1; besides PKCdelta this site is targeted by atypical protein kinase C zeta."
+ },
+ "66": {
+  "gene": "CARM1",
+  "why": "AdoMet-dependent asymmetric dimethylation of histone H3 arginine 17, the signature activity of the type I arginine methyltransferase CARM1 (PRMT4)."
+ },
+ "67": {
+  "gene": "CAPN2",
+  "why": "Limited proteolysis of talin between residues 433 and 434, separating the FERM head from the rod, is the classic calpain-2 cleavage."
+ },
+ "68": {
+  "gene": "PTPN1",
+  "why": "Hydrolytic removal of the phosphate from phosphotyrosine 24 of ANXA2 while leaving pSer26 intact, a cytosolic protein-tyrosine phosphatase (PTP1B) reaction."
+ },
+ "69": {
+  "gene": "HDAC1",
+  "why": "Hydrolysis of acetyl-lysine amide bonds on nucleosomal histones releasing free acetate, performed by the class I deacetylase in NuRD/Sin3/CoREST chromatin complexes."
+ },
+ "70": {
+  "gene": "ALDH9A1",
+  "why": "NAD+-dependent oxidation of the aminoaldehyde 3-aminopropanal to beta-alanine, the aminoaldehyde dehydrogenase (EC 1.2.1.19) activity."
+ },
+ "71": {
+  "gene": "ACSM1",
+  "why": "ATP-dependent thioesterification of a medium-chain (C6) fatty acid to hexanoyl-CoA with AMP/PPi release, a medium-chain acyl-CoA synthetase reaction."
+ },
+ "72": {
+  "gene": "ACOT1",
+  "why": "Hydrolysis of the thioester bond of the C18:1 trans acyl-CoA releasing elaidate and free CoA, a long-chain acyl-CoA thioesterase reaction."
+ },
+ "73": {
+  "gene": "CD36",
+  "why": "Facilitated uptake of a long-chain saturated fatty acid (C20:0) across the plasma membrane by the fatty-acid translocase/FABP-transporter system."
+ },
+ "74": {
+  "gene": "CD36",
+  "why": "Facilitated, non-energized import of the monounsaturated C20:1 fatty acid from extracellular space into cytosol by fatty-acid translocase."
+ },
+ "75": {
+  "gene": "ACSL1",
+  "why": "ATP-dependent ligation of CoA to the very-long-chain saturated acid C21:0, forming heneicosanoyl-CoA plus AMP and PPi."
+ },
+ "76": {
+  "gene": "CD36",
+  "why": "Facilitated uptake of the polyunsaturated fatty acid EPA across the plasma membrane by the CD36/FABP fatty-acid transport system."
+ },
+ "77": {
+  "gene": "ACSL1",
+  "why": "ATP-dependent formation of the C24:5 acyl-CoA thioester from tetracosapentaenoic acid with AMP and PPi release."
+ },
+ "78": {
+  "gene": "ENPP1",
+  "why": "Hydrolysis of the pyrophosphate bridge of CDP-glycerol into CMP and sn-glycerol-3-phosphate, a nucleotide pyrophosphatase/phosphodiesterase reaction."
+ },
+ "79": {
+  "gene": "GPAM",
+  "why": "Acyl transfer from a C14:1 acyl-CoA to the sn-1 position of glycerol-3-phosphate, the glycerol-3-phosphate acyltransferase step."
+ },
+ "80": {
+  "gene": "GPAM",
+  "why": "sn-1 acylation of glycerol-3-phosphate using docosapentaenoyl-CoA to give lysophosphatidate, a GPAT reaction."
+ },
+ "81": {
+  "gene": "GPAM",
+  "why": "Mitochondrial (outer membrane) acylation of glycerol-3-phosphate at sn-1 by acyl-CoA, the GPAT1 step initiating cardiolipin/phosphatidate synthesis."
+ },
+ "82": {
+  "gene": "GNPAT",
+  "why": "Peroxisomal transfer of palmitate from palmitoyl-CoA to dihydroxyacetone phosphate, the DHAP acyltransferase step of ether-lipid synthesis."
+ },
+ "83": {
+  "gene": "FASN",
+  "why": "Thioesterase hydrolysis of an acyl-[ACP] thioester releasing the free C14:1 fatty acid and holo-ACP, the TE domain activity of fatty acid synthase."
+ },
+ "84": {
+  "gene": "FASN",
+  "why": "Hydrolytic release of palmitoleate from its ACP thioester by the thioesterase domain of the fatty acid synthase."
+ },
+ "85": {
+  "gene": "FASN",
+  "why": "Thioesterase cleavage of stearoyl-ACP to free stearate and holo-ACP, terminating chain elongation on fatty acid synthase."
+ },
+ "86": {
+  "gene": "FASN",
+  "why": "Thioesterase hydrolysis of the C18:1 acyl-ACP thioester to release oleate and holo-ACP."
+ },
+ "87": {
+  "gene": "FASN",
+  "why": "Thioesterase hydrolysis of the C18:2 acyl-ACP thioester releasing octadecadienoate and holo-ACP."
+ },
+ "88": {
+  "gene": "ELOVL5",
+  "why": "Malonyl-CoA-dependent two-carbon elongation of the n-3 C18:4 acyl-CoA to the C20:4 acyl-CoA, the condensing (elongase) step for C18-C20 PUFAs."
+ },
+ "89": {
+  "gene": "SPHK1",
+  "why": "ATP-dependent phosphorylation of the C1 hydroxyl of sphingosine to sphingosine-1-phosphate in the cytosol."
+ },
+ "90": {
+  "gene": "ST8SIA5",
+  "why": "Alpha-2,8 sialyl transfer from CMP-NeuAc onto the terminal (Gal-linked) sialic acid of GM1b to give the disialyl GD1c."
+ },
+ "91": {
+  "gene": "ST8SIA5",
+  "why": "Alpha-2,8 sialylation of the outer-branch sialic acid of GD1a producing GT1a, the ST8Sia V branch of ganglioside synthesis."
+ },
+ "92": {
+  "gene": "ST6GALNAC6",
+  "why": "Alpha-2,6 sialyl transfer onto the GalNAc residue of GD1a producing the alpha-series ganglioside GT1a-alpha."
+ },
+ "93": {
+  "gene": "ST8SIA5",
+  "why": "Alpha-2,8 sialylation of the terminal sialic acid of GT1b to give the tetrasialoganglioside GQ1b."
+ },
+ "94": {
+  "gene": "ST6GALNAC6",
+  "why": "Alpha-2,6 sialyl transfer onto the GalNAc of GT1b generating the alpha-series ganglioside GQ1b-alpha."
+ },
+ "95": {
+  "gene": "ST8SIA1",
+  "why": "Alpha-2,8 sialylation of the inner (Gal-linked) sialic acid of GM2 to form the disialylganglioside GD2, GD3-synthase chemistry."
+ },
+ "96": {
+  "gene": "B3GNT5",
+  "why": "Beta-1,3 transfer of GlcNAc from UDP-GlcNAc onto the terminal galactose of lactosylceramide to make lactotriaosylceramide (Lc3Cer)."
+ },
+ "97": {
+  "gene": "FUT3",
+  "why": "Alpha-1,3/4 fucosyl transfer from GDP-fucose onto the GlcNAc of the already alpha-1,2-fucosylated neolacto-hexaosylceramide, a Lewis-type fucosyltransferase step."
+ },
+ "98": {
+  "gene": "EPHX1",
+  "why": "Water attack opening the 5(6)-epoxide of the 15-epi-epoxytetraene to give the trihydroxy lipoxin B4, an epoxide hydrolase reaction."
+ },
+ "99": {
+  "gene": "ALOX12",
+  "why": "Intramolecular rearrangement of 12(S)-HPETE into the 11,12-epoxy-hydroxy product hepoxilin A3, the hepoxilin synthase activity intrinsic to 12-lipoxygenase."
+ },
+ "100": {
+  "gene": "FAAH",
+  "why": "Condensation of arachidonate with glycerol to the 2-arachidonyl glyceryl (noladin) ether is the reverse of the amidase/esterase chemistry that FAAH performs on 2-arachidonoylglycerol."
+ },
+ "101": {
+  "gene": "SLCO1B1",
+  "why": "Carrier-mediated bidirectional movement of the organic anion leukotriene E4 across the plasma membrane by an OATP-family exchanger."
+ },
+ "102": {
+  "gene": "DHRS4",
+  "why": "NADP-dependent interconversion of the 10,11 single bond and the 10,11 alkene of 12-oxo-20-carboxy-LTB4, the same enoyl reduction the model assigns to DHRS4 in mitochondria."
+ },
+ "103": {
+  "gene": "DHRS4",
+  "why": "NADPH-dependent saturation of the 6,7 enone double bond of 5-oxo-12-epi-LTB4, the same short-chain dehydrogenase/reductase chemistry used on other oxo-LTB4 species."
+ },
+ "104": {
+  "gene": "CYP4F3",
+  "why": "P450 omega/omega-1 hydroxylation of the terminal region of 20-OH-10,11-dihydro-LTB4 using NADPH and O2, the classic leukotriene B4 omega-hydroxylase."
+ },
+ "105": {
+  "gene": "ECHS1",
+  "why": "Hydration of the trans-2 (Delta-18) enoyl-CoA of the LTB4 omega-oxidation intermediate to the 3-hydroxyacyl-CoA, i.e. enoyl-CoA hydratase chemistry preceding the NAD+ dehydrogenase step."
+ },
+ "106": {
+  "gene": "SLC32A1",
+  "why": "ATP-driven efflux of GABA out of the cytosol by the vesicular inhibitory amino acid transporter."
+ },
+ "107": {
+  "gene": "GSTM1",
+  "why": "Michael addition of glutathione thiol to the cyclopentenone of prostaglandin J2, a glutathione S-transferase conjugation."
+ },
+ "108": {
+  "gene": "PIGZ",
+  "why": "Transfer of the fourth mannose from dolichyl-phosphate-mannose onto the GPI glycan, the GPI mannosyltransferase IV step."
+ },
+ "109": {
+  "gene": "PIGZ",
+  "why": "Dol-P-Man-dependent addition of the fourth (terminal) mannose to the GPI anchor precursor in the ER."
+ },
+ "110": {
+  "gene": "CYP27A1",
+  "why": "Mitochondrial P450 oxidation of the C26 aldehyde of the trihydroxycholestane bile-acid intermediate to the carboxylic acid."
+ },
+ "111": {
+  "gene": "AMACR",
+  "why": "Peroxisomal racemization of the C25 methyl-branched centre of THCA-CoA from the (R) to the (S) epimer."
+ },
+ "112": {
+  "gene": "ABCA1",
+  "why": "ATP-hydrolysing floppase movement of phosphatidylserine away from the cytosolic leaflet into the mitochondrial compartment."
+ },
+ "113": {
+  "gene": "CYP27A1",
+  "why": "NAD(H)-linked interconversion of the C26 alcohol and C26 aldehyde of 5beta-cholestane-3alpha,7alpha-diol, the sterol 27-oxidase step."
+ },
+ "114": {
+  "gene": "AKR1D1",
+  "why": "NADPH-dependent 5beta-reduction of the Delta-4 double bond of the 3-oxo-cholestene bile-acid intermediate."
+ },
+ "115": {
+  "gene": "AKR1C4",
+  "why": "NADPH-dependent reduction of the 3-oxo group to a 3alpha-hydroxyl on the 5beta-cholestane nucleus."
+ },
+ "116": {
+  "gene": "CYP27A1",
+  "why": "Mitochondrial P450 27-hydroxylation of the side chain of the 5beta-cholestane tetrol using NADPH and O2."
+ },
+ "117": {
+  "gene": "SLCO1B3",
+  "why": "OATP-mediated exchange importing taurocholate while exporting glutathione/bicarbonate across the plasma membrane."
+ },
+ "118": {
+  "gene": "ABCC2",
+  "why": "ATP-dependent export of conjugated bilirubin diglucuronide out of the hepatocyte by the canalicular multispecific organic anion pump."
+ },
+ "119": {
+  "gene": "ABCC2",
+  "why": "ATP-driven efflux of bilirubin monoglucuronide from the ER/canalicular membrane by an MRP-family conjugate pump."
+ },
+ "120": {
+  "gene": "CYP2E1",
+  "why": "P450 hydroxylation at C26 of 23S,25-dihydroxyvitamin D3 using NAD(P)H and O2, matching the enzymes assigned to the flanking side-chain oxidations."
+ },
+ "121": {
+  "gene": "FDFT1",
+  "why": "NADPH-dependent reductive rearrangement of the cyclopropylcarbinyl diphosphate presqualene-PP to squalene by squalene synthase."
+ },
+ "122": {
+  "gene": "FASN",
+  "why": "Dehydration of the 3-hydroxyacyl-ACP to the trans-2-enoyl-ACP by the dehydratase domain of the cytosolic fatty acid synthase."
+ },
+ "123": {
+  "gene": "SCD",
+  "why": "O2/NADPH-dependent introduction of a cis double bond into stearoyl-CoA by an acyl-CoA desaturase."
+ },
+ "124": {
+  "gene": "HSD17B12",
+  "why": "NADPH reduction of the 3-oxoacyl-CoA to the (3S)-hydroxyacyl-CoA, the ketoacyl-CoA reductase step of microsomal elongation."
+ },
+ "125": {
+  "gene": "FASN",
+  "why": "Thioesterase hydrolysis releasing stearate from the ACP thioester."
+ },
+ "126": {
+  "gene": "TECR",
+  "why": "NADPH-dependent reduction of the trans-2 double bond of the enoyl-CoA, the final elongation-cycle trans-2-enoyl-CoA reductase step."
+ },
+ "127": {
+  "gene": "SLCO2A1",
+  "why": "Carrier-mediated uptake of the hydroxyeicosanoid 10-HETE across the plasma membrane by an organic anion (prostaglandin) transporter."
+ },
+ "128": {
+  "gene": "HACD1",
+  "why": "Dehydration of the (3S)-hydroxyacyl-CoA to the trans-2-enoyl-CoA by the 3-hydroxyacyl-CoA dehydratase of the elongation cycle."
+ },
+ "129": {
+  "gene": "HSD17B12",
+  "why": "NADPH-dependent reduction of the 3-oxoacyl-CoA to the (3S)-hydroxyacyl-CoA in microsomal fatty acid elongation."
+ },
+ "130": {
+  "gene": "PEMT",
+  "why": "SAM-dependent N-methylation of phosphatidyl-N-methylethanolamine to the dimethyl species."
+ },
+ "131": {
+  "gene": "TECR",
+  "why": "NADPH reduction of the trans-2 double bond of the tetracosapentaenoyl-CoA to the saturated-at-C2 acyl-CoA."
+ },
+ "132": {
+  "gene": "CPT1A",
+  "why": "Reversible transfer of the tridecanoyl group from carnitine to CoA by a cytosolic carnitine acyltransferase."
+ },
+ "133": {
+  "gene": "NLN",
+  "why": "Endopeptidase cleavage of neurotensin at the Pro10-Tyr11 bond yielding NT(1-10) and NT(11-13), the signature neurolysin cut."
+ },
+ "134": {
+  "gene": "CPT1A",
+  "why": "Transfer of the docosatrienoyl group from CoA to L-carnitine by carnitine palmitoyltransferase 1."
+ },
+ "135": {
+  "gene": "AKR1A1",
+  "why": "NADP(H)-linked interconversion of 5-hydroxyindoleacetaldehyde and its alcohol 5-hydroxytryptophol by an NADPH-dependent aldehyde reductase."
+ },
+ "136": {
+  "gene": "CRAT",
+  "why": "Carnitine acyltransferase transfer of the tricosanoyl group from carnitine to CoA in the ER lumen."
+ },
+ "137": {
+  "gene": "ACSL1",
+  "why": "ATP-dependent thioesterification of 9-eicosenoic acid with CoA via an acyl-adenylate intermediate by a long-chain acyl-CoA synthetase."
+ },
+ "138": {
+  "gene": "ABCD1",
+  "why": "Translocation of a very-long-chain polyunsaturated acyl-CoA from cytosol into the peroxisome by an ABCD half-transporter."
+ },
+ "139": {
+  "gene": "HADH",
+  "why": "NAD+-dependent oxidation of the (S)-3-hydroxyl of 3-hydroxybutyryl-CoA to the 3-oxo group by short-chain 3-hydroxyacyl-CoA dehydrogenase."
+ },
+ "140": {
+  "gene": "ACADVL",
+  "why": "FAD-dependent alpha,beta-dehydrogenation of the C22 acyl-CoA to the trans-2-enoyl-CoA by the very-long-chain acyl-CoA dehydrogenase."
+ },
+ "141": {
+  "gene": "SLC27A2",
+  "why": "Peroxisomal ATP-dependent activation of palmitoleate to its CoA thioester by the peroxisomal very-long-chain acyl-CoA synthetase."
+ },
+ "142": {
+  "gene": "ECI1",
+  "why": "Isomerization of the cis-3 double bond to the trans-2 position of the dodecadienoyl-CoA by mitochondrial enoyl-CoA isomerase."
+ },
+ "143": {
+  "gene": "ACAA1",
+  "why": "Thiolytic cleavage of the 3-oxoacyl-CoA by CoA to release acetyl-CoA and the two-carbon-shorter acyl-CoA in the peroxisome."
+ },
+ "144": {
+  "gene": "HSD17B4",
+  "why": "Hydration of the trans-2-enoyl-CoA to the (3S)-hydroxyacyl-CoA by the peroxisomal multifunctional enzyme 2 hydratase domain."
+ },
+ "145": {
+  "gene": "HADH",
+  "why": "NAD+-dependent oxidation of the 3(S)-hydroxyl of the branched short-chain acyl-CoA to the 3-oxoacyl-CoA."
+ },
+ "146": {
+  "gene": "LIPA",
+  "why": "Acid lysosomal hydrolysis of the cholesteryl ester bond releasing free cholesterol and the C22 fatty acid."
+ },
+ "147": {
+  "gene": "STS",
+  "why": "Reversible sulfuryl transfer/hydrolysis at the steroid 17-hydroxyl, the steryl-sulfatase reaction written in the sulfation direction."
+ },
+ "148": {
+  "gene": "HSD17B12",
+  "why": "NADPH-dependent reduction of the 3-oxo group of the C24 acyl-CoA to the (3S)-hydroxyacyl-CoA in ER elongation."
+ },
+ "149": {
+  "gene": "CES1",
+  "why": "Hydrolysis of the cholesteryl ester bond in the ER by a neutral carboxylesterase, releasing cholesterol and the free fatty acid."
+ },
+ "150": {
+  "gene": "CES1",
+  "why": "Hydrolysis of a cholesteryl ester bond releasing free cholesterol and fatty acid in the ER lumen, the neutral cholesteryl-ester hydrolase/carboxylesterase reaction that reverses SOAT."
+ },
+ "151": {
+  "gene": "BCKDHA",
+  "why": "ThPP-dependent oxidative decarboxylation of 2-oxobutyrate to 2-(1-hydroxypropyl)-ThPP, the E1 step of the branched-chain 2-oxoacid dehydrogenase complex (its E2 product S-propanoyldihydrolipoamide is made by DBT)."
+ },
+ "152": {
+  "gene": "CPS1",
+  "why": "Mitochondrial ATP-dependent condensation of ammonia with CO2/bicarbonate to carbamoyl phosphate, the urea-cycle entry step."
+ },
+ "153": {
+  "gene": "ASNS",
+  "why": "Glutamine-hydrolysing amidotransfer onto aspartate with ATP\u2192AMP+PPi, i.e. asparagine synthetase."
+ },
+ "154": {
+  "gene": "EPHX1",
+  "why": "Microsomal (ER) hydrolytic opening of an arene oxide to the trans-dihydrodiol, the classic epoxide hydrolase step after CYP epoxidation of benzo[a]pyrene."
+ },
+ "155": {
+  "gene": "CMPK2",
+  "why": "Reversible phosphoryl transfer between CDP and ADP (CMP/UMP kinase chemistry) inside mitochondria, where the CMP kinase isoform is the mitochondrial one."
+ },
+ "156": {
+  "gene": "GALT",
+  "why": "Uridylyl group exchange between UDP-hexose and hexose-1-phosphate (galactose-1-P uridylyltransferase), written here in the reverse direction."
+ },
+ "157": {
+  "gene": "AFMID",
+  "why": "Hydrolysis of the formamide bond of N-formylkynurenine to give formate plus kynurenine (arylformamidase/kynurenine formamidase)."
+ },
+ "158": {
+  "gene": "AFMID",
+  "why": "The same arylformamidase deformylation, here hydrolysing N-formylanthranilate to anthranilate plus formate."
+ },
+ "159": {
+  "gene": "ETNPPL",
+  "why": "PLP-dependent phospho-lyase cleavage of phosphoethanolamine into acetaldehyde, ammonia and inorganic phosphate."
+ },
+ "160": {
+  "gene": "RBKS",
+  "why": "Reversal of ribokinase: phosphoryl transfer between ribose-5-phosphate and ADP, the only human enzyme phosphorylating free ribose at C5."
+ },
+ "161": {
+  "gene": "FPGT",
+  "why": "Guanylyltransfer from GTP onto L-fucose-1-phosphate with PPi release, the salvage-pathway GDP-fucose pyrophosphorylase."
+ },
+ "162": {
+  "gene": "CARNS1",
+  "why": "ATP-dependent (AMP+PPi releasing) amide bond formation between beta-alanine and histidine, i.e. carnosine synthase."
+ },
+ "163": {
+  "gene": "HYI",
+  "why": "Intramolecular aldose-ketose isomerisation converting hydroxypyruvate to tartronate semialdehyde (2-hydroxy-3-oxopropanoate)."
+ },
+ "164": {
+  "gene": "IDNK",
+  "why": "Reversal of gluconokinase: phosphoryl transfer between 6-phosphogluconate and ADP, the only human enzyme phosphorylating free D-gluconate."
+ },
+ "165": {
+  "gene": "PNP",
+  "why": "Phosphorolysis of the N-glycosidic bond of inosine giving hypoxanthine and ribose-1-phosphate."
+ },
+ "166": {
+  "gene": "H6PD",
+  "why": "NADP+-dependent dehydrogenation of the anomeric carbon of a free aldose to its lactone, the broad-specificity hexose/pentose 1-dehydrogenase activity."
+ },
+ "167": {
+  "gene": "CARNS1",
+  "why": "Same ATP-dependent dipeptide ligation as carnosine synthesis, using GABA instead of beta-alanine to give homocarnosine."
+ },
+ "168": {
+  "gene": "SLC22A5",
+  "why": "Carrier-mediated movement of acetylcarnitine across the peroxisomal membrane, the carnitine/acylcarnitine transporter used for non-mitochondrial membranes."
+ },
+ "169": {
+  "gene": "DHFR",
+  "why": "NADPH-dependent reduction of folate to dihydrofolate by dihydrofolate reductase."
+ },
+ "170": {
+  "gene": "AMDHD1",
+  "why": "Hydrolytic ring opening of 4-imidazolone-5-propanoate to N-formimino-L-glutamate (imidazolonepropionase) in histidine catabolism."
+ },
+ "171": {
+  "gene": "UROC1",
+  "why": "Hydration of the urocanate double bond with ring tautomerisation to 4-imidazolone-5-propanoate (urocanate hydratase)."
+ },
+ "172": {
+  "gene": "PPCDC",
+  "why": "Flavin-dependent decarboxylation of the cysteine carboxyl of 4'-phosphopantothenoylcysteine to give 4'-phosphopantetheine in CoA biosynthesis."
+ },
+ "173": {
+  "gene": "SLC22A5",
+  "why": "Carrier-mediated export of a medium-chain acylcarnitine from the peroxisome to cytosol, the carnitine/acylcarnitine carrier step of the peroxisomal shuttle."
+ },
+ "174": {
+  "gene": "GGT1",
+  "why": "Hydrolytic removal of the gamma-glutamyl residue from leukotriene C4 to give LTD4 plus glutamate (gamma-glutamyl transpeptidase)."
+ },
+ "175": {
+  "gene": "SLC2A2",
+  "why": "Facilitated (Na+-independent, bidirectional) efflux of galactose through a GLUT-family hexose uniporter with galactose specificity."
+ },
+ "176": {
+  "gene": "SLC35A3",
+  "why": "Antiport of cytosolic UDP-GlcNAc into the ER/Golgi lumen against UMP, the nucleotide-sugar transporter specific for UDP-N-acetylglucosamine."
+ },
+ "177": {
+  "gene": "SLC5A9",
+  "why": "Na+-coupled symport of mannose into the cell, the sodium/glucose cotransporter member (SGLT4) with mannose specificity."
+ },
+ "178": {
+  "gene": "SLC6A6",
+  "why": "Carrier-mediated movement of taurine out of the cytosol into the peroxisomal compartment by the taurine transporter."
+ },
+ "179": {
+  "gene": "ACOX1",
+  "why": "One peroxisomal beta-oxidation cycle (FAD oxidation, hydration, NAD+ oxidation, thiolysis) shortening a dicarboxylyl-CoA by two carbons; the acyl-CoA oxidase starts the cycle."
+ },
+ "180": {
+  "gene": "TARS1",
+  "why": "ATP-dependent aminoacylation of tRNA(Thr) with threonine via a threonyl-adenylate, releasing AMP and PPi."
+ },
+ "181": {
+  "gene": "HADHA",
+  "why": "One mitochondrial beta-oxidation cycle on a long odd-chain acyl-CoA (C15 to C13), carried out by the trifunctional protein hydratase/dehydrogenase with VLCAD."
+ },
+ "182": {
+  "gene": "ECI1",
+  "why": "Shift of a 3-cis double bond into 2-trans conjugation with the thioester (delta3,delta2-enoyl-CoA isomerase) in mitochondrial unsaturated fatty acid oxidation."
+ },
+ "183": {
+  "gene": "HADHA",
+  "why": "Coupled FAD dehydrogenation and water addition converting stearoyl-CoA to (S)-3-hydroxyoctadecanoyl-CoA, the long-chain enoyl-CoA hydratase activity of the trifunctional protein."
+ },
+ "184": {
+  "gene": "SLC1A5",
+  "why": "Na+-dependent obligatory exchange of intracellular alanine for extracellular asparagine, the ASCT2 antiport mode."
+ },
+ "185": {
+  "gene": "SLC7A6",
+  "why": "y+L exchange: efflux of the cationic amino acid arginine coupled to Na+-dependent influx of the neutral amino acid asparagine."
+ },
+ "186": {
+  "gene": "SLC7A6",
+  "why": "y+L exchange: cationic histidine out in exchange for neutral homoserine plus Na+ in."
+ },
+ "187": {
+  "gene": "SLC7A9",
+  "why": "Na+-independent b(0,+) exchange bringing cationic lysine in against efflux of the neutral amino acid threonine."
+ },
+ "188": {
+  "gene": "SLC7A9",
+  "why": "Na+-independent b(0,+) exchange importing cationic histidine against export of neutral asparagine."
+ },
+ "189": {
+  "gene": "ECHS1",
+  "why": "Syn addition of water across the 2-enoyl-CoA double bond of 3-methylcrotonyl-CoA giving 3-hydroxyisovaleryl-CoA (mitochondrial short-chain crotonase)."
+ },
+ "190": {
+  "gene": "SLCO1B1",
+  "why": "OATP-mediated uptake of thyroxine into the cell driven by counter-efflux of bicarbonate."
+ },
+ "191": {
+  "gene": "SLCO2A1",
+  "why": "Carrier-mediated cellular uptake of prostaglandin F2alpha by the prostaglandin transporter PGT."
+ },
+ "192": {
+  "gene": "SLCO1B1",
+  "why": "Bidirectional organic-anion carrier moving the bulky bilirubin diglucuronide conjugate across the plasma membrane."
+ },
+ "193": {
+  "gene": "SLCO2A1",
+  "why": "Facilitated bidirectional transport of the eicosanoid thromboxane B2 across the plasma membrane by the prostaglandin transporter."
+ },
+ "194": {
+  "gene": "SLCO2A1",
+  "why": "Facilitated bidirectional membrane transport of leukotriene A4 by the eicosanoid (prostaglandin) transporter."
+ },
+ "195": {
+  "gene": "SLCO2A1",
+  "why": "Facilitated bidirectional membrane transport of leukotriene B4 by the eicosanoid transporter."
+ },
+ "196": {
+  "gene": "SLCO1B1",
+  "why": "Organic-anion transporter carrying the cysteinyl-leukotriene conjugate LTF4 across the plasma membrane."
+ },
+ "197": {
+  "gene": "SLCO1B1",
+  "why": "Bidirectional organic-anion carrier moving bilirubin monoglucuronide across the plasma membrane."
+ },
+ "198": {
+  "gene": "SLCO2A1",
+  "why": "Facilitated bidirectional transport of prostaglandin A1 by the prostaglandin transporter."
+ },
+ "199": {
+  "gene": "SLCO2A1",
+  "why": "Facilitated bidirectional transport of prostaglandin B1 by the prostaglandin transporter."
+ },
+ "200": {
+  "gene": "SLCO2A1",
+  "why": "Carrier-mediated, uncoupled bidirectional movement of a prostanoid across the plasma membrane is the job of the prostaglandin transporter PGT."
+ },
+ "201": {
+  "gene": "SLCO2A1",
+  "why": "Facilitated equilibrative prostaglandin flux between cytosol and extracellular space by the dedicated prostanoid carrier."
+ },
+ "202": {
+  "gene": "SLCO2A1",
+  "why": "Same prostanoid species on both sides of the plasma membrane with no coupled ion or ATP, i.e. PGT-mediated facilitated transport."
+ },
+ "203": {
+  "gene": "SLCO2A1",
+  "why": "Prostaglandin D-series carrier translocation across the plasma membrane by the organic-anion prostaglandin transporter."
+ },
+ "204": {
+  "gene": "SLCO2A1",
+  "why": "Reversible prostanoid translocation across the plasma membrane, the defining activity of PGT."
+ },
+ "205": {
+  "gene": "SLCO2A1",
+  "why": "F-series prostaglandin carrier flux across the plasma membrane by the prostaglandin transporter."
+ },
+ "206": {
+  "gene": "SLCO2A1",
+  "why": "Equilibrative membrane translocation of a carboxylate prostanoid by PGT."
+ },
+ "207": {
+  "gene": "SLCO2A1",
+  "why": "Endoperoxide prostanoid translocation across the plasma membrane by the prostaglandin transporter."
+ },
+ "208": {
+  "gene": "SLCO2A1",
+  "why": "PGH2 crosses the plasma membrane on the prostaglandin-specific organic anion carrier, as in the bicarbonate-exchange form of the same step."
+ },
+ "209": {
+  "gene": "SLCO2A1",
+  "why": "Prostacyclin translocation across the plasma membrane by the prostaglandin transporter."
+ },
+ "210": {
+  "gene": "SLC29A1",
+  "why": "Uncoupled, bidirectional nucleoside movement across the plasma membrane is equilibrative (ENT1) rather than Na+-coupled CNT transport."
+ },
+ "211": {
+  "gene": "DBT",
+  "why": "Transfer of the 3-methylbutanoyl group from dihydrolipoamide to CoA is the E2 dihydrolipoyl transacylase step of the branched-chain ketoacid dehydrogenase complex."
+ },
+ "212": {
+  "gene": "SLC12A2",
+  "why": "Electroneutral Na+/Cl- cotransport with NH4+ occupying the K+ site is the Na-K-Cl cotransporter."
+ },
+ "213": {
+  "gene": "MTMR1",
+  "why": "Hydrolysis of the D3 phosphate of PI(3)P back to phosphatidylinositol is myotubularin-family 3-phosphatase chemistry."
+ },
+ "214": {
+  "gene": "ALLC",
+  "why": "Hydrolytic cleavage of allantoate's amidine to urea plus ureidoglycolate is the allantoicase reaction."
+ },
+ "215": {
+  "gene": "AFMID",
+  "why": "Hydrolysis of the N-formyl amide of a formylkynurenine releasing formate is arylformamidase (kynurenine formamidase)."
+ },
+ "216": {
+  "gene": "KYAT1",
+  "why": "PLP-dependent transamination of a 3-hydroxykynurenine derivative with 2-oxoglutarate, followed by cyclization to the xanthurenate ring, is kynurenine aminotransferase chemistry."
+ },
+ "217": {
+  "gene": "PNMT",
+  "why": "SAM-dependent N-methylation of the noradrenaline amine to give adrenaline is phenylethanolamine N-methyltransferase."
+ },
+ "218": {
+  "gene": "DIO1",
+  "why": "Reductive selenoenzyme iodothyronine deiodination/iodination interconverting 3,5-T2 and T3 in the ER is a type I/II deiodinase reaction."
+ },
+ "219": {
+  "gene": "DIO1",
+  "why": "Selenocysteine-dependent iodothyronine deiodinase interconverting T3 and T4 at the phenolic outer ring."
+ },
+ "220": {
+  "gene": "CD320",
+  "why": "Receptor-mediated cellular uptake of transcobalamin-bound adenosylcobalamin from the extracellular space."
+ },
+ "221": {
+  "gene": "DHPS",
+  "why": "Condensation of 1,3-diaminopropane with the cyclized 4-aminobutanal (1-pyrroline) to form the dehydrospermidine imine is the aminobutyl-transfer half reaction of deoxyhypusine synthase."
+ },
+ "222": {
+  "gene": "UGT1A1",
+  "why": "Transfer of glucuronic acid from UDP-glucuronate onto an aliphatic alcohol to give an ether glucuronide is UDP-glucuronosyltransferase chemistry."
+ },
+ "223": {
+  "gene": "FMO3",
+  "why": "NADPH/O2-dependent oxygenation of a thioether-like selenoether to its Se-oxide is flavin-containing monooxygenase chemistry, not a P450 hydroxylation."
+ },
+ "224": {
+  "gene": "SLC27A4",
+  "why": "Movement of a long-chain fatty acid from cytosol into the ER lumen by the ER-resident fatty acid transport protein."
+ },
+ "225": {
+  "gene": "B3GNT6",
+  "why": "Beta-1,3-GlcNAc transfer from UDP-GlcNAc onto the GalNAc of Tn antigen builds core 3, the core 3 synthase reaction."
+ },
+ "226": {
+  "gene": "IDUA",
+  "why": "Lysosomal hydrolysis of a terminal alpha-L-iduronide from a heparan sulfate fragment is alpha-L-iduronidase."
+ },
+ "227": {
+  "gene": "DOLPP1",
+  "why": "Hydrolysis of the phosphomonoester of a polyprenyl phosphate in the ER releasing free dolichol and Pi is dolichyl-phosphate/pyrophosphate phosphatase chemistry."
+ },
+ "228": {
+  "gene": "MAN1A1",
+  "why": "Removal of a single alpha-1,2-linked mannose from a Man7 N-glycan in the Golgi is class I alpha-1,2-mannosidase activity."
+ },
+ "229": {
+  "gene": "HEXB",
+  "why": "Lysosomal hydrolysis of a terminal beta-linked N-acetylglucosamine residue is beta-hexosaminidase."
+ },
+ "230": {
+  "gene": "SLC35A3",
+  "why": "Antiport of cytosolic UDP-GlcNAc into the Golgi lumen against UMP is the Golgi UDP-GlcNAc nucleotide-sugar transporter."
+ },
+ "231": {
+  "gene": "HEXB",
+  "why": "Lysosomal release of a terminal beta-GlcNAc (with its 6-O-sulfate) from a keratan sulfate fragment is beta-hexosaminidase chemistry."
+ },
+ "232": {
+  "gene": "CSGALNACT1",
+  "why": "Transfer of an N-acetylhexosamine from a UDP-sugar donor onto the growing chondroitin sulfate chain is chondroitin N-acetylgalactosaminyltransferase."
+ },
+ "233": {
+  "gene": "AGA",
+  "why": "Hydrolysis of the GlcNAc-Asn amide linking the glycan to the peptide asparagine is glycosylasparaginase."
+ },
+ "234": {
+  "gene": "ENPP2",
+  "why": "Phosphodiesterase cleavage of a 1-alkenyl-glycerophosphoethanolamine on the glycerol side, releasing ethanolamine phosphate and the free alkenylglycerol (EC 3.1.4.39)."
+ },
+ "235": {
+  "gene": "ADPRH",
+  "why": "Hydrolysis of the N-glycosidic ADP-ribose\u2013arginine bond regenerating free protein arginine is ADP-ribosylarginine hydrolase."
+ },
+ "236": {
+  "gene": "ADPRH",
+  "why": "Same ADP-ribosyl-arginine glycohydrolase chemistry acting on the free amino acid conjugate."
+ },
+ "237": {
+  "gene": "SLC19A1",
+  "why": "Anion-exchange uptake of thiamine monophosphate against hydroxide by the reduced folate carrier, which also handles thiamine phosphates."
+ },
+ "238": {
+  "gene": "ECHS1",
+  "why": "Reversible syn addition/elimination of water across the C2\u2013C3 double bond of crotonyl-CoA is enoyl-CoA hydratase chemistry in the mitochondrion."
+ },
+ "239": {
+  "gene": "FAAH",
+  "why": "Hydrolysis of a primary carboxamide to the free acid plus ammonia is fatty acid amide hydrolase (amidase signature) chemistry."
+ },
+ "240": {
+  "gene": "CMPK2",
+  "why": "Mitochondrial UMP/CMP kinase phosphoryl transfer interconverting UMP/UDP with the ADP/ATP pair."
+ },
+ "241": {
+  "gene": "HSD3B1",
+  "why": "3beta-hydroxysteroid dehydrogenase/isomerase converting a 3beta-hydroxy-delta5 androstane to the 3-keto compound with loss of the 16alpha-OH as water."
+ },
+ "242": {
+  "gene": "CYP24A1",
+  "why": "Mitochondrial P450 24-hydroxylation of 25-hydroxyvitamin D is vitamin D 24-hydroxylase."
+ },
+ "243": {
+  "gene": "CYP2A6",
+  "why": "P450 7-hydroxylation of coumarin to umbelliferone is the diagnostic CYP2A6 reaction."
+ },
+ "244": {
+  "gene": "CYP2C8",
+  "why": "P450 6alpha-hydroxylation of the taxane ring of paclitaxel is the marker activity of CYP2C8."
+ },
+ "245": {
+  "gene": "CYP3A4",
+  "why": "P450 oxidation of the dihydropyridine nifedipine is the classic CYP3A4 probe reaction."
+ },
+ "246": {
+  "gene": "CSAD",
+  "why": "PLP-dependent decarboxylation of a sulfonated cysteine analogue (cysteate) to taurine is cysteine sulfinic acid decarboxylase."
+ },
+ "247": {
+  "gene": "RBKS",
+  "why": "ATP-dependent phosphorylation of the free pentose at C5 is ribokinase-type sugar kinase chemistry acting on 2-deoxyribose."
+ },
+ "248": {
+  "gene": "ST8SIA5",
+  "why": "Alpha-2,8 sialyl transfer onto the terminal Neu5Ac of GM1b to build the disialyl GD1c cap."
+ },
+ "249": {
+  "gene": "ST6GALNAC6",
+  "why": "Alpha-2,6 sialylation of the GalNAc of GD1a to give the alpha-series ganglioside GT1aalpha."
+ },
+ "250": {
+  "gene": "ST8SIA5",
+  "why": "Adds a second Neu5Ac in alpha-2,8 linkage onto the terminal alpha-2,3-sialyl of the c-series ganglioside GQ1c, the classic ST8Sia V reaction (GM1b/GD1a/GT1b/GQ1c -> GD1c/GT1a/GQ1b/GP1c)."
+ },
+ "251": {
+  "gene": "ST6GALNAC6",
+  "why": "Transfers Neu5Ac in alpha-2,6 linkage onto the internal GalNAc of GT1b to give the alpha-series ganglioside GQ1balpha."
+ },
+ "252": {
+  "gene": "ST8SIA1",
+  "why": "Alpha-2,8-sialyltransferase extending the disialyl cap of GD3 to the trisialyl GT3 (same EC 2.4.99.8 chemistry as GM3 -> GD3)."
+ },
+ "253": {
+  "gene": "ST8SIA5",
+  "why": "Adds Neu5Ac alpha-2,8 onto the terminal alpha-2,3-Neu5Ac of GT1b, the ST8Sia V (GQ1b synthase) step."
+ },
+ "254": {
+  "gene": "ST8SIA5",
+  "why": "Alpha-2,8-sialylation of the terminal Neu5Ac of GD1a to give GT1a, the ST8Sia V (GT1a synthase) step."
+ },
+ "255": {
+  "gene": "ST6GALNAC6",
+  "why": "Alpha-2,6-sialylation of the internal GalNAc of GQ1c producing the alpha-series GP1calpha."
+ },
+ "256": {
+  "gene": "A4GNT",
+  "why": "Transfers GlcNAc in alpha-1,4 linkage onto the terminal Gal of core 1 (T-antigen), the gastric-mucin alpha1,4-GlcNAc capping reaction."
+ },
+ "257": {
+  "gene": "A4GNT",
+  "why": "Same alpha-1,4-GlcNAc capping of the terminal Gal, here on the core 2 O-glycan."
+ },
+ "258": {
+  "gene": "GCNT3",
+  "why": "Beta-1,6-GlcNAc branching onto GalNAc-Ser/Thr (Tn antigen) to form core 6, an activity of the mucin-type C2/C4/core-6 GlcNAc transferase."
+ },
+ "259": {
+  "gene": "B3GNT5",
+  "why": "Beta-1,3-GlcNAc transfer onto lactosylceramide (Lc3 synthase), the committed step of lacto/neolacto glycosphingolipid synthesis."
+ },
+ "260": {
+  "gene": "ST8SIA1",
+  "why": "Alpha-2,8-Neu5Ac addition onto the terminal alpha-2,3-sialyl of sialylparagloboside giving the disialyl neolacto species 3',8'-LD1."
+ },
+ "261": {
+  "gene": "NPL",
+  "why": "Aldol condensation of N-acetylmannosamine with pyruvate to N-acetylneuraminate (sialic acid lyase, run in the synthetic direction)."
+ },
+ "262": {
+  "gene": "PIGZ",
+  "why": "Transfers the fourth mannose from dolichol-P-mannose onto the Man3 of the EtN-phosphate-bearing GPI intermediate (SMP3/Man-IV transferase)."
+ },
+ "263": {
+  "gene": "PIGZ",
+  "why": "Adds the fourth (terminal) mannose from Dol-P-Man onto the third mannose of the doubly ethanolamine-phosphorylated GPI precursor."
+ },
+ "264": {
+  "gene": "SLC29A1",
+  "why": "Equilibrative, facilitated diffusion of the nucleoside deoxycytidine across the mitochondrial membrane by an ENT-type carrier."
+ },
+ "265": {
+  "gene": "SLC16A12",
+  "why": "Monocarboxylate carrier moving the acetate anion between cytosol and Golgi lumen, the same intracellular MCT type used for cytosol-to-mitochondrion acetate."
+ },
+ "266": {
+  "gene": "CYP2E1",
+  "why": "NADPH/O2-dependent microsomal hydroxylation of hydroxyacetone to methylglyoxal, the second step of the CYP2E1 acetone-oxidation pathway."
+ },
+ "267": {
+  "gene": "LDHD",
+  "why": "Flavin-linked lactate:cytochrome c oxidoreductase oxidising lactate to pyruvate with electron delivery to cytochrome c rather than NAD+."
+ },
+ "268": {
+  "gene": "PGM2L1",
+  "why": "Phosphoryl transfer from 1,3-bisphosphoglycerate to glucose-1-phosphate forming glucose-1,6-bisphosphate (glucose-1,6-bisphosphate synthase)."
+ },
+ "269": {
+  "gene": "PRODH",
+  "why": "FAD-dependent oxidation of the proline ring C-N bond to 1-pyrroline-5-carboxylate (proline dehydrogenase/oxidase)."
+ },
+ "270": {
+  "gene": "SUCLA2",
+  "why": "ADP-forming acyl-CoA synthetase (succinyl-CoA synthetase beta subunit) hydrolysing the itaconyl-CoA thioester with substrate-level ATP synthesis."
+ },
+ "271": {
+  "gene": "CLYBL",
+  "why": "Hydration of the itaconyl-CoA double bond to (3S)-citramalyl-CoA in the mitochondrial itaconate-disposal pathway."
+ },
+ "272": {
+  "gene": "FGGY",
+  "why": "ATP-dependent phosphorylation of the free pentulose D-ribulose at C5 by the FGGY-family carbohydrate (ribulo)kinase."
+ },
+ "273": {
+  "gene": "GGCT",
+  "why": "Gamma-glutamyl cyclotransferase releases the free amino acid and cyclises the gamma-glutamyl moiety to 5-oxoproline."
+ },
+ "274": {
+  "gene": "ALDH2",
+  "why": "NAD+-dependent mitochondrial aldehyde dehydrogenase oxidising glycolaldehyde to glycolate."
+ },
+ "275": {
+  "gene": "SLC35D2",
+  "why": "Golgi nucleotide-sugar antiporter importing UDP-glucose in exchange for lumenal UMP."
+ },
+ "276": {
+  "gene": "SLC5A9",
+  "why": "Na+-coupled symport of fructose across the apical plasma membrane (SGLT4, a Na+/fructose-mannose cotransporter)."
+ },
+ "277": {
+  "gene": "SLCO2A1",
+  "why": "Organic-anion transporter mediating prostaglandin E1 uptake in exchange for efflux of bicarbonate."
+ },
+ "278": {
+  "gene": "SLC38A2",
+  "why": "Na+-coupled symport of the neutral imino acid proline into the cell (system A/N-type amino acid transporter)."
+ },
+ "279": {
+  "gene": "SIAE",
+  "why": "Esterase hydrolysing the O-acetyl ester of N-acetyl-9(4)-O-acetylneuraminate to free acetate and Neu5Ac."
+ },
+ "280": {
+  "gene": "FAAH",
+  "why": "Amidase hydrolysing the primary carboxamide of indol-3-yl-acetamide to indoleacetate and ammonia."
+ },
+ "281": {
+  "gene": "QPCT",
+  "why": "Glutaminyl cyclase intramolecularly cyclises an N-terminal glutaminyl residue to pyroglutamate with loss of ammonia."
+ },
+ "282": {
+  "gene": "PLOD1",
+  "why": "2-oxoglutarate/O2-dependent dioxygenase hydroxylating C5 of lysyl residues in procollagen (lysyl hydroxylase)."
+ },
+ "283": {
+  "gene": "SLC6A7",
+  "why": "Na+/Cl--dependent high-affinity proline symporter (PROT) of the SLC6 neurotransmitter-transporter family."
+ },
+ "284": {
+  "gene": "SLC10A1",
+  "why": "Na+-dependent taurocholate cotransporter taking up the sulfated taurine-conjugated bile salt across the basolateral membrane."
+ },
+ "285": {
+  "gene": "ENPP6",
+  "why": "Choline-specific glycerophosphodiesterase cleaving glycerophosphocholine on the glycerol side to give glycerol plus phosphocholine."
+ },
+ "286": {
+  "gene": "SLC27A2",
+  "why": "Vectorial acylation: the fatty-acid transport protein with intrinsic acyl-CoA synthetase activity imports arachidonate and thioesterifies it with CoA using ATP."
+ },
+ "287": {
+  "gene": "SLC22A5",
+  "why": "Na+-coupled carnitine/acylcarnitine carrier (OCTN2) moving O-acetylcarnitine across the plasma membrane."
+ },
+ "288": {
+  "gene": "URAD",
+  "why": "Decarboxylation of 2-oxo-4-hydroxy-4-carboxy-5-ureidoimidazoline (OHCU) to S-allantoin in the urate degradation pathway."
+ },
+ "289": {
+  "gene": "SLC10A1",
+  "why": "Na+-taurocholate cotransporting polypeptide importing the taurine-conjugated bile acid tauro-hyodeoxycholate."
+ },
+ "290": {
+  "gene": "ABCB11",
+  "why": "ATP-hydrolysing canalicular export pump extruding the bile-alcohol 5beta-cholestanepentol from cytosol to the extracellular space."
+ },
+ "291": {
+  "gene": "SLC15A1",
+  "why": "Proton-coupled oligopeptide transporter (PEPT1) importing a tripeptide down the inward H+ gradient."
+ },
+ "292": {
+  "gene": "SLC15A1",
+  "why": "H+/peptide symport of a tripeptide across the apical plasma membrane by PEPT1."
+ },
+ "293": {
+  "gene": "SLC15A1",
+  "why": "Proton-coupled uptake of the tripeptide by the SLC15 oligopeptide transporter."
+ },
+ "294": {
+  "gene": "SLC15A1",
+  "why": "H+-dependent cotransport of the acidic tripeptide into the cytosol by PEPT1."
+ },
+ "295": {
+  "gene": "SLC15A1",
+  "why": "Proton-coupled dipeptide uptake by the SLC15 peptide transporter."
+ },
+ "296": {
+  "gene": "SLC15A1",
+  "why": "H+/tripeptide symport into the cytosol by PEPT1."
+ },
+ "297": {
+  "gene": "SLC15A1",
+  "why": "Proton-coupled uptake of the dipeptide by the SLC15 oligopeptide transporter."
+ },
+ "298": {
+  "gene": "SLC15A1",
+  "why": "H+-coupled import of the basic tripeptide by PEPT1."
+ },
+ "299": {
+  "gene": "SLC15A1",
+  "why": "Proton-coupled cotransport of the tripeptide across the plasma membrane by the SLC15 peptide transporter."
+ },
+ "300": {
+  "gene": "SLC15A1",
+  "why": "Proton-coupled uptake of an intact tripeptide across the plasma membrane, the defining chemistry of the PEPT1 oligopeptide H+ symporter."
+ },
+ "301": {
+  "gene": "SLC15A1",
+  "why": "H+/tripeptide symport from extracellular space into cytosol by the proton-dependent oligopeptide transporter PEPT1."
+ },
+ "302": {
+  "gene": "SLC15A1",
+  "why": "Electrogenic H+-coupled import of a histidine-containing tripeptide, a classic PEPT1 substrate class."
+ },
+ "303": {
+  "gene": "SLC15A1",
+  "why": "Proton-gradient-driven cellular uptake of an intact tri-peptide via the POT/PTR family transporter PEPT1."
+ },
+ "304": {
+  "gene": "SLC15A1",
+  "why": "H+ symport of a neutral/basic tripeptide across the apical plasma membrane by PEPT1."
+ },
+ "305": {
+  "gene": "SLC15A1",
+  "why": "Proton-coupled tripeptide translocation into the cytosol, PEPT1-type peptide transport."
+ },
+ "306": {
+  "gene": "SLC15A1",
+  "why": "H+/peptide cotransport of an acidic tripeptide into the cell by the oligopeptide transporter PEPT1."
+ },
+ "307": {
+  "gene": "SLC15A1",
+  "why": "Inward proton-coupled symport of an intact tripeptide, PEPT1 chemistry."
+ },
+ "308": {
+  "gene": "SLC15A1",
+  "why": "Proton-driven uptake of a bulky aromatic tripeptide across the plasma membrane by PEPT1."
+ },
+ "309": {
+  "gene": "SLC15A1",
+  "why": "H+-coupled import of a cysteinyl tripeptide by the proton-dependent oligopeptide transporter PEPT1."
+ },
+ "310": {
+  "gene": "SLC15A1",
+  "why": "Proton symport of a tri-aromatic tripeptide into the cytosol by PEPT1."
+ },
+ "311": {
+  "gene": "SLC15A1",
+  "why": "5-aminolevulinate is a peptidomimetic PEPT1 substrate, here moved inward by the same H+ symport shown in reverse in the solved example."
+ },
+ "312": {
+  "gene": "SLC16A1",
+  "why": "Proton-coupled symport of the short-chain monocarboxylate butyrate across the plasma membrane by MCT1."
+ },
+ "313": {
+  "gene": "ABCA1",
+  "why": "ATP hydrolysis-driven efflux of a lysophosphatidylcholine species from the cytosolic leaflet to the exterior by the ABCA1 phospholipid floppase."
+ },
+ "314": {
+  "gene": "ABCA1",
+  "why": "ATP-dependent export of a very-long-chain lysophosphatidylcholine by the ABCA1 phospholipid efflux pump."
+ },
+ "315": {
+  "gene": "ABCA1",
+  "why": "ATP-driven outward translocation of lysophosphatidylethanolamine across the plasma membrane by ABCA1."
+ },
+ "316": {
+  "gene": "ABCA1",
+  "why": "ATP hydrolysis coupled efflux of a sulfated glycosphingolipid from cytosol to extracellular space by an ABCA-family lipid floppase."
+ },
+ "317": {
+  "gene": "ABCA1",
+  "why": "ATP-dependent sphingomyelin efflux from the plasma-membrane inner leaflet by ABCA1."
+ },
+ "318": {
+  "gene": "ABCA1",
+  "why": "ATP-driven export of sphingomyelin (d18:1/16:0) by the ABCA1 lipid translocase."
+ },
+ "319": {
+  "gene": "ABCA1",
+  "why": "ATPase-coupled outward flopping of a monounsaturated sphingomyelin species by ABCA1."
+ },
+ "320": {
+  "gene": "ABCA1",
+  "why": "ATP hydrolysis-driven sphingomyelin efflux to the extracellular acceptor by ABCA1."
+ },
+ "321": {
+  "gene": "ABCC1",
+  "why": "ATP-dependent efflux of a hydroxylated C19 steroid out of the cell by the MRP1 multidrug/steroid export pump."
+ },
+ "322": {
+  "gene": "DEGS2",
+  "why": "NADPH/O2-dependent C4-hydroxylation of dihydroceramide to phytoceramide, the hydroxylase activity specific to DES2 rather than the pure desaturase."
+ },
+ "323": {
+  "gene": "ABCC2",
+  "why": "ATP hydrolysis-driven canalicular efflux of a bile-acid glucuronide conjugate by the MRP2 organic-anion pump."
+ },
+ "324": {
+  "gene": "UGT1A3",
+  "why": "Glucuronic acid transfer from UDP-glucuronate onto the C24 carboxyl of lithocholate to give the acyl (ester) glucuronide, the signature UGT1A3 reaction."
+ },
+ "325": {
+  "gene": "UGT1A3",
+  "why": "UDP-glucuronate-dependent ether glucuronidation of the atorvastatin lactone hydroxyl, matching the UGT1A3 ether-glucuronide route seen for atorvastatin acid."
+ },
+ "326": {
+  "gene": "ABCB1",
+  "why": "ATP-driven efflux of a statin (cerivastatin) metabolite across the plasma membrane by P-glycoprotein."
+ },
+ "327": {
+  "gene": "CYP2C9",
+  "why": "Oxygen-dependent oxidation of the 3-hydroxy group of ibuprofen through to the carboxylic acid by cytochrome P450 2C9."
+ },
+ "328": {
+  "gene": "SLC25A3",
+  "why": "Electroneutral H+/phosphate symport across the inner mitochondrial membrane by the mitochondrial phosphate carrier."
+ },
+ "329": {
+  "gene": "ADHFE1",
+  "why": "Hydroxyacid-oxoacid transhydrogenase transfers hydride from a 3-hydroxy acid to 2-oxoglutarate, yielding the oxo acid plus D-2-hydroxyglutarate."
+ },
+ "330": {
+  "gene": "GALM",
+  "why": "Anomeric interconversion of galactose to its beta-D anomer by aldose 1-epimerase (galactose mutarotase)."
+ },
+ "331": {
+  "gene": "GGACT",
+  "why": "Gamma-glutamylamine cyclotransferase cleaves the isopeptide bond of epsilon-(gamma-glutamyl)lysine, releasing free lysine and cyclizing the glutamyl moiety to 5-oxoproline."
+ },
+ "332": {
+  "gene": "GGACT",
+  "why": "Same gamma-glutamylamine cyclotransferase cleavage of the isodipeptide to 5-oxoproline plus lysine, occurring in the nuclear compartment."
+ }
+}

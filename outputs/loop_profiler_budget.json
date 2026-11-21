@@ -1,0 +1,498 @@
+{
+ "test": "does the interaction profiler save evaluations on the nexus design spaces",
+ "gates": {
+  "P1": true,
+  "P2": false,
+  "P3": true,
+  "P4": true,
+  "P5": true,
+  "P6": true
+ },
+ "space_a": {
+  "n_true": 56,
+  "n_groups": 56,
+  "rows": [
+   {
+    "n_references": 3,
+    "calls": 132,
+    "distinct": 87,
+    "misses_outside_table": 0,
+    "missed": 11,
+    "false_positives": 0,
+    "frac_of_space": 0.6796875,
+    "seconds": 0.025310277938842773
+   },
+   {
+    "n_references": 6,
+    "calls": 176,
+    "distinct": 128,
+    "misses_outside_table": 0,
+    "missed": 6,
+    "false_positives": 0,
+    "frac_of_space": 1.0,
+    "seconds": 0.02657008171081543
+   },
+   {
+    "n_references": 12,
+    "calls": 176,
+    "distinct": 128,
+    "misses_outside_table": 0,
+    "missed": 6,
+    "false_positives": 0,
+    "frac_of_space": 1.0,
+    "seconds": 0.03891181945800781
+   },
+   {
+    "n_references": 24,
+    "calls": 176,
+    "distinct": 128,
+    "misses_outside_table": 0,
+    "missed": 0,
+    "false_positives": 0,
+    "frac_of_space": 1.0,
+    "seconds": 0.08321452140808105
+   },
+   {
+    "n_references": 48,
+    "calls": 176,
+    "distinct": 128,
+    "misses_outside_table": 0,
+    "missed": 0,
+    "false_positives": 0,
+    "frac_of_space": 1.0,
+    "seconds": 0.19155478477478027
+   }
+  ],
+  "rstar": {
+   "n_references": 24,
+   "calls": 176,
+   "distinct": 128,
+   "misses_outside_table": 0,
+   "missed": 0,
+   "false_positives": 0,
+   "frac_of_space": 1.0,
+   "seconds": 0.08321452140808105
+  }
+ },
+ "space_b": {
+  "n_true": 10,
+  "n_groups": 84,
+  "rows": [
+   {
+    "n_references": 3,
+    "calls": 126,
+    "distinct": 84,
+    "misses_outside_table": 0,
+    "missed": 0,
+    "false_positives": 0,
+    "frac_of_space": 0.328125,
+    "seconds": 0.008372068405151367
+   },
+   {
+    "n_references": 6,
+    "calls": 220,
+    "distinct": 172,
+    "misses_outside_table": 0,
+    "missed": 0,
+    "false_positives": 0,
+    "frac_of_space": 0.671875,
+    "seconds": 0.014163732528686523
+   },
+   {
+    "n_references": 12,
+    "calls": 283,
+    "distinct": 235,
+    "misses_outside_table": 0,
+    "missed": 0,
+    "false_positives": 0,
+    "frac_of_space": 0.91796875,
+    "seconds": 0.02651667594909668
+   },
+   {
+    "n_references": 24,
+    "calls": 301,
+    "distinct": 253,
+    "misses_outside_table": 0,
+    "missed": 0,
+    "false_positives": 0,
+    "frac_of_space": 0.98828125,
+    "seconds": 0.04742908477783203
+   },
+   {
+    "n_references": 48,
+    "calls": 304,
+    "distinct": 256,
+    "misses_outside_table": 0,
+    "missed": 0,
+    "false_positives": 0,
+    "frac_of_space": 1.0,
+    "seconds": 0.0890049934387207
+   }
+  ],
+  "rstar": {
+   "n_references": 3,
+   "calls": 126,
+   "distinct": 84,
+   "misses_outside_table": 0,
+   "missed": 0,
+   "false_positives": 0,
+   "frac_of_space": 0.328125,
+   "seconds": 0.008372068405151367
+  }
+ },
+ "crossover": {
+  "density 0.76, R=3": {
+   "crossover_n": 7,
+   "rows": [
+    {
+     "n": 7,
+     "distinct": 85,
+     "space": 128
+    },
+    {
+     "n": 8,
+     "distinct": 123,
+     "space": 256
+    },
+    {
+     "n": 10,
+     "distinct": 268,
+     "space": 1024
+    },
+    {
+     "n": 12,
+     "distinct": 507,
+     "space": 4096
+    },
+    {
+     "n": 14,
+     "distinct": 732,
+     "space": 16384
+    },
+    {
+     "n": 16,
+     "distinct": 1246,
+     "space": 65536
+    },
+    {
+     "n": 18,
+     "distinct": 1904,
+     "space": 262144
+    },
+    {
+     "n": 20,
+     "distinct": 2499,
+     "space": 1048576
+    }
+   ]
+  },
+  "density 0.76, R=24": {
+   "crossover_n": 10,
+   "rows": [
+    {
+     "n": 7,
+     "distinct": 128,
+     "space": 128
+    },
+    {
+     "n": 8,
+     "distinct": 256,
+     "space": 256
+    },
+    {
+     "n": 10,
+     "distinct": 965,
+     "space": 1024
+    },
+    {
+     "n": 12,
+     "distinct": 2935,
+     "space": 4096
+    },
+    {
+     "n": 14,
+     "distinct": 5423,
+     "space": 16384
+    },
+    {
+     "n": 16,
+     "distinct": 9448,
+     "space": 65536
+    },
+    {
+     "n": 18,
+     "distinct": 15129,
+     "space": 262144
+    },
+    {
+     "n": 20,
+     "distinct": 20072,
+     "space": 1048576
+    }
+   ]
+  },
+  "density 0.15, R=3": {
+   "crossover_n": 7,
+   "rows": [
+    {
+     "n": 7,
+     "distinct": 49,
+     "space": 128
+    },
+    {
+     "n": 8,
+     "distinct": 84,
+     "space": 256
+    },
+    {
+     "n": 10,
+     "distinct": 150,
+     "space": 1024
+    },
+    {
+     "n": 12,
+     "distinct": 220,
+     "space": 4096
+    },
+    {
+     "n": 14,
+     "distinct": 299,
+     "space": 16384
+    },
+    {
+     "n": 16,
+     "distinct": 432,
+     "space": 65536
+    },
+    {
+     "n": 18,
+     "distinct": 571,
+     "space": 262144
+    },
+    {
+     "n": 20,
+     "distinct": 678,
+     "space": 1048576
+    }
+   ]
+  },
+  "density 0.15, R=24": {
+   "crossover_n": 7,
+   "rows": [
+    {
+     "n": 7,
+     "distinct": 126,
+     "space": 128
+    },
+    {
+     "n": 8,
+     "distinct": 252,
+     "space": 256
+    },
+    {
+     "n": 10,
+     "distinct": 755,
+     "space": 1024
+    },
+    {
+     "n": 12,
+     "distinct": 1542,
+     "space": 4096
+    },
+    {
+     "n": 14,
+     "distinct": 2432,
+     "space": 16384
+    },
+    {
+     "n": 16,
+     "distinct": 3402,
+     "space": 65536
+    },
+    {
+     "n": 18,
+     "distinct": 4554,
+     "space": 262144
+    },
+    {
+     "n": 20,
+     "distinct": 5442,
+     "space": 1048576
+    }
+   ]
+  }
+ },
+ "seconds_per_config_a": 0.0859375,
+ "seconds_saved_design": 0.0,
+ "seconds_saved_by_recommendation": 23304.7,
+ "pipeline_seconds": 25209.5,
+ "rstar_by_seed": [
+  {
+   "seed": 1000,
+   "rstar": 12,
+   "misses": {
+    "3": 27,
+    "6": 20,
+    "12": 0,
+    "24": 0,
+    "48": 0
+   }
+  },
+  {
+   "seed": 1001,
+   "rstar": 12,
+   "misses": {
+    "3": 7,
+    "6": 7,
+    "12": 0,
+    "24": 0,
+    "48": 0
+   }
+  },
+  {
+   "seed": 1002,
+   "rstar": 12,
+   "misses": {
+    "3": 16,
+    "6": 6,
+    "12": 0,
+    "24": 0,
+    "48": 0
+   }
+  },
+  {
+   "seed": 1003,
+   "rstar": 48,
+   "misses": {
+    "3": 27,
+    "6": 7,
+    "12": 1,
+    "24": 1,
+    "48": 0
+   }
+  },
+  {
+   "seed": 1004,
+   "rstar": 12,
+   "misses": {
+    "3": 7,
+    "6": 1,
+    "12": 0,
+    "24": 0,
+    "48": 0
+   }
+  },
+  {
+   "seed": 1005,
+   "rstar": 48,
+   "misses": {
+    "3": 27,
+    "6": 6,
+    "12": 6,
+    "24": 6,
+    "48": 0
+   }
+  },
+  {
+   "seed": 1006,
+   "rstar": 12,
+   "misses": {
+    "3": 16,
+    "6": 16,
+    "12": 0,
+    "24": 0,
+    "48": 0
+   }
+  },
+  {
+   "seed": 1007,
+   "rstar": 6,
+   "misses": {
+    "3": 16,
+    "6": 0,
+    "12": 0,
+    "24": 0,
+    "48": 0
+   }
+  }
+ ],
+ "seconds": 13.144368410110474,
+ "log": [
+  "========================================================================================================",
+  "  DOES THE PROFILER SAVE EVALUATIONS? -- the nexus design spaces, counted",
+  "========================================================================================================",
+  "     tables from outputs/loop_nexus_catalyst_interactions.json: space A 128 configs (tau 0.01), space B 256 configs (tau 0.1011)",
+  "     A blocks: esm_enz, esm_sub, esm_prod, esm_absdiff, freq, enz_seq, sub_seq",
+  "     B blocks: dock_shape, dock_spread, dock_clash, size, log_len, aa_comp, esm_pair, freq",
+  "",
+  "P1/P2/P6  SPACE A -- the 7 ESM/sequence blocks, 2,231 reactions",
+  "     space A: 56 groups of order 2 and 3, 56 genuinely interacting at tau=0.01; full state space 128",
+  "       R=3   calls    132  DISTINCT   87 of 128 ( 68.0%)   missed 11  false-pos 0",
+  "       R=6   calls    176  DISTINCT  128 of 128 (100.0%)   missed  6  false-pos 0",
+  "       R=12  calls    176  DISTINCT  128 of 128 (100.0%)   missed  6  false-pos 0",
+  "       R=24  calls    176  DISTINCT  128 of 128 (100.0%)   missed  0  false-pos 0",
+  "       R=48  calls    176  DISTINCT  128 of 128 (100.0%)   missed  0  false-pos 0",
+  "",
+  "P3        SPACE B -- the 8 docking/sequence blocks, 58 dockable reactions",
+  "     space B: 84 groups of order 2 and 3, 10 genuinely interacting at tau=0.1011; full state space 256",
+  "       R=3   calls    126  DISTINCT   84 of 256 ( 32.8%)   missed  0  false-pos 0",
+  "       R=6   calls    220  DISTINCT  172 of 256 ( 67.2%)   missed  0  false-pos 0",
+  "       R=12  calls    283  DISTINCT  235 of 256 ( 91.8%)   missed  0  false-pos 0",
+  "       R=24  calls    301  DISTINCT  253 of 256 ( 98.8%)   missed  0  false-pos 0",
+  "       R=48  calls    304  DISTINCT  256 of 256 (100.0%)   missed  0  false-pos 0",
+  "",
+  "     every configuration the profiler asked for was in the enumerated table: the counter counts the real schedule.",
+  "     P1 PASS",
+  "",
+  "     space A reaches zero missed groups first at n_references=24, consuming 128 distinct configurations of 128",
+  "     that is the ENTIRE state space. On this objective the profiler at the setting that makes it correct evaluates everything enumeration would have evaluated, so it saves nothing -- it is an analysis of a table you already had, not a way to avoid building one.",
+  "     P2 FAIL",
+  "",
+  "     NOT A GATE -- a diagnostic added after this run's R* disagreed with the nexus run's.",
+  "     The nexus sweep (seed 15900) reported zero misses from n_references=12; this run",
+  "     (seed 15901) still misses 6 at 12. The references are drawn at random, so R* is",
+  "     itself a random variable. Re-drawing it 8 ways to see how wide:",
+  "       seed 1000: misses by R 3:27 6:20 12:0 24:0 48:0   -> R* = 12",
+  "       seed 1001: misses by R 3:7 6:7 12:0 24:0 48:0   -> R* = 12",
+  "       seed 1002: misses by R 3:16 6:6 12:0 24:0 48:0   -> R* = 12",
+  "       seed 1003: misses by R 3:27 6:7 12:1 24:1 48:0   -> R* = 48",
+  "       seed 1004: misses by R 3:7 6:1 12:0 24:0 48:0   -> R* = 12",
+  "       seed 1005: misses by R 3:27 6:6 12:6 24:6 48:0   -> R* = 48",
+  "       seed 1006: misses by R 3:16 6:16 12:0 24:0 48:0   -> R* = 12",
+  "       seed 1007: misses by R 3:16 6:0 12:0 24:0 48:0   -> R* = 6",
+  "     R* across 8 seeds: [12, 12, 12, 48, 12, 48, 12, 6]  -- the cheap setting cannot tell you which one you are on.",
+  "",
+  "     space B reaches zero missed groups first at n_references=3, consuming 84 distinct configurations of 256",
+  "     a saving of 172 configurations.",
+  "     P3 PASS",
+  "",
+  "P4        WHERE DOES THE SCHEDULE BEAT ENUMERATION? synthetic objectives, declared structure",
+  "     density 0.76, R=3      crossover at n=7   n=7:85/128  n=8:123/256  n=10:268/1,024  n=12:507/4,096  n=14:732/16,384  n=16:1,246/65,536  n=18:1,904/262,144  n=20:2,499/1,048,576",
+  "     density 0.76, R=24     crossover at n=10   n=7:128/128  n=8:256/256  n=10:965/1,024  n=12:2,935/4,096  n=14:5,423/16,384  n=16:9,448/65,536  n=18:15,129/262,144  n=20:20,072/1,048,576",
+  "     density 0.15, R=3      crossover at n=7   n=7:49/128  n=8:84/256  n=10:150/1,024  n=12:220/4,096  n=14:299/16,384  n=16:432/65,536  n=18:571/262,144  n=20:678/1,048,576",
+  "     density 0.15, R=24     crossover at n=7   n=7:126/128  n=8:252/256  n=10:755/1,024  n=12:1,542/4,096  n=14:2,432/16,384  n=16:3,402/65,536  n=18:4,554/262,144  n=20:5,442/1,048,576",
+  "     the schedule does pay for itself once the space is bigger than the nexus arm's -- the tool is not useless, it is being used on a space too small for it.",
+  "     P4 PASS",
+  "",
+  "P5        SECONDS, AT THE MEASURED COST OF THIS OBJECTIVE",
+  "     space-A objective: 11 s for 128 configurations = 0.086 s each",
+  "     profiling at R=24 instead of enumerating saves 0.00 s",
+  "     the ablation the profile RECOMMENDS -- drop every docking block, regret 0.0000 (N5) --",
+  "       saves 23,305 s of a 25,210 s pipeline: 92.4%, a 13.23x reduction",
+  "     the search economy is worth exactly nothing; the recommendation is worth 23,304.7 s",
+  "     P5 PASS  (both figures reported against each other)",
+  "",
+  "     one-sided at every setting in both spaces: a REPORTED interaction can be believed\n     at n_references=3, and only a reported ABSENCE needs the expensive setting. That is\n     the cheap way to use this tool -- profile at 3, and pay for the expensive setting\n     only where you intend to act on a null.",
+  "     P6 PASS",
+  "",
+  "========================================================================================================",
+  "  P1  PASS",
+  "  P2  FAIL",
+  "  P3  PASS",
+  "  P4  PASS",
+  "  P5  PASS",
+  "  P6  PASS",
+  "  5/6",
+  "========================================================================================================"
+ ]
+}

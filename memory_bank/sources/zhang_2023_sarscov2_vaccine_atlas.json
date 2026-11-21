@@ -1,0 +1,10 @@
+{
+  "id": "zhang_2023_sarscov2_vaccine_atlas",
+  "type": "peer_reviewed_paper",
+  "citation": "Zhang, B. et al. Multimodal single-cell datasets characterize antigen-specific CD8+ T cells across SARS-CoV-2 vaccination and infection. Nature Immunology 24, 1725-1734 (2023).",
+  "doi": "10.1038/s41590-023-01608-9",
+  "organism": "human",
+  "authority": "primary",
+  "licence": "not checked (verify before redistributing or commercial use)",
+  "notes": "PBMC CITE-seq + ASAP-seq after mRNA vaccination; AG2 evaluation of unseen cell states (vaccine-induced CD8+ T cells)."
+}

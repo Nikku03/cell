@@ -1,0 +1,19 @@
+=================================================================================================
+DO CLIQUES ADD ANYTHING TO THE BEST DESIGN? THE TREE WITH CLIQUE-WIRED SIBLINGS
+=================================================================================================
+  H H1S: exact solver worst depth 1.000, constant guesser 0.080 -> PASS
+  H P1N: exact solver worst depth 1.000, constant guesser 0.171 -> PASS
+
+H1S -- 12 items, with snap; trained on 1-3 hops
+     arm          params   k=1    k=2    k=3    k=4    k=6    k=8    k=12   k=16    learnt  exact
+     TREE         76,596   0.994  0.978  0.963  0.951  0.932  0.910  0.906  0.902   10/10   0/10
+     CLIQUETREE   78,516   0.988  0.964  0.941  0.919  0.896  0.863  0.844  0.847   10/10   0/10
+  C1 clique-wired tree vs tree (PRIMARY): CLIQUETREE higher on 1/10, lower on 9/10, mean -0.047 -> HURTS
+
+P1N -- 6 items, no snap; trained on 1-3 hops
+     arm          params   k=1    k=2    k=3    k=4    k=6    k=8    k=12   k=16   k=24   k=32    learnt  exact
+     TREE         26,334   1.000  1.000  0.999  0.992  0.960  0.925  0.883  0.865  0.857  0.849   10/10   0/10
+     CLIQUETREE   28,254   1.000  1.000  0.997  0.982  0.936  0.887  0.841  0.827  0.806  0.800   10/10   0/10
+  C1 clique-wired tree vs tree (PRIMARY): CLIQUETREE higher on 4/10, lower on 6/10, mean -0.036 -> NO DIFFERENCE
+
+  runtime 215s

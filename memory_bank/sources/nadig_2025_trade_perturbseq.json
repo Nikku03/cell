@@ -1,0 +1,10 @@
+{
+  "id": "nadig_2025_trade_perturbseq",
+  "type": "dataset",
+  "citation": "Nadig A, Replogle JM, Pogson AN, et al. Transcriptome-wide analysis of differential expression in perturbation atlases. Nature Genetics (2025).",
+  "url": "https://doi.org/10.6084/m9.figshare.29498366",
+  "organism": "human (K562, RPE1, HepG2, Jurkat cell lines)",
+  "authority": "primary",
+  "licence": "CC BY 4.0 (figshare 29498366)",
+  "notes": "DESeq2 log2 fold change, lfcSE and p for every measured gene after every CRISPRi knockdown, one pipeline for five screens: K562, RPE1, HepG2 and Jurkat essential-gene screens (same ~2,400-gene library; K562/RPE1 data from Replogle 2022, HepG2/Jurkat new) and the K562 genome-wide screen (9,866 knockdowns). Pulled by rem/atlas/xcellbank.py (md5-checked) into cellbrain layers XCELL_K562ESS, XCELL_RPE1ESS, XCELL_HEPG2ESS, XCELL_JURKATESS, XCELL_K562GW. Data check: in the four essential files p equals the Wald p of lfc/lfcSE; in the K562 genome-wide file it does not (no p above 0.32), so analyses use the Wald p from lfc/lfcSE."
+}

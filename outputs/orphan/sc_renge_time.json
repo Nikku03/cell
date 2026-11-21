@@ -1,0 +1,272 @@
+{
+  "test": "sc_renge_time",
+  "pairs": [
+    "day2vday5",
+    "day2vday4",
+    "day3vday5"
+  ],
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "npred": 20,
+  "cells": {
+    "day2vday5|s0": {
+      "n_kos": 22,
+      "median_depth": 66,
+      "cross": 0.8795454545454544,
+      "floor": 0.771590909090909,
+      "ratio": 1.1399116347569955
+    },
+    "day2vday5|s1": {
+      "n_kos": 22,
+      "median_depth": 66,
+      "cross": 0.8772727272727271,
+      "floor": 0.7738636363636364,
+      "ratio": 1.1336270190895739
+    },
+    "day2vday5|s2": {
+      "n_kos": 22,
+      "median_depth": 66,
+      "cross": 0.8477272727272726,
+      "floor": 0.759090909090909,
+      "ratio": 1.1167664670658681
+    },
+    "day2vday4|s0": {
+      "n_kos": 22,
+      "median_depth": 66,
+      "cross": 0.8295454545454544,
+      "floor": 0.7863636363636364,
+      "ratio": 1.0549132947976876
+    },
+    "day2vday4|s1": {
+      "n_kos": 22,
+      "median_depth": 66,
+      "cross": 0.8386363636363636,
+      "floor": 0.7875,
+      "ratio": 1.0649350649350648
+    },
+    "day2vday4|s2": {
+      "n_kos": 22,
+      "median_depth": 66,
+      "cross": 0.8545454545454544,
+      "floor": 0.7863636363636364,
+      "ratio": 1.0867052023121384
+    },
+    "day3vday5|s0": {
+      "n_kos": 23,
+      "median_depth": 82,
+      "cross": 0.7804347826086956,
+      "floor": 0.7293478260869565,
+      "ratio": 1.0700447093889716
+    },
+    "day3vday5|s1": {
+      "n_kos": 23,
+      "median_depth": 82,
+      "cross": 0.767391304347826,
+      "floor": 0.7304347826086957,
+      "ratio": 1.050595238095238
+    },
+    "day3vday5|s2": {
+      "n_kos": 23,
+      "median_depth": 82,
+      "cross": 0.7978260869565217,
+      "floor": 0.7217391304347825,
+      "ratio": 1.105421686746988
+    }
+  },
+  "by_pair": {
+    "day2vday5": {
+      "cross": 0.868181818181818,
+      "floor": 0.7681818181818182,
+      "ratio": 1.1301017069708124
+    },
+    "day2vday4": {
+      "cross": 0.8409090909090908,
+      "floor": 0.7867424242424242,
+      "ratio": 1.0688511873482969
+    },
+    "day3vday5": {
+      "cross": 0.7818840579710145,
+      "floor": 0.7271739130434782,
+      "ratio": 1.0753538780770657
+    }
+  },
+  "overall_ratio": 1.0914355907987252,
+  "sweep": {
+    "name": "cross-day - same-day disagreement",
+    "verdict": "ROBUST",
+    "n_cells": 9,
+    "inert_axes": [],
+    "n_duplicate_cells": 0,
+    "n_effective_cells": 9,
+    "n_resolved_pos": 7,
+    "n_resolved_neg": 0,
+    "sign_consistent": true,
+    "cells_needed_for_robust": 6,
+    "passing_configs": [
+      {
+        "pair": "day2vday5",
+        "seed": 0
+      },
+      {
+        "pair": "day2vday5",
+        "seed": 1
+      },
+      {
+        "pair": "day2vday5",
+        "seed": 2
+      },
+      {
+        "pair": "day2vday4",
+        "seed": 1
+      },
+      {
+        "pair": "day2vday4",
+        "seed": 2
+      },
+      {
+        "pair": "day3vday5",
+        "seed": 0
+      },
+      {
+        "pair": "day3vday5",
+        "seed": 2
+      }
+    ],
+    "cells": [
+      {
+        "config": {
+          "pair": "day2vday5",
+          "seed": 0
+        },
+        "cohort": "day2vday5|s0",
+        "n": 22,
+        "delta": 0.10795454545454541,
+        "lo": 0.06590909090909088,
+        "hi": 0.15227272727272725
+      },
+      {
+        "config": {
+          "pair": "day2vday5",
+          "seed": 1
+        },
+        "cohort": "day2vday5|s1",
+        "n": 22,
+        "delta": 0.10340909090909088,
+        "lo": 0.05795454545454545,
+        "hi": 0.15227272727272725
+      },
+      {
+        "config": {
+          "pair": "day2vday5",
+          "seed": 2
+        },
+        "cohort": "day2vday5|s2",
+        "n": 22,
+        "delta": 0.08863636363636361,
+        "lo": 0.03522727272727272,
+        "hi": 0.14204545454545456
+      },
+      {
+        "config": {
+          "pair": "day2vday4",
+          "seed": 0
+        },
+        "cohort": "day2vday4|s0",
+        "n": 22,
+        "delta": 0.04318181818181818,
+        "lo": -0.0034090909090909198,
+        "hi": 0.09431818181818183
+      },
+      {
+        "config": {
+          "pair": "day2vday4",
+          "seed": 1
+        },
+        "cohort": "day2vday4|s1",
+        "n": 22,
+        "delta": 0.051136363636363626,
+        "lo": 0.019318181818181818,
+        "hi": 0.08295454545454546
+      },
+      {
+        "config": {
+          "pair": "day2vday4",
+          "seed": 2
+        },
+        "cohort": "day2vday4|s2",
+        "n": 22,
+        "delta": 0.06818181818181818,
+        "lo": 0.040909090909090916,
+        "hi": 0.09545454545454546
+      },
+      {
+        "config": {
+          "pair": "day3vday5",
+          "seed": 0
+        },
+        "cohort": "day3vday5|s0",
+        "n": 23,
+        "delta": 0.05108695652173914,
+        "lo": 0.008695652173913054,
+        "hi": 0.1
+      },
+      {
+        "config": {
+          "pair": "day3vday5",
+          "seed": 1
+        },
+        "cohort": "day3vday5|s1",
+        "n": 23,
+        "delta": 0.03695652173913043,
+        "lo": -0.0032608695652173894,
+        "hi": 0.08152173913043477
+      },
+      {
+        "config": {
+          "pair": "day3vday5",
+          "seed": 2
+        },
+        "cohort": "day3vday5|s2",
+        "n": 23,
+        "delta": 0.07608695652173912,
+        "lo": 0.0391304347826087,
+        "hi": 0.11956521739130431
+      }
+    ]
+  },
+  "log": [
+    "====================================================================================================",
+    "TIME vs NOISE on RENGE -- is the same knockout on another day a different answer, or the same one?",
+    "====================================================================================================",
+    "  PREDECLARED: ratio > 1 past bootstrap in a majority of cells => time restructures the response.",
+    "               ratio ~ 1 => the days are re-measurements. ratio < 1 => the floor is broken.",
+    "  day2: 4,710 cells, 23 knockouts, 246 controls",
+    "  day3: 6,091 cells, 23 knockouts, 374 controls",
+    "  day4: 7,582 cells, 23 knockouts, 498 controls",
+    "  day5: 6,910 cells, 23 knockouts, 435 controls",
+    "  candidate genes expressed in every day: 12,149 of 60,683",
+    "  day2 vs day5 seed0:  22 KOs, depth  66 cells  cross 0.8795  floor 0.7716  ratio 1.140",
+    "  day2 vs day5 seed1:  22 KOs, depth  66 cells  cross 0.8773  floor 0.7739  ratio 1.134",
+    "  day2 vs day5 seed2:  22 KOs, depth  66 cells  cross 0.8477  floor 0.7591  ratio 1.117",
+    "  day2 vs day4 seed0:  22 KOs, depth  66 cells  cross 0.8295  floor 0.7864  ratio 1.055",
+    "  day2 vs day4 seed1:  22 KOs, depth  66 cells  cross 0.8386  floor 0.7875  ratio 1.065",
+    "  day2 vs day4 seed2:  22 KOs, depth  66 cells  cross 0.8545  floor 0.7864  ratio 1.087",
+    "  day3 vs day5 seed0:  23 KOs, depth  82 cells  cross 0.7804  floor 0.7293  ratio 1.070",
+    "  day3 vs day5 seed1:  23 KOs, depth  82 cells  cross 0.7674  floor 0.7304  ratio 1.051",
+    "  day3 vs day5 seed2:  23 KOs, depth  82 cells  cross 0.7978  floor 0.7217  ratio 1.105",
+    "\n        pair     cross     floor    ratio",
+    "   day2vday5    0.8682    0.7682    1.130",
+    "   day2vday4    0.8409    0.7867    1.069",
+    "   day3vday5    0.7819    0.7272    1.075",
+    "         ALL                        1.091",
+    "\n  SWEEP cross-day - same-day disagreement   axes[pair,seed]  9 cells\n  config                       cohort         delta                 95% CI\n  pair=day2vday5 seed=0        day2vday5|s0   +0.1080 [ +0.0659, +0.1523] RES+\n  pair=day2vday5 seed=1        day2vday5|s1   +0.1034 [ +0.0580, +0.1523] RES+\n  pair=day2vday5 seed=2        day2vday5|s2   +0.0886 [ +0.0352, +0.1420] RES+\n  pair=day2vday4 seed=0        day2vday4|s0   +0.0432 [ -0.0034, +0.0943] ns\n  pair=day2vday4 seed=1        day2vday4|s1   +0.0511 [ +0.0193, +0.0830] RES+\n  pair=day2vday4 seed=2        day2vday4|s2   +0.0682 [ +0.0409, +0.0955] RES+\n  pair=day3vday5 seed=0        day3vday5|s0   +0.0511 [ +0.0087, +0.1000] RES+\n  pair=day3vday5 seed=1        day3vday5|s1   +0.0370 [ -0.0033, +0.0815] ns\n  pair=day3vday5 seed=2        day3vday5|s2   +0.0761 [ +0.0391, +0.1196] RES+\n  -> ROBUST   resolved +7/-0 of 9 (>= 6 needed), sign-consistent True",
+    "\n  READING",
+    "  A day changes the top-20 movers 1.091x as much as re-measuring the same day at the",
+    "  same depth does. Compare the cell-state gate on the three per-cell lines: RPE1 g2m 1.638,",
+    "  Jurkat s 1.370, HepG2 g2m 1.310 -- state moves the answer further than a day does, so the state",
+    "  effect is NOT time in disguise. Both are real; they are not the same axis."
+  ]
+}

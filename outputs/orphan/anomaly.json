@@ -1,0 +1,393 @@
+{
+ "n_map_nodes": 9561,
+ "decoupled": [
+  {
+   "a": "FBRS",
+   "b": "RFX7",
+   "codependency": 0.8,
+   "response_similarity": -0.01,
+   "ppi_bound": false
+  },
+  {
+   "a": "PET117",
+   "b": "COA6",
+   "codependency": 0.73,
+   "response_similarity": -0.06,
+   "ppi_bound": true
+  },
+  {
+   "a": "NDUFB3",
+   "b": "NDUFS1",
+   "codependency": 0.78,
+   "response_similarity": -0.0,
+   "ppi_bound": false
+  },
+  {
+   "a": "TERF1",
+   "b": "CD99",
+   "codependency": 0.69,
+   "response_similarity": -0.09,
+   "ppi_bound": false
+  },
+  {
+   "a": "MARS2",
+   "b": "HSD17B10",
+   "codependency": 0.8,
+   "response_similarity": 0.03,
+   "ppi_bound": false
+  },
+  {
+   "a": "UBR5",
+   "b": "OTUD5",
+   "codependency": 0.78,
+   "response_similarity": 0.01,
+   "ppi_bound": false
+  },
+  {
+   "a": "ADSL",
+   "b": "PAICS",
+   "codependency": 0.79,
+   "response_similarity": 0.03,
+   "ppi_bound": false
+  },
+  {
+   "a": "TFAM",
+   "b": "MRPL39",
+   "codependency": 0.65,
+   "response_similarity": -0.11,
+   "ppi_bound": false
+  },
+  {
+   "a": "NDUFA10",
+   "b": "NDUFS1",
+   "codependency": 0.81,
+   "response_similarity": 0.06,
+   "ppi_bound": false
+  },
+  {
+   "a": "PFDN1",
+   "b": "VBP1",
+   "codependency": 0.74,
+   "response_similarity": 0.0,
+   "ppi_bound": false
+  },
+  {
+   "a": "NDUFA1",
+   "b": "NDUFS1",
+   "codependency": 0.77,
+   "response_similarity": 0.03,
+   "ppi_bound": false
+  },
+  {
+   "a": "PRKDC",
+   "b": "FBRS",
+   "codependency": 0.71,
+   "response_similarity": -0.03,
+   "ppi_bound": false
+  },
+  {
+   "a": "LRPPRC",
+   "b": "MARS2",
+   "codependency": 0.71,
+   "response_similarity": -0.02,
+   "ppi_bound": false
+  },
+  {
+   "a": "MRPL21",
+   "b": "MRPS6",
+   "codependency": 0.78,
+   "response_similarity": 0.05,
+   "ppi_bound": false
+  },
+  {
+   "a": "CCNQ",
+   "b": "DEXI",
+   "codependency": 0.72,
+   "response_similarity": -0.01,
+   "ppi_bound": false
+  },
+  {
+   "a": "POLE3",
+   "b": "POLE4",
+   "codependency": 0.76,
+   "response_similarity": 0.03,
+   "ppi_bound": true
+  },
+  {
+   "a": "BCS1L",
+   "b": "UQCRC2",
+   "codependency": 0.75,
+   "response_similarity": 0.03,
+   "ppi_bound": true
+  },
+  {
+   "a": "NCAPD3",
+   "b": "NCAPH2",
+   "codependency": 0.72,
+   "response_similarity": 0.01,
+   "ppi_bound": true
+  },
+  {
+   "a": "NDUFA11",
+   "b": "NDUFS1",
+   "codependency": 0.77,
+   "response_similarity": 0.06,
+   "ppi_bound": false
+  },
+  {
+   "a": "SCD",
+   "b": "SCAP",
+   "codependency": 0.69,
+   "response_similarity": -0.02,
+   "ppi_bound": false
+  }
+ ],
+ "n_decoupled": 142,
+ "hidden_link": [
+  {
+   "a": "GLB1",
+   "b": "FBXL14",
+   "response_similarity": 0.76,
+   "codependency": -0.08
+  },
+  {
+   "a": "CCDC34",
+   "b": "AGRN",
+   "response_similarity": 0.71,
+   "codependency": -0.09
+  },
+  {
+   "a": "AQP10",
+   "b": "AGRN",
+   "response_similarity": 0.71,
+   "codependency": -0.03
+  },
+  {
+   "a": "MYB",
+   "b": "PTGR2",
+   "response_similarity": 0.69,
+   "codependency": -0.05
+  },
+  {
+   "a": "PTPN1",
+   "b": "LDB1",
+   "response_similarity": 0.56,
+   "codependency": -0.18
+  },
+  {
+   "a": "AGRN",
+   "b": "PPP1R14C",
+   "response_similarity": 0.78,
+   "codependency": 0.06
+  },
+  {
+   "a": "ATOX1",
+   "b": "GMNN",
+   "response_similarity": 0.77,
+   "codependency": 0.06
+  },
+  {
+   "a": "DMRTA1",
+   "b": "ATOX1",
+   "response_similarity": 0.72,
+   "codependency": 0.01
+  },
+  {
+   "a": "GATA1",
+   "b": "HMBOX1",
+   "response_similarity": 0.78,
+   "codependency": 0.08
+  },
+  {
+   "a": "C6orf136",
+   "b": "PPP1R14C",
+   "response_similarity": 0.69,
+   "codependency": -0.0
+  },
+  {
+   "a": "RNF31",
+   "b": "FBXL14",
+   "response_similarity": 0.71,
+   "codependency": 0.03
+  },
+  {
+   "a": "SDR39U1",
+   "b": "FBXL14",
+   "response_similarity": 0.72,
+   "codependency": 0.04
+  },
+  {
+   "a": "IMPA2",
+   "b": "FBXL14",
+   "response_similarity": 0.76,
+   "codependency": 0.09
+  },
+  {
+   "a": "STX1A",
+   "b": "AGRN",
+   "response_similarity": 0.54,
+   "codependency": -0.12
+  },
+  {
+   "a": "COX10",
+   "b": "AGRN",
+   "response_similarity": 0.6,
+   "codependency": -0.06
+  },
+  {
+   "a": "CLCN6",
+   "b": "AGRN",
+   "response_similarity": 0.72,
+   "codependency": 0.06
+  },
+  {
+   "a": "GSK3B",
+   "b": "MON1A",
+   "response_similarity": 0.58,
+   "codependency": -0.08
+  },
+  {
+   "a": "HEBP1",
+   "b": "KDM1A",
+   "response_similarity": 0.55,
+   "codependency": -0.1
+  },
+  {
+   "a": "STEAP3",
+   "b": "AGRN",
+   "response_similarity": 0.66,
+   "codependency": 0.01
+  },
+  {
+   "a": "CYREN",
+   "b": "SUPT20H",
+   "response_similarity": 0.58,
+   "codependency": -0.07
+  }
+ ],
+ "n_hidden": 196,
+ "compartment_outlier": [
+  {
+   "gene": "AASDHPPT",
+   "labeled_compartment": "cytoplasm",
+   "module_compartment": "mitochondrion",
+   "module_agreement": "7/10"
+  },
+  {
+   "gene": "ACTR6",
+   "labeled_compartment": "cytoskeleton",
+   "module_compartment": "nucleus",
+   "module_agreement": "8/10"
+  },
+  {
+   "gene": "ATP6V1E1",
+   "labeled_compartment": "plasma membrane",
+   "module_compartment": "membrane",
+   "module_agreement": "6/7"
+  },
+  {
+   "gene": "CMPK1",
+   "labeled_compartment": "nucleus",
+   "module_compartment": "cytoplasm",
+   "module_agreement": "7/10"
+  },
+  {
+   "gene": "DIS3",
+   "labeled_compartment": "cytoplasm",
+   "module_compartment": "nucleus",
+   "module_agreement": "8/10"
+  },
+  {
+   "gene": "EIF6",
+   "labeled_compartment": "cytoplasm",
+   "module_compartment": "nucleus",
+   "module_agreement": "7/10"
+  },
+  {
+   "gene": "ELP5",
+   "labeled_compartment": "nucleus",
+   "module_compartment": "cytoplasm",
+   "module_agreement": "8/10"
+  },
+  {
+   "gene": "EXOSC10",
+   "labeled_compartment": "cytoplasm",
+   "module_compartment": "nucleus",
+   "module_agreement": "8/10"
+  },
+  {
+   "gene": "FASTKD5",
+   "labeled_compartment": "nucleus",
+   "module_compartment": "mitochondrion",
+   "module_agreement": "10/10"
+  },
+  {
+   "gene": "GBF1",
+   "labeled_compartment": "Golgi",
+   "module_compartment": "nucleus",
+   "module_agreement": "7/10"
+  },
+  {
+   "gene": "GEMIN4",
+   "labeled_compartment": "cytoplasm",
+   "module_compartment": "nucleus",
+   "module_agreement": "8/10"
+  },
+  {
+   "gene": "GLRX3",
+   "labeled_compartment": "cytoplasm",
+   "module_compartment": "nucleus",
+   "module_agreement": "6/6"
+  },
+  {
+   "gene": "IGBP1",
+   "labeled_compartment": "cytoplasm",
+   "module_compartment": "nucleus",
+   "module_agreement": "8/10"
+  },
+  {
+   "gene": "INO80",
+   "labeled_compartment": "cytoplasm",
+   "module_compartment": "nucleus",
+   "module_agreement": "6/7"
+  },
+  {
+   "gene": "KRT17",
+   "labeled_compartment": "cytoplasm",
+   "module_compartment": "nucleus",
+   "module_agreement": "6/10"
+  },
+  {
+   "gene": "MBTPS2",
+   "labeled_compartment": "membrane",
+   "module_compartment": "ER",
+   "module_agreement": "6/7"
+  },
+  {
+   "gene": "MRPS27",
+   "labeled_compartment": "cytoplasm",
+   "module_compartment": "mitochondrion",
+   "module_agreement": "10/10"
+  },
+  {
+   "gene": "MTPAP",
+   "labeled_compartment": "cytoplasm",
+   "module_compartment": "mitochondrion",
+   "module_agreement": "8/10"
+  },
+  {
+   "gene": "MYBBP1A",
+   "labeled_compartment": "cytoplasm",
+   "module_compartment": "nucleus",
+   "module_agreement": "8/10"
+  },
+  {
+   "gene": "NDUFAF3",
+   "labeled_compartment": "nucleus",
+   "module_compartment": "mitochondrion",
+   "module_agreement": "10/10"
+  }
+ ],
+ "n_outliers": 92,
+ "verdict": "ONE of the three anomaly types survives scrutiny. (3) COMPARTMENT-OUTLIER is a REAL annotation-error detector: a gene whose whole co-dependency module sits in a different compartment than its label \u2014 FASTKD5 labeled nucleus but its module is mitochondrial 10/10 (FASTKD5 IS a mito RNA-processing protein), ACTR6 labeled cytoskeleton but nuclear (it's an INO80 chromatin-remodeller subunit), ELP5 nuclear\u2192cytoplasm (Elongator is cytoplasmic), DIS3/EXOSC10 cytoplasm\u2192nucleus (nuclear exosome). The module CORRECTS the label. (1) DECOUPLED and (2) HIDDEN-LINK are CONFOUND-DOMINATED and NOT trustworthy: even after controls, decoupled is mostly mitochondrial/metabolic complex-mates (PET117~COA6, NDUF* complex I) whose K562 knockdown responses are weak \u2014 weak signal reads as 'decoupled', not biology; hidden-link is spurious correlations between weak responders plus shared erythroid-lineage signal (K562). Root cause: the measured Perturb-seq response in K562 is dominated by response MAGNITUDE and the proliferation/stress axis, so 'structure vs measured response' disagreement mostly measures assay signal quality, not biology \u2014 the same structure(recoverable)-vs-dynamics(noisy) split seen throughout. Trust the cross-ANNOTATION anomaly (compartment vs module), not the perturbation one."
+}

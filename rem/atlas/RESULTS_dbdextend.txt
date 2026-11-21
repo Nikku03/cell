@@ -1,0 +1,71 @@
+=================================================================================================
+RECOVERING DNA-BINDING REGIONS FOR THE REST OF THE REGULATORS
+=================================================================================================
+  20,190 reviewed entries parsed for DNA_BIND + ZN_FING + DOMAIN coordinates
+
+=================================================================================================
+R1  BLOCKING VALIDATION, IN BOTH DIRECTIONS
+=================================================================================================
+   PASS  SP1 recovered via C2H2 zinc fingers              [(626, 650), (656, 680)]
+   PASS  JUN recovered via bZIP domain                    [(252, 315)]
+   PASS  TP53 DNA_BIND unchanged (102..292)               [(102, 292)]
+   PASS  DAND5 CTCK REJECTED                              []
+   PASS  ACAP1 Arf-GAP C4-type REJECTED                   []
+   PASS  ADAP1 Arf-GAP C4-type REJECTED                   []
+   PASS  AGAP2 Arf-GAP C4-type REJECTED                   []
+   PASS  NR3C1 NR C4-type still accepted                  [(421, 441)]
+   PASS  GATA1 GATA-type still accepted                   [(204, 228)]
+   PASS  no PHD/RING/LIM/FYVE admitted anywhere           []
+
+  R1: PASS -- recovers the positives, rejects every named negative control
+
+=================================================================================================
+R0  THE CEILING GATE, AGAINST THE HONEST DENOMINATOR
+=================================================================================================
+  all signed-edge regulators               4,320
+     with a positioned DBD  before/after     467 -> 1,065
+
+  CREDIBLE TFs among them (corrob >=2)     1,231   <- the honest denominator
+     with a positioned DBD  before           449   36.5%
+     with a positioned DBD  after            902   73.3%
+     LIFT                                  +36.8 points
+
+  R0: PASS against the predeclared 10-point bar
+
+=================================================================================================
+R2  WHAT IT BUYS ON ISOEDGE'S OWN TERMS
+=================================================================================================
+                                     before      after
+    eligible regulators                 123        294
+    eligible signed edges             8,769     13,827
+    % of all signed edges             12.3%      19.5%
+    isoform space removed             32.1%      36.2%
+
+  R2: eligible edges 8,769 -> 13,827  (1.58x)
+
+=================================================================================================
+R3  THE LEAK CHECK, MEASURED
+=================================================================================================
+  genes gaining a DBD only from the extension    1,093
+  ...that NO source calls a TF                     632   57.8%
+  examples: ['AHSG', 'AKAP8', 'AKAP8L', 'ANKZF1', 'APTX', 'ARHGEF18', 'ARID3C', 'ASCL5', 'ATMIN', 'BACC1']
+  These are the whitelist's false-positive exposure. C2H2 zinc fingers in particular
+  occur in many proteins that are not sequence-specific TFs, so this number is expected
+  to be large and is reported rather than filtered away. Claims from this module should
+  be restricted to the credible-TF subset above.
+
+  artifact: outputs/dbd_regions.json  (1,704 proteins)
+
+=================================================================================================
+R4  WHAT THIS DOES NOT SETTLE
+=================================================================================================
+  1. A name-matched whitelist is weaker evidence than UniProt's curated DNA_BIND feature.
+     The two are tagged separately in the artifact so a consumer can use only the first.
+  2. Zinc fingers are the main source of the lift AND the main source of leak; C2H2 arrays
+     appear in RNA-binding and protein-interaction roles too.
+  3. Coverage is still bounded by UniProt curation. Proteins with no positioned domain of
+     any kind remain ineligible however clearly they regulate transcription.
+  4. Everything isoedge could not settle is still unsettled: an intact DBD is necessary,
+     not sufficient, and the target side of every edge remains unresolved.
+
+  runtime 3.2s

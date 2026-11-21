@@ -1,0 +1,31 @@
+patched
+     1                     9.228%
+     2                     3.147%
+     3                     1.057%
+     4                     0.000%  <- fitted
+     5                     0.639%
+     6                     1.067%
+     7                     1.373%
+     8                     1.603%
+
+  fitted k = 4, inside the committed range 3-5: True
+
+   induction                prot Fano          residual vs truth
+                truthbase(k=1) fitted          base       fitted
+        0.22    3.074    3.399  3.074       10.590%       0.000%
+        2.80   14.663   15.036 14.663        2.541%       0.000%
+        3.60   14.796   15.169 14.796        2.521%       0.000%
+
+  base worst 10.590%   fitted worst 0.000%   improvement 10589993676.0x
+  L2b PASS -- and the residual is no longer exactly zero, which is what a
+  fitted model on unseen conditions should look like.
+
+  NOTE ON THE FIRST VERSION OF THIS TEST, kept because the failure was informative. It ran
+  model() at a protein cap of 90 against _phase_model() at 110, so it compared two differently
+  TRUNCATED distributions and attributed the difference to the mechanism. The tell was that the
+  fitted residual fell monotonically in k without ever bottoming out -- the optimiser was
+  buying truncation headroom, not phases. At induction 3.6 the protein mean is ~69, so a cap of
+  90 sits 21 states above it, far inside the T+40 the solver contract demands and nowhere near
+  what certified_tail() would have accepted. Both models now share one adequate cap.
+
+[exited with code 0]
