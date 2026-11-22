@@ -1,0 +1,42 @@
+{
+ "built": "2026-11-22",
+ "families": {
+  "BODY": {
+   "cells": 841,
+   "proteins_universe": 18979,
+   "median_proteins_per_cell": 1526.0,
+   "interacting_same_room_pairs": 32156,
+   "complexes": 2136,
+   "median_complete_machines": 45.0,
+   "pathways": 1713
+  },
+  "LINES": {
+   "cells": 4,
+   "proteins_universe": 19215,
+   "median_proteins_per_cell": 11495.5,
+   "interacting_same_room_pairs": 32157,
+   "complexes": 2134,
+   "median_complete_machines": 1384.0,
+   "pathways": 1714
+  },
+  "CANCER": {
+   "cells": 1673,
+   "proteins_universe": 18980,
+   "median_proteins_per_cell": 11503.0,
+   "interacting_same_room_pairs": 32155,
+   "complexes": 2135,
+   "median_complete_machines": 1398.0,
+   "pathways": 1713
+  }
+ },
+ "layers": {
+  "ACTIVE_GENES_CELLTYPE": "LAYER-ACTIVE_GENES_CELLTYPE/eaa2f0ac3e1d65165036",
+  "GENE_INFLUENCE_K562": "LAYER-GENE_INFLUENCE_K562/14b41e1cedd3ffe4a5c5",
+  "GENE_COEXPRESSION_TF": "LAYER-GENE_COEXPRESSION_TF/97fbe9960e3cb63c875a",
+  "COMPLEXPORTAL_HUMAN_TSV": "LAYER-COMPLEXPORTAL_HUMAN_TSV/765a2bf2b057a6846666",
+  "CELLMAP_BODY": "LAYER-CELLMAP_BODY/d0d7d9f23dd76d7a2101",
+  "CELLMAP_LINES": "LAYER-CELLMAP_LINES/fdf60009c2462a1ad4f3",
+  "CELLMAP_CANCER": "LAYER-CELLMAP_CANCER/fa559cc4e263780cf35a"
+ },
+ "facts_written": 2524
+}
