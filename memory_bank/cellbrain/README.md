@@ -159,3 +159,20 @@ In total, 44,082 facts and 16 layers were added.
 - **Fact `cellmap/summary`** on `CELL-<family>-<id>`: proteins per room, complete and nearly complete machines (with the missing parts), core and distinctive jobs, distinctive proteins, hubs, backups.
 - **Also banked:** the G1 layers, and the Complex Portal human file.
 - **Test G7-M1 (a complete machine needs its parts):** FAIL. RNA presence is too coarse for this in general. Some machines show it, for example cFLIP-CASP8-FADD.
+
+## Limits fixed where possible (fixbank, cellfix G8, cellmap2; 2026-11-23)
+
+- **New layers:**
+  - Protein: `PROT_PROCAN`, `PROT_CCLE` (local), `PROT_HPA_IHC`.
+  - Deeper RNA: `EXPR_HPA_SCT`.
+  - Interactions and pathways: `PPI_BIOPLEX` (local), `PATH_PROGENY` (local).
+  - Timing: `TIMING_HPA_CCD`.
+  - Maps: `CELLMAP_DEEP`, `CELLMAP_CANCERPROT`, `PROTEIN_OFFSET_PROCAN`.
+- **Tests:**
+  - **PASS:** protein from RNA in cancer lines (0.46 → 0.84); deeper RNA finds real proteins; jobs of unknown proteins from neighbours (AUROC 0.77).
+  - **FAIL:** protein offsets in tissues; partners by cell line (just under the bar); TF on/off in general (39 TFs confirmed); machine tests with protein.
+- **New facts:**
+  - Cell summaries: `CELL-DEEP-*` (with `tf_on`, `pathways`, `protein_stain`, `cell_cycle_varying`) and `CELL-CANCERPROT-*`.
+  - Gene facts: `protein/per_rna_offset_cancer_lines`, `predict/job_from_neighbours`, `partners/bioplex_by_cell_line`.
+  - Complex facts: `COMPLEX-*` `machine/protein_comovement`.
+- **The completed list of limits:** see `rem/atlas/RESULTS_TWOPROBLEMS.txt`.

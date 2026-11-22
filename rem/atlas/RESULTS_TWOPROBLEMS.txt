@@ -6419,3 +6419,56 @@ CELLMAP -- EVERY CELL MAPPED DOWN TO SINGLE PROTEINS (G7)
          (TPM >= 1) is too coarse to say whether a machine is built in a cancer line. Some machines do show it strongly:
          cFLIP-CASP8-FADD (-0.26; CFLAR is needed where CASP8 is made -- a known dependency), ESCRT-I variants (-0.18),
          Na/K-ATPase FXYD variants (-0.12), PAR polarity complex (-0.11).
+
+=================================================================================================
+FIXING THE CELL-MAP LIMITS: PUBLIC DATA (fixbank), TESTED FIXES (cellfix G8), MAPS REBUILT (cellmap2)
+=================================================================================================
+  Asked: "first add public available info, then the yes things, then complete the list".
+  DATA ADDED (fixbank.py, committed before it ran): ProCan-DepMapSanger protein, 949 cancer lines x 8,448 proteins (CC BY
+  4.0); CCLE protein, 375 x 12,186 (local only); HPA tissue immunohistochemistry, 13,276 genes x 248 tissue cell types;
+  HPA single-cell-type pseudobulk RNA, 155 types (median 12,721 genes each vs ~1,500 seen per CELLxGENE type); BioPlex
+  interactions measured in HEK293T (117,474) and HCT116 (70,591) (local only); PROGENy, 14 pathway footprints (local
+  only); HPA cell-cycle dependence (761 proteins).
+  TESTS (cellfix.py committed, controls-only trial, declared, one run):
+  G8-P1 protein from RNA, cancer lines   PASS. Per-gene protein/RNA offset learned on DEV lines: on 345 EXAM lines,
+         Spearman across genes RNA alone 0.46 -> RNA + offset 0.84 (every line better). Controls fine.
+  G8-P2 the same offsets in body tissues   FAIL. Against HPA staining levels in 21 matched cell types the offset made
+         it worse (median 0.38 -> 0.29; 1 of 18 better). Staining intensity is antibody-dependent and not comparable
+         across genes; offsets are used for cancer lines only.
+  G8-D1 deeper RNA finds real proteins   PASS. Genes made in the deep pseudobulk RNA but outside a cell type's top
+         1,500 have their protein stained 6.1x more often than genes not made (CMH; random 1.0, p_MC 0.005). Stained:
+         top 1,500 ~70%, deep-only ~60%, not made ~20%.
+  G8-I1 partners depend on the cell   FAIL (right direction, under the bar). BioPlex pairs seen only in HCT116 have
+         their less-made partner relatively more made in HCT116 than pairs seen only in HEK293T: 0.0186 percentile
+         units (bar 0.02), Mann-Whitney p 4e-51, none of 1,000 permutations reached it.
+  G8-A1 on / off from targets   FAIL. Knocking a TF down lowers its target-based activity: mean AUROC 0.536 (bar
+         0.60; random 0.499, p_MC 0.01). Works well for some TFs (39 of 287 at AUROC >= 0.9: SREBF2, NFE2, KLF2,
+         MYBL2, TFDP1, ZNF148, BHLHE40, ...), not in general (most TF knockdowns barely move their targets in K562).
+  G8-U1 jobs of unknown proteins from neighbours   PASS. Held-out genes' Reactome pathways recovered from DepMap,
+         ProCan, HPA RNA and K562 knockdown neighbours: median AUROC 0.77 over 1,556 pathways (73% >= 0.7; random
+         0.50). Best: nucleotide synthesis, proteasome, mitochondrial translation (~1.0); worst: signalling and
+         transporter pathways (~0.4).
+  G8-M1 machines with protein   FAIL. Parts needed more where the machine is complete by protein: median -0.002 (53%;
+         sign p 0.0007) but under the bar and within random (p_MC 0.13).
+  G8-M2 machines move together as protein   FAIL as declared. Parts co-vary strongly as protein (median r 0.23 vs
+         0.02 for random genes; p_MC 0.005) but equally as RNA (0.24), so protein adds nothing over RNA here.
+  MAPS REBUILT (cellmap2.py; descriptive, each part labelled with its test): 155 deep HPA cell types (median 12,591
+  proteins; hepatocytes ALB, APOC3, fibrinogen; NR5A2 on; macrophages NF-kB on), with protein-stain checks; 949 cancer
+  lines by measured protein (median 5,205 detected); protein/RNA offsets as gene facts (cancer lines only); TF on/off
+  only for the 39 confirmed TFs; PROGENy pathways (not tested here); predicted jobs and neighbours for 7,157 proteins
+  with none known (e.g. CCDC124 -> ribosome, POLDIP2 -> mitochondria, YBX2 -> reproduction); protein co-movement for
+  1,297 machines; BioPlex partners by line; cell-cycle-varying proteins per cell. 32,415 facts. Page updated.
+  THE LIST, COMPLETED:
+   1 RNA not protein ....... FIXED for 947 cancer lines (measured) and estimable for RNA-only cancer lines (P1); NOT
+                             fixed for body cell types (P2 failed; needs quantitative tissue/cell-type proteomics).
+   2 only busy genes ....... FIXED for 155 cell types (deep RNA, D1 passed); the 841 single-cell types still see the top.
+   3 partners from few cells PARTLY: interactions measured in 2 lines added; the made-in-that-cell rule holds weakly
+                             (I1 under the bar). Needs interaction maps in more cell types (lab).
+   4 timing .............. PARTLY: cell-cycle-varying proteins flagged; real timing needs time courses per cell type
+                             (lab, or public time-course sets one cell type at a time).
+   5 on/off switches ...... PARTLY: target-based readout trusted for 39 TFs; pathway footprints added untested; direct
+                             modification data (phosphoproteomics) not added; needs per-cell-type measurement.
+   6 unknown proteins ..... FIXED as predictions (U1 passed) for 7,157 proteins; each needs lab confirmation.
+   7 is the machine built . NOT FIXED: neither RNA nor protein presence predicts parts being needed together (M1); parts
+                             do move together (M2), equally in RNA and protein. Needs assembly measurements (e.g.
+                             co-fractionation, native mass spectrometry) per cell type.
