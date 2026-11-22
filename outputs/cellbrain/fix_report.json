@@ -1,0 +1,81 @@
+{
+ "added": "2026-11-22",
+ "facts_written": 13,
+ "layers": {
+  "FIX_RAW_PROCAN": "LAYER-FIX_RAW_PROCAN/b5a90751a6e6639e400a",
+  "FIX_RAW_CCLE_PROT": "LAYER-FIX_RAW_CCLE_PROT/26a1c6ca7a1945e4b4b0",
+  "FIX_RAW_HPA_IHC": "LAYER-FIX_RAW_HPA_IHC/4064121fa6cf93fe57ee",
+  "FIX_RAW_HPA_SCT": "LAYER-FIX_RAW_HPA_SCT/50704e30f623183f6e6c",
+  "FIX_RAW_BIOPLEX": "LAYER-FIX_RAW_BIOPLEX/67b8d47f7aeea300e145",
+  "FIX_RAW_PROGENY": "LAYER-FIX_RAW_PROGENY/7caba57e0221279c0eb1",
+  "PROT_PROCAN": "LAYER-PROT_PROCAN/0dbb9b10ffae4bcc0e02",
+  "PROT_CCLE": "LAYER-PROT_CCLE/2e6df0e66d30b252a908",
+  "PROT_HPA_IHC": "LAYER-PROT_HPA_IHC/d3022a73eb8e021776ea",
+  "EXPR_HPA_SCT": "LAYER-EXPR_HPA_SCT/5002207070329f7391cd",
+  "PPI_BIOPLEX": "LAYER-PPI_BIOPLEX/289071312f0a581823d0",
+  "PATH_PROGENY": "LAYER-PATH_PROGENY/1aeeb07d209945b3e5ea",
+  "TIMING_HPA_CCD": "LAYER-TIMING_HPA_CCD/ec4eff48afaf37d877a6"
+ },
+ "build": {
+  "procan": {
+   "lines": 949,
+   "lines_with_modelid": 947,
+   "proteins": 8448,
+   "finite_share": 0.6135923330379666
+  },
+  "ccle_prot": {
+   "lines": 375,
+   "lines_with_modelid": 375,
+   "proteins": 12186,
+   "finite_share": 0.7308213797253679
+  },
+  "hpa_ihc": {
+   "rows": 1179296,
+   "genes": 13276,
+   "tissue_cell_types": 248,
+   "detected_share": 0.5239354665834531
+  },
+  "hpa_sct": {
+   "genes": 20162,
+   "cell_types": 155,
+   "median_genes_ge1_per_type": 12721.0
+  },
+  "bioplex": {
+   "HEK293T": 117474,
+   "HCT116": 70591
+  },
+  "progeny": {
+   "rows": 232918,
+   "pathways": [
+    "Androgen",
+    "EGFR",
+    "Estrogen",
+    "Hypoxia",
+    "JAK-STAT",
+    "MAPK",
+    "NFkB",
+    "PI3K",
+    "TGFb",
+    "TNFa",
+    "Trail",
+    "VEGF",
+    "WNT",
+    "p53"
+   ],
+   "genes": 18506
+  },
+  "timing": {
+   "genes": 2043,
+   "ccd_protein_yes": 761,
+   "ccd_transcript_yes": 530
+  }
+ },
+ "licences": {
+  "procan": "CC BY 4.0",
+  "ccle_prot": "unclear (local only)",
+  "hpa_ihc": "CC BY-SA 3.0",
+  "hpa_sct": "CC BY-SA 3.0",
+  "bioplex": "unclear (local only)",
+  "progeny": "academic (local only)"
+ }
+}
