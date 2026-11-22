@@ -222,8 +222,8 @@ def mc_l2(G):
         r = np.random.default_rng(SEED + 1 + b); nu = len(tfs)
         mult = np.bincount(r.integers(0, nu, nu), minlength=nu)[unit]; idx = np.repeat(np.arange(len(ind)), mult)
         stb = q5(zz[idx]) * 5 + q5(aa[idx]); ob, pb = gx.cmh(~ind[idx], inct[idx], stb); ors.append(ob)
-        pick = r.choice(NULL_L2, 20, replace=False); so = [gx.cmh(~IS[k][idx], inct[idx], stb)[0] for k in pick]
-        gm = float(np.exp(np.mean(np.log(np.clip(so, 1e-6, 1e6))))); pe = (1 + sum(x >= ob for x in so)) / 21
+        pick = r.choice(NULL_L2, min(20, NULL_L2), replace=False); so = [gx.cmh(~IS[k][idx], inct[idx], stb)[0] for k in pick]
+        gm = float(np.exp(np.mean(np.log(np.clip(so, 1e-6, 1e6))))); pe = (1 + sum(x >= ob for x in so)) / (1 + len(so))
         real_ok = ob >= 1.5 and pb < 0.05 and pe < 0.05; ctrl_ok = 0.67 <= gm <= 1.5      # planted is fixed by construction (100% in G2)
         fails.append(not (real_ok and ctrl_ok))
     share = float(np.mean(fails))
