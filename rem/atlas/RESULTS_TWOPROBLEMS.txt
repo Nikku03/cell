@@ -6269,3 +6269,23 @@ GENEREGX -- HOW GENE-TO-GENE INFLUENCE CHANGES WITH CELL TYPE, AND AT WHAT LEVEL
          written (xcell/*); outputs/genereg/xcell_*, k562_direct_indirect.json.gz, tf_hierarchy_k562.json.
   NOT: four cell lines, not body cell types; essential-gene knockdowns (few cell-type TFs); DESeq2 calls many small
   effects; gene-level TSS can be wrong for genes with readthrough annotations.
+
+=================================================================================================
+GENEREGMC -- MONTE CARLO CHECKS ON THE G2 VERDICTS (MC; asked: "run monte carlo to rule out the randomness")
+=================================================================================================
+  generegmc.py committed and the four MC claims declared before the run; NOT blind (G2 outcomes were known), thresholds
+  fixed in the file. Two checks per claim on the same data and rules: CHANCE (the statistic on scrambled data many
+  times) and STABILITY (200 runs, each with fresh seeds for every random draw and a bootstrap re-draw of knockdowns or
+  TFs, the full declared gate re-applied). All four verdicts are STABLE:
+  MC-X1 (G2 PASS) STABLE PASS. 10,000 coin-flip nulls per cell type: none reached the real gap (p_MC 0.0001, the
+         floor) -- RPE1 0.71 vs chance 95th percentile 0.45, HepG2 0.65 vs 0.42, Jurkat 0.36 vs 0.23. Gate passed in
+         200/200 re-drawn runs; median gap 95% RPE1 0.68-0.78, HepG2 0.62-0.68, Jurkat 0.34-0.39.
+  MC-X2 (G2 FAIL) STABLE FAIL. Mean Spearman -0.040 vs chance 95th percentile 0.035 (p_MC 0.97, 10,000 draws); failed
+         in 200/200 runs; 95% -0.079 to 0.001. No sign of "more expressed -> more influence" in any re-draw.
+  MC-L1 (G2 PASS) STABLE PASS. Median gain 0.030 (all 391,395 links) vs chance 95th percentile 0.0007, chance maximum
+         0.0013 (p_MC 0.005, the floor for 200 draws); passed in 200/200 runs; 95% 0.024-0.036. The dose effect is
+         real but small, as G2 said (raw effect still spreads less than per-unit effect).
+  MC-L2 (G2 FAIL) STABLE FAIL. MH OR 0.87 vs 1,000 shuffled-mediator ORs (median 1.01, 95th percentile 1.29; p_MC
+         0.83); failed in 200/200 runs; 95% 0.64-1.24.
+  Reading: none of the four verdicts is a product of chance draws or of which genes happened to be in the screens.
+  NOT: Monte Carlo cannot remove a bias shared by the whole dataset (lab, cell lines, DESeq2, the TSS quirk in L2).

@@ -104,3 +104,7 @@ In total, 44,082 facts and 16 layers were added.
   - `xcell/targets_*` and `xcell/regulators_*` (everywhere, flips_sign, only_<line>, with log2 fold change and effect per unit of knockdown);
   - `xcell/k562_direct_targets`, `k562_indirect_targets` (with the middle gene);
   - `xcell/tf_hierarchy_k562`.
+- **Monte Carlo check (generegmc, 2026-11-22):** all four G2 verdicts are stable.
+  - Chance runs: 10,000 / 10,000 / 200 / 1,000 scrambled-data runs. Chance never matched the two passes (p 0.0001 and 0.005) and easily matched the two fails (p 0.97 and 0.83).
+  - Re-drawn runs: each verdict was the same in 200 of 200 runs (fresh random seeds plus re-sampled genes).
+  - Bank facts: `montecarlo` on `CLAIM-G2-X1` … `CLAIM-G2-L2`.
