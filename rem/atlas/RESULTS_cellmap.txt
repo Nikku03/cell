@@ -1,0 +1,4 @@
+=================================================================================================
+CELLMAP -- every cell down to single proteins; G7-M1 complete machines need their parts
+=================================================================================================
+  G7-M1: 2,317 machine parts in 1248 machines over 1,103 cancer lines: median d 0.001 (share more needed when complete 0.49, sign p 0.72); random stand-ins median -0.000, p_MC 0.83 -> FAIL

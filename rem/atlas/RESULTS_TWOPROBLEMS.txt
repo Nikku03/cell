@@ -6398,3 +6398,24 @@ GENEREGC -- ONE PREDICTOR FROM ALL THREE CLUES: STRENGTH + PARTNERS + SUBSTITUTE
   substitute adds a little. In the four screened cell types the combined predictor beats the generic guess but adds
   only a little over strength alone (clear gains in the blood lines K562 and Jurkat, none in RPE1). Substitutes are a
   weak clue in both arenas (few genes have a usable one).
+
+=================================================================================================
+CELLMAP -- EVERY CELL MAPPED DOWN TO SINGLE PROTEINS (G7)
+=================================================================================================
+  Asked: with which genes are active in which cell, what each gene does, protein amounts and interactions, map every
+  cell down to single proteins -- "yes build it". cellmap.py (committed before it ran) builds, per cell: proteins made,
+  their rooms, active partners (interacting + both made + shared room, the G4 rule), complete / nearly complete
+  machines (Complex Portal), jobs (Reactome; core and distinctive), backups (closest paralog also made). Cells: 841 body
+  cell types (CELLxGENE; median 1,526 proteins seen per type), 4 screened lines and 1,673 cancer lines (median ~11,500
+  proteins, ~1,390 of ~2,135 machines complete). The maps read like the textbook: hepatocyte ALB, fibrinogen, APOB,
+  complement C5b6 complete, drug and steroid metabolism; B cell CD79A, MS4A1, HLA-DQ, BCR signalling; erythroblast
+  haemoglobins, AHSP, haem synthesis, erythrocyte spectrin complex; cardiac muscle RYR2, TTN, TNNT2, troponin complete,
+  cardiac conduction; neuron synaptic proteins, GABA-A receptors complete; T cell CD3, IL7R, TCR signalling, CD8.
+  Also banked the G1 layers (ACTIVE_GENES_CELLTYPE, GENE_INFLUENCE_K562, GENE_COEXPRESSION_TF) that had been saved but not
+  registered. 2,518 cell summary facts (CELL-BODY-*, CELL-LINES-*, CELL-CANCER-*); outputs/cellmap.
+  G7-M1 a complete machine needs its parts (1,103 cancer lines)   FAIL. 2,317 parts of 1,248 machines: being needed
+         where the machine is complete minus where a part is missing, median +0.001 (49% more needed when complete;
+         sign p 0.72); random level-matched stand-ins -0.000 (p_MC 0.83). Controls fine. No general effect: RNA presence
+         (TPM >= 1) is too coarse to say whether a machine is built in a cancer line. Some machines do show it strongly:
+         cFLIP-CASP8-FADD (-0.26; CFLAR is needed where CASP8 is made -- a known dependency), ESCRT-I variants (-0.18),
+         Na/K-ATPase FXYD variants (-0.12), PAR polarity complex (-0.11).

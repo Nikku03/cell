@@ -1,0 +1,182 @@
+{
+ "lines": 1103,
+ "complexes": 1248,
+ "items": 2317,
+ "median_d": 0.0006705671548843384,
+ "share_negative": 0.4941735002157963,
+ "p_sign": 0.7196091200858992,
+ "null_median": -1.146271824836731e-05,
+ "null_5": -0.0012105286819860338,
+ "p_mc": 0.8258706467661692,
+ "passed": false,
+ "negative": {
+  "median_d": -0.0005617719143629074,
+  "p_sign": 0.18457440265313016,
+  "p_mc": 0.23,
+  "passed": false
+ },
+ "planted": {
+  "median_d": -0.049329432845115664,
+  "passed": true
+ },
+ "most_needed_when_complete": [
+  {
+   "machine": "cFLIP-CASP8-FADD complex",
+   "median_d": -0.261,
+   "parts": [
+    "CFLAR",
+    "CASP8",
+    "FADD"
+   ]
+  },
+  {
+   "machine": "ESCRT-I complex, VPS37B-UBAP1 variant",
+   "median_d": -0.178,
+   "parts": [
+    "TSG101",
+    "VPS37B",
+    "VPS28",
+    "UBAP1"
+   ]
+  },
+  {
+   "machine": "ESCRT-I complex, VPS37B-MVB12A variant",
+   "median_d": -0.175,
+   "parts": [
+    "TSG101",
+    "VPS37B",
+    "MVB12A",
+    "VPS28"
+   ]
+  },
+  {
+   "machine": "Sodium:potassium-exchanging ATPase complex, FXYD3 variant",
+   "median_d": -0.122,
+   "parts": [
+    "FXYD3",
+    "ATP1B1",
+    "ATP1A1"
+   ]
+  },
+  {
+   "machine": "PAR cell polarity complex, PARD6B-PRKCZ variant",
+   "median_d": -0.11,
+   "parts": [
+    "PRKCZ",
+    "PARD6B",
+    "PARD3"
+   ]
+  },
+  {
+   "machine": "PAR cell polarity complex, PARD6B-PRKCI variant",
+   "median_d": -0.096,
+   "parts": [
+    "PARD6B",
+    "PARD3",
+    "PRKCI"
+   ]
+  },
+  {
+   "machine": "Sodium:potassium-exchanging ATPase complex, FXYD5 variant",
+   "median_d": -0.093,
+   "parts": [
+    "FXYD5",
+    "ATP1B1",
+    "ATP1A1"
+   ]
+  },
+  {
+   "machine": "Serine palmitoyltransferase complex, SPTLC1-SPTLC3-SPTSSA variant",
+   "median_d": -0.075,
+   "parts": [
+    "SPTLC1",
+    "SPTSSA",
+    "SPTLC3"
+   ]
+  },
+  {
+   "machine": "Brain-specific SWI/SNF ATP-dependent chromatin remodeling complex, ARID1B-SMARCA4 variant",
+   "median_d": -0.074,
+   "parts": [
+    "ARID1B",
+    "SMARCE1",
+    "ACTB",
+    "ACTL6B",
+    "SMARCB1",
+    "SMARCD2",
+    "SMARCA4",
+    "SMARCC2"
+   ]
+  },
+  {
+   "machine": "20S immunoproteasome complex",
+   "median_d": -0.072,
+   "parts": [
+    "PSMB1",
+    "PSMA4",
+    "PSMA3",
+    "PSMA6",
+    "PSMA7",
+    "PSMA2",
+    "PSMB2",
+    "PSMA1"
+   ]
+  },
+  {
+   "machine": "Sodium:potassium-exchanging ATPase complex, FXYD2 variant",
+   "median_d": -0.068,
+   "parts": [
+    "FXYD2",
+    "ATP1B1",
+    "ATP1A1"
+   ]
+  },
+  {
+   "machine": "Sodium:potassium-exchanging ATPase complex, FXYD4 variant",
+   "median_d": -0.065,
+   "parts": [
+    "ATP1B1",
+    "FXYD4",
+    "ATP1A1"
+   ]
+  },
+  {
+   "machine": "Vacuolar proton translocating ATPase complex, ATP6V0A3 variant",
+   "median_d": -0.065,
+   "parts": [
+    "ATP6V1H",
+    "ATP6AP1",
+    "ATP6V1D",
+    "TCIRG1",
+    "ATP6V1A",
+    "ATP6V0B",
+    "ATP6V1F",
+    "ATP6AP2"
+   ]
+  },
+  {
+   "machine": "Little elongation complex, ELL2 variant",
+   "median_d": -0.065,
+   "parts": [
+    "ELL2",
+    "ICE2",
+    "ZC3H8",
+    "ICE1"
+   ]
+  },
+  {
+   "machine": "Ripoptosome",
+   "median_d": -0.061,
+   "parts": [
+    "CASP8",
+    "RIPK1",
+    "FADD"
+   ]
+  }
+ ],
+ "gate": {
+  "real": false,
+  "controls_ok": true,
+  "verdict": "FAIL"
+ }
+}

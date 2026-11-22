@@ -150,3 +150,12 @@ In total, 44,082 facts and 16 layers were added.
   - The substitute adds little: +0.005 among genes that have one.
 - **The four screened cell types:** FAIL. The combined predictor beats the generic guess (0.34 → 0.41 pooled) but adds only +0.007 over strength alone. Clear gains in K562 and Jurkat.
 - **Claim facts:** `combined_predictor_test` on `CLAIM-G6-*`.
+
+## Cell maps down to single proteins (cellmap, 2026-11-22)
+
+- **Layers:** `CELLMAP_BODY` (841 cell types), `CELLMAP_LINES` (4), `CELLMAP_CANCER` (1,673).
+- **Per protein and cell:** made or not, room, number of active partners (interacting + both made + same room), estimated log2 amount.
+- **Per cell:** complex completeness.
+- **Fact `cellmap/summary`** on `CELL-<family>-<id>`: proteins per room, complete and nearly complete machines (with the missing parts), core and distinctive jobs, distinctive proteins, hubs, backups.
+- **Also banked:** the G1 layers, and the Complex Portal human file.
+- **Test G7-M1 (a complete machine needs its parts):** FAIL. RNA presence is too coarse for this in general. Some machines show it, for example cFLIP-CASP8-FADD.
