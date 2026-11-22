@@ -185,6 +185,13 @@ def build_family(fam, genes, cids, cnames, extra, P, LV, K):
     lp = np.array([K["ptr"].get(gg, K["ptr_med"]) for gg in U], np.float32)
     est = np.log2(np.maximum(LV, 0) + 1e-3) + lp[:, None]
     H = cbb.hgnc(); sym = np.array([H["e2s"].get(gg, gg) for gg in U])
+    lvl = np.log2(np.maximum(LV, 0) + 1e-3)                                            # display order: measured RNA level
+    freq = P.mean(1); rare = freq <= 0.30                                              # made in <= 30% of the family's cells
+    Pd = (P & rare[:, None]).astype(np.float32); Nd = int(rare.sum())
+    hit_d = np.asarray(W.T.dot(Pd)).T; Kd = np.asarray(W.T.dot(rare.astype(np.float32))).ravel(); nd = Pd.sum(0)
+    pv_d = hypergeom.sf(hit_d - 1, max(Nd, 1), Kd[None, :], nd[:, None])
+    comp_freq = (frac >= 1.0).mean(0)                                                  # share of cells where each machine is complete
+    cnames_c = [K["names"].get(c, c) for c in cids_c]; base = [n.split(",")[0].strip() for n in cnames_c]
     summaries = {}
     for c in range(nC):
         pres = np.nonzero(P[:, c])[0]
@@ -194,21 +201,27 @@ def build_family(fam, genes, cids, cnames, extra, P, LV, K):
         for r_i, rname in enumerate(ROOMS):
             ids = pres[RM[pres, r_i]]
             if len(ids):
-                o = ids[np.argsort(-est[ids, c])][:10]; rooms_top[rname] = dict(n=int(len(ids)), top=[str(sym[i]) for i in o])
-        comp_full = np.nonzero(frac[c] >= 1.0)[0]; comp_full = comp_full[np.argsort(-size[comp_full])]
-        near = np.nonzero((frac[c] >= 0.75) & (frac[c] < 1.0) & (size >= 3))[0]; near = near[np.argsort(-frac[c, near])]
+                o = ids[np.argsort(-lvl[ids, c])][:10]; rooms_top[rname] = dict(n=int(len(ids)), top=[str(sym[i]) for i in o])
+        comp_full = np.nonzero(frac[c] >= 1.0)[0]; comp_full = comp_full[np.lexsort((-size[comp_full], comp_freq[comp_full]))]   # rarest first
+        done_base = {base[j] for j in comp_full}
+        near = [j for j in np.nonzero((frac[c] >= 0.75) & (frac[c] < 1.0) & (size >= 3))[0] if base[j] not in done_base]
+        near = sorted(near, key=lambda j: -frac[c, j])
+        qd = bh(pv_d[c]); djobs = [j for j in np.argsort(pv_d[c])[:8] if qd[j] < 0.05]
+        dist = pres[rare[pres]]; dist = dist[np.argsort(-lvl[dist, c])][:15]
         q = bh(pv[c]); jobs = [j for j in np.argsort(pv[c])[:8] if q[j] < 0.05]
         hubs = pres[np.argsort(-act[pres, c].astype(np.int32))][:10]
-        cov = pres[covered[pres, c]]; cov = cov[np.argsort(-est[cov, c])][:10]
+        cov = pres[covered[pres, c]]; cov = cov[np.argsort(-lvl[cov, c])][:10]
 
         def missing(j):
             return [str(sym[i]) for i in Cc[:, j].nonzero()[0] if not P[i, c]][:6]
         summaries[str(cids[c])] = dict(
             name=str(cnames[c]), lineage=(extra[c] if extra else None), proteins=int(len(pres)), rooms=rooms_top,
             active_partnerships=int(act[:, c].sum() // 2), machines_complete=int(len(comp_full)), machines_total=int(len(cids_c)),
-            complete=[[K["names"].get(cids_c[j], cids_c[j]), int(size[j])] for j in comp_full[:15]],
-            nearly_complete=[[K["names"].get(cids_c[j], cids_c[j]), int(size[j]), round(float(frac[c, j]), 2), missing(j)] for j in near[:10]],
+            complete=[[cnames_c[j], int(size[j]), round(float(comp_freq[j]), 3)] for j in comp_full[:15]],
+            nearly_complete=[[cnames_c[j], int(size[j]), round(float(frac[c, j]), 2), missing(j)] for j in near[:10]],
             jobs=[[pws[j][1], int(hit[c, j]), int(Ksz[j]), float(q[j])] for j in jobs],
+            distinctive_jobs=[[pws[j][1], int(hit_d[c, j]), int(Kd[j]), float(qd[j])] for j in djobs],
+            distinctive_proteins=[str(sym[i]) for i in dist], distinctive_n=int(rare[pres].sum()),
             hubs=[[str(sym[i]), int(act[i, c])] for i in hubs if act[i, c] > 0],
             backups_covered=int(covered[:, c].sum()), backup_examples=[[str(sym[i]), str(sym[sub[i]])] for i in cov])
     np.savez_compressed(os.path.join(cbb.LAY, f"cellmap_{fam.lower()}.npz"), genes=U, cells=np.array(cids, dtype=str), cell_names=np.array(cnames, dtype=str),
@@ -395,7 +408,9 @@ def page(outdir):
         for cid, v in S.items():
             cells.append(dict(id=cid, fam=fam, name=v["name"], n=v["proteins"], ap=v["active_partnerships"], mc=v["machines_complete"],
                               rooms={k: [x["n"], x["top"][:8]] for k, x in v["rooms"].items()}, complete=v["complete"][:12],
-                              near=v["nearly_complete"][:8], jobs=[[j[0], j[1], j[2]] for j in v["jobs"][:8]], hubs=v["hubs"][:8],
+                              near=v["nearly_complete"][:8], jobs=[[j[0], j[1], j[2]] for j in v["jobs"][:6]],
+                              djobs=[[j[0], j[1], j[2]] for j in v["distinctive_jobs"][:8]], dist=v["distinctive_proteins"][:15], dn=v["distinctive_n"],
+                              hubs=v["hubs"][:8],
                               bk=v["backups_covered"], bkx=v["backup_examples"][:8]))
     json.dump(dict(cells=cells, rooms=ROOMS), open(os.path.join(outdir, "cells.json"), "w"), separators=(",", ":"))
     print(len(cells), "cells ->", os.path.join(outdir, "cells.json"), os.path.getsize(os.path.join(outdir, "cells.json")), "bytes")
