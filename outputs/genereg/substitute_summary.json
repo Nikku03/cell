@@ -1,0 +1,544 @@
+{
+ "G5-S1": {
+  "genes": 963,
+  "cell_lines": 1103,
+  "median_rho": 0.022527465596795082,
+  "null_median": 0.001032560772728175,
+  "null_95": 0.004791181348264216,
+  "p_mc": 0.000999000999000999,
+  "share_positive": 0.612668743509865,
+  "passed": false,
+  "negative": {
+   "median_rho": 0.005997828207910061,
+   "p": 0.015,
+   "passed": false
+  },
+  "planted": {
+   "median_rho": 0.07252746559679508,
+   "p": 0.000999000999000999,
+   "passed": true
+  },
+  "top_cover": [
+   {
+    "gene": "CDS2",
+    "substitute": "CDS1",
+    "identity": 69.41429901123047,
+    "rho": 0.741
+   },
+   {
+    "gene": "FAM50A",
+    "substitute": "FAM50B",
+    "identity": 73.45130157470703,
+    "rho": 0.738
+   },
+   {
+    "gene": "EFR3A",
+    "substitute": "EFR3B",
+    "identity": 62.72840118408203,
+    "rho": 0.714
+   },
+   {
+    "gene": "RPP25L",
+    "substitute": "RPP25",
+    "identity": 31.658300399780273,
+    "rho": 0.668
+   },
+   {
+    "gene": "RAB6A",
+    "substitute": "RAB6B",
+    "identity": 90.86540222167969,
+    "rho": 0.623
+   },
+   {
+    "gene": "INTS6",
+    "substitute": "INTS6L",
+    "identity": 68.04010009765625,
+    "rho": 0.598
+   },
+   {
+    "gene": "DNAJC19",
+    "substitute": "DNAJC15",
+    "identity": 44.66669845581055,
+    "rho": 0.58
+   },
+   {
+    "gene": "MYBL2",
+    "substitute": "MYBL1",
+    "identity": 37.5,
+    "rho": 0.57
+   },
+   {
+    "gene": "EAF1",
+    "substitute": "EAF2",
+    "identity": 55.223899841308594,
+    "rho": 0.561
+   },
+   {
+    "gene": "DDX3X",
+    "substitute": "DDX3Y",
+    "identity": 92.1449966430664,
+    "rho": 0.556
+   },
+   {
+    "gene": "EIF1AX",
+    "substitute": "EIF1AY",
+    "identity": 99.30560302734375,
+    "rho": 0.546
+   },
+   {
+    "gene": "PSMB5",
+    "substitute": "PSMB8",
+    "identity": 56.52170181274414,
+    "rho": 0.537
+   },
+   {
+    "gene": "NMT1",
+    "substitute": "NMT2",
+    "identity": 74.49800109863281,
+    "rho": 0.527
+   },
+   {
+    "gene": "SLC2A1",
+    "substitute": "SLC2A3",
+    "identity": 63.70970153808594,
+    "rho": 0.513
+   },
+   {
+    "gene": "RRAGC",
+    "substitute": "RRAGD",
+    "identity": 77.0,
+    "rho": 0.513
+   },
+   {
+    "gene": "SNAP23",
+    "substitute": "SNAP25",
+    "identity": 59.24169921875,
+    "rho": 0.511
+   },
+   {
+    "gene": "PPP2CA",
+    "substitute": "PPP2CB",
+    "identity": 97.41100311279297,
+    "rho": 0.498
+   },
+   {
+    "gene": "GSPT1",
+    "substitute": "GSPT2",
+    "identity": 86.49919891357422,
+    "rho": 0.477
+   },
+   {
+    "gene": "PTK2",
+    "substitute": "PTK2B",
+    "identity": 42.609500885009766,
+    "rho": 0.47
+   },
+   {
+    "gene": "COPG1",
+    "substitute": "COPG2",
+    "identity": 80.6635971069336,
+    "rho": 0.467
+   },
+   {
+    "gene": "ARHGEF7",
+    "substitute": "ARHGEF6",
+    "identity": 55.45240020751953,
+    "rho": 0.457
+   },
+   {
+    "gene": "MYH9",
+    "substitute": "MYH10",
+    "identity": 76.18340301513672,
+    "rho": 0.452
+   },
+   {
+    "gene": "PSMB6",
+    "substitute": "PSMB9",
+    "identity": 54.3932991027832,
+    "rho": 0.445
+   },
+   {
+    "gene": "NXT1",
+    "substitute": "NXT2",
+    "identity": 73.2394027709961,
+    "rho": 0.434
+   },
+   {
+    "gene": "UAP1",
+    "substitute": "UAP1L1",
+    "identity": 56.13029861450195,
+    "rho": 0.431
+   }
+  ],
+  "gate": {
+   "real": false,
+   "controls_ok": true,
+   "verdict": "FAIL"
+  }
+ },
+ "G5-P1": {
+  "genes": 963,
+  "dev_lines": 567,
+  "exam_lines": 536,
+  "r_own_rna_median": 0.06077949788433176,
+  "r_with_substitute_median": 0.10054941088943524,
+  "better": {
+   "n": 963,
+   "median": 0.018778488041240354,
+   "share_positive": 0.7175493250259606,
+   "p": 5.365939630190929e-43,
+   "passed": true
+  },
+  "random_gene_gain_95": 0.005023352141437829,
+  "p_mc": 0.004975124378109453,
+  "passed": true,
+  "negative": {
+   "n": 963,
+   "median": 0.003643256049211771,
+   "share_positive": 0.5956340956340956,
+   "p": 1.6326910453983887e-09,
+   "passed": false
+  },
+  "planted": {
+   "n": 962,
+   "median": 0.5648705509291254,
+   "share_positive": 1.0,
+   "p": 2.5653355008114852e-290,
+   "passed": true
+  },
+  "gate": {
+   "real": true,
+   "controls_ok": true,
+   "verdict": "PASS"
+  }
+ },
+ "G5-S2": {
+  "knockdowns": 232,
+  "mean_spearman": -0.07068965517241378,
+  "p_permutation": 0.031596840315968405,
+  "null_mean": -0.001391168705229894,
+  "null_5": -0.06527649085102093,
+  "p_mc": 0.04195804195804196,
+  "passed": false,
+  "negative": {
+   "mean": 0.006989814747223213,
+   "p": 0.577,
+   "passed": false
+  },
+  "planted": {
+   "mean": -0.4674519860380395,
+   "passed": true
+  },
+  "strongest_cover": [
+   {
+    "gene": "HDAC7",
+    "substitute": "HDAC4",
+    "spearman": -1.0,
+    "reach": {
+     "K562": 0.103,
+     "RPE1": 0.197,
+     "HepG2": 0.018,
+     "Jurkat": 0.002
+    },
+    "substitute_rna": {
+     "K562": 1.44,
+     "RPE1": 0.79,
+     "HepG2": 2.14,
+     "Jurkat": 3.57
+    }
+   },
+   {
+    "gene": "KIF18A",
+    "substitute": "KIF18B",
+    "spearman": -1.0,
+    "reach": {
+     "K562": 0.001,
+     "RPE1": 0.014,
+     "HepG2": 0.002,
+     "Jurkat": 0.0
+    },
+    "substitute_rna": {
+     "K562": 3.27,
+     "RPE1": 1.72,
+     "HepG2": 3.1,
+     "Jurkat": 3.76
+    }
+   },
+   {
+    "gene": "TUBA1B",
+    "substitute": "TUBA1A",
+    "spearman": -1.0,
+    "reach": {
+     "K562": 0.004,
+     "RPE1": 0.015,
+     "HepG2": 0.007,
+     "Jurkat": 0.002
+    },
+    "substitute_rna": {
+     "K562": 3.94,
+     "RPE1": 6.41,
+     "HepG2": 3.64,
+     "Jurkat": 5.14
+    }
+   },
+   {
+    "gene": "MED12",
+    "substitute": "MED12L",
+    "spearman": -1.0,
+    "reach": {
+     "K562": 0.412,
+     "RPE1": 0.132,
+     "HepG2": 0.036,
+     "Jurkat": 0.002
+    },
+    "substitute_rna": {
+     "K562": 0.0,
+     "RPE1": 0.0,
+     "HepG2": 0.1,
+     "Jurkat": 2.73
+    }
+   },
+   {
+    "gene": "IFITM2",
+    "substitute": "IFITM3",
+    "spearman": -1.0,
+    "reach": {
+     "K562": 0.001,
+     "RPE1": 0.003,
+     "HepG2": 0.001,
+     "Jurkat": 0.001
+    },
+    "substitute_rna": {
+     "K562": 5.07,
+     "RPE1": 6.0,
+     "HepG2": 6.3,
+     "Jurkat": 1.44
+    }
+   },
+   {
+    "gene": "EIF1",
+    "substitute": "EIF1B",
+    "spearman": -1.0,
+    "reach": {
+     "K562": 0.005,
+     "RPE1": 0.04,
+     "HepG2": 0.008,
+     "Jurkat": 0.02
+    },
+    "substitute_rna": {
+     "K562": 5.34,
+     "RPE1": 4.7,
+     "HepG2": 4.8,
+     "Jurkat": 4.08
+    }
+   },
+   {
+    "gene": "ARL4D",
+    "substitute": "ARL4A",
+    "spearman": -1.0,
+    "reach": {
+     "K562": 0.002,
+     "RPE1": 0.008,
+     "HepG2": 0.002,
+     "Jurkat": 0.002
+    },
+    "substitute_rna": {
+     "K562": 5.41,
+     "RPE1": 2.92,
+     "HepG2": 3.67,
+     "Jurkat": 2.64
+    }
+   },
+   {
+    "gene": "CFL1",
+    "substitute": "CFL2",
+    "spearman": -1.0,
+    "reach": {
+     "K562": 0.004,
+     "RPE1": 0.013,
+     "HepG2": 0.002,
+     "Jurkat": 0.02
+    },
+    "substitute_rna": {
+     "K562": 2.27,
+     "RPE1": 4.55,
+     "HepG2": 4.89,
+     "Jurkat": 1.64
+    }
+   },
+   {
+    "gene": "RUMY4",
+    "substitute": "RUMY3",
+    "spearman": -1.0,
+    "reach": {
+     "K562": 0.0,
+     "RPE1": 0.008,
+     "HepG2": 0.002,
+     "Jurkat": 0.0
+    },
+    "substitute_rna": {
+     "K562": 3.44,
+     "RPE1": 1.19,
+     "HepG2": 1.53,
+     "Jurkat": 3.27
+    }
+   },
+   {
+    "gene": "SSX4",
+    "substitute": "SSX4B",
+    "spearman": -1.0,
+    "reach": {
+     "K562": 0.001,
+     "RPE1": 0.003,
+     "HepG2": 0.002,
+     "Jurkat": 0.001
+    },
+    "substitute_rna": {
+     "K562": 2.42,
+     "RPE1": 0.0,
+     "HepG2": 0.0,
+     "Jurkat": 0.0
+    }
+   },
+   {
+    "gene": "EIF1AX",
+    "substitute": "EIF1AY",
+    "spearman": -1.0,
+    "reach": {
+     "K562": 0.038,
+     "RPE1": 0.141,
+     "HepG2": 0.009,
+     "Jurkat": 0.004
+    },
+    "substitute_rna": {
+     "K562": 0.1,
+     "RPE1": 0.0,
+     "HepG2": 4.12,
+     "Jurkat": 4.07
+    }
+   },
+   {
+    "gene": "TUBA3D",
+    "substitute": "TUBA3C",
+    "spearman": -0.8,
+    "reach": {
+     "K562": 0.0,
+     "RPE1": 0.011,
+     "HepG2": 0.001,
+     "Jurkat": 0.0
+    },
+    "substitute_rna": {
+     "K562": 1.19,
+     "RPE1": 0.0,
+     "HepG2": 0.1,
+     "Jurkat": 0.0
+    }
+   },
+   {
+    "gene": "AURKA",
+    "substitute": "AURKB",
+    "spearman": -0.8,
+    "reach": {
+     "K562": 0.006,
+     "RPE1": 0.058,
+     "HepG2": 0.006,
+     "Jurkat": 0.001
+    },
+    "substitute_rna": {
+     "K562": 4.67,
+     "RPE1": 2.94,
+     "HepG2": 4.82,
+     "Jurkat": 4.85
+    }
+   },
+   {
+    "gene": "SMC1A",
+    "substitute": "SMC1B",
+    "spearman": -0.8,
+    "reach": {
+     "K562": 0.162,
+     "RPE1": 0.285,
+     "HepG2": 0.059,
+     "Jurkat": 0.03
+    },
+    "substitute_rna": {
+     "K562": 0.0,
+     "RPE1": 0.0,
+     "HepG2": 0.1,
+     "Jurkat": 1.71
+    }
+   },
+   {
+    "gene": "HNRNPM",
+    "substitute": "MYEF2",
+    "spearman": -0.8,
+    "reach": {
+     "K562": 0.021,
+     "RPE1": 0.007,
+     "HepG2": 0.008,
+     "Jurkat": 0.01
+    },
+    "substitute_rna": {
+     "K562": 0.83,
+     "RPE1": 3.85,
+     "HepG2": 2.21,
+     "Jurkat": 3.66
+    }
+   }
+  ],
+  "gate": {
+   "real": false,
+   "controls_ok": true,
+   "verdict": "FAIL"
+  }
+ },
+ "G5-S3": {
+  "per_screen": {
+   "K562": {
+    "pairs": 236,
+    "median_lfc": 0.0322113037109375,
+    "share_up_link": 0.059322033898305086
+   },
+   "RPE1": {
+    "pairs": 295,
+    "median_lfc": -0.0511474609375,
+    "share_up_link": 0.09830508474576272
+   },
+   "HepG2": {
+    "pairs": 312,
+    "median_lfc": 0.009967803955078125,
+    "share_up_link": 0.07371794871794872
+   },
+   "Jurkat": {
+    "pairs": 307,
+    "median_lfc": 0.030517578125,
+    "share_up_link": 0.04234527687296417
+   },
+   "K562 genome-wide": {
+    "pairs": 1691,
+    "median_lfc": 0.0229339599609375,
+    "share_up_link": 0.01655824955647546
+   }
+  },
+  "pairs": 2841,
+  "median_lfc_substitute": 0.0209503173828125,
+  "null_mean": 0.0042243291735649105,
+  "null_95": 0.010929679870605467,
+  "diff": 0.01672598820924759,
+  "p_mc": 0.000999000999000999,
+  "passed": false,
+  "negative": {
+   "diff": -0.007180270430323359,
+   "passed": false
+  },
+  "planted": {
+   "diff": 0.06672598820924759,
+   "passed": true
+  },
+  "gate": {
+   "real": false,
+   "controls_ok": true,
+   "verdict": "FAIL"
+  }
+ }
+}

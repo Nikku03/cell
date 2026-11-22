@@ -1,0 +1,8 @@
+=================================================================================================
+GENEREGPARA -- substitute proteins (closest paralogs): cover, stepping up, prediction (with Monte Carlo)
+=================================================================================================
+  G5-S1 cover across 1,103 cancer lines: 963 genes, median rho 0.023 vs random genes 0.001 (p_MC 0.001) -> FAIL
+  G5-S2 cover across the four screened cell types: 232 knockdowns, mean Spearman -0.071 (perm p 0.032; random genes -0.001, p_MC 0.042) -> FAIL
+  G5-S3 stepping up: 2,841 pairs, median lfc of the substitute 0.021 vs random 0.004 (p_MC 0.001) -> FAIL
+  G5-P1 predict which lines need a gene (EXAM lines): r own RNA 0.061 -> with substitute 0.101 (gain 0.019, p_MC 0.005) -> PASS
+  Facts written 967

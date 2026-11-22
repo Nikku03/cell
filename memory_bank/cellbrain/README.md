@@ -130,3 +130,15 @@ In total, 44,082 facts and 16 layers were added.
   - In all four cell types, 200 random "partners" never matched (p 0.005).
   - In K562, partners alone (r 0.30) beat the other cell types (0.26) and a repeat experiment (0.24).
 - **Facts:** `ppi_rule_test` on `CLAIM-G4-R1` … `CLAIM-G4-P2`. Details: `outputs/genereg/ppi_rule_summary.json`.
+
+## Substitute proteins (paralogbank + generegpara G5, 2026-11-22)
+
+- **New layers:**
+  - `PARALOGS_ENSEMBL` (Ensembl Compara 116);
+  - `EXPR_DEPMAP` (DepMap 24Q4 RNA, 1,673 lines; CC BY 4.0).
+- **Results:** substitutes are real but small on average.
+  - **Cover across cancer lines:** beats random genes, p 0.001, but under the bar → FAIL.
+  - **Cover across the four screened cell types:** right direction, under the bar → FAIL.
+  - **Stepping up:** the substitute rises a little, p 0.001, under the bar → FAIL.
+- **Prediction:** the substitute's level helps predict which cancer lines need a gene → PASS.
+- **Gene fact:** `substitute/closest_paralog` (substitute, identity, DepMap cover rho).

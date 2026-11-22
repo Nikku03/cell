@@ -6347,3 +6347,29 @@ GENEREGPPI -- THE USER'S RULE: INTERACT IN ONE CELL + MADE + SAME ROOM IN ANOTHE
   both are made and share a room, and that is what makes prediction work best: knowing a gene's partners there
   predicts its knockdown better than knowing the same gene in other cell types. RPE1 again has little beyond the
   shared stress response to predict. "Not made" weakens partnership, but less than the declared bar.
+
+=================================================================================================
+GENEREGPARA -- SUBSTITUTE PROTEINS (CLOSEST PARALOGS): COVER, STEPPING UP, PREDICTION (G5)
+=================================================================================================
+  Asked: "but what about substitute proteins?" New data (paralogbank.py, committed before it ran): Ensembl Compara 116
+  human paralogs (141,164 pairs; 10,815 genes with a closest paralog >= 30% identity) and DepMap 24Q4 RNA (CC BY 4.0;
+  1,103 lines also with CRISPR gene effect). generegpara.py committed, controls-only trial, declared, one run. Every
+  claim's Monte Carlo puts matched random genes (same RNA level, not a paralog) in the substitute's place.
+  G5-S1 cover across 1,103 cancer lines   FAIL (real, under the bar). Median Spearman of substitute RNA vs gene effect
+         0.023 (61% of 963 genes positive) vs random genes 0.001; none of 1,000 draws reached it (p 0.001), but the bar
+         was 0.05. Strong cover for particular pairs: CDS2/CDS1 0.74, FAM50A/FAM50B 0.74, EFR3A/EFR3B 0.71, RPP25L/RPP25,
+         RAB6A/RAB6B, INTS6/INTS6L, DDX3X/DDX3Y, EIF1AX/EIF1AY (X/Y pairs: lines with a Y chromosome need the X copy
+         less), NMT1/NMT2, PPP2CA/PPP2CB, GSPT1/GSPT2, PSMB5/PSMB8 (immunoproteasome).
+  G5-S2 cover across the four screened cell types   FAIL (right direction, under the bar). 232 knockdowns: mean
+         Spearman -0.071 (needed <= -0.10), permutation p 0.032, random genes -0.001 (p_MC 0.042). Examples with full
+         cover pattern: MED12/MED12L (MED12's knockdown hits K562 hardest, G2), TUBA1B/TUBA1A, CFL1/CFL2, EIF1/EIF1B.
+  G5-S3 stepping up   FAIL (real, under the bar). Knocking down a gene raises its substitute: median log2 fold change
+         +0.021 over 2,841 pairs vs random genes +0.004; none of 1,000 draws reached it (p 0.001), but the bar was +0.02
+         over random (got +0.017). Per screen: K562 +0.032, Jurkat +0.031, K562 genome-wide +0.023, HepG2 +0.010, RPE1
+         -0.051.
+  G5-P1 predict which cancer lines need a gene   PASS. Held-out (EXAM) lines, 963 genes: own RNA alone r 0.061 ->
+         plus the substitute's RNA 0.101 (gain +0.019, 72% of genes); 200 random-gene draws never matched (p 0.005, the
+         floor). Controls fine.
+  Reading: substitutes are real -- every effect points the right way and beats random genes in the Monte Carlo --
+  but on average small: most sister genes do not cover; some pairs cover strongly. Knowing a gene's substitute level
+  helps predict which cells need the gene (passed). 963 gene facts substitute/closest_paralog written.
