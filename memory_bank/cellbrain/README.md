@@ -117,3 +117,16 @@ In total, 44,082 facts and 16 layers were added.
 - **Predicting from K562 alone:** works only for Jurkat (the other blood cell). Predictions for 1,149 knockdowns are stored as gene facts `predict/knockdown_effect_Jurkat`, marked as predictions, not measurements.
 - **Predicting the next step (chain reaction):** FAIL. Effects do not chain in this simple linear way.
 - **Claim facts:** `prediction_test` on `CLAIM-G3-T1`, `CLAIM-G3-T2`, `CLAIM-G3-C1`.
+
+## The interaction-room rule (generegppi G4, 2026-11-22)
+
+- **Rule:** if two proteins interact in one cell, they work together in another cell when both are made there and share a compartment.
+- **Results:**
+  - **Same compartment matters:** PASS in all five screens.
+  - **Interactions seen in HEK293T carry over:** PASS in K562, RPE1, HepG2 and Jurkat, beyond simply sharing a compartment. Monte Carlo floor: none of 1,000 random draws matched.
+  - **Not made → no partnership:** right direction, under the bar → FAIL.
+- **Prediction from partners:**
+  - Partners beat the earlier transfer model in K562, HepG2 and Jurkat. RPE1 misses the bar → declared FAIL.
+  - In all four cell types, 200 random "partners" never matched (p 0.005).
+  - In K562, partners alone (r 0.30) beat the other cell types (0.26) and a repeat experiment (0.24).
+- **Facts:** `ppi_rule_test` on `CLAIM-G4-R1` … `CLAIM-G4-P2`. Details: `outputs/genereg/ppi_rule_summary.json`.

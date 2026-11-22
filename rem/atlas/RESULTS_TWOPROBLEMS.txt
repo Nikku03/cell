@@ -6315,3 +6315,35 @@ GENEREGP -- USING WHAT IS NOT RANDOM TO PREDICT: CELL DATA AND THE NEXT STEP (G3
   Reading: predictable = how hard a knockdown hits the cell (it carries over between cell types) and the shared
   response; the knockdown-specific pattern carries over between similar cells (K562 <-> Jurkat) and adds a little;
   chaining effects through go-between genes does not predict the next step.
+
+=================================================================================================
+GENEREGPPI -- THE USER'S RULE: INTERACT IN ONE CELL + MADE + SAME ROOM IN ANOTHER -> WORK TOGETHER THERE (G4)
+=================================================================================================
+  Asked: if A interacts with B in one cell type and both are in the same room in another cell, they interact there;
+  add it to the Monte Carlo. Readout: partners that work together give similar knockdown patterns (shared stress
+  response removed). Interactions: HPA, OpenCell (measured in HEK293T), Complex Portal (48,796 pairs); rooms: HPA +
+  OpenCell mapped to 11 compartments; made: HPA cell-line RNA nTPM >= 1 (RNA stands in for protein; timing not in the
+  data). generegppi.py committed, a controls-only trial on subsets, claims declared, then one full run (~1 h 40 min).
+  G4-R1 same room matters   PASS. Interacting pairs, both made: median similarity ON (same room) vs OFF (different
+         rooms): K562 0.102 vs 0.017, RPE1 0.060 vs 0.022, HepG2 0.068 vs 0.027, Jurkat 0.061 vs 0.024, K562
+         genome-wide 0.060 vs 0.011. None of 10,000 relabellings within strength strata matched (p 0.0001, the floor).
+  G4-R2 the interaction carries over from another cell type   PASS. OpenCell pairs (seen in HEK293T) that are ON in
+         K562/RPE1/HepG2/Jurkat: 0.045/0.034/0.033/0.025 vs random non-partners made and in a shared room, matched for
+         strength: -0.008/-0.004/-0.004/-0.004. None of 1,000 random draws matched (p 0.001, the floor). Being in the
+         same room is not enough: the known interaction itself carries over.
+  G4-R3 not made -> no partnership   FAIL (direction right, under the bar). Pooled: ON minus one-not-made 0.016 (needed
+         0.02), p 0.0001. Per screen ON vs not made: K562 0.075 vs 0.026, RPE1 0.057 vs 0.029, HepG2 0.053 vs 0.031,
+         Jurkat 0.034 vs 0.025, K562 genome-wide 0.020 vs 0.015 (pooling with the weak genome-wide pairs dilutes it).
+         Few such pairs (81-634 per screen); RNA < 1 nTPM in HPA's cells may still mean a little protein in the screen's.
+  G4-P1 the rule helps predict on top of G3   FAIL as declared (needed all four). Median r G3 -> G3 + made, same-room
+         partners measured in that cell type: K562 0.288 -> 0.339 (+0.051), HepG2 0.480 -> 0.494 (+0.022), Jurkat
+         0.319 -> 0.345 (+0.042) BETTER; RPE1 0.594 -> 0.600 (+0.0075, under the 0.01 bar). In all four, 200 random
+         same-room "partners" never gave the gain (p_MC 0.005, the floor). Controls fine.
+  G4-P2 predict a gene never measured anywhere from its partners alone   FAIL as declared (RPE1 again). Generic ->
+         partners: K562 0.225 -> 0.305 (+0.076), HepG2 0.460 -> 0.477 (+0.031), Jurkat 0.278 -> 0.325 (+0.058) BETTER;
+         RPE1 0.581 -> 0.588 (+0.0085). p_MC 0.005 in all four. In K562, partners alone (0.305) beat transfer from the
+         other cell types (G3, 0.26) and a second K562 experiment (0.24).
+  Reading: the rule holds. Known partners (even from another cell type, HEK293T) act together in a new cell when
+  both are made and share a room, and that is what makes prediction work best: knowing a gene's partners there
+  predicts its knockdown better than knowing the same gene in other cell types. RPE1 again has little beyond the
+  shared stress response to predict. "Not made" weakens partnership, but less than the declared bar.
