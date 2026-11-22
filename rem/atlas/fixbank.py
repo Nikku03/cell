@@ -123,8 +123,8 @@ def build():
     z = zipfile.ZipFile(raw("hpa_ihc", "normal_ihc_data.tsv.zip")); d = pd.read_csv(z.open(z.namelist()[0]), sep="\t", dtype=str)
     lev = {"Not detected": 0, "Low": 1, "Medium": 2, "High": 3}; rel = {"Enhanced": 3, "Supported": 2, "Approved": 1, "Uncertain": 0}
     d = d[d.Level.isin(lev)]
-    np.savez_compressed(os.path.join(cbb.LAY, "prot_hpa_ihc.npz"), gene=d.Gene.values.astype(str), tissue=d.Tissue.values.astype(str),
-                        cell_type=d["Cell type"].values.astype(str), level=d.Level.map(lev).values.astype(np.uint8),
+    np.savez_compressed(os.path.join(cbb.LAY, "prot_hpa_ihc.npz"), gene=d.Gene.to_numpy(dtype=str), tissue=d.Tissue.to_numpy(dtype=str),
+                        cell_type=d["Cell type"].to_numpy(dtype=str), level=d.Level.map(lev).values.astype(np.uint8),
                         reliability=d.Reliability.map(rel).fillna(0).values.astype(np.uint8))
     info["hpa_ihc"] = dict(rows=len(d), genes=int(d.Gene.nunique()), tissue_cell_types=int((d.Tissue + "|" + d["Cell type"]).nunique()),
                            detected_share=float((d.Level != "Not detected").mean()))
@@ -148,7 +148,7 @@ def build():
     d = pd.read_csv(raw("progeny", "progeny_omnipath.tsv"), sep="\t", dtype=str)
     w = d.pivot_table(index=["record_id", "genesymbol"], columns="label", values="value", aggfunc="first").reset_index()
     w["ens"] = [cbb.to_ens(x) or "" for x in w.genesymbol]; w = w[w.ens != ""]
-    np.savez_compressed(os.path.join(cbb.LAY, "path_progeny.npz"), gene=w.ens.values.astype(str), pathway=w.pathway.values.astype(str),
+    np.savez_compressed(os.path.join(cbb.LAY, "path_progeny.npz"), gene=w.ens.to_numpy(dtype=str), pathway=w.pathway.to_numpy(dtype=str),
                         weight=w.weight.astype(float).values.astype(np.float32), p=w.p_value.astype(float).values.astype(np.float32))
     info["progeny"] = dict(rows=len(w), pathways=sorted(w.pathway.unique().tolist()), genes=int(w.ens.nunique()))
     # timing: HPA cell-cycle dependence
