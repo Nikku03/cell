@@ -142,3 +142,11 @@ In total, 44,082 facts and 16 layers were added.
   - **Stepping up:** the substitute rises a little, p 0.001, under the bar → FAIL.
 - **Prediction:** the substitute's level helps predict which cancer lines need a gene → PASS.
 - **Gene fact:** `substitute/closest_paralog` (substitute, identity, DepMap cover rho).
+
+## One combined predictor (generegc G6, 2026-11-22)
+
+- **Cancer lines (DepMap):** PASS. Combining line strength, partners (made, same room) and the substitute predicts which lines need a gene: r 0.05 (own RNA alone) → 0.25.
+  - Partners add the most.
+  - The substitute adds little: +0.005 among genes that have one.
+- **The four screened cell types:** FAIL. The combined predictor beats the generic guess (0.34 → 0.41 pooled) but adds only +0.007 over strength alone. Clear gains in K562 and Jurkat.
+- **Claim facts:** `combined_predictor_test` on `CLAIM-G6-*`.

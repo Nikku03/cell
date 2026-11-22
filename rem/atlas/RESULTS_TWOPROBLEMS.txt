@@ -6373,3 +6373,28 @@ GENEREGPARA -- SUBSTITUTE PROTEINS (CLOSEST PARALOGS): COVER, STEPPING UP, PREDI
   Reading: substitutes are real -- every effect points the right way and beats random genes in the Monte Carlo --
   but on average small: most sister genes do not cover; some pairs cover strongly. Knowing a gene's substitute level
   helps predict which cells need the gene (passed). 963 gene facts substitute/closest_paralog written.
+
+=================================================================================================
+GENEREGC -- ONE PREDICTOR FROM ALL THREE CLUES: STRENGTH + PARTNERS + SUBSTITUTES (G6)
+=================================================================================================
+  Asked: combine all three into one predictor and test it. generegc.py committed (arena A pooled over the four cell
+  types, written in before any run and disclosed), controls-only trial, declared, scored once on EXAM.
+  G6-B1 one predictor, ~1,100 cancer lines   PASS. Which lines need a gene (3,087 genes, 536 held-out lines): own RNA
+         alone r 0.049 -> combined 0.249 (gain +0.185, 94% of genes); 200 random-clue draws reached at most 0.087
+         (p 0.005, the floor).
+  G6-B2 each clue adds, cancer lines   FAIL (substitute). Without line strength 0.172 (clue adds +0.018, 78% of
+         genes), without partners 0.165 (+0.025, 85%; random partners never matched, p 0.005), without substitute 0.238
+         (median gain 0.000 over all genes: only 964 of 3,087 have one; p_MC 1). POST HOC among the 964 with a
+         substitute: +0.005, 68% positive, p 3e-30 -- real but small.
+  G6-A1 one predictor, the four screened cell types (pooled)   FAIL. 2,784 knockdown x cell type: generic 0.342, G3
+         (strength) 0.381, combined 0.409; BETTER than generic (+0.034, 75%) but over G3 only +0.0074 (bar 0.01).
+         Per cell type G3 -> combined: K562 0.263 -> 0.290 (BETTER), Jurkat 0.297 -> 0.325 (BETTER), HepG2 0.444 ->
+         0.456, RPE1 0.556 -> 0.550.
+  G6-A2 each clue adds, screens   FAIL. Partners +0.0076 (69%; random partners never matched, p 0.005); strength
+         +0.0079 (61%); substitute ~0 (only 24-42 knockdowns per cell type have a sister knocked down there). All
+         under the 0.01 bar.
+  Reading: in cancer lines, one predictor built from all three clues works well: five times better than the gene's
+  own RNA at telling which lines need it, with partners the biggest clue, then how sensitive the line is overall; the
+  substitute adds a little. In the four screened cell types the combined predictor beats the generic guess but adds
+  only a little over strength alone (clear gains in the blood lines K562 and Jurkat, none in RPE1). Substitutes are a
+  weak clue in both arenas (few genes have a usable one).
