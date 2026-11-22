@@ -6289,3 +6289,29 @@ GENEREGMC -- MONTE CARLO CHECKS ON THE G2 VERDICTS (MC; asked: "run monte carlo 
          0.83); failed in 200/200 runs; 95% 0.64-1.24.
   Reading: none of the four verdicts is a product of chance draws or of which genes happened to be in the screens.
   NOT: Monte Carlo cannot remove a bias shared by the whole dataset (lab, cell lines, DESeq2, the TSS quirk in L2).
+
+=================================================================================================
+GENEREGP -- USING WHAT IS NOT RANDOM TO PREDICT: CELL DATA AND THE NEXT STEP (G3)
+=================================================================================================
+  Asked: use what is not random to predict the next step or cell data. generegp.py committed before any run; models
+  developed on DEV knockdowns only (fit DEV-A, scored DEV-B; variants listed in the ledger), claims declared with
+  thresholds unchanged, then scored ONCE on EXAM knockdowns. Score = per-knockdown Pearson r of predicted vs measured
+  log2 fold changes; baseline = generic (what any knockdown does in that cell type); BETTER = sign test p < 0.05 and
+  median gain >= 0.01. Model: a knockdown's strength (size of its generic part) and its specific pattern, carried over.
+  G3-T1 cell data from the other three cell types   FAIL as declared (needed all four). Median r generic -> model:
+         K562 0.21 -> 0.26 (gain +0.047, 80% of knockdowns, BETTER), HepG2 0.42 -> 0.44 (+0.018, BETTER), Jurkat 0.27 ->
+         0.30 (+0.036, BETTER), RPE1 0.55 -> 0.56 (+0.007, p 7e-18 but under the 0.01 bar). Controls fine (shuffled
+         knockdowns 0/4, planted 4/4). The K562 prediction (0.26) beats a second K562 experiment (0.24). Learned weights
+         follow cell similarity: K562 leans on Jurkat, Jurkat on K562, HepG2 on K562 and RPE1. RPE1's response is mostly
+         the shared one (generic alone r 0.55), so there is little left to predict there.
+  G3-T2 cell data from K562 genome-wide alone   FAIL as declared (needed all three). Jurkat 0.24 -> 0.27 (+0.018,
+         BETTER); HepG2 0.36 -> 0.37 (+0.007) and RPE1 0.52 -> 0.52 (+0.002) under the bar. Controls fine. Predictions
+         for 1,149 K562-screened knockdowns never screened in Jurkat written to the bank as predictions (Jurkat only,
+         where it passed; EXAM median r 0.27). Their top genes are mostly the shared response (histones, CCNB1, TOP2A:
+         "this knockdown slows division"), with the knockdown-specific part small.
+  G3-C1 the next step (K562)   FAIL. Generic 0.271, with the next step through 3,515 go-between genes 0.270, shuffled
+         go-betweens 0.270 (gain +0.0004, p 0.09; vs shuffled +0.0009). Knowing what A does to m and what m does adds
+         nothing to predicting A's further effects here: effects do not chain in this simple linear way (or noise hides it).
+  Reading: predictable = how hard a knockdown hits the cell (it carries over between cell types) and the shared
+  response; the knockdown-specific pattern carries over between similar cells (K562 <-> Jurkat) and adds a little;
+  chaining effects through go-between genes does not predict the next step.

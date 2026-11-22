@@ -108,3 +108,12 @@ In total, 44,082 facts and 16 layers were added.
   - Chance runs: 10,000 / 10,000 / 200 / 1,000 scrambled-data runs. Chance never matched the two passes (p 0.0001 and 0.005) and easily matched the two fails (p 0.97 and 0.83).
   - Re-drawn runs: each verdict was the same in 200 of 200 runs (fresh random seeds plus re-sampled genes).
   - Bank facts: `montecarlo` on `CLAIM-G2-X1` … `CLAIM-G2-L2`.
+
+## Prediction (generegp G3, 2026-11-22)
+
+- **Predicting a knockdown in another cell type:**
+  - Using the other three cell types beats the simple guess in K562, HepG2 and Jurkat. RPE1 misses the bar, so the declared claim FAILS.
+  - In K562, the prediction is better than repeating the experiment.
+- **Predicting from K562 alone:** works only for Jurkat (the other blood cell). Predictions for 1,149 knockdowns are stored as gene facts `predict/knockdown_effect_Jurkat`, marked as predictions, not measurements.
+- **Predicting the next step (chain reaction):** FAIL. Effects do not chain in this simple linear way.
+- **Claim facts:** `prediction_test` on `CLAIM-G3-T1`, `CLAIM-G3-T2`, `CLAIM-G3-C1`.
