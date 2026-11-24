@@ -24,7 +24,8 @@ CLAIMS (declared before running; rem/atlas/cellbrain_ledger.jsonl, ids G11-*):
  G11-K2 THE TISSUE PATTERN POINTS TO THE GOVERNORS. For the genes whose address share varies across tissues (G9 rule:
         >= 10 tissues with >= 1 nTPM, range >= 0.3): r = correlation across the 40 tissues between the share and each
         splicing protein's RNA (as in G9). If a splicing protein raises the share where it is high, knocking it down
-        should lower the share. For each gene and line with >= 10 measured splicing-protein knockdowns: gain =
+        should lower the share (RNA versions that HPA did not normalise are left out of the sums). For each gene and line
+        with >= 10 measured splicing-protein knockdowns: gain =
         Spearman(r, -change). CLAIM: BETTER AND Monte Carlo p < 0.05 (which splicing protein each knockdown hit is shuffled
         among that line's splicing-protein knockdowns, 1,000 draws). Controls: r taken from another gene must not be
         BETTER; a planted change (r + noise of the same spread) must be BETTER.
@@ -191,8 +192,9 @@ def run_k1(rng, units_by_line, exps, spl, label="address"):
 def tissue_r(P, genes, spl):
     """G9's rule: share of tag-changing versions across 40 tissues (HPA transcripts), and its correlation with each
     splicing protein's RNA."""
-    z = gx.npz("ISOFORM_HPA_TISSUE"); X = z["X"]; tg = z["gene"].astype(str); tt = z["transcript"].astype(str)
-    row = collections.defaultdict(list)
+    z = gx.npz("ISOFORM_HPA_TISSUE"); tg = z["gene"].astype(str); tt = z["transcript"].astype(str)
+    X = np.nan_to_num(z["X"].astype(np.float64))     # versions HPA did not normalise (nTPM NA in every tissue) count as absent,
+    row = collections.defaultdict(list)                # instead of blanking the whole gene (the G9 description did the latter)
     for i, (g, t) in enumerate(zip(tg, tt)):
         row[g].append((t, i))
     gexp = {g: X[[i for _, i in row[g]]].sum(0) for g in spl if g in row}
