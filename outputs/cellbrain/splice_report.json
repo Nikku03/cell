@@ -1,0 +1,19 @@
+{
+ "added": "2026-11-24",
+ "facts_written": 2,
+ "layers": {
+  "SPLICE_RAW_ENCODE": "LAYER-SPLICE_RAW_ENCODE/6f9a2a624e66c3e633dd",
+  "SPLICE_KD_ENCODE": "LAYER-SPLICE_KD_ENCODE/2fc9a4e43ee6d8d2417f"
+ },
+ "build": {
+  "isoforms": 32928,
+  "files": 1044,
+  "knockdown_experiments": 460,
+  "control_experiments": 62,
+  "targets": {
+   "K562": 219,
+   "HepG2": 232
+  },
+  "knockdowns_without_files": []
+ }
+}
