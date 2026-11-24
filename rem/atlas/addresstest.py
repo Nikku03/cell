@@ -196,14 +196,19 @@ def run_p1(rng, D):
     for (a, b), o in pair_n.items():
         e = nint * (dom_n[a] / tot) * (dom_n[b] / tot) * (2 if a != b else 1)
         L[(a, b)] = float(np.log((o + 0.5) / (e + 0.5)))
-    by_dom = collections.defaultdict(list)
+    from scipy import sparse
+    dn = sorted({d_ for g in U for d_ in dom[g]}); di_ = {d_: i for i, d_ in enumerate(dn)}
+    rr, cc, vv = [], [], []
     for (a, b), v in L.items():
-        if v > 0:
-            by_dom[a].append((b, v)); by_dom[b].append((a, v))
-    dom_genes = collections.defaultdict(list)
+        if v > 0 and a in di_ and b in di_:
+            rr += [di_[a], di_[b]]; cc += [di_[b], di_[a]]; vv += [v, v]
+    Ld = sparse.csr_matrix((vv, (rr, cc)), shape=(len(dn), len(dn)))           # positive domain-pair log-odds
+    gi_r, gi_c = [], []
     for g in U:
         for d_ in dom[g]:
-            dom_genes[d_].append(ui[g])
+            gi_r.append(ui[g]); gi_c.append(di_[d_])
+    Gd = sparse.csr_matrix((np.ones(len(gi_r), np.float32), (gi_r, gi_c)), shape=(nU, len(dn)))
+    gptr, gidx = Gd.indptr, Gd.indices; has_dom = np.diff(gptr) > 0
     # rooms, classes, made-together
     RN = list(CLASS_OF_ROOM); CN = ["nuclear", "secretory", "mito", "cyto"]
     RM = np.array([[r in rooms.get(g, ()) for r in RN] for g in U], np.float32)
@@ -215,17 +220,17 @@ def run_p1(rng, D):
             MADE[i] = S["X"][sr[g]] >= 1.0
     queries = [g for g in U if g not in dev and truth.get(g) and any(t in ui for t in truth[g])]
     if TRIAL:
-        queries = queries[::8]
+        queries = queries[::40]
     ev = cf.evidences(); res = collections.defaultdict(list); nulls10 = np.zeros(N200); hit10 = []
     for s in range(0, len(queries), 500):
         Q = queries[s:s + 500]; sim, _ = cf.combined_sim(ev, Q, U); sim = np.nan_to_num(sim, nan=-9)
         for qi, q in enumerate(Q):
             i = ui[q]; ds = np.zeros(nU, np.float32)
-            for a in dom[q]:
-                for b, v in by_dom.get(a, ()):
-                    idx = dom_genes.get(b)
-                    if idx:
-                        ds[idx] = np.maximum(ds[idx], v)
+            qd = [di_[d_] for d_ in dom[q] if d_ in di_]
+            if qd:
+                M = np.asarray(Ld[qd].max(axis=0).todense()).ravel()               # best partner-domain score for each domain
+                vals = M[gidx]; red = np.maximum.reduceat(vals, gptr[:-1][has_dom]) if len(vals) else np.array([])
+                ds[has_dom] = np.maximum(red, 0)
             s1 = rankdata(ds) + rankdata(sim[qi]); s1[i] = -1e9
             dest = ((RM @ RM[i]) > 0) | ((CM @ CM[i]) > 0) if (RM[i].any() or CM[i].any()) else np.ones(nU, bool)
             mq = MADE[i]; together = (MADE[:, mq].mean(1) >= 0.5) if mq.any() else np.ones(nU, bool)
