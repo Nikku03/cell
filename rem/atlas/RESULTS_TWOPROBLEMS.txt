@@ -6502,3 +6502,23 @@ G9  ADDRESS TAGS, RNA THAT TRAVELS WITH ITS PROTEIN, THE COMMON-SENSE PARTNER FI
   IN SIMPLE: the address tags work; the finder that checks "can they fit -> do they go to the same place -> are they
   made together" finds a true partner in the first 10 tries 15x more often than chance and beats fit alone; the RNA
   fraction data could not show RNA travelling to the ER; and imaging cannot see which RNA version made the protein.
+
+========================================================================================================================
+G12 RNA AT THE ER AND THE MITOCHONDRIA, MEASURED IN PLACE (APEX-seq, HEK293T)   (erlocbank.py, erloctest.py)
+    Re-test of G9-A2/A3 with ER-specific data (Fazal et al. 2019; RNA labelled within nanometres of the ER membrane,
+    the mitochondrial surface and seven other places). Declared before the real run; trial showed only controls.
+  G12-A2 ER-made proteins' RNA sits at the ER   FAIL as declared (just under the bar), but strongly real: AUROC 0.690
+         (bar 0.70; random 95% 0.51, p_MC 0.001); ER-made RNAs +0.66 log2 at the ER membrane vs -0.08 for the rest
+         (3,137 vs 8,374 genes). Nuclear labelling with the same genes: 0.42 (control ok). ER lumen (reported) 0.57.
+         So the RNA does travel with ER-made proteins; the G9 failure was the ENCODE fraction, not the biology.
+  G12-A3 mitochondrial proteins' RNA sits at the mitochondria   FAIL: AUROC 0.42 (mito RNAs -0.34 vs -0.11). In
+         HEK293T most mitochondrial-protein RNAs are not concentrated at the mitochondrial surface.
+  G12-T1 the growing protein's tag pulls the RNA   FAIL (real, under the bar): puromycin, which pulls the growing
+         protein off, changes mitochondrial-protein RNAs differently from others (AUROC 0.57, bar 0.60, p_MC 0.001);
+         cycloheximide control 0.39 (ok). Inside mitochondrial proteins, transit peptide vs none: 0.51 (no difference).
+  REPORTED: 289 RNAs enriched at the ER membrane whose protein has no ER tag (e.g. UFL1, FAF2, SQLE, SNX19, EEA1 --
+         some are known ER-surface proteins with tags UniProt does not annotate); no mitochondrial-protein RNA stays
+         clearly enriched at the mitochondria under puromycin.
+  IN SIMPLE: for the ER, yes -- the RNA goes to the ER with its protein (while it is being made). For mitochondria
+  in these cells, the RNA mostly does not wait at the surface; the protein goes in after it is made. No sign here of
+  a separate RNA "address tail" for mitochondria.

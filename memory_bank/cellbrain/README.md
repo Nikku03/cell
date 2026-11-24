@@ -185,3 +185,10 @@ In total, 44,082 facts and 16 layers were added.
   - **FAIL:** RNA in the membrane fraction (the ENCODE fraction is not an ER read-out); RNA versions that change the tag vs dual-room proteins (imaging cannot tell isoforms apart).
 - **New facts:** `CLAIM-G9-*`; gene facts `isoform/tag_changing_by_tissue` (189 genes: where the tag-changing version is used, and splicing proteins that follow it; correlation, not cause).
 - **Outputs:** `outputs/address/address_tests.json`, `outputs/address/isoform_when_and_governors.json`.
+
+## RNA at the ER and mitochondria, measured in place (erlocbank, erloctest G12; 2026-11-24)
+
+- **New layer:** `APEX_SEQ_HEK293T` (local; Fazal et al. 2019 APEX-seq: RNA enrichment at the ER membrane, ER lumen, mitochondrial surface and matrix, cytosol and four nuclear places; mitochondrial surface under puromycin / cycloheximide / CCCP).
+- **Tests (all FAIL as declared):** ER-made proteins' RNA at the ER membrane AUROC 0.69 (bar 0.70; strongly real, +0.66 vs −0.08 log2); mitochondrial proteins' RNA at the mitochondrial surface 0.42 (no); puromycin sensitivity 0.57 (real, under the bar).
+- **New facts:** `CLAIM-G12-*`; gene facts `rna_location/er_membrane_without_er_tag` (289 RNAs at the ER whose protein has no annotated ER tag). Lists stay local (source terms).
+- **Meaning:** the RNA of ER proteins travels to the ER while being made; for mitochondria in these cells it mostly does not.
