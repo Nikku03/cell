@@ -1,0 +1,8134 @@
+{
+ "TMEM131L": {
+  "gene": "ENSG00000121210",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.43,
+  "tissues_most_tag_changed": [
+   [
+    "epididymis",
+    0.93
+   ],
+   [
+    "gallbladder",
+    0.9
+   ],
+   [
+    "salivary gland",
+    0.89
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "LSM3",
+    -0.33
+   ],
+   [
+    "HNRNPH2",
+    -0.3
+   ],
+   [
+    "GPKOW",
+    -0.3
+   ],
+   [
+    "WBP4",
+    -0.27
+   ],
+   [
+    "YJU2",
+    -0.18
+   ]
+  ]
+ },
+ "HEPACAM2": {
+  "gene": "ENSG00000188175",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.98,
+  "tissues_most_tag_changed": [
+   [
+    "bone marrow",
+    0.98
+   ],
+   [
+    "testis",
+    0.61
+   ],
+   [
+    "breast",
+    0.53
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "CDC5L",
+    0.82
+   ],
+   [
+    "PPIL4",
+    0.77
+   ],
+   [
+    "HTATSF1",
+    0.72
+   ],
+   [
+    "SDE2",
+    0.68
+   ],
+   [
+    "WBP4",
+    0.68
+   ]
+  ]
+ },
+ "TK2": {
+  "gene": "ENSG00000166548",
+  "tag_changed": [
+   "transit"
+  ],
+  "range": 0.38,
+  "tissues_most_tag_changed": [
+   [
+    "testis",
+    0.89
+   ],
+   [
+    "epididymis",
+    0.88
+   ],
+   [
+    "adrenal gland",
+    0.87
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "SF3B4",
+    0.35
+   ],
+   [
+    "PPIL4",
+    0.32
+   ],
+   [
+    "GPKOW",
+    -0.2
+   ],
+   [
+    "PCBP1",
+    -0.2
+   ],
+   [
+    "LENG1",
+    0.19
+   ]
+  ]
+ },
+ "TLR4": {
+  "gene": "ENSG00000136869",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.49,
+  "tissues_most_tag_changed": [
+   [
+    "gallbladder",
+    0.76
+   ],
+   [
+    "appendix",
+    0.75
+   ],
+   [
+    "fallopian tube",
+    0.74
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "SDE2",
+    0.43
+   ],
+   [
+    "GPKOW",
+    -0.41
+   ],
+   [
+    "HTATSF1",
+    -0.36
+   ],
+   [
+    "POLR2J",
+    -0.36
+   ],
+   [
+    "PRPF6",
+    -0.34
+   ]
+  ]
+ },
+ "MATN2": {
+  "gene": "ENSG00000132561",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.52,
+  "tissues_most_tag_changed": [
+   [
+    "choroid plexus",
+    0.52
+   ],
+   [
+    "epididymis",
+    0.51
+   ],
+   [
+    "kidney",
+    0.33
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "PCBP1",
+    -0.34
+   ],
+   [
+    "SDE2",
+    -0.26
+   ],
+   [
+    "PPIL4",
+    0.25
+   ],
+   [
+    "RNF113A",
+    -0.21
+   ],
+   [
+    "CWC22",
+    -0.18
+   ]
+  ]
+ },
+ "GFRA2": {
+  "gene": "ENSG00000168546",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.58,
+  "tissues_most_tag_changed": [
+   [
+    "esophagus",
+    0.87
+   ],
+   [
+    "adrenal gland",
+    0.81
+   ],
+   [
+    "testis",
+    0.77
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "CWC22",
+    -0.65
+   ],
+   [
+    "SMU1",
+    -0.46
+   ],
+   [
+    "PPIL4",
+    -0.41
+   ],
+   [
+    "SDE2",
+    -0.33
+   ],
+   [
+    "LSM3",
+    0.29
+   ]
+  ]
+ },
+ "NME4": {
+  "gene": "ENSG00000103202",
+  "tag_changed": [
+   "transit"
+  ],
+  "range": 0.3,
+  "tissues_most_tag_changed": [
+   [
+    "testis",
+    0.33
+   ],
+   [
+    "cerebral cortex",
+    0.23
+   ],
+   [
+    "skeletal muscle",
+    0.19
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "SF3B5",
+    -0.54
+   ],
+   [
+    "CWC22",
+    -0.4
+   ],
+   [
+    "RNF113A",
+    -0.4
+   ],
+   [
+    "HNRNPH2",
+    -0.4
+   ],
+   [
+    "PRPF6",
+    0.24
+   ]
+  ]
+ },
+ "ARID1A": {
+  "gene": "ENSG00000117713",
+  "tag_changed": [
+   "NLS"
+  ],
+  "range": 0.39,
+  "tissues_most_tag_changed": [
+   [
+    "cervix",
+    0.39
+   ],
+   [
+    "esophagus",
+    0.21
+   ],
+   [
+    "cerebral cortex",
+    0.13
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "YJU2",
+    -0.33
+   ],
+   [
+    "LSM8",
+    -0.3
+   ],
+   [
+    "LSM3",
+    -0.28
+   ],
+   [
+    "RNF113A",
+    -0.23
+   ],
+   [
+    "LENG1",
+    -0.2
+   ]
+  ]
+ },
+ "APOL1": {
+  "gene": "ENSG00000100342",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.37,
+  "tissues_most_tag_changed": [
+   [
+    "bone marrow",
+    0.44
+   ],
+   [
+    "ovary",
+    0.37
+   ],
+   [
+    "choroid plexus",
+    0.32
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "SF3B5",
+    0.42
+   ],
+   [
+    "YJU2",
+    0.42
+   ],
+   [
+    "HTATSF1",
+    0.35
+   ],
+   [
+    "PPIL4",
+    0.34
+   ],
+   [
+    "CDC5L",
+    0.3
+   ]
+  ]
+ },
+ "PRORP": {
+  "gene": "ENSG00000100890",
+  "tag_changed": [
+   "transit"
+  ],
+  "range": 0.31,
+  "tissues_most_tag_changed": [
+   [
+    "choroid plexus",
+    0.88
+   ],
+   [
+    "thymus",
+    0.84
+   ],
+   [
+    "liver",
+    0.75
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "SF3B5",
+    0.3
+   ],
+   [
+    "YJU2",
+    -0.23
+   ],
+   [
+    "CWC22",
+    0.23
+   ],
+   [
+    "HNRNPH2",
+    0.19
+   ],
+   [
+    "GPKOW",
+    0.19
+   ]
+  ]
+ },
+ "TLR3": {
+  "gene": "ENSG00000164342",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.54,
+  "tissues_most_tag_changed": [
+   [
+    "testis",
+    0.97
+   ],
+   [
+    "placenta",
+    0.74
+   ],
+   [
+    "small intestine",
+    0.66
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "RNF113A",
+    -0.47
+   ],
+   [
+    "GPKOW",
+    -0.38
+   ],
+   [
+    "SMU1",
+    -0.36
+   ],
+   [
+    "HNRNPH2",
+    -0.35
+   ],
+   [
+    "LENG1",
+    -0.3
+   ]
+  ]
+ },
+ "RAD51C": {
+  "gene": "ENSG00000108384",
+  "tag_changed": [
+   "NLS"
+  ],
+  "range": 0.49,
+  "tissues_most_tag_changed": [
+   [
+    "epididymis",
+    0.92
+   ],
+   [
+    "adrenal gland",
+    0.91
+   ],
+   [
+    "prostate",
+    0.9
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "PRPF6",
+    -0.5
+   ],
+   [
+    "PPIL4",
+    0.45
+   ],
+   [
+    "CWC22",
+    0.36
+   ],
+   [
+    "HNRNPH2",
+    0.29
+   ],
+   [
+    "WBP4",
+    -0.27
+   ]
+  ]
+ },
+ "NDUFB5": {
+  "gene": "ENSG00000136521",
+  "tag_changed": [
+   "transit"
+  ],
+  "range": 0.61,
+  "tissues_most_tag_changed": [
+   [
+    "adrenal gland",
+    0.8
+   ],
+   [
+    "esophagus",
+    0.67
+   ],
+   [
+    "adipose tissue",
+    0.65
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "HNRNPH2",
+    -0.23
+   ],
+   [
+    "LENG1",
+    0.18
+   ],
+   [
+    "CWC22",
+    -0.16
+   ],
+   [
+    "CDC5L",
+    -0.15
+   ],
+   [
+    "SMU1",
+    -0.13
+   ]
+  ]
+ },
+ "CALU": {
+  "gene": "ENSG00000128595",
+  "tag_changed": [
+   "ER_RETENTION",
+   "signal"
+  ],
+  "range": 0.44,
+  "tissues_most_tag_changed": [
+   [
+    "ovary",
+    0.77
+   ],
+   [
+    "tongue",
+    0.72
+   ],
+   [
+    "adrenal gland",
+    0.7
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "SDE2",
+    -0.46
+   ],
+   [
+    "PPIL4",
+    -0.46
+   ],
+   [
+    "LSM8",
+    -0.42
+   ],
+   [
+    "YJU2",
+    -0.41
+   ],
+   [
+    "RNF113A",
+    -0.33
+   ]
+  ]
+ },
+ "SYNCRIP": {
+  "gene": "ENSG00000135316",
+  "tag_changed": [
+   "NLS"
+  ],
+  "range": 0.6,
+  "tissues_most_tag_changed": [
+   [
+    "tongue",
+    0.99
+   ],
+   [
+    "ovary",
+    0.98
+   ],
+   [
+    "breast",
+    0.93
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "PRPF6",
+    0.41
+   ],
+   [
+    "YJU2",
+    0.38
+   ],
+   [
+    "HTATSF1",
+    0.29
+   ],
+   [
+    "GPKOW",
+    0.26
+   ],
+   [
+    "POLR2J",
+    0.25
+   ]
+  ]
+ },
+ "FCMR": {
+  "gene": "ENSG00000162894",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.48,
+  "tissues_most_tag_changed": [
+   [
+    "duodenum",
+    0.48
+   ],
+   [
+    "stomach",
+    0.38
+   ],
+   [
+    "bone marrow",
+    0.37
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "RNF113A",
+    0.52
+   ],
+   [
+    "LSM8",
+    0.51
+   ],
+   [
+    "YJU2",
+    0.39
+   ],
+   [
+    "WBP4",
+    -0.38
+   ],
+   [
+    "HTATSF1",
+    -0.36
+   ]
+  ]
+ },
+ "MEGF6": {
+  "gene": "ENSG00000162591",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.74,
+  "tissues_most_tag_changed": [
+   [
+    "salivary gland",
+    0.83
+   ],
+   [
+    "skin",
+    0.8
+   ],
+   [
+    "spleen",
+    0.71
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "HNRNPH2",
+    -0.63
+   ],
+   [
+    "LENG1",
+    0.56
+   ],
+   [
+    "PPIL4",
+    -0.39
+   ],
+   [
+    "SDE2",
+    -0.39
+   ],
+   [
+    "CDC5L",
+    -0.39
+   ]
+  ]
+ },
+ "MFAP3L": {
+  "gene": "ENSG00000198948",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.52,
+  "tissues_most_tag_changed": [
+   [
+    "testis",
+    0.75
+   ],
+   [
+    "skeletal muscle",
+    0.73
+   ],
+   [
+    "skin",
+    0.66
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "CWC22",
+    -0.52
+   ],
+   [
+    "SDE2",
+    -0.35
+   ],
+   [
+    "PRPF6",
+    0.33
+   ],
+   [
+    "HNRNPH2",
+    -0.33
+   ],
+   [
+    "RNF113A",
+    -0.31
+   ]
+  ]
+ },
+ "ASTN2": {
+  "gene": "ENSG00000148219",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.77,
+  "tissues_most_tag_changed": [
+   [
+    "tongue",
+    0.96
+   ],
+   [
+    "skeletal muscle",
+    0.96
+   ],
+   [
+    "liver",
+    0.95
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "SF3B5",
+    0.51
+   ],
+   [
+    "PCBP1",
+    0.47
+   ],
+   [
+    "POLR2J",
+    0.36
+   ],
+   [
+    "CDC5L",
+    0.32
+   ],
+   [
+    "LSM3",
+    0.31
+   ]
+  ]
+ },
+ "ITGA10": {
+  "gene": "ENSG00000143127",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.35,
+  "tissues_most_tag_changed": [
+   [
+    "skin",
+    0.79
+   ],
+   [
+    "testis",
+    0.77
+   ],
+   [
+    "stomach",
+    0.75
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "LSM8",
+    0.66
+   ],
+   [
+    "PCBP1",
+    -0.4
+   ],
+   [
+    "HNRNPH2",
+    -0.31
+   ],
+   [
+    "CWC22",
+    -0.27
+   ],
+   [
+    "RNF113A",
+    -0.27
+   ]
+  ]
+ },
+ "CPD": {
+  "gene": "ENSG00000108582",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.71,
+  "tissues_most_tag_changed": [
+   [
+    "testis",
+    0.71
+   ],
+   [
+    "smooth muscle",
+    0.33
+   ],
+   [
+    "bone marrow",
+    0.31
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "GPKOW",
+    -0.48
+   ],
+   [
+    "HNRNPH2",
+    -0.4
+   ],
+   [
+    "POLR2J",
+    -0.35
+   ],
+   [
+    "RNF113A",
+    -0.3
+   ],
+   [
+    "SF3B4",
+    0.28
+   ]
+  ]
+ },
+ "JTB": {
+  "gene": "ENSG00000143543",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.35,
+  "tissues_most_tag_changed": [
+   [
+    "skin",
+    0.51
+   ],
+   [
+    "endometrium",
+    0.46
+   ],
+   [
+    "spleen",
+    0.43
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "SF3B5",
+    -0.35
+   ],
+   [
+    "LSM8",
+    0.33
+   ],
+   [
+    "PRPF6",
+    0.27
+   ],
+   [
+    "POLR2J",
+    -0.2
+   ],
+   [
+    "HNRNPH2",
+    -0.19
+   ]
+  ]
+ },
+ "IL18RAP": {
+  "gene": "ENSG00000115607",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.4,
+  "tissues_most_tag_changed": [
+   [
+    "appendix",
+    0.47
+   ],
+   [
+    "small intestine",
+    0.4
+   ],
+   [
+    "breast",
+    0.33
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "GPKOW",
+    -0.52
+   ],
+   [
+    "POLR2J",
+    -0.46
+   ],
+   [
+    "LSM8",
+    0.45
+   ],
+   [
+    "SF3B5",
+    -0.4
+   ],
+   [
+    "WBP4",
+    -0.39
+   ]
+  ]
+ },
+ "FKBP9": {
+  "gene": "ENSG00000122642",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.72,
+  "tissues_most_tag_changed": [
+   [
+    "choroid plexus",
+    0.72
+   ],
+   [
+    "bone marrow",
+    0.67
+   ],
+   [
+    "adrenal gland",
+    0.44
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "SF3B5",
+    0.56
+   ],
+   [
+    "YJU2",
+    0.52
+   ],
+   [
+    "LSM8",
+    0.5
+   ],
+   [
+    "RNF113A",
+    0.45
+   ],
+   [
+    "POLR2J",
+    0.45
+   ]
+  ]
+ },
+ "GLUD1": {
+  "gene": "ENSG00000148672",
+  "tag_changed": [
+   "transit"
+  ],
+  "range": 0.5,
+  "tissues_most_tag_changed": [
+   [
+    "epididymis",
+    0.86
+   ],
+   [
+    "liver",
+    0.85
+   ],
+   [
+    "rectum",
+    0.84
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "HNRNPH2",
+    0.53
+   ],
+   [
+    "CWC22",
+    0.44
+   ],
+   [
+    "YJU2",
+    -0.37
+   ],
+   [
+    "PPIL4",
+    0.35
+   ],
+   [
+    "PRPF6",
+    -0.31
+   ]
+  ]
+ },
+ "PLAU": {
+  "gene": "ENSG00000122861",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.76,
+  "tissues_most_tag_changed": [
+   [
+    "testis",
+    0.77
+   ],
+   [
+    "choroid plexus",
+    0.26
+   ],
+   [
+    "bone marrow",
+    0.17
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "HNRNPH2",
+    -0.52
+   ],
+   [
+    "RNF113A",
+    -0.34
+   ],
+   [
+    "CWC22",
+    -0.32
+   ],
+   [
+    "GPKOW",
+    -0.27
+   ],
+   [
+    "PCBP1",
+    -0.21
+   ]
+  ]
+ },
+ "ERBB2": {
+  "gene": "ENSG00000141736",
+  "tag_changed": [
+   "NLS",
+   "signal"
+  ],
+  "range": 0.93,
+  "tissues_most_tag_changed": [
+   [
+    "testis",
+    0.94
+   ],
+   [
+    "cerebral cortex",
+    0.57
+   ],
+   [
+    "thymus",
+    0.5
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "HNRNPH2",
+    -0.31
+   ],
+   [
+    "SF3B5",
+    -0.26
+   ],
+   [
+    "CDC5L",
+    0.26
+   ],
+   [
+    "RNF113A",
+    -0.23
+   ],
+   [
+    "PRPF6",
+    0.23
+   ]
+  ]
+ },
+ "PGR": {
+  "gene": "ENSG00000082175",
+  "tag_changed": [
+   "NLS"
+  ],
+  "range": 0.81,
+  "tissues_most_tag_changed": [
+   [
+    "testis",
+    0.81
+   ],
+   [
+    "salivary gland",
+    0.17
+   ],
+   [
+    "smooth muscle",
+    0.11
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "HNRNPH2",
+    -0.8
+   ],
+   [
+    "GPKOW",
+    -0.7
+   ],
+   [
+    "RNF113A",
+    -0.68
+   ],
+   [
+    "SMU1",
+    -0.6
+   ],
+   [
+    "CWC22",
+    -0.58
+   ]
+  ]
+ },
+ "C2": {
+  "gene": "ENSG00000166278",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.35,
+  "tissues_most_tag_changed": [
+   [
+    "endometrium",
+    0.35
+   ],
+   [
+    "choroid plexus",
+    0.29
+   ],
+   [
+    "prostate",
+    0.26
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "PCBP1",
+    -0.38
+   ],
+   [
+    "SDE2",
+    -0.24
+   ],
+   [
+    "RNF113A",
+    -0.2
+   ],
+   [
+    "POLR2J",
+    -0.17
+   ],
+   [
+    "CDC5L",
+    -0.16
+   ]
+  ]
+ },
+ "MMP2": {
+  "gene": "ENSG00000087245",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.4,
+  "tissues_most_tag_changed": [
+   [
+    "choroid plexus",
+    0.71
+   ],
+   [
+    "esophagus",
+    0.66
+   ],
+   [
+    "gallbladder",
+    0.65
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "LSM3",
+    -0.45
+   ],
+   [
+    "PCBP1",
+    -0.41
+   ],
+   [
+    "SF3B4",
+    0.31
+   ],
+   [
+    "CDC5L",
+    -0.3
+   ],
+   [
+    "HNRNPH2",
+    -0.26
+   ]
+  ]
+ },
+ "NUDT7": {
+  "gene": "ENSG00000140876",
+  "tag_changed": [
+   "PTS1"
+  ],
+  "range": 0.32,
+  "tissues_most_tag_changed": [
+   [
+    "heart muscle",
+    0.5
+   ],
+   [
+    "adipose tissue",
+    0.47
+   ],
+   [
+    "fallopian tube",
+    0.44
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "LSM8",
+    -0.33
+   ],
+   [
+    "RNF113A",
+    -0.21
+   ],
+   [
+    "WBP4",
+    0.2
+   ],
+   [
+    "PCBP1",
+    -0.17
+   ],
+   [
+    "CDC5L",
+    0.17
+   ]
+  ]
+ },
+ "MTHFD2": {
+  "gene": "ENSG00000065911",
+  "tag_changed": [
+   "transit"
+  ],
+  "range": 0.38,
+  "tissues_most_tag_changed": [
+   [
+    "adrenal gland",
+    0.88
+   ],
+   [
+    "tongue",
+    0.85
+   ],
+   [
+    "cervix",
+    0.85
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "CWC22",
+    0.42
+   ],
+   [
+    "PRPF6",
+    -0.42
+   ],
+   [
+    "YJU2",
+    -0.38
+   ],
+   [
+    "GPKOW",
+    -0.33
+   ],
+   [
+    "LSM8",
+    -0.31
+   ]
+  ]
+ },
+ "LIF": {
+  "gene": "ENSG00000128342",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.39,
+  "tissues_most_tag_changed": [
+   [
+    "lymph node",
+    0.44
+   ],
+   [
+    "gallbladder",
+    0.4
+   ],
+   [
+    "seminal vesicle",
+    0.39
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "LSM3",
+    -0.38
+   ],
+   [
+    "SF3B5",
+    -0.36
+   ],
+   [
+    "SMU1",
+    -0.25
+   ],
+   [
+    "PRPF6",
+    -0.22
+   ],
+   [
+    "LSM8",
+    -0.21
+   ]
+  ]
+ },
+ "CD46": {
+  "gene": "ENSG00000117335",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.7,
+  "tissues_most_tag_changed": [
+   [
+    "duodenum",
+    0.82
+   ],
+   [
+    "rectum",
+    0.77
+   ],
+   [
+    "colon",
+    0.72
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "WBP4",
+    -0.63
+   ],
+   [
+    "HTATSF1",
+    -0.54
+   ],
+   [
+    "PRPF6",
+    -0.42
+   ],
+   [
+    "SMU1",
+    -0.4
+   ],
+   [
+    "CDC5L",
+    -0.37
+   ]
+  ]
+ },
+ "NPR3": {
+  "gene": "ENSG00000113389",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.44,
+  "tissues_most_tag_changed": [
+   [
+    "skin",
+    0.89
+   ],
+   [
+    "tongue",
+    0.86
+   ],
+   [
+    "kidney",
+    0.82
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "SDE2",
+    -0.6
+   ],
+   [
+    "PPIL4",
+    -0.56
+   ],
+   [
+    "YJU2",
+    -0.46
+   ],
+   [
+    "LSM8",
+    -0.43
+   ],
+   [
+    "PCBP1",
+    -0.38
+   ]
+  ]
+ },
+ "CDH2": {
+  "gene": "ENSG00000170558",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 1.0,
+  "tissues_most_tag_changed": [
+   [
+    "epididymis",
+    1.0
+   ],
+   [
+    "testis",
+    0.43
+   ],
+   [
+    "kidney",
+    0.23
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "PPIL4",
+    0.38
+   ],
+   [
+    "GPKOW",
+    -0.35
+   ],
+   [
+    "PRPF6",
+    -0.27
+   ],
+   [
+    "YJU2",
+    -0.25
+   ],
+   [
+    "HTATSF1",
+    0.23
+   ]
+  ]
+ },
+ "UGT1A6": {
+  "gene": "ENSG00000167165",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.72,
+  "tissues_most_tag_changed": [
+   [
+    "esophagus",
+    0.72
+   ],
+   [
+    "tonsil",
+    0.49
+   ],
+   [
+    "skin",
+    0.23
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "SF3B4",
+    0.56
+   ],
+   [
+    "SF3B5",
+    0.54
+   ],
+   [
+    "PPIL4",
+    -0.48
+   ],
+   [
+    "POLR2J",
+    -0.4
+   ],
+   [
+    "PRPF6",
+    0.4
+   ]
+  ]
+ },
+ "TFEB": {
+  "gene": "ENSG00000112561",
+  "tag_changed": [
+   "NES"
+  ],
+  "range": 0.34,
+  "tissues_most_tag_changed": [
+   [
+    "choroid plexus",
+    0.34
+   ],
+   [
+    "breast",
+    0.19
+   ],
+   [
+    "bone marrow",
+    0.18
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "SF3B5",
+    0.49
+   ],
+   [
+    "LSM8",
+    0.33
+   ],
+   [
+    "YJU2",
+    0.32
+   ],
+   [
+    "RNF113A",
+    0.27
+   ],
+   [
+    "GPKOW",
+    0.26
+   ]
+  ]
+ },
+ "NF1": {
+  "gene": "ENSG00000196712",
+  "tag_changed": [
+   "NLS"
+  ],
+  "range": 0.62,
+  "tissues_most_tag_changed": [
+   [
+    "choroid plexus",
+    0.65
+   ],
+   [
+    "bone marrow",
+    0.5
+   ],
+   [
+    "epididymis",
+    0.46
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "SF3B5",
+    0.38
+   ],
+   [
+    "LSM8",
+    0.33
+   ],
+   [
+    "PPIL4",
+    0.3
+   ],
+   [
+    "YJU2",
+    0.29
+   ],
+   [
+    "CWC22",
+    -0.27
+   ]
+  ]
+ },
+ "ZP3": {
+  "gene": "ENSG00000188372",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.97,
+  "tissues_most_tag_changed": [
+   [
+    "pancreas",
+    1.0
+   ],
+   [
+    "salivary gland",
+    0.95
+   ],
+   [
+    "epididymis",
+    0.93
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "LSM3",
+    -0.59
+   ],
+   [
+    "CWC22",
+    -0.52
+   ],
+   [
+    "SF3B5",
+    -0.51
+   ],
+   [
+    "GPKOW",
+    -0.47
+   ],
+   [
+    "HTATSF1",
+    -0.46
+   ]
+  ]
+ },
+ "SCP2": {
+  "gene": "ENSG00000116171",
+  "tag_changed": [
+   "PTS1"
+  ],
+  "range": 0.36,
+  "tissues_most_tag_changed": [
+   [
+    "skin",
+    0.4
+   ],
+   [
+    "epididymis",
+    0.39
+   ],
+   [
+    "lymph node",
+    0.36
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "LSM8",
+    0.32
+   ],
+   [
+    "GPKOW",
+    -0.28
+   ],
+   [
+    "SF3B4",
+    0.28
+   ],
+   [
+    "PRPF6",
+    -0.25
+   ],
+   [
+    "POLR2J",
+    -0.22
+   ]
+  ]
+ },
+ "PTPRE": {
+  "gene": "ENSG00000132334",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.56,
+  "tissues_most_tag_changed": [
+   [
+    "epididymis",
+    1.0
+   ],
+   [
+    "thymus",
+    1.0
+   ],
+   [
+    "tonsil",
+    0.99
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "CWC22",
+    0.49
+   ],
+   [
+    "SMU1",
+    0.46
+   ],
+   [
+    "CDC5L",
+    0.37
+   ],
+   [
+    "SF3B4",
+    0.36
+   ],
+   [
+    "SF3B5",
+    0.36
+   ]
+  ]
+ },
+ "IL4R": {
+  "gene": "ENSG00000077238",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.62,
+  "tissues_most_tag_changed": [
+   [
+    "choroid plexus",
+    0.64
+   ],
+   [
+    "epididymis",
+    0.64
+   ],
+   [
+    "skeletal muscle",
+    0.49
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "LSM8",
+    0.31
+   ],
+   [
+    "SDE2",
+    -0.28
+   ],
+   [
+    "HTATSF1",
+    0.27
+   ],
+   [
+    "PRPF6",
+    0.24
+   ],
+   [
+    "CWC22",
+    -0.21
+   ]
+  ]
+ },
+ "ACVR2A": {
+  "gene": "ENSG00000121989",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.74,
+  "tissues_most_tag_changed": [
+   [
+    "skeletal muscle",
+    0.74
+   ],
+   [
+    "cervix",
+    0.07
+   ],
+   [
+    "ovary",
+    0.04
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "HTATSF1",
+    0.59
+   ],
+   [
+    "PCBP1",
+    0.59
+   ],
+   [
+    "POLR2J",
+    0.55
+   ],
+   [
+    "WBP4",
+    0.55
+   ],
+   [
+    "GPKOW",
+    0.52
+   ]
+  ]
+ },
+ "CANX": {
+  "gene": "ENSG00000127022",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.91,
+  "tissues_most_tag_changed": [
+   [
+    "epididymis",
+    0.91
+   ],
+   [
+    "adrenal gland",
+    0.84
+   ],
+   [
+    "choroid plexus",
+    0.73
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "CWC22",
+    -0.29
+   ],
+   [
+    "HTATSF1",
+    0.28
+   ],
+   [
+    "SDE2",
+    -0.23
+   ],
+   [
+    "SF3B5",
+    0.21
+   ],
+   [
+    "POLR2J",
+    0.2
+   ]
+  ]
+ },
+ "NDUFS1": {
+  "gene": "ENSG00000023228",
+  "tag_changed": [
+   "transit"
+  ],
+  "range": 0.34,
+  "tissues_most_tag_changed": [
+   [
+    "skin",
+    0.4
+   ],
+   [
+    "esophagus",
+    0.39
+   ],
+   [
+    "lymph node",
+    0.35
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "GPKOW",
+    -0.41
+   ],
+   [
+    "HTATSF1",
+    -0.4
+   ],
+   [
+    "WBP4",
+    -0.39
+   ],
+   [
+    "HNRNPH2",
+    -0.39
+   ],
+   [
+    "SF3B4",
+    0.35
+   ]
+  ]
+ },
+ "GABRB3": {
+  "gene": "ENSG00000166206",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.61,
+  "tissues_most_tag_changed": [
+   [
+    "cervix",
+    0.82
+   ],
+   [
+    "testis",
+    0.8
+   ],
+   [
+    "fallopian tube",
+    0.78
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "SF3B4",
+    0.59
+   ],
+   [
+    "HTATSF1",
+    -0.46
+   ],
+   [
+    "WBP4",
+    -0.29
+   ],
+   [
+    "SF3B5",
+    0.26
+   ],
+   [
+    "YJU2",
+    -0.22
+   ]
+  ]
+ },
+ "ERP29": {
+  "gene": "ENSG00000089248",
+  "tag_changed": [
+   "ER_RETENTION"
+  ],
+  "range": 0.38,
+  "tissues_most_tag_changed": [
+   [
+    "ovary",
+    0.43
+   ],
+   [
+    "thymus",
+    0.28
+   ],
+   [
+    "endometrium",
+    0.27
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "PRPF6",
+    0.57
+   ],
+   [
+    "SMU1",
+    0.42
+   ],
+   [
+    "GPKOW",
+    0.35
+   ],
+   [
+    "WBP4",
+    0.33
+   ],
+   [
+    "HTATSF1",
+    0.3
+   ]
+  ]
+ },
+ "DUT": {
+  "gene": "ENSG00000128951",
+  "tag_changed": [
+   "transit"
+  ],
+  "range": 0.69,
+  "tissues_most_tag_changed": [
+   [
+    "esophagus",
+    0.95
+   ],
+   [
+    "bone marrow",
+    0.92
+   ],
+   [
+    "gallbladder",
+    0.91
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "SDE2",
+    0.45
+   ],
+   [
+    "SF3B4",
+    0.38
+   ],
+   [
+    "CWC22",
+    0.37
+   ],
+   [
+    "GPKOW",
+    -0.36
+   ],
+   [
+    "POLR2J",
+    -0.3
+   ]
+  ]
+ },
+ "SHMT2": {
+  "gene": "ENSG00000182199",
+  "tag_changed": [
+   "transit"
+  ],
+  "range": 0.35,
+  "tissues_most_tag_changed": [
+   [
+    "liver",
+    0.38
+   ],
+   [
+    "cerebral cortex",
+    0.36
+   ],
+   [
+    "stomach",
+    0.34
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "PRPF6",
+    -0.35
+   ],
+   [
+    "SF3B5",
+    -0.35
+   ],
+   [
+    "LSM8",
+    -0.28
+   ],
+   [
+    "HTATSF1",
+    -0.27
+   ],
+   [
+    "SF3B4",
+    -0.25
+   ]
+  ]
+ },
+ "LONP1": {
+  "gene": "ENSG00000196365",
+  "tag_changed": [
+   "transit"
+  ],
+  "range": 0.67,
+  "tissues_most_tag_changed": [
+   [
+    "cervix",
+    0.68
+   ],
+   [
+    "testis",
+    0.59
+   ],
+   [
+    "pancreas",
+    0.51
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "LENG1",
+    -0.3
+   ],
+   [
+    "PCBP1",
+    -0.29
+   ],
+   [
+    "GPKOW",
+    -0.28
+   ],
+   [
+    "LSM3",
+    -0.26
+   ],
+   [
+    "WBP4",
+    -0.2
+   ]
+  ]
+ },
+ "LTBR": {
+  "gene": "ENSG00000111321",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.59,
+  "tissues_most_tag_changed": [
+   [
+    "esophagus",
+    0.7
+   ],
+   [
+    "tonsil",
+    0.68
+   ],
+   [
+    "epididymis",
+    0.67
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "YJU2",
+    -0.42
+   ],
+   [
+    "SF3B4",
+    0.35
+   ],
+   [
+    "CWC22",
+    0.34
+   ],
+   [
+    "LSM3",
+    -0.33
+   ],
+   [
+    "POLR2J",
+    -0.31
+   ]
+  ]
+ },
+ "GDNF": {
+  "gene": "ENSG00000168621",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.95,
+  "tissues_most_tag_changed": [
+   [
+    "epididymis",
+    1.0
+   ],
+   [
+    "skin",
+    0.95
+   ],
+   [
+    "duodenum",
+    0.53
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "HNRNPH2",
+    -0.49
+   ],
+   [
+    "SDE2",
+    -0.48
+   ],
+   [
+    "CWC22",
+    -0.48
+   ],
+   [
+    "CDC5L",
+    -0.41
+   ],
+   [
+    "PCBP1",
+    -0.39
+   ]
+  ]
+ },
+ "IFI27": {
+  "gene": "ENSG00000165949",
+  "tag_changed": [
+   "transit"
+  ],
+  "range": 0.74,
+  "tissues_most_tag_changed": [
+   [
+    "pancreas",
+    1.0
+   ],
+   [
+    "epididymis",
+    0.98
+   ],
+   [
+    "skin",
+    0.95
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "CWC22",
+    -0.38
+   ],
+   [
+    "HNRNPH2",
+    -0.35
+   ],
+   [
+    "SMU1",
+    -0.3
+   ],
+   [
+    "POLR2J",
+    0.23
+   ],
+   [
+    "SDE2",
+    -0.19
+   ]
+  ]
+ },
+ "VIPR2": {
+  "gene": "ENSG00000106018",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.49,
+  "tissues_most_tag_changed": [
+   [
+    "heart muscle",
+    0.49
+   ],
+   [
+    "tongue",
+    0.42
+   ],
+   [
+    "skeletal muscle",
+    0.36
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "POLR2J",
+    0.72
+   ],
+   [
+    "HTATSF1",
+    0.6
+   ],
+   [
+    "CDC5L",
+    0.57
+   ],
+   [
+    "PPIL4",
+    -0.56
+   ],
+   [
+    "SF3B4",
+    -0.56
+   ]
+  ]
+ },
+ "CD86": {
+  "gene": "ENSG00000114013",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.44,
+  "tissues_most_tag_changed": [
+   [
+    "testis",
+    0.58
+   ],
+   [
+    "heart muscle",
+    0.43
+   ],
+   [
+    "lymph node",
+    0.4
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "GPKOW",
+    -0.43
+   ],
+   [
+    "HNRNPH2",
+    -0.39
+   ],
+   [
+    "LENG1",
+    -0.21
+   ],
+   [
+    "SF3B4",
+    0.16
+   ],
+   [
+    "HTATSF1",
+    0.16
+   ]
+  ]
+ },
+ "ACADSB": {
+  "gene": "ENSG00000196177",
+  "tag_changed": [
+   "transit"
+  ],
+  "range": 0.4,
+  "tissues_most_tag_changed": [
+   [
+    "pancreas",
+    0.41
+   ],
+   [
+    "testis",
+    0.4
+   ],
+   [
+    "esophagus",
+    0.31
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "HNRNPH2",
+    -0.52
+   ],
+   [
+    "GPKOW",
+    -0.51
+   ],
+   [
+    "WBP4",
+    -0.44
+   ],
+   [
+    "SMU1",
+    -0.42
+   ],
+   [
+    "HTATSF1",
+    -0.36
+   ]
+  ]
+ },
+ "FLT3LG": {
+  "gene": "ENSG00000090554",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.43,
+  "tissues_most_tag_changed": [
+   [
+    "testis",
+    0.47
+   ],
+   [
+    "appendix",
+    0.45
+   ],
+   [
+    "duodenum",
+    0.44
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "LSM8",
+    0.57
+   ],
+   [
+    "GPKOW",
+    -0.38
+   ],
+   [
+    "SF3B4",
+    0.31
+   ],
+   [
+    "SDE2",
+    0.29
+   ],
+   [
+    "WBP4",
+    -0.28
+   ]
+  ]
+ },
+ "PLTP": {
+  "gene": "ENSG00000100979",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.53,
+  "tissues_most_tag_changed": [
+   [
+    "choroid plexus",
+    0.66
+   ],
+   [
+    "urinary bladder",
+    0.51
+   ],
+   [
+    "bone marrow",
+    0.49
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "SF3B5",
+    0.57
+   ],
+   [
+    "PPIL4",
+    0.38
+   ],
+   [
+    "SF3B4",
+    0.36
+   ],
+   [
+    "CWC22",
+    0.26
+   ],
+   [
+    "SMU1",
+    0.25
+   ]
+  ]
+ },
+ "ADK": {
+  "gene": "ENSG00000156110",
+  "tag_changed": [
+   "NLS"
+  ],
+  "range": 0.51,
+  "tissues_most_tag_changed": [
+   [
+    "liver",
+    0.86
+   ],
+   [
+    "thymus",
+    0.82
+   ],
+   [
+    "skin",
+    0.82
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "SF3B4",
+    0.53
+   ],
+   [
+    "CWC22",
+    0.43
+   ],
+   [
+    "HTATSF1",
+    -0.43
+   ],
+   [
+    "SDE2",
+    0.39
+   ],
+   [
+    "PPIL4",
+    0.37
+   ]
+  ]
+ },
+ "CDH13": {
+  "gene": "ENSG00000140945",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.54,
+  "tissues_most_tag_changed": [
+   [
+    "gallbladder",
+    0.68
+   ],
+   [
+    "esophagus",
+    0.63
+   ],
+   [
+    "thyroid gland",
+    0.62
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "LSM8",
+    -0.41
+   ],
+   [
+    "SF3B5",
+    0.23
+   ],
+   [
+    "GPKOW",
+    0.21
+   ],
+   [
+    "CWC22",
+    0.2
+   ],
+   [
+    "SMU1",
+    0.18
+   ]
+  ]
+ },
+ "FGF12": {
+  "gene": "ENSG00000114279",
+  "tag_changed": [
+   "NLS"
+  ],
+  "range": 0.86,
+  "tissues_most_tag_changed": [
+   [
+    "heart muscle",
+    1.0
+   ],
+   [
+    "pancreas",
+    0.95
+   ],
+   [
+    "kidney",
+    0.87
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "SF3B4",
+    -0.72
+   ],
+   [
+    "LSM3",
+    0.46
+   ],
+   [
+    "LENG1",
+    -0.39
+   ],
+   [
+    "PPIL4",
+    -0.37
+   ],
+   [
+    "SMU1",
+    -0.36
+   ]
+  ]
+ },
+ "BTN3A2": {
+  "gene": "ENSG00000186470",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.55,
+  "tissues_most_tag_changed": [
+   [
+    "choroid plexus",
+    0.66
+   ],
+   [
+    "thymus",
+    0.34
+   ],
+   [
+    "tongue",
+    0.34
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "GPKOW",
+    0.52
+   ],
+   [
+    "PRPF6",
+    0.51
+   ],
+   [
+    "SF3B5",
+    0.5
+   ],
+   [
+    "POLR2J",
+    0.32
+   ],
+   [
+    "RNF113A",
+    0.31
+   ]
+  ]
+ },
+ "TRAP1": {
+  "gene": "ENSG00000126602",
+  "tag_changed": [
+   "transit"
+  ],
+  "range": 0.3,
+  "tissues_most_tag_changed": [
+   [
+    "choroid plexus",
+    0.3
+   ],
+   [
+    "adrenal gland",
+    0.06
+   ],
+   [
+    "heart muscle",
+    0.05
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "SDE2",
+    -0.43
+   ],
+   [
+    "SF3B5",
+    0.4
+   ],
+   [
+    "GPKOW",
+    0.32
+   ],
+   [
+    "PRPF6",
+    0.3
+   ],
+   [
+    "POLR2J",
+    0.27
+   ]
+  ]
+ },
+ "NFATC3": {
+  "gene": "ENSG00000072736",
+  "tag_changed": [
+   "NES"
+  ],
+  "range": 0.38,
+  "tissues_most_tag_changed": [
+   [
+    "skeletal muscle",
+    0.83
+   ],
+   [
+    "tongue",
+    0.81
+   ],
+   [
+    "smooth muscle",
+    0.81
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "RNF113A",
+    -0.51
+   ],
+   [
+    "PPIL4",
+    -0.49
+   ],
+   [
+    "LSM8",
+    -0.45
+   ],
+   [
+    "SDE2",
+    -0.32
+   ],
+   [
+    "YJU2",
+    -0.32
+   ]
+  ]
+ },
+ "SP140": {
+  "gene": "ENSG00000079263",
+  "tag_changed": [
+   "NLS"
+  ],
+  "range": 0.53,
+  "tissues_most_tag_changed": [
+   [
+    "choroid plexus",
+    0.58
+   ],
+   [
+    "bone marrow",
+    0.46
+   ],
+   [
+    "liver",
+    0.33
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "SF3B5",
+    0.68
+   ],
+   [
+    "GPKOW",
+    0.64
+   ],
+   [
+    "POLR2J",
+    0.63
+   ],
+   [
+    "HNRNPH2",
+    0.5
+   ],
+   [
+    "HTATSF1",
+    0.49
+   ]
+  ]
+ },
+ "NFATC2": {
+  "gene": "ENSG00000101096",
+  "tag_changed": [
+   "NES"
+  ],
+  "range": 0.53,
+  "tissues_most_tag_changed": [
+   [
+    "fallopian tube",
+    0.83
+   ],
+   [
+    "smooth muscle",
+    0.82
+   ],
+   [
+    "salivary gland",
+    0.79
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "LSM8",
+    -0.33
+   ],
+   [
+    "LSM3",
+    -0.32
+   ],
+   [
+    "HTATSF1",
+    -0.29
+   ],
+   [
+    "POLR2J",
+    -0.29
+   ],
+   [
+    "PPIL4",
+    -0.28
+   ]
+  ]
+ },
+ "PNOC": {
+  "gene": "ENSG00000168081",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 1.0,
+  "tissues_most_tag_changed": [
+   [
+    "duodenum",
+    1.0
+   ],
+   [
+    "salivary gland",
+    1.0
+   ],
+   [
+    "stomach",
+    1.0
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "LSM8",
+    0.55
+   ],
+   [
+    "PRPF6",
+    -0.44
+   ],
+   [
+    "HTATSF1",
+    -0.38
+   ],
+   [
+    "PCBP1",
+    0.37
+   ],
+   [
+    "RNF113A",
+    0.33
+   ]
+  ]
+ },
+ "CUL4B": {
+  "gene": "ENSG00000158290",
+  "tag_changed": [
+   "NLS"
+  ],
+  "range": 0.8,
+  "tissues_most_tag_changed": [
+   [
+    "seminal vesicle",
+    0.98
+   ],
+   [
+    "cervix",
+    0.96
+   ],
+   [
+    "breast",
+    0.96
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "YJU2",
+    -0.75
+   ],
+   [
+    "PCBP1",
+    -0.58
+   ],
+   [
+    "POLR2J",
+    -0.52
+   ],
+   [
+    "LSM3",
+    -0.49
+   ],
+   [
+    "LSM8",
+    -0.44
+   ]
+  ]
+ },
+ "WFDC2": {
+  "gene": "ENSG00000101443",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.35,
+  "tissues_most_tag_changed": [
+   [
+    "liver",
+    0.35
+   ],
+   [
+    "adrenal gland",
+    0.18
+   ],
+   [
+    "appendix",
+    0.12
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "CDC5L",
+    0.4
+   ],
+   [
+    "LSM3",
+    0.35
+   ],
+   [
+    "SF3B4",
+    -0.34
+   ],
+   [
+    "LENG1",
+    -0.33
+   ],
+   [
+    "PCBP1",
+    0.27
+   ]
+  ]
+ },
+ "PTPRR": {
+  "gene": "ENSG00000153233",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.68,
+  "tissues_most_tag_changed": [
+   [
+    "seminal vesicle",
+    0.68
+   ],
+   [
+    "smooth muscle",
+    0.47
+   ],
+   [
+    "duodenum",
+    0.36
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "LSM3",
+    -0.67
+   ],
+   [
+    "SF3B4",
+    0.61
+   ],
+   [
+    "CWC22",
+    0.39
+   ],
+   [
+    "CDC5L",
+    -0.39
+   ],
+   [
+    "YJU2",
+    -0.3
+   ]
+  ]
+ },
+ "DECR1": {
+  "gene": "ENSG00000104325",
+  "tag_changed": [
+   "transit"
+  ],
+  "range": 0.78,
+  "tissues_most_tag_changed": [
+   [
+    "bone marrow",
+    0.86
+   ],
+   [
+    "appendix",
+    0.74
+   ],
+   [
+    "lymph node",
+    0.68
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "SF3B4",
+    0.67
+   ],
+   [
+    "HTATSF1",
+    -0.63
+   ],
+   [
+    "WBP4",
+    -0.6
+   ],
+   [
+    "LSM8",
+    0.48
+   ],
+   [
+    "POLR2J",
+    -0.47
+   ]
+  ]
+ },
+ "LAMA3": {
+  "gene": "ENSG00000053747",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.91,
+  "tissues_most_tag_changed": [
+   [
+    "placenta",
+    0.99
+   ],
+   [
+    "duodenum",
+    0.97
+   ],
+   [
+    "colon",
+    0.94
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "WBP4",
+    -0.58
+   ],
+   [
+    "SMU1",
+    -0.55
+   ],
+   [
+    "CDC5L",
+    -0.55
+   ],
+   [
+    "HTATSF1",
+    -0.55
+   ],
+   [
+    "GPKOW",
+    -0.25
+   ]
+  ]
+ },
+ "PCK2": {
+  "gene": "ENSG00000100889",
+  "tag_changed": [
+   "transit"
+  ],
+  "range": 0.34,
+  "tissues_most_tag_changed": [
+   [
+    "choroid plexus",
+    0.34
+   ],
+   [
+    "heart muscle",
+    0.15
+   ],
+   [
+    "adrenal gland",
+    0.07
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "GPKOW",
+    0.45
+   ],
+   [
+    "SDE2",
+    -0.45
+   ],
+   [
+    "POLR2J",
+    0.41
+   ],
+   [
+    "CWC22",
+    -0.37
+   ],
+   [
+    "SF3B5",
+    0.36
+   ]
+  ]
+ },
+ "PTPRN": {
+  "gene": "ENSG00000054356",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.63,
+  "tissues_most_tag_changed": [
+   [
+    "duodenum",
+    0.63
+   ],
+   [
+    "adrenal gland",
+    0.37
+   ],
+   [
+    "cerebral cortex",
+    0.29
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "SF3B5",
+    -0.45
+   ],
+   [
+    "PRPF6",
+    -0.43
+   ],
+   [
+    "SDE2",
+    0.4
+   ],
+   [
+    "LENG1",
+    -0.36
+   ],
+   [
+    "YJU2",
+    0.29
+   ]
+  ]
+ },
+ "RSPO1": {
+  "gene": "ENSG00000169218",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.44,
+  "tissues_most_tag_changed": [
+   [
+    "epididymis",
+    0.44
+   ],
+   [
+    "skin",
+    0.44
+   ],
+   [
+    "smooth muscle",
+    0.39
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "HTATSF1",
+    0.48
+   ],
+   [
+    "SMU1",
+    0.39
+   ],
+   [
+    "GPKOW",
+    -0.36
+   ],
+   [
+    "CDC5L",
+    0.33
+   ],
+   [
+    "PPIL4",
+    0.3
+   ]
+  ]
+ },
+ "P3H1": {
+  "gene": "ENSG00000117385",
+  "tag_changed": [
+   "ER_RETENTION"
+  ],
+  "range": 0.58,
+  "tissues_most_tag_changed": [
+   [
+    "cerebral cortex",
+    0.72
+   ],
+   [
+    "lymph node",
+    0.69
+   ],
+   [
+    "skeletal muscle",
+    0.63
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "RNF113A",
+    0.55
+   ],
+   [
+    "LSM8",
+    0.55
+   ],
+   [
+    "YJU2",
+    0.5
+   ],
+   [
+    "PRPF6",
+    0.44
+   ],
+   [
+    "GPKOW",
+    0.4
+   ]
+  ]
+ },
+ "NADK2": {
+  "gene": "ENSG00000152620",
+  "tag_changed": [
+   "transit"
+  ],
+  "range": 0.34,
+  "tissues_most_tag_changed": [
+   [
+    "epididymis",
+    0.93
+   ],
+   [
+    "skin",
+    0.83
+   ],
+   [
+    "rectum",
+    0.82
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "PPIL4",
+    0.43
+   ],
+   [
+    "SF3B4",
+    0.42
+   ],
+   [
+    "CWC22",
+    0.34
+   ],
+   [
+    "SMU1",
+    0.32
+   ],
+   [
+    "POLR2J",
+    -0.29
+   ]
+  ]
+ },
+ "PLA1A": {
+  "gene": "ENSG00000144837",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.62,
+  "tissues_most_tag_changed": [
+   [
+    "skeletal muscle",
+    0.65
+   ],
+   [
+    "tongue",
+    0.48
+   ],
+   [
+    "esophagus",
+    0.35
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "POLR2J",
+    0.64
+   ],
+   [
+    "HTATSF1",
+    0.63
+   ],
+   [
+    "PPIL4",
+    -0.6
+   ],
+   [
+    "GPKOW",
+    0.58
+   ],
+   [
+    "PCBP1",
+    0.58
+   ]
+  ]
+ },
+ "ZNF326": {
+  "gene": "ENSG00000162664",
+  "tag_changed": [
+   "NLS"
+  ],
+  "range": 0.47,
+  "tissues_most_tag_changed": [
+   [
+    "gallbladder",
+    0.57
+   ],
+   [
+    "prostate",
+    0.57
+   ],
+   [
+    "appendix",
+    0.57
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "POLR2J",
+    -0.52
+   ],
+   [
+    "PRPF6",
+    -0.52
+   ],
+   [
+    "GPKOW",
+    -0.5
+   ],
+   [
+    "LSM3",
+    -0.49
+   ],
+   [
+    "SF3B5",
+    -0.47
+   ]
+  ]
+ },
+ "ARSI": {
+  "gene": "ENSG00000183876",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.47,
+  "tissues_most_tag_changed": [
+   [
+    "esophagus",
+    0.47
+   ],
+   [
+    "appendix",
+    0.38
+   ],
+   [
+    "urinary bladder",
+    0.35
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "RNF113A",
+    0.57
+   ],
+   [
+    "YJU2",
+    0.51
+   ],
+   [
+    "LSM3",
+    0.43
+   ],
+   [
+    "SF3B4",
+    0.43
+   ],
+   [
+    "PCBP1",
+    0.39
+   ]
+  ]
+ },
+ "VARS2": {
+  "gene": "ENSG00000137411",
+  "tag_changed": [
+   "transit"
+  ],
+  "range": 0.92,
+  "tissues_most_tag_changed": [
+   [
+    "cerebral cortex",
+    0.92
+   ],
+   [
+    "choroid plexus",
+    0.81
+   ],
+   [
+    "endometrium",
+    0.64
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "PRPF6",
+    0.56
+   ],
+   [
+    "GPKOW",
+    0.51
+   ],
+   [
+    "PPIL4",
+    -0.29
+   ],
+   [
+    "SDE2",
+    -0.26
+   ],
+   [
+    "PCBP1",
+    -0.2
+   ]
+  ]
+ },
+ "CERCAM": {
+  "gene": "ENSG00000167123",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.68,
+  "tissues_most_tag_changed": [
+   [
+    "cerebral cortex",
+    0.69
+   ],
+   [
+    "skeletal muscle",
+    0.23
+   ],
+   [
+    "choroid plexus",
+    0.13
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "CWC22",
+    -0.36
+   ],
+   [
+    "SF3B4",
+    -0.35
+   ],
+   [
+    "GPKOW",
+    0.32
+   ],
+   [
+    "HTATSF1",
+    0.3
+   ],
+   [
+    "PRPF6",
+    0.29
+   ]
+  ]
+ },
+ "EGFLAM": {
+  "gene": "ENSG00000164318",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.47,
+  "tissues_most_tag_changed": [
+   [
+    "pancreas",
+    0.94
+   ],
+   [
+    "choroid plexus",
+    0.93
+   ],
+   [
+    "thymus",
+    0.93
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "LSM8",
+    0.36
+   ],
+   [
+    "PRPF6",
+    0.32
+   ],
+   [
+    "SF3B5",
+    0.24
+   ],
+   [
+    "YJU2",
+    0.2
+   ],
+   [
+    "LSM3",
+    0.19
+   ]
+  ]
+ },
+ "PLAG1": {
+  "gene": "ENSG00000181690",
+  "tag_changed": [
+   "NLS"
+  ],
+  "range": 0.32,
+  "tissues_most_tag_changed": [
+   [
+    "parathyroid gland",
+    0.37
+   ],
+   [
+    "lung",
+    0.3
+   ],
+   [
+    "tonsil",
+    0.25
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "HNRNPH2",
+    0.6
+   ],
+   [
+    "GPKOW",
+    0.4
+   ],
+   [
+    "PCBP1",
+    0.38
+   ],
+   [
+    "SMU1",
+    0.38
+   ],
+   [
+    "SDE2",
+    0.34
+   ]
+  ]
+ },
+ "DMKN": {
+  "gene": "ENSG00000161249",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.88,
+  "tissues_most_tag_changed": [
+   [
+    "duodenum",
+    0.97
+   ],
+   [
+    "small intestine",
+    0.9
+   ],
+   [
+    "colon",
+    0.86
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "CWC22",
+    -0.24
+   ],
+   [
+    "PCBP1",
+    -0.2
+   ],
+   [
+    "WBP4",
+    -0.2
+   ],
+   [
+    "LENG1",
+    0.18
+   ],
+   [
+    "LSM8",
+    0.17
+   ]
+  ]
+ },
+ "ITPRIPL1": {
+  "gene": "ENSG00000198885",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.32,
+  "tissues_most_tag_changed": [
+   [
+    "breast",
+    0.66
+   ],
+   [
+    "small intestine",
+    0.66
+   ],
+   [
+    "appendix",
+    0.64
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "LSM8",
+    0.5
+   ],
+   [
+    "RNF113A",
+    0.45
+   ],
+   [
+    "HNRNPH2",
+    0.39
+   ],
+   [
+    "YJU2",
+    0.32
+   ],
+   [
+    "SDE2",
+    0.31
+   ]
+  ]
+ },
+ "RPUSD3": {
+  "gene": "ENSG00000156990",
+  "tag_changed": [
+   "transit"
+  ],
+  "range": 0.44,
+  "tissues_most_tag_changed": [
+   [
+    "cerebral cortex",
+    0.47
+   ],
+   [
+    "adrenal gland",
+    0.35
+   ],
+   [
+    "choroid plexus",
+    0.34
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "PCBP1",
+    -0.39
+   ],
+   [
+    "LSM3",
+    -0.3
+   ],
+   [
+    "SDE2",
+    -0.25
+   ],
+   [
+    "CDC5L",
+    -0.25
+   ],
+   [
+    "LENG1",
+    0.23
+   ]
+  ]
+ },
+ "MOXD1": {
+  "gene": "ENSG00000079931",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.61,
+  "tissues_most_tag_changed": [
+   [
+    "testis",
+    0.61
+   ],
+   [
+    "liver",
+    0.41
+   ],
+   [
+    "skin",
+    0.32
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "GPKOW",
+    -0.5
+   ],
+   [
+    "HNRNPH2",
+    -0.39
+   ],
+   [
+    "LSM3",
+    0.35
+   ],
+   [
+    "RNF113A",
+    -0.34
+   ],
+   [
+    "CDC5L",
+    0.34
+   ]
+  ]
+ },
+ "ATRAID": {
+  "gene": "ENSG00000138085",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.4,
+  "tissues_most_tag_changed": [
+   [
+    "skeletal muscle",
+    0.77
+   ],
+   [
+    "tongue",
+    0.69
+   ],
+   [
+    "kidney",
+    0.65
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "LSM3",
+    0.6
+   ],
+   [
+    "WBP4",
+    0.55
+   ],
+   [
+    "CDC5L",
+    0.54
+   ],
+   [
+    "HTATSF1",
+    0.49
+   ],
+   [
+    "PCBP1",
+    0.47
+   ]
+  ]
+ },
+ "DHRS11": {
+  "gene": "ENSG00000278535",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.78,
+  "tissues_most_tag_changed": [
+   [
+    "epididymis",
+    0.86
+   ],
+   [
+    "endometrium",
+    0.57
+   ],
+   [
+    "ovary",
+    0.56
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "PPIL4",
+    0.46
+   ],
+   [
+    "SF3B4",
+    0.31
+   ],
+   [
+    "PCBP1",
+    -0.31
+   ],
+   [
+    "GPKOW",
+    -0.23
+   ],
+   [
+    "CWC22",
+    0.18
+   ]
+  ]
+ },
+ "CES3": {
+  "gene": "ENSG00000172828",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.72,
+  "tissues_most_tag_changed": [
+   [
+    "skin",
+    0.84
+   ],
+   [
+    "skeletal muscle",
+    0.78
+   ],
+   [
+    "tongue",
+    0.63
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "PPIL4",
+    -0.72
+   ],
+   [
+    "GPKOW",
+    0.67
+   ],
+   [
+    "PRPF6",
+    0.67
+   ],
+   [
+    "HTATSF1",
+    0.6
+   ],
+   [
+    "WBP4",
+    0.57
+   ]
+  ]
+ },
+ "BTNL8": {
+  "gene": "ENSG00000113303",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.81,
+  "tissues_most_tag_changed": [
+   [
+    "testis",
+    0.89
+   ],
+   [
+    "spleen",
+    0.86
+   ],
+   [
+    "bone marrow",
+    0.83
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "PRPF6",
+    0.72
+   ],
+   [
+    "CDC5L",
+    0.53
+   ],
+   [
+    "SF3B4",
+    0.48
+   ],
+   [
+    "HTATSF1",
+    0.45
+   ],
+   [
+    "SMU1",
+    0.45
+   ]
+  ]
+ },
+ "LRIG3": {
+  "gene": "ENSG00000139263",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.6,
+  "tissues_most_tag_changed": [
+   [
+    "epididymis",
+    1.0
+   ],
+   [
+    "tongue",
+    0.87
+   ],
+   [
+    "choroid plexus",
+    0.83
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "SF3B4",
+    0.39
+   ],
+   [
+    "SF3B5",
+    0.37
+   ],
+   [
+    "YJU2",
+    -0.36
+   ],
+   [
+    "PPIL4",
+    0.33
+   ],
+   [
+    "CWC22",
+    0.32
+   ]
+  ]
+ },
+ "RSPO2": {
+  "gene": "ENSG00000147655",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.35,
+  "tissues_most_tag_changed": [
+   [
+    "seminal vesicle",
+    0.85
+   ],
+   [
+    "epididymis",
+    0.81
+   ],
+   [
+    "rectum",
+    0.79
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "CWC22",
+    0.53
+   ],
+   [
+    "SF3B4",
+    0.52
+   ],
+   [
+    "YJU2",
+    -0.5
+   ],
+   [
+    "PPIL4",
+    0.5
+   ],
+   [
+    "LSM3",
+    -0.45
+   ]
+  ]
+ },
+ "THSD4": {
+  "gene": "ENSG00000187720",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.41,
+  "tissues_most_tag_changed": [
+   [
+    "choroid plexus",
+    0.41
+   ],
+   [
+    "esophagus",
+    0.29
+   ],
+   [
+    "fallopian tube",
+    0.22
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "SF3B5",
+    0.43
+   ],
+   [
+    "SDE2",
+    -0.33
+   ],
+   [
+    "PRPF6",
+    0.3
+   ],
+   [
+    "HNRNPH2",
+    -0.26
+   ],
+   [
+    "PPIL4",
+    -0.25
+   ]
+  ]
+ },
+ "TMEM182": {
+  "gene": "ENSG00000170417",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.79,
+  "tissues_most_tag_changed": [
+   [
+    "stomach",
+    0.81
+   ],
+   [
+    "fallopian tube",
+    0.8
+   ],
+   [
+    "thyroid gland",
+    0.77
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "WBP4",
+    -0.79
+   ],
+   [
+    "PCBP1",
+    -0.65
+   ],
+   [
+    "POLR2J",
+    -0.63
+   ],
+   [
+    "PPIL4",
+    0.6
+   ],
+   [
+    "LSM3",
+    -0.6
+   ]
+  ]
+ },
+ "ASXL2": {
+  "gene": "ENSG00000143970",
+  "tag_changed": [
+   "NLS"
+  ],
+  "range": 0.6,
+  "tissues_most_tag_changed": [
+   [
+    "testis",
+    0.6
+   ],
+   [
+    "bone marrow",
+    0.1
+   ],
+   [
+    "choroid plexus",
+    0.03
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "HNRNPH2",
+    -0.56
+   ],
+   [
+    "GPKOW",
+    -0.45
+   ],
+   [
+    "RNF113A",
+    -0.4
+   ],
+   [
+    "SF3B5",
+    -0.25
+   ],
+   [
+    "PCBP1",
+    -0.24
+   ]
+  ]
+ },
+ "NEGR1": {
+  "gene": "ENSG00000172260",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.94,
+  "tissues_most_tag_changed": [
+   [
+    "cervix",
+    0.94
+   ],
+   [
+    "tongue",
+    0.94
+   ],
+   [
+    "urinary bladder",
+    0.94
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "YJU2",
+    -0.81
+   ],
+   [
+    "LSM8",
+    -0.64
+   ],
+   [
+    "RNF113A",
+    -0.54
+   ],
+   [
+    "SDE2",
+    -0.51
+   ],
+   [
+    "SF3B5",
+    -0.45
+   ]
+  ]
+ },
+ "ANKS1B": {
+  "gene": "ENSG00000185046",
+  "tag_changed": [
+   "NLS"
+  ],
+  "range": 0.69,
+  "tissues_most_tag_changed": [
+   [
+    "ovary",
+    0.72
+   ],
+   [
+    "adrenal gland",
+    0.68
+   ],
+   [
+    "placenta",
+    0.68
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "PPIL4",
+    0.43
+   ],
+   [
+    "PCBP1",
+    -0.42
+   ],
+   [
+    "WBP4",
+    -0.35
+   ],
+   [
+    "SMU1",
+    -0.28
+   ],
+   [
+    "SF3B4",
+    0.28
+   ]
+  ]
+ },
+ "MRPL10": {
+  "gene": "ENSG00000159111",
+  "tag_changed": [
+   "transit"
+  ],
+  "range": 0.55,
+  "tissues_most_tag_changed": [
+   [
+    "skeletal muscle",
+    0.82
+   ],
+   [
+    "tongue",
+    0.68
+   ],
+   [
+    "skin",
+    0.65
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "HTATSF1",
+    0.61
+   ],
+   [
+    "WBP4",
+    0.57
+   ],
+   [
+    "LSM3",
+    0.47
+   ],
+   [
+    "POLR2J",
+    0.45
+   ],
+   [
+    "CDC5L",
+    0.33
+   ]
+  ]
+ },
+ "BPHL": {
+  "gene": "ENSG00000137274",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.53,
+  "tissues_most_tag_changed": [
+   [
+    "appendix",
+    0.53
+   ],
+   [
+    "thymus",
+    0.48
+   ],
+   [
+    "bone marrow",
+    0.4
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "SDE2",
+    0.45
+   ],
+   [
+    "SF3B4",
+    0.35
+   ],
+   [
+    "CWC22",
+    0.3
+   ],
+   [
+    "LSM8",
+    0.29
+   ],
+   [
+    "LENG1",
+    -0.24
+   ]
+  ]
+ },
+ "TMEM25": {
+  "gene": "ENSG00000149582",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.46,
+  "tissues_most_tag_changed": [
+   [
+    "epididymis",
+    0.46
+   ],
+   [
+    "smooth muscle",
+    0.33
+   ],
+   [
+    "rectum",
+    0.3
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "SMU1",
+    0.39
+   ],
+   [
+    "WBP4",
+    0.3
+   ],
+   [
+    "HNRNPH2",
+    0.3
+   ],
+   [
+    "LSM3",
+    0.27
+   ],
+   [
+    "CDC5L",
+    0.25
+   ]
+  ]
+ },
+ "JAML": {
+  "gene": "ENSG00000160593",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.66,
+  "tissues_most_tag_changed": [
+   [
+    "tongue",
+    0.73
+   ],
+   [
+    "heart muscle",
+    0.61
+   ],
+   [
+    "stomach",
+    0.53
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "PCBP1",
+    0.46
+   ],
+   [
+    "CDC5L",
+    0.37
+   ],
+   [
+    "CWC22",
+    0.37
+   ],
+   [
+    "SDE2",
+    0.34
+   ],
+   [
+    "LSM3",
+    0.31
+   ]
+  ]
+ },
+ "AEBP1": {
+  "gene": "ENSG00000106624",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.53,
+  "tissues_most_tag_changed": [
+   [
+    "epididymis",
+    0.56
+   ],
+   [
+    "choroid plexus",
+    0.54
+   ],
+   [
+    "breast",
+    0.43
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "SF3B5",
+    0.36
+   ],
+   [
+    "PPIL4",
+    0.24
+   ],
+   [
+    "LSM8",
+    0.22
+   ],
+   [
+    "SDE2",
+    -0.2
+   ],
+   [
+    "PCBP1",
+    -0.2
+   ]
+  ]
+ },
+ "VRK3": {
+  "gene": "ENSG00000105053",
+  "tag_changed": [
+   "NLS"
+  ],
+  "range": 0.32,
+  "tissues_most_tag_changed": [
+   [
+    "skeletal muscle",
+    0.32
+   ],
+   [
+    "tongue",
+    0.24
+   ],
+   [
+    "cerebral cortex",
+    0.19
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "WBP4",
+    0.76
+   ],
+   [
+    "HTATSF1",
+    0.72
+   ],
+   [
+    "GPKOW",
+    0.65
+   ],
+   [
+    "PCBP1",
+    0.65
+   ],
+   [
+    "LSM3",
+    0.64
+   ]
+  ]
+ },
+ "P3H2": {
+  "gene": "ENSG00000090530",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.58,
+  "tissues_most_tag_changed": [
+   [
+    "tongue",
+    1.0
+   ],
+   [
+    "choroid plexus",
+    0.99
+   ],
+   [
+    "epididymis",
+    0.86
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "SF3B5",
+    0.54
+   ],
+   [
+    "HTATSF1",
+    0.43
+   ],
+   [
+    "CDC5L",
+    0.38
+   ],
+   [
+    "POLR2J",
+    0.34
+   ],
+   [
+    "WBP4",
+    0.32
+   ]
+  ]
+ },
+ "MSRB3": {
+  "gene": "ENSG00000174099",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.58,
+  "tissues_most_tag_changed": [
+   [
+    "tongue",
+    0.99
+   ],
+   [
+    "skeletal muscle",
+    0.99
+   ],
+   [
+    "epididymis",
+    0.94
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "SF3B4",
+    -0.47
+   ],
+   [
+    "WBP4",
+    0.4
+   ],
+   [
+    "LSM8",
+    -0.39
+   ],
+   [
+    "HTATSF1",
+    0.31
+   ],
+   [
+    "SDE2",
+    -0.3
+   ]
+  ]
+ },
+ "IGSF1": {
+  "gene": "ENSG00000147255",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.96,
+  "tissues_most_tag_changed": [
+   [
+    "liver",
+    0.97
+   ],
+   [
+    "choroid plexus",
+    0.23
+   ],
+   [
+    "esophagus",
+    0.2
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "CWC22",
+    0.39
+   ],
+   [
+    "LSM3",
+    0.38
+   ],
+   [
+    "CDC5L",
+    0.35
+   ],
+   [
+    "SDE2",
+    0.34
+   ],
+   [
+    "PCBP1",
+    0.33
+   ]
+  ]
+ },
+ "ACVR1C": {
+  "gene": "ENSG00000123612",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.51,
+  "tissues_most_tag_changed": [
+   [
+    "pancreas",
+    0.53
+   ],
+   [
+    "duodenum",
+    0.37
+   ],
+   [
+    "rectum",
+    0.25
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "HTATSF1",
+    -0.69
+   ],
+   [
+    "SMU1",
+    -0.68
+   ],
+   [
+    "HNRNPH2",
+    -0.65
+   ],
+   [
+    "LSM8",
+    0.65
+   ],
+   [
+    "WBP4",
+    -0.59
+   ]
+  ]
+ },
+ "IL17RD": {
+  "gene": "ENSG00000144730",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.31,
+  "tissues_most_tag_changed": [
+   [
+    "testis",
+    0.31
+   ],
+   [
+    "heart muscle",
+    0.08
+   ],
+   [
+    "salivary gland",
+    0.07
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "HNRNPH2",
+    -0.69
+   ],
+   [
+    "GPKOW",
+    -0.6
+   ],
+   [
+    "RNF113A",
+    -0.55
+   ],
+   [
+    "SMU1",
+    -0.51
+   ],
+   [
+    "CWC22",
+    -0.39
+   ]
+  ]
+ },
+ "MCFD2": {
+  "gene": "ENSG00000180398",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.64,
+  "tissues_most_tag_changed": [
+   [
+    "tongue",
+    0.65
+   ],
+   [
+    "cerebral cortex",
+    0.58
+   ],
+   [
+    "skeletal muscle",
+    0.56
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "WBP4",
+    0.66
+   ],
+   [
+    "HTATSF1",
+    0.62
+   ],
+   [
+    "LSM3",
+    0.59
+   ],
+   [
+    "SF3B4",
+    -0.55
+   ],
+   [
+    "CDC5L",
+    0.44
+   ]
+  ]
+ },
+ "THOC2": {
+  "gene": "ENSG00000125676",
+  "tag_changed": [
+   "NLS"
+  ],
+  "range": 0.84,
+  "tissues_most_tag_changed": [
+   [
+    "choroid plexus",
+    0.89
+   ],
+   [
+    "epididymis",
+    0.5
+   ],
+   [
+    "skin",
+    0.37
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "SDE2",
+    -0.47
+   ],
+   [
+    "CDC5L",
+    -0.34
+   ],
+   [
+    "SF3B5",
+    0.25
+   ],
+   [
+    "PCBP1",
+    -0.24
+   ],
+   [
+    "YJU2",
+    -0.22
+   ]
+  ]
+ },
+ "COQ8A": {
+  "gene": "ENSG00000163050",
+  "tag_changed": [
+   "transit"
+  ],
+  "range": 0.43,
+  "tissues_most_tag_changed": [
+   [
+    "choroid plexus",
+    0.43
+   ],
+   [
+    "cervix",
+    0.37
+   ],
+   [
+    "appendix",
+    0.34
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "SF3B5",
+    0.29
+   ],
+   [
+    "GPKOW",
+    0.28
+   ],
+   [
+    "HNRNPH2",
+    0.2
+   ],
+   [
+    "SF3B4",
+    0.15
+   ],
+   [
+    "CWC22",
+    0.15
+   ]
+  ]
+ },
+ "RNF128": {
+  "gene": "ENSG00000133135",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.77,
+  "tissues_most_tag_changed": [
+   [
+    "urinary bladder",
+    0.77
+   ],
+   [
+    "stomach",
+    0.37
+   ],
+   [
+    "liver",
+    0.31
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "YJU2",
+    -0.4
+   ],
+   [
+    "PRPF6",
+    -0.39
+   ],
+   [
+    "HTATSF1",
+    -0.35
+   ],
+   [
+    "PPIL4",
+    0.35
+   ],
+   [
+    "GPKOW",
+    -0.29
+   ]
+  ]
+ },
+ "SCG3": {
+  "gene": "ENSG00000104112",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.36,
+  "tissues_most_tag_changed": [
+   [
+    "pancreas",
+    0.38
+   ],
+   [
+    "stomach",
+    0.34
+   ],
+   [
+    "testis",
+    0.2
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "LSM3",
+    -0.75
+   ],
+   [
+    "HNRNPH2",
+    -0.42
+   ],
+   [
+    "GPKOW",
+    -0.4
+   ],
+   [
+    "WBP4",
+    -0.4
+   ],
+   [
+    "LENG1",
+    -0.34
+   ]
+  ]
+ },
+ "CTNNBL1": {
+  "gene": "ENSG00000132792",
+  "tag_changed": [
+   "NLS"
+  ],
+  "range": 0.34,
+  "tissues_most_tag_changed": [
+   [
+    "choroid plexus",
+    0.34
+   ],
+   [
+    "epididymis",
+    0.32
+   ],
+   [
+    "testis",
+    0.25
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "SF3B5",
+    0.28
+   ],
+   [
+    "LSM8",
+    0.28
+   ],
+   [
+    "CWC22",
+    -0.26
+   ],
+   [
+    "SDE2",
+    -0.24
+   ],
+   [
+    "HNRNPH2",
+    -0.24
+   ]
+  ]
+ },
+ "SMPDL3A": {
+  "gene": "ENSG00000172594",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.61,
+  "tissues_most_tag_changed": [
+   [
+    "cerebral cortex",
+    0.64
+   ],
+   [
+    "heart muscle",
+    0.45
+   ],
+   [
+    "skeletal muscle",
+    0.44
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "HTATSF1",
+    0.55
+   ],
+   [
+    "WBP4",
+    0.53
+   ],
+   [
+    "SF3B4",
+    -0.45
+   ],
+   [
+    "PRPF6",
+    0.44
+   ],
+   [
+    "PPIL4",
+    -0.36
+   ]
+  ]
+ },
+ "JARID2": {
+  "gene": "ENSG00000008083",
+  "tag_changed": [
+   "NLS"
+  ],
+  "range": 0.72,
+  "tissues_most_tag_changed": [
+   [
+    "choroid plexus",
+    0.76
+   ],
+   [
+    "testis",
+    0.61
+   ],
+   [
+    "epididymis",
+    0.5
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "HNRNPH2",
+    -0.31
+   ],
+   [
+    "PRPF6",
+    0.3
+   ],
+   [
+    "CWC22",
+    -0.29
+   ],
+   [
+    "LSM8",
+    0.27
+   ],
+   [
+    "SDE2",
+    -0.24
+   ]
+  ]
+ },
+ "ERCC4": {
+  "gene": "ENSG00000175595",
+  "tag_changed": [
+   "NLS"
+  ],
+  "range": 0.77,
+  "tissues_most_tag_changed": [
+   [
+    "skeletal muscle",
+    0.81
+   ],
+   [
+    "bone marrow",
+    0.62
+   ],
+   [
+    "cerebral cortex",
+    0.27
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "YJU2",
+    0.58
+   ],
+   [
+    "PCBP1",
+    0.54
+   ],
+   [
+    "POLR2J",
+    0.46
+   ],
+   [
+    "HTATSF1",
+    0.42
+   ],
+   [
+    "LSM8",
+    0.4
+   ]
+  ]
+ },
+ "TOP1MT": {
+  "gene": "ENSG00000184428",
+  "tag_changed": [
+   "transit"
+  ],
+  "range": 0.81,
+  "tissues_most_tag_changed": [
+   [
+    "testis",
+    0.98
+   ],
+   [
+    "epididymis",
+    0.83
+   ],
+   [
+    "adrenal gland",
+    0.77
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "GPKOW",
+    -0.32
+   ],
+   [
+    "LENG1",
+    -0.29
+   ],
+   [
+    "HNRNPH2",
+    -0.29
+   ],
+   [
+    "CDC5L",
+    0.26
+   ],
+   [
+    "HTATSF1",
+    0.25
+   ]
+  ]
+ },
+ "ESAM": {
+  "gene": "ENSG00000149564",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.35,
+  "tissues_most_tag_changed": [
+   [
+    "bone marrow",
+    0.35
+   ],
+   [
+    "testis",
+    0.1
+   ],
+   [
+    "cerebral cortex",
+    0.08
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "YJU2",
+    0.68
+   ],
+   [
+    "SDE2",
+    0.52
+   ],
+   [
+    "LSM8",
+    0.46
+   ],
+   [
+    "PPIL4",
+    0.35
+   ],
+   [
+    "RNF113A",
+    0.34
+   ]
+  ]
+ },
+ "NSUN4": {
+  "gene": "ENSG00000117481",
+  "tag_changed": [
+   "transit"
+  ],
+  "range": 0.98,
+  "tissues_most_tag_changed": [
+   [
+    "testis",
+    0.98
+   ],
+   [
+    "bone marrow",
+    0.27
+   ],
+   [
+    "heart muscle",
+    0.23
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "HNRNPH2",
+    -0.48
+   ],
+   [
+    "GPKOW",
+    -0.4
+   ],
+   [
+    "RNF113A",
+    -0.37
+   ],
+   [
+    "SF3B5",
+    -0.25
+   ],
+   [
+    "PCBP1",
+    -0.2
+   ]
+  ]
+ },
+ "TLCD1": {
+  "gene": "ENSG00000160606",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.64,
+  "tissues_most_tag_changed": [
+   [
+    "testis",
+    0.76
+   ],
+   [
+    "fallopian tube",
+    0.63
+   ],
+   [
+    "choroid plexus",
+    0.6
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "LSM8",
+    -0.56
+   ],
+   [
+    "RNF113A",
+    -0.54
+   ],
+   [
+    "PCBP1",
+    -0.42
+   ],
+   [
+    "YJU2",
+    -0.26
+   ],
+   [
+    "SDE2",
+    -0.21
+   ]
+  ]
+ },
+ "CCDC51": {
+  "gene": "ENSG00000164051",
+  "tag_changed": [
+   "transit"
+  ],
+  "range": 0.43,
+  "tissues_most_tag_changed": [
+   [
+    "choroid plexus",
+    0.94
+   ],
+   [
+    "spleen",
+    0.87
+   ],
+   [
+    "rectum",
+    0.85
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "PCBP1",
+    -0.43
+   ],
+   [
+    "YJU2",
+    -0.35
+   ],
+   [
+    "SDE2",
+    -0.32
+   ],
+   [
+    "POLR2J",
+    -0.3
+   ],
+   [
+    "CDC5L",
+    -0.26
+   ]
+  ]
+ },
+ "LINGO1": {
+  "gene": "ENSG00000169783",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.73,
+  "tissues_most_tag_changed": [
+   [
+    "testis",
+    0.73
+   ],
+   [
+    "salivary gland",
+    0.73
+   ],
+   [
+    "spleen",
+    0.6
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "SF3B5",
+    -0.53
+   ],
+   [
+    "HNRNPH2",
+    -0.46
+   ],
+   [
+    "LSM8",
+    -0.46
+   ],
+   [
+    "GPKOW",
+    -0.38
+   ],
+   [
+    "POLR2J",
+    -0.37
+   ]
+  ]
+ },
+ "NARS2": {
+  "gene": "ENSG00000137513",
+  "tag_changed": [
+   "transit"
+  ],
+  "range": 0.73,
+  "tissues_most_tag_changed": [
+   [
+    "epididymis",
+    0.84
+   ],
+   [
+    "breast",
+    0.82
+   ],
+   [
+    "skin",
+    0.82
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "PPIL4",
+    0.39
+   ],
+   [
+    "PCBP1",
+    -0.33
+   ],
+   [
+    "SF3B4",
+    0.31
+   ],
+   [
+    "CWC22",
+    0.28
+   ],
+   [
+    "SF3B5",
+    0.24
+   ]
+  ]
+ },
+ "AJUBA": {
+  "gene": "ENSG00000129474",
+  "tag_changed": [
+   "NLS"
+  ],
+  "range": 0.47,
+  "tissues_most_tag_changed": [
+   [
+    "rectum",
+    0.7
+   ],
+   [
+    "smooth muscle",
+    0.67
+   ],
+   [
+    "tonsil",
+    0.66
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "LENG1",
+    -0.56
+   ],
+   [
+    "SF3B5",
+    0.36
+   ],
+   [
+    "CDC5L",
+    0.3
+   ],
+   [
+    "YJU2",
+    -0.3
+   ],
+   [
+    "SMU1",
+    0.29
+   ]
+  ]
+ },
+ "LCOR": {
+  "gene": "ENSG00000196233",
+  "tag_changed": [
+   "NLS"
+  ],
+  "range": 0.57,
+  "tissues_most_tag_changed": [
+   [
+    "epididymis",
+    0.7
+   ],
+   [
+    "choroid plexus",
+    0.66
+   ],
+   [
+    "skin",
+    0.41
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "GPKOW",
+    0.37
+   ],
+   [
+    "HTATSF1",
+    0.36
+   ],
+   [
+    "PRPF6",
+    0.35
+   ],
+   [
+    "WBP4",
+    0.32
+   ],
+   [
+    "SF3B5",
+    0.31
+   ]
+  ]
+ },
+ "IL4I1": {
+  "gene": "ENSG00000104951",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.95,
+  "tissues_most_tag_changed": [
+   [
+    "testis",
+    0.95
+   ],
+   [
+    "fallopian tube",
+    0.02
+   ],
+   [
+    "smooth muscle",
+    0.02
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "GPKOW",
+    -0.82
+   ],
+   [
+    "HNRNPH2",
+    -0.81
+   ],
+   [
+    "RNF113A",
+    -0.56
+   ],
+   [
+    "PCBP1",
+    -0.53
+   ],
+   [
+    "CWC22",
+    -0.41
+   ]
+  ]
+ },
+ "NELL2": {
+  "gene": "ENSG00000184613",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.33,
+  "tissues_most_tag_changed": [
+   [
+    "kidney",
+    0.33
+   ],
+   [
+    "bone marrow",
+    0.18
+   ],
+   [
+    "fallopian tube",
+    0.16
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "LSM3",
+    0.53
+   ],
+   [
+    "HTATSF1",
+    0.38
+   ],
+   [
+    "YJU2",
+    0.23
+   ],
+   [
+    "PPIL4",
+    0.23
+   ],
+   [
+    "SMU1",
+    0.22
+   ]
+  ]
+ },
+ "OLFM1": {
+  "gene": "ENSG00000130558",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.72,
+  "tissues_most_tag_changed": [
+   [
+    "epididymis",
+    0.72
+   ],
+   [
+    "tonsil",
+    0.62
+   ],
+   [
+    "thymus",
+    0.54
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "PPIL4",
+    0.37
+   ],
+   [
+    "LSM8",
+    0.34
+   ],
+   [
+    "CWC22",
+    0.28
+   ],
+   [
+    "HNRNPH2",
+    0.25
+   ],
+   [
+    "SMU1",
+    0.24
+   ]
+  ]
+ },
+ "COQ7": {
+  "gene": "ENSG00000167186",
+  "tag_changed": [
+   "transit"
+  ],
+  "range": 0.5,
+  "tissues_most_tag_changed": [
+   [
+    "testis",
+    0.5
+   ],
+   [
+    "choroid plexus",
+    0.4
+   ],
+   [
+    "tongue",
+    0.34
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "WBP4",
+    0.35
+   ],
+   [
+    "HTATSF1",
+    0.35
+   ],
+   [
+    "LSM3",
+    0.34
+   ],
+   [
+    "HNRNPH2",
+    -0.33
+   ],
+   [
+    "PRPF6",
+    0.27
+   ]
+  ]
+ },
+ "ECSIT": {
+  "gene": "ENSG00000130159",
+  "tag_changed": [
+   "transit"
+  ],
+  "range": 0.44,
+  "tissues_most_tag_changed": [
+   [
+    "epididymis",
+    0.46
+   ],
+   [
+    "appendix",
+    0.2
+   ],
+   [
+    "cerebral cortex",
+    0.2
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "PPIL4",
+    0.27
+   ],
+   [
+    "PCBP1",
+    -0.22
+   ],
+   [
+    "HTATSF1",
+    0.2
+   ],
+   [
+    "CWC22",
+    -0.2
+   ],
+   [
+    "YJU2",
+    -0.16
+   ]
+  ]
+ },
+ "HEPH": {
+  "gene": "ENSG00000089472",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.8,
+  "tissues_most_tag_changed": [
+   [
+    "pancreas",
+    0.8
+   ],
+   [
+    "choroid plexus",
+    0.3
+   ],
+   [
+    "rectum",
+    0.13
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "SMU1",
+    -0.37
+   ],
+   [
+    "LSM8",
+    0.31
+   ],
+   [
+    "CWC22",
+    -0.3
+   ],
+   [
+    "POLR2J",
+    0.29
+   ],
+   [
+    "YJU2",
+    0.27
+   ]
+  ]
+ },
+ "MXRA8": {
+  "gene": "ENSG00000162576",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.44,
+  "tissues_most_tag_changed": [
+   [
+    "skin",
+    0.44
+   ],
+   [
+    "esophagus",
+    0.37
+   ],
+   [
+    "cerebral cortex",
+    0.27
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "PRPF6",
+    0.45
+   ],
+   [
+    "SDE2",
+    -0.36
+   ],
+   [
+    "PPIL4",
+    -0.35
+   ],
+   [
+    "YJU2",
+    0.3
+   ],
+   [
+    "CWC22",
+    -0.3
+   ]
+  ]
+ },
+ "LARP6": {
+  "gene": "ENSG00000166173",
+  "tag_changed": [
+   "NES",
+   "NLS"
+  ],
+  "range": 0.65,
+  "tissues_most_tag_changed": [
+   [
+    "epididymis",
+    0.73
+   ],
+   [
+    "adipose tissue",
+    0.68
+   ],
+   [
+    "liver",
+    0.68
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "PPIL4",
+    0.34
+   ],
+   [
+    "LSM8",
+    0.32
+   ],
+   [
+    "PRPF6",
+    -0.29
+   ],
+   [
+    "GPKOW",
+    -0.17
+   ],
+   [
+    "HNRNPH2",
+    0.17
+   ]
+  ]
+ },
+ "MECR": {
+  "gene": "ENSG00000116353",
+  "tag_changed": [
+   "transit"
+  ],
+  "range": 0.58,
+  "tissues_most_tag_changed": [
+   [
+    "thymus",
+    0.8
+   ],
+   [
+    "cerebral cortex",
+    0.77
+   ],
+   [
+    "urinary bladder",
+    0.75
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "SMU1",
+    0.3
+   ],
+   [
+    "CWC22",
+    0.26
+   ],
+   [
+    "PRPF6",
+    0.23
+   ],
+   [
+    "SDE2",
+    0.2
+   ],
+   [
+    "POLR2J",
+    -0.2
+   ]
+  ]
+ },
+ "NUDT9": {
+  "gene": "ENSG00000170502",
+  "tag_changed": [
+   "transit"
+  ],
+  "range": 0.59,
+  "tissues_most_tag_changed": [
+   [
+    "epididymis",
+    0.61
+   ],
+   [
+    "choroid plexus",
+    0.45
+   ],
+   [
+    "rectum",
+    0.41
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "YJU2",
+    -0.44
+   ],
+   [
+    "RNF113A",
+    -0.28
+   ],
+   [
+    "PCBP1",
+    -0.27
+   ],
+   [
+    "SDE2",
+    -0.25
+   ],
+   [
+    "PPIL4",
+    0.19
+   ]
+  ]
+ },
+ "PRX": {
+  "gene": "ENSG00000105227",
+  "tag_changed": [
+   "NES",
+   "NLS"
+  ],
+  "range": 0.83,
+  "tissues_most_tag_changed": [
+   [
+    "skin",
+    1.0
+   ],
+   [
+    "lymph node",
+    1.0
+   ],
+   [
+    "ovary",
+    0.95
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "SMU1",
+    0.34
+   ],
+   [
+    "CWC22",
+    0.27
+   ],
+   [
+    "PRPF6",
+    0.25
+   ],
+   [
+    "PPIL4",
+    -0.2
+   ],
+   [
+    "SF3B4",
+    0.19
+   ]
+  ]
+ },
+ "DHX36": {
+  "gene": "ENSG00000174953",
+  "tag_changed": [
+   "NLS"
+  ],
+  "range": 0.53,
+  "tissues_most_tag_changed": [
+   [
+    "pancreas",
+    0.74
+   ],
+   [
+    "testis",
+    0.67
+   ],
+   [
+    "tongue",
+    0.66
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "SF3B4",
+    -0.41
+   ],
+   [
+    "PPIL4",
+    -0.34
+   ],
+   [
+    "LENG1",
+    -0.31
+   ],
+   [
+    "CWC22",
+    -0.3
+   ],
+   [
+    "LSM3",
+    0.29
+   ]
+  ]
+ },
+ "TRIT1": {
+  "gene": "ENSG00000043514",
+  "tag_changed": [
+   "transit"
+  ],
+  "range": 0.54,
+  "tissues_most_tag_changed": [
+   [
+    "skeletal muscle",
+    0.61
+   ],
+   [
+    "pancreas",
+    0.51
+   ],
+   [
+    "bone marrow",
+    0.42
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "POLR2J",
+    0.56
+   ],
+   [
+    "PCBP1",
+    0.55
+   ],
+   [
+    "HTATSF1",
+    0.52
+   ],
+   [
+    "WBP4",
+    0.51
+   ],
+   [
+    "GPKOW",
+    0.47
+   ]
+  ]
+ },
+ "SEMA4A": {
+  "gene": "ENSG00000196189",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.87,
+  "tissues_most_tag_changed": [
+   [
+    "tongue",
+    0.87
+   ],
+   [
+    "skeletal muscle",
+    0.72
+   ],
+   [
+    "ovary",
+    0.7
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "HTATSF1",
+    0.77
+   ],
+   [
+    "WBP4",
+    0.65
+   ],
+   [
+    "POLR2J",
+    0.62
+   ],
+   [
+    "GPKOW",
+    0.61
+   ],
+   [
+    "LSM3",
+    0.5
+   ]
+  ]
+ },
+ "RNF167": {
+  "gene": "ENSG00000108523",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.5,
+  "tissues_most_tag_changed": [
+   [
+    "epididymis",
+    0.56
+   ],
+   [
+    "choroid plexus",
+    0.51
+   ],
+   [
+    "rectum",
+    0.44
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "PCBP1",
+    -0.5
+   ],
+   [
+    "YJU2",
+    -0.44
+   ],
+   [
+    "RNF113A",
+    -0.36
+   ],
+   [
+    "PPIL4",
+    0.32
+   ],
+   [
+    "SDE2",
+    -0.25
+   ]
+  ]
+ },
+ "CHODL": {
+  "gene": "ENSG00000154645",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.36,
+  "tissues_most_tag_changed": [
+   [
+    "heart muscle",
+    0.36
+   ],
+   [
+    "adipose tissue",
+    0.24
+   ],
+   [
+    "rectum",
+    0.19
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "SF3B4",
+    -0.49
+   ],
+   [
+    "PRPF6",
+    -0.47
+   ],
+   [
+    "SMU1",
+    -0.44
+   ],
+   [
+    "YJU2",
+    -0.4
+   ],
+   [
+    "LSM8",
+    -0.32
+   ]
+  ]
+ },
+ "SIAE": {
+  "gene": "ENSG00000110013",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.32,
+  "tissues_most_tag_changed": [
+   [
+    "tongue",
+    0.99
+   ],
+   [
+    "choroid plexus",
+    0.99
+   ],
+   [
+    "breast",
+    0.99
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "SF3B5",
+    0.46
+   ],
+   [
+    "CWC22",
+    0.42
+   ],
+   [
+    "SF3B4",
+    0.37
+   ],
+   [
+    "PPIL4",
+    0.35
+   ],
+   [
+    "SMU1",
+    0.32
+   ]
+  ]
+ },
+ "IL36R": {
+  "gene": "ENSG00000115598",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.47,
+  "tissues_most_tag_changed": [
+   [
+    "adipose tissue",
+    0.47
+   ],
+   [
+    "gallbladder",
+    0.4
+   ],
+   [
+    "skin",
+    0.28
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "SF3B5",
+    -0.45
+   ],
+   [
+    "PPIL4",
+    -0.44
+   ],
+   [
+    "HNRNPH2",
+    -0.44
+   ],
+   [
+    "CDC5L",
+    -0.39
+   ],
+   [
+    "SMU1",
+    -0.38
+   ]
+  ]
+ },
+ "NTN4": {
+  "gene": "ENSG00000074527",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.45,
+  "tissues_most_tag_changed": [
+   [
+    "epididymis",
+    0.99
+   ],
+   [
+    "gallbladder",
+    0.97
+   ],
+   [
+    "rectum",
+    0.96
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "SF3B4",
+    0.35
+   ],
+   [
+    "SF3B5",
+    0.32
+   ],
+   [
+    "PCBP1",
+    -0.26
+   ],
+   [
+    "LSM3",
+    -0.26
+   ],
+   [
+    "PPIL4",
+    0.25
+   ]
+  ]
+ },
+ "LGR6": {
+  "gene": "ENSG00000133067",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.5,
+  "tissues_most_tag_changed": [
+   [
+    "testis",
+    0.99
+   ],
+   [
+    "thyroid gland",
+    0.98
+   ],
+   [
+    "skin",
+    0.97
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "LSM3",
+    0.58
+   ],
+   [
+    "HTATSF1",
+    0.51
+   ],
+   [
+    "CDC5L",
+    0.4
+   ],
+   [
+    "PRPF6",
+    0.32
+   ],
+   [
+    "SF3B4",
+    0.31
+   ]
+  ]
+ },
+ "TMEM9B": {
+  "gene": "ENSG00000175348",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.36,
+  "tissues_most_tag_changed": [
+   [
+    "skeletal muscle",
+    0.73
+   ],
+   [
+    "appendix",
+    0.72
+   ],
+   [
+    "bone marrow",
+    0.71
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "CDC5L",
+    0.59
+   ],
+   [
+    "PCBP1",
+    0.58
+   ],
+   [
+    "LSM3",
+    0.58
+   ],
+   [
+    "HTATSF1",
+    0.47
+   ],
+   [
+    "SMU1",
+    0.46
+   ]
+  ]
+ },
+ "NECTIN3": {
+  "gene": "ENSG00000177707",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.39,
+  "tissues_most_tag_changed": [
+   [
+    "tonsil",
+    0.51
+   ],
+   [
+    "parathyroid gland",
+    0.51
+   ],
+   [
+    "heart muscle",
+    0.5
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "SMU1",
+    0.4
+   ],
+   [
+    "CDC5L",
+    0.35
+   ],
+   [
+    "CWC22",
+    0.35
+   ],
+   [
+    "HNRNPH2",
+    0.28
+   ],
+   [
+    "SF3B5",
+    0.27
+   ]
+  ]
+ },
+ "DUOX1": {
+  "gene": "ENSG00000137857",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.36,
+  "tissues_most_tag_changed": [
+   [
+    "epididymis",
+    0.47
+   ],
+   [
+    "breast",
+    0.41
+   ],
+   [
+    "cervix",
+    0.41
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "SMU1",
+    0.38
+   ],
+   [
+    "LSM8",
+    0.38
+   ],
+   [
+    "SF3B5",
+    0.34
+   ],
+   [
+    "LSM3",
+    0.32
+   ],
+   [
+    "CDC5L",
+    0.31
+   ]
+  ]
+ },
+ "ACSS1": {
+  "gene": "ENSG00000154930",
+  "tag_changed": [
+   "transit"
+  ],
+  "range": 0.49,
+  "tissues_most_tag_changed": [
+   [
+    "choroid plexus",
+    0.5
+   ],
+   [
+    "epididymis",
+    0.23
+   ],
+   [
+    "liver",
+    0.14
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "SDE2",
+    -0.41
+   ],
+   [
+    "CWC22",
+    -0.27
+   ],
+   [
+    "PCBP1",
+    -0.26
+   ],
+   [
+    "SF3B5",
+    0.21
+   ],
+   [
+    "YJU2",
+    -0.18
+   ]
+  ]
+ },
+ "GFOD1": {
+  "gene": "ENSG00000145990",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.85,
+  "tissues_most_tag_changed": [
+   [
+    "rectum",
+    0.94
+   ],
+   [
+    "smooth muscle",
+    0.89
+   ],
+   [
+    "tonsil",
+    0.88
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "CWC22",
+    0.42
+   ],
+   [
+    "YJU2",
+    -0.36
+   ],
+   [
+    "SMU1",
+    0.33
+   ],
+   [
+    "HNRNPH2",
+    0.32
+   ],
+   [
+    "PCBP1",
+    -0.31
+   ]
+  ]
+ },
+ "CACNA2D2": {
+  "gene": "ENSG00000007402",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.9,
+  "tissues_most_tag_changed": [
+   [
+    "parathyroid gland",
+    1.0
+   ],
+   [
+    "rectum",
+    0.86
+   ],
+   [
+    "lung",
+    0.77
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "CDC5L",
+    0.63
+   ],
+   [
+    "SMU1",
+    0.48
+   ],
+   [
+    "HNRNPH2",
+    0.47
+   ],
+   [
+    "LSM8",
+    -0.43
+   ],
+   [
+    "YJU2",
+    -0.43
+   ]
+  ]
+ },
+ "ADA2": {
+  "gene": "ENSG00000093072",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.95,
+  "tissues_most_tag_changed": [
+   [
+    "choroid plexus",
+    0.96
+   ],
+   [
+    "heart muscle",
+    0.92
+   ],
+   [
+    "kidney",
+    0.9
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "LSM8",
+    -0.54
+   ],
+   [
+    "SDE2",
+    -0.54
+   ],
+   [
+    "RNF113A",
+    -0.52
+   ],
+   [
+    "CWC22",
+    -0.4
+   ],
+   [
+    "HTATSF1",
+    0.39
+   ]
+  ]
+ },
+ "RAI14": {
+  "gene": "ENSG00000039560",
+  "tag_changed": [
+   "NLS"
+  ],
+  "range": 0.36,
+  "tissues_most_tag_changed": [
+   [
+    "tongue",
+    0.4
+   ],
+   [
+    "skeletal muscle",
+    0.37
+   ],
+   [
+    "appendix",
+    0.36
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "WBP4",
+    0.37
+   ],
+   [
+    "PCBP1",
+    0.34
+   ],
+   [
+    "PPIL4",
+    -0.31
+   ],
+   [
+    "SF3B4",
+    -0.3
+   ],
+   [
+    "SF3B5",
+    -0.25
+   ]
+  ]
+ },
+ "NTM": {
+  "gene": "ENSG00000182667",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.91,
+  "tissues_most_tag_changed": [
+   [
+    "choroid plexus",
+    0.91
+   ],
+   [
+    "cerebral cortex",
+    0.53
+   ],
+   [
+    "lung",
+    0.39
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "PRPF6",
+    0.85
+   ],
+   [
+    "SDE2",
+    -0.76
+   ],
+   [
+    "GPKOW",
+    0.64
+   ],
+   [
+    "CWC22",
+    -0.61
+   ],
+   [
+    "PCBP1",
+    -0.58
+   ]
+  ]
+ },
+ "CLCF1": {
+  "gene": "ENSG00000175505",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.54,
+  "tissues_most_tag_changed": [
+   [
+    "skin",
+    0.54
+   ],
+   [
+    "testis",
+    0.44
+   ],
+   [
+    "duodenum",
+    0.32
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "HNRNPH2",
+    -0.51
+   ],
+   [
+    "CWC22",
+    -0.43
+   ],
+   [
+    "SMU1",
+    -0.36
+   ],
+   [
+    "GPKOW",
+    -0.3
+   ],
+   [
+    "PCBP1",
+    -0.29
+   ]
+  ]
+ },
+ "GHRL": {
+  "gene": "ENSG00000157017",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.87,
+  "tissues_most_tag_changed": [
+   [
+    "epididymis",
+    0.87
+   ],
+   [
+    "choroid plexus",
+    0.73
+   ],
+   [
+    "esophagus",
+    0.52
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "HTATSF1",
+    0.57
+   ],
+   [
+    "PCBP1",
+    -0.54
+   ],
+   [
+    "RNF113A",
+    -0.53
+   ],
+   [
+    "WBP4",
+    0.5
+   ],
+   [
+    "SDE2",
+    -0.46
+   ]
+  ]
+ },
+ "PISD": {
+  "gene": "ENSG00000241878",
+  "tag_changed": [
+   "transit"
+  ],
+  "range": 0.65,
+  "tissues_most_tag_changed": [
+   [
+    "bone marrow",
+    0.66
+   ],
+   [
+    "adipose tissue",
+    0.5
+   ],
+   [
+    "testis",
+    0.45
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "PPIL4",
+    0.46
+   ],
+   [
+    "LSM8",
+    0.4
+   ],
+   [
+    "SDE2",
+    0.4
+   ],
+   [
+    "YJU2",
+    0.31
+   ],
+   [
+    "GPKOW",
+    -0.28
+   ]
+  ]
+ },
+ "CD300A": {
+  "gene": "ENSG00000167851",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.41,
+  "tissues_most_tag_changed": [
+   [
+    "pancreas",
+    0.41
+   ],
+   [
+    "skeletal muscle",
+    0.16
+   ],
+   [
+    "kidney",
+    0.15
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "CWC22",
+    -0.28
+   ],
+   [
+    "SF3B4",
+    -0.26
+   ],
+   [
+    "PCBP1",
+    0.25
+   ],
+   [
+    "POLR2J",
+    0.23
+   ],
+   [
+    "LSM3",
+    0.19
+   ]
+  ]
+ },
+ "IL20RA": {
+  "gene": "ENSG00000016402",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.77,
+  "tissues_most_tag_changed": [
+   [
+    "epididymis",
+    0.97
+   ],
+   [
+    "tonsil",
+    0.96
+   ],
+   [
+    "adrenal gland",
+    0.95
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "LSM8",
+    0.45
+   ],
+   [
+    "GPKOW",
+    -0.42
+   ],
+   [
+    "WBP4",
+    -0.38
+   ],
+   [
+    "POLR2J",
+    -0.35
+   ],
+   [
+    "PCBP1",
+    -0.34
+   ]
+  ]
+ },
+ "CD84": {
+  "gene": "ENSG00000066294",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.88,
+  "tissues_most_tag_changed": [
+   [
+    "pancreas",
+    0.91
+   ],
+   [
+    "choroid plexus",
+    0.83
+   ],
+   [
+    "skin",
+    0.65
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "LSM8",
+    0.47
+   ],
+   [
+    "POLR2J",
+    0.44
+   ],
+   [
+    "YJU2",
+    0.43
+   ],
+   [
+    "SF3B5",
+    0.41
+   ],
+   [
+    "PRPF6",
+    0.39
+   ]
+  ]
+ },
+ "ANGPTL2": {
+  "gene": "ENSG00000136859",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.77,
+  "tissues_most_tag_changed": [
+   [
+    "epididymis",
+    0.77
+   ],
+   [
+    "choroid plexus",
+    0.64
+   ],
+   [
+    "rectum",
+    0.62
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "PPIL4",
+    0.41
+   ],
+   [
+    "HNRNPH2",
+    0.37
+   ],
+   [
+    "YJU2",
+    -0.36
+   ],
+   [
+    "SMU1",
+    0.34
+   ],
+   [
+    "CWC22",
+    0.33
+   ]
+  ]
+ },
+ "OGDHL": {
+  "gene": "ENSG00000197444",
+  "tag_changed": [
+   "transit"
+  ],
+  "range": 0.53,
+  "tissues_most_tag_changed": [
+   [
+    "choroid plexus",
+    0.53
+   ],
+   [
+    "small intestine",
+    0.47
+   ],
+   [
+    "adrenal gland",
+    0.33
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "SDE2",
+    -0.45
+   ],
+   [
+    "CWC22",
+    -0.34
+   ],
+   [
+    "SMU1",
+    -0.34
+   ],
+   [
+    "LSM8",
+    0.33
+   ],
+   [
+    "CDC5L",
+    -0.3
+   ]
+  ]
+ },
+ "PLXNB3": {
+  "gene": "ENSG00000198753",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.72,
+  "tissues_most_tag_changed": [
+   [
+    "small intestine",
+    0.72
+   ],
+   [
+    "duodenum",
+    0.66
+   ],
+   [
+    "salivary gland",
+    0.64
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "POLR2J",
+    -0.52
+   ],
+   [
+    "HTATSF1",
+    -0.51
+   ],
+   [
+    "SF3B5",
+    -0.48
+   ],
+   [
+    "SF3B4",
+    0.47
+   ],
+   [
+    "SDE2",
+    0.47
+   ]
+  ]
+ },
+ "ING4": {
+  "gene": "ENSG00000111653",
+  "tag_changed": [
+   "NLS"
+  ],
+  "range": 0.3,
+  "tissues_most_tag_changed": [
+   [
+    "bone marrow",
+    0.44
+   ],
+   [
+    "small intestine",
+    0.43
+   ],
+   [
+    "skeletal muscle",
+    0.42
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "SDE2",
+    0.47
+   ],
+   [
+    "PCBP1",
+    0.45
+   ],
+   [
+    "YJU2",
+    0.43
+   ],
+   [
+    "CDC5L",
+    0.31
+   ],
+   [
+    "LSM8",
+    0.3
+   ]
+  ]
+ },
+ "MINPP1": {
+  "gene": "ENSG00000107789",
+  "tag_changed": [
+   "ER_RETENTION",
+   "signal"
+  ],
+  "range": 0.81,
+  "tissues_most_tag_changed": [
+   [
+    "epididymis",
+    0.84
+   ],
+   [
+    "breast",
+    0.62
+   ],
+   [
+    "rectum",
+    0.61
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "YJU2",
+    -0.4
+   ],
+   [
+    "PCBP1",
+    -0.4
+   ],
+   [
+    "RNF113A",
+    -0.26
+   ],
+   [
+    "PPIL4",
+    0.24
+   ],
+   [
+    "POLR2J",
+    -0.22
+   ]
+  ]
+ },
+ "DNAJC16": {
+  "gene": "ENSG00000116138",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.91,
+  "tissues_most_tag_changed": [
+   [
+    "epididymis",
+    0.91
+   ],
+   [
+    "bone marrow",
+    0.71
+   ],
+   [
+    "choroid plexus",
+    0.68
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "LSM8",
+    0.48
+   ],
+   [
+    "PPIL4",
+    0.39
+   ],
+   [
+    "SF3B5",
+    0.37
+   ],
+   [
+    "RNF113A",
+    0.33
+   ],
+   [
+    "YJU2",
+    0.31
+   ]
+  ]
+ },
+ "COQ6": {
+  "gene": "ENSG00000119723",
+  "tag_changed": [
+   "transit"
+  ],
+  "range": 0.53,
+  "tissues_most_tag_changed": [
+   [
+    "thymus",
+    0.96
+   ],
+   [
+    "choroid plexus",
+    0.94
+   ],
+   [
+    "tonsil",
+    0.94
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "CWC22",
+    0.34
+   ],
+   [
+    "SMU1",
+    0.33
+   ],
+   [
+    "CDC5L",
+    0.28
+   ],
+   [
+    "YJU2",
+    -0.24
+   ],
+   [
+    "SF3B5",
+    0.23
+   ]
+  ]
+ },
+ "LRP12": {
+  "gene": "ENSG00000147650",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.51,
+  "tissues_most_tag_changed": [
+   [
+    "choroid plexus",
+    0.89
+   ],
+   [
+    "epididymis",
+    0.88
+   ],
+   [
+    "bone marrow",
+    0.78
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "PPIL4",
+    0.43
+   ],
+   [
+    "PCBP1",
+    -0.31
+   ],
+   [
+    "SF3B4",
+    0.29
+   ],
+   [
+    "LENG1",
+    -0.23
+   ],
+   [
+    "SF3B5",
+    0.22
+   ]
+  ]
+ },
+ "PCDHB14": {
+  "gene": "ENSG00000120327",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.33,
+  "tissues_most_tag_changed": [
+   [
+    "urinary bladder",
+    0.33
+   ],
+   [
+    "adrenal gland",
+    0.31
+   ],
+   [
+    "cerebral cortex",
+    0.29
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "PRPF6",
+    0.29
+   ],
+   [
+    "YJU2",
+    0.29
+   ],
+   [
+    "LSM8",
+    0.22
+   ],
+   [
+    "SF3B5",
+    -0.18
+   ],
+   [
+    "GPKOW",
+    0.17
+   ]
+  ]
+ },
+ "CAMTA1": {
+  "gene": "ENSG00000171735",
+  "tag_changed": [
+   "NLS"
+  ],
+  "range": 0.41,
+  "tissues_most_tag_changed": [
+   [
+    "bone marrow",
+    1.0
+   ],
+   [
+    "urinary bladder",
+    0.99
+   ],
+   [
+    "liver",
+    0.99
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "SF3B5",
+    0.43
+   ],
+   [
+    "SF3B4",
+    0.33
+   ],
+   [
+    "CWC22",
+    0.32
+   ],
+   [
+    "PCBP1",
+    0.23
+   ],
+   [
+    "PPIL4",
+    0.2
+   ]
+  ]
+ },
+ "ELAPOR2": {
+  "gene": "ENSG00000164659",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.44,
+  "tissues_most_tag_changed": [
+   [
+    "testis",
+    0.83
+   ],
+   [
+    "duodenum",
+    0.79
+   ],
+   [
+    "cervix",
+    0.76
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "HTATSF1",
+    -0.55
+   ],
+   [
+    "WBP4",
+    -0.42
+   ],
+   [
+    "GPKOW",
+    -0.41
+   ],
+   [
+    "HNRNPH2",
+    -0.37
+   ],
+   [
+    "SMU1",
+    -0.37
+   ]
+  ]
+ },
+ "CDNF": {
+  "gene": "ENSG00000185267",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.79,
+  "tissues_most_tag_changed": [
+   [
+    "testis",
+    0.8
+   ],
+   [
+    "skin",
+    0.5
+   ],
+   [
+    "rectum",
+    0.42
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "HNRNPH2",
+    -0.61
+   ],
+   [
+    "GPKOW",
+    -0.54
+   ],
+   [
+    "PCBP1",
+    -0.54
+   ],
+   [
+    "SF3B4",
+    0.51
+   ],
+   [
+    "WBP4",
+    -0.47
+   ]
+  ]
+ },
+ "ATPAF1": {
+  "gene": "ENSG00000123472",
+  "tag_changed": [
+   "transit"
+  ],
+  "range": 0.42,
+  "tissues_most_tag_changed": [
+   [
+    "pancreas",
+    0.69
+   ],
+   [
+    "thyroid gland",
+    0.66
+   ],
+   [
+    "smooth muscle",
+    0.66
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "PRPF6",
+    -0.44
+   ],
+   [
+    "HTATSF1",
+    -0.32
+   ],
+   [
+    "CWC22",
+    0.31
+   ],
+   [
+    "GPKOW",
+    -0.3
+   ],
+   [
+    "YJU2",
+    -0.27
+   ]
+  ]
+ },
+ "METRNL": {
+  "gene": "ENSG00000176845",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.85,
+  "tissues_most_tag_changed": [
+   [
+    "bone marrow",
+    0.85
+   ],
+   [
+    "pancreas",
+    0.7
+   ],
+   [
+    "duodenum",
+    0.67
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "YJU2",
+    0.49
+   ],
+   [
+    "RNF113A",
+    0.42
+   ],
+   [
+    "HTATSF1",
+    -0.33
+   ],
+   [
+    "LSM8",
+    0.29
+   ],
+   [
+    "SF3B4",
+    0.27
+   ]
+  ]
+ },
+ "OLFML2A": {
+  "gene": "ENSG00000185585",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.63,
+  "tissues_most_tag_changed": [
+   [
+    "epididymis",
+    0.73
+   ],
+   [
+    "skin",
+    0.66
+   ],
+   [
+    "choroid plexus",
+    0.64
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "SMU1",
+    0.37
+   ],
+   [
+    "PPIL4",
+    0.29
+   ],
+   [
+    "SF3B4",
+    0.28
+   ],
+   [
+    "SF3B5",
+    0.28
+   ],
+   [
+    "HNRNPH2",
+    0.24
+   ]
+  ]
+ },
+ "TAFA5": {
+  "gene": "ENSG00000219438",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.92,
+  "tissues_most_tag_changed": [
+   [
+    "parathyroid gland",
+    0.92
+   ],
+   [
+    "liver",
+    0.87
+   ],
+   [
+    "stomach",
+    0.78
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "HTATSF1",
+    -0.33
+   ],
+   [
+    "LSM8",
+    -0.3
+   ],
+   [
+    "WBP4",
+    -0.25
+   ],
+   [
+    "PRPF6",
+    -0.18
+   ],
+   [
+    "LENG1",
+    0.15
+   ]
+  ]
+ },
+ "SRL": {
+  "gene": "ENSG00000185739",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.31,
+  "tissues_most_tag_changed": [
+   [
+    "tonsil",
+    0.31
+   ],
+   [
+    "fallopian tube",
+    0.26
+   ],
+   [
+    "spleen",
+    0.26
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "PPIL4",
+    0.51
+   ],
+   [
+    "LSM3",
+    -0.5
+   ],
+   [
+    "POLR2J",
+    -0.49
+   ],
+   [
+    "SF3B4",
+    0.46
+   ],
+   [
+    "WBP4",
+    -0.41
+   ]
+  ]
+ },
+ "BTBD6": {
+  "gene": "ENSG00000184887",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.42,
+  "tissues_most_tag_changed": [
+   [
+    "adipose tissue",
+    0.42
+   ],
+   [
+    "stomach",
+    0.25
+   ],
+   [
+    "skeletal muscle",
+    0.18
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "SF3B5",
+    -0.31
+   ],
+   [
+    "SF3B4",
+    -0.3
+   ],
+   [
+    "CWC22",
+    -0.19
+   ],
+   [
+    "LSM3",
+    0.17
+   ],
+   [
+    "PCBP1",
+    0.17
+   ]
+  ]
+ },
+ "MANSC1": {
+  "gene": "ENSG00000111261",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.38,
+  "tissues_most_tag_changed": [
+   [
+    "choroid plexus",
+    0.9
+   ],
+   [
+    "pancreas",
+    0.88
+   ],
+   [
+    "epididymis",
+    0.88
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "SDE2",
+    -0.69
+   ],
+   [
+    "CDC5L",
+    -0.61
+   ],
+   [
+    "PCBP1",
+    -0.55
+   ],
+   [
+    "YJU2",
+    -0.54
+   ],
+   [
+    "SMU1",
+    -0.5
+   ]
+  ]
+ },
+ "RNF150": {
+  "gene": "ENSG00000170153",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.31,
+  "tissues_most_tag_changed": [
+   [
+    "salivary gland",
+    0.31
+   ],
+   [
+    "testis",
+    0.21
+   ],
+   [
+    "placenta",
+    0.21
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "SMU1",
+    -0.61
+   ],
+   [
+    "HNRNPH2",
+    -0.58
+   ],
+   [
+    "GPKOW",
+    -0.43
+   ],
+   [
+    "WBP4",
+    -0.43
+   ],
+   [
+    "CDC5L",
+    -0.35
+   ]
+  ]
+ },
+ "PINLYP": {
+  "gene": "ENSG00000234465",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.46,
+  "tissues_most_tag_changed": [
+   [
+    "tongue",
+    1.0
+   ],
+   [
+    "smooth muscle",
+    0.99
+   ],
+   [
+    "ovary",
+    0.99
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "HNRNPH2",
+    0.52
+   ],
+   [
+    "PRPF6",
+    -0.39
+   ],
+   [
+    "SF3B4",
+    -0.38
+   ],
+   [
+    "CWC22",
+    0.27
+   ],
+   [
+    "YJU2",
+    -0.26
+   ]
+  ]
+ },
+ "OLFML2B": {
+  "gene": "ENSG00000162745",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.42,
+  "tissues_most_tag_changed": [
+   [
+    "testis",
+    0.42
+   ],
+   [
+    "pancreas",
+    0.29
+   ],
+   [
+    "choroid plexus",
+    0.28
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "HNRNPH2",
+    -0.53
+   ],
+   [
+    "CWC22",
+    -0.45
+   ],
+   [
+    "SDE2",
+    -0.34
+   ],
+   [
+    "PRPF6",
+    0.3
+   ],
+   [
+    "SMU1",
+    -0.28
+   ]
+  ]
+ },
+ "TM2D2": {
+  "gene": "ENSG00000169490",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.43,
+  "tissues_most_tag_changed": [
+   [
+    "bone marrow",
+    0.97
+   ],
+   [
+    "skeletal muscle",
+    0.86
+   ],
+   [
+    "testis",
+    0.81
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "YJU2",
+    0.51
+   ],
+   [
+    "LSM8",
+    0.5
+   ],
+   [
+    "LSM3",
+    0.42
+   ],
+   [
+    "PCBP1",
+    0.39
+   ],
+   [
+    "POLR2J",
+    0.35
+   ]
+  ]
+ },
+ "HDHD5": {
+  "gene": "ENSG00000069998",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.81,
+  "tissues_most_tag_changed": [
+   [
+    "pancreas",
+    0.89
+   ],
+   [
+    "stomach",
+    0.86
+   ],
+   [
+    "spleen",
+    0.84
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "HNRNPH2",
+    -0.34
+   ],
+   [
+    "PPIL4",
+    -0.32
+   ],
+   [
+    "SMU1",
+    -0.28
+   ],
+   [
+    "PCBP1",
+    0.26
+   ],
+   [
+    "SF3B4",
+    -0.25
+   ]
+  ]
+ },
+ "TMEM52": {
+  "gene": "ENSG00000178821",
+  "tag_changed": [
+   "signal"
+  ],
+  "range": 0.34,
+  "tissues_most_tag_changed": [
+   [
+    "small intestine",
+    0.45
+   ],
+   [
+    "skin",
+    0.43
+   ],
+   [
+    "ovary",
+    0.42
+   ]
+  ],
+  "candidate_governors": [
+   [
+    "YJU2",
+    0.44
+   ],
+   [
+    "HNRNPH2",
+    -0.35
+   ],
+   [
+    "RNF113A",
+    0.29
+   ],
+   [
+    "SF3B5",
+    -0.28
+   ],
+   [
+    "SF3B4",
+    0.28
+   ]
+  ]
+ }
+}

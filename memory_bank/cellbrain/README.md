@@ -176,3 +176,12 @@ In total, 44,082 facts and 16 layers were added.
   - Gene facts: `protein/per_rna_offset_cancer_lines`, `predict/job_from_neighbours`, `partners/bioplex_by_cell_line`.
   - Complex facts: `COMPLEX-*` `machine/protein_comovement`.
 - **The completed list of limits:** see `rem/atlas/RESULTS_TWOPROBLEMS.txt`.
+
+## Address tags, partner finder, RNA versions (addressbank, addresstest G9; 2026-11-24)
+
+- **New layers:** `ADDR_UNIPROT` (signal / transit peptides, transmembrane segments, NLS, ER-retention, peroxisome signal, GPI, Pfam domains, isoforms whose alternative sequence touches the tag), `ADDR_MITOCARTA` (local), `RNA_FRACTIONS_ENCODE` (K562 and HepG2 cell fractions), `ISOFORM_HPA_TISSUE` (each RNA version in 40 tissues).
+- **Tests:**
+  - **PASS:** address tag → room (signal OR 5.7, mito transit OR 88, NLS OR 6.3); the common-sense partner finder (fit → same destination → made together) finds a known partner in the first 10 tries for 18.3% of held-out proteins (random 1.2%) and beats fit alone (median +0.38 log2).
+  - **FAIL:** RNA in the membrane fraction (the ENCODE fraction is not an ER read-out); RNA versions that change the tag vs dual-room proteins (imaging cannot tell isoforms apart).
+- **New facts:** `CLAIM-G9-*`; gene facts `isoform/tag_changing_by_tissue` (189 genes: where the tag-changing version is used, and splicing proteins that follow it; correlation, not cause).
+- **Outputs:** `outputs/address/address_tests.json`, `outputs/address/isoform_when_and_governors.json`.
