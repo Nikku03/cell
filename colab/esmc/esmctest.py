@@ -102,6 +102,8 @@ def embed(seqs, model_name, cache, budget=None):
     """mean over residues of the last hidden layer; returns float32 [n, d], number of non-finite rows."""
     import torch
     from transformers import AutoModel, AutoTokenizer
+    from transformers.utils import logging as hf_logging
+    hf_logging.set_verbosity_error()                                   # the unused masked-LM head is reported as "unexpected"; not needed here
     rev = REVISIONS.get(model_name); cuda = torch.cuda.is_available(); big = "6B" in model_name
     if cuda:
         half = torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16
