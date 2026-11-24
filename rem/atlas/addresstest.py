@@ -214,10 +214,10 @@ def run_p1(rng, D):
     RM = np.array([[r in rooms.get(g, ()) for r in RN] for g in U], np.float32)
     CM = np.array([[c in (aclass(g) | {CLASS_OF_ROOM[r] for r in rooms.get(g, ())}) for c in CN] for g in U], np.float32)
     S = gx.npz("EXPR_HPA_SCT"); sr = {g: i for i, g in enumerate(S["rows"].astype(str))}
-    MADE = np.zeros((nU, S["X"].shape[1]), bool)
+    SX = S["X"]; MADE = np.zeros((nU, SX.shape[1]), bool)                     # read the npz array once
     for g, i in ui.items():
         if g in sr:
-            MADE[i] = S["X"][sr[g]] >= 1.0
+            MADE[i] = SX[sr[g]] >= 1.0
     queries = [g for g in U if g not in dev and truth.get(g) and any(t in ui for t in truth[g])]
     if TRIAL:
         queries = queries[::40]
