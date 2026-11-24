@@ -1,0 +1,248 @@
+{
+ "G10-E1": {
+  "dev_proteins": 6749,
+  "exam_proteins": 6706,
+  "esmc_vs_tags": {
+   "n": 6706,
+   "median": 0.038155928177156184,
+   "share_positive": 0.6070682970474203,
+   "p": 1.437536129654873e-69,
+   "passed": true
+  },
+  "shuffled_vs_tags": {
+   "n": 6706,
+   "median": -0.009150250146144318,
+   "share_positive": 0.4533253802564867,
+   "p": 0.9999999999999909,
+   "passed": false
+  },
+  "planted_vs_tags": {
+   "n": 6706,
+   "median": 0.03474250845225685,
+   "share_positive": 0.6871458395466746,
+   "p": 1.6945483540688388e-211,
+   "passed": true
+  },
+  "mean_logloss": {
+   "tags": 0.544883705636231,
+   "tags+esmc": 0.5078226242635523,
+   "tags+shuffled": 0.5605292321609072,
+   "tags+planted": 0.5169410611577021
+  },
+  "exam_auroc": {
+   "tags": {
+    "nuclear": 0.6459909854477052,
+    "secretory": 0.681859594177006,
+    "mito": 0.7280261462907603,
+    "cyto": 0.5959983098232489
+   },
+   "tags+esmc": {
+    "nuclear": 0.7610837567215843,
+    "secretory": 0.7628717639819139,
+    "mito": 0.7895379721687165,
+    "cyto": 0.6589564146604941
+   },
+   "tags+shuffled": {
+    "nuclear": 0.6359845529213902,
+    "secretory": 0.672091073426055,
+    "mito": 0.7023424317001221,
+    "cyto": 0.5780482820156221
+   },
+   "tags+planted": {
+    "nuclear": 0.7992841729650881,
+    "secretory": 0.7043886888080664,
+    "mito": 0.7344310367135564,
+    "cyto": 0.6074803940208974
+   },
+   "esmc_only": {
+    "nuclear": 0.7576922331414394,
+    "secretory": 0.7588787080989766,
+    "mito": 0.7856401770566002,
+    "cyto": 0.6523142728252193
+   }
+  },
+  "gate": {
+   "real": true,
+   "controls_ok": true,
+   "negative_passed": false,
+   "planted_passed": true,
+   "verdict": "PASS"
+  }
+ },
+ "G10-E2": {
+  "proteins": 4524,
+  "classes_tested": [
+   "nuclear",
+   "secretory",
+   "mito",
+   "cyto"
+  ],
+  "in_class": {
+   "nuclear": 2898,
+   "secretory": 1660,
+   "mito": 269,
+   "cyto": 2475
+  },
+  "esmc": {
+   "mean_auroc": 0.6870440680596,
+   "null_95": 0.5099820428492576,
+   "p_mc": 0.000999000999000999,
+   "passed": false,
+   "per_class": {
+    "nuclear": 0.755902934288142,
+    "secretory": 0.6859083681093088,
+    "mito": 0.6598657166945513,
+    "cyto": 0.6464992531463981
+   }
+  },
+  "shuffled": {
+   "mean_auroc": 0.499650860113685,
+   "null_95": 0.5096038352720239,
+   "p_mc": 0.4975024975024975,
+   "passed": false,
+   "per_class": {
+    "nuclear": 0.5067180614870331,
+    "secretory": 0.5009778639698459,
+    "mito": 0.4881709250870395,
+    "cyto": 0.5027365899108213
+   }
+  },
+  "planted": {
+   "mean_auroc": 0.7650962153312058,
+   "null_95": 0.5098615209972623,
+   "p_mc": 0.000999000999000999,
+   "passed": true,
+   "per_class": {
+    "nuclear": 0.7590561671662265,
+    "secretory": 0.7650175422359831,
+    "mito": 0.7776916726003521,
+    "cyto": 0.7586194793222611
+   }
+  },
+  "gate": {
+   "real": false,
+   "controls_ok": true,
+   "negative_passed": false,
+   "planted_passed": true,
+   "verdict": "FAIL"
+  }
+ },
+ "G10-P1": {
+  "queries": 2648,
+  "shortlist_rank_mismatch": 0,
+  "dev_training_pairs": 12974,
+  "median_tries": {
+   "g9": 21.0,
+   "esmc": 10.0,
+   "shuffled": 53.0,
+   "planted": 10.0
+  },
+  "within_10": {
+   "g9": 0.4052114803625378,
+   "esmc": 0.5101963746223565,
+   "shuffled": 0.2639728096676737,
+   "planted": 0.5007552870090635
+  },
+  "first_try": {
+   "g9": 0.1593655589123867,
+   "esmc": 0.2345166163141994,
+   "shuffled": 0.07477341389728097,
+   "planted": 0.23829305135951662
+  },
+  "esmc_vs_g9": {
+   "n": 2648,
+   "median": 0.7464848667069858,
+   "share_positive": 0.739964317573595,
+   "p": 3.7745334908540865e-119,
+   "passed": true
+  },
+  "shuffled_vs_g9": {
+   "n": 2648,
+   "median": -0.7185264814011689,
+   "share_positive": 0.3574859887910328,
+   "p": 1.0,
+   "passed": false
+  },
+  "planted_vs_g9": {
+   "n": 2648,
+   "median": 1.0,
+   "share_positive": 0.7071490094745909,
+   "p": 1.918851325904037e-91,
+   "passed": true
+  },
+  "pair_model_alone": {
+   "queries": 4327,
+   "within_10": 0.23965796163623757,
+   "random_within_10": 0.005175281208615613,
+   "median_tries": 117.0,
+   "exam_pair_auroc": 0.9107179005740036
+  },
+  "gate": {
+   "real": true,
+   "controls_ok": true,
+   "negative_passed": false,
+   "planted_passed": true,
+   "verdict": "PASS"
+  }
+ },
+ "G10-S1": {
+  "isoforms": 10692,
+  "tag_changing": 477,
+  "genes": 5250,
+  "median_shift": {
+   "tag_changing": 0.1986520771370322,
+   "other": 0.1083617190584033
+  },
+  "esmc": {
+   "auroc": 0.5695240004878442,
+   "null_95": 0.5217807967157335,
+   "p_mc": 0.000999000999000999,
+   "passed": false
+  },
+  "shuffled": {
+   "auroc": 0.48269083286995024,
+   "null_95": 0.52307854498399,
+   "p_mc": 0.8771228771228772,
+   "passed": false
+  },
+  "planted": {
+   "auroc": 0.7656497733384874,
+   "null_95": 0.5209470172254481,
+   "p_mc": 0.000999000999000999,
+   "passed": true
+  },
+  "gate": {
+   "real": false,
+   "controls_ok": true,
+   "negative_passed": false,
+   "planted_passed": true,
+   "verdict": "FAIL"
+  }
+ },
+ "meta": {
+  "code_sha": "6c574b9b3f1f2408",
+  "model": "biohub/ESMC-600M",
+  "revision": "5e366569e675ad5ae3512f66bf0b53ffe80ee83e",
+  "declared_model": "biohub/ESMC-600M",
+  "gating": true,
+  "trial": false,
+  "gpu": "NVIDIA L4",
+  "torch": "2.14.1+cu130",
+  "transformers": "5.24.1",
+  "python": "3.13.16",
+  "sequences": 41603,
+  "pieces": 42954,
+  "non_finite": 0,
+  "fingerprint_minutes": 29.2,
+  "total_minutes": 31.0,
+  "finished": "2026-11-24T20:56:48Z",
+  "bundle": {
+   "genes.json.gz": "474299430ee9c9c18efb8c18bc9a7ce72603c3d1074d9416f9e42ba7ebbf8dfb",
+   "ppi.tsv.gz": "535368acc69fcdf27680a7b221b43e749210f1716518caf0d729baa6ec7b6261",
+   "proteins.tsv.gz": "8ad2206d38f29319a6749811a12f8ba91fbfa3ad9330cf7cacb174678390446c",
+   "shortlist.npz": "721cb18247cdf1f968541bc323ab7d7e348e2ac1d27509e955f41ca4ec1dfe07"
+  },
+  "uniprot_release": "2026_04",
+  "catalogue_rows": 965
+ }
+}

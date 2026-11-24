@@ -192,3 +192,11 @@ In total, 44,082 facts and 16 layers were added.
 - **Tests (all FAIL as declared):** ER-made proteins' RNA at the ER membrane AUROC 0.69 (bar 0.70; strongly real, +0.66 vs −0.08 log2); mitochondrial proteins' RNA at the mitochondrial surface 0.42 (no); puromycin sensitivity 0.57 (real, under the bar).
 - **New facts:** `CLAIM-G12-*`; gene facts `rna_location/er_membrane_without_er_tag` (289 RNAs at the ER whose protein has no annotated ER tag). Lists stay local (source terms).
 - **Meaning:** the RNA of ER proteins travels to the ER while being made; for mitochondria in these cells it mostly does not.
+
+## ESM C protein language model (esmcbundle, colab/esmc G10; 2026-11-24)
+
+- **Run:** on the user's Colab L4 from a fixed bundle (`colab/esmc/`, sha256 in `manifest.json`) and declared code; results checked against the declared code id and recorded with `esmcbundle.py record`.
+- **Tests:**
+  - **PASS:** address from the whole sequence beats tags alone (61% of held-out proteins better; e.g. nuclear AUROC 0.65 → 0.76); partner finder + ESM C: partner within 10 tries 40.5% → 51.0%, median tries 21 → 10.
+  - **FAIL (real, just under the bars):** hidden addresses (AUROC 0.687 vs 0.70); isoform moves (0.57 vs 0.60).
+- **New facts:** `CLAIM-G10-*`. Fingerprints were not kept (re-run the notebook with `KEEP_FINGERPRINTS_IN_DRIVE = True` to bank them).

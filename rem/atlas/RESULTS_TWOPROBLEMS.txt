@@ -6522,3 +6522,29 @@ G12 RNA AT THE ER AND THE MITOCHONDRIA, MEASURED IN PLACE (APEX-seq, HEK293T)   
   IN SIMPLE: for the ER, yes -- the RNA goes to the ER with its protein (while it is being made). For mitochondria
   in these cells, the RNA mostly does not wait at the surface; the protein goes in after it is made. No sign here of
   a separate RNA "address tail" for mitochondria.
+
+========================================================================================================================
+G10 ESM C (protein language model) ADDED TO THE CELL MODEL   (colab/esmc/esmctest.py, run by the user on Colab)
+    Declared before the run (code id 6c574b9b3f1f2408, ESMC-600M at a fixed revision). Run on an NVIDIA L4: 41,603
+    sequences in 29 min, no non-finite fingerprints; results file checked against the declared code id and recorded.
+  G10-E1 address from the whole sequence   PASS. Adding the ESM C fingerprint to the address tags lowers the error for
+         61% of 6,706 held-out proteins (median +0.038 nats, sign p 1e-69). Held-out AUROC tags -> tags + ESM C:
+         nuclear 0.65 -> 0.76, secretory 0.68 -> 0.76, mitochondria 0.73 -> 0.79, cytoplasm 0.60 -> 0.66.
+         Shuffled fingerprints made it worse (control ok); planted passed.
+  G10-E2 hidden addresses (proteins with no tag at all)   FAIL (just under the bar), real: mean AUROC 0.687 (bar 0.70;
+         random 95% 0.51, p_MC 0.001) over 4,524 proteins: nuclear 0.76, secretory 0.69, mitochondria 0.66,
+         cytoplasm 0.65. Shuffled 0.50.
+  G10-P1 partners that fit   PASS. ESM C "do these fit" added to the G9 partner finder, 2,648 held-out proteins whose
+         G9 shortlist holds a known partner: partner within 10 tries 40.5% -> 51.0%, first try right 15.9% -> 23.5%,
+         median tries 21 -> 10 (median gain +0.75 log2, 74% helped, sign p 1e-119). Shuffled fingerprints: 26.4%,
+         median 53 (worse; control ok). Reported: the ESM C pair model alone over all 20,082 candidates finds a partner
+         within 10 tries for 24% of 4,327 held-out proteins (random 0.5%), AUROC 0.91 on held-out pairs.
+         Caveat (not tested): interactions include whole complexes (Complex Portal), so part of the gain is likely
+         "proteins that look like ribosome / proteasome parts bind each other".
+  G10-S1 RNA versions that move the protein   FAIL (real, under the bar): versions whose alternative sequence touches
+         the tag shift the predicted address more (median 0.20 vs 0.11; length-stratified AUROC 0.57, bar 0.60,
+         p_MC 0.001). Shuffled 0.48. A catalogue of 965 tag-changing versions with predicted rooms is in the user's
+         Drive (cellbrain_esmc), not yet copied here.
+  IN SIMPLE: reading the whole protein sequence improves where-it-goes predictions and halves the tries needed to
+  find a real partner. It sees addresses without a known tag and isoform moves, but not quite strongly enough to
+  pass the bars we set.
