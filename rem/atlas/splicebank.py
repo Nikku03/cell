@@ -118,6 +118,8 @@ def pull():
 
 def build():
     meta = json.load(open(os.path.join(RAW, "experiments.json"))); tx2iso, isos, iso_gene = isoform_map()
+    for v in meta["experiments"].values():                                      # ENCODE lists the control-shRNA experiments in the same
+        v["role"] = "control" if not v["target"] else "knockdown"              # search; a control has no target protein
     cols = []
     for e, v in sorted(meta["experiments"].items()):
         for rep, acc, md5, url in v["files"]:
