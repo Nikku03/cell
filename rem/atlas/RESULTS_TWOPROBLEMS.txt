@@ -6548,3 +6548,27 @@ G10 ESM C (protein language model) ADDED TO THE CELL MODEL   (colab/esmc/esmctes
   IN SIMPLE: reading the whole protein sequence improves where-it-goes predictions and halves the tries needed to
   find a real partner. It sees addresses without a known tag and isoform moves, but not quite strongly enough to
   pass the bars we set.
+
+========================================================================================================================
+G11 WHAT GOVERNS WHICH RNA VERSION IS MADE -- CHECKED WITH REAL KNOCKDOWNS   (splicebank.py, splicetest.py)
+    ENCODE knocked down 451 RNA-binding proteins one at a time in K562 and HepG2 (460 knockdowns, 62 control
+    experiments, 1,044 replicate tables summed per UniProt isoform). Declared before the real run; trials showed only
+    controls (first trial's K2 controls failed -> found NA sums in the tissue table, fixed before declaring; disclosed).
+  G11-K1 splicing proteins move the address version   PASS. For 397 gene x cell-line units, knocking down a splicing
+         protein (Reactome; 42 in K562, 46 in HepG2) shifts the address-changing share more than knocking down one of
+         186 other RNA-binding proteins: 72% of units, median AUROC gain +0.032, sign p 2e-18; shuffled labels never
+         matched (p_MC 0.001); controls ok. Reported: the same holds for RNA versions that do not touch the address
+         (7,475 units, 72%, +0.037) -- splicing proteins govern RNA version choice in general; address versions are
+         not special.
+  G11-K2 the tissue pattern points to the governors   FAIL: which splicing protein's RNA follows a gene's address
+         share across 40 tissues does not predict which knockdown moves it (190 genes, 177 gene x line units; median
+         rho -0.002, p_MC 0.57; planted passed, mismatched control did not). So G9's "candidate governors" (tissue
+         correlation) should not be trusted; use the measured ones.
+  REPORTED: measured governors for 205 genes (a knockdown shifts the address share by >= 0.10, both replicates beyond
+         both controls; isoform/governors_measured facts; outputs/splice/governors_measured.json). Noisy: such shifts
+         happen for 13.6% of measured splicing-protein pairs but also for 11.0% of other-protein pairs, so a single
+         hit is weak evidence; hits repeated across lines or proteins are better.
+  IN SIMPLE: the splicing machinery does decide which RNA version is made -- knock one of its parts down and the
+  versions shift more than when other RNA proteins are removed -- but this is true for all versions, not only the
+  address-changing ones, and tissue patterns cannot tell us which part controls which gene. The measured list is the
+  best answer we have, with noise.

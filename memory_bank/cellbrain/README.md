@@ -200,3 +200,10 @@ In total, 44,082 facts and 16 layers were added.
   - **PASS:** address from the whole sequence beats tags alone (61% of held-out proteins better; e.g. nuclear AUROC 0.65 → 0.76); partner finder + ESM C: partner within 10 tries 40.5% → 51.0%, median tries 21 → 10.
   - **FAIL (real, just under the bars):** hidden addresses (AUROC 0.687 vs 0.70); isoform moves (0.57 vs 0.60).
 - **New facts:** `CLAIM-G10-*`. Fingerprints were not kept (re-run the notebook with `KEEP_FINGERPRINTS_IN_DRIVE = True` to bank them).
+
+## What governs RNA versions (splicebank, splicetest G11; 2026-11-24)
+
+- **New layer:** `SPLICE_KD_ENCODE` (ENCODE shRNA knockdowns of 451 RNA-binding proteins in K562 and HepG2, summed per UniProt isoform; TPM and counts per replicate).
+- **Tests:** **PASS** — splicing-protein knockdowns shift the address-changing RNA versions more than other RNA-binding-protein knockdowns (72% of genes; also true for all other versions). **FAIL** — the tissue correlation does not pick the right governor.
+- **New facts:** `CLAIM-G11-*`; gene facts `isoform/governors_measured` (205 genes; noisy — single hits are weak).
+- **Disclosure:** G9's descriptive "candidate governors" used sums that skipped most splicing proteins; prefer `isoform/governors_measured`.
