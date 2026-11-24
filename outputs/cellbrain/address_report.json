@@ -1,0 +1,56 @@
+{
+ "added": "2026-11-24",
+ "facts_written": 20091,
+ "layers": {
+  "ADDR_RAW_UNIPROT": "LAYER-ADDR_RAW_UNIPROT/50693fac0f658a708c23",
+  "ADDR_RAW_MITOCARTA": "LAYER-ADDR_RAW_MITOCARTA/4b9a662eda6dabf30d35",
+  "ADDR_RAW_HPA_TX": "LAYER-ADDR_RAW_HPA_TX/1cab7a7639566e6319bd",
+  "ADDR_RAW_ENCODE_FRAC": "LAYER-ADDR_RAW_ENCODE_FRAC/22e1e89416f434b977e3",
+  "ADDR_UNIPROT": "LAYER-ADDR_UNIPROT/c733144312f876fcb5d5",
+  "ADDR_MITOCARTA": "LAYER-ADDR_MITOCARTA/60ddba3493edb4982bfe",
+  "RNA_FRACTIONS_ENCODE": "LAYER-RNA_FRACTIONS_ENCODE/529a90c4ca16299cd971",
+  "ISOFORM_HPA_TISSUE": "LAYER-ISOFORM_HPA_TISSUE/0f4e21a4174f92469ffc"
+ },
+ "build": {
+  "uniprot": {
+   "proteins": 20083,
+   "signal": 3375,
+   "transit_mito": 511,
+   "tm": 5180,
+   "nls": 504,
+   "er_retention": 57,
+   "pts1": 40,
+   "gpi": 136,
+   "genes_with_isoforms_changing_tag": 902
+  },
+  "mitocarta": {
+   "genes": 1244
+  },
+  "encode_fractions": {
+   "genes": 58735,
+   "samples": [
+    "HepG2_cytosolic_rep1",
+    "HepG2_cytosolic_rep2",
+    "HepG2_insoluble_rep1",
+    "HepG2_insoluble_rep2",
+    "HepG2_membrane_rep1",
+    "HepG2_membrane_rep2",
+    "HepG2_nuclear_rep1",
+    "HepG2_nuclear_rep2",
+    "K562_cytosolic_rep1",
+    "K562_cytosolic_rep2",
+    "K562_insoluble_rep1",
+    "K562_insoluble_rep2",
+    "K562_membrane_rep1",
+    "K562_membrane_rep2",
+    "K562_nuclear_rep1",
+    "K562_nuclear_rep2"
+   ]
+  },
+  "hpa_transcripts": {
+   "transcripts": 205541,
+   "genes": 40538,
+   "tissues": 40
+  }
+ }
+}
