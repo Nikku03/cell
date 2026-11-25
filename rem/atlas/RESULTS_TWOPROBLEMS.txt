@@ -6572,3 +6572,16 @@ G11 WHAT GOVERNS WHICH RNA VERSION IS MADE -- CHECKED WITH REAL KNOCKDOWNS   (sp
   versions shift more than when other RNA proteins are removed -- but this is true for all versions, not only the
   address-changing ones, and tissue patterns cannot tell us which part controls which gene. The measured list is the
   best answer we have, with noise.
+
+========================================================================================================================
+DESCRIPTIVE UPDATES (isoformwhen.py; no claims)
+  G9 "when and what governs" redone with corrected sums: 206 genes whose address-changing RNA version varies across
+  40 tissues (G9 had 189 because its sums dropped genes and 193 of 212 splicing proteins). Each gene now lists the
+  tissues where the version is used most and least, the splicing proteins that follow it across tissues (correlation
+  only; G11-K2 showed this does not pick the real governor), and the knockdowns that moved it (G11; 112 of the 206
+  genes; noisy). Facts isoform/when_and_governors_v2 (replace isoform/tag_changing_by_tissue);
+  outputs/address/isoform_when_and_governors_v2.json.
+  G10 catalogue copied from the user's Drive (checked: 965 rows, the declared code's columns, matches the recorded
+  results): 965 address-changing RNA versions of 751 genes, 247 predicted by ESM C to move to another room (e.g.
+  ATPAF1, MRPL38, ISCU, TIMM50 versions without the mitochondrial transit peptide). Facts isoform/esmc_predicted_room;
+  outputs/esmc/G10_isoform_catalogue.csv. Predictions, not measurements (G10-S1 under its bar).
