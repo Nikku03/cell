@@ -3,7 +3,7 @@
 Asked by the user: "Do the first 3" -- (3) update the cell-map page with the address tags, the partner finder, the
 ESM C results, the measured splicing controllers and the ER RNA results.
 Per protein (UniProt reviewed, Ensembl): rooms by imaging (HPA, OpenCell), address tags (UniProt); likely partners =
-the first 10 candidates of the G9 partner finder (tested: G9-P1 PASS -- fit (Pfam domain pairs learned on DEV
+the first 10 candidates of the G9 partner finder, re-ordered with ESM C fit (G10-P1 rule) when esmcpartners.py has run (tested: G9-P1 PASS -- fit (Pfam domain pairs learned on DEV
 interactions + similar behaviour in DepMap / ProCan / HPA / K562 knockdowns), then same destination, then made
 together), known partners (HPA, OpenCell, Complex Portal) marked; RNA versions that change the address with the ESM C
 room prediction (G10 catalogue), where they are used (HPA tissues) and the knockdowns that moved them (ENCODE, G11).
@@ -72,11 +72,17 @@ def build(outdir):
     truth = collections.defaultdict(set)
     for p in ppi:
         x, y = tuple(p); truth[x].add(y); truth[y].add(x)
-    ev = cf.evidences(); with_beh = set().union(*[set(map(str, v[0])) for v in ev.values()])
-    has = [g for g in U if P[g]["pfam"] or g in with_beh]
-    print(f"partner lists for {len(has)} of {len(U)} proteins", flush=True)
-    o = eb.g9_orders(D, U, has, truth, k=10)
-    partners = {g: [[sym(U[j]), int(U[j] in truth.get(g, ()))] for j in o["cand"][k_]] for k_, g in enumerate(has)}
+    sug = R("outputs", "address", "partner_suggestions_esmc.json.gz"); only = set()
+    if os.path.exists(sug):                                                   # ESM C fit added (G10-P1 rule; esmcpartners.py)
+        S = json.load(gzip.open(sug, "rt")); partners = {v["gene"]: v["suggested"] for v in S.values()}
+        only = {v["gene"] for v in S.values() if v["how"] == "ESM C fit only"}
+        print(f"partner lists with ESM C for {len(partners)} proteins ({len(only)} from ESM C alone)", flush=True)
+    else:
+        ev = cf.evidences(); with_beh = set().union(*[set(map(str, v[0])) for v in ev.values()])
+        has = [g for g in U if P[g]["pfam"] or g in with_beh]
+        print(f"partner lists for {len(has)} of {len(U)} proteins", flush=True)
+        o = eb.g9_orders(D, U, has, truth, k=10)
+        partners = {g: [[sym(U[j]), int(U[j] in truth.get(g, ()))] for j in o["cand"][k_]] for k_, g in enumerate(has)}
     cat = collections.defaultdict(list)
     for r in csv.DictReader(open(R("outputs", "esmc", "G10_isoform_catalogue.csv"))):
         cat[r["gene"]].append([r["isoform"], r["tag_changed"], r["canonical_class"], r["isoform_class"], float(r["shift"]), int(r["moves"])])
@@ -89,6 +95,8 @@ def build(outdir):
         row = dict(s=s_, e=g, r=sorted(rooms.get(g, ())), t=tags, tm=int(v["tm"]), n=int(len(truth.get(g, ()))))
         if g in partners:
             row["p"] = partners[g]
+            if g in only:
+                row["po"] = 1
         if g in cat:
             row["v"] = cat[g]
         if g in when:
@@ -99,8 +107,9 @@ def build(outdir):
     genes.sort(key=lambda r: r["s"])
     os.makedirs(outdir, exist_ok=True)
     json.dump(dict(genes=genes, tests=tests()), open(os.path.join(outdir, "proteins.json"), "w"), separators=(",", ":"))
-    with gzip.open(R("outputs", "address", "partner_suggestions.json.gz"), "wt") as f:
-        json.dump({sym(g): dict(gene=g, suggested=p, known_partners=len(truth.get(g, ()))) for g, p in partners.items()}, f, separators=(",", ":"))
+    if not only and not os.path.exists(sug):
+        with gzip.open(R("outputs", "address", "partner_suggestions.json.gz"), "wt") as f:
+            json.dump({sym(g): dict(gene=g, suggested=p, known_partners=len(truth.get(g, ()))) for g, p in partners.items()}, f, separators=(",", ":"))
     print(f"{len(genes)} proteins; {len(partners)} partner lists; {len(cat)} with ESM C version predictions; {len(when)} with tissue use; "
           f"{len(gov)} with measured controllers; {os.path.getsize(os.path.join(outdir, 'proteins.json')) / 1e6:.1f} MB ({time.time() - t0:.0f}s)")
 
