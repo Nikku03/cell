@@ -16,7 +16,8 @@ range, +-60 degrees where the portal records none -- Jurkat and RPE1); locally n
 tomograms (the sign with the higher DEV F1); score map = maximum over rotations, in robust z units (median, 1.4826 x
 MAD over the interior); peaks = local maxima at least 20 nm apart, 20 nm from the border; threshold = the z that
 maximises F1 on the DEV tomograms (grid 2.0 .. 12.0, step 0.25), then used unchanged everywhere. A pick matches a
-hand-placed ribosome within 15 nm (one-to-one). CONTROL TEMPLATE: the same template with its Fourier phases
+hand-placed ribosome within 15 nm (one-to-one); picks are scored only inside the box the hand-picked ribosomes of
+that tomogram span, widened by 15 nm (some tomograms are labelled only in part, e.g. one slice). CONTROL TEMPLATE: the same template with its Fourier phases
 randomised (same power spectrum, same mask), run through the identical pipeline (its own DEV threshold).
 PREDICTION (frozen in bundle.json before any run; built by rem/atlas/cryoetbundle.py): share of ribosomes making ER
 proteins = sum over nuclear-encoded genes with a signal peptide or transmembrane segment of HPA nTPM x protein length
@@ -238,8 +239,17 @@ def peaks(S, sd):
     return idx.cpu().numpy() * VOX, z.cpu().numpy()
 
 
+def in_labelled(pred, gt):
+    """picks inside the box spanned by the hand-picked ribosomes, widened by the match distance (partial labelling)."""
+    if len(gt) == 0:
+        return pred[:0]
+    lo, hi = gt.min(0) - MATCH_NM * 10, gt.max(0) + MATCH_NM * 10
+    return pred[((pred >= lo) & (pred <= hi)).all(1)]
+
+
 def f1(pred, gt):
     from scipy.optimize import linear_sum_assignment
+    pred = in_labelled(pred, gt)
     if len(pred) == 0 or len(gt) == 0:
         return 0.0, 0.0, 0.0, 0
     d = np.sqrt(((pred[:, None, :] - gt[None, :, :]) ** 2).sum(-1)); cost = np.where(d <= MATCH_NM * 10, d, 1e9)
@@ -263,9 +273,10 @@ def run(a):
     batch = 16 if gpu_gb > 30 else 8 if gpu_gb > 14 else 2
     found = {}                                                   # (run, kind, sign) -> (coords, z)
 
-    def load(e):
+    def load(e, centre_A=None):
         if a.trial:
-            shp = np.array(zarr_shape(e["tomo_prefix"])); c = shp // 2; h = np.minimum(shp // 2, [50, 120, 120])
+            shp = np.array(zarr_shape(e["tomo_prefix"])); h = np.minimum(shp // 2, [50, 120, 120])
+            c = shp // 2 if centre_A is None else np.clip(np.round(np.array(centre_A) / e["vox"]).astype(int), h, shp - h)
             e["crop"] = (c - h).tolist(); e["crop_size"] = (2 * h).tolist(); vol = read_zarr_level(e["tomo_prefix"], e["crop"], e["crop_size"])
         else:
             vol = read_zarr_level(e["tomo_prefix"])
@@ -278,7 +289,7 @@ def run(a):
     # 1) hand-picked HSC-3: DEV picks the sign and the thresholds, EXAM scores once
     gt = {}
     for e in bun["ground_truth"]:
-        V = load(e); g = read_points(e["gt_path"], e["gt_vox"])
+        g = read_points(e["gt_path"], e["gt_vox"]); V = load(e, np.median(g, 0) if len(g) else None)
         if a.trial:
             lo = np.array(e["crop"]) * e["vox"]; hi = lo + np.array(V.shape) * VOX; g = g[((g >= lo) & (g < hi)).all(1)] - lo
         gt[e["run"]] = g
@@ -286,7 +297,7 @@ def run(a):
             for sign in ((-1, 1) if e["split"] == "dev" else ()):
                 found[(e["run"], kind, sign)] = find(e, V, kind, sign)
         e["_V"] = V if e["split"] == "exam" else None
-        log(f"  {e['run']} ({e['split']}): {len(g)} hand-picked; searched")
+        log(f"  {e['run']} ({e['split']}): searched")
     dev_runs = [e["run"] for e in bun["ground_truth"] if e["split"] == "dev"]
 
     def best_z(kind, sign):
@@ -294,14 +305,15 @@ def run(a):
         for z in ZGRID:
             tp = npred = ngt = 0
             for r in dev_runs:
-                c, s = found[(r, kind, sign)]; p = c[s > z]; _, _, _, t = f1(p, gt[r]); tp += t; npred += len(p); ngt += len(gt[r])
+                c, s = found[(r, kind, sign)]; p = in_labelled(c[s > z], gt[r]); _, _, _, t = f1(p, gt[r]); tp += t; npred += len(p); ngt += len(gt[r])
             pr, rc = tp / max(npred, 1), tp / max(ngt, 1); f.append(2 * pr * rc / (pr + rc) if tp else 0.0)
         i = int(np.argmax(f)); return float(ZGRID[i]), float(f[i])
     choice = {}
     for kind in ("real", "control"):
         opts = {sign: best_z(kind, sign) for sign in (-1, 1)}; sign = max(opts, key=lambda s: opts[s][1])
         choice[kind] = dict(sign=sign, z=opts[sign][0], dev_f1=opts[sign][1], dev_f1_other_sign=opts[-sign][1])
-    log("DEV choices: " + json.dumps(choice))
+    if not a.trial:
+        log("DEV choices: " + json.dumps(choice))
     exam = {}
     for kind in ("real", "control"):
         tp = npred = ngt = 0
@@ -309,14 +321,14 @@ def run(a):
             if e["split"] != "exam":
                 continue
             c, s = find(e, e["_V"], kind, choice[kind]["sign"]); found[(e["run"], kind, choice[kind]["sign"])] = (c, s)
-            p = c[s > choice[kind]["z"]]; _, _, _, t = f1(p, gt[e["run"]]); tp += t; npred += len(p); ngt += len(gt[e["run"]])
+            p = in_labelled(c[s > choice[kind]["z"]], gt[e["run"]]); _, _, _, t = f1(p, gt[e["run"]]); tp += t; npred += len(p); ngt += len(gt[e["run"]])
         pr, rc = tp / max(npred, 1), tp / max(ngt, 1); exam[kind] = dict(f1=(2 * pr * rc / (pr + rc) if tp else 0.0), precision=pr, recall=rc, picks=npred, hand_picked=ngt)
     portal = {}
     if not a.trial:
         tp = npred = ngt = 0
         for e in bun["ground_truth"]:
             if e["split"] == "exam" and e.get("portal_auto_path"):
-                p = read_points(e["portal_auto_path"], e["gt_vox"]); _, _, _, t = f1(p, gt[e["run"]]); tp += t; npred += len(p); ngt += len(gt[e["run"]])
+                p = in_labelled(read_points(e["portal_auto_path"], e["gt_vox"]), gt[e["run"]]); _, _, _, t = f1(p, gt[e["run"]]); tp += t; npred += len(p); ngt += len(gt[e["run"]])
         pr, rc = tp / max(npred, 1), tp / max(ngt, 1); portal = dict(f1=(2 * pr * rc / (pr + rc) if tp else 0.0), precision=pr, recall=rc)
     r1_real = exam["real"]["f1"] >= 0.50; r1_ctl = exam["control"]["f1"] < 0.50
     res = {"G14-R1": dict(exam=exam["real"], control=exam["control"], dev=choice, reported_portal_automated_vs_hand=portal,
@@ -342,7 +354,7 @@ def run(a):
         if near is not None:
             L["membrane_near"] += near; L["with_mask"] += len(out["real"])
         L["per_tomogram"].append(dict(run=e["run"], found=len(out["real"]), control=len(out["control"]), membrane_near=near, volume_um3=round(vol_um3, 4)))
-        log(f"  {e['line']} {e['run']}: {len(out['real'])} ribosomes (control template {len(out['control'])})")
+        log(f"  {e['line']} {e['run']}: searched" if a.trial else f"  {e['line']} {e['run']}: {len(out['real'])} ribosomes (control template {len(out['control'])})")
     for k, L in lines.items():
         L["per_um3"] = L["found"] / max(L["volume_um3"], 1e-9); L["membrane_near_share"] = L["membrane_near"] / max(L["with_mask"], 1)
         L["control_ratio"] = L["control_found"] / max(L["found"], 1); L["predicted_er_share"] = bun["prediction"].get(k)
