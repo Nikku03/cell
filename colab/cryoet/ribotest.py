@@ -12,7 +12,7 @@ hand-picked tomograms (3 smallest sha256('cellbrain-cryoet:' + run) = DEV) are i
 FINDER (template matching, fixed before any run): template = human 80S ribosome EMD-54265 (HEK cells, 3.0 A),
 low-passed to 50 A and resampled to 25 A voxels (box 40 nm, spherical mask radius 15 nm); 300 uniformly random
 rotations (seed) plus identity; each rotated template gets the tomogram's missing wedge (tilt axis y, the run's tilt
-range); locally normalised cross-correlation by FFT; tomograms resampled to 25 A, density sign chosen on the DEV
+range, +-60 degrees where the portal records none -- Jurkat and RPE1); locally normalised cross-correlation by FFT; tomograms resampled to 25 A, density sign chosen on the DEV
 tomograms (the sign with the higher DEV F1); score map = maximum over rotations, in robust z units (median, 1.4826 x
 MAD over the interior); peaks = local maxima at least 20 nm apart, 20 nm from the border; threshold = the z that
 maximises F1 on the DEV tomograms (grid 2.0 .. 12.0, step 0.25), then used unchanged everywhere. A pick matches a
@@ -26,7 +26,8 @@ CLAIMS (ids G14-*):
  G14-R1 THE FINDER FINDS RIBOSOMES. On the three EXAM hand-picked HSC-3 tomograms, F1 >= 0.50. Control: the
         random-phase template must stay below 0.50.
  G14-R2 THE CELL'S MEMBRANE-BOUND RIBOSOMES MATCH WHAT ITS RNA PREDICTS (Jurkat). Share of found ribosomes whose
-        centre lies within 25 nm of a membrane, pooled over the Jurkat tomograms, is within 0.10 of the predicted
+        centre lies within 25 nm of a membrane, pooled over the Jurkat tomograms that have a
+        membrane mask (8 of 12), is within 0.10 of the predicted
         share of ribosomes making ER proteins. Controls: the random-phase template must find at most a third as many
         particles in Jurkat as the real one; R1 must pass (otherwise the count cannot be trusted).
  REPORTED: per line (Jurkat, RPE1, HeLa): ribosomes found per tomogram and per cubic micrometre of tomogram, the
@@ -159,7 +160,7 @@ def to_vox(vol, vox_in, dtype=None, order=1):
         g = torch.exp(-2 * (math.pi * s) ** 2 * (k[0][:, None, None] ** 2 + k[1][None, :, None] ** 2 + k[2][None, None, :] ** 2))
         t = torch.fft.irfftn(Ff * g, s=t.shape); del Ff, g
     size = [max(8, int(round(n * vox_in / VOX))) for n in vol.shape]
-    t = F.interpolate(t[None, None], size=size, mode="trilinear" if order == 1 else "nearest", align_corners=False)[0, 0]
+    t = (F.interpolate(t[None, None], size=size, mode="trilinear", align_corners=False) if order == 1 else F.interpolate(t[None, None], size=size, mode="nearest"))[0, 0]
     return t
 
 
