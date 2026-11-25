@@ -13,7 +13,7 @@ Runs (public bucket s3://cryoet-data-portal-public; only paths and metadata are 
 Prediction (frozen here): share of ribosomes making ER proteins = sum over nuclear-encoded UniProt genes with a signal
 peptide or transmembrane segment of HPA nTPM x protein length / the same over all genes (EXPR_HPA_CELLLINES).
 
-Run: python3 -I rem/atlas/cryoetbundle.py build | declare | record RESULTS.json
+Run: python3 -I rem/atlas/cryoetbundle.py build | declare | redeclare REASON | record RESULTS.json
 """
 
 from __future__ import annotations
@@ -164,6 +164,19 @@ def declare():
             print(cid, "declared")
 
 
+def redeclare(reason):
+    """same claims, new code id (e.g. a memory-only fix after a crashed run); the last declaration of an id counts."""
+    doc = open(os.path.join(COLAB, "ribotest.py")).read().split('"""')[1]; old = {r["id"]: r for r in _read() if r["op"] == "declare" and r["id"] in CLAIMS}
+    if any(r["op"] == "result" and r["id"] in CLAIMS for r in _read()):
+        raise SystemExit("G14 already recorded")
+    with open(LEDGER, "a") as f:
+        for cid in CLAIMS:
+            f.write(json.dumps(dict(op="declare", id=cid, at=cbb.now(), code_sha=code_sha(), commit=gx._git("rev-parse", "HEAD").stdout.strip(),
+                                    amends=old[cid]["code_sha"], reason=reason,
+                                    claim=doc.split(" " + cid)[1].split(" G14-")[0].split("REPORTED:")[0].strip()[:1500], trial=False), sort_keys=True) + "\n")
+            print(cid, "re-declared", old[cid]["code_sha"], "->", code_sha())
+
+
 def record(path):
     res = json.load(open(path)); meta = res["meta"]
     dec = {r["id"]: r for r in _read() if r["op"] == "declare" and r["id"] in CLAIMS}
@@ -186,4 +199,4 @@ def record(path):
 
 if __name__ == "__main__":
     a = sys.argv[1:]
-    {"build": build, "declare": declare, "record": lambda: record(a[1])}[a[0]]()
+    {"build": build, "declare": declare, "redeclare": lambda: redeclare(a[1]), "record": lambda: record(a[1])}[a[0]]()
