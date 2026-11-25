@@ -6610,3 +6610,23 @@ G13 TWO CHECKS OF THE PARTNER LISTS ON THE PAGE   (partnercheck.py; declared bef
          111 -> 66, 69% helped, sign p 2e-104); shuffled worse, planted passed.
   IN SIMPLE: the partner lists work on partners they have never seen, and ESM C's help is real, not just "ribosome
   parts look alike".
+
+========================================================================================================================
+G14 IS THE MACHINE BUILT? RIBOSOMES FOUND IN 3D PICTURES OF HUMAN CELLS   (colab/cryoet/ribotest.py; cryoetbundle.py)
+    Run by the user on Colab (NVIDIA L4, 56 min, re-declared code 5c77def2f8d95f82 after a first run ran out of GPU
+    memory before any held-out or cell outcome was shown). Template matching with the human 80S ribosome (EMD-54265)
+    at 25 A, 301 rotations, threshold set on 3 hand-labelled HSC-3 tomograms.
+  G14-R1 the finder finds ribosomes   FAIL (real, under the bar): on the 3 held-out hand-labelled tomograms F1 0.46
+         (bar 0.50; precision 0.58, recall 0.38; DEV 0.48). Control ok: scrambled template 0.13; flipping the contrast
+         gives 0.07 on DEV. Reported: the depositors' own automated picks reach F1 0.74 against the same hand labels,
+         so a finer, CTF-aware search does better than ours.
+  G14-R2 Jurkat membrane-bound ribosomes vs RNA prediction   VOID (its control is R1 passing). For the record:
+         35% of Jurkat picks lie within 25 nm of a membrane vs 0.19 predicted -- but random positions give 25% and the
+         scrambled template's picks 43%, so in these cryo-sections (dense with membranes) this measure is not
+         specific; it would not have passed (difference 0.16 > 0.10) and could not be trusted if it had.
+  REPORTED (descriptive, finder not validated in these cells): picks per cubic micrometre Jurkat 1,531, RPE1 2,904,
+         HeLa 2,704 (before correcting for recall 0.38 / precision 0.58); scrambled template finds as many or more in
+         Jurkat (1.37x) and nearly as many in RPE1 (0.90x) and HeLa (0.74x), so these counts are mostly not specific.
+  IN SIMPLE: our ribosome finder works partly (finds about 4 in 10 ribosomes, right about 6 times in 10) -- not
+  well enough to count machines in Jurkat or RPE1, where a shape-less blob finder does about as well. Ribosomes are
+  clearly "built" in these cells (no one doubts that); what failed is our ability to count them reliably here.

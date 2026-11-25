@@ -214,3 +214,10 @@ In total, 44,082 facts and 16 layers were added.
 - **PASS:** ESM C helps outside big machines (contacts only: within 10 tries 25.8% → 36.4%).
 - **PASS:** the page's lists find BioPlex partners never used to build them (9.9% within 10 tries, 9.8× chance; ESM C beats the finder alone).
 - Output: `outputs/address/partner_checks.json` (summary; BioPlex itself stays local).
+
+## Ribosomes in 3D pictures of human cells (cryoetbundle, colab/cryoet G14; 2026-11-25)
+
+- **Run** on the user's Colab L4 (CryoET Data Portal; local only, no data licence stated).
+- **R1 FAIL (under the bar):** template-matching finder F1 0.46 on held-out hand-labelled HSC-3 tomograms (bar 0.50; scrambled control 0.13). The depositors' own picks reach 0.74.
+- **R2 VOID:** Jurkat membrane-near share 0.35 vs predicted 0.19, but random positions give 0.25 and scrambled picks 0.43 — not a specific measure in cryo-sections.
+- **Lesson:** counting machines in cells needs a better finder (finer voxels, CTF-aware search, or a model trained on the portal's many automated picks) and whole-cell lamellae rather than old cryo-sections.
