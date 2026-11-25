@@ -6585,3 +6585,8 @@ DESCRIPTIVE UPDATES (isoformwhen.py; no claims)
   results): 965 address-changing RNA versions of 751 genes, 247 predicted by ESM C to move to another room (e.g.
   ATPAF1, MRPL38, ISCU, TIMM50 versions without the mitochondrial transit peptide). Facts isoform/esmc_predicted_room;
   outputs/esmc/G10_isoform_catalogue.csv. Predictions, not measurements (G10-S1 under its bar).
+  PAGE (proteinpage.py; cell-map page version 3): a Proteins view (20,083 proteins: rooms, address tags, first 10 tries
+  of the tested G9 partner finder for 19,753 of them -- 10,967 with no known partner yet -- ESM C version predictions,
+  tissue use, measured controllers) and a Tests view (every test since G9, passed or not, in plain words). Partner
+  suggestions also saved as outputs/address/partner_suggestions.json.gz. BioPlex, MitoCarta and APEX-seq lists stay
+  local (MitoCarta feeds the finder's destination step, as in G9).

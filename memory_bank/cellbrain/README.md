@@ -207,3 +207,4 @@ In total, 44,082 facts and 16 layers were added.
 - **Tests:** **PASS** — splicing-protein knockdowns shift the address-changing RNA versions more than other RNA-binding-protein knockdowns (72% of genes; also true for all other versions). **FAIL** — the tissue correlation does not pick the right governor.
 - **New facts:** `CLAIM-G11-*`; gene facts `isoform/governors_measured` (205 genes; noisy — single hits are weak).
 - **Disclosure:** G9's descriptive "candidate governors" used sums that skipped most splicing proteins; prefer `isoform/governors_measured`.
+- **Page (2026-11-25):** the cell-map page now has a Proteins view (address tags, likely partners from the tested finder, RNA versions with ESM C predictions, tissue use and measured controllers) and a Tests view. Built by `rem/atlas/proteinpage.py`; partner suggestions in `outputs/address/partner_suggestions.json.gz`.
