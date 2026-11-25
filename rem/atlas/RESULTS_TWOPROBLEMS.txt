@@ -6590,3 +6590,9 @@ DESCRIPTIVE UPDATES (isoformwhen.py; no claims)
   tissue use, measured controllers) and a Tests view (every test since G9, passed or not, in plain words). Partner
   suggestions also saved as outputs/address/partner_suggestions.json.gz. BioPlex, MitoCarta and APEX-seq lists stay
   local (MitoCarta feeds the finder's destination step, as in G9).
+  ESM C FINGERPRINTS BANKED AND PARTNERS RE-ORDERED (esmcpartners.py; descriptive): the user's repeat Colab run
+  reproduced every G10 number exactly; its fingerprints (41,603 x 1,152, check 8d8a962209771305 matched after rejoining
+  12 Drive parts) are layer ESMC_600M_FINGERPRINTS. The G10-P1 pair model retrained here with the same code gives
+  50.7% within 10 tries on the G10-P1 proteins (recorded 51.0%), so the page's partner lists now use it: all 20,083
+  proteins (330 from ESM C alone, mostly small proteins with no domain or behaviour data). Facts partners/suggested_esmc;
+  outputs/address/partner_suggestions_esmc.json.gz; page version 4.
