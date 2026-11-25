@@ -36,6 +36,9 @@ CLAIMS (ids G14-*):
  REPORTED: per line (Jurkat, RPE1, HeLa): ribosomes found per tomogram and per cubic micrometre of tomogram, the
         membrane-near share, and the predicted share (RPE1); the portal's own automated ribosome picks scored against
         the hand-picked ones (context for R1).
+MEMORY (added after the user's first Colab run ran out of GPU memory on a Jurkat tomogram; no EXAM or cell outcome had
+been shown): rotations per pass adapt to free GPU memory; tomograms over 160 million voxels at 25 A are analysed in a
+central box of that size (y and x shrunk equally; three Jurkat tomograms); the hand-picked tomograms are unaffected.
 NOT: template matching at 25 A also picks other large dense particles; cryo-sections (Jurkat) are compressed and old
 (2011); RPE1 tomograms show the thin cell edge, not a whole cell; "within 25 nm of a membrane" includes plasma
 membrane, mitochondria and vesicles, not only ER; the predicted share assumes ribosomes per mRNA scale with protein
@@ -59,12 +62,14 @@ import urllib.request
 
 import numpy as np
 
+os.environ.setdefault("PYTORCH_CUDA_ALLOC_CONF", "expandable_segments:True")
 HERE = os.path.dirname(os.path.abspath(__file__))
 B = "https://cryoet-data-portal-public.s3.us-west-2.amazonaws.com/"
 EMD_URL = "https://ftp.ebi.ac.uk/pub/databases/emdb/structures/EMD-54265/map/emd_54265.map.gz"
 VOX, LOWPASS, BOX_NM, MASK_NM = 25.0, 50.0, 40.0, 15.0
 MATCH_NM, MINSEP_NM, BORDER_NM, MEM_NM = 15.0, 20.0, 20.0, 25.0
 N_ROT, SEED = 300, 20261125
+MAX_VOXELS = 160e6                 # analysed voxels at 25 A per tomogram; larger ones: central box (y and x shrunk equally)
 ZGRID = np.arange(2.0, 12.0001, 0.25)
 
 
@@ -180,7 +185,7 @@ def template(phase_random=False, rng=None):
     c = np.array(t.shape) // 2; t = t[c[0] - b // 2:c[0] + b // 2, c[1] - b // 2:c[1] + b // 2, c[2] - b // 2:c[2] + b // 2]
     if phase_random:
         F_ = np.fft.rfftn(t); ph = np.exp(1j * rng.uniform(0, 2 * np.pi, F_.shape)); ph[0, 0, 0] = 1
-        t = np.fft.irfftn(np.abs(F_) * ph, s=t.shape)
+        t = np.fft.irfftn(np.abs(F_) * ph, s=t.shape, axes=(0, 1, 2))
     z, y, x = np.mgrid[:b, :b, :b] - (b - 1) / 2; mask = (np.sqrt(z ** 2 + y ** 2 + x ** 2) * VOX <= MASK_NM * 10).astype(np.float32)
     return t.astype(np.float32), mask
 
@@ -218,10 +223,20 @@ def match(V, T, mask, batch):
     sd = torch.sqrt(torch.clamp(m2 - mu * mu, min=1e-12)); del Mf, mu, m2
     best = torch.full(shp, -1e9, device=d)
     Tt = torch.tensor(T, device=d)
-    for s in range(0, len(T), batch):
-        Tf = torch.fft.rfftn(pad(Tt[s:s + batch]), dim=(-3, -2, -1))
-        cc = torch.fft.irfftn(Vf[None] * torch.conj(Tf), s=shp, dim=(-3, -2, -1)); del Tf
-        best = torch.maximum(best, cc.max(0).values); del cc
+    if d == "cuda":                                              # rotations per pass: what free memory allows (about 4 volume copies each)
+        torch.cuda.empty_cache(); free = torch.cuda.mem_get_info()[0]
+        batch = int(max(1, min(batch, (0.8 * free) // (4.5 * V.numel() * 4))))
+    s = 0
+    while s < len(T):
+        try:
+            Tf = torch.fft.rfftn(pad(Tt[s:s + batch]), dim=(-3, -2, -1))
+            cc = torch.fft.irfftn(Vf[None] * torch.conj(Tf), s=shp, dim=(-3, -2, -1)); del Tf
+            best = torch.maximum(best, cc.max(0).values); del cc; s += batch
+        except torch.OutOfMemoryError:
+            Tf = cc = None; torch.cuda.empty_cache()
+            if batch == 1:
+                raise
+            batch = max(1, batch // 2); log(f"    GPU memory full: {batch} rotations per pass")
     return best / (sd * math.sqrt(n)), sd
 
 
@@ -276,10 +291,15 @@ def run(a):
     found = {}                                                   # (run, kind, sign) -> (coords, z)
 
     def load(e, centre_A=None):
+        shp = np.array(zarr_shape(e["tomo_prefix"]))
         if a.trial:
-            shp = np.array(zarr_shape(e["tomo_prefix"])); h = np.minimum(shp // 2, [50, 120, 120])
+            h = np.minimum(shp // 2, [50, 120, 120])
             c = shp // 2 if centre_A is None else np.clip(np.round(np.array(centre_A) / e["vox"]).astype(int), h, shp - h)
             e["crop"] = (c - h).tolist(); e["crop_size"] = (2 * h).tolist(); vol = read_zarr_level(e["tomo_prefix"], e["crop"], e["crop_size"])
+        elif np.prod(shp * e["vox"] / VOX) > MAX_VOXELS:          # central box, y and x shrunk equally
+            f = math.sqrt(MAX_VOXELS / np.prod(shp * e["vox"] / VOX)); size = np.array([shp[0], int(shp[1] * f), int(shp[2] * f)])
+            e["crop"] = ((shp - size) // 2).tolist(); e["crop_size"] = size.tolist(); e["capped"] = True
+            vol = read_zarr_level(e["tomo_prefix"], e["crop"], e["crop_size"])
         else:
             vol = read_zarr_level(e["tomo_prefix"])
         V = to_vox(vol, e["vox"]); V = (V - V.mean()) / (V.std() + 1e-12); return V
@@ -332,6 +352,10 @@ def run(a):
             if e["split"] == "exam" and e.get("portal_auto_path"):
                 p = in_labelled(read_points(e["portal_auto_path"], e["gt_vox"]), gt[e["run"]]); _, _, _, t = f1(p, gt[e["run"]]); tp += t; npred += len(p); ngt += len(gt[e["run"]])
         pr, rc = tp / max(npred, 1), tp / max(ngt, 1); portal = dict(f1=(2 * pr * rc / (pr + rc) if tp else 0.0), precision=pr, recall=rc)
+    for e in bun["ground_truth"]:
+        e.pop("_V", None)
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
     r1_real = exam["real"]["f1"] >= 0.50; r1_ctl = exam["control"]["f1"] < 0.50
     res = {"G14-R1": dict(exam=exam["real"], control=exam["control"], dev=choice, reported_portal_automated_vs_hand=portal,
                           gate=dict(real=bool(r1_real), controls_ok=bool(r1_ctl), verdict=("PASS" if r1_real else "FAIL") if r1_ctl else "VOID (controls)"))}
@@ -345,7 +369,7 @@ def run(a):
             c, s = find(e, V, kind, choice[kind]["sign"]); out[kind] = c[s > choice[kind]["z"]]
         near = near_ctl = near_rand = None
         if e.get("membrane_prefix") and len(out["real"]):
-            m = read_zarr_level(e["membrane_prefix"], e.get("crop"), e.get("crop_size")) if a.trial else read_zarr_level(e["membrane_prefix"])
+            m = read_zarr_level(e["membrane_prefix"], e.get("crop"), e.get("crop_size")) if e.get("crop") else read_zarr_level(e["membrane_prefix"])
             M = (to_vox((m > 0).astype(np.float32), e["vox"], order=0) > 0.5).cpu().numpy()
             dist = ndimage.distance_transform_edt(~M) * VOX
             def n_near(pts):
@@ -353,14 +377,17 @@ def run(a):
                 return int((dist[ijk[:, 0], ijk[:, 1], ijk[:, 2]] <= MEM_NM * 10).sum())
             eb = int(round(BORDER_NM * 10 / VOX)); rpts = (rng.uniform(eb, np.array(M.shape) - eb, (2000, 3)) * VOX)
             near, near_ctl, near_rand = n_near(out["real"]), n_near(out["control"]), n_near(rpts)
-        vol_um3 = float(np.prod(V.shape) * (VOX / 1e4) ** 3)
+        vol_um3 = float(np.prod(V.shape) * (VOX / 1e4) ** 3); del V
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
         L = lines.setdefault(e["line"], dict(tomograms=0, found=0, control_found=0, membrane_near=0, with_mask=0, volume_um3=0.0, per_tomogram=[],
                                              control_near=0, control_with_mask=0, random_near=0, random_with_mask=0))
         L["tomograms"] += 1; L["found"] += len(out["real"]); L["control_found"] += len(out["control"]); L["volume_um3"] += vol_um3
         if near is not None:
             L["membrane_near"] += near; L["with_mask"] += len(out["real"])
             L["control_near"] += near_ctl; L["control_with_mask"] += len(out["control"]); L["random_near"] += near_rand; L["random_with_mask"] += 2000
-        L["per_tomogram"].append(dict(run=e["run"], found=len(out["real"]), control=len(out["control"]), membrane_near=near, volume_um3=round(vol_um3, 4)))
+        L["per_tomogram"].append(dict(run=e["run"], found=len(out["real"]), control=len(out["control"]), membrane_near=near, volume_um3=round(vol_um3, 4),
+                                      central_box_only=bool(e.get("capped"))))
         log(f"  {e['line']} {e['run']}: searched" if a.trial else f"  {e['line']} {e['run']}: {len(out['real'])} ribosomes (control template {len(out['control'])})")
     for k, L in lines.items():
         L["per_um3"] = L["found"] / max(L["volume_um3"], 1e-9); L["membrane_near_share"] = L["membrane_near"] / max(L["with_mask"], 1)
