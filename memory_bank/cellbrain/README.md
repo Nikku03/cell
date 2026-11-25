@@ -208,3 +208,9 @@ In total, 44,082 facts and 16 layers were added.
 - **New facts:** `CLAIM-G11-*`; gene facts `isoform/governors_measured` (205 genes; noisy — single hits are weak).
 - **Disclosure:** G9's descriptive "candidate governors" used sums that skipped most splicing proteins; prefer `isoform/governors_measured`.
 - **Page (2026-11-25):** the cell-map page now has a Proteins view (address tags, likely partners from the tested finder, RNA versions with ESM C predictions, tissue use and measured controllers) and a Tests view. Built by `rem/atlas/proteinpage.py`; partner suggestions in `outputs/address/partner_suggestions.json.gz`.
+
+## Partner-list checks (partnercheck G13; 2026-11-25)
+
+- **PASS:** ESM C helps outside big machines (contacts only: within 10 tries 25.8% → 36.4%).
+- **PASS:** the page's lists find BioPlex partners never used to build them (9.9% within 10 tries, 9.8× chance; ESM C beats the finder alone).
+- Output: `outputs/address/partner_checks.json` (summary; BioPlex itself stays local).

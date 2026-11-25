@@ -1,0 +1,97 @@
+{
+ "G13-B1": {
+  "queries": 1909,
+  "median_tries": {
+   "g9": 47.0,
+   "esmc": 23.0,
+   "shuffled": 88.0,
+   "planted": 18.0
+  },
+  "within_10": {
+   "g9": 0.2577265584075432,
+   "esmc": 0.3640649554740702,
+   "shuffled": 0.1686746987951807,
+   "planted": 0.41173389209009953
+  },
+  "esmc_vs_g9": {
+   "n": 1909,
+   "median": 0.8541491335365452,
+   "share_positive": 0.7374929735806633,
+   "p": 5.665984302259045e-93,
+   "passed": true
+  },
+  "shuffled_vs_g9": {
+   "n": 1909,
+   "median": -0.3484258970644385,
+   "share_positive": 0.4213362068965517,
+   "p": 0.999999999995288,
+   "passed": false
+  },
+  "planted_vs_g9": {
+   "n": 1909,
+   "median": 1.3625700793847084,
+   "share_positive": 0.7413127413127413,
+   "p": 7.503391970207215e-98,
+   "passed": true
+  },
+  "reported_big_complex_partners": {
+   "queries": 219,
+   "esmc_vs_g9": {
+    "n": 219,
+    "median": 0.0,
+    "share_positive": 0.8211382113821138,
+    "p": 1.3691526154763418e-13,
+    "passed": false
+   },
+   "within_10": {
+    "g9": 0.8264840182648402,
+    "esmc": 0.8904109589041096
+   }
+  },
+  "gate": {
+   "real": true,
+   "controls_ok": true,
+   "verdict": "PASS"
+  }
+ },
+ "G13-X1": {
+  "queries": 7040,
+  "within_10": 0.09872159090909091,
+  "random_within_10": 0.010095203926154829,
+  "fold_over_random": 9.779058613498764,
+  "p_mc": 0.000999000999000999,
+  "shortlist_queries": 3320,
+  "median_tries": {
+   "g9": 111.0,
+   "esmc": 66.0,
+   "shuffled": 133.0,
+   "planted": 34.0
+  },
+  "esmc_vs_g9": {
+   "n": 3320,
+   "median": 0.6374299206152918,
+   "share_positive": 0.6889788293897883,
+   "p": 1.9366279457773848e-104,
+   "passed": true
+  },
+  "shuffled_vs_g9": {
+   "n": 3320,
+   "median": -0.12166213389873831,
+   "share_positive": 0.4650243309002433,
+   "p": 0.9999721213954512,
+   "passed": false
+  },
+  "planted_vs_g9": {
+   "n": 3320,
+   "median": 1.584962500721156,
+   "share_positive": 0.7797235023041474,
+   "p": 7.328354412907505e-237,
+   "passed": true
+  },
+  "gate": {
+   "real": true,
+   "controls_ok": true,
+   "verdict": "PASS"
+  }
+ }
+}

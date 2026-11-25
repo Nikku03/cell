@@ -6596,3 +6596,17 @@ DESCRIPTIVE UPDATES (isoformwhen.py; no claims)
   50.7% within 10 tries on the G10-P1 proteins (recorded 51.0%), so the page's partner lists now use it: all 20,083
   proteins (330 from ESM C alone, mostly small proteins with no domain or behaviour data). Facts partners/suggested_esmc;
   outputs/address/partner_suggestions_esmc.json.gz; page version 4.
+
+========================================================================================================================
+G13 TWO CHECKS OF THE PARTNER LISTS ON THE PAGE   (partnercheck.py; declared before the real run; trial showed controls)
+  G13-B1 ESM C helps outside the big machines   PASS. Partners that share no Complex Portal complex with the protein
+         (contacts, not machine parts), 1,909 held-out proteins whose G9 top 500 holds one: within 10 tries 25.8% ->
+         36.4%, median tries 47 -> 23 (median gain +0.85 log2, 74% helped, sign p 6e-93); shuffled fingerprints worse
+         (16.9%, control ok); planted passed. Reported: partners inside big machines (>= 20 parts, 219 proteins) were
+         already easy (83% within 10 tries by G9; 89% with ESM C). So the G10-P1 gain is not a big-machine artefact.
+  G13-X1 the lists find partners nobody gave them   PASS. BioPlex partners not in HPA, OpenCell or Complex Portal (never
+         used to build or train anything): the page's first 10 tries hold one for 9.9% of 7,040 held-out proteins
+         (chance 1.0%: 9.8x, p_MC 0.001); where the G9 top 500 holds one (3,320 proteins), ESM C beats G9 (median tries
+         111 -> 66, 69% helped, sign p 2e-104); shuffled worse, planted passed.
+  IN SIMPLE: the partner lists work on partners they have never seen, and ESM C's help is real, not just "ribosome
+  parts look alike".

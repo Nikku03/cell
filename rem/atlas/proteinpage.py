@@ -62,6 +62,11 @@ def tests():
         ("G9-A2/A3", "FAIL", "RNA in ENCODE's membrane fraction", "The fraction is not an ER read-out (ribosome and skeleton RNAs dominate); re-tested as G12 with APEX-seq."),
         ("G9-S1", a["G9-S1"]["gate"]["verdict"], "Address-changing versions make dual-room proteins", "Imaging sees one location per gene, so it cannot tell versions apart."),
     ]
+    pc = R("outputs", "address", "partner_checks.json")
+    if os.path.exists(pc):
+        c = json.load(open(pc)); b, x = c["G13-B1"], c["G13-X1"]
+        rows[4:4] = [("G13-B1", b["gate"]["verdict"], "ESM C helps outside the big machines", f"Partners that are contacts, not parts of the same machine: within 10 tries {b['within_10']['g9']:.0%} → {b['within_10']['esmc']:.0%}; median tries {b['median_tries']['g9']:.0f} → {b['median_tries']['esmc']:.0f}."),
+                     ("G13-X1", x["gate"]["verdict"], "The partner lists find partners nobody gave them", f"BioPlex partners never used to build the lists: found in the first 10 tries for {x['within_10']:.1%} of held-out proteins, {x['fold_over_random']:.0f}x chance; ESM C beats the finder alone (median tries {x['median_tries']['g9']:.0f} → {x['median_tries']['esmc']:.0f}).")]
     return [dict(id=i, verdict=v, title=t, text=x) for i, v, t, x in rows]
 
 
