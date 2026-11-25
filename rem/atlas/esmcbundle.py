@@ -86,7 +86,7 @@ def read_fasta(path):
 
 
 # ------------------------------------------------------------------------------------------------ G9 order, reproduced
-def g9_orders(D, U, queries, truth):
+def g9_orders(D, U, queries, truth, k=K):
     """The G9-P1 full order (same code as addresstest.run_p1) for the given queries: first K candidates, their compatibility
     score s1, destination and made-together flags, and the rank of the first partner in `truth` over all candidates."""
     from scipy.stats import rankdata
@@ -143,9 +143,9 @@ def g9_orders(D, U, queries, truth):
             mq = MADE[i]; together = (MADE[:, mq].mean(1) >= 0.5) if mq.any() else np.ones(nU, bool)
             full = s1 + 1e6 * dest + 1e3 * (dest & together)
             rk = (-full).argsort(kind="stable"); pos = np.empty(nU, np.int64); pos[rk] = np.arange(nU)
-            tr = np.array([ui[t] for t in truth[q] if t in ui and t != q])
-            out["rank"].append(int(pos[tr].min()) + 1)
-            top = rk[:K]; out["cand"].append(top.astype(np.int16)); out["s1"].append(s1[top].astype(np.float32))
+            tr = np.array([ui[t] for t in truth.get(q, ()) if t in ui and t != q], dtype=np.int64)
+            out["rank"].append(int(pos[tr].min()) + 1 if len(tr) else -1)
+            top = rk[:k]; out["cand"].append(top.astype(np.int16)); out["s1"].append(s1[top].astype(np.float32))
             out["flags"].append((dest[top].astype(np.uint8) | ((dest & together)[top].astype(np.uint8) << 1)))
         print(f"  G9 order: {min(s + 500, len(queries))}/{len(queries)} queries", flush=True)
     return {k: np.array(v) for k, v in out.items()}
