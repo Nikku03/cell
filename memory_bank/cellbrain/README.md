@@ -221,3 +221,9 @@ In total, 44,082 facts and 16 layers were added.
 - **R1 FAIL (under the bar):** template-matching finder F1 0.46 on held-out hand-labelled HSC-3 tomograms (bar 0.50; scrambled control 0.13). The depositors' own picks reach 0.74.
 - **R2 VOID:** Jurkat membrane-near share 0.35 vs predicted 0.19, but random positions give 0.25 and scrambled picks 0.43 — not a specific measure in cryo-sections.
 - **Lesson:** counting machines in cells needs a better finder (finer voxels, CTF-aware search, or a model trained on the portal's many automated picks) and whole-cell lamellae rather than old cryo-sections.
+
+## Predicting the next state (lagtagbank, lagtagtest G15; 2026-11-27)
+
+- **New layer:** `LAGTAG_GATA4` (local; Takei et al. 2026 GEO GSE305653: mouse ES cells before / after Gata4, RNA Pol II per gene, with human orthologs).
+- **FAIL:** CollecTRI GATA4 targets do not specifically switch on (OR 1.65, p 0.17); two-step targets enrich (OR 1.71, p 8e-5) but no more than any regulator's two-step set.
+- **Meaning:** tissue-derived regulator lists do not carry over to an early fate switch in another species; the next-step problem needs cell-type-specific regulator data (e.g. measured before/after pairs in the cell type of interest).

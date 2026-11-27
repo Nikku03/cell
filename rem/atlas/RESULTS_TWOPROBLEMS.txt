@@ -6630,3 +6630,20 @@ G14 IS THE MACHINE BUILT? RIBOSOMES FOUND IN 3D PICTURES OF HUMAN CELLS   (colab
   IN SIMPLE: our ribosome finder works partly (finds about 4 in 10 ribosomes, right about 6 times in 10) -- not
   well enough to count machines in Jurkat or RPE1, where a shape-less blob finder does about as well. Ribosomes are
   clearly "built" in these cells (no one doubts that); what failed is our ability to count them reliably here.
+
+========================================================================================================================
+G15 DOES OUR REGULATOR MAP PREDICT THE NEXT STATE? Mouse ES cells switching on Gata4 (LagTag paper data, GEO GSE305653)
+    (lagtagbank.py, lagtagtest.py; declared before the real run; trial showed only controls)
+    16,806 mouse genes with a one-to-one human ortholog; after 24 h of Gata4 + LIF withdrawal 504 genes switch on and
+    456 switch off by RNA Pol II (the paper reports 933 changing; consistent).
+  G15-N1 GATA4's own targets switch on   FAIL: 5 of 110 mapped CollecTRI GATA4 targets switch on (4.5% vs 3.0%
+         elsewhere; OR 1.65, p 0.17), not beyond random matched sets (p_MC 0.09) nor other regulators' target sets
+         (p_TF 0.29). The five: HHEX, PDGFRA (both endoderm markers), HSPA5, IL33, SERPINH1. Controls ok.
+  G15-N2 the next step (targets of GATA4's target regulators)   FAIL: 60 of 1,270 switch on (4.7% vs 2.9%; OR 1.71,
+         p 8e-5; beats random matched sets, p_MC 0.001) but NOT specific -- two-step sets of other regulators do as
+         well (p_TF 0.26). The map points at "genes that are regulated" in general, not at GATA4's program.
+  REPORTED: LagTag same-cell change (endpoint vs recorded) correlates r 0.53 with the CUT&Tag change; with LagTag-defined
+         switching, direct OR 1.46 (p 0.22), two-step OR 1.65 (p 9e-6) -- same picture.
+  IN SIMPLE: our human regulator map, carried to mouse, does not predict what Gata4 does in the first 24 hours; its
+  GATA4 list is mostly about heart and gut genes, while these cells first make early endoderm (Hhex, Pdgfra) and
+  leave the stem-cell state. Two steps out the map finds "regulated genes" in general -- real, but not specific.
