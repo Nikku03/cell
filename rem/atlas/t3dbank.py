@@ -10,7 +10,9 @@ stated -> local only), times 0, 30, 60, 90, 120, 240, 360, 1440 min:
     (GSE201353_LIMA_HiC_diffLoops.tsv.gz: 42,690 loops at 10 kb, clusters static / up.early / up.late / down.early /
     down.late, log2 fold change 0 h vs each time, raw counts at each time in 5 replicate columns r1-r5).
   RNA-seq (GSE201354): Salmon transcript quantities and coverage bigWigs per replicate (2: labelled 2 and 3).
-  GENCODE release 46 comprehensive annotation (shared with k3dbank.py).
+  All THP-1 files are on the older genome build GRCh37 / hg19 (chr1 = 249,250,621 bp in the .hic headers, bigWigs and
+  loop table), so genes are placed with GENCODE release 46 mapped to GRCh37 ('lift37' comprehensive GTF; same gene and
+  transcript ids as release 46; TSS = gene start on + strand, gene end on - strand).
 Built exactly as k3dbank.py (same functions): gene TPM, clean-intron signal, compartment E1 per 100 kb bin per time
 point (at 0 h the eigenvector that follows gene density, later the one that follows 0 h), loops as published (cluster
 up.* -> 'gained', down.* -> 'lost'; the original label kept).
@@ -46,10 +48,12 @@ HIC_URL = FTP + "series/GSE201nnn/GSE201353/suppl/GSE201353_LIMA_THP1_WT_LPIF_{:
 LOOPS = FTP + "series/GSE201nnn/GSE201353/suppl/GSE201353_LIMA_HiC_diffLoops.tsv.gz"
 RNA_LIST = FTP + "series/GSE201nnn/GSE201354/suppl/filelist.txt"
 RNA_URL = FTP + "samples/{nnn}/{gsm}/suppl/{f}"
+GENCODE37 = "https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_46/GRCh37_mapping/gencode.v46lift37.annotation.gtf.gz"
 BIN, CHROMS = kb.BIN, kb.CHROMS
 cbb.SRC["reed2022"] = ("Reed et al. 2022 Cell Reports: THP-1 LPS + IFN-gamma time course, Hi-C + RNA-seq (GEO GSE201376)",
                        "https://doi.org/10.1016/j.celrep.2022.111567", "no licence stated (local only)")
 cbb.LOCAL_ONLY.add("reed2022")
+cbb.SRC["gencode46_lift37"] = ("GENCODE release 46 mapped to GRCh37 (lift37 comprehensive GTF)", "https://www.gencodegenes.org/human/release_46lift37.html", "free use")
 
 
 def rna_files():
@@ -67,9 +71,11 @@ def rna_files():
 
 def pull():
     rep = {}
+    get = lambda url, path: "kept" if os.path.exists(path) else xb.fetch(url, path)
+    rep["gencode37"] = get(GENCODE37, os.path.join(RAW, "gencode", "raw", "gencode.v46lift37.annotation.gtf.gz"))
     for d in rna_files():
-        rep[d["f"]] = xb.fetch(RNA_URL.format(nnn=d["gsm"][:-3] + "nnn", gsm=d["gsm"], f=d["f"]), os.path.join(RAW, "rna", "raw", d["f"])); print(d["f"], rep[d["f"]], flush=True)
-    rep["loops"] = xb.fetch(LOOPS, os.path.join(RAW, "hic", "raw", "GSE201353_LIMA_HiC_diffLoops.tsv.gz"))
+        rep[d["f"]] = get(RNA_URL.format(nnn=d["gsm"][:-3] + "nnn", gsm=d["gsm"], f=d["f"]), os.path.join(RAW, "rna", "raw", d["f"])); print(d["f"], rep[d["f"]], flush=True)
+    rep["loops"] = get(LOOPS, os.path.join(RAW, "hic", "raw", "GSE201353_LIMA_HiC_diffLoops.tsv.gz"))
     for t in TIMES:
         out = os.path.join(RAW, "hic", "raw", f"intra100k_{t}.npz")
         if os.path.exists(out):
@@ -80,6 +86,26 @@ def pull():
         np.savez_compressed(out + ".part.npz", **arr); os.replace(out + ".part.npz", out)
         rep[t] = dict(version=h.version, url=HIC_URL.format(t), contacts=float(sum(arr[f"{c}_v"].sum() for c in CHROMS))); print("hic", t, rep[t], flush=True)
     json.dump(rep, open(os.path.join(RAW, "pull.json"), "w"), indent=1, default=str)
+
+
+def gtf37():
+    """GRCh37 positions: transcript -> gene, gene spans (with type), strand + name, exons (all genes)."""
+    tx, span, info, ex = {}, {}, {}, collections.defaultdict(list)
+    for line in gzip.open(os.path.join(RAW, "gencode", "raw", "gencode.v46lift37.annotation.gtf.gz"), "rt"):
+        if line[0] == "#":
+            continue
+        f = line.split("\t", 8)
+        if f[2] not in ("gene", "transcript", "exon") or f[0] == "chrY":
+            continue
+        g = re.search(r'gene_id "([^".]+)', f[8]).group(1); ch = f[0].replace("chr", "")
+        if f[2] == "gene":
+            span[g] = (ch, int(f[3]) - 1, int(f[4]), re.search(r'gene_type "([^"]+)', f[8]).group(1))
+            info[g] = (f[6], re.search(r'gene_name "([^"]+)', f[8]).group(1))
+        elif f[2] == "transcript":
+            tx[re.search(r'transcript_id "([^".]+)', f[8]).group(1)] = g
+        else:
+            ex[ch].append((int(f[3]) - 1, int(f[4])))
+    return tx, span, info, ex
 
 
 def compartments(tss_pc):
@@ -106,9 +132,11 @@ def compartments(tss_pc):
 
 def build():
     import pyBigWig
-    tx, span, ex = kb.gtf()
-    tss = [g for g in json.load(open(os.path.join(kb.AG, "raw", "gencode46_tss.json"))) if g[2] == "protein_coding" and g[3].replace("chr", "") in CHROMS]
-    tss = [g for g in tss if g[0] in span]; genes = [g[0] for g in tss]; gi = {g: k for k, g in enumerate(genes)}
+    tx, span, ginfo, ex = gtf37()
+    # rows as in gencode46_tss.json: (gene, symbol, type, chrom, 1-based TSS)
+    tss = sorted([(g, ginfo[g][1], ty, "chr" + c, (s + 1) if ginfo[g][0] == "+" else e) for g, (c, s, e, ty) in span.items() if ty == "protein_coding" and c in CHROMS],
+                 key=lambda r: (CHROMS.index(r[3][3:]), r[4]))
+    genes = [g[0] for g in tss]; gi = {g: k for k, g in enumerate(genes)}
     files = sorted(rna_files(), key=lambda d: (d["rep"], d["t"]))
     quant = [d for d in files if d["f"].endswith("quant.sf.gz")]; bws = [d for d in files if d["f"].endswith(".bw")]
     mid = os.path.join(RAW, "build_intermediate.npz")
@@ -168,11 +196,12 @@ def build():
 
 def bank():
     info = json.load(open(os.path.join(RAW, "build_info.json")))
-    raws = [cbb.layer_fact(f"THP1LPIF_RAW_{k.upper()}", 1, "reed2022", os.path.join(RAW, k, "raw"), "downloaded files", "-", "as published") for k in ("rna", "hic")]
+    raws = [cbb.layer_fact(f"THP1LPIF_RAW_{k.upper()}", 1, src, os.path.join(RAW, k, "raw"), "downloaded files", "-", "as published")
+            for k, src in (("rna", "reed2022"), ("hic", "reed2022"), ("gencode", "gencode46_lift37"))]
     lay = cbb.layer_fact("THP1_LPIF_3D", 1, "reed2022", os.path.join(cbb.LAY, "thp1_lpif_3d.npz"),
                          f"{info['genes']} protein-coding genes; {info['bins']} 100-kb bins; {info['loops']} loops",
                          "RNA TPM + intron signal (8 times x 2 reps); compartment E1 (8 times); loop counts (8 times x 5 replicate columns)",
-                         "TPM; mean coverage; E1 z per chromosome; raw counts", inputs=tuple(f.ref for f in raws) + ("LAYER-K562PMA_RAW_GENCODE",), tier="derived")
+                         "TPM; mean coverage; E1 z per chromosome; raw counts", inputs=tuple(f.ref for f in raws), tier="derived")
     n = cbb.bank().add_many(raws + [lay])
     rep = dict(added=time.strftime("%Y-%m-%d"), facts_written=n, layers={f.entity: f.ref for f in raws + [lay]}, build=info)
     json.dump(rep, open(R("outputs", "cellbrain", "thp1lpif_report.json"), "w"), indent=1, default=int); print(json.dumps(rep, default=int)[:800])
