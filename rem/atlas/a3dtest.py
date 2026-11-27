@@ -17,25 +17,24 @@ CLAIMS (declared before running; ids G18-*):
         the same half, baseline stratum and 0 h E1 quintile). PASS: gain rule on EXAM genes AND median beats 95% of 1,000
         circular shifts of the E1-change track along each chromosome (p_MC < 0.05).
  G18-L1 LOOPS AT THE GENE START (repeat of G16-L1 / G17-L1). Loops = ENCODE's HiCCUPS loops of all 5 time points joined
-        (a3dbank.py); changing = moderated test of 12 h vs 0 h over the 4 + 4 replicate maps, Benjamini-Hochberg q < 0.1;
-        direction = sign of the change (gained +1, lost -1); static = the rest. A gene belongs to a loop when its start
+        (a3dbank.py; 60,457); a moderated test of 12 h vs 0 h over the 4 + 4 replicate maps finds only 4 loops at
+        q < 0.1 (seen when the layer was built, before any test), so here changing = the 2% of loops with the smallest
+        p (the most-changed, as C1 uses the most-shifted bins); direction = sign of the change (gained +1, lost -1);
+        static = the rest. A gene belongs to a loop when its start
         site is within 10 kb of either anchor; genes with changing loops of one direction only get that sign; score =
         sign x (change - mean change of genes in the same half and stratum that sit only at static loops). PASS: gain
         rule on EXAM genes AND median beats 95% of 1,000 shuffles of gained / lost labels (p_MC < 0.05).
- G18-T1 GENES MOVE FIRST (as found in K562 and THP-1). Hi-C halves: biological replicates 1-2 vs 3-4; RNA halves:
-        replicates 1-2 vs 3-4 (mean of the two). Cross-fitted: a loop-gene pair is CHOSEN on one Hi-C half + one RNA half
-        (|loop change 0 -> 12 h| >= 0.5 and |intron change 0 -> 12 h| >= 0.5, log2, same sign) and MEASURED on the other
-        halves. Pooled over chosen pairs (both folds; turned by the sign of the chosen change): share of the 12 h change
-        reached at 1, 4 and 8 h, FY(t) for transcription (intron RNA) and FL(t) for the loop; d = mean over the three
-        times of FY(t) - FL(t). PASS: d >= +0.01 AND d > 0 in 95% of 2,000 bootstrap resamples of EXAM genes.
  Controls: C1 and L1 as in G16 / G17: 50 planted runs (+0.3 log2 in the predicted direction on a shifted / shuffled
-        track) must PASS >= 90%, 50 null runs <= 10% (else VOID). T1: 200 runs simulated with EQUAL timing (common curve
-        = mean of FL(t) and FY(t), clipped to 0-1; each pair's own 12 h changes; each assay's noise at each time) must
-        pass <= 10%, and 200 with transcription 0.25 ahead and the loop 0.25 behind must pass >= 90% (else VOID).
- REPORTED: C1 at 1 h and 4 h; C1 and L1 with intron signal; the T1 curves; T1 with mRNA instead of intron; rank
-        correlations; bins flipping A <-> B; loop classes; per-chromosome compartment checks.
-NOT: bulk cells; dexamethasone acts through one receptor (GR) on a few hundred genes, a narrow response; the loop
-calls are ENCODE's and the differential test is ours (no gene outcomes used); association, not cause.
+        track) must PASS >= 90%, 50 null runs <= 10% (else VOID).
+ REPORTED: C1 at 1 h and 4 h; C1 and L1 with intron signal; rank correlations; bins flipping A <-> B; loop classes;
+        per-chromosome compartment checks. Timing ('genes move first', G16 / G17-T1) is NOT declared here: the DEV
+        trial showed it cannot be measured in A549 -- with the G17 method (halves = replicates 1-2 vs 3-4, pairs chosen
+        on |change 0 -> 12 h| >= 0.5, pooled shares at 1, 4, 8 h) a planted 0.25 lead was found in only 36% of runs
+        (55 DEV genes), because the loops barely change; its numbers and controls are reported only.
+NOT: bulk cells; dexamethasone acts through one receptor (GR) on a few hundred genes, a narrow response, and barely
+changes the 3D map (compartments r >= 0.98 to 0 h; 4 significant loop changes), so C1 and L1 here ask whether the
+largest of small changes go with the genes; the loop calls are ENCODE's and the change test is ours (no gene outcomes
+used); association, not cause.
 
 Run: python3 -I rem/atlas/a3dtest.py declare | test [--trial]
 """
@@ -65,7 +64,7 @@ kt = _load("k3dtest")                    # G16's C1 / L1 code, unchanged
 gx, cbb, Fact = kt.gx, kt.cbb, kt.Fact
 LEDGER = gx.LEDGER
 OUT = R("outputs", "a549_3d")
-CLAIMS = ["G18-C1", "G18-L1", "G18-T1"]
+CLAIMS = ["G18-C1", "G18-L1"]
 SEED = 20261130
 TIMES = [0, 60, 240, 480, 720]
 MID = [60, 240, 480]
@@ -108,9 +107,11 @@ def load():
         D["y_ok"] = np.isfinite(X).all(1) & ex & (np.nanmean(Xn, 1) > 2 * p)
     bkey = {(c, s): k for k, (c, s) in enumerate(zip(D["bin_chrom"], D["bin_start"]))}
     D["gbin"] = np.array([bkey.get((c, (t // 100000) * 100000), -1) for c, t in zip(D["chrom"], D["tss"])])
-    # L1: changing = q < 0.1 from a3dbank's moderated 12 h vs 0 h test (loop_cluster); direction = sign of the 12 h change
-    D["loop_lfc_all"] = D["loop_lfc"]; l12 = D["loop_lfc_all"][:, TIMES.index(END)]; chg = np.isin(D["loop_cluster"], ["gained", "lost"])
-    D["loop_lfc"] = np.stack([np.where(chg, np.where(D["loop_cluster"] == "gained", 1.0, -1.0), 0.0), l12], 1)
+    # L1: changing = the 2% of loops with the smallest p (moderated 12 h vs 0 h test); direction = sign of the 12 h change
+    D["loop_lfc_all"] = D["loop_lfc"]; l12 = D["loop_lfc_all"][:, TIMES.index(END)]
+    chg = (D["loop_p"] <= np.quantile(D["loop_p"], 0.02)) & np.isfinite(l12) & (l12 != 0)
+    D["loop_cluster_q"] = D["loop_cluster"]; D["loop_cluster"] = np.where(chg, np.where(l12 > 0, "gained", "lost"), "static")
+    D["loop_lfc"] = np.stack([np.where(chg, np.sign(l12), 0.0), l12], 1)
     # RNA halves (mean of 2 replicates) for T1
     for k, src in (("yh", "y"), ("eh", "e")):
         D[k] = {(t, h): np.mean([D[src][(t, r)] for r in rr], 0) for t in TIMES for h, rr in HALF.items()}
@@ -199,19 +200,19 @@ def run(rng, half):
     l1 = kt.L1(D, col=0); out["G18-L1"] = l1.full(l1.dir, lfc, half, rng, N_MC)
     ctl["G18-L1"] = kt.controls(l1, lambda r: l1.shuffle(r), lfc, half, rng, lambda d: l1.gene_sign(d))
     l1y = kt.L1(Dy, col=0, M=l1.M); rep["L1_intron_signal"] = l1y.full(l1y.dir, np.nan_to_num(yl), half, rng, N_MC)
-    rep["loops"] = dict(union=int(len(D["loop_cluster"])), changing=int(l1.diff.sum()), gained_12h=int((l1.dir > 0).sum()), lost_12h=int((l1.dir < 0).sum()),
+    rep["loops"] = dict(union=int(len(D["loop_cluster"])), significant_q_below_0_1=int(np.isin(D["loop_cluster_q"], ["gained", "lost"]).sum()), changing=int(l1.diff.sum()), gained_12h=int((l1.dir > 0).sum()), lost_12h=int((l1.dir < 0).sum()),
                         median_counts_per_library=float(np.median(D["loop_counts"])))
     sg = l1.gene_sign(l1.dir); mm = D["expressed"] & (D["half"] == half) & (sg != 0)
     rep["rank_corr_loop_sign_vs_expression_change"] = float(spearmanr(sg[mm], lfc[mm])[0]) if mm.sum() > 2 else None
 
     L, N = t1_data(D); M = l1.M.tocoo(); ok = D["y_ok"][M.row]; gp, lp = M.row[ok], M.col[ok]
-    rows = t1_choose(D, L, gp, lp, D["yh"], half); out["G18-T1"] = t1_stat(rows, rng)
+    rows = t1_choose(D, L, gp, lp, D["yh"], half); t1 = t1_stat(rows, rng)
     if len(rows):
-        eq = [t1_sim(D, L, N, D["yh"], rows, out["G18-T1"], rng, 0.0) for _ in range(N_SIM)]
-        pl = [t1_sim(D, L, N, D["yh"], rows, out["G18-T1"], rng, SHIFT) for _ in range(N_SIM)]
+        eq = [t1_sim(D, L, N, D["yh"], rows, t1, rng, 0.0) for _ in range(N_SIM)]
+        pl = [t1_sim(D, L, N, D["yh"], rows, t1, rng, SHIFT) for _ in range(N_SIM)]
     else:
         eq, pl = [True], [False]
-    ctl["G18-T1"] = dict(equal_timing_pass_rate=float(np.mean(eq)), planted_lead_pass_rate=float(np.mean(pl)), runs=N_SIM, ok=bool(np.mean(eq) <= 0.10 and np.mean(pl) >= 0.9))
+    rep["T1_not_declared"] = dict(t1, controls=dict(equal_timing_pass_rate=float(np.mean(eq)), planted_lead_pass_rate=float(np.mean(pl)), runs=N_SIM))
     gm2 = D["expressed"][M.row]; rep["T1_mRNA_instead_of_intron"] = t1_stat(t1_choose(D, L, M.row[gm2], M.col[gm2], D["eh"], half), rng)
     for cid in CLAIMS:
         out[cid]["controls"] = ctl[cid]
