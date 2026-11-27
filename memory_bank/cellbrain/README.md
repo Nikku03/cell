@@ -243,3 +243,12 @@ In total, 44,082 facts and 16 layers were added.
 - **L1 FAIL (does not repeat):** changing loops at the gene start do not predict direction (median +0.06, 51%).
 - **T1 PASS (repeats G16's finding):** transcription reaches 46% / 68% / 74% of its 24 h change at 2 / 4 / 6 h, loops 32% / 39% / 42%; mature mRNA lags about as much as the loops.
 - **Meaning (K562 + THP-1):** the open/closed neighbourhood is a robust 3D partner of gene activity in both; loops track genes in the slow K562 switch but not in the fast immune switch; in both, gene activity changes first and the 3D map follows.
+
+## Same test in A549 + dexamethasone, ENCODE (a3dbank, a3dtest G18; 2026-11-27)
+
+- **New layer:** `A549_DEX_3D` (ENCODE, free use): RNA TPM + intron signal (4 replicates) and compartment E1 at 0, 1, 4, 8, 12 h; 60,457 joined HiCCUPS loops with counts in 20 replicate maps. `hicremote.pixels()` fetches only the blocks around given pixels.
+- **The steroid barely changes the 3D map:** compartments r >= 0.98 to 0 h; 4 of 60,457 loops change at q < 0.1.
+- **C1 PASS (third cell type):** the most-shifted bins' genes follow (median +0.27 log2, 79%).
+- **L1 FAIL:** most-changed loops lean the right way (60%) but no more than shuffled labels (p_MC 0.23).
+- **Timing not measurable** (no loop change to time) -- genes respond without the 3D map moving.
+- **Across G16-G18:** open/closed neighbourhood tracks genes in all 3 cell types; loops only in K562; gene activity leads and the 3D map follows (or does not need to move).

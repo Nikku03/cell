@@ -6710,3 +6710,36 @@ G17 THE SAME TEST IN THP-1 MACROPHAGES SWITCHED ON BY LPS + INTERFERON-GAMMA (3D
   three-quarters of its change by 6 hours, the loops less than half. But here, unlike K562, a loop changing at a gene's
   start did not tell which way that gene would go -- in a fast immune switch the loops seem to follow at their own pace
   rather than tracking each gene, so "open/closed zone" is the more reliable 3D signal of the two.
+
+========================================================================================================================
+G18 THE SAME TEST IN A549 LUNG CELLS GIVEN THE STEROID DEXAMETHASONE (ENCODE; 3D map + RNA at 0, 1, 4, 8, 12 h)
+    ENCODE, Reddy lab (free use): in situ Hi-C, one map per biological replicate (4 per time point, read remotely; only
+    the 100 kb counts and the 3 x 3 pixels at 10 kb around each loop fetched), HiCCUPS loops of all 5 times joined
+    (60,457), polyA RNA-seq 4 replicates per time (TPM + strand-summed intron signal). (a3dbank.py, a3dtest.py; C1/L1
+    code imported unchanged from k3dtest.py; declared before the EXAM run; DEV trial showed only controls.)
+    EXAM genes: 5,975 expressed protein-coding.
+    Seen when the layer was built (before any test): dexamethasone barely changes the 3D map -- compartments at every
+    time match 0 h at r >= 0.98 on every chromosome (0.994 genome-wide at 12 h; 251 bins flip closed -> open, 455 open
+    -> closed), and our moderated 4-vs-4 test finds only 4 loops changed at q < 0.1 (as D'Ippolito et al. 2018
+    reported: the steroid works through loops that already exist). So, before declaring: L1 uses the 2% most-changed
+    loops (1,210) instead of significant ones, and timing is not declared (DEV trial: a planted lead was found in only
+    36% of runs with 55 genes -- with no loop change there is nothing to time).
+  G18-C1 open/closed neighbourhood   PASS (third cell type): 238 EXAM genes in the most-shifted bins; median gain
+         +0.27 log2 (79% agree, sign p 3e-20; p_MC 0.001; shifted 95th percentile +0.03). At 1 h +0.06 (66%), at 4 h
+         +0.17 (74%); with intron signal +0.13. Controls ok (planted 100%, null 0%).
+  G18-L1 loops at the gene start   FAIL: 311 EXAM genes at the most-changed loops; median +0.04 (60% agree, sign p
+         3e-4) -- the gain rule alone would pass, but shuffling gained / lost labels gives as much (p_MC 0.23; shuffled
+         95th percentile +0.05), so the direction of the loop change adds nothing specific. Controls ok (planted 100%,
+         null 4%). Rank correlation of loop direction with expression change 0.20.
+  REPORTED (timing, not declared): the loops' "share of the 12 h change" comes out above 1 at 1-8 h (their 12 h change
+         is about zero, so the share is noise); planted-lead control 62%. Not interpretable -- recorded as not measurable.
+  IN SIMPLE: a third, very different switch -- a steroid acting through one receptor -- gives the same main answer.
+  The open/closed zones hardly move at all, yet where they move most the genes follow (8 in 10). Loops essentially do
+  not change, while hundreds of genes go up or down: here the genes change WITHOUT the 3D map changing, using contacts
+  that were already in place. That fits the K562 and THP-1 timing: gene activity leads, the 3D map follows -- or, in a
+  quick, narrow response, does not need to move at all.
+
+ACROSS G16-G18 (K562 PMA 72 h, THP-1 LPS+IFNg 24 h, A549 dexamethasone 12 h):
+  open/closed neighbourhood moves with the genes   PASS x 3 (+0.38, +0.64, +0.27 log2; 67%, 78%, 79% agree)
+  loop change at the gene start predicts direction  PASS in K562 only (+0.25); FAIL in THP-1 (+0.06) and A549 (+0.04)
+  which comes first                                  genes first in K562 and THP-1; in A549 genes change while loops do not
