@@ -6,6 +6,8 @@ the straw reader's layout): header -> master index (chr1_chr2 -> matrix position
 (zlib) -> records (bin x, bin y, count). Returns RAW counts (no normalisation) for one intra-chromosomal matrix.
 
 Use:  h = HicRemote(url); h.chroms; h.resolutions; i, j, v = h.intra(chrom, binsize)
+      counts = h.pixels(chrom, binsize, [(i, j), ...], pad=1)   # sum over the (2 pad + 1)^2 pixels around each (i, j),
+                                                                 # fetching only the blocks that hold them
 """
 
 from __future__ import annotations
@@ -74,6 +76,50 @@ class HicRemote:
         e = b.index(b"\0", p[0]); v = b[p[0]:e].decode("utf-8", "replace"); p[0] = e + 1; return v
 
     # -- matrix
+    def zoom(self, chrom, binsize):
+        """(blockBinCount, blockColumnCount, {blockNumber: (filePosition, size)}) of chrom x chrom at binsize."""
+        k = self.chroms[chrom][0]; pos, size = self.index[f"{k}_{k}"]
+        b = self._get(pos, size); p = [0]
+        self._i32(b, p); self._i32(b, p)
+        for _ in range(self._i32(b, p)):
+            unit = self._s(b, p); self._i32(b, p)
+            for _ in range(4):
+                self._f32(b, p)
+            bs = self._i32(b, p); bbc = self._i32(b, p); bcc = self._i32(b, p); nb = self._i32(b, p); bl = {}
+            for _ in range(nb):
+                bn = self._i32(b, p); fp = self._i64(b, p); sz = self._i32(b, p); bl[bn] = (fp, sz)
+            if unit == "BP" and bs == binsize:
+                return bbc, bcc, bl
+        raise KeyError(f"{chrom} has no {binsize} bp level")
+
+    def pixels(self, chrom, binsize, pairs, pad=1):
+        """for each (i, j) bin pair: summed raw counts over bins i-pad..i+pad x j-pad..j+pad (only needed blocks fetched)."""
+        bbc, bcc, bm = self.zoom(chrom, binsize)
+        want, need = {}, set()
+        for n, (i, j) in enumerate(pairs):
+            for di in range(-pad, pad + 1):
+                for dj in range(-pad, pad + 1):
+                    x, y = min(i + di, j + dj), max(i + di, j + dj)
+                    if x < 0:
+                        continue
+                    want.setdefault((x, y), []).append(n)
+                    for bn in ((y // bbc) * bcc + x // bbc, (x // bbc) * bcc + y // bbc):
+                        if bn in bm:
+                            need.add(bn)
+        bl = sorted(bm[bn] for bn in need if bm[bn][1] > 0); out = np.zeros(len(pairs)); g = 0
+        while g < len(bl):
+            h = g; start = bl[g][0]
+            while h + 1 < len(bl) and bl[h + 1][0] + bl[h + 1][1] - start <= self.chunk and bl[h + 1][0] <= bl[h][0] + bl[h][1] + 4096:
+                h += 1
+            buf = self._get(start, bl[h][0] + bl[h][1] - start)
+            for fp, sz in bl[g:h + 1]:
+                x, y, v = self._records(zlib.decompress(buf[fp - start:fp - start + sz]))
+                for a, c, w in zip(np.minimum(x, y).tolist(), np.maximum(x, y).tolist(), v.tolist()):
+                    for n in want.get((a, c), ()):
+                        out[n] += w
+            g = h + 1
+        return out
+
     def blocks(self, chrom, binsize):
         k = self.chroms[chrom][0]; pos, size = self.index[f"{k}_{k}"]
         b = self._get(pos, size); p = [0]
