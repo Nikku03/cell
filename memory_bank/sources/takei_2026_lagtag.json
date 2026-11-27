@@ -1,0 +1,39 @@
+{
+ "name": "Takei et al. 2026 Cell Systems 17(11):101717, 'Genome-wide chromatin recording resolves dynamic cell state changes' (LagTag)",
+ "doi": "10.1016/j.cels.2026.101717",
+ "preprint_doi": "10.1101/2025.08.05.668773",
+ "pmid": "42685696",
+ "pmcid": "PMC13540299",
+ "looked_at": "2026-11-27 (full text via PubMed Central; cell.com blocks automated reading)",
+ "what": "records an earlier chromatin state (M.EcoGII adenine-methyltransferase fusions switched on by Shield-1 for 16 h) and reads it out later with the present state from the same ~10^4 cells (m6A antibody + CUT&Tag); marks dilute with division (robust ~2-3 divisions)",
+ "recorded": [
+  "RNA Pol II Ser2p (elongating)",
+  "H3K4me3 (TAF3 reader)",
+  "H3K27me3 (CBX7 reader)",
+  "Lamin B1"
+ ],
+ "cells": [
+  "mouse E14 ES cells; Gata4-induced endoderm, 24 h chase (~2 divisions)",
+  "human HCT116 (validation only)"
+ ],
+ "validation": {
+  "H3K4me3 vs ChIP-seq r": 0.76,
+  "vs CUT&Tag r": 0.87,
+  "Lamin B1 vs pA-DamID r": 0.91,
+  "differentiation fold-change, recorded vs Pol II r": 0.71
+ },
+ "result": "recorded (before) signal at pluripotency genes (Zfp42), endpoint (after) at endoderm genes (Sox17); 933 genes change Pol II after differentiation",
+ "limits": [
+  "bulk only (no single-cell yet)",
+  "two time points",
+  "no transcription factors tested",
+  "16 h window",
+  "does not show causality"
+ ],
+ "data": {
+  "GEO": "GSE305653 (raw and processed LagTag and CUT&Tag)",
+  "code": "CaltechDATA doi:10.22002/abcrz-g3683",
+  "licence": "not stated -> local only"
+ },
+ "use_for_cellbrain": "a lab method for our 'timing / next step' gap (before and after states of the same cells); its own data are small (mouse ES -> endoderm, 4 marks, bulk) and mostly mouse, so only a small before -> after test is possible now"
+}
