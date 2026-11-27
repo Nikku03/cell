@@ -1,0 +1,107 @@
+{
+ "name": "Time-course datasets that measure 3D chromosome structure AND gene expression at the same time points",
+ "looked_at": "2026-11-27 (PubMed, GEO records and file lists, ENCODE and 4DN portals; nothing downloaded yet)",
+ "asked_by_user": "find info where we have multiple time stamps ... look at the chromosome and its 3d map at that time, and compare it with that time's gene expression so we can link how change in chromosome links to gene expression",
+ "ranked": [
+  {
+   "rank": 1,
+   "why_first": "our own cell line (K562); very deep Hi-C (4 biological replicates, ~6 billion reads per time point) so loop changes are measured reliably",
+   "paper": "Bond et al. 2023 Genome Research 33:1258, 'Chromatin loop dynamics during cellular differentiation are associated with changes to both anchor and internal regulatory features'",
+   "doi": "10.1101/gr.277397.122", "pmid": "37699658",
+   "cells": "human K562 pushed toward megakaryocyte by PMA",
+   "time_points": {"Hi-C": ["0", "6 h", "72 h"], "RNA-seq": ["0", "30 min", "90 min", "3 h", "6 h", "24 h", "48 h", "72 h"], "ATAC / CUT&RUN (CTCF, RAD21, H3K27ac, JUN)": ["0", "6 h", "72 h"]},
+   "matched_points": ["0", "6 h", "72 h"],
+   "data": {"GEO": "SuperSeries GSE213909: Hi-C GSE214123 (.hic per time point, merged 5-6 GB each, per-replicate ~1 GB); RNA GSE213386 (Salmon quant.sf per replicate, ~2.5 MB each); ATAC GSE213295; CUT&RUN GSE213908", "code": "github.com/mbond0718/MEGA2023", "licence": "GEO, none stated -> local only"},
+   "reported": "1503 loops change; gained loop anchors carry AP-1 and large H3K27ac gains; adding loop and enhancer changes improves prediction of expression change"
+  },
+  {
+   "rank": 2,
+   "why": "the most time points with BOTH measurements (8 matched points over 24 h), human blood-lineage line",
+   "paper": "Reed et al. 2022 Cell Reports 41:111567, 'Temporal analysis suggests a reciprocal relationship between 3D chromatin structure and transcription'",
+   "doi": "10.1016/j.celrep.2022.111567", "pmid": "36323252",
+   "cells": "human THP-1 macrophages activated with LPS + interferon-gamma",
+   "time_points": {"Hi-C (5 replicates each)": ["0", "30", "60", "90", "120", "240", "360", "1440 min"], "RNA-seq (2 replicates each)": "same 8 points", "H3K27ac ChIP, ATAC": "same 8 points"},
+   "matched_points": "all 8",
+   "data": {"GEO": "SuperSeries GSE201376: Hi-C GSE201353 (.hic per time point + differential loop table), RNA GSE201354 (bigWig + binned differential gene table)", "licence": "GEO, none stated -> local only"},
+   "reported": "enhancer acetylation changes come before expression changes at looped enhancer-promoter pairs; gained loops go with higher expression of genes pointing out of the loop; strong transcription inside a loop goes with loop loss (two-way relationship)"
+  },
+  {
+   "rank": 3,
+   "why": "human, ENCODE (clear open licence, can be committed), five Hi-C time points with RNA-seq at the same points plus many in between",
+   "paper": "D'Ippolito et al. 2018 Cell Systems 7:146, 'Pre-established chromatin interactions mediate the genomic response to glucocorticoids'",
+   "doi": "10.1016/j.cels.2018.06.007", "pmid": "30031775",
+   "cells": "human A549 lung cells treated with dexamethasone",
+   "time_points": {"in situ Hi-C": ["0", "1 h", "4 h", "8 h", "12 h"], "polyA RNA-seq": "23 ENCODE experiments from 5 min to 12 h, including 0, 1, 4, 8 h", "DNase, ATAC, histone and TF ChIP": "same series"},
+   "data": {"ENCODE": "search A549 + dexamethasone (5 in situ Hi-C, 23 RNA-seq, 12 DNase, 74 histone ChIP)", "licence": "ENCODE, free use"},
+   "reported": "hormone-bound GR mostly uses loops that already exist; induced genes move toward active compartments, repressed genes toward inactive ones"
+  },
+  {
+   "rank": 4,
+   "why": "3D structure AND RNA from the SAME single cell, with real time stamps; the authors build a 3D model per cell",
+   "paper": "Liu et al. 2023 Science 380:1070, 'Linking genome structures to functions by simultaneous single-cell Hi-C and RNA-seq' (HiRES)",
+   "doi": "10.1126/science.adg3797", "pmid": "37289875",
+   "cells": "mouse embryos, embryonic day 7.0 to 11.5 (7,716 single cells), plus mouse brain",
+   "data": {"GEO": "GSE223917 (7,895 samples)", "licence": "GEO, none stated -> local only"},
+   "reported": "chromatin rewiring widely happens BEFORE transcription switches on along developmental pseudotime"
+  },
+  {
+   "rank": 5,
+   "why": "same-cell 3D + RNA in HUMAN blood stem/progenitor cells (the lineage K562 comes from); order comes from a differentiation path (pseudotime), not clock time; also K562 cells profiled",
+   "paper": "Zhou et al. 2024 Nature Genetics 56:1701, 'GAGE-seq concurrently profiles multiscale 3D genome organization and gene expression in single cells'",
+   "doi": "10.1038/s41588-024-01745-3", "pmid": "38744973",
+   "cells": "human bone marrow CD34+ (3 replicates), mouse cortex, K562 mixing controls",
+   "data": {"GEO": "GSE238001 (pairs + tsv)", "licence": "GEO, none stated -> local only"},
+   "reported": "3D features help explain cell-type expression; in blood formation 3D and expression changes are sometimes out of step"
+  },
+  {
+   "rank": 6,
+   "paper": "Bertero et al. 2019 Nature Communications 10:1538 (human stem cell -> heart muscle)",
+   "doi": "10.1038/s41467-019-09483-5", "pmid": "30948719",
+   "time_points": "stem cell, mesoderm (day 2), cardiac progenitor (day 5), cardiomyocyte (day 14), plus fetal heart; Hi-C and RNA-seq at each",
+   "data": {"GEO": "GSE106690 (Hi-C GSE106687, RNA GSE106688)"},
+   "reported": "big heart genes move from inactive to active compartment as they switch on"
+  },
+  {
+   "rank": 7,
+   "paper": "Stadhouders et al. 2018 Nature Genetics 50:238 (mouse B cell -> stem cell reprogramming)",
+   "doi": "10.1038/s41588-017-0030-7", "pmid": "29335546",
+   "time_points": "B, Ba, day 2, 4, 6, 8, stem cell; Hi-C and RNA-seq at each",
+   "data": {"GEO": "GSE96611 (Hi-C GSE96553, RNA GSE96608)"},
+   "reported": "3D changes often come BEFORE expression changes"
+  },
+  {
+   "rank": 8,
+   "paper": "Li et al. 2023 Nucleic Acids Research 51:6634 (human erythropoiesis: stem/progenitor -> erythroid progenitor -> precursor)",
+   "doi": "10.1093/nar/gkad468", "pmid": "37254808",
+   "time_points": "3 stages; Micro-C (GSE214808) and RNA-seq (GSE214809) at each, GATA1 HiChIP day 5 and day 12, GATA1 knockdown RNA at 24/48/72 h",
+   "reported": "compartments and domains barely change; about half of enhancers and their promoter contacts rewire, led by GATA1"
+  },
+  {
+   "rank": 9,
+   "paper": "Zhang et al. 2019 Nature 576:158 (mouse erythroid cells leaving mitosis)",
+   "doi": "10.1038/s41586-019-1778-y", "pmid": "31776509",
+   "time_points": "prometaphase, ana/telophase, early, mid, late G1 (minutes to hours); Hi-C, Capture-C, Pol II ChIP at each",
+   "data": {"GEO": "GSE129997"},
+   "reported": "compartments come back first, then small domains, then big ones; some enhancer contacts form before structural loops"
+  },
+  {
+   "rank": 10,
+   "paper": "Oudelaar et al. 2020 Nature Communications 11:2722 (mouse erythroid differentiation in vivo, Tiled-C)",
+   "doi": "10.1038/s41467-020-16598-7", "pmid": "32483172",
+   "reported": "enhancer-promoter contacts form gradually WITH rising expression, not before it"
+  },
+  {
+   "rank": "cause-effect tests (switch a 3D protein off, then watch over time)",
+   "paper": "Nora et al. 2017 Cell 169:930 (CTCF degron in mouse ES cells; Hi-C and RNA-seq over days)",
+   "doi": "10.1016/j.cell.2017.05.004", "pmid": "28525758",
+   "data": {"GEO": "GSE98671"},
+   "reported": "removing CTCF dissolves domains but changes few genes"
+  }
+ ],
+ "not_found": [
+  "no K562 time course on ENCODE or 4DN (only single-state Hi-C and two chromatin-tracing sets at MYC and chr21)",
+  "no imaging (chromatin tracing + RNA) dataset with several time points in human cells; imaging methods that do both in one cell exist (ORCA, MINA, DNA-MERFISH) but published sets are single time points"
+ ],
+ "what_the_papers_disagree_on": "does 3D change come before expression (HiRES, Stadhouders), with it (Oudelaar), or both ways (Reed)? A predeclared test on rank 1-3 can check this in our own way",
+ "use_for_cellbrain": "next test (G16, not yet declared): at matched time points, do genes whose 3D surroundings change (compartment flip, gained or lost loop at the promoter) change expression in the predicted direction more than matched control genes; and does the 3D change come before the expression change (THP-1, 8 points)"
+}
