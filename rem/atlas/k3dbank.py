@@ -227,9 +227,14 @@ def compartments(tss_pc):
 
 
 # ---------------------------------------------------------------- build
+def fnum(x):
+    return float("nan") if x in ("NA", "", "NaN") else float(x)
+
+
 def build():
     import pyBigWig
     tx, span, ex = gtf()
+    mid = os.path.join(RAW, "build_intermediate.npz")      # TPM, intron signal and E1 are slow: kept if already made
     tss = [g for g in json.load(open(os.path.join(AG, "raw", "gencode46_tss.json"))) if g[2] == "protein_coding" and g[3].replace("chr", "") in CHROMS]
     tss = [g for g in tss if g[0] in span]
     genes = [g[0] for g in tss]
@@ -237,7 +242,11 @@ def build():
     files = sorted(rna_files(), key=lambda d: (d["rep"], d["t"]))
     quant = [d for d in files if d["f"].endswith("quant.sf.gz")]; bws = [d for d in files if d["f"].endswith(".bw")]
     TPM = np.zeros((len(genes), len(quant)), np.float32); mapped = []
-    for k, d in enumerate(quant):
+    cached = np.load(mid, allow_pickle=False) if os.path.exists(mid) else None
+    if cached is not None and list(cached["gene"]) == genes:
+        TPM, INT, E1, bchr, bstart = cached["tpm"], cached["intron"], cached["e1"], cached["bin_chrom"], cached["bin_start"]
+        mapped = list(cached["mapped"]); intr = clean_introns(genes, span, ex); cinfo = json.load(open(mid + ".json"))
+    for k, d in enumerate(quant if cached is None else []):
         tot = got = 0.0
         for line in gzip.open(os.path.join(RAW, "rna", "raw", d["f"]), "rt"):
             f = line.split("\t")
@@ -247,9 +256,10 @@ def build():
             if g in gi:
                 TPM[gi[g], k] += t; got += t
         mapped.append(got / tot); print("tpm", d["f"], round(got / tot, 3), flush=True)
-    intr = clean_introns(genes, span, ex)
-    INT = np.full((len(genes), len(bws)), np.nan, np.float32)
-    for k, d in enumerate(bws):
+    if cached is None:
+        intr = clean_introns(genes, span, ex)
+        INT = np.full((len(genes), len(bws)), np.nan, np.float32)
+    for k, d in enumerate(bws if cached is None else []):
         bw = pyBigWig.open(os.path.join(RAW, "rna", "raw", d["f"])); ch = bw.chroms()
         for g, pcs in intr.items():
             c = "chr" + span[g][0]
@@ -260,7 +270,10 @@ def build():
                 v = bw.stats(c, a, min(b, ch[c]), type="mean", exact=True)[0]; s += (v or 0.0) * (b - a); l += b - a
             INT[gi[g], k] = s / l
         bw.close(); print("introns", d["f"], flush=True)
-    E1, bchr, bstart, cinfo = compartments({c: [g[4] - 1 for g in tss if g[3].replace("chr", "") == c] for c in CHROMS})
+    if cached is None:
+        E1, bchr, bstart, cinfo = compartments({c: [g[4] - 1 for g in tss if g[3].replace("chr", "") == c] for c in CHROMS})
+        np.savez_compressed(mid, gene=np.array(genes), tpm=TPM, intron=INT, e1=E1, bin_chrom=bchr, bin_start=bstart, mapped=np.array(mapped))
+        json.dump(cinfo, open(mid + ".json", "w"))
     L = [line.rstrip("\n").split("\t") for line in gzip.open(os.path.join(RAW, "hic", "raw", "GSE214123_hicSummary.txt.gz"), "rt")]
     head = L[0]; L = L[1:]; libs = [h for h in head if h.startswith("MEGA_K562")]
     col = {h: k for k, h in enumerate(head)}
@@ -272,10 +285,10 @@ def build():
                         bin_chrom=bchr, bin_start=bstart, e1=E1.astype(np.float32), e1_cols=np.array([str(t) for t in HIC_T]),
                         loop_anchor=np.array([[L_[col["seqnames1"]].replace("chr", ""), L_[col["start1"]], L_[col["end1"]], L_[col["seqnames2"]].replace("chr", ""),
                                                L_[col["start2"]], L_[col["end2"]]] for L_ in L]),
-                        loop_lfc=np.array([[float(L_[col["log2FoldChange_360"]]), float(L_[col["log2FoldChange_4320"]]), float(L_[col["padj_360"]]),
-                                            float(L_[col["padj_4320"]])] for L_ in L]),
+                        loop_lfc=np.array([[fnum(L_[col["log2FoldChange_360"]]), fnum(L_[col["log2FoldChange_4320"]]), fnum(L_[col["padj_360"]]),
+                                            fnum(L_[col["padj_4320"]])] for L_ in L]),
                         loop_cluster=np.array([L_[col["cluster"]] for L_ in L]), loop_libs=np.array(libs),
-                        loop_counts=np.array([[float(L_[col[h]]) for h in libs] for L_ in L], np.float32))
+                        loop_counts=np.array([[fnum(L_[col[h]]) for h in libs] for L_ in L], np.float32))
     info = dict(genes=len(genes), tpm_share_mapped_to_protein_coding=[round(x, 3) for x in mapped], genes_with_clean_introns=len(intr),
                 bins=int(len(bchr)), bins_valid_all_times=int((~np.isnan(E1).any(1)).sum()), compartments=cinfo, loops=len(L),
                 loop_clusters=dict(collections.Counter(L_[col["cluster"]] for L_ in L)))

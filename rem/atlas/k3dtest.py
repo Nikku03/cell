@@ -179,7 +179,7 @@ class L1:
                             if s[L] - 10000 <= t < e[L] + 10000:
                                 rows.append(g); cols_.append(L)
             M = csr_matrix((np.ones(len(rows)), (rows, cols_)), shape=(len(D["gene"]), len(A))); M.sum_duplicates(); M.data[:] = 1
-        self.M = M; self.diff = np.isin(cl, ["gained", "lost"]) & (lfc != 0); self.static = cl == "static"
+        self.M = M; self.diff = np.isin(cl, ["gained", "lost"]) & np.isfinite(lfc) & (lfc != 0); self.static = cl == "static"
         self.dir = np.where(self.diff, np.sign(lfc), 0.0)
         self.on_static = np.asarray(M @ self.static.astype(float)).ravel() > 0
         self.on_diff = np.asarray(M @ self.diff.astype(float)).ravel() > 0
