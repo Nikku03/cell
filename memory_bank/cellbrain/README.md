@@ -235,3 +235,11 @@ In total, 44,082 facts and 16 layers were added.
 - **L1 PASS:** genes at gained loops go up, at lost loops go down (median +0.25 log2, 62%; p_MC 0.001).
 - **T1 FAIL (reverse):** at 6 h transcription has made 67% of its 72 h change, loops 31% — genes move first, loops follow.
 - **Meaning:** 3D shape and expression are tightly linked, but in this switch loops lock in activity changes rather than start them. Next: repeat on THP-1 (8 matched time points) and A549 (ENCODE) to see if the order holds.
+
+## Same test in THP-1 macrophages, 8 matched time points (t3dbank, t3dtest G17; 2026-11-27)
+
+- **New layer:** `THP1_LPIF_3D` (local; Reed et al. 2022 GEO GSE201376; files on GRCh37 -> genes placed with GENCODE 46 lift37): RNA TPM + intron signal and compartment E1 at 0, 30, 60, 90, 120, 240, 360 min, 24 h; 42,690 loops with counts in 5 replicate columns.
+- **C1 PASS (repeats, stronger):** genes in the most-shifted bins move with the shift (median +0.64 log2, 78%; already +0.16 at 2 h).
+- **L1 FAIL (does not repeat):** changing loops at the gene start do not predict direction (median +0.06, 51%).
+- **T1 PASS (repeats G16's finding):** transcription reaches 46% / 68% / 74% of its 24 h change at 2 / 4 / 6 h, loops 32% / 39% / 42%; mature mRNA lags about as much as the loops.
+- **Meaning (K562 + THP-1):** the open/closed neighbourhood is a robust 3D partner of gene activity in both; loops track genes in the slow K562 switch but not in the fast immune switch; in both, gene activity changes first and the 3D map follows.

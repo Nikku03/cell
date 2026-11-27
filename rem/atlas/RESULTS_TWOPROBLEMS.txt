@@ -6679,3 +6679,34 @@ G16 WHEN THE CHROMOSOME'S 3D SHAPE CHANGES, DO THE GENES THERE CHANGE WITH IT --
   the genes move first: by 6 h transcription has done two-thirds of its change while the loops have done one-third.
   So here loops mostly follow (and lock in) changes in gene activity rather than start them -- the opposite of what
   the mouse-embryo single-cell study (HiRES) reported, and in line with the THP-1 study's "both ways" picture.
+
+========================================================================================================================
+G17 THE SAME TEST IN THP-1 MACROPHAGES SWITCHED ON BY LPS + INTERFERON-GAMMA (3D map and RNA at the SAME 8 times)
+    Reed et al. 2022 Cell Reports (GEO GSE201376; local only): Hi-C merged maps (20-23 GB each, read remotely) and RNA
+    at 0, 30, 60, 90, 120, 240, 360 min and 24 h. All THP-1 files are on GRCh37/hg19 (found when the first build hit
+    out-of-range positions), so genes were placed with GENCODE 46 lift37; K562 files were checked and are hg38.
+    (t3dbank.py, t3dtest.py; C1/L1 code imported unchanged from k3dtest.py; declared before the EXAM run; DEV trial
+    showed only controls.) EXAM genes: 6,486 expressed protein-coding. Compartments follow gene density on every
+    chromosome (r 0.31-0.53; chr9 2nd pattern again) and drift slowly (24 h vs 0 h r 0.945-0.990).
+    One rule changed after the DEV trial (controls only): L1 with the authors' 4 pattern clusters (502 loops) found a
+    planted +0.3 effect in only 58% of 50 runs, so "changing" = the authors' adjusted p < 0.1 (938 loops; direction =
+    sign at 24 h; 54% of them are in the authors' clusters).
+  G17-C1 open/closed neighbourhood   PASS (repeats G16-C1, stronger): 375 EXAM genes in the most-shifted bins; median
+         gain +0.64 log2 (78% agree, sign p 1e-28; p_MC 0.001; shifted 95th percentile +0.10). Already at 2 h +0.16
+         (71%) and at 6 h +0.33 (76%). Controls ok (planted 100%, null 4%).
+  G17-L1 loops at the gene start   FAIL (does not repeat G16-L1): 251 EXAM genes at only-gained or only-lost loops;
+         median +0.06 (51% agree, sign p 0.45; p_MC 0.24). Same at each loop's own peak time (+0.01) and with intron
+         signal (+0.01). Controls ok (planted 90%, null 4%). Rank correlation of loop direction with expression change
+         0.04 (K562: 0.35).
+  G17-T1 genes move first   PASS (repeats the G16 finding): 974 cross-fitted pairs, 606 EXAM genes. Share of the 24 h
+         change reached, transcription (intron) vs loop: 30 min 0.12 vs 0.13; 60 min 0.22 vs 0.26; 90 min 0.32 vs
+         0.19; 2 h 0.46 vs 0.32; 4 h 0.68 vs 0.39; 6 h 0.74 vs 0.42. d = +0.13 (bootstrap 5th percentile +0.05,
+         p 0.005). Controls ok (equal timing passes 4.5%, planted lead 100%).
+  REPORTED: with mature mRNA instead of intron RNA the lead disappears (d +0.04, p 0.18): mRNA lags transcription by
+         about as much as the loops do. Bins flipping by 24 h: 745 closed -> open, 966 open -> closed (of 28,023).
+         Rank correlation of E1 change with expression change 0.21 (K562 0.13).
+  IN SIMPLE: in a second, very different cell type the main picture holds. Genes whose stretch of DNA moves into the
+  open zone go up, strongly and fast (already by 2 hours). And again the genes move first: transcription has done
+  three-quarters of its change by 6 hours, the loops less than half. But here, unlike K562, a loop changing at a gene's
+  start did not tell which way that gene would go -- in a fast immune switch the loops seem to follow at their own pace
+  rather than tracking each gene, so "open/closed zone" is the more reliable 3D signal of the two.
