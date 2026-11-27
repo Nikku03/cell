@@ -26,17 +26,17 @@ CLAIMS (declared before running; ids G16-*):
  G16-T1 THE 3D CHANGE COMES FIRST. Timing is read against transcription (intron RNA, short-lived) rather than mature
         mRNA, which lags. Hi-C halves: biological replicates 1-2 vs 3-4; RNA replicates 1 vs 2. Cross-fitted: a
         loop-gene pair (gene start within 10 kb of an anchor, any loop) is CHOSEN on one Hi-C half + one RNA replicate
-        (|loop change 0 -> 72 h| >= 1 and |intron change 0 -> 72 h| >= 1, same sign) and MEASURED on the other half +
-        other replicate: share of the 72 h change already reached at 6 h, for the loop (fL) and for the intron signal
-        (fY), each clipped to [-0.5, 1.5]; d = fL - fY; per gene the median d over its pairs (both folds). PASS: gain
-        rule on EXAM genes (d > 0).
- Controls: C1 and L1: 50 planted runs (an effect of +0.2 log2 in the predicted direction added on a shifted / shuffled
+        (|loop change 0 -> 72 h| >= 0.5 and |intron change 0 -> 72 h| >= 0.5, log2, same sign) and MEASURED on the other
+        half + other replicate. Pooled over the chosen pairs (both folds; changes turned by the sign of the chosen
+        change): share of the 72 h change already reached at 6 h, FL for the loop and FY for the intron signal
+        (sum of 6 h changes / sum of 72 h changes, so noise in the measured half cannot bias it); d = FL - FY. PASS:
+        d >= +0.01 AND d > 0 in 95% of 2,000 bootstrap resamples of EXAM genes (p_boot < 0.05).
+ Controls: C1 and L1: 50 planted runs (an effect of +0.3 log2 in the predicted direction added on a shifted / shuffled
         track) must PASS the full rule in >= 90% (else VOID); 50 null runs (shifted / shuffled track, no effect) must
         PASS in <= 10% (else VOID). T1: 200 simulated runs with EQUAL timing for loop and intron (each pair's own
-        changes and the measured noise of each assay) must pass in <= 10%, and 200 with the loop 0.25 ahead and the
+        changes, the pooled share as the common timing, and the measured noise of each assay) must pass in <= 10%, and 200 with the loop 0.25 ahead and the
         intron 0.25 behind must pass in >= 90% (else VOID).
- REPORTED: the same at 6 h (C1, L1); C1 and L1 with intron signal; T1 with mRNA instead of intron signal; share of
-        pairs where expression moves first; rank correlations of E1 change and of loop change with expression change;
+ REPORTED: the same at 6 h (C1, L1); C1 and L1 with intron signal; T1 with mRNA instead of intron signal; rank correlations of E1 change and of loop change with expression change;
         numbers of bins flipping A <-> B; per-chromosome compartment checks.
 NOT: bulk cells (an average); PMA also stops division and changes many pathways at once; one cell line; only one Hi-C
 time point between 0 and 72 h; loop calls and their differential test are the authors'; association, not cause.
@@ -74,7 +74,7 @@ SEED = 20261128
 N_MC = 100 if TRIAL else 1000
 N_CTRL, N_CTRL_MC = (10, 100) if TRIAL else (50, 200)
 N_SIM = 50 if TRIAL else 200
-PLANT = 0.2
+PLANT = 0.3
 H_ = lambda e: int(hashlib.sha256(("cellbrain-c1:" + e).encode()).hexdigest(), 16) % 2
 LAYER = "K562_PMA_3D"
 
@@ -238,39 +238,54 @@ def t1_pairs(D, l1):
     M = l1.M.tocoo(); m = D["y_ok"][M.row] & D["expressed"][M.row]; return M.row[m], M.col[m]
 
 
-def frac(d6, d72):
-    with np.errstate(divide="ignore", invalid="ignore"):
-        return np.clip(np.where(d72 != 0, d6 / d72, 0.0), -0.5, 1.5)
+N_BOOT = 500 if TRIAL else 2000
+T1_SEL = 0.5
 
 
-def t1_scores(D, L, gpair, lpair, Y, half, folds=(("A", 1, "B", 2), ("B", 2, "A", 1)), keep=None):
-    per = {}
-    for hs, rs, hm, rm in folds:
+def t1_choose(D, L, gpair, lpair, Y, half):
+    """cross-fitted pairs: chosen on one Hi-C half + one RNA replicate, measured on the others.
+    Returns rows (gene, loop, fold, sign of the chosen change, measured loop d6, d72, measured intron d6, d72)."""
+    rows = []
+    for f, (hs, rs, hm, rm) in enumerate((("A", 1, "B", 2), ("B", 2, "A", 1))):
         dLs = L[(hs, 4320)][lpair] - L[(hs, 0)][lpair]; dYs = Y[(4320, rs)][gpair] - Y[(0, rs)][gpair]
-        ch = (np.abs(dLs) >= 1) & (np.abs(dYs) >= 1) & (np.sign(dLs) == np.sign(dYs)) & (D["half"][gpair] == half)
-        fL = frac(L[(hm, 360)][lpair] - L[(hm, 0)][lpair], L[(hm, 4320)][lpair] - L[(hm, 0)][lpair])
-        fY = frac(Y[(360, rm)][gpair] - Y[(0, rm)][gpair], Y[(4320, rm)][gpair] - Y[(0, rm)][gpair])
-        for k in np.nonzero(ch)[0]:
-            per.setdefault(int(gpair[k]), []).append(fL[k] - fY[k])
-            if keep is not None:
-                keep.append((hs, rs, hm, rm, int(gpair[k]), int(lpair[k]), float(fL[k]), float(fY[k])))
-    return np.array([np.median(v) for v in per.values()])
+        ch = (np.abs(dLs) >= T1_SEL) & (np.abs(dYs) >= T1_SEL) & (np.sign(dLs) == np.sign(dYs)) & (D["half"][gpair] == half)
+        k = np.nonzero(ch)[0]
+        rows.append(np.stack([gpair[k], lpair[k], np.full(len(k), f), np.sign(dLs[k]),
+                              L[(hm, 360)][lpair[k]] - L[(hm, 0)][lpair[k]], L[(hm, 4320)][lpair[k]] - L[(hm, 0)][lpair[k]],
+                              Y[(360, rm)][gpair[k]] - Y[(0, rm)][gpair[k]], Y[(4320, rm)][gpair[k]] - Y[(0, rm)][gpair[k]]], 1))
+    return np.concatenate(rows)
 
 
-def t1_sim(D, L, N, Y, keep, rng, shift):
-    """re-measure every chosen pair with simulated noise; equal timing (shift 0) or loop ahead by `shift`."""
+def t1_stat(rows, rng, n_boot=None):
+    """pooled share of the 72 h change reached at 6 h, loop (FL) and intron (FY); d = FL - FY; bootstrap over genes."""
+    n_boot = n_boot or N_BOOT
+    if len(rows) == 0:
+        return dict(genes=0, pairs=0, FL=None, FY=None, d=0.0, p_boot=1.0, passed=False)
+    g = rows[:, 0].astype(int); u, gi = np.unique(g, return_inverse=True); sg = rows[:, 3]
+    sums = np.stack([np.bincount(gi, weights=sg * rows[:, c], minlength=len(u)) for c in (4, 5, 6, 7)], 1)
+    tot = sums.sum(0); FL, FY = tot[0] / tot[1], tot[2] / tot[3]; d = FL - FY
+    W = rng.multinomial(len(u), np.full(len(u), 1 / len(u)), size=n_boot); B = W @ sums
+    with np.errstate(divide="ignore", invalid="ignore"):
+        db = B[:, 0] / B[:, 1] - B[:, 2] / B[:, 3]
+    p = float((1 + np.sum(~(db > 0))) / (n_boot + 1))
+    return dict(genes=int(len(u)), pairs=int(len(rows)), FL=float(FL), FY=float(FY), d=float(d), d_boot_5=float(np.nanquantile(db, 0.05)), p_boot=p,
+                passed=bool(p < 0.05 and d >= 0.01))
+
+
+def t1_sim(D, L, N, Y, rows, obs, rng, shift):
+    """re-measure every chosen pair with simulated noise of each assay; equal timing (shift 0) or loop ahead by `shift`."""
     diff = np.concatenate([(Y[(t, 1)] - Y[(t, 2)])[D["y_ok"]] for t in (0, 360, 4320)])
     mean_lv = np.concatenate([((Y[(t, 1)] + Y[(t, 2)]) / 2)[D["y_ok"]] for t in (0, 360, 4320)])
     qs = np.quantile(mean_lv, np.linspace(0, 1, 11)); sdb = np.array([diff[(mean_lv >= qs[i]) & (mean_lv <= qs[i + 1])].std() / np.sqrt(2) for i in range(10)])
-    per = {}
-    for hs, rs, hm, rm, g, l, fL, fY in keep:
-        f = float(np.clip((fL + fY) / 2, 0, 1)); dL = L[(hm, 4320)][l] - L[(hm, 0)][l]; dY = Y[(4320, rm)][g] - Y[(0, rm)][g]
-        sL = [1 / (np.log(2) * np.sqrt(N[(hm, t)][l] + 1)) for t in (0, 360, 4320)]
-        sY = [sdb[min(9, max(0, np.searchsorted(qs, Y[(t, rm)][g]) - 1))] for t in (0, 360, 4320)]
-        fl, fy = np.clip(f + shift, 0, 1), np.clip(f - shift, 0, 1)
-        Ls = np.array([0, fl * dL, dL]) + rng.normal(0, sL); Ys = np.array([0, fy * dY, dY]) + rng.normal(0, sY)
-        per.setdefault(g, []).append(frac(Ls[1] - Ls[0], Ls[2] - Ls[0]) - frac(Ys[1] - Ys[0], Ys[2] - Ys[0]))
-    return np.array([np.median(v) for v in per.values()])
+    f = float(np.clip((obs["FL"] + obs["FY"]) / 2, 0, 1)); fl, fy = np.clip(f + shift, 0, 1), np.clip(f - shift, 0, 1)
+    g = rows[:, 0].astype(int); l = rows[:, 1].astype(int); hm = np.where(rows[:, 2] == 0, "B", "A"); rm = np.where(rows[:, 2] == 0, 2, 1)
+    dL, dY = rows[:, 5], rows[:, 7]
+    sL = np.stack([1 / (np.log(2) * np.sqrt(np.where(hm == "B", N[("B", t)][l], N[("A", t)][l]) + 1)) for t in (0, 360, 4320)], 1)
+    yl = np.stack([np.where(rm == 2, Y[(t, 2)][g], Y[(t, 1)][g]) for t in (0, 360, 4320)], 1)
+    sY = sdb[np.clip(np.searchsorted(qs, yl) - 1, 0, 9)]
+    Ls = np.stack([np.zeros(len(g)), fl * dL, dL], 1) + rng.normal(0, sL); Ys = np.stack([np.zeros(len(g)), fy * dY, dY], 1) + rng.normal(0, sY)
+    sim = rows.copy(); sim[:, 4], sim[:, 5] = Ls[:, 1] - Ls[:, 0], Ls[:, 2] - Ls[:, 0]; sim[:, 6], sim[:, 7] = Ys[:, 1] - Ys[:, 0], Ys[:, 2] - Ys[:, 0]
+    return t1_stat(sim, rng, 500)["passed"]
 
 
 # ---------------------------------------------------------------- run
@@ -299,17 +314,13 @@ def run(rng, half):
     sg = l1.gene_sign(l1.dir); mm = D["expressed"] & (D["half"] == half) & (sg != 0)
     rep["rank_corr_loop_sign_vs_expression_change"] = float(spearmanr(sg[mm], lfc72[mm])[0]) if mm.sum() > 2 else None
 
-    L, N = t1_data(D); gp, lp = t1_pairs(D, l1); keep = []
-    d = t1_scores(D, L, gp, lp, D["y"], half, keep=keep); ok, p, med, n = gain(d)
-    out["G16-T1"] = dict(genes=n, pairs=len(keep), sign_p=p, median=med, share_loop_first=float((d > 0).mean()) if n else None,
-                         share_expression_first=float((d < 0).mean()) if n else None, passed=bool(ok))
-    eq = [gain(t1_sim(D, L, N, D["y"], keep, rng, 0.0))[0] for _ in range(N_SIM)]
-    pl = [gain(t1_sim(D, L, N, D["y"], keep, rng, 0.25))[0] for _ in range(N_SIM)]
+    L, N = t1_data(D); gp, lp = t1_pairs(D, l1)
+    rows = t1_choose(D, L, gp, lp, D["y"], half); out["G16-T1"] = t1_stat(rows, rng)
+    eq = [t1_sim(D, L, N, D["y"], rows, out["G16-T1"], rng, 0.0) for _ in range(N_SIM)] if len(rows) else [True]
+    pl = [t1_sim(D, L, N, D["y"], rows, out["G16-T1"], rng, 0.25) for _ in range(N_SIM)] if len(rows) else [False]
     ctl["G16-T1"] = dict(equal_timing_pass_rate=float(np.mean(eq)), planted_lead_pass_rate=float(np.mean(pl)), runs=N_SIM,
                          ok=bool(np.mean(eq) <= 0.10 and np.mean(pl) >= 0.9))
-    Ye = {k: v for k, v in D["e"].items()}
-    dm = t1_scores(D, L, gp, lp, Ye, half); okm, pm, medm, nm = gain(dm)
-    rep["T1_mRNA_instead_of_intron"] = dict(genes=nm, sign_p=pm, median=medm, share_loop_first=float((dm > 0).mean()) if nm else None)
+    rep["T1_mRNA_instead_of_intron"] = t1_stat(t1_choose(D, L, gp, lp, D["e"], half), rng)
     for cid in CLAIMS:
         out[cid]["controls"] = ctl[cid]
         out[cid]["gate"] = dict(real=out[cid]["passed"], controls_ok=ctl[cid]["ok"],
