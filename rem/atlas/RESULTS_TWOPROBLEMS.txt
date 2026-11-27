@@ -6647,3 +6647,35 @@ G15 DOES OUR REGULATOR MAP PREDICT THE NEXT STATE? Mouse ES cells switching on G
   IN SIMPLE: our human regulator map, carried to mouse, does not predict what Gata4 does in the first 24 hours; its
   GATA4 list is mostly about heart and gut genes, while these cells first make early endoderm (Hhex, Pdgfra) and
   leave the stem-cell state. Two steps out the map finds "regulated genes" in general -- real, but not specific.
+
+========================================================================================================================
+G16 WHEN THE CHROMOSOME'S 3D SHAPE CHANGES, DO THE GENES THERE CHANGE WITH IT -- AND WHICH COMES FIRST?
+    K562 pushed toward megakaryocyte with PMA (Bond et al. 2023 Genome Research, GEO GSE213909; local only): Hi-C at
+    0, 6, 72 h (2.5-2.8 billion intra-chromosomal contacts per time point, read over HTTPS byte ranges, hicremote.py)
+    and RNA at 0, 0.5, 1.5, 3, 6, 24, 48, 72 h (2 replicates). (k3dbank.py, k3dtest.py; code baa728e2d7aad6c2;
+    declared before the EXAM run; DEV trials showed only controls.) EXAM genes: 6,687 expressed protein-coding.
+    Before declaring, the DEV control runs changed two things (no outcomes seen): T1's per-pair ratio leaned toward
+    "loop first" under simulated equal timing (12% false passes > 10%), so T1 now pools the changes and divides once
+    (cross-fitted, bootstrap over genes); L1 caught a planted +0.2 log2 effect in only 90% of runs, so the planted
+    effect is +0.3 for C1 and L1.
+    Compartments: E1 follows gene density on every chromosome (r 0.32-0.55; chr9 uses its 2nd pattern, the BCR-ABL
+    amplified region takes the 1st); 6 h and 72 h patterns match 0 h at r 0.92-0.99 (chr22 at 72 h 0.82).
+    1,374 bins flip closed -> open and 373 open -> closed by 72 h (of 28,051).
+  G16-C1 open/closed neighbourhood   PASS: 380 EXAM genes in the 10% most-shifted bins; median gain +0.38 log2 in
+         the predicted direction (67% agree, sign p 2e-11), beating every one of 1,000 circular shifts of the track
+         (p_MC 0.001; shifted 95th percentile +0.03). Controls ok (planted 100%, null 0%).
+  G16-L1 loops at the gene start   PASS: 317 EXAM genes at only-gained or only-lost loops (1,503 changing loops);
+         median gain +0.25 log2 (62% agree, sign p 1.5e-5), beating all 1,000 gained/lost label shuffles (p_MC
+         0.001). Controls ok (planted 100%, null 4%).
+  G16-T1 the 3D change comes first   FAIL, and the reverse holds: over 836 cross-fitted loop-gene pairs (472 EXAM
+         genes), at 6 h the loops have made 31% of their 72 h change, transcription (intron RNA) 67%; d = -0.36
+         (bootstrap 5th percentile -0.44). Controls ok (equal timing passes 4%, planted loop-lead 100%).
+  REPORTED: at 6 h, compartment shifts already go with expression (median +0.16, p_MC 0.001) but loop changes do not
+         yet (+0.04, p_MC 0.21); with intron signal instead of mRNA C1 is stronger (+0.52) and L1 holds (+0.15, p_MC
+         0.02); T1 with mRNA gives the same picture (31% vs 64%); rank correlation of E1 change with expression
+         change 0.13, of loop direction with expression change 0.35.
+  IN SIMPLE: yes, the 3D map and the genes move together. When a stretch of DNA moves into the "open" zone, or a
+  new loop forms at a gene's start, that gene goes up (and the reverse goes down), well beyond chance. But in K562
+  the genes move first: by 6 h transcription has done two-thirds of its change while the loops have done one-third.
+  So here loops mostly follow (and lock in) changes in gene activity rather than start them -- the opposite of what
+  the mouse-embryo single-cell study (HiRES) reported, and in line with the THP-1 study's "both ways" picture.

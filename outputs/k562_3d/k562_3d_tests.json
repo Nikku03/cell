@@ -1,0 +1,126 @@
+{
+ "G16-C1": {
+  "genes": 380,
+  "sign_p": 2.40490561255806e-11,
+  "median": 0.3756476412609642,
+  "share_positive": 0.6684210526315789,
+  "p_mc": 0.000999000999000999,
+  "null_median_95": 0.02714529166129729,
+  "passed": true,
+  "controls": {
+   "planted_pass_rate": 1.0,
+   "null_pass_rate": 0.0,
+   "runs": 50,
+   "ok": true
+  },
+  "gate": {
+   "real": true,
+   "controls_ok": true,
+   "verdict": "PASS"
+  }
+ },
+ "G16-L1": {
+  "genes": 317,
+  "sign_p": 1.4938927884475286e-05,
+  "median": 0.2522770487911149,
+  "share_positive": 0.6182965299684543,
+  "p_mc": 0.000999000999000999,
+  "null_median_95": 0.10426789154206903,
+  "passed": true,
+  "controls": {
+   "planted_pass_rate": 1.0,
+   "null_pass_rate": 0.04,
+   "runs": 50,
+   "ok": true
+  },
+  "gate": {
+   "real": true,
+   "controls_ok": true,
+   "verdict": "PASS"
+  }
+ },
+ "G16-T1": {
+  "genes": 472,
+  "pairs": 836,
+  "FL": 0.3111369337187971,
+  "FY": 0.669300393650808,
+  "d": -0.3581634599320109,
+  "d_boot_5": -0.4402835517309311,
+  "p_boot": 1.0,
+  "passed": false,
+  "controls": {
+   "equal_timing_pass_rate": 0.04,
+   "planted_lead_pass_rate": 1.0,
+   "runs": 200,
+   "ok": true
+  },
+  "gate": {
+   "real": false,
+   "controls_ok": true,
+   "verdict": "FAIL"
+  }
+ },
+ "reported": {
+  "C1_at_6h": {
+   "genes": 575,
+   "sign_p": 6.043240711350728e-05,
+   "median": 0.16292723687428182,
+   "share_positive": 0.5808695652173913,
+   "p_mc": 0.000999000999000999,
+   "null_median_95": 0.07712754681361489,
+   "passed": true
+  },
+  "C1_intron_signal": {
+   "genes": 243,
+   "sign_p": 3.3763335846157957e-13,
+   "median": 0.5236413828600357,
+   "share_positive": 0.7283950617283951,
+   "p_mc": 0.000999000999000999,
+   "null_median_95": 0.03642889707987015,
+   "passed": true
+  },
+  "bins": {
+   "valid": 28051,
+   "flip_B_to_A": 1374,
+   "flip_A_to_B": 373,
+   "corr_E1_0h_72h": 0.962573378601703
+  },
+  "rank_corr_E1_change_vs_expression_change": 0.12664016950035625,
+  "L1_at_6h": {
+   "genes": 314,
+   "sign_p": 0.34644214882621877,
+   "median": 0.03631470277954103,
+   "share_positive": 0.5127388535031847,
+   "p_mc": 0.2087912087912088,
+   "null_median_95": 0.07032946962037659,
+   "passed": false
+  },
+  "L1_intron_signal": {
+   "genes": 221,
+   "sign_p": 0.015560530214225867,
+   "median": 0.15058301427148346,
+   "share_positive": 0.5746606334841629,
+   "p_mc": 0.01898101898101898,
+   "null_median_95": 0.12441021583580117,
+   "passed": true
+  },
+  "loops": {
+   "changing": 1503,
+   "gained_72h": 999,
+   "lost_72h": 504,
+   "cluster_vs_72h_sign_agree": 0.9993346640053227
+  },
+  "rank_corr_loop_sign_vs_expression_change": 0.34816839302105745,
+  "T1_mRNA_instead_of_intron": {
+   "genes": 497,
+   "pairs": 903,
+   "FL": 0.3154087377765067,
+   "FY": 0.6408976839630965,
+   "d": -0.32548894618658986,
+   "d_boot_5": -0.40768889976710154,
+   "p_boot": 1.0,
+   "passed": false
+  },
+  "genes_expressed_in_half": 6687
+ }
+}

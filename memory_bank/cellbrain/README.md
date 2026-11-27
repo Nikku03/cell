@@ -227,3 +227,11 @@ In total, 44,082 facts and 16 layers were added.
 - **New layer:** `LAGTAG_GATA4` (local; Takei et al. 2026 GEO GSE305653: mouse ES cells before / after Gata4, RNA Pol II per gene, with human orthologs).
 - **FAIL:** CollecTRI GATA4 targets do not specifically switch on (OR 1.65, p 0.17); two-step targets enrich (OR 1.71, p 8e-5) but no more than any regulator's two-step set.
 - **Meaning:** tissue-derived regulator lists do not carry over to an early fate switch in another species; the next-step problem needs cell-type-specific regulator data (e.g. measured before/after pairs in the cell type of interest).
+
+## 3D chromosome map vs gene expression over time (k3dbank, k3dtest G16; 2026-11-27)
+
+- **New layer:** `K562_PMA_3D` (local; Bond et al. 2023 GEO GSE213909): K562 + PMA, per gene RNA TPM and intron signal at 8 times x 2 replicates; open/closed compartment value per 100-kb bin at 0, 6, 72 h; 33,914 loops with counts in 30 libraries. Hi-C read remotely with `hicremote.py` (no 6 GB downloads).
+- **C1 PASS:** genes in the 10% most-shifted bins move with the shift (median +0.38 log2, 67% agree; p_MC 0.001).
+- **L1 PASS:** genes at gained loops go up, at lost loops go down (median +0.25 log2, 62%; p_MC 0.001).
+- **T1 FAIL (reverse):** at 6 h transcription has made 67% of its 72 h change, loops 31% — genes move first, loops follow.
+- **Meaning:** 3D shape and expression are tightly linked, but in this switch loops lock in activity changes rather than start them. Next: repeat on THP-1 (8 matched time points) and A549 (ENCODE) to see if the order holds.
