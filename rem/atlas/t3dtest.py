@@ -16,9 +16,12 @@ CLAIMS (declared before running; ids G17-*):
         shifted bin = sign(E1 change) x (its change - mean change of stable-bin genes in the same half, baseline
         stratum and 0 h E1 quintile). PASS: gain rule on EXAM genes AND median beats 95% of 1,000 circular shifts of the
         E1-change track along each chromosome (p_MC < 0.05).
- G17-L1 LOOPS AT THE GENE START (repeat of G16-L1). Loops from the authors' table (42,690 at 10 kb); changing = their
-        up.early / up.late clusters (gained, +1) and down.early / down.late (lost, -1); a gene belongs to a loop when
-        its start site is within 10 kb of either anchor; genes with changing loops of one direction only get that sign;
+ G17-L1 LOOPS AT THE GENE START (repeat of G16-L1). Loops from the authors' table (42,690 at 10 kb); changing = the
+        authors' time-course adjusted p < 0.1 (938 loops), direction = sign of the loop's log2 fold change at 24 h
+        (gained +1, lost -1); static = the rest. (Changed from G16's rule after the DEV trial: the authors' four pattern
+        clusters hold only 502 loops, and a planted +0.3 effect was then found in only 58% of 50 DEV control runs; with
+        p < 0.1, 98%.) A gene belongs to a loop when its start site is within 10 kb of either anchor; genes with
+        changing loops of one direction only get that sign;
         score = sign x (change - mean change of genes in the same half and stratum that sit only at static loops).
         PASS: gain rule on EXAM genes AND median beats 95% of 1,000 shuffles of gained / lost labels (p_MC < 0.05).
  G17-T1 GENES MOVE FIRST (G16-T1 found the reverse of '3D first' in K562; tested here in that direction, with six
@@ -109,9 +112,10 @@ def load():
         D["y_ok"] = np.isfinite(X).all(1) & ex & (np.nanmean(Xn, 1) > 2 * p)
     bkey = {(c, s): k for k, (c, s) in enumerate(zip(D["bin_chrom"], D["bin_start"]))}
     D["gbin"] = np.array([bkey.get((c, (t // 100000) * 100000), -1) for c, t in zip(D["chrom"], D["tss"])])
-    # L1 reads the direction from column 0: the authors' label (gained +1 / lost -1), as declared
-    D["loop_dir_label"] = np.where(D["loop_cluster"] == "gained", 1.0, np.where(D["loop_cluster"] == "lost", -1.0, 0.0))
-    D["loop_lfc_all"] = D["loop_lfc"]; D["loop_lfc"] = np.stack([D["loop_dir_label"], D["loop_lfc_all"][:, TIMES.index(END)]], 1)
+    # L1: changing = authors' adjusted p < 0.1, direction = sign of the 24 h log2 fold change (column 0), as declared
+    D["loop_lfc_all"] = D["loop_lfc"]; l24 = D["loop_lfc_all"][:, TIMES.index(END)]; chg = (D["loop_padj"] < 0.1) & np.isfinite(l24) & (l24 != 0)
+    D["loop_cluster_authors"] = D["loop_cluster"]; D["loop_cluster"] = np.where(chg, np.where(l24 > 0, "gained", "lost"), "static")
+    D["loop_lfc"] = np.stack([np.where(chg, np.sign(l24), 0.0), l24], 1)
     return D
 
 
@@ -216,8 +220,9 @@ def run(rng, half):
     rep["L1_at_each_loop_peak_time"] = l1_peak(D, l1, half)
     l1y = kt.L1(Dy, col=0, M=l1.M); rep["L1_intron_signal"] = l1y.full(l1y.dir, np.nan_to_num(yl), half, rng, N_MC)
     lab = D["loop_label"]
-    rep["loops"] = dict(changing=int(l1.diff.sum()), **{k: int((lab == k).sum()) for k in ("up.early", "up.late", "down.early", "down.late")},
-                        label_vs_24h_sign_agree=float((np.sign(D["loop_lfc_all"][l1.diff, iE]) == l1.dir[l1.diff]).mean()))
+    rep["loops"] = dict(changing=int(l1.diff.sum()), gained_24h=int((l1.dir > 0).sum()), lost_24h=int((l1.dir < 0).sum()),
+                        **{f"authors_{k}": int((lab == k).sum()) for k in ("up.early", "up.late", "down.early", "down.late")},
+                        authors_clusters_among_changing=float(np.isin(lab[l1.diff], ["up.early", "up.late", "down.early", "down.late"]).mean()))
     sg = l1.gene_sign(l1.dir); mm = D["expressed"] & (D["half"] == half) & (sg != 0)
     rep["rank_corr_loop_sign_vs_expression_change"] = float(spearmanr(sg[mm], lfc[mm])[0]) if mm.sum() > 2 else None
 
