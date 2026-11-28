@@ -1,0 +1,2137 @@
+[
+ {
+  "turn": 1,
+  "track": "ml_kcat",
+  "fingerprint": "357b5910032ee1ef",
+  "fingerprint_files": {
+   "loop_ml_kcat.json": "fb4206222bf6da0f",
+   "loop_ml_audit.json": "5d67374d84a7a04d",
+   "loop_ml_probe.json": "3e1149a5bf54ca44",
+   "loop_b4_fix.json": "b20eaea39cf215da",
+   "loop_plan_exec.json": "e31dcce956eb025c",
+   "loop_active_site.json": "33d141deb30d6a40"
+  },
+  "check_source_hash": "aa6bb3d2acb28162",
+  "stalled": false,
+  "n_measured": 5,
+  "answers": {
+   "question": "predict log10 kcat from enzyme sequence and substrate",
+   "n_runs": 6,
+   "all_scores": {
+    "loop_ml_kcat.json:XGB composition": 1.4686410863797956,
+    "loop_ml_kcat.json:XGB substrate": 1.4197315006996734,
+    "loop_ml_kcat.json:XGB esm": 1.3922708631847949,
+    "loop_ml_kcat.json:XGB esm+substrate": 1.3755987103105032,
+    "loop_ml_kcat.json:XGB all": 1.3662989492808546,
+    "loop_ml_kcat.json:MLP all": 1.437413699844415,
+    "loop_ml_kcat.json:constant (train median)": 1.5090860292875687,
+    "loop_ml_kcat.json:1-NN on ESM embedding": 1.8094420084166627,
+    "loop_ml_kcat.json:5-NN on ESM embedding": 1.6012652781259444,
+    "loop_ml_kcat.json:1-NN on composition": 2.01968808270727,
+    "loop_ml_kcat.json:EC median": 1.5015377566146224,
+    "loop_ml_kcat.json:constant_rmse": 1.504,
+    "loop_ml_audit.json:model_rmse": 1.3768263740087427,
+    "loop_ml_audit.json:constant_rmse": 1.5090860292875687,
+    "loop_ml_audit.json:mlp_tuned_rmse": 1.3867215456859623,
+    "loop_ml_audit.json:ec_rmse": 1.5015377566146224
+   },
+   "audit": {
+    "test": "loop 134 -- B4 corrected",
+    "manifest": {
+     "manifest_version": 1,
+     "inputs": [
+      {
+       "path": "colab/data/ml/kcat_records.tsv",
+       "bytes": 1376344,
+       "hash": "130cb6f337cb17e6",
+       "method": "sha256:full"
+      },
+      {
+       "path": "colab/data/ml/esm2_8M_mean.npy",
+       "bytes": 5027968,
+       "hash": "077dfe7c9708fafc",
+       "method": "sha256:full"
+      },
+      {
+       "path": "colab/data/ml/substrate_ecfp.npy",
+       "bytes": 692608,
+       "hash": "83d31b1f0980aa4c",
+       "method": "sha256:full"
+      }
+     ],
+     "coverage": {
+      "available": 17004,
+      "used": 17004,
+      "selection": "all",
+      "fraction": 1.0
+     },
+     "seed": 13400,
+     "controls": [
+      "EC-median residual built BOTH leaky and clean, both scored",
+      "embedding permuted within EC class -- destroys sequence, keeps EC",
+      "the permutation itself checked against gate_guard's achievable bound before its result is allowed to mean anything",
+      "five nested feature sets on identical folds"
+     ],
+     "note": "loop 133's B4 concluded the sequence adds nothing beyond the EC number, and improver.py made that the stopping rule for a 4-hour run. This retests it without a residual.",
+     "warnings": []
+    },
+    "gates": {
+     "C1": true,
+     "C2": true,
+     "C4": true,
+     "C3": false,
+     "C5": true,
+     "C6": true
+    },
+    "c1": {
+     "constant": 1.5068949644405327,
+     "ec_median": 1.5015377566146224,
+     "variance_share": 0.007097621488407202
+    },
+    "c2": {
+     "leaky_model": 1.531529967431412,
+     "leaky_baseline": 1.4848906482578186,
+     "clean_model": 1.5003648677328385,
+     "clean_baseline": 1.4873237151393461
+    },
+    "c4": {
+     "moved": 0.7343566219713009,
+     "alone_in_class": 0.024935309338979063,
+     "achievable": 0.9996827513871533
+    },
+    "c3": {
+     "real": 1.3768959983604854,
+     "permuted": 1.3815070713978406,
+     "cost": 0.004611073037355196,
+     "paired_ci": 0.0488
+    },
+    "c5": {
+     "constant": 1.5068949644405327,
+     "EC only": 1.4707310450281916,
+     "sequence only": 1.3890410815484358,
+     "sequence + substrate": 1.3768959983604854,
+     "sequence + substrate + EC": 1.372793032450061
+    },
+    "c6": {
+     "P1_active_site_pooling": {
+      "from": "loop 133 B1 irreducible_rmse",
+      "value": 0.9473651091817341,
+      "max_gain": 0.37772537218785873,
+      "argument": "the ABSOLUTE ceiling if active-site pooling resolved every point-mutant pair perfectly. It will not; this is the number a promise may not exceed"
+     },
+     "P4_explicit_EC": {
+      "from": "C5, this loop",
+      "value": 1.372793032450061,
+      "max_gain": 0.004102965910424361,
+      "argument": "not a ceiling but the MEASURED value, because C5 just ran it"
+     },
+     "P2_mutant_flag": {
+      "from": "loop 133 B1",
+      "value": 0.9473651091817341,
+      "max_gain": 0.37772537218785873,
+      "argument": "shares P1's ceiling: a flag and a pooling change attack the SAME variance component, so their gains may not be added"
+     }
+    },
+    "seconds": 584.3241896629333,
+    "log": [
+     "====================================================================================================",
+     "  LOOP 134 -- B4 was the stopping rule, and B4 is wrong",
+     "====================================================================================================",
+     "",
+     "  17,004 records | ESM (7856, 320) | paired interval 0.0488",
+     "",
+     "C1 HOW MUCH DOES THE EC NUMBER ACTUALLY EXPLAIN?",
+     "     out-of-fold constant         RMSE 1.5069",
+     "     out-of-fold EC-median        RMSE 1.5015",
+     "     the EC number explains 0.7% of the variance in log10 kcat",
+     "     loop 133's B4 asserted that everything the model knows is already in the EC number.",
+     "     A predictor worth 0.7% of the variance cannot contain a model that beats it.",
+     "     C1 PASS -- measured",
+     "",
+     "C2 DOES B4's RESIDUAL LEAK, AND HOW MUCH IS IT WORTH?",
+     "     loop 133's residual, loop 133's baseline   model 1.5315  vs sd 1.4849   -> LOSES",
+     "     clean residual, out-of-fold baseline       model 1.5004  vs const 1.4873   -> LOSES",
+     "     the leak was worth +0.0312 and the in-sample baseline -0.0024",
+     "     C2 PASS -- both constructions reported",
+     "",
+     "C4 IS THE PERMUTATION CONTROL EVEN CAPABLE OF MOVING?",
+     "     records whose EC class has only one record (cannot move): 2.5%",
+     "     records that actually received a DIFFERENT sequence: 73.4%",
+     "     gate_guard achievable bound for this vector: 0.9997",
+     "     C4 PASS -- the control can move",
+     "",
+     "C3 THE TEST B4 SHOULD HAVE BEEN: WITHIN-CLASS PERMUTATION",
+     "     real embedding                        RMSE 1.3769",
+     "     embedding permuted WITHIN EC class    RMSE 1.3815",
+     "     destroying sequence identity while keeping EC costs +0.0046",
+     "     the paired interval is 0.0488",
+     "     C3 FAIL -- the sequence adds nothing beyond EC; B4 SURVIVES on better evidence",
+     "",
+     "C5 WHAT THE SEQUENCE ADDS, PRICED AGAINST WHAT EC ADDS",
+     "     constant                     RMSE 1.5069",
+     "     EC only                      RMSE 1.4707",
+     "     sequence only                RMSE 1.3890",
+     "     sequence + substrate         RMSE 1.3769",
+     "     sequence + substrate + EC    RMSE 1.3728",
+     "     C5 PASS -- the nested decomposition B4 was reaching for, with no residual involved",
+     "",
+     "C6 THE GROUNDED MAXIMA THE IMPROVER ASKED FOR",
+     "     P1_active_site_pooling     max gain +0.3777   (loop 133 B1 irreducible_rmse)",
+     "     P4_explicit_EC             max gain +0.0041   (C5, this loop)",
+     "     P2_mutant_flag             max gain +0.3777   (loop 133 B1)",
+     "     P2 and P1 cite the same deficit, so the improver's bundle arithmetic must treat",
+     "     them as OVERLAPPING rather than independent.",
+     "",
+     "====================================================================================================",
+     "  C1  PASS",
+     "  C2  PASS",
+     "  C3  FAIL",
+     "  C4  PASS",
+     "  C5  PASS",
+     "  C6  PASS",
+     "  5/6",
+     "====================================================================================================",
+     "    manifest: 3 inputs, coverage 17004/17004 (100.0%) by 'all', seed 13400, controls 4"
+    ]
+   },
+   "Q1_previous": {
+    "best_model": "XGB all",
+    "rmse": 1.3662989492808546,
+    "constant": 1.504,
+    "note": "loop 131, reported with no error bar"
+   },
+   "Q2_new": {
+    "rmse": 1.3768263740087427,
+    "mlp_tuned": 1.3867215456859623,
+    "gain_vs_constant": 0.13229049047105587,
+    "ci": [
+     0.10029573458110118,
+     0.16681991756016107
+    ],
+    "paired_ci": [
+     -0.014316574423367572,
+     0.03452278029788722
+    ],
+    "note": "loop 132, cluster-bootstrapped. 'ci' is on the gain over a constant; 'paired_ci' is on a model-vs-model difference on the SAME folds and is the correct yardstick for a paired change"
+   },
+   "Q3_changed_and_why": [
+    {
+     "what": "the gain acquired a confidence interval",
+     "why": "loop 131 reported 1.3663 with no spread; a cluster bootstrap gives 0.13229049047105587 [0.10029573458110118, 0.16681991756016107]",
+     "verdict": "the gain is REAL"
+    },
+    {
+     "what": "the MLP verdict reversed",
+     "why": "loop 131 gave it 40 fixed epochs and no early stopping. With nested CV it reaches 1.3867215456859623 against gradient boosting's 1.3768263740087427, CI on the difference [0.009546593688911245, -0.014316574423367572, 0.03452278029788722]",
+     "verdict": "'the neural network lost' was a TUNING ARTEFACT"
+    },
+    {
+     "what": "the ceiling moved",
+     "why": "loop 132 said 0.5625 over all sequences; debiased it is 0.8326689633988986",
+     "verdict": "loop 132's ceiling was OVERSTATED and is corrected"
+    }
+   ],
+   "Q4_flat": [
+    {
+     "what": "the sequence beyond the EC number",
+     "evidence": "loop 134 C3, no residual involved: permuting the embedding WITHIN EC class costs +0.0046 against a paired interval of 0.0488. C1 measures the EC number at 0.7% of the variance",
+     "verdict": "FLAT -- confirmed without a residual"
+    },
+    {
+     "what": "the substrate channel",
+     "evidence": "shuffling substrates within a protein costs 0.019075568720891126 of a 0.13229049047105587 total gain",
+     "verdict": "about 15% of the gain; nearly flat"
+    }
+   ],
+   "Q5_cost": {
+    "esm_8M_embedding_min": 46,
+    "esm_650M_projected_h": 3.9,
+    "loop_runtimes_s": {
+     "loop_ml_kcat.json": 427.72041869163513,
+     "loop_ml_audit.json": 486.51827573776245,
+     "loop_ml_probe.json": 521.478563785553,
+     "loop_b4_fix.json": 584.3241896629333,
+     "loop_plan_exec.json": 539.8837127685547,
+     "loop_active_site.json": 1012.6740791797638
+    },
+    "note": "650M was stopped after loop 133 B1 showed a mean-pooled readout cannot see the mutants, so a larger encoder would have inherited the same blindness"
+   },
+   "Q6_same_data": {
+    "IMPLICIT -- same inputs, used differently": [
+     {
+      "change": "pool the embedding over ACTIVE-SITE residues instead of the whole chain",
+      "deficit": "mutant_irreducible_rmse",
+      "cost": "one re-embedding, ~46 min at 8M"
+     },
+     {
+      "change": "add a mutant flag and substitution count from the sequences already held",
+      "deficit": "mutant_irreducible_rmse",
+      "cost": "free, computed from sequences.json"
+     },
+     {
+      "change": "normalise the target to 37 C with Q10, rather than feeding temperature",
+      "deficit": "missing_conditions_rmse",
+      "cost": "free where temperature is recoverable"
+     },
+     {
+      "change": "add EC number as an explicit feature",
+      "deficit": "b4_flat",
+      "cost": "free"
+     }
+    ],
+    "EXPLICIT -- new information": [
+     {
+      "change": "UniProt active-site and binding-site annotations",
+      "deficit": "mutant_irreducible_rmse",
+      "cost": "one fetch, 216,664 enzymes"
+     },
+     {
+      "change": "temperature and pH parsed from UniProt kinetics free text",
+      "deficit": "missing_conditions_rmse",
+      "cost": "free, already on disk"
+     }
+    ]
+   }
+  },
+  "plan": [
+   {
+    "id": "P1",
+    "noise_kind": "encoder_swap",
+    "change": "active-site pooling replaces mean pooling",
+    "kind": "implicit+explicit",
+    "depends_on": [],
+    "needs_files": [
+     "colab/data/ml/sequences.json",
+     "colab/data/uniprot_sites.tsv.gz"
+    ],
+    "mechanism": "kcat is set by a few catalytic residues; averaging 320 dims over ~400 residues moves the vector ~1% when 5 residues change, so 18,595 point mutants differing a median 4.5x in kcat are indistinguishable",
+    "cites": "mutant_irreducible_rmse",
+    "derivation": {
+     "from": "loop 133 B1 irreducible_rmse, CUT by loop 134 C3",
+     "component": 0.947,
+     "max_gain": 0.37740560968269454,
+     "fraction_claimed": 0.08,
+     "argument": "the ceiling assumes active-site pooling resolves EVERY point-mutant pair perfectly. It will not: pooling over annotated sites still averages several residues, and 3,597 merged proteins carry mutations outside any annotated site. And loop 134 C3 measured protein identity at 0.0046 to the current readout. That bounds EXTRACTION, not the deficit, so it does not refute a change of readout -- but it is evidence against one, and the claimed fraction is cut accordingly. The fraction was 0.40 before loop 134 ran; 0.08 is what survives C3"
+    },
+    "predicted_gain": 0.0302,
+    "nearest_refuted": "650M with mean pooling",
+    "distinguisher": "this changes the READOUT, which is the thing that refutation named as the cause. It is the fix, not a repeat",
+    "falsifier": "B4 still fails: the EC-median residual is still unlearnable",
+    "cost_min": 60,
+    "promised_rmse": 1.2268263740087428,
+    "noise_used": 0.0488,
+    "noise_source_used": "same as a model swap -- a different encoder is a different inductive bias, not an extra column",
+    "missing_inputs": [],
+    "blockers": [],
+    "checks": {
+     "T1_cites_measured_deficit": true,
+     "T2_gain_exceeds_noise": false,
+     "T3_has_falsifier": true,
+     "T4_not_already_refuted": true,
+     "T5_not_circular": true,
+     "T6_respects_bounds": true,
+     "T7_gain_is_derived": true,
+     "T8_inputs_exist": true,
+     "T10_names_layer_and_gate": null
+    },
+    "checks_not_applicable": [
+     "T10_names_layer_and_gate"
+    ],
+    "observed": {
+     "value": 0.014507809252258141,
+     "ci": [
+      0.014869136930433407,
+      0.001661142976020292,
+      0.029479521785270437
+     ],
+     "what": "site vs mean pooling, H3 -- but REFUTED by H5: random positions of the same count score the same, so the gain is subsampling noise, not catalytic residues",
+     "from": "loop_active_site.json"
+    },
+    "rejected_on": [
+     "T2_gain_exceeds_noise"
+    ],
+    "verdict": "MEASURED",
+    "blocked_on": [],
+    "measured_note": "+0.0145 (site vs mean pooling, H3 -- but REFUTED by H5: random positions of the same count score the same, so the gain is subsampling noise, not catalytic residues) CI [+0.0017, +0.0295] -> EXCLUDES zero; the plan predicted +0.0302, error -0.0157"
+   },
+   {
+    "id": "P2",
+    "noise_kind": "feature_addition",
+    "change": "mutant flag and substitution count as features",
+    "kind": "implicit",
+    "depends_on": [],
+    "needs_files": [
+     "colab/data/ml/sequences.json",
+     "colab/data/ml/kcat_records.tsv"
+    ],
+    "mechanism": "the model cannot resolve a variant, but it can at least be told it is looking at one",
+    "cites": "mutant_irreducible_rmse",
+    "derivation": {
+     "from": "loop 133 B1, same component as P1, CUT by loop 134 C3",
+     "component": 0.947,
+     "max_gain": 0.37740560968269454,
+     "fraction_claimed": 0.03,
+     "argument": "a flag says THAT a record is a variant, never WHICH, so it can only recover the mean offset between wild types and mutants -- a small fraction of a component whose spread is within-pair. loop 134 C3 measured protein identity at 0.0046 to the current readout. That bounds EXTRACTION, not the deficit, so it does not refute a change of readout -- but it is evidence against one, and the claimed fraction is cut accordingly."
+    },
+    "predicted_gain": 0.0113,
+    "nearest_refuted": "more kcat records",
+    "distinguisher": "adds a COLUMN, not rows; the refutation was about n",
+    "falsifier": "no change beyond the paired interval",
+    "cost_min": 5,
+    "promised_rmse": 1.3268263740087427,
+    "noise_used": 0.0306,
+    "noise_source_used": "loop 135 E2: the measured width of a cluster-bootstrap interval on a PAIRED feature-addition difference, same model, same folds",
+    "missing_inputs": [],
+    "blockers": [],
+    "checks": {
+     "T1_cites_measured_deficit": true,
+     "T2_gain_exceeds_noise": false,
+     "T3_has_falsifier": true,
+     "T4_not_already_refuted": true,
+     "T5_not_circular": true,
+     "T6_respects_bounds": true,
+     "T7_gain_is_derived": true,
+     "T8_inputs_exist": true,
+     "T10_names_layer_and_gate": null
+    },
+    "checks_not_applicable": [
+     "T10_names_layer_and_gate"
+    ],
+    "observed": {
+     "value": 0.016793200382080764,
+     "ci": [
+      0.016823332012460272,
+      0.0016188680749562095,
+      0.032198841176479226
+     ],
+     "what": "mutant flag alone, E2",
+     "from": "loop_plan_exec.json"
+    },
+    "rejected_on": [
+     "T2_gain_exceeds_noise"
+    ],
+    "verdict": "MEASURED",
+    "blocked_on": [],
+    "measured_note": "+0.0168 (mutant flag alone, E2) CI [+0.0016, +0.0322] -> EXCLUDES zero; the plan predicted +0.0113, error +0.0055"
+   },
+   {
+    "id": "P3",
+    "noise_kind": "feature_addition",
+    "change": "Q10-normalise the target to 37 C",
+    "kind": "implicit",
+    "depends_on": [],
+    "needs_files": [
+     "colab/data/kcat_conditions.tsv.gz"
+    ],
+    "mechanism": "kcat(T2) = kcat(T1)*Q10^((T2-T1)/10) removes a known variance component using physics instead of asking the network to learn Arrhenius",
+    "cites": "missing_conditions_rmse",
+    "derivation": {
+     "from": "loop 133 B5 within-pair sd",
+     "component": 0.5137,
+     "max_gain": 0.09942151486421058,
+     "fraction_claimed": 0.1,
+     "argument": "temperature is one of several missing conditions (pH, buffer, mutation), and Q10 can only act on the subset where a temperature is recoverable"
+    },
+    "predicted_gain": 0.0099,
+    "nearest_refuted": "predict kcat/KM instead",
+    "distinguisher": "that changed the target to a NOISIER one; this changes the target to the same quantity at a common temperature, which cannot add variance",
+    "falsifier": "target variance does not fall on the subset with a known temperature",
+    "cost_min": 5,
+    "promised_rmse": 1.3368263740087427,
+    "noise_used": 0.0306,
+    "noise_source_used": "loop 135 E2: the measured width of a cluster-bootstrap interval on a PAIRED feature-addition difference, same model, same folds",
+    "missing_inputs": [
+     "colab/data/kcat_conditions.tsv.gz"
+    ],
+    "blockers": [
+     {
+      "file": "colab/data/kcat_conditions.tsv.gz",
+      "kind": "SOURCE_RETIRED",
+      "detail": "SABIO-RK REST probed by fetch_web G3: redirects to a UI 404. Temperature and pH are not obtainable from the standard source, so loop 133 B5's 0.5137 floor is a WALL and not a gap"
+     }
+    ],
+    "checks": {
+     "T1_cites_measured_deficit": true,
+     "T2_gain_exceeds_noise": false,
+     "T3_has_falsifier": true,
+     "T4_not_already_refuted": true,
+     "T5_not_circular": true,
+     "T6_respects_bounds": true,
+     "T7_gain_is_derived": true,
+     "T8_inputs_exist": false,
+     "T10_names_layer_and_gate": null
+    },
+    "checks_not_applicable": [
+     "T10_names_layer_and_gate"
+    ],
+    "observed": null,
+    "rejected_on": [
+     "T2_gain_exceeds_noise",
+     "T8_inputs_exist"
+    ],
+    "verdict": "REJECT",
+    "blocked_on": []
+   },
+   {
+    "id": "P4",
+    "noise_kind": "feature_addition",
+    "change": "EC number as an explicit categorical feature",
+    "kind": "implicit",
+    "depends_on": [],
+    "needs_files": [
+     "colab/data/ml/kcat_records.tsv"
+    ],
+    "mechanism": "B4 shows the EC number carries everything the model has; give it directly rather than via a proxy",
+    "cites": "c3_sequence_beyond_ec",
+    "derivation": {
+     "from": "loop 134 C5, MEASURED against C5's OWN baseline",
+     "component": null,
+     "max_gain": 0.004102965910424361,
+     "fraction_claimed": 1.0,
+     "argument": "C5 ran this feature set, so the gain is the measurement itself. Compared against C5's own baseline and not loop 132's, because mixing baselines across runs is what produced the 3.2% figure loop 134 C1 had to correct to 0.7%"
+    },
+    "predicted_gain": 0.0041,
+    "nearest_refuted": "bigger substrate fingerprint",
+    "distinguisher": "different channel: that priced the SUBSTRATE side, this the enzyme's declared chemistry",
+    "falsifier": "no gain, which would mean ESM already encodes EC fully",
+    "cost_min": 2,
+    "promised_rmse": 1.3568263740087427,
+    "noise_used": 0.0306,
+    "noise_source_used": "loop 135 E2: the measured width of a cluster-bootstrap interval on a PAIRED feature-addition difference, same model, same folds",
+    "missing_inputs": [],
+    "blockers": [],
+    "checks": {
+     "T1_cites_measured_deficit": true,
+     "T2_gain_exceeds_noise": false,
+     "T3_has_falsifier": true,
+     "T4_not_already_refuted": true,
+     "T5_not_circular": true,
+     "T6_respects_bounds": true,
+     "T7_gain_is_derived": true,
+     "T8_inputs_exist": true,
+     "T10_names_layer_and_gate": null
+    },
+    "checks_not_applicable": [
+     "T10_names_layer_and_gate"
+    ],
+    "observed": {
+     "value": 0.0069615906822264595,
+     "ci": [
+      0.007028015674420383,
+      -0.0045049512171136275,
+      0.018846311859800957
+     ],
+     "what": "explicit EC alone, E3",
+     "from": "loop_plan_exec.json"
+    },
+    "rejected_on": [
+     "T2_gain_exceeds_noise"
+    ],
+    "verdict": "MEASURED",
+    "blocked_on": [],
+    "measured_note": "+0.0070 (explicit EC alone, E3) CI [-0.0045, +0.0188] -> includes zero; the plan predicted +0.0041, error +0.0029"
+   },
+   {
+    "id": "P5",
+    "noise_kind": "encoder_swap",
+    "change": "ESM2-650M with the fixed readout",
+    "kind": "explicit",
+    "depends_on": [
+     "P1"
+    ],
+    "needs_files": [
+     "colab/data/ml/esm2_650M_mean.npy"
+    ],
+    "depends_on_result": [
+     {
+      "what": "P1 has actually moved the sequence-beyond-EC test",
+      "measured": false
+     }
+    ],
+    "mechanism": "a larger encoder, once the readout no longer discards the signal it would add",
+    "cites": "b3_family_detector",
+    "derivation": {
+     "from": "loop 133 B3 -- the encoder is a family detector",
+     "component": null,
+     "max_gain": null,
+     "fraction_claimed": null,
+     "argument": "there is NO recorded number bounding what a larger encoder adds. Saying so is the point: T7 fails an item whose size nobody has measured"
+    },
+    "predicted_gain": 0.08,
+    "nearest_refuted": "650M with mean pooling",
+    "distinguisher": "ONLY the fixed readout distinguishes it, so it is refuted unless P1 is accepted AND has actually moved B4",
+    "falsifier": "gain smaller than the paired interval, as at 8M",
+    "cost_min": 240,
+    "promised_rmse": 1.2968263740087427,
+    "noise_used": 0.0488,
+    "noise_source_used": "same as a model swap -- a different encoder is a different inductive bias, not an extra column",
+    "missing_inputs": [
+     "colab/data/ml/esm2_650M_mean.npy"
+    ],
+    "blockers": [
+     {
+      "file": "colab/data/ml/esm2_650M_mean.npy",
+      "kind": "COMPUTE_NOT_DOWNLOAD",
+      "detail": "an embedding is produced, not fetched; no web source can supply it"
+     }
+    ],
+    "checks": {
+     "T1_cites_measured_deficit": true,
+     "T2_gain_exceeds_noise": true,
+     "T3_has_falsifier": true,
+     "T4_not_already_refuted": false,
+     "T5_not_circular": true,
+     "T6_respects_bounds": true,
+     "T7_gain_is_derived": false,
+     "T8_inputs_exist": false,
+     "T10_names_layer_and_gate": null
+    },
+    "checks_not_applicable": [
+     "T10_names_layer_and_gate"
+    ],
+    "observed": null,
+    "rejected_on": [
+     "T4_not_already_refuted",
+     "T7_gain_is_derived",
+     "T8_inputs_exist"
+    ],
+    "verdict": "REJECT",
+    "blocked_on": [
+     "P1 has actually moved the sequence-beyond-EC test"
+    ]
+   },
+   {
+    "id": "P6",
+    "noise_kind": "feature_addition",
+    "change": "encode EC properly -- out-of-fold target encoding and hierarchy",
+    "kind": "implicit",
+    "depends_on": [],
+    "needs_files": [
+     "colab/data/ml/kcat_records.tsv"
+    ],
+    "mechanism": "loop 134 measured the EC channel through an arbitrary integer index, which a tree cannot split on meaningfully. Every EC number in this project's recent record -- C1's 0.7%, C5's 1.4707, P4's +0.0041 -- is downstream of that encoding",
+    "cites": "c3_sequence_beyond_ec",
+    "derivation": {
+     "from": "loop 134 C5's EC encoding is BROKEN",
+     "component": null,
+     "max_gain": 0.020506894306312695,
+     "fraction_claimed": null,
+     "argument": "C5 encoded EC as eci.get(e, -1), an ARBITRARY INTEGER INDEX over thousands of classes. A tree splitting on that index groups EC 1.1.1.1 with whatever happened to sort beside it, so 'EC only 1.4707' and the +0.0041 that P4 inherits are both measured through a broken feature. The remedy is an out-of-fold target encoding plus hierarchical levels, and until that runs NO maximum exists, so T7 must fail this item. That is the correct outcome: the fix is cheap and the measurement is the thing that unblocks it"
+    },
+    "predicted_gain": 0.02,
+    "nearest_refuted": "bigger substrate fingerprint",
+    "distinguisher": "different channel entirely: that priced the substrate side, this repairs an instrument the enzyme side was measured with",
+    "falsifier": "a correct encoding scores no better than the integer index, which would mean the index was never the problem",
+    "cost_min": 10,
+    "promised_rmse": 1.3568263740087427,
+    "noise_used": 0.0306,
+    "noise_source_used": "loop 135 E2: the measured width of a cluster-bootstrap interval on a PAIRED feature-addition difference, same model, same folds",
+    "missing_inputs": [],
+    "blockers": [],
+    "checks": {
+     "T1_cites_measured_deficit": true,
+     "T2_gain_exceeds_noise": false,
+     "T3_has_falsifier": true,
+     "T4_not_already_refuted": true,
+     "T5_not_circular": true,
+     "T6_respects_bounds": true,
+     "T7_gain_is_derived": true,
+     "T8_inputs_exist": true,
+     "T10_names_layer_and_gate": null
+    },
+    "checks_not_applicable": [
+     "T10_names_layer_and_gate"
+    ],
+    "observed": {
+     "value": 0.020506894306312695,
+     "ci": null,
+     "what": "best EC encoding, E7",
+     "from": "loop_plan_exec.json"
+    },
+    "rejected_on": [
+     "T2_gain_exceeds_noise"
+    ],
+    "verdict": "MEASURED",
+    "blocked_on": [],
+    "measured_note": "+0.0205 (best EC encoding, E7); the plan predicted +0.0200, error +0.0005"
+   },
+   {
+    "id": "M1",
+    "change": "measure the EC channel through three encodings on identical folds",
+    "kind": "probe",
+    "depends_on": [],
+    "unblocks": {
+     "item": "P6",
+     "check": "T7_gain_is_derived"
+    },
+    "needs_files": [
+     "colab/data/ml/kcat_records.tsv",
+     "colab/data/ml/esm2_8M_mean.npy"
+    ],
+    "mechanism": "the integer index as loop 134 used it, an out-of-fold target encoding built with the nested construction C2 showed B4 had got wrong, and hierarchical one-hot on EC levels 1-3. Whichever wins becomes the maximum P6 is allowed to promise",
+    "cites": "instrument_unverified",
+    "derivation": null,
+    "predicted_gain": 0.0,
+    "nearest_refuted": "bigger substrate fingerprint",
+    "distinguisher": "this measures an instrument rather than proposing a change",
+    "falsifier": "all three encodings score within the paired interval of each other, which would mean the integer index was never the problem and P6 should be dropped",
+    "cost_min": 10,
+    "promised_rmse": 1.3768263740087427,
+    "missing_inputs": [],
+    "blockers": [],
+    "unblock_status": "P6 currently does not fail T7_gain_is_derived",
+    "checks": {
+     "T1_cites_measured_deficit": true,
+     "T2_gain_exceeds_noise": true,
+     "T3_has_falsifier": true,
+     "T4_not_already_refuted": true,
+     "T5_not_circular": true,
+     "T6_respects_bounds": true,
+     "T7_gain_is_derived": true,
+     "T8_inputs_exist": true,
+     "T9_probe_unblocks_something": false,
+     "T10_names_layer_and_gate": null
+    },
+    "checks_not_applicable": [
+     "T10_names_layer_and_gate"
+    ],
+    "observed": null,
+    "rejected_on": [
+     "T9_probe_unblocks_something"
+    ],
+    "verdict": "REJECT",
+    "blocked_on": []
+   },
+   {
+    "id": "M2",
+    "change": "measure what protein identity is worth to a NON-mean-pooled readout",
+    "kind": "probe",
+    "depends_on": [],
+    "unblocks": {
+     "item": "P1",
+     "check": "T2_gain_exceeds_noise"
+    },
+    "needs_files": [
+     "colab/data/ml/sequences.json",
+     "colab/data/uniprot_sites.tsv.gz"
+    ],
+    "mechanism": "loop 134 C3 measured protein identity at 0.0046 to the MEAN-POOLED readout. P1 claims a different readout would extract more. Nobody has measured that, and C3's design -- permute within EC class -- reruns unchanged against any new readout",
+    "cites": "protein_identity_value_rmse",
+    "derivation": null,
+    "predicted_gain": 0.0,
+    "nearest_refuted": "650M with mean pooling",
+    "distinguisher": "measures the readout's ceiling instead of assuming it",
+    "falsifier": "within-class permutation costs no more under the new readout than the 0.0046 it costs under mean pooling, which would retire P1 and P5 together",
+    "cost_min": 60,
+    "promised_rmse": 1.3768263740087427,
+    "missing_inputs": [],
+    "blockers": [],
+    "unblock_status": "P1 currently FAILS T2_gain_exceeds_noise",
+    "checks": {
+     "T1_cites_measured_deficit": true,
+     "T2_gain_exceeds_noise": true,
+     "T3_has_falsifier": true,
+     "T4_not_already_refuted": true,
+     "T5_not_circular": true,
+     "T6_respects_bounds": true,
+     "T7_gain_is_derived": true,
+     "T8_inputs_exist": true,
+     "T9_probe_unblocks_something": true,
+     "T10_names_layer_and_gate": null
+    },
+    "checks_not_applicable": [
+     "T10_names_layer_and_gate"
+    ],
+    "observed": {
+     "value": -0.000832024331635095,
+     "ci": null,
+     "what": "within-EC permutation under the site-pooled readout, H4 -- NEGATIVE, so protein identity is worth nothing even to a readout built to expose it",
+     "from": "loop_active_site.json"
+    },
+    "rejected_on": [],
+    "verdict": "MEASURED",
+    "blocked_on": [],
+    "measured_note": "-0.0008 (within-EC permutation under the site-pooled readout, H4 -- NEGATIVE, so protein identity is worth nothing even to a readout built to expose it)"
+   }
+  ],
+  "bundle": null,
+  "whole_picture": {
+   "result": {
+    "current_rmse": 1.3768263740087427,
+    "constant": 1.504,
+    "gain_ci": [
+     0.10029573458110118,
+     0.16681991756016107
+    ]
+   },
+   "what_the_model_needs_it_for": "the enzyme-capacity constraint v <= kcat*[E]; loop 133 B6 measured the cell's own enzymes as EASIER than average, reaction-weighted 1.1895 against 1.3072",
+   "dataset": {
+    "records": 17004,
+    "sequences": 7856,
+    "clusters": 3006,
+    "point_mutant_pairs": 18595,
+    "singletons_contributing_zero_within_variance": 4257
+   },
+   "bounds_that_cap_any_plan": {
+    "experimental_floor_rmse": [
+     0.0607,
+     "loop 129: same protein AND same substrate measured twice, 1.15x median over 101 values"
+    ],
+    "missing_conditions_rmse": [
+     0.5137,
+     "loop 133 B5: within (protein, substrate) pairs, 3.26x, because temperature, pH and mutation are not in the file"
+    ],
+    "per_protein_ceiling_rmse": [
+     0.8327,
+     "loop 133 B2: a perfect per-protein predictor, after merging near-duplicates and debiasing singletons"
+    ],
+    "mutant_irreducible_rmse": [
+     0.947,
+     "loop 133 B1: 18,595 point-mutant pairs a mean-pooled embedding cannot distinguish"
+    ],
+    "protein_identity_site_pooled_rmse": [
+     -0.0008,
+     "loop 136 H4: the SAME within-EC permutation under an ACTIVE-SITE-POOLED readout. Negative: the permuted model was fractionally better. A readout built specifically to expose protein identity extracts nothing from it"
+    ],
+    "residue_subsampling_regularisation_rmse": [
+     0.01,
+     "loop 136 H5: pooling over the same NUMBER of residues at RANDOM positions gains this much over mean pooling. It is the noise, not the residues"
+    ],
+    "protein_identity_value_rmse": [
+     0.0046,
+     "loop 134 C3: permuting the embedding among records SHARING an EC number -- destroying protein identity, preserving class exactly -- costs this much, against a paired interval of 0.0488. What the model extracts from knowing WHICH protein it is, is unmeasurable"
+    ]
+   },
+   "the_uncomfortable_reading": "FLAT -- confirmed without a residual. If P1 does not change that, kcat is not predictable from sequence at this data scale, and loop 127's measured-or-flagged-constant is already the right design.",
+   "what_the_first_run_of_this_file_got_wrong": "it accepted 5 of 5 items and named a broken number as its stopping rule. The check now carries T7, a BLOCKED verdict for unmeasured dependencies, and a track that reads the audit of its own metric."
+  },
+  "upgrades": [
+   {
+    "change": "NOTHING IS SCHEDULABLE",
+    "why": "every item failed a check and no probe survived either. This is a real state and not an error: it means the next move is to fetch data or to relax a promise, and the loop must say so rather than emit an order it cannot execute",
+    "new_order": []
+   },
+   {
+    "change": "make B4 the stopping rule, not the RMSE",
+    "why": "RMSE can improve while the model still knows nothing the EC number did not. B4 -- learnability of the EC-median residual -- is the only gate that distinguishes those, so it decides whether P5's 4 hours are spent"
+   },
+   {
+    "change": "price the whole plan by removed variance, not by adding gains",
+    "why": "the accepted units promise 0.00 if gains are added, which would land at 1.3768. Combined by removed variance the plan promises 1.3768. The floor is 0.5137: the additive reading is the one that would have to be walked back",
+    "naive_rmse": 1.3768263740087427,
+    "honest_rmse": 1.3768263740087427
+   },
+   {
+    "change": "P5 is not schedulable yet",
+    "why": "its only distinguisher from the refuted '650M with mean pooling' is P1's fixed readout, so its 240 minutes are conditional on P1 having moved B4. Listing it as a queued item would be pretending that condition is met"
+   }
+  ],
+  "noise": 0.048839354721254793,
+  "noise_source": "paired model-vs-model CI, loop 132 A3",
+  "n_rejected": 3,
+  "n_blocked": 0,
+  "n_executable": 0,
+  "execute_order": [],
+  "executed": [],
+  "reflection": {
+   "R1_fingerprint": {
+    "changed": true,
+    "moved_artefacts": [],
+    "why": "first turn"
+   },
+   "R2_predictions_measured": [
+    {
+     "turn": 1,
+     "id": "P2",
+     "measured_as": "mutant flag alone, E2",
+     "predicted": 0.0113,
+     "measured": 0.016793200382080764,
+     "signed_error": 0.005493200382080765,
+     "verdict": "UNDER-promised"
+    },
+    {
+     "turn": 1,
+     "id": "P4",
+     "measured_as": "explicit EC alone, E3",
+     "predicted": 0.0041,
+     "measured": 0.0069615906822264595,
+     "signed_error": 0.002861590682226459,
+     "verdict": "UNDER-promised"
+    },
+    {
+     "turn": 1,
+     "id": "P6",
+     "measured_as": "best EC encoding, E7",
+     "predicted": 0.02,
+     "measured": 0.020506894306312695,
+     "signed_error": 0.0005068943063126947,
+     "verdict": "UNDER-promised"
+    }
+   ],
+   "R2_note": "3 prediction(s) now have a measured outcome",
+   "R3_plan_changed": {
+    "changed": true,
+    "detail": "first turn"
+   },
+   "R4_drift": {
+    "events": [],
+    "n_rejected": 3,
+    "n_blocked": 0,
+    "check_source_hash": "aa6bb3d2acb28162",
+    "verdict": "no drift detected"
+   },
+   "R5_waiting_on": [
+    "P3: SOURCE_RETIRED -- colab/data/kcat_conditions.tsv.gz  (SABIO-RK REST probed by fetch_web G3: redirects to a UI 404. Temperature and pH are not obtainable from the st)",
+    "P5: COMPUTE_NOT_DOWNLOAD -- colab/data/ml/esm2_650M_mean.npy  (an embedding is produced, not fetched; no web source can supply it)",
+    "M1: rejected on T9_probe_unblocks_something"
+   ],
+   "R6_finished": {
+    "stalled": false,
+    "executable_remaining": 0,
+    "verdict": "0 executable item(s) remain"
+   }
+  }
+ },
+ {
+  "turn": 1,
+  "track": "cell",
+  "fingerprint": "575904808907e69b",
+  "fingerprint_files": {
+   "cell_run.json": "093ccfb37eae5baf",
+   "cell_model_audit.json": "4330ced2ff9220f7",
+   "capability_audit.json": "92eb44584d7d60d4",
+   "loop_b4_fix.json": "b20eaea39cf215da",
+   "cell_record_fix.json": "2777fa6fc702d308",
+   "cell_layers.json": "f33e057e84e53d48",
+   "colab/cell_assembled.py": "1a10a15ac041d424"
+  },
+  "check_source_hash": "aa6bb3d2acb28162",
+  "stalled": false,
+  "n_measured": 2,
+  "answers": {
+   "question": "does the whole-cell model run, and which of its layers survive their gates",
+   "n_runs": 1,
+   "layer_counts": {
+    "RUNS": 12,
+    "CLOSES": 10,
+    "FAILED": 14,
+    "STATIC": 11
+   },
+   "n_layers": 47,
+   "Q1_previous": {
+    "recorded_at_last_cell_run": {
+     "RUNS": 11,
+     "CLOSES": 9,
+     "FAILED": 12,
+     "STATIC": 10
+    },
+    "note": "cell_run.json records only the four counts, not per-layer status, so a layer that changed status between runs is invisible here. That is a gap in the ARTEFACT and it is named rather than filled by reading the table twice"
+   },
+   "Q2_new": {
+    "counts": {
+     "RUNS": 12,
+     "CLOSES": 10,
+     "FAILED": 14,
+     "STATIC": 11
+    },
+    "n_failed": 14,
+    "rmse": null,
+    "note": "there is no scalar metric with a sampling distribution on this track; see TRACKS['cell']['why_not_t2']"
+   },
+   "Q3_changed_and_why": [
+    {
+     "what": "the kcat layer's verdict is now backed by a decisive control",
+     "why": "layer 'what the kcat model actually learned' cited loop 133 B4, whose residual leaked and whose baseline was in-sample. Loop 134 C3 reaches the same conclusion by within-class permutation: +0.0046 against a 0.0488 interval",
+     "verdict": "SAME STATUS, MUCH BETTER EVIDENCE -- and the layer's prose still cites the broken test, so the record is now behind the measurement"
+    },
+    {
+     "what": "nothing else moved",
+     "why": "no loop since cell_run.json has changed a layer's status",
+     "verdict": "the counts are unchanged at 14 FAILED, 12 RUNS, 11 STATIC, 10 CLOSES"
+    }
+   ],
+   "Q4_flat": [
+    {
+     "what": "the transcription -> protein axis",
+     "evidence": "three separate FAILED layers say the same thing: 'protein dynamics from transcription alone' (p=2e-67 the wrong way), 'TF network as a predictor of transcript dynamics', and 'CollecTRI as a replacement network'. Two independent networks were tried and both failed",
+     "verdict": "FLAT ACROSS THREE ATTEMPTS -- the wall is not the network, it is that protein dynamics has a non-transcriptional source"
+    },
+    {
+     "what": "the count of FAILED layers",
+     "evidence": "14 of 47, unchanged since cell_run.json",
+     "verdict": "FLAT -- and it should be, because a FAILED layer is a recorded negative and not a defect to be cleared"
+    }
+   ],
+   "Q5_cost": {
+    "cell_run_seconds": 11.305814266204834,
+    "note": "the model runs; the cost is not the binding constraint on this track"
+   },
+   "Q6_same_data": {
+    "IMPLICIT -- same inputs, used differently": [
+     {
+      "change": "correct the kcat layer's prose to cite loop 134 C3 rather than the leaking B4 residual",
+      "deficit": "record_behind_measurement",
+      "cost": "free"
+     },
+     {
+      "change": "record per-layer status in cell_run.json, not only the four counts",
+      "deficit": "artefact_cannot_show_change",
+      "cost": "free"
+     }
+    ],
+    "EXPLICIT -- new information": [
+     {
+      "change": "a measurement of the non-transcriptional source of protein dynamics",
+      "deficit": "three FAILED layers point at it",
+      "cost": "unknown; no dataset identified"
+     }
+    ]
+   },
+   "failed_layers": [
+    {
+     "layer": "protein dynamics from transcription alone",
+     "source": "loop_cellcycle_axis/119",
+     "evidence": "dP/dt = k_sp*M - b*P is a first-order filter, so protein swing is FORCED below mRNA swing -- measured at 100.0000% of 4,190 genes, median attenuation 0.16, 81.9% damped below a tenth of the drive. Protein oscillation can only ever be RARER than transcript oscillation here"
+    },
+    {
+     "layer": "chromatin->transcription",
+     "source": "loop_chromatin_to_rate",
+     "evidence": "forward emission fails held-out prediction, fails fame, fails its own null"
+    },
+    {
+     "layer": "regulation->transcription",
+     "source": "loop_tf_rate/loop_perturb",
+     "evidence": "network loses to fame 2:1; perturbation no better than shuffled edge signs"
+    },
+    {
+     "layer": "TF network as a predictor of transcript dynamics",
+     "source": "loop_tf_cellcycle/120",
+     "evidence": "on 273 genes with a measured CCD-transcript call, a signed regulator and an mRNA state: real edge signs AUC 0.5465 against SHUFFLED signs 0.5494 +/- 0.0079 -- signs carry nothing; CCD-regulator enrichment +9.9 points against an out-degree-preserving null at +4.9 +/- 7.9, z = 0.63; the gene's own pub"
+    },
+    {
+     "layer": "CollecTRI as a replacement network",
+     "source": "loop_collectri/130",
+     "evidence": "loop 120's protocol run unchanged on literature-curated CollecTRI. Marginally better on identical genes -- AUC 0.5717 against the existing network's 0.5610 -- and it is the first network in this arc to beat fame (0.5717 against the gene's own publication count 0.5586). That is the whole of the good "
+    },
+    {
+     "layer": "reaction+graph fusion",
+     "source": "loop_fusion_linear",
+     "evidence": "combined 0.166 BELOW graph-only; 90% of what remains survives degree-preserving rewiring"
+    },
+    {
+     "layer": "cell cycle as a process",
+     "source": "loop_cellcycle/99",
+     "evidence": "canonical phase order recovered but 176/500 shuffles do it too"
+    },
+    {
+     "layer": "degron motifs as the mechanism",
+     "source": "loop_degron/121",
+     "evidence": "D-box R..L and D-box+ do not clear z=2 against either a label shuffle or a composition-preserving sequence shuffle. KEN-box clears both at z +2.6 -- and is one of the two motif densities that FAILED the fame check (rho +0.2429 with publication count)"
+    },
+    {
+     "layer": "regulated translation k_sp(t)",
+     "source": "loop_utr5/122",
+     "evidence": "5' UTR built by subtracting the CDS from the MANE Select cDNA -- exact, 19,293 genes, median 133 nt, validated by 71.6% 5'TOP in ribosomal proteins (16.3x) and 86.1% Kozak -3 purine. U3: no feature survives Bonferroni. U4: the predicted direction fails on all five surviving features (best p = 0.12)."
+    },
+    {
+     "layer": "relocalisation, RETIRED",
+     "source": "loop_ms_cellcycle/123 V4",
+     "evidence": "predicted: dual localisation higher in the MS-disconfirmed imaging calls. Measured: disconfirmed 88.6% (n=273) vs confirmed 88.1% (n=42), difference +0.5%, permutation p 1.0000"
+    },
+    {
+     "layer": "replication as process",
+     "source": "loop_replication_time",
+     "evidence": "a Gaussian blur of the origin map (R2 0.320) beats the fork simulation (0.153)"
+    },
+    {
+     "layer": "expression noise",
+     "source": "loop_noise",
+     "evidence": "predicted CV tracks measured at +0.4837 but is cross-dataset abundance agreement to 0.8%"
+    },
+    {
+     "layer": "replicate count as a quality signal",
+     "source": "loop_kcat_floor/127",
+     "evidence": "spread RISES with the number of measurements behind an EC: 1.54x at 3-4 records, 2.24x at 5-9, 2.55x at 10-19, 2.62x at 20+"
+    },
+    {
+     "layer": "what the kcat model actually learned",
+     "source": "loop_ml_probe/133 B3-B4",
+     "evidence": "the ESM embedding is a FAMILY DETECTOR, not a catalysis model. Same 320 numbers, same folds: EC top-level class accuracy 0.779 against a 0.394 majority, log10 sequence length R2 +0.7631, log10 kcat R2 +0.1381. loop 133's B4 reached this by refitting on the EC-median residual (RMSE 1.5386 vs a residu"
+    }
+   ],
+   "static_layers": [
+    {
+     "layer": "signalling stoichiometry",
+     "source": "loop_signalling_cost"
+    },
+    {
+     "layer": "complex stoichiometry",
+     "source": "loop_complex_stoich"
+    },
+    {
+     "layer": "cell cycle (measured layer)",
+     "source": "loop_cellcycle_axis/119"
+    },
+    {
+     "layer": "cell cycle, measured without a camera",
+     "source": "loop_ms_cellcycle/123"
+    },
+    {
+     "layer": "relocalisation as the mechanism",
+     "source": "loop_degron/121 post-hoc"
+    },
+    {
+     "layer": "the cell-cycle signal, decomposed",
+     "source": "loop_utr5/122 post-hoc"
+    },
+    {
+     "layer": "compartments (gene labels)",
+     "source": "loop_compartment_mass"
+    },
+    {
+     "layer": "protein structure",
+     "source": "struct/fold + the nexus arm"
+    },
+    {
+     "layer": "spatial organisation",
+     "source": "loop_geometry/116 + loop_spatial_proteome/118"
+    },
+    {
+     "layer": "enzyme kinetics",
+     "source": "kinetics_bundle + loop_kcat_audit/124"
+    },
+    {
+     "layer": "what a kcat model would need instead",
+     "source": "loop_ml_probe/133 B1, B5, B6"
+    }
+   ],
+   "audit": {},
+   "all_scores": {
+    "n_failed": 14,
+    "n_static": 11
+   },
+   "parts": {
+    "genes": 16492,
+    "human_protein_coding": 19900,
+    "gene_coverage": 0.8287437185929648,
+    "genes_with_reaction": 2549,
+    "humangem_reactions": 13078,
+    "ppi": 191447,
+    "reg": 612133,
+    "complexes": 2039
+   },
+   "cell_deficits": {
+    "record_behind_measurement": {
+     "holds": true,
+     "evidence": "layer cites the B4 residual (True); loop_b4_fix.json present (True)"
+    },
+    "artefact_cannot_show_change": {
+     "holds": true,
+     "evidence": "cell_run.json['layers'] = {'RUNS': 11, 'CLOSES': 9, 'FAILED': 12, 'STATIC': 10}; per-layer status present: False"
+    },
+    "three_failed_layers": {
+     "holds": true,
+     "evidence": "5 FAILED layers on that axis: ['protein dynamics from transcription alone', 'chromatin->transcription', 'regulation->transcription', 'TF network as a predictor of transcript dynamics', 'CollecTRI as a replacement network']"
+    }
+   },
+   "track": "cell"
+  },
+  "plan": [
+   {
+    "id": "C1",
+    "change": "correct the kcat layer to cite loop 134 C3, not the leaking B4",
+    "kind": "record",
+    "depends_on": [],
+    "needs_files": [
+     "colab/cell_assembled.py",
+     "outputs/loop_b4_fix.json"
+    ],
+    "targets_layer": "what the kcat model actually learned",
+    "gate": "the layer's evidence field must cite a test whose control was shown capable of moving before its result was read -- loop 134 C4 then C3",
+    "mechanism": "the layer currently asserts 'EVERYTHING THE MODEL KNOWS IS ALREADY IN THE EC NUMBER' on the strength of a residual that leaked and a baseline that was in-sample. The conclusion survived; the evidence for it did not",
+    "cites": "record_behind_measurement",
+    "derivation": null,
+    "predicted_gain": 0.0,
+    "nearest_refuted": "650M with mean pooling",
+    "distinguisher": "this corrects a record rather than proposing a model change",
+    "falsifier": "loop 134 C3 does not in fact support the layer's claim, in which case the layer's STATUS is wrong too and not merely its citation",
+    "cost_min": 5,
+    "promised_rmse": null,
+    "layer_exists": true,
+    "deficit_evidence": "layer cites the B4 residual (True); loop_b4_fix.json present (True)",
+    "missing_inputs": [],
+    "blockers": [],
+    "checks": {
+     "T1_cites_measured_deficit": true,
+     "T2_gain_exceeds_noise": null,
+     "T3_has_falsifier": true,
+     "T4_not_already_refuted": true,
+     "T5_not_circular": true,
+     "T6_respects_bounds": null,
+     "T7_gain_is_derived": null,
+     "T8_inputs_exist": true,
+     "T10_names_layer_and_gate": true
+    },
+    "checks_not_applicable": [
+     "T2_gain_exceeds_noise",
+     "T6_respects_bounds",
+     "T7_gain_is_derived"
+    ],
+    "observed": {
+     "value": {
+      "before": "FAILED",
+      "after": "FAILED"
+     },
+     "ci": null,
+     "what": "status unchanged by the correction, G2",
+     "from": "cell_record_fix.json"
+    },
+    "rejected_on": [],
+    "verdict": "MEASURED",
+    "blocked_on": [],
+    "measured_note": "{'before': 'FAILED', 'after': 'FAILED'} (status unchanged by the correction, G2)"
+   },
+   {
+    "id": "C2",
+    "change": "record per-layer status in cell_run.json, not only four counts",
+    "kind": "record",
+    "depends_on": [],
+    "needs_files": [
+     "colab/cell_assembled.py"
+    ],
+    "targets_layer": null,
+    "gate": "a rerun must be able to show WHICH layer changed status, not only that a count moved",
+    "mechanism": "cell_run.json stores {'RUNS': 11, 'CLOSES': 9, 'FAILED': 12, 'STATIC': 10}. Two layers swapping status is invisible to that artefact, so the improver's Q3 on this track cannot answer 'what changed' from the record",
+    "cites": "artefact_cannot_show_change",
+    "derivation": null,
+    "predicted_gain": 0.0,
+    "nearest_refuted": "more kcat records",
+    "distinguisher": "changes what is RECORDED, not what is measured",
+    "falsifier": "the counts already differ from the current table, which would mean the artefact is not merely coarse but stale",
+    "cost_min": 5,
+    "promised_rmse": null,
+    "layer_exists": true,
+    "deficit_evidence": "cell_run.json['layers'] = {'RUNS': 11, 'CLOSES': 9, 'FAILED': 12, 'STATIC': 10}; per-layer status present: False",
+    "missing_inputs": [],
+    "blockers": [],
+    "checks": {
+     "T1_cites_measured_deficit": true,
+     "T2_gain_exceeds_noise": null,
+     "T3_has_falsifier": true,
+     "T4_not_already_refuted": true,
+     "T5_not_circular": true,
+     "T6_respects_bounds": null,
+     "T7_gain_is_derived": null,
+     "T8_inputs_exist": true,
+     "T10_names_layer_and_gate": true
+    },
+    "checks_not_applicable": [
+     "T2_gain_exceeds_noise",
+     "T6_respects_bounds",
+     "T7_gain_is_derived"
+    ],
+    "observed": {
+     "value": 47,
+     "ci": null,
+     "what": "per-layer artefact written, G4",
+     "from": "cell_record_fix.json"
+    },
+    "rejected_on": [],
+    "verdict": "MEASURED",
+    "blocked_on": [],
+    "measured_note": "47 (per-layer artefact written, G4)"
+   },
+   {
+    "id": "C3",
+    "change": "find the non-transcriptional source of protein dynamics",
+    "kind": "explicit",
+    "depends_on": [],
+    "needs_files": [
+     "colab/data/protein_dynamics_source.tsv.gz"
+    ],
+    "targets_layer": "protein dynamics from transcription alone",
+    "gate": "a candidate mechanism must predict, on held-out genes, which of the 362 proteins that oscillate without their transcript will do so",
+    "mechanism": "three FAILED layers converge on this and none of them names a replacement. Loops 121, 122 and 123 eliminated degrons, translation control and relocalisation in turn",
+    "cites": "three_failed_layers",
+    "derivation": null,
+    "predicted_gain": 0.0,
+    "nearest_refuted": "predict kcat/KM instead",
+    "distinguisher": "different subsystem entirely",
+    "falsifier": "no dataset distinguishes the 362 from the 38, in which case this is not a plan but a wish",
+    "cost_min": 240,
+    "promised_rmse": null,
+    "layer_exists": true,
+    "deficit_evidence": "5 FAILED layers on that axis: ['protein dynamics from transcription alone', 'chromatin->transcription', 'regulation->transcription', 'TF network as a predictor of transcript dynamics', 'CollecTRI as a replacement network']",
+    "missing_inputs": [],
+    "blockers": [],
+    "checks": {
+     "T1_cites_measured_deficit": true,
+     "T2_gain_exceeds_noise": null,
+     "T3_has_falsifier": true,
+     "T4_not_already_refuted": true,
+     "T5_not_circular": true,
+     "T6_respects_bounds": null,
+     "T7_gain_is_derived": null,
+     "T8_inputs_exist": true,
+     "T10_names_layer_and_gate": true
+    },
+    "checks_not_applicable": [
+     "T2_gain_exceeds_noise",
+     "T6_respects_bounds",
+     "T7_gain_is_derived"
+    ],
+    "observed": null,
+    "rejected_on": [],
+    "verdict": "ACCEPT",
+    "blocked_on": []
+   }
+  ],
+  "bundle": null,
+  "whole_picture": {
+   "result": {
+    "counts": {
+     "RUNS": 12,
+     "CLOSES": 10,
+     "FAILED": 14,
+     "STATIC": 11
+    },
+    "n_failed": 14,
+    "metric_note": "there is no scalar metric with a sampling distribution on this track; see TRACKS['cell']['why_not_t2']"
+   },
+   "what_the_model_needs_it_for": "the layer table IS the model's honesty ledger: a FAILED layer is a recorded negative, and the count is not a defect budget to be driven to zero",
+   "dataset": {
+    "layers": 47,
+    "parts": {
+     "genes": 16492,
+     "human_protein_coding": 19900,
+     "gene_coverage": 0.8287437185929648,
+     "genes_with_reaction": 2549,
+     "humangem_reactions": 13078,
+     "ppi": 191447,
+     "reg": 612133,
+     "complexes": 2039
+    }
+   },
+   "verified_deficits": {
+    "record_behind_measurement": "layer cites the B4 residual (True); loop_b4_fix.json present (True)",
+    "artefact_cannot_show_change": "cell_run.json['layers'] = {'RUNS': 11, 'CLOSES': 9, 'FAILED': 12, 'STATIC': 10}; per-layer status present: False",
+    "three_failed_layers": "5 FAILED layers on that axis: ['protein dynamics from transcription alone', 'chromatin->transcription', 'regulation->transcription', 'TF network as a predictor of transcript dynamics', 'CollecTRI as a replacement network']"
+   },
+   "bounds_that_cap_any_plan": {
+    "no_scalar_metric": "the metric is a count of judged layers, not a sample; a bootstrap over it would have no referent, and the count is gameable by relabelling",
+    "relabelling": "splitting one FAILED layer into two RUNS layers improves the count without touching the model, which is why T10 asks for a gate"
+   },
+   "the_uncomfortable_reading": "three FAILED layers converge on the same wall -- protein dynamics has a source that is not transcription, and loops 121, 122 and 123 eliminated degrons, translation control and relocalisation in turn without naming a replacement. The cell track's real deficit is not a number, it is that NO DATASET on disk distinguishes the 362 proteins that oscillate without their transcript from the 38 that do the reverse.",
+   "what_the_first_run_of_this_file_got_wrong": "it had no cell track at all, and when one was added the first thing it found was that cell_run.json's stored counts are STALE, not merely coarse"
+  },
+  "upgrades": [
+   {
+    "change": "order probes first, then by cost",
+    "why": "1 schedulable, 2 already measured. No scalar metric on this track, so no gain arithmetic is emitted",
+    "new_order": [
+     "C3"
+    ]
+   },
+   {
+    "change": "the stopping rule here is a GATE, not a metric",
+    "why": "each item names the gate that would have to pass; a count of layers can be improved by relabelling and so cannot be the rule"
+   }
+  ],
+  "noise": null,
+  "noise_source": "no scalar metric on this track; T2 does not apply",
+  "n_rejected": 0,
+  "n_blocked": 0,
+  "n_executable": 0,
+  "execute_order": [
+   "C3"
+  ],
+  "executed": [],
+  "reflection": {
+   "R1_fingerprint": {
+    "changed": true,
+    "moved_artefacts": [],
+    "why": "first turn"
+   },
+   "R2_predictions_measured": [],
+   "R2_note": "no prediction has been measured yet; every predicted_gain in this track is still an unfalsified opinion",
+   "R3_plan_changed": {
+    "changed": true,
+    "detail": "first turn"
+   },
+   "R4_drift": {
+    "events": [],
+    "n_rejected": 0,
+    "n_blocked": 0,
+    "check_source_hash": "aa6bb3d2acb28162",
+    "verdict": "no drift detected"
+   },
+   "R5_waiting_on": [],
+   "R6_finished": {
+    "stalled": false,
+    "executable_remaining": 0,
+    "verdict": "0 executable item(s) remain"
+   }
+  }
+ },
+ {
+  "turn": 2,
+  "track": "ml_kcat",
+  "fingerprint": "357b5910032ee1ef",
+  "fingerprint_files": {
+   "loop_ml_kcat.json": "fb4206222bf6da0f",
+   "loop_ml_audit.json": "5d67374d84a7a04d",
+   "loop_ml_probe.json": "3e1149a5bf54ca44",
+   "loop_b4_fix.json": "b20eaea39cf215da",
+   "loop_plan_exec.json": "e31dcce956eb025c",
+   "loop_active_site.json": "33d141deb30d6a40"
+  },
+  "check_source_hash": "aa6bb3d2acb28162",
+  "stalled": true,
+  "plan": [
+   {
+    "id": "P1",
+    "noise_kind": "encoder_swap",
+    "change": "active-site pooling replaces mean pooling",
+    "kind": "implicit+explicit",
+    "depends_on": [],
+    "needs_files": [
+     "colab/data/ml/sequences.json",
+     "colab/data/uniprot_sites.tsv.gz"
+    ],
+    "mechanism": "kcat is set by a few catalytic residues; averaging 320 dims over ~400 residues moves the vector ~1% when 5 residues change, so 18,595 point mutants differing a median 4.5x in kcat are indistinguishable",
+    "cites": "mutant_irreducible_rmse",
+    "derivation": {
+     "from": "loop 133 B1 irreducible_rmse, CUT by loop 134 C3",
+     "component": 0.947,
+     "max_gain": 0.37740560968269454,
+     "fraction_claimed": 0.08,
+     "argument": "the ceiling assumes active-site pooling resolves EVERY point-mutant pair perfectly. It will not: pooling over annotated sites still averages several residues, and 3,597 merged proteins carry mutations outside any annotated site. And loop 134 C3 measured protein identity at 0.0046 to the current readout. That bounds EXTRACTION, not the deficit, so it does not refute a change of readout -- but it is evidence against one, and the claimed fraction is cut accordingly. The fraction was 0.40 before loop 134 ran; 0.08 is what survives C3"
+    },
+    "predicted_gain": 0.0302,
+    "nearest_refuted": "650M with mean pooling",
+    "distinguisher": "this changes the READOUT, which is the thing that refutation named as the cause. It is the fix, not a repeat",
+    "falsifier": "B4 still fails: the EC-median residual is still unlearnable",
+    "cost_min": 60,
+    "promised_rmse": 1.2268263740087428,
+    "noise_used": 0.0488,
+    "noise_source_used": "same as a model swap -- a different encoder is a different inductive bias, not an extra column",
+    "missing_inputs": [],
+    "blockers": [],
+    "checks": {
+     "T1_cites_measured_deficit": true,
+     "T2_gain_exceeds_noise": false,
+     "T3_has_falsifier": true,
+     "T4_not_already_refuted": true,
+     "T5_not_circular": true,
+     "T6_respects_bounds": true,
+     "T7_gain_is_derived": true,
+     "T8_inputs_exist": true,
+     "T10_names_layer_and_gate": null
+    },
+    "checks_not_applicable": [
+     "T10_names_layer_and_gate"
+    ],
+    "observed": {
+     "value": 0.014507809252258141,
+     "ci": [
+      0.014869136930433407,
+      0.001661142976020292,
+      0.029479521785270437
+     ],
+     "what": "site vs mean pooling, H3 -- but REFUTED by H5: random positions of the same count score the same, so the gain is subsampling noise, not catalytic residues",
+     "from": "loop_active_site.json"
+    },
+    "rejected_on": [
+     "T2_gain_exceeds_noise"
+    ],
+    "verdict": "MEASURED",
+    "blocked_on": [],
+    "measured_note": "+0.0145 (site vs mean pooling, H3 -- but REFUTED by H5: random positions of the same count score the same, so the gain is subsampling noise, not catalytic residues) CI [+0.0017, +0.0295] -> EXCLUDES zero; the plan predicted +0.0302, error -0.0157"
+   },
+   {
+    "id": "P2",
+    "noise_kind": "feature_addition",
+    "change": "mutant flag and substitution count as features",
+    "kind": "implicit",
+    "depends_on": [],
+    "needs_files": [
+     "colab/data/ml/sequences.json",
+     "colab/data/ml/kcat_records.tsv"
+    ],
+    "mechanism": "the model cannot resolve a variant, but it can at least be told it is looking at one",
+    "cites": "mutant_irreducible_rmse",
+    "derivation": {
+     "from": "loop 133 B1, same component as P1, CUT by loop 134 C3",
+     "component": 0.947,
+     "max_gain": 0.37740560968269454,
+     "fraction_claimed": 0.03,
+     "argument": "a flag says THAT a record is a variant, never WHICH, so it can only recover the mean offset between wild types and mutants -- a small fraction of a component whose spread is within-pair. loop 134 C3 measured protein identity at 0.0046 to the current readout. That bounds EXTRACTION, not the deficit, so it does not refute a change of readout -- but it is evidence against one, and the claimed fraction is cut accordingly."
+    },
+    "predicted_gain": 0.0113,
+    "nearest_refuted": "more kcat records",
+    "distinguisher": "adds a COLUMN, not rows; the refutation was about n",
+    "falsifier": "no change beyond the paired interval",
+    "cost_min": 5,
+    "promised_rmse": 1.3268263740087427,
+    "noise_used": 0.0306,
+    "noise_source_used": "loop 135 E2: the measured width of a cluster-bootstrap interval on a PAIRED feature-addition difference, same model, same folds",
+    "missing_inputs": [],
+    "blockers": [],
+    "checks": {
+     "T1_cites_measured_deficit": true,
+     "T2_gain_exceeds_noise": false,
+     "T3_has_falsifier": true,
+     "T4_not_already_refuted": true,
+     "T5_not_circular": true,
+     "T6_respects_bounds": true,
+     "T7_gain_is_derived": true,
+     "T8_inputs_exist": true,
+     "T10_names_layer_and_gate": null
+    },
+    "checks_not_applicable": [
+     "T10_names_layer_and_gate"
+    ],
+    "observed": {
+     "value": 0.016793200382080764,
+     "ci": [
+      0.016823332012460272,
+      0.0016188680749562095,
+      0.032198841176479226
+     ],
+     "what": "mutant flag alone, E2",
+     "from": "loop_plan_exec.json"
+    },
+    "rejected_on": [
+     "T2_gain_exceeds_noise"
+    ],
+    "verdict": "MEASURED",
+    "blocked_on": [],
+    "measured_note": "+0.0168 (mutant flag alone, E2) CI [+0.0016, +0.0322] -> EXCLUDES zero; the plan predicted +0.0113, error +0.0055"
+   },
+   {
+    "id": "P3",
+    "noise_kind": "feature_addition",
+    "change": "Q10-normalise the target to 37 C",
+    "kind": "implicit",
+    "depends_on": [],
+    "needs_files": [
+     "colab/data/kcat_conditions.tsv.gz"
+    ],
+    "mechanism": "kcat(T2) = kcat(T1)*Q10^((T2-T1)/10) removes a known variance component using physics instead of asking the network to learn Arrhenius",
+    "cites": "missing_conditions_rmse",
+    "derivation": {
+     "from": "loop 133 B5 within-pair sd",
+     "component": 0.5137,
+     "max_gain": 0.09942151486421058,
+     "fraction_claimed": 0.1,
+     "argument": "temperature is one of several missing conditions (pH, buffer, mutation), and Q10 can only act on the subset where a temperature is recoverable"
+    },
+    "predicted_gain": 0.0099,
+    "nearest_refuted": "predict kcat/KM instead",
+    "distinguisher": "that changed the target to a NOISIER one; this changes the target to the same quantity at a common temperature, which cannot add variance",
+    "falsifier": "target variance does not fall on the subset with a known temperature",
+    "cost_min": 5,
+    "promised_rmse": 1.3368263740087427,
+    "noise_used": 0.0306,
+    "noise_source_used": "loop 135 E2: the measured width of a cluster-bootstrap interval on a PAIRED feature-addition difference, same model, same folds",
+    "missing_inputs": [
+     "colab/data/kcat_conditions.tsv.gz"
+    ],
+    "blockers": [
+     {
+      "file": "colab/data/kcat_conditions.tsv.gz",
+      "kind": "SOURCE_RETIRED",
+      "detail": "SABIO-RK REST probed by fetch_web G3: redirects to a UI 404. Temperature and pH are not obtainable from the standard source, so loop 133 B5's 0.5137 floor is a WALL and not a gap"
+     }
+    ],
+    "checks": {
+     "T1_cites_measured_deficit": true,
+     "T2_gain_exceeds_noise": false,
+     "T3_has_falsifier": true,
+     "T4_not_already_refuted": true,
+     "T5_not_circular": true,
+     "T6_respects_bounds": true,
+     "T7_gain_is_derived": true,
+     "T8_inputs_exist": false,
+     "T10_names_layer_and_gate": null
+    },
+    "checks_not_applicable": [
+     "T10_names_layer_and_gate"
+    ],
+    "observed": null,
+    "rejected_on": [
+     "T2_gain_exceeds_noise",
+     "T8_inputs_exist"
+    ],
+    "verdict": "REJECT",
+    "blocked_on": []
+   },
+   {
+    "id": "P4",
+    "noise_kind": "feature_addition",
+    "change": "EC number as an explicit categorical feature",
+    "kind": "implicit",
+    "depends_on": [],
+    "needs_files": [
+     "colab/data/ml/kcat_records.tsv"
+    ],
+    "mechanism": "B4 shows the EC number carries everything the model has; give it directly rather than via a proxy",
+    "cites": "c3_sequence_beyond_ec",
+    "derivation": {
+     "from": "loop 134 C5, MEASURED against C5's OWN baseline",
+     "component": null,
+     "max_gain": 0.004102965910424361,
+     "fraction_claimed": 1.0,
+     "argument": "C5 ran this feature set, so the gain is the measurement itself. Compared against C5's own baseline and not loop 132's, because mixing baselines across runs is what produced the 3.2% figure loop 134 C1 had to correct to 0.7%"
+    },
+    "predicted_gain": 0.0041,
+    "nearest_refuted": "bigger substrate fingerprint",
+    "distinguisher": "different channel: that priced the SUBSTRATE side, this the enzyme's declared chemistry",
+    "falsifier": "no gain, which would mean ESM already encodes EC fully",
+    "cost_min": 2,
+    "promised_rmse": 1.3568263740087427,
+    "noise_used": 0.0306,
+    "noise_source_used": "loop 135 E2: the measured width of a cluster-bootstrap interval on a PAIRED feature-addition difference, same model, same folds",
+    "missing_inputs": [],
+    "blockers": [],
+    "checks": {
+     "T1_cites_measured_deficit": true,
+     "T2_gain_exceeds_noise": false,
+     "T3_has_falsifier": true,
+     "T4_not_already_refuted": true,
+     "T5_not_circular": true,
+     "T6_respects_bounds": true,
+     "T7_gain_is_derived": true,
+     "T8_inputs_exist": true,
+     "T10_names_layer_and_gate": null
+    },
+    "checks_not_applicable": [
+     "T10_names_layer_and_gate"
+    ],
+    "observed": {
+     "value": 0.0069615906822264595,
+     "ci": [
+      0.007028015674420383,
+      -0.0045049512171136275,
+      0.018846311859800957
+     ],
+     "what": "explicit EC alone, E3",
+     "from": "loop_plan_exec.json"
+    },
+    "rejected_on": [
+     "T2_gain_exceeds_noise"
+    ],
+    "verdict": "MEASURED",
+    "blocked_on": [],
+    "measured_note": "+0.0070 (explicit EC alone, E3) CI [-0.0045, +0.0188] -> includes zero; the plan predicted +0.0041, error +0.0029"
+   },
+   {
+    "id": "P5",
+    "noise_kind": "encoder_swap",
+    "change": "ESM2-650M with the fixed readout",
+    "kind": "explicit",
+    "depends_on": [
+     "P1"
+    ],
+    "needs_files": [
+     "colab/data/ml/esm2_650M_mean.npy"
+    ],
+    "depends_on_result": [
+     {
+      "what": "P1 has actually moved the sequence-beyond-EC test",
+      "measured": false
+     }
+    ],
+    "mechanism": "a larger encoder, once the readout no longer discards the signal it would add",
+    "cites": "b3_family_detector",
+    "derivation": {
+     "from": "loop 133 B3 -- the encoder is a family detector",
+     "component": null,
+     "max_gain": null,
+     "fraction_claimed": null,
+     "argument": "there is NO recorded number bounding what a larger encoder adds. Saying so is the point: T7 fails an item whose size nobody has measured"
+    },
+    "predicted_gain": 0.08,
+    "nearest_refuted": "650M with mean pooling",
+    "distinguisher": "ONLY the fixed readout distinguishes it, so it is refuted unless P1 is accepted AND has actually moved B4",
+    "falsifier": "gain smaller than the paired interval, as at 8M",
+    "cost_min": 240,
+    "promised_rmse": 1.2968263740087427,
+    "noise_used": 0.0488,
+    "noise_source_used": "same as a model swap -- a different encoder is a different inductive bias, not an extra column",
+    "missing_inputs": [
+     "colab/data/ml/esm2_650M_mean.npy"
+    ],
+    "blockers": [
+     {
+      "file": "colab/data/ml/esm2_650M_mean.npy",
+      "kind": "COMPUTE_NOT_DOWNLOAD",
+      "detail": "an embedding is produced, not fetched; no web source can supply it"
+     }
+    ],
+    "checks": {
+     "T1_cites_measured_deficit": true,
+     "T2_gain_exceeds_noise": true,
+     "T3_has_falsifier": true,
+     "T4_not_already_refuted": false,
+     "T5_not_circular": true,
+     "T6_respects_bounds": true,
+     "T7_gain_is_derived": false,
+     "T8_inputs_exist": false,
+     "T10_names_layer_and_gate": null
+    },
+    "checks_not_applicable": [
+     "T10_names_layer_and_gate"
+    ],
+    "observed": null,
+    "rejected_on": [
+     "T4_not_already_refuted",
+     "T7_gain_is_derived",
+     "T8_inputs_exist"
+    ],
+    "verdict": "REJECT",
+    "blocked_on": [
+     "P1 has actually moved the sequence-beyond-EC test"
+    ]
+   },
+   {
+    "id": "P6",
+    "noise_kind": "feature_addition",
+    "change": "encode EC properly -- out-of-fold target encoding and hierarchy",
+    "kind": "implicit",
+    "depends_on": [],
+    "needs_files": [
+     "colab/data/ml/kcat_records.tsv"
+    ],
+    "mechanism": "loop 134 measured the EC channel through an arbitrary integer index, which a tree cannot split on meaningfully. Every EC number in this project's recent record -- C1's 0.7%, C5's 1.4707, P4's +0.0041 -- is downstream of that encoding",
+    "cites": "c3_sequence_beyond_ec",
+    "derivation": {
+     "from": "loop 134 C5's EC encoding is BROKEN",
+     "component": null,
+     "max_gain": 0.020506894306312695,
+     "fraction_claimed": null,
+     "argument": "C5 encoded EC as eci.get(e, -1), an ARBITRARY INTEGER INDEX over thousands of classes. A tree splitting on that index groups EC 1.1.1.1 with whatever happened to sort beside it, so 'EC only 1.4707' and the +0.0041 that P4 inherits are both measured through a broken feature. The remedy is an out-of-fold target encoding plus hierarchical levels, and until that runs NO maximum exists, so T7 must fail this item. That is the correct outcome: the fix is cheap and the measurement is the thing that unblocks it"
+    },
+    "predicted_gain": 0.02,
+    "nearest_refuted": "bigger substrate fingerprint",
+    "distinguisher": "different channel entirely: that priced the substrate side, this repairs an instrument the enzyme side was measured with",
+    "falsifier": "a correct encoding scores no better than the integer index, which would mean the index was never the problem",
+    "cost_min": 10,
+    "promised_rmse": 1.3568263740087427,
+    "noise_used": 0.0306,
+    "noise_source_used": "loop 135 E2: the measured width of a cluster-bootstrap interval on a PAIRED feature-addition difference, same model, same folds",
+    "missing_inputs": [],
+    "blockers": [],
+    "checks": {
+     "T1_cites_measured_deficit": true,
+     "T2_gain_exceeds_noise": false,
+     "T3_has_falsifier": true,
+     "T4_not_already_refuted": true,
+     "T5_not_circular": true,
+     "T6_respects_bounds": true,
+     "T7_gain_is_derived": true,
+     "T8_inputs_exist": true,
+     "T10_names_layer_and_gate": null
+    },
+    "checks_not_applicable": [
+     "T10_names_layer_and_gate"
+    ],
+    "observed": {
+     "value": 0.020506894306312695,
+     "ci": null,
+     "what": "best EC encoding, E7",
+     "from": "loop_plan_exec.json"
+    },
+    "rejected_on": [
+     "T2_gain_exceeds_noise"
+    ],
+    "verdict": "MEASURED",
+    "blocked_on": [],
+    "measured_note": "+0.0205 (best EC encoding, E7); the plan predicted +0.0200, error +0.0005"
+   },
+   {
+    "id": "M1",
+    "change": "measure the EC channel through three encodings on identical folds",
+    "kind": "probe",
+    "depends_on": [],
+    "unblocks": {
+     "item": "P6",
+     "check": "T7_gain_is_derived"
+    },
+    "needs_files": [
+     "colab/data/ml/kcat_records.tsv",
+     "colab/data/ml/esm2_8M_mean.npy"
+    ],
+    "mechanism": "the integer index as loop 134 used it, an out-of-fold target encoding built with the nested construction C2 showed B4 had got wrong, and hierarchical one-hot on EC levels 1-3. Whichever wins becomes the maximum P6 is allowed to promise",
+    "cites": "instrument_unverified",
+    "derivation": null,
+    "predicted_gain": 0.0,
+    "nearest_refuted": "bigger substrate fingerprint",
+    "distinguisher": "this measures an instrument rather than proposing a change",
+    "falsifier": "all three encodings score within the paired interval of each other, which would mean the integer index was never the problem and P6 should be dropped",
+    "cost_min": 10,
+    "promised_rmse": 1.3768263740087427,
+    "missing_inputs": [],
+    "blockers": [],
+    "unblock_status": "P6 currently does not fail T7_gain_is_derived",
+    "checks": {
+     "T1_cites_measured_deficit": true,
+     "T2_gain_exceeds_noise": true,
+     "T3_has_falsifier": true,
+     "T4_not_already_refuted": true,
+     "T5_not_circular": true,
+     "T6_respects_bounds": true,
+     "T7_gain_is_derived": true,
+     "T8_inputs_exist": true,
+     "T9_probe_unblocks_something": false,
+     "T10_names_layer_and_gate": null
+    },
+    "checks_not_applicable": [
+     "T10_names_layer_and_gate"
+    ],
+    "observed": null,
+    "rejected_on": [
+     "T9_probe_unblocks_something"
+    ],
+    "verdict": "REJECT",
+    "blocked_on": []
+   },
+   {
+    "id": "M2",
+    "change": "measure what protein identity is worth to a NON-mean-pooled readout",
+    "kind": "probe",
+    "depends_on": [],
+    "unblocks": {
+     "item": "P1",
+     "check": "T2_gain_exceeds_noise"
+    },
+    "needs_files": [
+     "colab/data/ml/sequences.json",
+     "colab/data/uniprot_sites.tsv.gz"
+    ],
+    "mechanism": "loop 134 C3 measured protein identity at 0.0046 to the MEAN-POOLED readout. P1 claims a different readout would extract more. Nobody has measured that, and C3's design -- permute within EC class -- reruns unchanged against any new readout",
+    "cites": "protein_identity_value_rmse",
+    "derivation": null,
+    "predicted_gain": 0.0,
+    "nearest_refuted": "650M with mean pooling",
+    "distinguisher": "measures the readout's ceiling instead of assuming it",
+    "falsifier": "within-class permutation costs no more under the new readout than the 0.0046 it costs under mean pooling, which would retire P1 and P5 together",
+    "cost_min": 60,
+    "promised_rmse": 1.3768263740087427,
+    "missing_inputs": [],
+    "blockers": [],
+    "unblock_status": "P1 currently FAILS T2_gain_exceeds_noise",
+    "checks": {
+     "T1_cites_measured_deficit": true,
+     "T2_gain_exceeds_noise": true,
+     "T3_has_falsifier": true,
+     "T4_not_already_refuted": true,
+     "T5_not_circular": true,
+     "T6_respects_bounds": true,
+     "T7_gain_is_derived": true,
+     "T8_inputs_exist": true,
+     "T9_probe_unblocks_something": true,
+     "T10_names_layer_and_gate": null
+    },
+    "checks_not_applicable": [
+     "T10_names_layer_and_gate"
+    ],
+    "observed": {
+     "value": -0.000832024331635095,
+     "ci": null,
+     "what": "within-EC permutation under the site-pooled readout, H4 -- NEGATIVE, so protein identity is worth nothing even to a readout built to expose it",
+     "from": "loop_active_site.json"
+    },
+    "rejected_on": [],
+    "verdict": "MEASURED",
+    "blocked_on": [],
+    "measured_note": "-0.0008 (within-EC permutation under the site-pooled readout, H4 -- NEGATIVE, so protein identity is worth nothing even to a readout built to expose it)"
+   }
+  ],
+  "n_rejected": 3,
+  "n_blocked": 0,
+  "n_executable": 0,
+  "stall_reason": "input fingerprint unchanged since the previous turn and nothing was executed in between, so any plan emitted here would be a copy of the last one",
+  "reflection": {
+   "R1_fingerprint": {
+    "changed": false,
+    "moved_artefacts": [],
+    "why": "NOTHING CHANGED -- no new measurement has entered this track"
+   },
+   "R2_predictions_measured": [
+    {
+     "turn": 1,
+     "id": "P2",
+     "measured_as": "mutant flag alone, E2",
+     "predicted": 0.0113,
+     "measured": 0.016793200382080764,
+     "signed_error": 0.005493200382080765,
+     "verdict": "UNDER-promised"
+    },
+    {
+     "turn": 1,
+     "id": "P4",
+     "measured_as": "explicit EC alone, E3",
+     "predicted": 0.0041,
+     "measured": 0.0069615906822264595,
+     "signed_error": 0.002861590682226459,
+     "verdict": "UNDER-promised"
+    },
+    {
+     "turn": 1,
+     "id": "P6",
+     "measured_as": "best EC encoding, E7",
+     "predicted": 0.02,
+     "measured": 0.020506894306312695,
+     "signed_error": 0.0005068943063126947,
+     "verdict": "UNDER-promised"
+    },
+    {
+     "turn": 2,
+     "id": "P2",
+     "measured_as": "mutant flag alone, E2",
+     "predicted": 0.0113,
+     "measured": 0.016793200382080764,
+     "signed_error": 0.005493200382080765,
+     "verdict": "UNDER-promised"
+    },
+    {
+     "turn": 2,
+     "id": "P4",
+     "measured_as": "explicit EC alone, E3",
+     "predicted": 0.0041,
+     "measured": 0.0069615906822264595,
+     "signed_error": 0.002861590682226459,
+     "verdict": "UNDER-promised"
+    },
+    {
+     "turn": 2,
+     "id": "P6",
+     "measured_as": "best EC encoding, E7",
+     "predicted": 0.02,
+     "measured": 0.020506894306312695,
+     "signed_error": 0.0005068943063126947,
+     "verdict": "UNDER-promised"
+    }
+   ],
+   "R2_note": "6 prediction(s) now have a measured outcome",
+   "R3_plan_changed": {
+    "changed": false,
+    "detail": "IDENTICAL to the previous turn -- this turn added nothing"
+   },
+   "R4_drift": {
+    "events": [],
+    "n_rejected": 3,
+    "n_blocked": 0,
+    "check_source_hash": "aa6bb3d2acb28162",
+    "verdict": "no drift detected"
+   },
+   "R5_waiting_on": [
+    "P3: SOURCE_RETIRED -- colab/data/kcat_conditions.tsv.gz  (SABIO-RK REST probed by fetch_web G3: redirects to a UI 404. Temperature and pH are not obtainable from the st)",
+    "P5: COMPUTE_NOT_DOWNLOAD -- colab/data/ml/esm2_650M_mean.npy  (an embedding is produced, not fetched; no web source can supply it)",
+    "M1: rejected on T9_probe_unblocks_something"
+   ],
+   "R6_finished": {
+    "stalled": true,
+    "executable_remaining": 0,
+    "verdict": "FINISHED -- no executable item and no artefact can change without new data"
+   }
+  }
+ },
+ {
+  "turn": 2,
+  "track": "cell",
+  "fingerprint": "575904808907e69b",
+  "fingerprint_files": {
+   "cell_run.json": "093ccfb37eae5baf",
+   "cell_model_audit.json": "4330ced2ff9220f7",
+   "capability_audit.json": "92eb44584d7d60d4",
+   "loop_b4_fix.json": "b20eaea39cf215da",
+   "cell_record_fix.json": "2777fa6fc702d308",
+   "cell_layers.json": "f33e057e84e53d48",
+   "colab/cell_assembled.py": "1a10a15ac041d424"
+  },
+  "check_source_hash": "aa6bb3d2acb28162",
+  "stalled": true,
+  "plan": [
+   {
+    "id": "C1",
+    "change": "correct the kcat layer to cite loop 134 C3, not the leaking B4",
+    "kind": "record",
+    "depends_on": [],
+    "needs_files": [
+     "colab/cell_assembled.py",
+     "outputs/loop_b4_fix.json"
+    ],
+    "targets_layer": "what the kcat model actually learned",
+    "gate": "the layer's evidence field must cite a test whose control was shown capable of moving before its result was read -- loop 134 C4 then C3",
+    "mechanism": "the layer currently asserts 'EVERYTHING THE MODEL KNOWS IS ALREADY IN THE EC NUMBER' on the strength of a residual that leaked and a baseline that was in-sample. The conclusion survived; the evidence for it did not",
+    "cites": "record_behind_measurement",
+    "derivation": null,
+    "predicted_gain": 0.0,
+    "nearest_refuted": "650M with mean pooling",
+    "distinguisher": "this corrects a record rather than proposing a model change",
+    "falsifier": "loop 134 C3 does not in fact support the layer's claim, in which case the layer's STATUS is wrong too and not merely its citation",
+    "cost_min": 5,
+    "promised_rmse": null,
+    "layer_exists": true,
+    "deficit_evidence": "layer cites the B4 residual (True); loop_b4_fix.json present (True)",
+    "missing_inputs": [],
+    "blockers": [],
+    "checks": {
+     "T1_cites_measured_deficit": true,
+     "T2_gain_exceeds_noise": null,
+     "T3_has_falsifier": true,
+     "T4_not_already_refuted": true,
+     "T5_not_circular": true,
+     "T6_respects_bounds": null,
+     "T7_gain_is_derived": null,
+     "T8_inputs_exist": true,
+     "T10_names_layer_and_gate": true
+    },
+    "checks_not_applicable": [
+     "T2_gain_exceeds_noise",
+     "T6_respects_bounds",
+     "T7_gain_is_derived"
+    ],
+    "observed": {
+     "value": {
+      "before": "FAILED",
+      "after": "FAILED"
+     },
+     "ci": null,
+     "what": "status unchanged by the correction, G2",
+     "from": "cell_record_fix.json"
+    },
+    "rejected_on": [],
+    "verdict": "MEASURED",
+    "blocked_on": [],
+    "measured_note": "{'before': 'FAILED', 'after': 'FAILED'} (status unchanged by the correction, G2)"
+   },
+   {
+    "id": "C2",
+    "change": "record per-layer status in cell_run.json, not only four counts",
+    "kind": "record",
+    "depends_on": [],
+    "needs_files": [
+     "colab/cell_assembled.py"
+    ],
+    "targets_layer": null,
+    "gate": "a rerun must be able to show WHICH layer changed status, not only that a count moved",
+    "mechanism": "cell_run.json stores {'RUNS': 11, 'CLOSES': 9, 'FAILED': 12, 'STATIC': 10}. Two layers swapping status is invisible to that artefact, so the improver's Q3 on this track cannot answer 'what changed' from the record",
+    "cites": "artefact_cannot_show_change",
+    "derivation": null,
+    "predicted_gain": 0.0,
+    "nearest_refuted": "more kcat records",
+    "distinguisher": "changes what is RECORDED, not what is measured",
+    "falsifier": "the counts already differ from the current table, which would mean the artefact is not merely coarse but stale",
+    "cost_min": 5,
+    "promised_rmse": null,
+    "layer_exists": true,
+    "deficit_evidence": "cell_run.json['layers'] = {'RUNS': 11, 'CLOSES': 9, 'FAILED': 12, 'STATIC': 10}; per-layer status present: False",
+    "missing_inputs": [],
+    "blockers": [],
+    "checks": {
+     "T1_cites_measured_deficit": true,
+     "T2_gain_exceeds_noise": null,
+     "T3_has_falsifier": true,
+     "T4_not_already_refuted": true,
+     "T5_not_circular": true,
+     "T6_respects_bounds": null,
+     "T7_gain_is_derived": null,
+     "T8_inputs_exist": true,
+     "T10_names_layer_and_gate": true
+    },
+    "checks_not_applicable": [
+     "T2_gain_exceeds_noise",
+     "T6_respects_bounds",
+     "T7_gain_is_derived"
+    ],
+    "observed": {
+     "value": 47,
+     "ci": null,
+     "what": "per-layer artefact written, G4",
+     "from": "cell_record_fix.json"
+    },
+    "rejected_on": [],
+    "verdict": "MEASURED",
+    "blocked_on": [],
+    "measured_note": "47 (per-layer artefact written, G4)"
+   },
+   {
+    "id": "C3",
+    "change": "find the non-transcriptional source of protein dynamics",
+    "kind": "explicit",
+    "depends_on": [],
+    "needs_files": [
+     "colab/data/protein_dynamics_source.tsv.gz"
+    ],
+    "targets_layer": "protein dynamics from transcription alone",
+    "gate": "a candidate mechanism must predict, on held-out genes, which of the 362 proteins that oscillate without their transcript will do so",
+    "mechanism": "three FAILED layers converge on this and none of them names a replacement. Loops 121, 122 and 123 eliminated degrons, translation control and relocalisation in turn",
+    "cites": "three_failed_layers",
+    "derivation": null,
+    "predicted_gain": 0.0,
+    "nearest_refuted": "predict kcat/KM instead",
+    "distinguisher": "different subsystem entirely",
+    "falsifier": "no dataset distinguishes the 362 from the 38, in which case this is not a plan but a wish",
+    "cost_min": 240,
+    "promised_rmse": null,
+    "layer_exists": true,
+    "deficit_evidence": "5 FAILED layers on that axis: ['protein dynamics from transcription alone', 'chromatin->transcription', 'regulation->transcription', 'TF network as a predictor of transcript dynamics', 'CollecTRI as a replacement network']",
+    "missing_inputs": [],
+    "blockers": [],
+    "checks": {
+     "T1_cites_measured_deficit": true,
+     "T2_gain_exceeds_noise": null,
+     "T3_has_falsifier": true,
+     "T4_not_already_refuted": true,
+     "T5_not_circular": true,
+     "T6_respects_bounds": null,
+     "T7_gain_is_derived": null,
+     "T8_inputs_exist": true,
+     "T10_names_layer_and_gate": true
+    },
+    "checks_not_applicable": [
+     "T2_gain_exceeds_noise",
+     "T6_respects_bounds",
+     "T7_gain_is_derived"
+    ],
+    "observed": null,
+    "rejected_on": [],
+    "verdict": "ACCEPT",
+    "blocked_on": []
+   }
+  ],
+  "n_rejected": 0,
+  "n_blocked": 0,
+  "n_executable": 0,
+  "stall_reason": "input fingerprint unchanged since the previous turn and nothing was executed in between, so any plan emitted here would be a copy of the last one",
+  "reflection": {
+   "R1_fingerprint": {
+    "changed": false,
+    "moved_artefacts": [],
+    "why": "NOTHING CHANGED -- no new measurement has entered this track"
+   },
+   "R2_predictions_measured": [],
+   "R2_note": "no prediction has been measured yet; every predicted_gain in this track is still an unfalsified opinion",
+   "R3_plan_changed": {
+    "changed": false,
+    "detail": "IDENTICAL to the previous turn -- this turn added nothing"
+   },
+   "R4_drift": {
+    "events": [],
+    "n_rejected": 0,
+    "n_blocked": 0,
+    "check_source_hash": "aa6bb3d2acb28162",
+    "verdict": "no drift detected"
+   },
+   "R5_waiting_on": [],
+   "R6_finished": {
+    "stalled": true,
+    "executable_remaining": 0,
+    "verdict": "FINISHED -- no executable item and no artefact can change without new data"
+   }
+  }
+ }
+]

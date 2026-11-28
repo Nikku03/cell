@@ -1,0 +1,32 @@
+{
+ "cell_type": "K562",
+ "n_test": 126,
+ "K": 50,
+ "recall_specific": {
+  "tide": 0.24144188619753768,
+  "phys": 0.4205213951718911,
+  "learned": 0.42813148334420636,
+  "oracle": 0.6156297395493888
+ },
+ "phys_covered_test": 124,
+ "headroom_closed_frac": 0.039004421859022115,
+ "feature_names": [
+  "shared_cplx",
+  "shared_gobp",
+  "shared_gocc",
+  "shared_gomf",
+  "same_path",
+  "shared_ppi_nbr",
+  "jaccard_ppi_nbr",
+  "is_direct_ppi",
+  "abs_dep_diff",
+  "abs_loeuf_diff",
+  "abs_logdeg_diff",
+  "same_comp",
+  "same_proc",
+  "both_tf"
+ ],
+ "feature_importances": null,
+ "verdict": "LEARNED PERTURBATION SIMILARITY from gene features (no peeking at the held-out KO), K562, 126 held-out knockouts, specific-mover recall@50: TIDE null 0.241 -> fixed PHYS graph 0.421 -> LEARNED 0.428 -> ORACLE* ceiling 0.616. HONEST READ: the learned annotation-similarity BARELY beats the fixed physical graph (0.428 vs 0.421, only +0.008, closing just 4% of the graph->oracle head-room). This is a NEGATIVE-ish result and I am reporting it as one: hand-crafted STATIC ANNOTATION features (complex + GO-BP/CC/MF + pathway + PPI-neighbourhood + dependency + degree + compartment) add almost nothing over the raw physical graph for predicting which knockouts behave alike. The large oracle head-room (behavioural similarity IS there and IS shared) is NOT reachable from these annotations. WHAT THIS RULES IN/OUT: it rules OUT 'just engineer more annotation features' as the path to the oracle, and points to a richer REPRESENTATION -- learned gene embeddings, sequence/structure (ESM), or ultimately co-perturbation profiles (which is the oracle, i.e. you need measured neighbours). NEXUS/structural interaction magnitude can still enter as a feature here, but the bar is now explicit and high: it must beat 0.428, and annotation features already saturate near the graph, so it would have to add genuinely ORTHOGONAL behavioural signal. CAVEATS: modest test set (126 KOs); single-KO, within-one-cell-type, one steady-state-mRNA readout; says nothing about combinations, mutations, drugs, cross-cell-type, or a real cancer genotype.",
+ "note": "LEARNED PERTURBATION SIMILARITY from gene features (no peeking at the held-out KO), K562, 126 held-out knockouts, specific-mover recall@50: TIDE null 0.241 -> fixed PHYS graph 0.421 -> LEARNED 0.428 -> ORACLE* ceiling 0.616. HONEST READ: the learned annotation-similarity BARELY beats the fixed physical graph (0.428 vs 0.421, only +0.008, closing just 4% of the graph->oracle head-room). This is a NEGATIVE-ish result and I am reporting it as one: hand-crafted STATIC ANNOTATION features (complex + GO-BP/CC/MF + pathway + PPI-neighbourhood + dependency + degree + compartment) add almost nothing over the raw physical graph for predicting which knockouts behave alike. The large oracle head-room (behavioural similarity IS there and IS shared) is NOT reachable from these annotations. WHAT THIS RULES IN/OUT: it rules OUT 'just engineer more annotation features' as the path to the oracle, and points to a richer REPRESENTATION -- learned gene embeddings, sequence/structure (ESM), or ultimately co-perturbation profiles (which is the oracle, i.e. you need measured neighbours). NEXUS/structural interaction magnitude can still enter as a feature here, but the bar is now explicit and high: it must beat 0.428, and annotation features already saturate near the graph, so it would have to add genuinely ORTHOGONAL behavioural signal. CAVEATS: modest test set (126 KOs); single-KO, within-one-cell-type, one steady-state-mRNA readout; says nothing about combinations, mutations, drugs, cross-cell-type, or a real cancer genotype."
+}

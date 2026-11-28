@@ -1,0 +1,90 @@
+{
+  "expressed": 7223,
+  "network": 16492,
+  "frac": 0.43796992481203006,
+  "ppi_edges": 191447,
+  "ppi_edges_expressed": 95829,
+  "steps": {
+    "FULL-S1": 0.4607439972258173,
+    "FULL-S2": 0.47728514640190683,
+    "FULL-S3": 0.4646160089719319,
+    "K562-S1": 0.4550801804355438,
+    "K562-S2": 0.4766230158757268,
+    "K562-S3": 0.4556635056480883,
+    "RAND-PRUNE-S1": 0.22228944104039425,
+    "RAND-PRUNE-S2": 0.22879656034277132,
+    "RAND-PRUNE-S3": 0.22338219723296734,
+    "DEG-PRUNE-S1": 0.3606297474017615,
+    "DEG-PRUNE-S2": 0.3670081996156915,
+    "DEG-PRUNE-S3": 0.3618999634634662,
+    "K562-EXPR-S1": 0.43637727264038634,
+    "K562-EXPR-S2": 0.438145200537015,
+    "K562-EXPR-S3": 0.4018981155393492,
+    "EXPR-SHUF-S1": 0.4513493507695881,
+    "EXPR-SHUF-S2": 0.4447418549452927,
+    "EXPR-SHUF-S3": 0.4277760782191955
+  },
+  "damped": {
+    "FULL-DAMP": {
+      "score": 0.48091964395446823,
+      "delta": 0.0,
+      "se": 0.0,
+      "verdict": "reference"
+    },
+    "K562-DAMP": {
+      "score": 0.4792453968736559,
+      "delta": -0.001674247080812236,
+      "se": 0.003891606330613394,
+      "verdict": "indistinguishable"
+    },
+    "RAND-PRUNE-DAMP": {
+      "score": 0.22211803570030705,
+      "delta": -0.25880160825416115,
+      "se": 0.013214835397426827,
+      "verdict": "WORSE"
+    },
+    "DEG-PRUNE-DAMP": {
+      "score": 0.3636369551681207,
+      "delta": -0.11728268878634744,
+      "se": 0.009982717338447362,
+      "verdict": "WORSE"
+    },
+    "K562-EXPR-DAMP": {
+      "score": 0.44174628515626374,
+      "delta": -0.03917335879820449,
+      "se": 0.0053397843258831,
+      "verdict": "WORSE"
+    },
+    "EXPR-SHUF-DAMP": {
+      "score": 0.4566992813420749,
+      "delta": -0.024220362612393298,
+      "se": 0.00558780666585168,
+      "verdict": "WORSE"
+    },
+    "TIDE": {
+      "score": 0.2670929329168468,
+      "delta": -0.2138267110376213,
+      "se": 0.011743133041188177,
+      "verdict": "WORSE"
+    }
+  },
+  "controls": {
+    "RAND-PRUNE-DAMP": {
+      "delta": 0.25712736117334895,
+      "se": 0.013400912277235907,
+      "verdict": "BETTER"
+    },
+    "DEG-PRUNE-DAMP": {
+      "delta": 0.11560844170553519,
+      "se": 0.010374590539369125,
+      "verdict": "BETTER"
+    }
+  },
+  "expr_shuffle": {
+    "delta": -0.014952996185811189,
+    "se": 0.00461900150652347,
+    "verdict": "WORSE"
+  },
+  "ko_not_expressed": 104,
+  "verdict": "A CELL-SPECIFIC MARKOV CHAIN: DELETE THE PROTEINS K562 DOES NOT MAKE. Of the 16,492 proteins in the generic PPI graph every previous chain in this repo has walked, only 7223 (43.8%) are expressed in K562, so 9269 nodes are ghosts and every path through one is fictional. Pruning them removes 95618 of 191447 PPI edges. THE MEMORYLESS CHAIN IS ALSO REPORTED STEP BY STEP for the first time here -- every previous number blended the steps into a damped sum, which hides whether one step carries everything. Step alone, on the full graph: S1 0.4607, S2 0.4773, S3 0.4646; on the K562 graph: S1 0.4551, S2 0.4766, S3 0.4557. The best single step anywhere is FULL-S2 at 0.4773, against the damped incumbent's 0.4809. THE HEADLINE: K562-pruned scores 0.4792 against the full graph's 0.4809, -0.0017 +/- 0.0039 (indistinguishable). AND THE REASON THE NULL IS A NULL IS MEASURED, NOT GUESSED: on the UNPRUNED graph the walk already puts 77.3% / 76.8% / 73.3% of its mass on expressed nodes at steps 1/2/3, against 43.8% if mass were spread uniformly over nodes -- and the knockout seeds are themselves 92.6% expressed. The chain was ALREADY effectively confined to the protein K562 makes, so deleting the ghosts is free but cannot add anything. That is a much more useful statement than 'expression does not matter', which is what the flat delta on its own would suggest. AND THE BIOLOGY IS WHAT DOES IT, not the shrinking: against a uniformly random prune to the SAME node count it is +0.2571 (BETTER), and against a random prune MATCHED ON THE DEGREE DISTRIBUTION -- the control that matters, because expressed genes are better studied and therefore higher-degree -- it is +0.1156 (BETTER). Weighting transitions by the target's abundance gives 0.4417, and against the same graph with expression values SHUFFLED across surviving genes that is -0.0150 (WORSE). WHAT THIS CANNOT SAY: 'expressed' is defined by presence in the K562 Perturb-seq panel, which conflates 'not expressed' with 'not measured', and the panel is itself an expression-based selection, so the criterion is circular to an unknown degree. 104 of 1400 knockouts are not in the expressed set and get an all-zero score row in the pruned arms. Five splits of one cell line, one pre-registered config grid, neighbour pool = every non-test knockout."
+}

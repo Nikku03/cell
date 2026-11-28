@@ -1,0 +1,157 @@
+{
+ "test": "fetch_gaps",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/_mathieson2018.json",
+    "bytes": 486479,
+    "hash": "f54c8c875686c40e",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/itzhak_supp1.xlsx",
+    "bytes": 1653563,
+    "hash": "ce542f6561706a9a",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/AvgKdegs_genes_v1.csv",
+    "bytes": 24937650,
+    "hash": "a2ada15037c16822",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/dlkcat.json",
+    "bytes": 11671479,
+    "hash": "7dd69e66772febcf",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/omnipath_collectri.tsv",
+    "bytes": 17163512,
+    "hash": "bd7ab4cfc6169b0c",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/omnipath_dorothea.tsv",
+    "bytes": 5368035,
+    "hash": "96bfc2101a4a77c3",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/omnipath_tf_target.tsv",
+    "bytes": 11320675,
+    "hash": "4748e554720ff50a",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 16492,
+   "used": 5595,
+   "selection": "filtered",
+   "fraction": 0.3392553965559059
+  },
+  "seed": null,
+  "controls": [
+   "the existing signed network as the baseline gap 2 had to beat",
+   "both ends required to be model genes, stated as the filter",
+   "exact sequence match rather than name matching for DLKcat",
+   "same protein AND same substrate for the true replicate floor",
+   "the current state vector as the baseline gap 1 had to beat"
+  ],
+  "note": "recorded as a module because a fetch that failed is worth as much as one that worked, and gap 2's negative is written down nowhere else",
+  "warnings": [
+   "no seed recorded -- a rerun is not guaranteed to be the same experiment"
+  ]
+ },
+ "gap1": {
+  "current": 4190,
+  "mathieson": 8804,
+  "itzhak": 8469,
+  "kdeg_hela": 9967,
+  "protein_state_human": 5595,
+  "gained": 2607,
+  "same_cell_line": 6807
+ },
+ "gap2": {
+  "per_source": {
+   "collectri": 45507,
+   "dorothea": 6649,
+   "tf_target": 13791
+  },
+  "union": 47613,
+  "regulators": 1336,
+  "targets": 6799,
+  "existing": 54128,
+  "ratio": 0.8796371563700858,
+  "state_reach": 0.38138424821002387,
+  "helped": false
+ },
+ "gap3": {
+  "human_records": 2439,
+  "mapped": 1256,
+  "genes": 342,
+  "in_model": 289,
+  "true_floor_median": 1.1488549618320612,
+  "true_floor_75th": 1.758241758241758,
+  "n_replicate_pairs": 49,
+  "n_replicate_values": 101
+ },
+ "seconds": 4.79977560043335,
+ "log": [
+  "====================================================================================================",
+  "  THE THREE BOTTLENECKS, FETCHED AGAINST",
+  "====================================================================================================",
+  "",
+  "GAP 1 -- DYNAMICS COVERAGE",
+  "     current state vector (Schwanhausser, all four)    4,190",
+  "     Mathieson 2018 protein half-lives, human          8,804",
+  "     Itzhak 2016 protein copies, HeLa                  8,469",
+  "     AvgKdegs mRNA half-lives, HeLa                    9,967",
+  "     -> protein-side state, human                      5,595   (+1,405 against the current)",
+  "     -> genes gained outright                          2,607",
+  "     -> HeLa mRNA half-life AND HeLa protein copies    6,807   SAME CELL LINE",
+  "     STILL MISSING: absolute mRNA COPY numbers in HeLa -- the one cross-species borrow left",
+  "",
+  "GAP 2 -- SIGNED REGULATORY EDGES",
+  "     collectri     45,507 signed edges with both ends in the model",
+  "     dorothea       6,649 signed edges with both ends in the model",
+  "     tf_target     13,791 signed edges with both ends in the model",
+  "     UNION        47,613 edges, 1,336 regulators, 6,799 targets",
+  "     existing     54,128 edges",
+  "     ratio          0.88x  -- FEWER, not more",
+  "     state genes reached 38.1% against the current 42.9%",
+  "     THIS FETCH DID NOT HELP by the measure that motivated it. What it does not settle:",
+  "     whether CollecTRI's signs are BETTER. Loop 120 found the existing signs carry no",
+  "     information at all -- real 0.5465 against shuffled 0.5494 -- so edge COUNT was",
+  "     never the binding problem, and re-running loop 120's protocol on CollecTRI is the",
+  "     follow-up this points at.",
+  "",
+  "GAP 3 -- KINETICS VALIDATION",
+  "     DLKcat human records                            2,439",
+  "     mapped to a gene by EXACT sequence match        1,256   over 342 genes",
+  "     of those, in the model                            289",
+  "     validation set: 70 -> 289, a 4.1x expansion",
+  "",
+  "     AND A CORRECTION TO LOOP 127. It put the experimental noise floor at 2.85x from",
+  "     leave-one-out WITHIN AN EC -- but an EC class holds many enzymes and substrates, so",
+  "     that is enzyme-to-enzyme variation, not reproducibility. Same protein AND same",
+  "     substrate gives true replicates:",
+  "       49 protein-substrate pairs measured more than once, 101 values",
+  "       TRUE experimental floor: median 1.15x  (75th 1.76x)",
+  "     So 4x is roughly 3x LOOSER than what can actually be",
+  "     measured. Loop 127's threshold survives but for the opposite reason to the one",
+  "     given, and a tighter filter is available.",
+  "",
+  "====================================================================================================",
+  "  TWO OF THREE FETCHES DELIVERED",
+  "====================================================================================================",
+  "  gap 1 dynamics   +2,607 genes on the protein side, and 6,807 same-cell-line pairs",
+  "  gap 2 signing    NO GAIN -- 47,613 against 54,128 existing (0.88x)",
+  "  gap 3 kinetics   validation 70 -> 289, and the true noise floor is 1.15x not 2.85x",
+  "====================================================================================================",
+  "    manifest: 7 inputs, coverage 5595/16492 (33.9%) by 'filtered', seed None, controls 5",
+  "      WARN no seed recorded -- a rerun is not guaranteed to be the same experiment"
+ ]
+}

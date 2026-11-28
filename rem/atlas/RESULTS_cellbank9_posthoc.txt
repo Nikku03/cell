@@ -1,0 +1,24 @@
+=================================================================================================
+CELLBANK9 POST HOC -- each source alone vs predicting the mean response (DEV genes, descriptive)
+=================================================================================================
+  baseline 'mean TRAIN response' on all DEV genes: median r +0.056  (M2: see RESULTS_cellbank9_dev.txt)
+  source (alone)                     DEV genes  median r  mean-baseline r  median gain  beats mean
+  analog transfer (in M2)                 1190    +0.236           +0.056       +0.147         87%
+  interaction partners (in M2)             662    +0.119           +0.036       +0.076         65%
+  co-essential genes (in M2)              1171    +0.137           +0.056       +0.075         70%
+  Tahoe neighbours (new)                    41    +0.138           +0.090       +0.084         71%
+  Geneformer neighbours (new)             1170    +0.090           +0.058       +0.041         65%
+  ARCHS4 neighbours (new)                 1175    +0.130           +0.056       +0.078         74%
+  RPE1 record alone                        457    +0.254           +0.004       +0.225         86%
+  HepG2 record alone                       438    +0.262           +0.002       +0.230         87%
+  Jurkat record alone                      469    +0.291           +0.001       +0.270         88%
+  HCT116 record alone                     1117    +0.167           +0.059       +0.106         77%
+  HEK293T record alone                    1123    +0.176           +0.059       +0.112         79%
+  iPSC-N record alone                     1007    +0.080           +0.061       +0.031         57%
+  iPSC-Fsf record alone                    324    +0.093           +0.003       +0.090         69%
+  iPSC-Fsnf record alone                   292    +0.023           +0.079       -0.038         41%
+  iPSC-Fts record alone                     69    +0.165           -0.020       +0.134         78%
+  hESC-P record alone                      520    +0.160           +0.010       +0.150         78%
+  hESC-V record alone                       43    +0.181           +0.067       +0.096         74%
+  LINCS-sh record alone (new)              386    +0.033           +0.053       +0.003         51%
+  LINCS-xpr record alone (new)             315    +0.035           +0.054       -0.006         48%

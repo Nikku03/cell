@@ -1,0 +1,75 @@
+{
+ "n_ref_kos": 2058,
+ "K562deep_vs_gwps (same cell line)": {
+  "comparison": "K562deep_vs_gwps",
+  "n_shared_KOs_scored": 1208,
+  "median_spearman_zprofiles": 0.323,
+  "ALL": {
+   "n": 1208,
+   "median_spearman": 0.323,
+   "mover_replication_pct": 34.7,
+   "chance_pct": 0.28,
+   "lift_over_chance": 122.7,
+   "far_replication_pct": 34.7,
+   "near_replication_pct": 57.1,
+   "mean_top20_overlap_of20": 8.0
+  },
+  "STRONG": {
+   "n": 197,
+   "median_spearman": 0.53,
+   "mover_replication_pct": 33.5,
+   "chance_pct": 1.05,
+   "lift_over_chance": 32.0,
+   "far_replication_pct": 33.5,
+   "near_replication_pct": 66.7,
+   "mean_top20_overlap_of20": 9.4
+  },
+  "WEAK": {
+   "n": 734,
+   "median_spearman": 0.251,
+   "mover_replication_pct": 39.1,
+   "chance_pct": 0.07,
+   "lift_over_chance": 551.4,
+   "far_replication_pct": 39.1,
+   "near_replication_pct": 0.0,
+   "mean_top20_overlap_of20": 7.2
+  }
+ },
+ "K562deep_vs_HCT116 (cross cell line)": {
+  "comparison": "K562deep_vs_HCT116",
+  "n_shared_KOs_scored": 1063,
+  "median_spearman_zprofiles": 0.132,
+  "ALL": {
+   "n": 1063,
+   "median_spearman": 0.132,
+   "mover_replication_pct": 0.2,
+   "chance_pct": 0.0,
+   "lift_over_chance": 168.2,
+   "far_replication_pct": 0.2,
+   "near_replication_pct": 0.0,
+   "mean_top20_overlap_of20": 2.1
+  },
+  "STRONG": {
+   "n": 125,
+   "median_spearman": 0.281,
+   "mover_replication_pct": 0.1,
+   "chance_pct": 0.0,
+   "lift_over_chance": 38.8,
+   "far_replication_pct": 0.1,
+   "near_replication_pct": 0.0,
+   "mean_top20_overlap_of20": 2.0
+  },
+  "WEAK": {
+   "n": 714,
+   "median_spearman": 0.075,
+   "mover_replication_pct": 0.5,
+   "chance_pct": 0.0,
+   "lift_over_chance": 974.4,
+   "far_replication_pct": 0.5,
+   "near_replication_pct": 0.0,
+   "mean_top20_overlap_of20": 2.1
+  }
+ },
+ "verdict": "REPRODUCIBILITY across independent perturb-seq datasets -- the decisive test of whether the far-field 'wall' is real signal our features miss, or irreproducible noise. Metric honesty: |z|>1 mover% and its fold-over-chance are THRESHOLD/scale sensitive across datasets (HCT116 z is compressed -- almost nothing clears |z|>1, so its chance rate ~0 and both the mover% and the lift are unreliable cross-dataset); the fair, rank-based metrics are the z-profile Spearman and the top-20 mover overlap, so I lead with those. SAME CELL LINE (K562 deep vs genome-wide gwps, 1208 shared KOs): median profile Spearman 0.323, and of the 20 biggest movers 8.0/20 recur in the second experiment. STRONG knockouts reproduce well (Spearman 0.53, 9.4/20 top movers) and -- importantly -- WEAK knockouts STILL reproduce meaningfully within the cell line (Spearman 0.251, 7.2/20). CROSS CELL LINE (K562 vs HCT116 colon, 1063 shared KOs): everything roughly halves -- Spearman 0.132 (STRONG 0.281, WEAK 0.075), top-20 overlap 2.1/20. INTERPRETATION -- a genuine, two-sided refinement of the wall, and it CORRECTS a assumption. (1) The specific movers (including far-field, including weak knockouts) ARE reproducible signal WITHIN a cell line -- 7/20 of a weak knockout's top movers recur in an independent experiment, Spearman 0.25, far above chance. So the far-field is NOT pure noise, and the 1.06x graph-prediction 'wall' is largely a FEATURE/MODEL gap (our PPI/regulon graph doesn't encode the paths that generate the reproducible response), not a noise floor. That is more hopeful than the pure-chaos framing. (2) BUT much of the reproducibility is the GENERIC TIDE -- the same usual-suspect stress genes recur -- and the graded Spearman is still only ~0.32, so identities/magnitudes are only weakly pinned even where the mover-SET overlaps. (3) The response is strongly CELL-TYPE-SPECIFIC: K562->HCT116 halves reproducibility (Spearman 0.32->0.13; top-20 8->2), and for weak knockouts cross-line it hits the floor (Spearman 0.075) -- their specific movers are largely context-specific. NET, answering 'why not use the other datasets': absolutely use them, for what they genuinely add -- (a) they PROVE the response (even weak-KO far-field) is reproducible real biology within cell line, relocating the wall from 'noise' to 'missing features' (a harder but more honest target -- and note the obvious features, paralogs and graph propagation, already failed); (b) they QUANTIFY cell-type specificity (~half the signal is K562-specific), which is exactly the conditioning a cross-line model needs; (c) they make the near-field + generic tide more trustworthy to fold in. What they do NOT do is hand us a reproducible weak-KO far-field that transfers ACROSS cell lines -- that is close to the floor. Multi-dataset data reframes the wall and enables cell-type conditioning; it does not by itself breach the far field.",
+ "note": "REPRODUCIBILITY across independent perturb-seq datasets -- the decisive test of whether the far-field 'wall' is real signal our features miss, or irreproducible noise. Metric honesty: |z|>1 mover% and its fold-over-chance are THRESHOLD/scale sensitive across datasets (HCT116 z is compressed -- almost nothing clears |z|>1, so its chance rate ~0 and both the mover% and the lift are unreliable cross-dataset); the fair, rank-based metrics are the z-profile Spearman and the top-20 mover overlap, so I lead with those. SAME CELL LINE (K562 deep vs genome-wide gwps, 1208 shared KOs): median profile Spearman 0.323, and of the 20 biggest movers 8.0/20 recur in the second experiment. STRONG knockouts reproduce well (Spearman 0.53, 9.4/20 top movers) and -- importantly -- WEAK knockouts STILL reproduce meaningfully within the cell line (Spearman 0.251, 7.2/20). CROSS CELL LINE (K562 vs HCT116 colon, 1063 shared KOs): everything roughly halves -- Spearman 0.132 (STRONG 0.281, WEAK 0.075), top-20 overlap 2.1/20. INTERPRETATION -- a genuine, two-sided refinement of the wall, and it CORRECTS a assumption. (1) The specific movers (including far-field, including weak knockouts) ARE reproducible signal WITHIN a cell line -- 7/20 of a weak knockout's top movers recur in an independent experiment, Spearman 0.25, far above chance. So the far-field is NOT pure noise, and the 1.06x graph-prediction 'wall' is largely a FEATURE/MODEL gap (our PPI/regulon graph doesn't encode the paths that generate the reproducible response), not a noise floor. That is more hopeful than the pure-chaos framing. (2) BUT much of the reproducibility is the GENERIC TIDE -- the same usual-suspect stress genes recur -- and the graded Spearman is still only ~0.32, so identities/magnitudes are only weakly pinned even where the mover-SET overlaps. (3) The response is strongly CELL-TYPE-SPECIFIC: K562->HCT116 halves reproducibility (Spearman 0.32->0.13; top-20 8->2), and for weak knockouts cross-line it hits the floor (Spearman 0.075) -- their specific movers are largely context-specific. NET, answering 'why not use the other datasets': absolutely use them, for what they genuinely add -- (a) they PROVE the response (even weak-KO far-field) is reproducible real biology within cell line, relocating the wall from 'noise' to 'missing features' (a harder but more honest target -- and note the obvious features, paralogs and graph propagation, already failed); (b) they QUANTIFY cell-type specificity (~half the signal is K562-specific), which is exactly the conditioning a cross-line model needs; (c) they make the near-field + generic tide more trustworthy to fold in. What they do NOT do is hand us a reproducible weak-KO far-field that transfers ACROSS cell lines -- that is close to the floor. Multi-dataset data reframes the wall and enables cell-type conditioning; it does not by itself breach the far field."
+}

@@ -1,0 +1,82 @@
+=================================================================================================
+HOW ACCURATE IS backpoly's FULL-TAIL ESTIMATE?
+=================================================================================================
+  The reversal argument needs the estimate to distinguish 2.17 orders from 5.08, a margin of 2.91 orders. Everything below is measured against that.
+
+=================================================================================================
+H0  THE CEILING GATE: IS IT STABLE TO CHOICES THAT SHOULD NOT MATTER?
+=================================================================================================
+  10 controllers, 1024 states, L = 6. sha 9b909319ccc8.
+
+     degree  points/coef   seed            tail      log10
+          2            3      7    1.563532e-95   -94.8059
+          2            3    101    1.562022e-95   -94.8063
+          2            3 20260909    1.568618e-95   -94.8045
+          2            4      7    1.566277e-95   -94.8051
+          2            4    101    1.562468e-95   -94.8062
+          2            4 20260909    1.568261e-95   -94.8046
+          2            6      7    1.567952e-95   -94.8047
+          2            6    101    1.565708e-95   -94.8053
+          2            6 20260909    1.568512e-95   -94.8045
+          3            4      7    1.603289e-95   -94.7950
+          3            4    101    1.602047e-95   -94.7953
+
+    degree 2: spread across choices = 0.0018 orders
+
+    degree 3: spread across choices = 0.0003 orders
+
+  H0: worst spread 0.0018 orders against the 2.91-order margin -- STABLE, the arbitrary choices do not move the answer.
+
+=================================================================================================
+H1  CONVERGENCE IN DEGREE, AT THE ENGINE'S WIDTH
+=================================================================================================
+  Two adjacent degrees agreeing is not convergence. The successive changes must SHRINK.
+
+     degree  coefficients            tail   change, orders   seconds
+          1            11    3.690152e-95                        0.3
+          2            66    1.566277e-95          -0.3722       3.2
+          3           286    1.603289e-95          +0.0101      42.9
+          4          1001    1.612735e-95          +0.0026     361.2
+
+    successive changes: 0.3722, 0.0101, 0.0026
+  H1: the changes SHRINK -- converged.
+
+=================================================================================================
+H2  THE ERROR LAW IN WIDTH AND DEPTH, AGAINST EXACT ENUMERATION
+=================================================================================================
+
+     nCtrl   L        paths           exact       poly deg3  err, orders   sign
+         3   3        4,096    6.973226e-99    6.607133e-99       0.0234      -
+         3   4       32,768    5.977817e-99    5.293203e-99       0.0528      -
+         3   5      262,144    5.363614e-99    4.706899e-99       0.0567      -
+         4   3       65,536   1.503368e-102   1.423952e-102       0.0236      -
+         4   4    1,048,576   1.187971e-102   1.080006e-102       0.0414      -
+         5   3    1,048,576    1.173530e-97    1.271985e-97       0.0350      +
+
+    log10|error| = -2.357 + 0.049*nCtrl + 0.203*L      R^2 = 0.805
+
+    extrapolated to 10 controllers and L = 6: 0.2203 orders, 2-sigma interval [0.1617, 0.3003]
+
+  H2 AS PREDECLARED: the interval's upper end is 0.3003 orders against the 2.91-order margin.
+  IT STAYS FAR BELOW, so the reversal is supported by the error law.
+  The fit spans nCtrl 3 to 5 and L 3 to 5, and the engine sits at 10 and 6 -- five
+  controllers beyond the widest point. This is an extrapolation, and its whole purpose is
+  to say whether the margin is reached, not to predict a value.
+
+=================================================================================================
+H3  THE DIRECTION OF THE ERROR, WHICH THE ARGUMENT IS SENSITIVE TO
+=================================================================================================
+  signs at the 6 measured points: - - - - - +
+
+  H3: the sign is mixed -- no consistent bias.
+
+=================================================================================================
+H4  THE HONEST NUMBER
+=================================================================================================
+  engine-width estimate: 1.6127e-95, stable to 0.0018 orders across collocation
+  choices, with an extrapolated error interval of up to 0.3003 orders.
+
+  implied remaining pruning rise: 2.18 orders, +/- 0.30 from the error law
+  the class map's ladder, which it must not reach for the reversal to hold: 5.08
+
+  So the pruning error is 1.88 to 2.48 orders -- entirely below the class ladder, and the reversal holds.

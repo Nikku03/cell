@@ -1,0 +1,193 @@
+{
+ "panel": [
+  {
+   "ko": "GATA1",
+   "n_movers": 68,
+   "top10": [
+    [
+     "PRG2",
+     false,
+     ""
+    ],
+    [
+     "ALAS2",
+     false,
+     ""
+    ],
+    [
+     "GYPB",
+     false,
+     ""
+    ],
+    [
+     "GP1BB",
+     false,
+     ""
+    ],
+    [
+     "HEMGN",
+     false,
+     ""
+    ],
+    [
+     "DPYSL2",
+     true,
+     "up"
+    ],
+    [
+     "LTBP4",
+     false,
+     ""
+    ],
+    [
+     "BST2",
+     true,
+     "up"
+    ],
+    [
+     "TAL1",
+     false,
+     ""
+    ],
+    [
+     "EPOR",
+     false,
+     ""
+    ]
+   ],
+   "hits": 2
+  },
+  {
+   "ko": "RIPOR1",
+   "n_movers": 78,
+   "top10": [
+    [
+     "PRG2",
+     true,
+     "up"
+    ],
+    [
+     "FTH1",
+     true,
+     "up"
+    ],
+    [
+     "MT-ATP6",
+     false,
+     ""
+    ],
+    [
+     "TPT1",
+     false,
+     ""
+    ],
+    [
+     "MT-CO3",
+     false,
+     ""
+    ],
+    [
+     "MALAT1",
+     true,
+     "up"
+    ],
+    [
+     "MT-CO2",
+     false,
+     ""
+    ],
+    [
+     "ALAS2",
+     false,
+     ""
+    ],
+    [
+     "CPXM1",
+     false,
+     ""
+    ],
+    [
+     "MT-ND4",
+     false,
+     ""
+    ]
+   ],
+   "hits": 3
+  },
+  {
+   "ko": "EIF2S1",
+   "n_movers": 14,
+   "top10": [
+    [
+     "APOE",
+     false,
+     ""
+    ],
+    [
+     "TRIB3",
+     false,
+     ""
+    ],
+    [
+     "HSPA5",
+     false,
+     ""
+    ],
+    [
+     "SIRT2",
+     false,
+     ""
+    ],
+    [
+     "DDIT4",
+     false,
+     ""
+    ],
+    [
+     "SIRT1",
+     false,
+     ""
+    ],
+    [
+     "ATG5",
+     false,
+     ""
+    ],
+    [
+     "VEGFA",
+     false,
+     ""
+    ],
+    [
+     "NDC80",
+     false,
+     ""
+    ],
+    [
+     "ATF3",
+     false,
+     ""
+    ]
+   ],
+   "hits": 0
+  }
+ ],
+ "aggregate": {
+  "n_knockouts": 237,
+  "full_stack": {
+   "avg_hits_per10": 1.0,
+   "median": 1,
+   "pct_ge1": 56.0,
+   "best": 7
+  },
+  "prior_only": {
+   "avg_hits_per10": 1.07,
+   "median": 1,
+   "pct_ge1": 60.0,
+   "best": 7
+  }
+ },
+ "mech_adds": -0.06,
+ "verdict": "FULL-STACK FORWARD TEST, 237 knockouts, no cherry-picking. Out of 10 predictions the full stack gets 1.0/10 right on average (median 1, best case 7/10, 56% of knockouts get at least one). The mechanism layer (curated regulon + the CellOS-2.0 signaling->TF bridge) adds -0.06 hits/10 over the generic responsiveness prior alone (1.07/10) -- so almost all of the (small) accuracy is the generic prior betting on genes that move under many knockouts, not knockout-specific mechanism. This is the wall made concrete: the system reliably surfaces ~1 usual-suspect mover in its top 10 and, for the best-powered knockouts, up to a handful; it does NOT reconstruct which specific genes an arbitrary knockout hits. Honest ceiling, honestly reported.",
+ "note": "Full-stack forward test: for each knockout, rank genes by mechanism (curated regulon tier, then CellOS-2.0 signaling->terminal-TF->regulon bridge tier) backed off to the leave-one-out responsiveness prior, emit top-10, and count how many actually move in K562 Perturb-seq. RESULT (honest, all knockouts, no cherry-pick): full stack ~1.0/10 avg (median 1, best 7/10); mechanism adds only -0.06 hits/10 over the generic prior -- the accuracy is almost entirely the generic prior (usual-suspect movers), not knockout-specific transmission. Concrete demonstration of the far-field wall: reliably ~1 correct in 10 (a generic mover), up to a few for the strongest knockouts, and specific mechanism does not lift the absolute count. Panel (GATA1 + best-powered + top TF-KO + top bridge-KO) shows the per-KO top-10."
+}

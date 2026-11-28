@@ -1,0 +1,131 @@
+{
+ "test": "signed directed OmniPath vs unsigned BioGRID on K562 Perturb-seq",
+ "coverage": {
+  "usable_rows": 4210,
+  "signed_ge5": 982,
+  "genes": 8175
+ },
+ "direction": {
+  "activating": [
+   -0.005706888660551027,
+   0.0019116864297527602,
+   -2.9852639908570695
+  ],
+  "inhibiting": [
+   0.0014886878975211616,
+   0.0026254267404484384,
+   0.5670270187264432
+  ],
+  "gap": 0.007195576558072189
+ },
+ "arms": {
+  "C1_BIOGRID": 0.05243140230826019,
+  "C2_OP_UNSIGNED": 0.0526622690692515,
+  "C3_OP_SIGNED": 0.05347468356848521,
+  "C4_OP_SIGNED_2HOP": 0.0508172639800354,
+  "C5_SIGNED_RIDGE": 0.04935004636636675,
+  "C0_MEAN": 0.0,
+  "C6_SIGNED_GCN": 0.05368361268954572
+ },
+ "Q3": {
+  "delta": 5.98824049019609e-05,
+  "se": 0.00010760330152390511,
+  "z": 0.5565108510044875
+ },
+ "Q4": {
+  "delta": 0.000309044281019867,
+  "se": 0.00014402757153734143,
+  "z": 2.1457299996184576
+ },
+ "Q6": {
+  "real": 0.05347468356848521,
+  "reversed": 0.05460914988114909,
+  "fraction": 1.0212150168445777
+ },
+ "Q7": {
+  "delta": 0.004333566323178965,
+  "se": 0.00027113603728620147,
+  "z": 15.982996456515325
+ },
+ "gates": {
+  "Q1": true,
+  "Q2": true,
+  "Q3": false,
+  "Q4": false,
+  "Q5": false,
+  "Q6": false,
+  "Q7": false
+ },
+ "void": [
+  "Q5"
+ ],
+ "seconds": 519.6012759208679,
+ "log": [
+  "========================================================================================================",
+  "LOOP 242 -- SIGNED DIRECTED EDGES, AGAINST THE UNSIGNED GRAPH EVERY EARLIER LOOP USED",
+  "========================================================================================================",
+  "     The sign is real and small: the pre-loop probe measured activating targets at",
+  "     -0.0055 +/- 0.0022 and inhibiting at +0.0028 +/- 0.0036. Bars below are set",
+  "     against 0.008, not against the 0.02 used in loops 240-241 on a different quantity.",
+  "     screened: 8,175 of 8,248 genes finite in every row, 11,258 of 11,258 rows finite across them",
+  "     OmniPath: 812,087 directed, 98,287 activating, 32,294 inhibiting",
+  "     BioGRID:  1,780,204 undirected entries",
+  "     propagation universe: 42,014 nodes",
+  "     4,210 screened rows have a perturbed gene with outgoing directed edges",
+  "Q1 IS THERE ENOUGH SIGNED STRUCTURE TOUCHING THE READOUT TO TEST ANYTHING?",
+  "     perturbations with 5 or more SIGNED targets among the 8,175 screened genes: 982",
+  "     Q1 PASS -- 982 perturbations carry 5 or more signed measured targets",
+  "Q2 DOES THE SIGN PREDICT THE DIRECTION OF THE CHANGE?",
+  "     ACTIVATING  n= 787  targets +0.0006 vs the same genes under other knockdowns +0.0063   paired -0.0057 +/- 0.0019 (-3.0 se)",
+  "     INHIBITING  n= 274  targets +0.0103 vs the same genes under other knockdowns +0.0088   paired +0.0015 +/- 0.0026 (+0.6 se)",
+  "     gap (inhibiting minus activating) +0.0072; the prediction requires it POSITIVE",
+  "     and requires the activating arm at or below -2 se, which is the half that",
+  "     stops a gap built from two indistinguishable numbers counting as evidence",
+  "     Q2 PASS -- gap +0.0072 with the activating arm at -3.0 se",
+  "     3,838 distinct perturbed genes enter the held-out comparison",
+  "     fitting ...",
+  "     arm scores, correlation across the screened genes, held out by perturbation:",
+  "       C0_MEAN              +0.0000  (sd 0.0000)",
+  "       C1_BIOGRID           +0.0524  (sd 0.0524)",
+  "       C2_OP_UNSIGNED       +0.0527  (sd 0.0521)",
+  "       C3_OP_SIGNED         +0.0535  (sd 0.0519)",
+  "       C4_OP_SIGNED_2HOP    +0.0508  (sd 0.0502)",
+  "       C5_SIGNED_RIDGE      +0.0494  (sd 0.0503)",
+  "       C6_SIGNED_GCN        +0.0537  (sd 0.0507)",
+  "Q3 DOES SIGN BEAT NO SIGN?",
+  "     C3_OP_SIGNED +0.0535 vs C2_OP_UNSIGNED +0.0527 -- SAME edges, sign kept or discarded",
+  "     paired +0.0001 +/- 0.0001  (+0.6 se)",
+  "     Q3 FAIL -- keeping the sign is worth +0.0001 (+0.6 se) against a 0.005 bar at 3.0 se",
+  "Q4 DOES DIRECTION BEAT AN UNDIRECTED GRAPH?",
+  "     C2_OP_UNSIGNED +0.0527 vs C1_BIOGRID +0.0524   paired +0.0003 +/- 0.0001 (+2.1 se)",
+  "     Q4 FAIL -- direction is worth +0.0003 (+2.1 se)",
+  "Q5 CONTROL: PERMUTED SIGNS",
+  "     Q5 VOID -- Q3 did not pass, so there is nothing here to test",
+  "Q6 CONTROL: REVERSED EDGES",
+  "     every arrow reversed: C3 over C0 falls from +0.0535 to +0.0546  (102%)",
+  "     Q6 FAIL -- 102% survives with every arrow reversed; the graph is acting as an undirected similarity and the arrows are decorative",
+  "Q7 DID THE NETWORK HELP, OR THE FEATURES?",
+  "     C6_SIGNED_GCN +0.0537 vs C5_SIGNED_RIDGE +0.0494   paired +0.0043 +/- 0.0003 (+16.0 se)",
+  "     loop 241 measured its two MLPs LOSING to their linear twins by -0.0155 and -0.0170",
+  "     Q7 FAIL -- the signed network adds +0.0043 over its linear twin, against a 0.005 bar",
+  "Q8 WHAT THIS CANNOT SHOW",
+  "     OmniPath is a literature aggregation: coverage tracks how much a gene has been",
+  "     published on, so a coverage-driven result can look like a mechanism.",
+  "     The readout is CRISPRi in K562 at one timepoint. Two hops of propagation may not",
+  "     have happened by then, which would penalise C4 for assay timing, not structure.",
+  "     An OmniPath sign is a consensus across sources and contexts. This tests the",
+  "     consensus sign, not a K562-specific sign.",
+  "     8,175 of 8,248 genes and 8,917 of 11,258 rows survive screening; nothing here",
+  "     speaks for what was dropped.",
+  "========================================================================================================",
+  "  Q1  PASS",
+  "  Q2  PASS",
+  "  Q3  FAIL",
+  "  Q4  FAIL",
+  "  Q5  VOID",
+  "  Q6  FAIL",
+  "  Q7  FAIL",
+  "  2/6   [520s]   (1 VOID: Q5)",
+  "========================================================================================================"
+ ]
+}

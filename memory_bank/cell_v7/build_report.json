@@ -1,0 +1,22 @@
+{
+ "genes_with_profile": 1882,
+ "knocked_down_genes_with_profile": 509,
+ "test_genes_with_profile": 271,
+ "genes_with_patient_adverse_events": 713,
+ "width": 67,
+ "toxicity_classes": [
+  "cardiotoxicity",
+  "hepatotoxicity",
+  "neurotoxicity",
+  "carcinogenicity",
+  "hematological toxicity",
+  "immune system toxicity",
+  "dermatological toxicity",
+  "vascular toxicity",
+  "respiratory toxicity",
+  "psychiatric toxicity",
+  "misuse",
+  "teratogenicity"
+ ],
+ "seconds": 114.03594326972961
+}

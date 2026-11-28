@@ -1,0 +1,57 @@
+=================================================================================================
+SKILL-MATCHED: EVERY MEMORY PROBED AT THE MICE'S PLAIN-TRIAL ACCURACY (0.824)
+=================================================================================================
+  M1 harness: committing latch COMMITS, pure latch NO COMMITMENT -> PASS
+  M0 same networks as memcommit (steps and accuracy identical, 60/60): PASS
+
+=================================================================================================
+REGIME A: ZERO-SHOT -- probed at calibrated noise
+=================================================================================================
+                                    none   -3.8 Full   -3.8 Mini   -2.5 Mini   -1.6 Full   -1.6 Mini   -0.8 Full   -0.8 Mini
+    MOUSE                          0.186       0.610       0.214       0.337       0.578       0.317       0.322       0.179
+    tanh (10/10 calibrated)        0.209       0.414       0.274       0.434       0.583       0.308       0.318       0.198
+    channel (10/10 calibrated)       0.314       0.964       0.516       0.524       0.950       0.479       0.736       0.385
+    bump (10/10 calibrated)        0.218       0.392       0.249       0.424       0.325       0.228       0.241       0.214
+
+  C1 COMMITMENT INDEX (mouse +0.256); noise sd needed to reach 0.824
+    tanh     sd 0.31  index +0.266 (positive 9/10)  early fooling +0.375  MAE to mouse 0.158  -> COMMITS
+    channel  sd 0.41  index +0.213 (positive 10/10)  early fooling +0.636  MAE to mouse 0.202  -> COMMITS
+    bump     sd 0.45  index +0.084 (positive 7/10)  early fooling +0.107  MAE to mouse 0.162  -> NO COMMITMENT
+
+  C2 CLOSER TO THE MOUSE? (paired per seed, >= 9/10)
+    channel vs bump: channel closer on 2/10, mean MAE diff +0.040 -> NO CLEAR DIFFERENCE
+    channel vs tanh: channel closer on 4/10, mean MAE diff +0.043 -> NO CLEAR DIFFERENCE
+    bump vs tanh: bump closer on 5/10, mean MAE diff +0.003 -> NO CLEAR DIFFERENCE
+
+  fine fooling curve, Full pulse (seconds before go):
+                 4.0   3.8   3.6   3.4   3.2   3.0   2.8   2.6   2.4   2.2   2.0   1.8   1.6   1.4   1.2   1.0   0.8   0.6   0.4
+    tanh       +0.17 +0.20 +0.26 +0.33 +0.41 +0.51 +0.59 +0.63 +0.62 +0.60 +0.55 +0.45 +0.37 +0.31 +0.25 +0.18 +0.11 +0.02 -0.03
+    channel    +0.65 +0.65 +0.65 +0.65 +0.65 +0.64 +0.65 +0.65 +0.65 +0.64 +0.64 +0.64 +0.63 +0.62 +0.60 +0.52 +0.42 +0.28 +0.14
+    bump       +0.29 +0.17 +0.11 +0.15 +0.24 +0.40 +0.57 +0.65 +0.62 +0.51 +0.33 +0.19 +0.10 +0.06 +0.04 +0.02 +0.01 +0.01 +0.00
+
+=================================================================================================
+REGIME B: MOUSE TRIAL MIX -- probed at calibrated noise
+=================================================================================================
+                                    none   -3.8 Full   -3.8 Mini   -2.5 Mini   -1.6 Full   -1.6 Mini   -0.8 Full   -0.8 Mini
+    MOUSE                          0.186       0.610       0.214       0.337       0.578       0.317       0.322       0.179
+    tanh (10/10 calibrated)        0.177       0.237       0.176       0.323       0.369       0.195       0.108       0.151
+    channel (10/10 calibrated)       0.116       0.651       0.202       0.220       0.616       0.192       0.417       0.166
+    bump (10/10 calibrated)        0.169       0.272       0.177       0.358       0.360       0.209       0.213       0.178
+
+  C1 COMMITMENT INDEX (mouse +0.256); noise sd needed to reach 0.824
+    tanh     sd 0.31  index +0.260 (positive 9/10)  early fooling +0.192  MAE to mouse 0.137  -> COMMITS
+    channel  sd 0.36  index +0.199 (positive 10/10)  early fooling +0.500  MAE to mouse 0.130  -> COMMITS
+    bump     sd 0.59  index +0.146 (positive 9/10)  early fooling +0.191  MAE to mouse 0.115  -> COMMITS
+
+  C2 CLOSER TO THE MOUSE? (paired per seed, >= 9/10)
+    channel vs bump: channel closer on 3/10, mean MAE diff +0.015 -> NO CLEAR DIFFERENCE
+    channel vs tanh: channel closer on 6/10, mean MAE diff -0.008 -> NO CLEAR DIFFERENCE
+    bump vs tanh: bump closer on 6/10, mean MAE diff -0.022 -> NO CLEAR DIFFERENCE
+
+  fine fooling curve, Full pulse (seconds before go):
+                 4.0   3.8   3.6   3.4   3.2   3.0   2.8   2.6   2.4   2.2   2.0   1.8   1.6   1.4   1.2   1.0   0.8   0.6   0.4
+    tanh       +0.03 +0.06 +0.11 +0.20 +0.29 +0.41 +0.54 +0.62 +0.61 +0.57 +0.49 +0.33 +0.19 +0.08 -0.00 -0.06 -0.07 -0.05 -0.01
+    channel    +0.51 +0.53 +0.56 +0.60 +0.61 +0.62 +0.64 +0.64 +0.62 +0.58 +0.56 +0.54 +0.49 +0.45 +0.42 +0.36 +0.30 +0.21 +0.12
+    bump       +0.14 +0.10 +0.13 +0.21 +0.32 +0.44 +0.56 +0.64 +0.64 +0.57 +0.45 +0.30 +0.19 +0.14 +0.10 +0.07 +0.04 +0.01 +0.00
+
+  artifact: outputs/memmatch.json   runtime 87s

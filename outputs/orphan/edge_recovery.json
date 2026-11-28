@@ -1,0 +1,20 @@
+{
+ "TF": {
+  "n": 91,
+  "explained": 0.1007,
+  "via_regulon": 0.0832
+ },
+ "cofactor": {
+  "n": 277,
+  "explained": 0.103,
+  "via_regulon": 0.0283
+ },
+ "neither": {
+  "n": 10,
+  "explained": 0.0,
+  "via_regulon": 0.0
+ },
+ "tf_or_cofactor_helps": true,
+ "verdict": "EDGE RECOVERY (edge_recovery.py): is the 90%-unexplained response the uncurated targets of TF (or TF-COFACTOR) knockouts? K562 specific movers, broadest curated regulatory net (TRRUST + 60k SIGNOR/CollecTRI), classes = TF (91), TF-cofactor (touches a TF; 277), neither (10). Explained fraction: TF 10%, cofactor 10%, neither 0%. Being a TF/cofactor DOES raise coverage -- the KO's (or its partner-TF's) curated regulon recovers more movers, so some missing edges are uncurated regulon that could be added. So the TF/cofactor instinct is directionally right but coverage-bounded: curated regulons+cofactor routes are ~10% complete for the specific response; the rest is real biology no database has mapped. Deterministic.",
+ "note": "EDGE RECOVERY (edge_recovery.py): is the 90%-unexplained response the uncurated targets of TF (or TF-COFACTOR) knockouts? K562 specific movers, broadest curated regulatory net (TRRUST + 60k SIGNOR/CollecTRI), classes = TF (91), TF-cofactor (touches a TF; 277), neither (10). Explained fraction: TF 10%, cofactor 10%, neither 0%. Being a TF/cofactor DOES raise coverage -- the KO's (or its partner-TF's) curated regulon recovers more movers, so some missing edges are uncurated regulon that could be added. So the TF/cofactor instinct is directionally right but coverage-bounded: curated regulons+cofactor routes are ~10% complete for the specific response; the rest is real biology no database has mapped. Deterministic."
+}

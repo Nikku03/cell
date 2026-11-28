@@ -1,0 +1,10 @@
+{
+  "id": "gnomad_v4",
+  "type": "database",
+  "citation": "Chen, S. et al. A genomic mutational constraint map using variation in 76,156 human genomes. Nature 625, 92-100 (2024).",
+  "url": "https://gnomad.broadinstitute.org",
+  "organism": "human",
+  "authority": "primary",
+  "licence": "not checked (verify before redistributing or commercial use)",
+  "notes": "AG2 used gnomAD v4.1 common variants (allele frequency 0.05-0.95; 6,127,336 SNVs) as the GWAS-panel background."
+}

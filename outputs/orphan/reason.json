@@ -1,0 +1,42 @@
+{
+ "n": 15913,
+ "singles": {
+  "shock": 0.6359252279824831,
+  "fba": 0.6377533897167404,
+  "loeuf": 0.5661267087895876,
+  "complex": 0.7507757859566512,
+  "hub": 0.49895609251888495,
+  "loc": 0.7297341712364744,
+  "string_hub": 0.7477755315441673
+ },
+ "convergence_auc": 0.8347943553303848,
+ "weighted_reasoning_auc": 0.8865926159816705,
+ "best_single": 0.7507757859566512,
+ "calibration": {
+  "0": {
+   "n": 5753,
+   "p_essential": 0.0062576047279680165
+  },
+  "1": {
+   "n": 5158,
+   "p_essential": 0.03586661496704149
+  },
+  "2": {
+   "n": 2604,
+   "p_essential": 0.12788018433179724
+  },
+  "3": {
+   "n": 1369,
+   "p_essential": 0.30314097881665447
+  },
+  "4": {
+   "n": 662,
+   "p_essential": 0.5377643504531722
+  },
+  "5": {
+   "n": 196,
+   "p_essential": 0.6683673469387755
+  }
+ },
+ "verdict": "REASONING WORKS: weighing independent lines by reliability predicts essentiality at AUC 0.89, beating the best single line (0.75); and the confidence is CALIBRATED \u2014 P(essential) rises 1%\u219267% with agreement. Reasoning across data gives a better AND trustworthy answer than any single datum."
+}

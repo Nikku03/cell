@@ -1,0 +1,151 @@
+{
+ "nbin": 20,
+ "window": 250000,
+ "results": {
+  "atac_order": {
+   "LEVEL log RNA(t+1)": {
+    "AR floor: rna_t": {
+     "r2": 0.8867472697887184,
+     "gain_over_ar": 0.0
+    },
+    "+ promoter ATAC_t": {
+     "r2": 0.8867863323161588,
+     "gain_over_ar": 3.906252744034777e-05
+    },
+    "+ LINKED enhancer ATAC_t": {
+     "r2": 0.886792700334302,
+     "gain_over_ar": 4.5430545583591275e-05
+    },
+    "CTRL + RANDOM dist-matched peak": {
+     "r2": 0.8867833498024844,
+     "gain_over_ar": 3.6080013765982244e-05
+    },
+    "+ linked AND random": {
+     "r2": 0.886791380327742,
+     "gain_over_ar": 4.411053902353412e-05
+    }
+   },
+   "DELTA log RNA(t+1)-log RNA(t)": {
+    "AR floor: rna_t": {
+     "r2": 0.0008153835716465885,
+     "gain_over_ar": 0.0
+    },
+    "+ promoter ATAC_t": {
+     "r2": 0.001288310075448651,
+     "gain_over_ar": 0.0004729265038020625
+    },
+    "+ LINKED enhancer ATAC_t": {
+     "r2": 0.0012322376973548765,
+     "gain_over_ar": 0.000416854125708288
+    },
+    "CTRL + RANDOM dist-matched peak": {
+     "r2": 0.001258640839823122,
+     "gain_over_ar": 0.00044325726817653346
+    },
+    "+ linked AND random": {
+     "r2": 0.0012230727331774105,
+     "gain_over_ar": 0.00040768916153082195
+    }
+   },
+   "AR floor: rna_t": {
+    "r2": 0.0008153835716465885,
+    "gain_over_ar": 0.0
+   },
+   "+ promoter ATAC_t": {
+    "r2": 0.001288310075448651,
+    "gain_over_ar": 0.0004729265038020625
+   },
+   "+ LINKED enhancer ATAC_t": {
+    "r2": 0.0012322376973548765,
+    "gain_over_ar": 0.000416854125708288
+   },
+   "CTRL + RANDOM dist-matched peak": {
+    "r2": 0.001258640839823122,
+    "gain_over_ar": 0.00044325726817653346
+   },
+   "+ linked AND random": {
+    "r2": 0.0012230727331774105,
+    "gain_over_ar": 0.00040768916153082195
+   },
+   "direction": {
+    "forward_gain": 0.000416854125708288,
+    "reverse_gain": 0.00020392207941299922,
+    "asymmetry": 0.00021293204629528877
+   },
+   "linked_minus_random": -2.6403142468245464e-05
+  },
+  "gex_order": {
+   "LEVEL log RNA(t+1)": {
+    "AR floor: rna_t": {
+     "r2": 0.8784450114005338,
+     "gain_over_ar": 0.0
+    },
+    "+ promoter ATAC_t": {
+     "r2": 0.8784704380119734,
+     "gain_over_ar": 2.542661143967173e-05
+    },
+    "+ LINKED enhancer ATAC_t": {
+     "r2": 0.878470087783775,
+     "gain_over_ar": 2.5076383241229294e-05
+    },
+    "CTRL + RANDOM dist-matched peak": {
+     "r2": 0.8784719996950123,
+     "gain_over_ar": 2.6988294478558217e-05
+    },
+    "+ linked AND random": {
+     "r2": 0.8784709814590075,
+     "gain_over_ar": 2.5970058473712143e-05
+    }
+   },
+   "DELTA log RNA(t+1)-log RNA(t)": {
+    "AR floor: rna_t": {
+     "r2": -0.0003436156489960984,
+     "gain_over_ar": 0.0
+    },
+    "+ promoter ATAC_t": {
+     "r2": 0.00012349636895740977,
+     "gain_over_ar": 0.0004671120179535082
+    },
+    "+ LINKED enhancer ATAC_t": {
+     "r2": 0.00010693558868211107,
+     "gain_over_ar": 0.00045055123767820946
+    },
+    "CTRL + RANDOM dist-matched peak": {
+     "r2": 0.00013040206943988332,
+     "gain_over_ar": 0.00047401771843598174
+    },
+    "+ linked AND random": {
+     "r2": 0.00011159301849006376,
+     "gain_over_ar": 0.0004552086674861622
+    }
+   },
+   "AR floor: rna_t": {
+    "r2": -0.0003436156489960984,
+    "gain_over_ar": 0.0
+   },
+   "+ promoter ATAC_t": {
+    "r2": 0.00012349636895740977,
+    "gain_over_ar": 0.0004671120179535082
+   },
+   "+ LINKED enhancer ATAC_t": {
+    "r2": 0.00010693558868211107,
+    "gain_over_ar": 0.00045055123767820946
+   },
+   "CTRL + RANDOM dist-matched peak": {
+    "r2": 0.00013040206943988332,
+    "gain_over_ar": 0.00047401771843598174
+   },
+   "+ linked AND random": {
+    "r2": 0.00011159301849006376,
+    "gain_over_ar": 0.0004552086674861622
+   },
+   "direction": {
+    "forward_gain": 0.00045055123767820946,
+    "reverse_gain": 0.0008256790314444817,
+    "asymmetry": -0.0003751277937662723
+   },
+   "linked_minus_random": -2.3466480757772278e-05
+  }
+ },
+ "verdict": "NO TEMPORAL ORDERING. Forward gain +0.0004 vs reverse +0.0002, asymmetry +0.0002. Accessibility predicts future expression no better than expression predicts future accessibility, so the two move together and nothing here supports accessibility leading."
+}

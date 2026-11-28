@@ -1,0 +1,23 @@
+{
+ "localisation": {
+  "top1_partner": 0.985,
+  "random_baseline": 0.245,
+  "n": 2975,
+  "note": "geometric sanity check, near-exact by construction \u2014 not the achievement"
+ },
+ "magnitude": {
+  "burial_vs_absddg_all_r": -0.009,
+  "burial_vs_absddg_ala_r": 0.51,
+  "core_burial": 1.47,
+  "core_absddg": 1.97,
+  "surface_burial": 0.07,
+  "surface_absddg": 0.27,
+  "n": 3438,
+  "full_ddg_model_pearson": 0.52
+ },
+ "gain": {
+  "affinity_increasing_frac": 0.063,
+  "novel_partner_testable_here": false
+ },
+ "verdict": "Partner-screening for LOSS decomposes into two separable jobs, and the honest result is that the node does the first for free and needs its full \u0394\u0394G model for the second. LOCALISATION \u2014 'which partner's interface is this residue on' \u2014 is near-EXACT (top-1 98% vs 25% random), but that is because it is pure geometry / near-field STRUCTURE, the recoverable regime; it is a reliable layer, not a hard prediction. MAGNITUDE \u2014 'how much does THIS substitution change binding' \u2014 is the real problem, and the key honest finding is that the localisation/burial score ALONE does NOT predict it: across mixed substitutions burial vs measured |\u0394\u0394G| is r -0.01 (~0), because burial ignores what you mutate TO. Fix the substitution (X->Ala) and the on-target signal reappears (r 0.51); and burial cleanly separates the FUNCTIONAL interface \u2014 SKEMPI core residues (burial 1, measured |\u0394\u0394G| 1.97) from surface ones (burial 0, |\u0394\u0394G| 0.27). So the usable screen is LOCALISATION (structure, exact) x MAGNITUDE (the full \u0394\u0394G model, Pearson ~0.52) \u2014 flag 'this mutation is on partner P's interface AND is predicted to cost a lot' => LOSS of P, and predict ~no effect on partners the residue never touches. GAIN, stated plainly: affinity-increasing mutations are real (6% of SKEMPI) and the full model can score them at an existing interface, but a NOVEL emergent partner is NOT something this pipeline can claim \u2014 that is the dynamics-side problem (docking an unseen complex + experiment) the whole project keeps finding does not compose. Bottom line: a good LOSS/specificity screen, an honest NO on novel-partner discovery."
+}

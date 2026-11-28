@@ -1,0 +1,194 @@
+{
+ "n_knockouts": 1622,
+ "n_eval_genes": 6946,
+ "n_positives": 1858,
+ "self_knockdown_median_remaining": 0.42769166827201843,
+ "positives_per_ko_median": 0.0,
+ "positives_per_ko_mean": 1.1454993834771887,
+ "base_rate": 0.00016493208085491414,
+ "config_preregistered": [
+  [
+   "signed_only",
+   6,
+   0.5
+  ],
+  [
+   "signed_only",
+   6,
+   0.5
+  ],
+  [
+   "signed_only",
+   3,
+   0.6
+  ],
+  [
+   "signed_only",
+   6,
+   0.5
+  ],
+  [
+   "signed_only",
+   6,
+   0.5
+  ]
+ ],
+ "depth_curve": {
+  "all_edges_1steps_a1.0": 0.0001418694641279612,
+  "all_edges_2steps_a0.3": 0.000184089699283127,
+  "all_edges_2steps_a0.6": 0.0001841309840451421,
+  "all_edges_3steps_a0.3": 0.0002115634851719452,
+  "all_edges_3steps_a0.6": 0.0002138472034156927,
+  "all_edges_6steps_a0.5": 0.00021522093135204975,
+  "signed_only_1steps_a1.0": 0.0004216870113003768,
+  "signed_only_2steps_a0.3": 0.0004316189228151461,
+  "signed_only_2steps_a0.6": 0.0004325316949535843,
+  "signed_only_3steps_a0.3": 0.0004433366751559821,
+  "signed_only_3steps_a0.6": 0.0004461526805533621,
+  "signed_only_6steps_a0.5": 0.00045972847656135235
+ },
+ "auprc": {
+  "chain": {
+   "mean": 0.001151631069956209,
+   "sd": 0.0012260687758525117,
+   "lift": 6.9824564389584385
+  },
+  "onehop": {
+   "mean": 0.0011234195515545946,
+   "sd": 0.0012333361860873743,
+   "lift": 6.811407130325564
+  },
+  "generic": {
+   "mean": 0.021739949582524037,
+   "sd": 0.0037167231434403116,
+   "lift": 131.81152793220397
+  },
+  "chain_plus_generic": {
+   "mean": 0.0034378691382217414,
+   "sd": 0.003384561067026843,
+   "lift": 20.84415063704879
+  },
+  "sign_shuffled": {
+   "mean": 0.0006647551576938028,
+   "sd": 0.0005851954320696396,
+   "lift": 4.030478208048367
+  },
+  "seed_shuffled": {
+   "mean": 0.0005183289347509216,
+   "sd": 0.0005753041330080486,
+   "lift": 3.1426811088794797
+  }
+ },
+ "precision_at_10": {
+  "chain": 0.0012024048096192386,
+  "generic_null": 0.09779559118236474,
+  "n_kos_with_positives": 499
+ },
+ "paired_tests": {
+  "chain_minus_generic": {
+   "mean_diff": -0.020588318512567826,
+   "se": 0.0022082475821918472,
+   "verdict": "WORSE"
+  },
+  "chain_minus_onehop": {
+   "mean_diff": 2.821151840161408e-05,
+   "se": 1.3003657535959741e-05,
+   "verdict": "BETTER"
+  },
+  "chain_minus_signshuffled": {
+   "mean_diff": 0.00048687591226240586,
+   "se": 0.00032211794442973604,
+   "verdict": "indistinguishable"
+  },
+  "chain_minus_seedshuffled": {
+   "mean_diff": 0.000633302135205287,
+   "se": 0.0005731309287863402,
+   "verdict": "indistinguishable"
+  }
+ },
+ "folds": [
+  {
+   "fold": 0,
+   "graph": "signed_only",
+   "steps": 6,
+   "damping": 0.5,
+   "n_test": 325,
+   "n_pos": 349,
+   "chain": 0.00012745176179402597,
+   "generic": 0.01982314373418903,
+   "onehop": 0.00011856821077930243,
+   "sign_shuffled": 0.00012602824252469624,
+   "seed_shuffled": 0.0001328012363112635,
+   "chain_plus_generic": 0.00012744933477788124,
+   "base": 0.00015459921592947794
+  },
+  {
+   "fold": 1,
+   "graph": "signed_only",
+   "steps": 6,
+   "damping": 0.5,
+   "n_test": 325,
+   "n_pos": 333,
+   "chain": 0.0022367924065260143,
+   "generic": 0.018983506373394913,
+   "onehop": 0.0021979001185825483,
+   "sign_shuffled": 0.0011275798629192795,
+   "seed_shuffled": 0.0016398019977803334,
+   "chain_plus_generic": 0.00977409203282433,
+   "base": 0.0001475115727923099
+  },
+  {
+   "fold": 2,
+   "graph": "signed_only",
+   "steps": 3,
+   "damping": 0.6,
+   "n_test": 324,
+   "n_pos": 352,
+   "chain": 0.0030087293214625813,
+   "generic": 0.019902588522665278,
+   "onehop": 0.003004540561761749,
+   "sign_shuffled": 0.0015865940371334439,
+   "seed_shuffled": 0.00016015320904045084,
+   "chain_plus_generic": 0.0031908773691399724,
+   "base": 0.0001564094087368874
+  },
+  {
+   "fold": 3,
+   "graph": "signed_only",
+   "steps": 6,
+   "damping": 0.5,
+   "n_test": 324,
+   "n_pos": 388,
+   "chain": 0.0001663712989630248,
+   "generic": 0.020919220227359963,
+   "onehop": 0.00015168696111021583,
+   "sign_shuffled": 0.00025282601756440067,
+   "seed_shuffled": 0.00048580266064578934,
+   "chain_plus_generic": 0.0009883297306200222,
+   "base": 0.00017240582553952358
+  },
+  {
+   "fold": 4,
+   "graph": "signed_only",
+   "steps": 6,
+   "damping": 0.5,
+   "n_test": 324,
+   "n_pos": 436,
+   "chain": 0.0002188105610353978,
+   "generic": 0.029071289055011003,
+   "onehop": 0.0001444019055391581,
+   "sign_shuffled": 0.0002307476283271942,
+   "seed_shuffled": 0.00017308556997677158,
+   "chain_plus_generic": 0.0031085972237465003,
+   "base": 0.00019373438127637187
+  }
+ ],
+ "edge_signs": {
+  "1": 46448,
+  "-1": 7680,
+  "0": 558005
+ },
+ "beats_generic_null": false,
+ "verdict": "MARKOV CHAIN FOR 'OUT OF THE GAME'. A plain random walk would have been a rerun -- cascade_all measured RWR inside an XGBoost and the whole G-specific layer hit AUPRC 0.0661 against a 0.0625 base rate, lift 1.06, chance -- so this chain changes six things the data forces: it propagates LOSS OF TRANSCRIPTIONAL DRIVE (1 - fraction remaining, the exact quantity the Replogle matrix stores); it is SEEDED WITH THE MEASURED KNOCKDOWN because these are partial (42.8% of control still present at the median target, only 21% reaching <=5%); it is SIGNED; it is TRUNCATED at K steps and K is swept, because propagating to convergence is the documented failure mode; it aggregates PATH MULTIPLICITY, the one multi-hop effect that survived in multihop_diagnosis; and it is run on two graphs because 91% of the regulatory edges carry no sign at all. THE TARGET IS RARE, WHICH IS ITSELF THE HEADLINE: out-of-the-game (z <= -4.2 AND <= 5% of control left) happens to a MEDIAN OF 0 genes per knockout, mean 1.15, base rate 1.6e-04. A single knockout almost never drives another gene fully out of the game. RESULT on held-out knockouts: chain AUPRC 0.0012 (7.0x lift), one-hop 0.0011, generic-responsiveness null 0.0217 (132x), sign-shuffled 0.0007, seed-shuffled 0.0005; precision@10 0.001 against the null's 0.098. THE CHAIN IS SIGNIFICANTLY WORSE THAN THE GENERIC-RESPONSIVENESS NULL -- paired -0.02059 +- 0.00221, a 9-sigma defeat, with the null scoring 19x the chain. That null -- how often each gene is driven out of the game by ANY knockout, fitted on training knockouts only -- carries far more information than the mechanism, exactly as in cascade_all. WHICH GENES GET SWITCHED OFF IS MOSTLY A PROPERTY OF THE GENE, NOT OF THE KNOCKOUT. Iterating past one step is statistically detectable but negligible (+0.00003 +- 0.00001, +2% of the chain's own score). Edge SIGN carries no detectable information: shuffling signs while holding topology and magnitudes fixed moves the score +0.00049 +- 0.00032. AND THE CHAIN IS NOT DEMONSTRABLY KNOCKOUT-SPECIFIC: seeding it at a RANDOM gene moves the score only +0.00063 +- 0.00057, so it is largely ranking well-connected genes rather than responding to which gene was actually hit. Depth and graph were pre-registered on an inner split of each training fold (chosen: [('signed_only', (6, 0.5)), ('signed_only', (6, 0.5)), ('signed_only', (3, 0.6)), ('signed_only', (6, 0.5)), ('signed_only', (6, 0.5))]), so the headline is not the maximum over a sweep. WHAT THIS CANNOT SAY: 'out of the game' is defined transcriptionally at <= 5% of control mRNA -- not protein loss, not functional failure, and knockdown_dose established this screen cannot locate the level at which a gene stops working. AND THE GRAPH IS PART OF THE PROBLEM: the dense unsigned bulk gives a median out-degree of 329, so one step already touches a large slice of the graph and there is no locality for a path method to exploit; the signed-only graph (54,128 edges, median out-degree 6) scores ~3x better and was pre-registered by every fold, so carrying the unsigned 91% at half weight was actively harmful. Deterministic given seed 0.",
+ "note": "MARKOV CHAIN FOR 'OUT OF THE GAME'. A plain random walk would have been a rerun -- cascade_all measured RWR inside an XGBoost and the whole G-specific layer hit AUPRC 0.0661 against a 0.0625 base rate, lift 1.06, chance -- so this chain changes six things the data forces: it propagates LOSS OF TRANSCRIPTIONAL DRIVE (1 - fraction remaining, the exact quantity the Replogle matrix stores); it is SEEDED WITH THE MEASURED KNOCKDOWN because these are partial (42.8% of control still present at the median target, only 21% reaching <=5%); it is SIGNED; it is TRUNCATED at K steps and K is swept, because propagating to convergence is the documented failure mode; it aggregates PATH MULTIPLICITY, the one multi-hop effect that survived in multihop_diagnosis; and it is run on two graphs because 91% of the regulatory edges carry no sign at all. THE TARGET IS RARE, WHICH IS ITSELF THE HEADLINE: out-of-the-game (z <= -4.2 AND <= 5% of control left) happens to a MEDIAN OF 0 genes per knockout, mean 1.15, base rate 1.6e-04. A single knockout almost never drives another gene fully out of the game. RESULT on held-out knockouts: chain AUPRC 0.0012 (7.0x lift), one-hop 0.0011, generic-responsiveness null 0.0217 (132x), sign-shuffled 0.0007, seed-shuffled 0.0005; precision@10 0.001 against the null's 0.098. THE CHAIN IS SIGNIFICANTLY WORSE THAN THE GENERIC-RESPONSIVENESS NULL -- paired -0.02059 +- 0.00221, a 9-sigma defeat, with the null scoring 19x the chain. That null -- how often each gene is driven out of the game by ANY knockout, fitted on training knockouts only -- carries far more information than the mechanism, exactly as in cascade_all. WHICH GENES GET SWITCHED OFF IS MOSTLY A PROPERTY OF THE GENE, NOT OF THE KNOCKOUT. Iterating past one step is statistically detectable but negligible (+0.00003 +- 0.00001, +2% of the chain's own score). Edge SIGN carries no detectable information: shuffling signs while holding topology and magnitudes fixed moves the score +0.00049 +- 0.00032. AND THE CHAIN IS NOT DEMONSTRABLY KNOCKOUT-SPECIFIC: seeding it at a RANDOM gene moves the score only +0.00063 +- 0.00057, so it is largely ranking well-connected genes rather than responding to which gene was actually hit. Depth and graph were pre-registered on an inner split of each training fold (chosen: [('signed_only', (6, 0.5)), ('signed_only', (6, 0.5)), ('signed_only', (3, 0.6)), ('signed_only', (6, 0.5)), ('signed_only', (6, 0.5))]), so the headline is not the maximum over a sweep. WHAT THIS CANNOT SAY: 'out of the game' is defined transcriptionally at <= 5% of control mRNA -- not protein loss, not functional failure, and knockdown_dose established this screen cannot locate the level at which a gene stops working. AND THE GRAPH IS PART OF THE PROBLEM: the dense unsigned bulk gives a median out-degree of 329, so one step already touches a large slice of the graph and there is no locality for a path method to exploit; the signed-only graph (54,128 edges, median out-degree 6) scores ~3x better and was pre-registered by every fold, so carrying the unsigned 91% at half weight was actively harmful. Deterministic given seed 0."
+}

@@ -1,0 +1,113 @@
+{
+  "test": "chromatin_supercoil",
+  "n_bead": 72,
+  "bp": 3600.0,
+  "lk0": 342.85714285714283,
+  "sweeps": 1500,
+  "burn": 500,
+  "runs": [
+    {
+      "sigma": 0.0,
+      "dlk": 0.0,
+      "wr": -0.010702277941399153,
+      "wr_sd": 0.49127192160896727,
+      "tw": 0.010702277941399153,
+      "frac": 0.0,
+      "e_kT": 65.71301592047352,
+      "rg_nm": 94.91182072048208,
+      "acc": 0.7214444444444446
+    },
+    {
+      "sigma": -0.02,
+      "dlk": -6.857142857142857,
+      "wr": -6.397232693537554,
+      "wr_sd": 0.5284884813307118,
+      "tw": -0.45991016360530246,
+      "frac": 0.9329297678075601,
+      "e_kT": 69.60058288634659,
+      "rg_nm": 69.90581730236055,
+      "acc": 0.4998333333333333
+    },
+    {
+      "sigma": -0.04,
+      "dlk": -13.714285714285714,
+      "wr": -13.293928713229597,
+      "wr_sd": 0.5290388076259086,
+      "tw": -0.4203570010561162,
+      "frac": 0.9693489686729915,
+      "e_kT": 73.33742123806378,
+      "rg_nm": 54.91388519749522,
+      "acc": 0.373125
+    },
+    {
+      "sigma": -0.06,
+      "dlk": -20.57142857142857,
+      "wr": -19.790072671358814,
+      "wr_sd": 0.7072116016994902,
+      "tw": -0.7813559000697552,
+      "frac": 0.9620174215243869,
+      "e_kT": 85.12014065076798,
+      "rg_nm": 51.551413649341804,
+      "acc": 0.26475
+    }
+  ],
+  "control_C0": [
+    {
+      "sigma": -0.02,
+      "wr_real": -6.397232693537554,
+      "wr_c0": 0.05042535603379677,
+      "rg_real": 6.990581730236055e-08,
+      "rg_c0": 9.390919935296067e-08
+    },
+    {
+      "sigma": -0.04,
+      "wr_real": -13.293928713229597,
+      "wr_c0": 0.05042535603379677,
+      "rg_real": 5.491388519749522e-08,
+      "rg_c0": 9.390919935296067e-08
+    },
+    {
+      "sigma": -0.06,
+      "wr_real": -19.790072671358814,
+      "wr_c0": 0.05042535603379677,
+      "rg_real": 5.15514136493418e-08,
+      "rg_c0": 9.390919935296067e-08
+    }
+  ],
+  "gates": {
+    "writhe_fraction": false,
+    "zero_sigma_flat": true,
+    "C0_control": true
+  },
+  "frac_hi": 0.9656831950986892,
+  "log": [
+    "====================================================================================================",
+    "SUPERCOILING FROM THE CONSTRAINT ALONE -- does it buckle without being told to?",
+    "====================================================================================================",
+    "  3600 bp circle, 72 beads, 50 bp/bead, contour 1224 nm, Lk0 = 342.9",
+    "  A = 50 nm kT, C = 95 nm kT, excluded diameter 5 nm, 1500 sweeps (500 burn-in)",
+    "  Nothing tells the chain to buckle. Writhe reduces the torsional term at fixed dLk, and that",
+    "  trade is the entire mechanism -- it falls out of Lk = Tw + Wr rather than being coded.",
+    "\n    sigma    dLk     <Wr>     sd   Wr/dLk     <Tw>     E/kT   Rg nm    acc",
+    "    0.000    0.0   -0.011  0.491    0.000    0.011     65.7    94.9   0.72",
+    "   -0.020   -6.9   -6.397  0.528    0.933   -0.460     69.6    69.9   0.50",
+    "   -0.040  -13.7  -13.294  0.529    0.969   -0.420     73.3    54.9   0.37",
+    "   -0.060  -20.6  -19.790  0.707    0.962   -0.781     85.1    51.6   0.26",
+    "\n  CONTROL -- torsional modulus switched OFF (C = 0), same dLk, same moves, same seed.",
+    "  If the chain still coils, the coiling comes from the sampling or the excluded volume and",
+    "  not from torsional stress, and the result above is an artefact.",
+    "    sigma   <Wr> real   <Wr> C=0   Rg real   Rg C=0",
+    "   -0.020      -6.397      0.050      69.9     93.9",
+    "   -0.040     -13.294      0.050      54.9     93.9",
+    "   -0.060     -19.790      0.050      51.6     93.9",
+    "\n  READING",
+    "    Wr/dLk at |sigma| >= 0.04     0.966   (literature 0.70-0.75, not tuned for)",
+    "    |Wr| at sigma = 0             0.011",
+    "    real minus C=0 writhe         +13.110",
+    "    FAIL  writhe takes the literature share of dLk",
+    "    PASS  an unstressed circle does not writhe",
+    "    PASS  switching off C removes the coiling",
+    "  The coupling from Lk to shape is not doing what it should. Nothing should be layered on",
+    "  top until this is understood -- a rod that cannot supercoil cannot host a polymerase."
+  ]
+}

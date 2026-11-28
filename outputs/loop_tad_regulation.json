@@ -1,0 +1,730 @@
+{
+ "test": "loop_tad_regulation",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE63nnn/GSE63525/suppl/GSE63525_GM12878_insitu_primary_30.hic",
+    "missing": true
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/_tss_hg19.bed",
+    "bytes": 493972,
+    "hash": "f9256113c7481f82",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/reg/chea3_ENCODE_ChIP-seq.gmt",
+    "bytes": 5593822,
+    "hash": "80660361602d5c10",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/reg/chea3_ReMap_ChIP-seq.gmt",
+    "bytes": 2960359,
+    "hash": "4e548946fb50847f",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/ctcf_gm12878_hg19.bed.gz",
+    "bytes": 655789,
+    "hash": "8795b92127be542e",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 23,
+   "used": 23,
+   "selection": "filtered",
+   "fraction": 1.0
+  },
+  "seed": 8702,
+  "controls": [
+   "random boundaries matched on count and spacing",
+   "separation-matched contrast, loop 33's own estimator",
+   "a second arm on ChIP-measured rather than curated edges",
+   "publication mass run through the identical estimator",
+   "boundaries called from the model's own map, not the measured one",
+   "chr22 held out, 21 chromosomes unsimulated"
+  ],
+  "note": "loop 87's continuous correlation found nothing; this is the categorical form, with the fame confound attacked at source via ChIP edges",
+  "warnings": [
+   "declared input does not exist: https://ftp.ncbi.nlm.nih.gov/geo/series/GSE63nnn/GSE63525/suppl/GSE63525_GM12878_insitu_primary_30.hic"
+  ]
+ },
+ "gates": {
+  "B1 boundaries insulate regulatory sharing (curated)": false,
+  "B2 the ChIP arm agrees": false,
+  "B3 it survives the fame confound": false,
+  "B4 the model's own boundaries carry it": false,
+  "B5 held out": true,
+  "B6 the random-boundary null fires": false
+ },
+ "per_chromosome": [
+  {
+   "chrom": "chr1",
+   "mappable": 8867,
+   "n_boundaries": 884,
+   "curated": {
+    "diff": 0.005894007003683474,
+    "n_matched": 18416,
+    "n_same": 18416,
+    "n_sep": 15417,
+    "null_mean": -0.005117460880538413,
+    "p_emp": 0.2871287128712871,
+    "pub_diff": -0.17230089524571968
+   },
+   "chip": {
+    "diff": 0.8824829936223983,
+    "n_matched": 18416,
+    "n_same": 18416,
+    "n_sep": 15417,
+    "null_mean": -0.7511575287793921,
+    "p_emp": 0.2376237623762376,
+    "pub_diff": -0.17230089524571968
+   }
+  },
+  {
+   "chrom": "chr2",
+   "mappable": 9469,
+   "n_boundaries": 945,
+   "curated": {
+    "diff": -0.029117992563586565,
+    "n_matched": 5995,
+    "n_same": 5995,
+    "n_sep": 4931,
+    "null_mean": -0.007830297895084756,
+    "p_emp": 0.8613861386138614,
+    "pub_diff": -0.04653646058748395
+   },
+   "chip": {
+    "diff": 2.019481461402369,
+    "n_matched": 5995,
+    "n_same": 5995,
+    "n_sep": 4931,
+    "null_mean": -0.1640598192564625,
+    "p_emp": 0.019801980198019802,
+    "pub_diff": -0.04653646058748395
+   }
+  },
+  {
+   "chrom": "chr3",
+   "mappable": 7785,
+   "n_boundaries": 777,
+   "curated": {
+    "diff": -0.020184229924004767,
+    "n_matched": 7779,
+    "n_same": 7779,
+    "n_sep": 5284,
+    "null_mean": 5.4847504466034e-05,
+    "p_emp": 0.8712871287128713,
+    "pub_diff": 0.10132760939205689
+   },
+   "chip": {
+    "diff": 0.9588328221061518,
+    "n_matched": 7779,
+    "n_same": 7779,
+    "n_sep": 5284,
+    "null_mean": 0.1250602147878507,
+    "p_emp": 0.19801980198019803,
+    "pub_diff": 0.10132760939205689
+   }
+  },
+  {
+   "chrom": "chr4",
+   "mappable": 7489,
+   "n_boundaries": 748,
+   "curated": {
+    "diff": 0.03173314337770135,
+    "n_matched": 2813,
+    "n_same": 2813,
+    "n_sep": 3073,
+    "null_mean": -0.005678886833066372,
+    "p_emp": 0.4158415841584158,
+    "pub_diff": -0.37569851842487706
+   },
+   "chip": {
+    "diff": 2.5429414881615444,
+    "n_matched": 2813,
+    "n_same": 2813,
+    "n_sep": 3073,
+    "null_mean": -0.103773117363806,
+    "p_emp": 0.009900990099009901,
+    "pub_diff": -0.37569851842487706
+   }
+  },
+  {
+   "chrom": "chr5",
+   "mappable": 7036,
+   "n_boundaries": 702,
+   "curated": {
+    "diff": 0.10833049743846225,
+    "n_matched": 4670,
+    "n_same": 4670,
+    "n_sep": 6492,
+    "null_mean": -0.025209267689281254,
+    "p_emp": 0.1485148514851485,
+    "pub_diff": 0.19279940813809857
+   },
+   "chip": {
+    "diff": 2.3033778912571727,
+    "n_matched": 4670,
+    "n_same": 4670,
+    "n_sep": 6492,
+    "null_mean": 0.07523918746866659,
+    "p_emp": 0.1188118811881188,
+    "pub_diff": 0.19279940813809857
+   }
+  },
+  {
+   "chrom": "chr6",
+   "mappable": 6692,
+   "n_boundaries": 669,
+   "curated": {
+    "diff": 0.10848739995015191,
+    "n_matched": 12803,
+    "n_same": 12803,
+    "n_sep": 4209,
+    "null_mean": 0.003885406342995388,
+    "p_emp": 0.10891089108910891,
+    "pub_diff": 0.5526704556227713
+   },
+   "chip": {
+    "diff": 2.852888969954185,
+    "n_matched": 12803,
+    "n_same": 12803,
+    "n_sep": 4209,
+    "null_mean": -0.07881396428639674,
+    "p_emp": 0.0297029702970297,
+    "pub_diff": 0.5526704556227713
+   }
+  },
+  {
+   "chrom": "chr7",
+   "mappable": 6149,
+   "n_boundaries": 613,
+   "curated": {
+    "diff": -0.02881627780034234,
+    "n_matched": 6589,
+    "n_same": 6589,
+    "n_sep": 3807,
+    "null_mean": -0.0008619165785896804,
+    "p_emp": 0.7623762376237624,
+    "pub_diff": -0.16557385350941395
+   },
+   "chip": {
+    "diff": 6.350495600692711,
+    "n_matched": 6589,
+    "n_same": 6589,
+    "n_sep": 3807,
+    "null_mean": 1.005194600590759,
+    "p_emp": 0.0594059405940594,
+    "pub_diff": -0.16557385350941395
+   }
+  },
+  {
+   "chrom": "chr8",
+   "mappable": 5663,
+   "n_boundaries": 565,
+   "curated": {
+    "diff": -0.0013598528186942569,
+    "n_matched": 4157,
+    "n_same": 4157,
+    "n_sep": 2033,
+    "null_mean": -0.05215087007990093,
+    "p_emp": 0.06930693069306931,
+    "pub_diff": -0.3562128829453021
+   },
+   "chip": {
+    "diff": 7.60010921652025,
+    "n_matched": 4157,
+    "n_same": 4157,
+    "n_sep": 2033,
+    "null_mean": 7.7044312941761905,
+    "p_emp": 0.5643564356435643,
+    "pub_diff": -0.3562128829453021
+   }
+  },
+  {
+   "chrom": "chr9",
+   "mappable": 4467,
+   "n_boundaries": 441,
+   "curated": {
+    "diff": -0.07968259062129157,
+    "n_matched": 5997,
+    "n_same": 5997,
+    "n_sep": 4701,
+    "null_mean": -0.026991393074644168,
+    "p_emp": 0.7425742574257426,
+    "pub_diff": 0.1925266476696918
+   },
+   "chip": {
+    "diff": 7.621954347240552,
+    "n_matched": 5997,
+    "n_same": 5997,
+    "n_sep": 4701,
+    "null_mean": 4.1174949148947855,
+    "p_emp": 0.07920792079207921,
+    "pub_diff": 0.1925266476696918
+   }
+  },
+  {
+   "chrom": "chr10",
+   "mappable": 5161,
+   "n_boundaries": 514,
+   "curated": {
+    "diff": 0.04589684119573358,
+    "n_matched": 3827,
+    "n_same": 3827,
+    "n_sep": 3059,
+    "null_mean": -0.004414878446436292,
+    "p_emp": 0.10891089108910891,
+    "pub_diff": 0.09545198353159841
+   },
+   "chip": {
+    "diff": 2.325751874863472,
+    "n_matched": 3827,
+    "n_same": 3827,
+    "n_sep": 3059,
+    "null_mean": -0.4774645479710834,
+    "p_emp": 0.019801980198019802,
+    "pub_diff": 0.09545198353159841
+   }
+  },
+  {
+   "chrom": "chr11",
+   "mappable": 5230,
+   "n_boundaries": 522,
+   "curated": {
+    "diff": -0.005149597798974277,
+    "n_matched": 21077,
+    "n_same": 21077,
+    "n_sep": 10851,
+    "null_mean": -0.003999102268553833,
+    "p_emp": 0.5247524752475248,
+    "pub_diff": 1.2147729366729627
+   },
+   "chip": {
+    "diff": 10.751110422189123,
+    "n_matched": 21077,
+    "n_same": 21077,
+    "n_sep": 10851,
+    "null_mean": 0.2609214065324934,
+    "p_emp": 0.04950495049504951,
+    "pub_diff": 1.2147729366729627
+   }
+  },
+  {
+   "chrom": "chr12",
+   "mappable": 5216,
+   "n_boundaries": 521,
+   "curated": {
+    "diff": -0.012702727125860477,
+    "n_matched": 10202,
+    "n_same": 10202,
+    "n_sep": 8576,
+    "null_mean": 1.7890737839549515e-05,
+    "p_emp": 0.6138613861386139,
+    "pub_diff": 0.5868817064388954
+   },
+   "chip": {
+    "diff": 3.381274676877239,
+    "n_matched": 10202,
+    "n_same": 10202,
+    "n_sep": 8576,
+    "null_mean": 0.09110785745423765,
+    "p_emp": 0.0297029702970297,
+    "pub_diff": 0.5868817064388954
+   }
+  },
+  {
+   "chrom": "chr13",
+   "mappable": 3827,
+   "n_boundaries": 382,
+   "curated": {
+    "diff": -0.044317846372683004,
+    "n_matched": 885,
+    "n_same": 885,
+    "n_sep": 1080,
+    "null_mean": 0.002921780198753059,
+    "p_emp": 0.9504950495049505,
+    "pub_diff": 0.5155687464500943
+   },
+   "chip": {
+    "diff": 2.4484021468968353,
+    "n_matched": 885,
+    "n_same": 885,
+    "n_sep": 1080,
+    "null_mean": 0.4963624752114334,
+    "p_emp": 0.019801980198019802,
+    "pub_diff": 0.5155687464500943
+   }
+  },
+  {
+   "chrom": "chr14",
+   "mappable": 3503,
+   "n_boundaries": 350,
+   "curated": {
+    "diff": 0.006523281601183657,
+    "n_matched": 5374,
+    "n_same": 5374,
+    "n_sep": 3326,
+    "null_mean": -0.006567683144435541,
+    "p_emp": 0.3465346534653465,
+    "pub_diff": 0.653191501726363
+   },
+   "chip": {
+    "diff": 2.9045682751126236,
+    "n_matched": 5374,
+    "n_same": 5374,
+    "n_sep": 3326,
+    "null_mean": -0.14605412193122883,
+    "p_emp": 0.0297029702970297,
+    "pub_diff": 0.653191501726363
+   }
+  },
+  {
+   "chrom": "chr15",
+   "mappable": 3156,
+   "n_boundaries": 314,
+   "curated": {
+    "diff": -0.00899677738223393,
+    "n_matched": 4325,
+    "n_same": 4325,
+    "n_sep": 2816,
+    "null_mean": 0.0036547217336116654,
+    "p_emp": 0.6435643564356436,
+    "pub_diff": 0.2330917751253864
+   },
+   "chip": {
+    "diff": 1.8435677454732455,
+    "n_matched": 4325,
+    "n_same": 4325,
+    "n_sep": 2816,
+    "null_mean": -0.038003229528249145,
+    "p_emp": 0.019801980198019802,
+    "pub_diff": 0.2330917751253864
+   }
+  },
+  {
+   "chrom": "chr16",
+   "mappable": 3088,
+   "n_boundaries": 308,
+   "curated": {
+    "diff": -0.02211401780049886,
+    "n_matched": 15117,
+    "n_same": 15117,
+    "n_sep": 3851,
+    "null_mean": 0.005764370644900765,
+    "p_emp": 0.9603960396039604,
+    "pub_diff": -0.07624753280510928
+   },
+   "chip": {
+    "diff": 10.801614369544605,
+    "n_matched": 15117,
+    "n_same": 15117,
+    "n_sep": 3851,
+    "null_mean": 0.46325296953278394,
+    "p_emp": 0.009900990099009901,
+    "pub_diff": -0.07624753280510928
+   }
+  },
+  {
+   "chrom": "chr17",
+   "mappable": 3082,
+   "n_boundaries": 306,
+   "curated": {
+    "diff": 0.009951627577526797,
+    "n_matched": 16694,
+    "n_same": 16694,
+    "n_sep": 9852,
+    "null_mean": -0.01239788032038236,
+    "p_emp": 0.3069306930693069,
+    "pub_diff": 0.2819065981118773
+   },
+   "chip": {
+    "diff": 8.264563822853798,
+    "n_matched": 16694,
+    "n_same": 16694,
+    "n_sep": 9852,
+    "null_mean": 2.655261399915151,
+    "p_emp": 0.009900990099009901,
+    "pub_diff": 0.2819065981118773
+   }
+  },
+  {
+   "chrom": "chr18",
+   "mappable": 2991,
+   "n_boundaries": 298,
+   "curated": {
+    "diff": -0.24069506715364514,
+    "n_matched": 551,
+    "n_same": 551,
+    "n_sep": 894,
+    "null_mean": 0.01862036108319034,
+    "p_emp": 0.9504950495049505,
+    "pub_diff": -0.1134060308067835
+   },
+   "chip": {
+    "diff": 1.9045911016672734,
+    "n_matched": 551,
+    "n_same": 551,
+    "n_sep": 894,
+    "null_mean": -0.1452813041455184,
+    "p_emp": 0.019801980198019802,
+    "pub_diff": -0.1134060308067835
+   }
+  },
+  {
+   "chrom": "chr19",
+   "mappable": 2222,
+   "n_boundaries": 221,
+   "curated": {
+    "diff": 0.02189238347443224,
+    "n_matched": 19980,
+    "n_same": 19980,
+    "n_sep": 37581,
+    "null_mean": 0.00457901128779676,
+    "p_emp": 0.1782178217821782,
+    "pub_diff": 0.31579687768184755
+   },
+   "chip": {
+    "diff": 3.633600241153483,
+    "n_matched": 19980,
+    "n_same": 19980,
+    "n_sep": 37581,
+    "null_mean": 0.09129309514418905,
+    "p_emp": 0.09900990099009901,
+    "pub_diff": 0.31579687768184755
+   }
+  },
+  {
+   "chrom": "chr20",
+   "mappable": 2382,
+   "n_boundaries": 237,
+   "curated": {
+    "diff": -0.05080864935786292,
+    "n_matched": 5365,
+    "n_same": 5365,
+    "n_sep": 3190,
+    "null_mean": -0.028651290499286754,
+    "p_emp": 0.7722772277227723,
+    "pub_diff": 0.2847229771859968
+   },
+   "chip": {
+    "diff": 3.0997180503440913,
+    "n_matched": 5365,
+    "n_same": 5365,
+    "n_sep": 3190,
+    "null_mean": 3.660798465451803,
+    "p_emp": 0.6633663366336634,
+    "pub_diff": 0.2847229771859968
+   }
+  },
+  {
+   "chrom": "chr21",
+   "mappable": 1377,
+   "n_boundaries": 137,
+   "curated": {
+    "diff": -0.11657108937985432,
+    "n_matched": 1255,
+    "n_same": 1298,
+    "n_sep": 459,
+    "null_mean": -0.02542173839462909,
+    "p_emp": 0.8910891089108911,
+    "pub_diff": -0.17757481795492777
+   },
+   "chip": {
+    "diff": 1.790575398483765,
+    "n_matched": 1255,
+    "n_same": 1298,
+    "n_sep": 459,
+    "null_mean": 2.5578367468984435,
+    "p_emp": 0.7722772277227723,
+    "pub_diff": -0.17757481795492777
+   }
+  },
+  {
+   "chrom": "chr22",
+   "mappable": 1354,
+   "n_boundaries": 135,
+   "curated": {
+    "diff": 0.023468288707433668,
+    "n_matched": 3853,
+    "n_same": 3853,
+    "n_sep": 4189,
+    "null_mean": 0.00015195770392476246,
+    "p_emp": 0.0891089108910891,
+    "pub_diff": -0.0002313056450322662
+   },
+   "chip": {
+    "diff": 1.3022296628794034,
+    "n_matched": 3853,
+    "n_same": 3853,
+    "n_sep": 4189,
+    "null_mean": 0.31274558982106765,
+    "p_emp": 0.22772277227722773,
+    "pub_diff": -0.0002313056450322662
+   }
+  },
+  {
+   "chrom": "chrX",
+   "mappable": 5986,
+   "n_boundaries": 597,
+   "curated": {
+    "diff": 0.028985416905618896,
+    "n_matched": 4085,
+    "n_same": 4085,
+    "n_sep": 3150,
+    "null_mean": 0.002914494734987503,
+    "p_emp": 0.22772277227722773,
+    "pub_diff": 0.6351408464213977
+   },
+   "chip": {
+    "diff": 2.714152144332535,
+    "n_matched": 4085,
+    "n_same": 4085,
+    "n_sep": 3150,
+    "null_mean": 0.7354309920279699,
+    "p_emp": 0.0297029702970297,
+    "pub_diff": 0.6351408464213977
+   }
+  }
+ ],
+ "weighted": {
+  "curated": -0.00010856836447960006,
+  "chip": 3.7130799074875718,
+  "pub": 0.1695449838319814,
+  "null": -0.007293182832730199,
+  "survive": 67.17594823951303,
+  "pub_ratio": -1561.6426078136124
+ },
+ "counts": {
+  "curated_positive": 10,
+  "curated_sig": 0,
+  "curated_n": 23,
+  "chip_positive": 23,
+  "chip_sig": 13,
+  "chip_n": 23
+ },
+ "simulated": [
+  {
+   "chrom": "chr21",
+   "arm": "curated",
+   "sim": -0.030507110100417935,
+   "measured": -0.11657108937985432,
+   "null_mean": 0.0031254881065621008,
+   "p_emp": 0.7722772277227723,
+   "n_bnd_sim": 137,
+   "n_bnd_meas": 137,
+   "bnd_overlap": 18,
+   "beats_random": false
+  },
+  {
+   "chrom": "chr21",
+   "arm": "chip",
+   "sim": -0.6984758807961156,
+   "measured": 1.790575398483765,
+   "null_mean": -1.403921617384255,
+   "p_emp": 0.3069306930693069,
+   "n_bnd_sim": 137,
+   "n_bnd_meas": 137,
+   "bnd_overlap": 18,
+   "beats_random": false
+  },
+  {
+   "chrom": "chr22",
+   "arm": "curated",
+   "sim": -0.007100205139961571,
+   "measured": 0.023468288707433668,
+   "null_mean": 0.006462365351370253,
+   "p_emp": 0.7524752475247525,
+   "n_bnd_sim": 135,
+   "n_bnd_meas": 135,
+   "bnd_overlap": 24,
+   "beats_random": false
+  },
+  {
+   "chrom": "chr22",
+   "arm": "chip",
+   "sim": 1.3667270956384003,
+   "measured": 1.3022296628794034,
+   "null_mean": 0.23437192695545384,
+   "p_emp": 0.22772277227722773,
+   "n_bnd_sim": 135,
+   "n_bnd_meas": 135,
+   "bnd_overlap": 24,
+   "beats_random": false
+  }
+ ],
+ "seconds": 1161.5922198295593,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 87b -- do TAD boundaries insulate regulatory sharing? The categorical test.",
+  "====================================================================================================",
+  "",
+  "  curated arm: CollecTRI core, 53,839 edges over 7,485 targets",
+  "  ChIP arm: 849 ChEA3 experiments, 548,198 edges over 15,784 targets",
+  "  loop 87 measured, on the SAME curated network by continuous correlation: rho ~0 and pubs beating it",
+  "",
+  "B1 BOUNDARIES INSULATE REGULATORY SHARING IN MEASURED DATA   (+ B2 the ChIP arm)",
+  "     chr1    884 bnd   curated +0.0059 (p 0.287, n 18,416)   chip +0.8825 (p 0.238)   pubs -0.1723",
+  "     chr2    945 bnd   curated -0.0291 (p 0.861, n 5,995)   chip +2.0195 (p 0.020)   pubs -0.0465",
+  "     chr3    777 bnd   curated -0.0202 (p 0.871, n 7,779)   chip +0.9588 (p 0.198)   pubs +0.1013",
+  "     chr4    748 bnd   curated +0.0317 (p 0.416, n 2,813)   chip +2.5429 (p 0.010)   pubs -0.3757",
+  "     chr5    702 bnd   curated +0.1083 (p 0.149, n 4,670)   chip +2.3034 (p 0.119)   pubs +0.1928",
+  "     chr6    669 bnd   curated +0.1085 (p 0.109, n 12,803)   chip +2.8529 (p 0.030)   pubs +0.5527",
+  "     chr7    613 bnd   curated -0.0288 (p 0.762, n 6,589)   chip +6.3505 (p 0.059)   pubs -0.1656",
+  "     chr8    565 bnd   curated -0.0014 (p 0.069, n 4,157)   chip +7.6001 (p 0.564)   pubs -0.3562",
+  "     chr9    441 bnd   curated -0.0797 (p 0.743, n 5,997)   chip +7.6220 (p 0.079)   pubs +0.1925",
+  "     chr10   514 bnd   curated +0.0459 (p 0.109, n 3,827)   chip +2.3258 (p 0.020)   pubs +0.0955",
+  "     chr11   522 bnd   curated -0.0051 (p 0.525, n 21,077)   chip +10.7511 (p 0.050)   pubs +1.2148",
+  "     chr12   521 bnd   curated -0.0127 (p 0.614, n 10,202)   chip +3.3813 (p 0.030)   pubs +0.5869",
+  "     chr13   382 bnd   curated -0.0443 (p 0.950, n   885)   chip +2.4484 (p 0.020)   pubs +0.5156",
+  "     chr14   350 bnd   curated +0.0065 (p 0.347, n 5,374)   chip +2.9046 (p 0.030)   pubs +0.6532",
+  "     chr15   314 bnd   curated -0.0090 (p 0.644, n 4,325)   chip +1.8436 (p 0.020)   pubs +0.2331",
+  "     chr16   308 bnd   curated -0.0221 (p 0.960, n 15,117)   chip +10.8016 (p 0.010)   pubs -0.0762",
+  "     chr17   306 bnd   curated +0.0100 (p 0.307, n 16,694)   chip +8.2646 (p 0.010)   pubs +0.2819",
+  "     chr18   298 bnd   curated -0.2407 (p 0.950, n   551)   chip +1.9046 (p 0.020)   pubs -0.1134",
+  "     chr19   221 bnd   curated +0.0219 (p 0.178, n 19,980)   chip +3.6336 (p 0.099)   pubs +0.3158",
+  "     chr20   237 bnd   curated -0.0508 (p 0.772, n 5,365)   chip +3.0997 (p 0.663)   pubs +0.2847",
+  "     chr21   137 bnd   curated -0.1166 (p 0.891, n 1,255)   chip +1.7906 (p 0.772)   pubs -0.1776",
+  "     chr22   135 bnd   curated +0.0235 (p 0.089, n 3,853)   chip +1.3022 (p 0.228)   pubs -0.0002",
+  "     chrX    597 bnd   curated +0.0290 (p 0.228, n 4,085)   chip +2.7142 (p 0.030)   pubs +0.6351",
+  "     curated  weighted -0.0001   positive 10/23   significant 0",
+  "     chip     weighted +3.7131   positive 23/23   significant 13",
+  "     B1 FAIL -- boundaries do NOT insulate regulatory sharing in the curated arm",
+  "     B2 FAIL -- the two arms do NOT both carry it",
+  "",
+  "B3 THE FAME CONFOUND, STILL GATED",
+  "     publication mass shows the same same-domain excess of +0.1695 against the regulator excess -0.0001",
+  "     fame accounts for -156164% of the effect size if the two are on the same scale",
+  "     (they are not -- one counts regulators, one counts log publications -- so this is a",
+  "      direction check, and the sign of pub_diff is what matters)",
+  "     B3 FAIL",
+  "",
+  "B4 THE MODEL'S OWN BOUNDARIES CARRY IT",
+  "     chr21 curated  model-boundary -0.0305 (p 0.772)   measured-boundary -0.1166   boundaries 137 sim / 137 meas, 18 shared",
+  "     chr21 chip     model-boundary -0.6985 (p 0.307)   measured-boundary +1.7906   boundaries 137 sim / 137 meas, 18 shared",
+  "     chr22 curated  model-boundary -0.0071 (p 0.752)   measured-boundary +0.0235   boundaries 135 sim / 135 meas, 24 shared",
+  "     chr22 chip     model-boundary +1.3667 (p 0.228)   measured-boundary +1.3022   boundaries 135 sim / 135 meas, 24 shared",
+  "     B4 FAIL -- the model's own boundaries do NOT predict regulatory partition",
+  "",
+  "B5 HELD OUT",
+  "     chr22 entered no fitting; 21 chromosomes have no simulation at all",
+  "",
+  "B6 THE NULL THAT MUST FIRE",
+  "     random boundaries at matched count and matched spacing",
+  "     real -0.0001   random-boundary null -0.0073   survives 6718%",
+  "     B6 FAIL",
+  "",
+  "  FAIL  B1 boundaries insulate regulatory sharing (curated)",
+  "  FAIL  B2 the ChIP arm agrees",
+  "  FAIL  B3 it survives the fame confound",
+  "  FAIL  B4 the model's own boundaries carry it",
+  "  PASS  B5 held out",
+  "  FAIL  B6 the random-boundary null fires",
+  "    manifest: 5 inputs, coverage 23/23 (100.0%) by 'filtered', seed 8702, controls 6",
+  "      WARN declared input does not exist: https://ftp.ncbi.nlm.nih.gov/geo/series/GSE63nnn/GSE63525/suppl/GSE63525_GM12878_insitu_primary_30.hic"
+ ]
+}

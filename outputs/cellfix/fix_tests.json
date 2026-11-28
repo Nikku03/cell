@@ -1,0 +1,568 @@
+{
+ "G8-P1": {
+  "lines_dev": 352,
+  "lines_exam": 345,
+  "genes": 8383,
+  "median_r_rna": 0.4622131520848727,
+  "median_r_rna_plus_offset": 0.8389428013701835,
+  "better": {
+   "n": 345,
+   "median": 0.3790710217961728,
+   "share_positive": 1.0,
+   "p": 1.3952482803738708e-104,
+   "passed": true
+  },
+  "negative": {
+   "n": 345,
+   "median": -0.1553781287573881,
+   "share_positive": 0.0,
+   "p": 1.0,
+   "passed": false
+  },
+  "planted": {
+   "n": 345,
+   "median": 0.32950335938095177,
+   "share_positive": 1.0,
+   "p": 1.3952482803738708e-104,
+   "passed": true
+  },
+  "gate": {
+   "real": true,
+   "controls_ok": true,
+   "verdict": "PASS"
+  }
+ },
+ "G8-P2": {
+  "cell_types": [
+   "adipocytes",
+   "cardiomyocytes",
+   "cholangiocytes",
+   "cytotrophoblasts",
+   "enterocytes",
+   "ependymal cells",
+   "extravillous trophoblasts",
+   "fibroblasts",
+   "goblet cells",
+   "granulosa cells",
+   "hepatocytes",
+   "hofbauer cells",
+   "leydig cells",
+   "macrophages",
+   "melanocytes",
+   "oocytes",
+   "paneth cells",
+   "sertoli cells",
+   "smooth muscle cells",
+   "syncytiotrophoblasts",
+   "urothelial cells"
+  ],
+  "median_r_rna": NaN,
+  "median_r_rna_plus_offset": NaN,
+  "per_cell_type": {
+   "adipocytes": [
+    0.269,
+    0.167
+   ],
+   "cardiomyocytes": [
+    0.379,
+    0.252
+   ],
+   "cholangiocytes": [
+    0.283,
+    0.201
+   ],
+   "cytotrophoblasts": [
+    0.37,
+    0.291
+   ],
+   "enterocytes": [
+    0.504,
+    0.433
+   ],
+   "ependymal cells": [
+    0.689,
+    0.678
+   ],
+   "extravillous trophoblasts": [
+    -1.0,
+    -1.0
+   ],
+   "fibroblasts": [
+    0.292,
+    0.151
+   ],
+   "goblet cells": [
+    0.327,
+    0.304
+   ],
+   "granulosa cells": [
+    NaN,
+    NaN
+   ],
+   "hepatocytes": [
+    0.399,
+    0.308
+   ],
+   "hofbauer cells": [
+    0.399,
+    0.348
+   ],
+   "leydig cells": [
+    0.315,
+    0.196
+   ],
+   "macrophages": [
+    0.351,
+    0.219
+   ],
+   "melanocytes": [
+    0.315,
+    0.199
+   ],
+   "oocytes": [
+    -1.0,
+    -1.0
+   ],
+   "paneth cells": [
+    0.438,
+    0.395
+   ],
+   "sertoli cells": [
+    0.248,
+    0.22
+   ],
+   "smooth muscle cells": [
+    0.322,
+    0.204
+   ],
+   "syncytiotrophoblasts": [
+    0.183,
+    0.262
+   ],
+   "urothelial cells": [
+    0.435,
+    0.294
+   ]
+  },
+  "better": {
+   "n": 20,
+   "median": -0.0799562854384169,
+   "share_positive": 0.05555555555555555,
+   "p": 0.9999961853027344,
+   "passed": false
+  },
+  "negative": {
+   "n": 20,
+   "median": -0.05427451691729049,
+   "share_positive": 0.05555555555555555,
+   "p": 0.9999961853027344,
+   "passed": false
+  },
+  "gate": {
+   "real": false,
+   "controls_ok": true,
+   "verdict": "FAIL"
+  }
+ },
+ "G8-D1": {
+  "cell_types": 21,
+  "detection_rates": {
+   "adipocytes": {
+    "busy": 0.562,
+    "deep_only": 0.4366239188786162,
+    "not_made": 0.13999283924095954,
+    "n_deep_only": 6706
+   },
+   "cardiomyocytes": {
+    "busy": 0.7973333333333333,
+    "deep_only": 0.6800675157280958,
+    "not_made": 0.19786453119786454,
+    "n_deep_only": 6517
+   },
+   "cholangiocytes": {
+    "busy": 0.5506666666666666,
+    "deep_only": 0.40459390481909624,
+    "not_made": 0.13227893601725377,
+    "n_deep_only": 6661
+   },
+   "cytotrophoblasts": {
+    "busy": 0.7796610169491526,
+    "deep_only": null,
+    "not_made": 0.4,
+    "n_deep_only": 0
+   },
+   "enterocytes": {
+    "busy": 0.6976744186046512,
+    "deep_only": null,
+    "not_made": 0.36127167630057805,
+    "n_deep_only": 0
+   },
+   "ependymal cells": {
+    "busy": 0.9365079365079365,
+    "deep_only": null,
+    "not_made": 1.0,
+    "n_deep_only": 0
+   },
+   "extravillous trophoblasts": {
+    "busy": 0.5,
+    "deep_only": null,
+    "not_made": 1.0,
+    "n_deep_only": 0
+   },
+   "fibroblasts": {
+    "busy": 0.6906666666666667,
+    "deep_only": 0.5432295823357276,
+    "not_made": 0.13403614457831325,
+    "n_deep_only": 7518
+   },
+   "goblet cells": {
+    "busy": 0.5093333333333333,
+    "deep_only": 0.28106508875739644,
+    "not_made": 0.19408502772643252,
+    "n_deep_only": 676
+   },
+   "granulosa cells": {
+    "busy": 0.375,
+    "deep_only": null,
+    "not_made": 0.75,
+    "n_deep_only": 0
+   },
+   "hepatocytes": {
+    "busy": 0.7793333333333333,
+    "deep_only": 0.6229426433915212,
+    "not_made": 0.21148899685624464,
+    "n_deep_only": 6015
+   },
+   "hofbauer cells": {
+    "busy": 0.6882453151618398,
+    "deep_only": null,
+    "not_made": 0.3163265306122449,
+    "n_deep_only": 0
+   },
+   "leydig cells": {
+    "busy": 0.8146666666666667,
+    "deep_only": 0.735808857099376,
+    "not_made": 0.33967391304347827,
+    "n_deep_only": 6571
+   },
+   "macrophages": {
+    "busy": 0.8373333333333334,
+    "deep_only": 0.6732793522267206,
+    "not_made": 0.21080305927342255,
+    "n_deep_only": 7410
+   },
+   "melanocytes": {
+    "busy": 0.7206666666666667,
+    "deep_only": 0.5661798616448885,
+    "not_made": 0.18059855521155832,
+    "n_deep_only": 6505
+   },
+   "oocytes": {
+    "busy": 0.8333333333333334,
+    "deep_only": null,
+    "not_made": 1.0,
+    "n_deep_only": 0
+   },
+   "paneth cells": {
+    "busy": 0.3774104683195592,
+    "deep_only": null,
+    "not_made": 0.10824742268041238,
+    "n_deep_only": 0
+   },
+   "sertoli cells": {
+    "busy": 0.624,
+    "deep_only": 0.43982808022922637,
+    "not_made": 0.32049947970863685,
+    "n_deep_only": 2792
+   },
+   "smooth muscle cells": {
+    "busy": 0.7133333333333334,
+    "deep_only": 0.5777845036319612,
+    "not_made": 0.16833046471600688,
+    "n_deep_only": 6608
+   },
+   "syncytiotrophoblasts": {
+    "busy": 0.9772727272727273,
+    "deep_only": null,
+    "not_made": 0.6666666666666666,
+    "n_deep_only": 0
+   },
+   "urothelial cells": {
+    "busy": 0.91,
+    "deep_only": 0.7784657203261854,
+    "not_made": 0.2376378512984703,
+    "n_deep_only": 6622
+   }
+  },
+  "mh_or": 6.056874457664081,
+  "cmh_p": 0.0,
+  "null_or_95": 1.0224521324530393,
+  "p_mc": 0.004975124378109453,
+  "passed": true,
+  "negative": {
+   "or_": 0.9985946682720896,
+   "p_mc": 0.54,
+   "passed": false
+  },
+  "gate": {
+   "real": true,
+   "controls_ok": true,
+   "verdict": "PASS"
+  }
+ },
+ "G8-I1": {
+  "pairs_hek293t_only": 51737,
+  "pairs_hct116_only": 41985,
+  "pairs_shared": 21053,
+  "median_delta_hct116_only": 0.021305676153722475,
+  "median_delta_hek293t_only": 0.0027335584499115217,
+  "median_delta_shared": -0.0016079755587715128,
+  "diff": 0.018572117703810953,
+  "p_mannwhitney": 3.863079647112279e-51,
+  "null_95": 0.0014739775955404683,
+  "p_mc": 0.000999000999000999,
+  "passed": false,
+  "negative": {
+   "diff": 0.0010183845205552489,
+   "passed": false
+  },
+  "planted": {
+   "diff": 0.06857211770381096,
+   "passed": true
+  },
+  "gate": {
+   "real": false,
+   "controls_ok": true,
+   "verdict": "FAIL"
+  }
+ },
+ "G8-A1": {
+  "tfs_with_regulons": 295,
+  "knocked_down_tfs": 287,
+  "mean_auroc": 0.5362179715091613,
+  "null_mean": 0.49879885752210285,
+  "null_95": 0.5223500201474318,
+  "p_mc": 0.009950248756218905,
+  "passed": false,
+  "negative": {
+   "auroc": 0.4785252079926046,
+   "passed": false
+  },
+  "planted": {
+   "auroc": 1.0033776576832822,
+   "passed": true
+  },
+  "best_detected": [
+   {
+    "tf": "ZBTB4",
+    "auroc": 1.0
+   },
+   {
+    "tf": "SREBF2",
+    "auroc": 1.0
+   },
+   {
+    "tf": "NFE2",
+    "auroc": 1.0
+   },
+   {
+    "tf": "SRSF2",
+    "auroc": 0.997
+   },
+   {
+    "tf": "SFPQ",
+    "auroc": 0.997
+   },
+   {
+    "tf": "KLF2",
+    "auroc": 0.993
+   },
+   {
+    "tf": "BHLHE40",
+    "auroc": 0.993
+   },
+   {
+    "tf": "ZNF148",
+    "auroc": 0.99
+   },
+   {
+    "tf": "TFDP1",
+    "auroc": 0.99
+   },
+   {
+    "tf": "MYBL2",
+    "auroc": 0.99
+   },
+   {
+    "tf": "KLF9",
+    "auroc": 0.99
+   },
+   {
+    "tf": "NEUROD1",
+    "auroc": 0.986
+   },
+   {
+    "tf": "SRF",
+    "auroc": 0.983
+   },
+   {
+    "tf": "REST",
+    "auroc": 0.983
+   },
+   {
+    "tf": "POU4F1",
+    "auroc": 0.983
+   }
+  ],
+  "gate": {
+   "real": false,
+   "controls_ok": true,
+   "verdict": "FAIL"
+  }
+ },
+ "G8-U1": {
+  "genes_dev": 5239,
+  "genes_exam": 5144,
+  "pathways": 1556,
+  "median_auroc": 0.7748239524496444,
+  "share_auroc_ge_0_7": 0.7313624678663239,
+  "null_median": 0.4999299627850876,
+  "null_95": 0.5041738146852167,
+  "p_mc": 0.004975124378109453,
+  "passed": true,
+  "negative": {
+   "median_auroc": 0.49759912109308185,
+   "passed": false
+  },
+  "planted": {
+   "median_auroc": 1.0,
+   "passed": true
+  },
+  "best_predicted": [
+   {
+    "pathway": "Purine ribonucleoside monophosphate biosynthesis",
+    "auroc": 1.0
+   },
+   {
+    "pathway": "Antigen processing: Ub, ATP-independent proteasomal degradation",
+    "auroc": 1.0
+   },
+   {
+    "pathway": "Translocation of ZAP-70 to Immunological synapse",
+    "auroc": 0.999
+   },
+   {
+    "pathway": "Mitochondrial translation elongation",
+    "auroc": 0.998
+   },
+   {
+    "pathway": "Mitochondrial translation initiation",
+    "auroc": 0.998
+   },
+   {
+    "pathway": "Nucleotide biosynthesis",
+    "auroc": 0.997
+   },
+   {
+    "pathway": "Mitotic Telophase/Cytokinesis",
+    "auroc": 0.994
+   },
+   {
+    "pathway": "AUF1 (hnRNP D0) binds and destabilizes mRNA",
+    "auroc": 0.994
+   },
+   {
+    "pathway": "Fibronectin matrix formation",
+    "auroc": 0.993
+   },
+   {
+    "pathway": "Vpu mediated degradation of CD4",
+    "auroc": 0.993
+   },
+   {
+    "pathway": "Type I hemidesmosome assembly",
+    "auroc": 0.993
+   },
+   {
+    "pathway": "Mitochondrial ribosome-associated quality control",
+    "auroc": 0.992
+   }
+  ],
+  "worst_predicted": [
+   {
+    "pathway": "Metal ion SLC transporters",
+    "auroc": 0.446
+   },
+   {
+    "pathway": "Ephrin signaling",
+    "auroc": 0.44
+   },
+   {
+    "pathway": "Cellular hexose transport",
+    "auroc": 0.427
+   },
+   {
+    "pathway": "Activation of the TFAP2 (AP-2) family of transcription factors",
+    "auroc": 0.401
+   },
+   {
+    "pathway": "p75NTR regulates axonogenesis",
+    "auroc": 0.372
+   },
+   {
+    "pathway": "Lysosphingolipid and LPA receptors",
+    "auroc": 0.356
+   }
+  ],
+  "gate": {
+   "real": true,
+   "controls_ok": true,
+   "verdict": "PASS"
+  }
+ },
+ "G8-M1": {
+  "lines": 592,
+  "complexes": 750,
+  "items": 3275,
+  "median_d": -0.002198845148086548,
+  "share_negative": 0.52793893129771,
+  "p_sign": 0.000733784625749543,
+  "null_median": -0.0009220964275300503,
+  "p_mc": 0.12935323383084577,
+  "passed": false,
+  "negative": {
+   "median_d": -0.0007789134979248047,
+   "passed": false
+  },
+  "planted": {
+   "median_d": -0.05219884514808655,
+   "passed": true
+  },
+  "gate": {
+   "real": false,
+   "controls_ok": true,
+   "verdict": "FAIL"
+  }
+ },
+ "G8-M2": {
+  "complexes": 771,
+  "lines": 697,
+  "median_protein_covariation": 0.23349469900131226,
+  "median_rna_covariation": 0.24429938197135925,
+  "protein_minus_rna": {
+   "n": 771,
+   "median": -0.0018506646156311035,
+   "share_positive": 0.48638132295719844,
+   "p": 0.7859008795020587,
+   "passed": false
+  },
+  "random_protein_median": 0.02156030759215355,
+  "p_mc": 0.004975124378109453,
+  "passed": false,
+  "gate": {
+   "real": false,
+   "controls_ok": true,
+   "verdict": "FAIL"
+  }
+ }
+}

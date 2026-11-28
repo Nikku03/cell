@@ -1,0 +1,90 @@
+=================================================================================================
+PARTITION THE SHARED ACCUMULATION, PROPAGATE BOUNDS WITH THEIR PROBABILITY ACCOUNTING
+=================================================================================================
+  One split of one accumulation coordinate narrows EVERY target's drive at once, which is
+  why the region count can stay small where splitting 200 drives independently is 2^200.
+  The transition operator is applied with the probabilities used EXACTLY; only region
+  membership is relaxed, pessimistically on both sides.
+
+=================================================================================================
+R0  CORRECTNESS: DO THE TERMINAL AND TRANSITION ENCLOSURES HOLD?
+=================================================================================================
+  terminal: 8 regions x 400 interior points, 0 violations
+  every reachable accumulation lies in the region its index selects: yes
+
+  R0: PASS
+
+=================================================================================================
+R1  THE REGION-COUNT SWEEP, WITH THE FULL PROPAGATION COST
+=================================================================================================
+  Tracking the TERMINAL gap and the FINAL interval separately, because terminal gaps
+  shrinking while transition bounds widen is the failure mode this must detect.
+
+  4 controllers, L = 4, 200 targets. exact tail 1.187971e-102
+
+     regions   terminal gap   final width  contains  mean crossings         work   seconds
+           1         71.540        71.540       yes            1.00        2,912      0.00
+           2         57.600        59.825       yes            1.75        5,824      0.00
+           4         44.152        48.317       yes            3.06       11,648      0.00
+           8         38.186        44.973       yes            5.36       23,296      0.01
+          16         34.620        42.851       yes            9.38       46,592      0.02
+          16  -- only 4 coordinates exist at this width, so the partition saturates here
+
+  The terminal-gap column is per region, in orders. The crossings column is how many
+  regions a shifted region reaches on average -- the transition ambiguity, and the thing
+  that grows if this approach is going to fail.
+
+=================================================================================================
+R1b  THE MECHANISM: THE ACCUMULATION MOVES AS FAR AS THE PARTITION IS WIDE
+=================================================================================================
+  Region membership is informative only if a region is large compared with how far the
+  accumulation moves in one level. It is not.
+
+     level   shift h_d   cut spacing  shift / spacing
+         1      0.0956        0.5000             0.19
+         2      0.1577        0.5000             0.32
+         3      0.2600        0.5000             0.52
+         4      0.4287        0.5000             0.86
+
+  A shift comparable to the cut spacing means a shifted region straddles the cut for most
+  starting positions, and SPLITTING FURTHER MAKES IT WORSE: the regions shrink while the
+  shift does not. That is why the crossings column roughly doubles per split, and it is a
+  property of the geometry rather than of the bound carried inside each region.
+  It is also sufficient.py's injectivity seen from another side: the accumulation is a
+  different point after every step, so coarse membership in it survives no step at all.
+
+=================================================================================================
+R1c  THE SWEEP AT A WIDTH WITH ENOUGH COORDINATES TO REACH 32 REGIONS
+=================================================================================================
+  8 controllers, L = 5: containment cannot be checked -- 2.8e14 paths -- and is marked so.
+
+     regions   terminal gap   final width  mean crossings   seconds
+           1         77.543        77.543            1.00      0.02
+           2         67.282        68.732            1.75      0.04
+           4         57.511        60.127            3.06      0.09
+           8         51.161        57.287            5.36      0.16
+          16         47.629        54.599            9.38      0.40
+          32         44.458        52.725           16.41      0.86
+
+=================================================================================================
+R2  THE GATES AT 200 TARGETS, AND THE COST AGAINST PATH ENUMERATION
+=================================================================================================
+
+     nCtrl   L  regions         paths    width  contains   work/paths   seconds
+         4   4       32     1.049e+06   42.851       yes    4.443e-02      0.02
+         6   4       32     1.074e+09   48.617 unavailable    1.008e-03      0.17
+         8   5       32     2.815e+14   52.725 unavailable    7.474e-08      0.85
+        10   6       32     1.181e+21   55.855 unavailable    3.412e-13      4.26
+
+=================================================================================================
+R3  WHAT THIS DOES NOT SETTLE
+=================================================================================================
+  1. The bound carried per region is a CONSTANT. That is the spec's letter and it is coarse
+     in ten dimensions: a piecewise-constant enclosure needs many regions to beat a single
+     affine one, and the sweep is where that shows.
+  2. Region membership is relaxed at boundaries by taking the extreme over reachable
+     regions. That is sound and it is the transition ambiguity the crossings column tracks.
+  3. Cuts are at coordinate midpoints, chosen greedily by curvature. Neither the position
+     nor the greedy order is optimised.
+  4. Rigour is modulo floating point, and containment is observed only where exact
+     enumeration runs.

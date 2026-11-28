@@ -1,0 +1,1453 @@
+{
+ "whole_cell_couplings": {
+  "real": 77987,
+  "null": 74,
+  "fdr": 0.0009488760947337376,
+  "systems": [
+   [
+    "Metabolism of proteins",
+    "Signal Transduction",
+    "raises",
+    2645
+   ],
+   [
+    "Disease",
+    "Signal Transduction",
+    "raises",
+    2401
+   ],
+   [
+    "Metabolism of proteins",
+    "Disease",
+    "raises",
+    2232
+   ],
+   [
+    "Gene expression (Transcription)",
+    "Signal Transduction",
+    "raises",
+    1666
+   ],
+   [
+    "Metabolism of proteins",
+    "Immune System",
+    "raises",
+    1563
+   ],
+   [
+    "Metabolism of proteins",
+    "Cell Cycle",
+    "raises",
+    1455
+   ],
+   [
+    "Metabolism of RNA",
+    "Signal Transduction",
+    "raises",
+    1424
+   ],
+   [
+    "Disease",
+    "Immune System",
+    "raises",
+    1317
+   ],
+   [
+    "Metabolism of proteins",
+    "Gene expression (Transcription)",
+    "raises",
+    1224
+   ],
+   [
+    "Metabolism of RNA",
+    "Disease",
+    "raises",
+    1128
+   ],
+   [
+    "Disease",
+    "Gene expression (Transcription)",
+    "raises",
+    918
+   ],
+   [
+    "Metabolism of proteins",
+    "Metabolism",
+    "raises",
+    884
+   ],
+   [
+    "Gene expression (Transcription)",
+    "Disease",
+    "raises",
+    871
+   ],
+   [
+    "Immune System",
+    "Signal Transduction",
+    "raises",
+    841
+   ],
+   [
+    "Disease",
+    "Cell Cycle",
+    "raises",
+    772
+   ],
+   [
+    "Metabolism of RNA",
+    "Immune System",
+    "raises",
+    757
+   ],
+   [
+    "Disease",
+    "Metabolism",
+    "raises",
+    725
+   ],
+   [
+    "Gene expression (Transcription)",
+    "Immune System",
+    "raises",
+    710
+   ],
+   [
+    "Metabolism",
+    "Signal Transduction",
+    "raises",
+    696
+   ],
+   [
+    "Metabolism of proteins",
+    "Signal Transduction",
+    "lowers",
+    694
+   ],
+   [
+    "Metabolism of proteins",
+    "DNA Repair",
+    "raises",
+    693
+   ],
+   [
+    "Disease",
+    "Metabolism of proteins",
+    "raises",
+    667
+   ],
+   [
+    "Metabolism of RNA",
+    "Cell Cycle",
+    "raises",
+    666
+   ],
+   [
+    "Metabolism of RNA",
+    "Gene expression (Transcription)",
+    "raises",
+    651
+   ],
+   [
+    "Cell Cycle",
+    "Signal Transduction",
+    "raises",
+    647
+   ],
+   [
+    "Developmental Biology",
+    "Signal Transduction",
+    "raises",
+    639
+   ],
+   [
+    "Metabolism of proteins",
+    "Disease",
+    "lowers",
+    619
+   ],
+   [
+    "Immune System",
+    "Disease",
+    "raises",
+    602
+   ],
+   [
+    "Metabolism of proteins",
+    "Cell Cycle",
+    "lowers",
+    576
+   ],
+   [
+    "Metabolism",
+    "Disease",
+    "raises",
+    545
+   ],
+   [
+    "Metabolism of RNA",
+    "Metabolism of proteins",
+    "raises",
+    541
+   ],
+   [
+    "Developmental Biology",
+    "Disease",
+    "raises",
+    541
+   ],
+   [
+    "Gene expression (Transcription)",
+    "Metabolism of proteins",
+    "lowers",
+    540
+   ],
+   [
+    "Cell Cycle",
+    "Immune System",
+    "raises",
+    512
+   ],
+   [
+    "Metabolism of RNA",
+    "Metabolism",
+    "raises",
+    498
+   ],
+   [
+    "Metabolism of proteins",
+    "Cellular responses to stimuli",
+    "raises",
+    498
+   ],
+   [
+    "Cell Cycle",
+    "Disease",
+    "raises",
+    496
+   ],
+   [
+    "Disease",
+    "Vesicle-mediated transport",
+    "raises",
+    487
+   ],
+   [
+    "Metabolism of proteins",
+    "Developmental Biology",
+    "raises",
+    485
+   ],
+   [
+    "Metabolism of proteins",
+    "Metabolism of RNA",
+    "raises",
+    483
+   ]
+  ],
+  "top": [
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Antigen processing: Ubiquitination & Proteasome degradation",
+    37.502525329589844,
+    173
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Somatic hypermutation of immunoglobulin genes",
+    36.930877685546875,
+    173
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Neddylation",
+    36.767879486083984,
+    173
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "Antigen processing: Ubiquitination & Proteasome degradation",
+    36.559295654296875,
+    163
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Nucleotide Excision Repair",
+    36.514503479003906,
+    173
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Formation of TC-NER Pre-Incision Complex",
+    36.4640007019043,
+    173
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Transcription-Coupled Nucleotide Excision Repair (TC-NER)",
+    36.43315505981445,
+    173
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Protein ubiquitination",
+    36.16574478149414,
+    173
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Global Genome Nucleotide Excision Repair (GG-NER)",
+    35.946712493896484,
+    173
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "Somatic hypermutation of immunoglobulin genes",
+    35.94374084472656,
+    163
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Chromatin organization",
+    35.9168815612793,
+    173
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "Neddylation",
+    35.85691452026367,
+    163
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Class I MHC mediated antigen processing & presentation",
+    35.85255813598633,
+    173
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Formation of Incision Complex in GG-NER",
+    35.75700759887695,
+    173
+   ],
+   [
+    "rRNA processing",
+    "Antigen processing: Ubiquitination & Proteasome degradation",
+    35.727108001708984,
+    187
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Organelle biogenesis and maintenance",
+    35.721275329589844,
+    173
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "E3 ubiquitin ligases ubiquitinate target proteins",
+    35.663543701171875,
+    173
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Chromatin modifying enzymes",
+    35.62738037109375,
+    173
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "Nucleotide Excision Repair",
+    35.61280822753906,
+    163
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "Transcription-Coupled Nucleotide Excision Repair (TC-NER)",
+    35.6087532043457,
+    163
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "Formation of TC-NER Pre-Incision Complex",
+    35.5761604309082,
+    163
+   ],
+   [
+    "rRNA processing",
+    "Somatic hypermutation of immunoglobulin genes",
+    35.204402923583984,
+    187
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "Protein ubiquitination",
+    35.164363861083984,
+    163
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Epigenetic regulation of gene expression",
+    35.14097595214844,
+    173
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "Global Genome Nucleotide Excision Repair (GG-NER)",
+    35.11882400512695,
+    163
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Protein localization",
+    35.076141357421875,
+    173
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "Formation of Incision Complex in GG-NER",
+    35.06106185913086,
+    163
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "Class I MHC mediated antigen processing & presentation",
+    35.015342712402344,
+    163
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "HATs acetylate histones",
+    35.00941848754883,
+    173
+   ],
+   [
+    "rRNA processing",
+    "Formation of TC-NER Pre-Incision Complex",
+    35.007686614990234,
+    187
+   ],
+   [
+    "rRNA processing",
+    "Neddylation",
+    35.00016784667969,
+    187
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "E3 ubiquitin ligases ubiquitinate target proteins",
+    34.97944641113281,
+    163
+   ],
+   [
+    "rRNA processing",
+    "Nucleotide Excision Repair",
+    34.945411682128906,
+    187
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Immunoglobulin maturation",
+    34.93757629394531,
+    173
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Affinity selection of immunoglobulins",
+    34.93757629394531,
+    173
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Respiratory Syncytial Virus Infection Pathway",
+    34.91796112060547,
+    173
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "DNA Repair",
+    34.90715789794922,
+    173
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Regulation of TP53 Activity",
+    34.89152908325195,
+    173
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Dual incision in TC-NER",
+    34.88119125366211,
+    173
+   ],
+   [
+    "rRNA processing",
+    "Transcription-Coupled Nucleotide Excision Repair (TC-NER)",
+    34.81867980957031,
+    187
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Assembly of the 9+0 primary cilium",
+    34.78424072265625,
+    173
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "Chromatin organization",
+    34.762962341308594,
+    163
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "Organelle biogenesis and maintenance",
+    34.71691131591797,
+    163
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Signaling by TGF-beta Receptor Complex",
+    34.71072006225586,
+    173
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Mitochondrial ribosome-associated quality control",
+    34.658756256103516,
+    173
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Cilium Assembly",
+    34.61931610107422,
+    173
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "RNA Polymerase II Pre-transcription Events",
+    34.581851959228516,
+    173
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "Chromatin modifying enzymes",
+    34.5787239074707,
+    163
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Signaling by WNT",
+    34.56221389770508,
+    173
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Regulation of endogenous retroelements",
+    34.490718841552734,
+    173
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Deubiquitination",
+    34.48707580566406,
+    173
+   ],
+   [
+    "rRNA processing",
+    "Formation of Incision Complex in GG-NER",
+    34.40132141113281,
+    187
+   ],
+   [
+    "rRNA processing",
+    "Global Genome Nucleotide Excision Repair (GG-NER)",
+    34.397216796875,
+    187
+   ],
+   [
+    "rRNA processing",
+    "Protein ubiquitination",
+    34.38152313232422,
+    187
+   ],
+   [
+    "rRNA processing",
+    "Chromatin organization",
+    34.366798400878906,
+    187
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Transcriptional regulation by RUNX1",
+    34.356388092041016,
+    173
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "Protein localization",
+    34.19637680053711,
+    163
+   ],
+   [
+    "rRNA processing",
+    "Class I MHC mediated antigen processing & presentation",
+    34.11870193481445,
+    187
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "Dual incision in TC-NER",
+    34.11301803588867,
+    163
+   ],
+   [
+    "rRNA processing",
+    "Chromatin modifying enzymes",
+    34.11043167114258,
+    187
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Signaling by TGFB family members",
+    34.1085319519043,
+    173
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "HATs acetylate histones",
+    34.089229583740234,
+    163
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "Immunoglobulin maturation",
+    34.08099365234375,
+    163
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "Affinity selection of immunoglobulins",
+    34.08099365234375,
+    163
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "DNA Damage Recognition in GG-NER",
+    34.07982635498047,
+    173
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "Respiratory Syncytial Virus Infection Pathway",
+    34.07144546508789,
+    163
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "Epigenetic regulation of gene expression",
+    34.06941223144531,
+    163
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Intracellular signaling by second messengers",
+    34.064517974853516,
+    173
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "DNA Repair",
+    34.0443000793457,
+    163
+   ],
+   [
+    "rRNA processing",
+    "Organelle biogenesis and maintenance",
+    34.031856536865234,
+    187
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "RNA polymerase II transcribes snRNA genes",
+    34.025238037109375,
+    173
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Transcription of the HIV genome",
+    34.00857162475586,
+    173
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "Mitochondrial ribosome-associated quality control",
+    33.99997329711914,
+    163
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "TCF dependent signaling in response to WNT",
+    33.97872543334961,
+    173
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Cellular Senescence",
+    33.9526481628418,
+    173
+   ],
+   [
+    "rRNA processing",
+    "E3 ubiquitin ligases ubiquitinate target proteins",
+    33.920467376708984,
+    187
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "Assembly of the 9+0 primary cilium",
+    33.8820915222168,
+    163
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Formation of RNA Pol II elongation complex ",
+    33.865509033203125,
+    173
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "RNA Polymerase II Transcription Elongation",
+    33.865509033203125,
+    173
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "TP53 Regulates Transcription of DNA Repair Genes",
+    33.78645324707031,
+    173
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Transcriptional and post-translational regulation of MITF-M expression and activity",
+    33.783267974853516,
+    173
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Differentiation of naive CD4+ T cells to T helper 2 cells (Th2 cells)",
+    33.770721435546875,
+    173
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "RNA Polymerase II Pre-transcription Events",
+    33.76862335205078,
+    163
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "RUNX1 interacts with co-factors whose precise effect on RUNX1 targets is not known",
+    33.76055145263672,
+    173
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "Cilium Assembly",
+    33.73263168334961,
+    163
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "Regulation of TP53 Activity",
+    33.72394943237305,
+    163
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "PIP3 activates AKT signaling",
+    33.713871002197266,
+    173
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Late Phase of HIV Life Cycle",
+    33.674774169921875,
+    173
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "HDACs deacetylate histones",
+    33.628292083740234,
+    173
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Transcriptional Regulation by VENTX",
+    33.627201080322266,
+    173
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "SUMOylation",
+    33.61245346069336,
+    173
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "Signaling by WNT",
+    33.60128402709961,
+    163
+   ],
+   [
+    "rRNA processing",
+    "Epigenetic regulation of gene expression",
+    33.57077407836914,
+    187
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Aberrant regulation of mitotic exit in cancer due to RB1 defects",
+    33.56955337524414,
+    173
+   ],
+   [
+    "rRNA processing",
+    "HATs acetylate histones",
+    33.552764892578125,
+    187
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "Deubiquitination",
+    33.54000473022461,
+    163
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "Signaling by TGF-beta Receptor Complex",
+    33.51099395751953,
+    163
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "PTEN Regulation",
+    33.508358001708984,
+    173
+   ],
+   [
+    "rRNA processing",
+    "Protein localization",
+    33.46589660644531,
+    187
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Transcriptional Regulation by TP53",
+    33.46188735961914,
+    173
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Epigenetic regulation by WDR5-containing histone modifying complexes",
+    33.458316802978516,
+    173
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "Regulation of endogenous retroelements",
+    33.44297409057617,
+    163
+   ],
+   [
+    "rRNA processing",
+    "Respiratory Syncytial Virus Infection Pathway",
+    33.3956298828125,
+    187
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "Transcriptional regulation by RUNX1",
+    33.391605377197266,
+    163
+   ],
+   [
+    "rRNA processing",
+    "Dual incision in TC-NER",
+    33.38323974609375,
+    187
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Conversion from APC/C:Cdc20 to APC/C:Cdh1 in late anaphase",
+    33.35098648071289,
+    173
+   ],
+   [
+    "rRNA processing",
+    "Mitochondrial ribosome-associated quality control",
+    33.27049255371094,
+    187
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Regulation of PTEN gene transcription",
+    33.2628059387207,
+    173
+   ],
+   [
+    "rRNA processing",
+    "DNA Repair",
+    33.26004409790039,
+    187
+   ],
+   [
+    "rRNA processing",
+    "Regulation of TP53 Activity",
+    33.21980285644531,
+    187
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "Intracellular signaling by second messengers",
+    33.20559310913086,
+    163
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Adipogenesis",
+    33.18011474609375,
+    173
+   ],
+   [
+    "rRNA processing",
+    "Immunoglobulin maturation",
+    33.16470718383789,
+    187
+   ],
+   [
+    "rRNA processing",
+    "Affinity selection of immunoglobulins",
+    33.16470718383789,
+    187
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "Transcription of the HIV genome",
+    33.13113021850586,
+    163
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "RNA polymerase II transcribes snRNA genes",
+    33.13107681274414,
+    163
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "Formation of RNA Pol II elongation complex ",
+    33.10319137573242,
+    163
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "RNA Polymerase II Transcription Elongation",
+    33.10319137573242,
+    163
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Epigenetic regulation of gene expression by MLL3 and MLL4 complexes",
+    33.09543991088867,
+    173
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "MLL4 and MLL3 complexes regulate expression of PPARG target genes in adipogenesis and hepatic steatosis",
+    33.09543991088867,
+    173
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Epigenetic regulation of adipogenesis genes by MLL3 and MLL4 complexes",
+    33.09543991088867,
+    173
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Transcriptional activity of SMAD2/SMAD3:SMAD4 heterotrimer",
+    33.082862854003906,
+    173
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Pausing and recovery of Tat-mediated HIV elongation",
+    33.082603454589844,
+    173
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Tat-mediated HIV elongation arrest and recovery",
+    33.082603454589844,
+    173
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "DNA Damage Recognition in GG-NER",
+    33.08131408691406,
+    163
+   ],
+   [
+    "rRNA processing",
+    "RNA Polymerase II Pre-transcription Events",
+    33.060997009277344,
+    187
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Differentiation of T cells",
+    33.049007415771484,
+    173
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "TCF dependent signaling in response to WNT",
+    33.04561233520508,
+    163
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Diseases of mitotic cell cycle",
+    33.04389190673828,
+    173
+   ],
+   [
+    "rRNA processing",
+    "Regulation of endogenous retroelements",
+    33.041996002197266,
+    187
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "RAF activation",
+    33.03480529785156,
+    173
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "Signaling by TGFB family members",
+    33.02381134033203,
+    163
+   ],
+   [
+    "rRNA processing",
+    "Signaling by TGF-beta Receptor Complex",
+    33.0098991394043,
+    187
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Senescence-Associated Secretory Phenotype (SASP)",
+    32.997371673583984,
+    173
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "HIV elongation arrest and recovery",
+    32.984954833984375,
+    173
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Pausing and recovery of HIV elongation",
+    32.984954833984375,
+    173
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "MITF-M-regulated melanocyte development",
+    32.9405403137207,
+    173
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "SUMO E3 ligases SUMOylate target proteins",
+    32.936187744140625,
+    173
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Formation of HIV elongation complex in the absence of HIV Tat",
+    32.93111801147461,
+    173
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Regulation of TP53 Activity through Acetylation",
+    32.91616439819336,
+    173
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "HIV Transcription Elongation",
+    32.904815673828125,
+    173
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Formation of HIV-1 elongation complex containing HIV-1 Tat",
+    32.904815673828125,
+    173
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Tat-mediated elongation of the HIV-1 transcript",
+    32.904815673828125,
+    173
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Base-Excision Repair, AP Site Formation",
+    32.90433120727539,
+    173
+   ],
+   [
+    "rRNA processing",
+    "Assembly of the 9+0 primary cilium",
+    32.89361572265625,
+    187
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "Transcriptional and post-translational regulation of MITF-M expression and activity",
+    32.871360778808594,
+    163
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "TP53 Regulates Transcription of DNA Repair Genes",
+    32.8587532043457,
+    163
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Formation of neuronal progenitor and neuronal BAF (npBAF and nBAF)",
+    32.85833740234375,
+    173
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "Cellular Senescence",
+    32.840171813964844,
+    163
+   ],
+   [
+    "rRNA processing",
+    "Signaling by WNT",
+    32.84010696411133,
+    187
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "PIP3 activates AKT signaling",
+    32.8316650390625,
+    163
+   ],
+   [
+    "rRNA processing",
+    "Deubiquitination",
+    32.79695129394531,
+    187
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "Differentiation of naive CD4+ T cells to T helper 2 cells (Th2 cells)",
+    32.78179168701172,
+    163
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Signaling by NOTCH",
+    32.775672912597656,
+    173
+   ],
+   [
+    "rRNA processing",
+    "Cilium Assembly",
+    32.76283264160156,
+    187
+   ],
+   [
+    "rRNA processing",
+    "Transcriptional regulation by RUNX1",
+    32.74539566040039,
+    187
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "Transcriptional Regulation by VENTX",
+    32.73764419555664,
+    163
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "SUMOylation of transcription factors",
+    32.67190170288086,
+    173
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "Late Phase of HIV Life Cycle",
+    32.66602325439453,
+    163
+   ],
+   [
+    "rRNA processing",
+    "DNA Damage Recognition in GG-NER",
+    32.612430572509766,
+    187
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Circadian clock",
+    32.61204147338867,
+    173
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Formation of the embryonic stem cell BAF (esBAF) complex",
+    32.606201171875,
+    173
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "RUNX1 interacts with co-factors whose precise effect on RUNX1 targets is not known",
+    32.597694396972656,
+    163
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "HDACs deacetylate histones",
+    32.587074279785156,
+    163
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "PTEN Regulation",
+    32.584259033203125,
+    163
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "Conversion from APC/C:Cdc20 to APC/C:Cdh1 in late anaphase",
+    32.567604064941406,
+    163
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "Aberrant regulation of mitotic exit in cancer due to RB1 defects",
+    32.53502655029297,
+    163
+   ],
+   [
+    "rRNA processing",
+    "Formation of RNA Pol II elongation complex ",
+    32.51572799682617,
+    187
+   ],
+   [
+    "rRNA processing",
+    "RNA Polymerase II Transcription Elongation",
+    32.51572799682617,
+    187
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Metabolism of vitamins and cofactors",
+    32.502567291259766,
+    173
+   ],
+   [
+    "rRNA processing",
+    "Transcription of the HIV genome",
+    32.49333572387695,
+    187
+   ],
+   [
+    "rRNA processing",
+    "Signaling by TGFB family members",
+    32.47848892211914,
+    187
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "Epigenetic regulation by WDR5-containing histone modifying complexes",
+    32.47280502319336,
+    163
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "DNA Damage Bypass",
+    32.44363784790039,
+    173
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "SUMOylation",
+    32.430110931396484,
+    163
+   ],
+   [
+    "rRNA processing",
+    "RUNX1 interacts with co-factors whose precise effect on RUNX1 targets is not known",
+    32.40262222290039,
+    187
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "Transcriptional Regulation by TP53",
+    32.397769927978516,
+    163
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Signaling by Nuclear Receptors",
+    32.379150390625,
+    173
+   ],
+   [
+    "rRNA processing",
+    "TP53 Regulates Transcription of DNA Repair Genes",
+    32.37480926513672,
+    187
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "SWI/SNF chromatin remodelers",
+    32.36288833618164,
+    173
+   ],
+   [
+    "rRNA processing",
+    "Intracellular signaling by second messengers",
+    32.35175323486328,
+    187
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "HIV Life Cycle",
+    32.34808349609375,
+    173
+   ],
+   [
+    "rRNA processing",
+    "TCF dependent signaling in response to WNT",
+    32.34359359741211,
+    187
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Gap-filling DNA repair synthesis and ligation in TC-NER",
+    32.3331413269043,
+    173
+   ],
+   [
+    "rRNA processing",
+    "Cellular Senescence",
+    32.295745849609375,
+    187
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Ub-specific processing proteases",
+    32.284664154052734,
+    173
+   ],
+   [
+    "rRNA processing",
+    "Differentiation of naive CD4+ T cells to T helper 2 cells (Th2 cells)",
+    32.2821159362793,
+    187
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "Pausing and recovery of Tat-mediated HIV elongation",
+    32.24928283691406,
+    163
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "Tat-mediated HIV elongation arrest and recovery",
+    32.24928283691406,
+    163
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "RAF activation",
+    32.239349365234375,
+    163
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "Base-Excision Repair, AP Site Formation",
+    32.23869705200195,
+    163
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Aberrant regulation of mitotic cell cycle due to RB1 defects",
+    32.23328399658203,
+    173
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "Regulation of PTEN gene transcription",
+    32.22242736816406,
+    163
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "tRNA modification in the nucleus and cytosol",
+    32.22166061401367,
+    173
+   ],
+   [
+    "rRNA processing",
+    "RNA polymerase II transcribes snRNA genes",
+    32.21433639526367,
+    187
+   ],
+   [
+    "rRNA processing",
+    "Transcriptional Regulation by VENTX",
+    32.20440673828125,
+    187
+   ],
+   [
+    "rRNA processing in the nucleus and cytosol",
+    "Glycerophospholipid biosynthesis",
+    32.17267608642578,
+    173
+   ],
+   [
+    "rRNA processing",
+    "Aberrant regulation of mitotic exit in cancer due to RB1 defects",
+    32.16672897338867,
+    187
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "Formation of HIV elongation complex in the absence of HIV Tat",
+    32.15910339355469,
+    163
+   ],
+   [
+    "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "HIV Transcription Elongation",
+    32.14876937866211,
+    163
+   ]
+  ]
+ },
+ "process_definitions": "Reactome human pathways (CC0), 15-300 measured genes",
+ "data": "K562 gwps Perturb-seq (CC BY 4.0), DepMap 24Q4 K562 (CC BY 4.0)"
+}

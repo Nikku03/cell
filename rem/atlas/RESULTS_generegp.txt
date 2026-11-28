@@ -1,0 +1,7 @@
+=================================================================================================
+GENEREGP -- predicting a knockdown's effects in an unmeasured cell type, and the next step (EXAM)
+=================================================================================================
+  G3-T1 from the other three cell types (median r, generic -> model): K562 0.21->0.26, RPE1 0.55->0.56, HepG2 0.42->0.44, Jurkat 0.27->0.30; K562 two-experiment ceiling 0.24 -> FAIL
+  G3-T2 from K562 genome-wide alone: RPE1 0.52->0.52, HepG2 0.36->0.36, Jurkat 0.24->0.27 -> FAIL
+  G3-C1 next step (K562): generic 0.27, with next step 0.27, shuffled go-betweens 0.27 -> FAIL
+  Predictions written: Jurkat 1,149 knockdowns; facts 1,152

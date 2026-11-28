@@ -1,0 +1,100 @@
+{
+ "blind": false,
+ "g2_verdicts": {
+  "MC-X1": "PASS",
+  "MC-X2": "FAIL",
+  "MC-L1": "PASS",
+  "MC-L2": "FAIL"
+ },
+ "MC-X1": {
+  "knockdowns": 167,
+  "chance": {
+   "RPE1": {
+    "real_median_gap": 0.7103948593139648,
+    "null_median_gap_95": 0.453558087348938,
+    "p_mc": 9.999000099990002e-05
+   },
+   "HepG2": {
+    "real_median_gap": 0.6520530581474304,
+    "null_median_gap_95": 0.41929036378860474,
+    "p_mc": 9.999000099990002e-05
+   },
+   "Jurkat": {
+    "real_median_gap": 0.356850266456604,
+    "null_median_gap_95": 0.22812938690185547,
+    "p_mc": 9.999000099990002e-05
+   }
+  },
+  "runs": 200,
+  "gate_pass_share": 1.0,
+  "gate_same_as_G2_share": 1.0,
+  "median_gap_95ci": {
+   "RPE1": [
+    0.6773541569709778,
+    0.7793177366256714
+   ],
+   "HepG2": [
+    0.6162257790565491,
+    0.6800227165222168
+   ],
+   "Jurkat": [
+    0.337019681930542,
+    0.39040112495422363
+   ]
+  },
+  "verdict": "STABLE PASS"
+ },
+ "MC-X2": {
+  "knockdowns": 763,
+  "chance": {
+   "real_mean_spearman": -0.04014738601839276,
+   "null_95": 0.03468993441370979,
+   "p_mc": 0.9739026097390261
+  },
+  "runs": 200,
+  "gate_fail_share": 1.0,
+  "gate_same_as_G2_share": 1.0,
+  "mean_spearman_95ci": [
+   -0.07937436793217305,
+   0.000932510147231341
+  ],
+  "verdict": "STABLE FAIL"
+ },
+ "MC-L1": {
+  "links": 391395,
+  "knockdowns_with_links": 1734,
+  "chance": {
+   "real_median_gain": 0.030129045248028452,
+   "null_median_gain_95": 0.0006656587123845813,
+   "null_max": 0.0013458132743798812,
+   "p_mc": 0.004975124378109453
+  },
+  "runs": 200,
+  "gate_pass_share": 1.0,
+  "gate_same_as_G2_share": 1.0,
+  "median_gain_95ci": [
+   0.023619844950732768,
+   0.036187874755176666
+  ],
+  "verdict": "STABLE PASS"
+ },
+ "MC-L2": {
+  "tfs": 761,
+  "links": 20120,
+  "chance": {
+   "real_mh_or": 0.8722689123430236,
+   "cmh_p": 0.41668004686943283,
+   "null_or_95": 1.2928437916836246,
+   "null_or_median": 1.005734043805258,
+   "p_mc": 0.8301698301698301
+  },
+  "runs": 200,
+  "gate_fail_share": 1.0,
+  "gate_same_as_G2_share": 1.0,
+  "mh_or_95ci": [
+   0.6396654711829636,
+   1.2362543122974015
+  ],
+  "verdict": "STABLE FAIL"
+ }
+}

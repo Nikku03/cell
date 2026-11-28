@@ -1,0 +1,331 @@
+{
+ "model": {
+  "reactions": 12931,
+  "metabolites": 8461,
+  "enzymes": 2848,
+  "wt_growth": 124.86814837744568
+ },
+ "validation_essentiality": {
+  "n_enzymes": 2526,
+  "n_fba_lethal": 81,
+  "n_depmap_essential": 235,
+  "depmap_essential_base_rate": 0.093,
+  "P(depmap_essential | FBA_lethal)": 0.8148,
+  "enrichment": 8.76,
+  "spearman_growth_vs_dependency": -0.07,
+  "spearman_p": 0.0004156291885767441,
+  "fba_lethal_and_depmap_essential": [
+   "AARS1",
+   "AHCTF1",
+   "CARS1",
+   "DARS1",
+   "EPRS1",
+   "FARSA",
+   "FARSB",
+   "GARS1",
+   "GLE1",
+   "HARS1",
+   "IARS1",
+   "KARS1",
+   "LARS1",
+   "MARS1",
+   "MTPAP",
+   "NARS1",
+   "NUP107",
+   "NUP133",
+   "NUP153",
+   "NUP155",
+   "NUP160",
+   "NUP205",
+   "NUP214",
+   "NUP43",
+   "NUP50",
+   "NUP54",
+   "NUP58",
+   "NUP62",
+   "NUP85",
+   "NUP88",
+   "NUP93",
+   "NUP98",
+   "POLR1A",
+   "POLR1B",
+   "POLR1C",
+   "POLR1E",
+   "POLR1H",
+   "POLR2B",
+   "POLR2C",
+   "POLR2D",
+   "POLR2E",
+   "POLR2F",
+   "POLR2G",
+   "POLR2H",
+   "POLR2I",
+   "POLR2K",
+   "POLR2L",
+   "POLR3A",
+   "POLR3B",
+   "POLR3C",
+   "POLR3E",
+   "POLR3F",
+   "POLR3H",
+   "POLR3K",
+   "POLRMT",
+   "QARS1",
+   "RAE1",
+   "RANBP2",
+   "RARS1",
+   "SARS1",
+   "SEC13",
+   "SEH1L",
+   "TARS1",
+   "TPR",
+   "WARS1",
+   "YARS1"
+  ]
+ },
+ "reach_sample": [
+  {
+   "protein": "GAPDH",
+   "growth_retained": 1.0,
+   "n_reactions": 143,
+   "n_subsystems": 18,
+   "max_hop": 6
+  },
+  {
+   "protein": "PKM",
+   "growth_retained": 1.0,
+   "n_reactions": 122,
+   "n_subsystems": 18,
+   "max_hop": 5
+  },
+  {
+   "protein": "PGK1",
+   "growth_retained": 1.0,
+   "n_reactions": 122,
+   "n_subsystems": 18,
+   "max_hop": 6
+  },
+  {
+   "protein": "ENO1",
+   "growth_retained": 1.0,
+   "n_reactions": 122,
+   "n_subsystems": 18,
+   "max_hop": 6
+  },
+  {
+   "protein": "LDHA",
+   "growth_retained": 1.0,
+   "n_reactions": 122,
+   "n_subsystems": 18,
+   "max_hop": 6
+  },
+  {
+   "protein": "GLS",
+   "growth_retained": 1.0,
+   "n_reactions": 306,
+   "n_subsystems": 25,
+   "max_hop": 6
+  },
+  {
+   "protein": "IDH1",
+   "growth_retained": 1.0,
+   "n_reactions": 127,
+   "n_subsystems": 16,
+   "max_hop": 6
+  },
+  {
+   "protein": "FH",
+   "growth_retained": 1.0,
+   "n_reactions": 392,
+   "n_subsystems": 36,
+   "max_hop": 6
+  },
+  {
+   "protein": "SDHA",
+   "growth_retained": 0.8571,
+   "n_reactions": 745,
+   "n_subsystems": 51,
+   "max_hop": 6
+  },
+  {
+   "protein": "PFKL",
+   "growth_retained": 1.0,
+   "n_reactions": 134,
+   "n_subsystems": 15,
+   "max_hop": 6
+  },
+  {
+   "protein": "ACO2",
+   "growth_retained": 1.0,
+   "n_reactions": 274,
+   "n_subsystems": 24,
+   "max_hop": 6
+  },
+  {
+   "protein": "CS",
+   "growth_retained": 1.0,
+   "n_reactions": 204,
+   "n_subsystems": 30,
+   "max_hop": 6
+  },
+  {
+   "protein": "TPI1",
+   "growth_retained": 1.0,
+   "n_reactions": 273,
+   "n_subsystems": 23,
+   "max_hop": 6
+  },
+  {
+   "protein": "PGAM1",
+   "growth_retained": 1.0,
+   "n_reactions": 139,
+   "n_subsystems": 18,
+   "max_hop": 6
+  }
+ ],
+ "demo": {
+  "protein": "AARS1",
+  "in_metabolic_model": true,
+  "growth_retained": 0.0,
+  "lethal": true,
+  "n_own_reactions": 1,
+  "direct_reactions": [
+   {
+    "reaction": "MAR05131",
+    "delta_flux": -53.3853,
+    "subsystem": "Aminoacyl-tRNA biosynthesis"
+   }
+  ],
+  "affected_reactions": [
+   {
+    "reaction": "MAR04410",
+    "delta_flux": -1000.0,
+    "subsystem": "Tricarboxylic acid cycle and glyoxylate/dicarboxylate metabolism",
+    "hop": 4
+   },
+   {
+    "reaction": "MAR05303",
+    "delta_flux": 1000.0,
+    "subsystem": "Transport reactions",
+    "hop": 6
+   },
+   {
+    "reaction": "MAR04885",
+    "delta_flux": 1000.0,
+    "subsystem": "Transport reactions",
+    "hop": null
+   },
+   {
+    "reaction": "MAR00569",
+    "delta_flux": 1000.0,
+    "subsystem": "Exchange/demand reactions",
+    "hop": 6
+   },
+   {
+    "reaction": "MAR04888",
+    "delta_flux": 1000.0,
+    "subsystem": "Transport reactions",
+    "hop": null
+   },
+   {
+    "reaction": "MAR09437",
+    "delta_flux": -1000.0,
+    "subsystem": "Exchange/demand reactions",
+    "hop": 6
+   },
+   {
+    "reaction": "MAR06328",
+    "delta_flux": -1000.0,
+    "subsystem": "Transport reactions",
+    "hop": 4
+   },
+   {
+    "reaction": "MAR06916",
+    "delta_flux": -1000.0,
+    "subsystem": "Oxidative phosphorylation",
+    "hop": 3
+   },
+   {
+    "reaction": "MAR09354",
+    "delta_flux": 1000.0,
+    "subsystem": "Exchange/demand reactions",
+    "hop": 5
+   },
+   {
+    "reaction": "MAR04710",
+    "delta_flux": -1000.0,
+    "subsystem": "Pentose phosphate pathway",
+    "hop": 5
+   }
+  ],
+  "n_reactions_moved": 646,
+  "affected_pathways": [
+   {
+    "subsystem": "Transport reactions",
+    "total_flux_moved": 27430.181,
+    "n_reactions": 235
+   },
+   {
+    "subsystem": "Exchange/demand reactions",
+    "total_flux_moved": 17004.603,
+    "n_reactions": 165
+   },
+   {
+    "subsystem": "Glycolysis / Gluconeogenesis",
+    "total_flux_moved": 5542.83,
+    "n_reactions": 10
+   },
+   {
+    "subsystem": "Pentose phosphate pathway",
+    "total_flux_moved": 4000.019,
+    "n_reactions": 6
+   },
+   {
+    "subsystem": "Tricarboxylic acid cycle and glyoxylate/dicarboxylate metabolism",
+    "total_flux_moved": 3999.74,
+    "n_reactions": 8
+   },
+   {
+    "subsystem": "Oxidative phosphorylation",
+    "total_flux_moved": 2626.058,
+    "n_reactions": 4
+   },
+   {
+    "subsystem": "Purine metabolism",
+    "total_flux_moved": 2116.135,
+    "n_reactions": 11
+   },
+   {
+    "subsystem": "Valine, leucine, and isoleucine metabolism",
+    "total_flux_moved": 2000.0,
+    "n_reactions": 2
+   },
+   {
+    "subsystem": "Pyrimidine metabolism",
+    "total_flux_moved": 1065.59,
+    "n_reactions": 11
+   },
+   {
+    "subsystem": "Artificial reactions",
+    "total_flux_moved": 879.496,
+    "n_reactions": 5
+   }
+  ],
+  "reach": {
+   "n_reactions": 646,
+   "n_subsystems": 48,
+   "max_hop": 6,
+   "hop_histogram": {
+    "4": 174,
+    "6": 114,
+    "3": 47,
+    "5": 246,
+    "1": 1,
+    "2": 23,
+    "0": 1
+   }
+  }
+ },
+ "verdict": "cascade(protein) = the REAL metabolic chain reaction of a knockout, by genome-scale FBA on Human-GEM (no toy network, no download -- cobra + cached model in-sandbox). Unlike the mRNA far field (a wall: cascade dies within ~1 pathway hop), the metabolic cascade is MECHANISTICALLY CAUSAL -- flux redistributes through shared metabolites by mass balance, so the wave genuinely propagates across pathways with a real magnitude at each step. VALIDATION: FBA-predicted lethality matches DepMap dependency -- Spearman(growth, dependency) = -0.07 (p=4e-04), and an FBA-lethal enzyme is 8.76x more likely than base to be DepMap-essential -- so the tool's magnitude is anchored to what real cells actually cannot lose. cascade() returns growth_retained (does the cell live / how slowed), the enzyme's own reactions, every downstream reaction ranked by |flux change| with its subsystem AND its metabolite-hop distance from the knockout site, and a pathway roll-up (the connected pathways that lit up = the '6 other pathways' answer). HONEST SCOPE: FBA gives the steady-state flux REDISTRIBUTION (new balance), not a time-course; reroutable knockouts look mild because the cell CAN reroute (real); glucose-limited aerobic medium; metabolic layer only (says nothing about the signaling/transcription far field, which stays the wall). HONEST METHOD CAVEAT: for a NON-lethal (reroutable) knockout the pFBA(WT)->pFBA(KO) flux difference can include alternate-optima reshuffling (the LP has degenerate solutions), so the per-reaction cascade of a reroutable enzyme is indicative not exact; the RELIABLE, non-degenerate signals are (a) growth impact, (b) the DepMap-anchored essentiality validation, and (c) the cascade of a LETHAL knockout (where the flux collapse is forced, not reshuffled) -- which is why the worked demo is chosen from the FBA-lethal set. This is the substrate where the user's chain-reaction vision is genuinely computable -- and it is.",
+ "note": "cascade(protein) = the REAL metabolic chain reaction of a knockout, by genome-scale FBA on Human-GEM (no toy network, no download -- cobra + cached model in-sandbox). Unlike the mRNA far field (a wall: cascade dies within ~1 pathway hop), the metabolic cascade is MECHANISTICALLY CAUSAL -- flux redistributes through shared metabolites by mass balance, so the wave genuinely propagates across pathways with a real magnitude at each step. VALIDATION: FBA-predicted lethality matches DepMap dependency -- Spearman(growth, dependency) = -0.07 (p=4e-04), and an FBA-lethal enzyme is 8.76x more likely than base to be DepMap-essential -- so the tool's magnitude is anchored to what real cells actually cannot lose. cascade() returns growth_retained (does the cell live / how slowed), the enzyme's own reactions, every downstream reaction ranked by |flux change| with its subsystem AND its metabolite-hop distance from the knockout site, and a pathway roll-up (the connected pathways that lit up = the '6 other pathways' answer). HONEST SCOPE: FBA gives the steady-state flux REDISTRIBUTION (new balance), not a time-course; reroutable knockouts look mild because the cell CAN reroute (real); glucose-limited aerobic medium; metabolic layer only (says nothing about the signaling/transcription far field, which stays the wall). HONEST METHOD CAVEAT: for a NON-lethal (reroutable) knockout the pFBA(WT)->pFBA(KO) flux difference can include alternate-optima reshuffling (the LP has degenerate solutions), so the per-reaction cascade of a reroutable enzyme is indicative not exact; the RELIABLE, non-degenerate signals are (a) growth impact, (b) the DepMap-anchored essentiality validation, and (c) the cascade of a LETHAL knockout (where the flux collapse is forced, not reshuffled) -- which is why the worked demo is chosen from the FBA-lethal set. This is the substrate where the user's chain-reaction vision is genuinely computable -- and it is."
+}

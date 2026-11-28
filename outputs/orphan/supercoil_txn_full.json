@@ -1,0 +1,100 @@
+{
+  "test": "supercoil_txn_full",
+  "manifest": {
+    "manifest_version": 1,
+    "inputs": [
+      {
+        "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/rnadecay/AvgKdegs.csv",
+        "bytes": 21962834,
+        "hash": "b8869c749b2b4a24",
+        "method": "sha256:full"
+      },
+      {
+        "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/k562_atac.bed.gz",
+        "bytes": 1268446,
+        "hash": "2f50c1a82609dccb",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/orphan/supercoil/GSM8706920_1_RPKM.bw",
+        "bytes": 107688596,
+        "hash": "d5666543ffbdba3e",
+        "method": "sha256:ends8M"
+      },
+      {
+        "path": "outputs/orphan/cell_complete.json",
+        "bytes": 38524393,
+        "hash": "cf872c8620cd7649",
+        "method": "sha256:full"
+      }
+    ],
+    "coverage": {
+      "available": 8867,
+      "used": 7267,
+      "selection": "filtered",
+      "fraction": 0.8195556558024134
+    },
+    "seed": 3312,
+    "controls": [
+      "displaced 2 Mb torsion",
+      "L1/L2 reconstruction against recorded"
+    ],
+    "note": "K562 rates; L3/L4/L5 not reproducible (_abcfeat.json has no producer)",
+    "warnings": []
+  },
+  "arms": {
+    "L1 basal promoter": 0.1465614019091223,
+    "L2 + M_ATAC": 0.16125406241657225,
+    "L3 + distal enhancers": 0.17554058093748576,
+    "L4 + TF occupancy": 0.19101427039608743,
+    "L5 + multiplicative form": 0.1908345785390809,
+    "+ TORSION": 0.1917806533541915,
+    "+ TORSION [displaced 2 Mb]": 0.18453838451189913
+  },
+  "verdict": "PARTIAL",
+  "note": "Torsion beats its displaced control but adds nothing over promoter accessibility. The twin-domain signal is real and already proxied by ATAC -- a mechanism the existing features capture, not new information.",
+  "faithful": true,
+  "n_genes": 12224,
+  "n_scored": 7267,
+  "target": "RNADecayCafe v1.1 (10.5281/zenodo.16884513)",
+  "torsion_track": "GSE285699 SH-SY5Y WT",
+  "log": [
+    "====================================================================================================",
+    "DOES MEASURED DNA TORSION PREDICT TRANSCRIPTION RATE?",
+    "====================================================================================================",
+    "  Torsion returned PARTIAL twice on the enhancer-gene bar, but the same run measured the",
+    "  twin-domain signature at the promoter at z = +23.21. That is a claim about TRANSCRIPTION,",
+    "  and this is the first test that asks it.",
+    "\n  target: RNADecayCafe v1.1, 88,695 usable rows, 8,867 K562",
+    "  ATAC: ENCODE ENCFF926KTI, 55,575 K562 peaks (GRCh38)",
+    "  12,224 genes with a rate, coordinates, strand and torsion",
+    "  ABC/rE2G links: 14,465 genes   Lambert TFs: 1,639",
+    "  8,849 (72.4%) have an ATAC peak at the promoter",
+    "  twin-domain asymmetry over these genes: mean +0.12141, z = +19.31",
+    "  7,267 K562 genes scored",
+    "\n  HELD-OUT GENES, 5 splits, 70/30, same regressor and settings as nexus_txn",
+    "    arm                                    r      R2",
+    "    L1 basal promoter                 0.3828  0.1466",
+    "    L2 + M_ATAC                       0.4016  0.1613",
+    "    L3 + distal enhancers             0.4190  0.1755",
+    "    L4 + TF occupancy                 0.4371  0.1910",
+    "    L5 + multiplicative form          0.4368  0.1908",
+    "    + TORSION                         0.4379  0.1918",
+    "    + TORSION [displaced 2 Mb]        0.4296  0.1845",
+    "\n  reconstruction check against the recorded ladder 0.1582 / 0.1667 / 0.1878 / 0.1995 / 0.1970:",
+    "    L1 basal promoter             0.1466  vs recorded 0.1582   (-0.0116)",
+    "    L2 + M_ATAC                   0.1613  vs recorded 0.1667   (-0.0054)",
+    "    L3 + distal enhancers         0.1755  vs recorded 0.1878   (-0.0123)",
+    "    L4 + TF occupancy             0.1910  vs recorded 0.1995   (-0.0085)",
+    "    L5 + multiplicative form      0.1908  vs recorded 0.1970   (-0.0062)",
+    "  FAITHFUL",
+    "\n  ------------------------------------------------------------------------------------------------",
+    "  TORSION MINUS the FULL ladder (L5) : +0.0009",
+    "  TORSION MINUS its displaced twin  : +0.0072",
+    "\n  VERDICT: PARTIAL",
+    "    Torsion beats its displaced control but adds nothing over promoter accessibility. The twin-dom",
+    "    ain signal is real and already proxied by ATAC -- a mechanism the existing features capture, n",
+    "    ot new information.",
+    "    manifest: 4 inputs, coverage 7267/8867 (82.0%) by 'filtered', seed 3312, controls 2"
+  ]
+}

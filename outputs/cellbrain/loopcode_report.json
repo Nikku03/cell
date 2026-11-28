@@ -1,0 +1,264 @@
+{
+ "added": "2026-11-28",
+ "facts_written": 6,
+ "layers": {
+  "LAYER-LOOPCODE_RAW_K562": "LAYER-LOOPCODE_RAW_K562/408daf4424cda9396fd0",
+  "LAYER-LOOPCODE_RAW_MOTIF": "LAYER-LOOPCODE_RAW_MOTIF/d02ece034b2c4083b0d2",
+  "LAYER-LOOPCODE_RAW_MARKS": "LAYER-LOOPCODE_RAW_MARKS/a6c64b5c071c15cab5cc",
+  "LAYER-LOOPCODE_RAW_HCT116": "LAYER-LOOPCODE_RAW_HCT116/a46877392eb72c864105",
+  "LAYER-LOOPCODE_K562": "LAYER-LOOPCODE_K562/4a2899c51840174e9dc8",
+  "LAYER-LOOPCODE_HCT116": "LAYER-LOOPCODE_HCT116/57d22b578b3d3110a1e0"
+ },
+ "build": {
+  "k562": {
+   "ctcf": 65346,
+   "rad21": 107902,
+   "h3k27ac": 94896,
+   "jun": 137719,
+   "atac": 180208
+  },
+  "ctcf_sites_with_motif_rel_0_8": 34931,
+  "motif_plus_share": 0.502275915376027,
+  "marks": {
+   "H3K27ac": 0.0136,
+   "H3K4me1": 0.0244,
+   "H3K4me3": 0.0138,
+   "H3K36me3": 0.0135,
+   "H3K27me3": 0.0075,
+   "H3K9me3": 0.0028
+  },
+  "hct116": {
+   "loops": 7102,
+   "compartments": {
+    "1": {
+     "untreated": {
+      "pc": 1,
+      "r": 0.386
+     },
+     "auxin_6h": {
+      "pc": 1,
+      "r": 0.957
+     }
+    },
+    "2": {
+     "untreated": {
+      "pc": 1,
+      "r": 0.328
+     },
+     "auxin_6h": {
+      "pc": 1,
+      "r": 0.958
+     }
+    },
+    "3": {
+     "untreated": {
+      "pc": 2,
+      "r": 0.338
+     },
+     "auxin_6h": {
+      "pc": 2,
+      "r": 0.866
+     }
+    },
+    "4": {
+     "untreated": {
+      "pc": 2,
+      "r": 0.398
+     },
+     "auxin_6h": {
+      "pc": 2,
+      "r": 0.883
+     }
+    },
+    "5": {
+     "untreated": {
+      "pc": 1,
+      "r": 0.241
+     },
+     "auxin_6h": {
+      "pc": 1,
+      "r": 0.979
+     }
+    },
+    "6": {
+     "untreated": {
+      "pc": 3,
+      "r": 0.26
+     },
+     "auxin_6h": {
+      "pc": 3,
+      "r": 0.84
+     }
+    },
+    "7": {
+     "untreated": {
+      "pc": 2,
+      "r": 0.36
+     },
+     "auxin_6h": {
+      "pc": 2,
+      "r": 0.95
+     }
+    },
+    "8": {
+     "untreated": {
+      "pc": 1,
+      "r": 0.317
+     },
+     "auxin_6h": {
+      "pc": 1,
+      "r": 0.989
+     }
+    },
+    "9": {
+     "untreated": {
+      "pc": 1,
+      "r": 0.347
+     },
+     "auxin_6h": {
+      "pc": 1,
+      "r": 0.988
+     }
+    },
+    "10": {
+     "untreated": {
+      "pc": 1,
+      "r": 0.376
+     },
+     "auxin_6h": {
+      "pc": 1,
+      "r": 0.978
+     }
+    },
+    "11": {
+     "untreated": {
+      "pc": 1,
+      "r": 0.301
+     },
+     "auxin_6h": {
+      "pc": 1,
+      "r": 0.991
+     }
+    },
+    "12": {
+     "untreated": {
+      "pc": 1,
+      "r": 0.425
+     },
+     "auxin_6h": {
+      "pc": 1,
+      "r": 0.881
+     }
+    },
+    "13": {
+     "untreated": {
+      "pc": 1,
+      "r": 0.334
+     },
+     "auxin_6h": {
+      "pc": 1,
+      "r": 0.985
+     }
+    },
+    "14": {
+     "untreated": {
+      "pc": 1,
+      "r": 0.367
+     },
+     "auxin_6h": {
+      "pc": 1,
+      "r": 0.991
+     }
+    },
+    "15": {
+     "untreated": {
+      "pc": 2,
+      "r": 0.415
+     },
+     "auxin_6h": {
+      "pc": 2,
+      "r": 0.927
+     }
+    },
+    "16": {
+     "untreated": {
+      "pc": 1,
+      "r": 0.494
+     },
+     "auxin_6h": {
+      "pc": 1,
+      "r": 0.988
+     }
+    },
+    "17": {
+     "untreated": {
+      "pc": 1,
+      "r": 0.41
+     },
+     "auxin_6h": {
+      "pc": 1,
+      "r": 0.979
+     }
+    },
+    "18": {
+     "untreated": {
+      "pc": 1,
+      "r": 0.386
+     },
+     "auxin_6h": {
+      "pc": 1,
+      "r": 0.996
+     }
+    },
+    "19": {
+     "untreated": {
+      "pc": 1,
+      "r": 0.43
+     },
+     "auxin_6h": {
+      "pc": 1,
+      "r": 0.988
+     }
+    },
+    "20": {
+     "untreated": {
+      "pc": 1,
+      "r": 0.47
+     },
+     "auxin_6h": {
+      "pc": 1,
+      "r": 0.98
+     }
+    },
+    "21": {
+     "untreated": {
+      "pc": 1,
+      "r": 0.315
+     },
+     "auxin_6h": {
+      "pc": 1,
+      "r": 0.993
+     }
+    },
+    "22": {
+     "untreated": {
+      "pc": 1,
+      "r": 0.532
+     },
+     "auxin_6h": {
+      "pc": 1,
+      "r": 0.976
+     }
+    }
+   },
+   "loop_pixel_counts": {
+    "untreated": 3695754,
+    "auxin_6h": 999044,
+    "washout_20": 700978,
+    "washout_40": 810467,
+    "washout_60": 851469,
+    "washout_180": 1571617
+   }
+  }
+ }
+}

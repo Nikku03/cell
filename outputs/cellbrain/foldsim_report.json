@@ -1,0 +1,21 @@
+{
+ "added": "2026-11-28",
+ "facts_written": 4,
+ "layers": {
+  "LAYER-FOLDSIM_RAW_MAPS": "LAYER-FOLDSIM_RAW_MAPS/f1e86bc9feba0402992f",
+  "LAYER-FOLDSIM_RAW_HCT116": "LAYER-FOLDSIM_RAW_HCT116/47605a0b5bd079d2a7c6",
+  "LAYER-FOLDSIM_K562_MAPS": "LAYER-FOLDSIM_K562_MAPS/0aed0baaaed9e0615da3",
+  "LAYER-FOLDSIM_HCT116": "LAYER-FOLDSIM_HCT116/952af476ddb28e12ca5f"
+ },
+ "build": {
+  "regions": 88,
+  "k562_counts_per_region_median": 3409695.0,
+  "hct116_counts_per_region_median": {
+   "untreated": 2148714.5,
+   "auxin_6h": 1427180.0
+  },
+  "hct116_ctcf_peaks": 58171,
+  "hct116_ctcf_with_motif": 46821,
+  "motif_plus_share": 0.5096003929860533
+ }
+}

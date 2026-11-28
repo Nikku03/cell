@@ -1,0 +1,60 @@
+=================================================================================================
+AN ERROR METER: can the cost of factorising be priced WITHOUT forming the joint?
+=================================================================================================
+  Three reporters on one shared pool. The exact three-way tail lift Lambda_full needs the
+  3-way joint. The candidate meter Lambda_pair needs only pairwise joints. If they track,
+  a MERGE can be priced from pairwise marginals -- the one direction that is not already
+  cheap. Coupling swept by pool SPEED, which leaves the pool's stationary law invariant.
+
+=================================================================================================
+M1  GROUND TRUTH
+=================================================================================================
+  worst stationary residual = 5.468e-15   PASS (bar 1e-10)
+  pool mean 2.9944533168 to 2.9944533168, span 2.225e-15   PASS (bar 1e-9)
+
+=================================================================================================
+M2  NON-VACUITY
+=================================================================================================
+  three-way tail range 4.231e-04 to 1.518e-02   offending: none
+  worst pairwise tail  4.393e-03   offending: none
+  PASS
+
+=================================================================================================
+THE SWEEP
+=================================================================================================
+   speed   Lam_full   Lam_pair   residual  |R|/|Lam|     MI_tot   bulk est
+     0.5    2.62653    3.40707   -0.78055     0.2972    0.26701    10.4534
+     1.0    2.47700    3.14089   -0.66389     0.2680    0.17339     8.4238
+     2.0    2.19961    2.69415   -0.49454     0.2248    0.09241     6.1498
+     4.0    1.77419    2.07596   -0.30177     0.1701    0.03994     4.0430
+     8.0    1.26749    1.41206   -0.14457     0.1141    0.01428     2.4178
+    16.0    0.80270    0.85767   -0.05498     0.0685    0.00442     1.3451
+
+=================================================================================================
+M3  THE SIGN -- is the meter conservative?
+=================================================================================================
+  residual R = Lambda_full - Lambda_pair over the sweep: -0.78055 to -0.05498
+  R <= 0 everywhere: the pairwise sum OVERSTATES the true error. The meter is
+  CONSERVATIVE and safe to use as a merge criterion -- it never licenses a merge-skip
+  that the exact answer would forbid.  PASS as predeclared.
+
+=================================================================================================
+M4  ACCURACY  and  M7  AGAINST THE BULK BASELINE
+=================================================================================================
+  worst relative residual of the PAIRWISE meter : 0.2972   FAIL (bar 0.25)
+  worst relative residual of the BULK baseline  : 2.9800
+  M7 PASS -- pairwise beats bulk  (ratio 10.0x)
+
+=================================================================================================
+M5  DISCRIMINATION -- could M4 have failed?
+=================================================================================================
+  |Lambda_full| spans 0.80270 to 2.62653 = 3.3x   FAIL -- too flat, any estimator would track it
+
+=================================================================================================
+M6  ZERO-COUPLING CONTROL
+=================================================================================================
+    speed    Lam_full    Lam_pair          MI
+       16   8.027e-01   8.577e-01   4.421e-03
+       64   2.497e-01   2.547e-01   3.313e-04
+      256   6.642e-02   6.677e-02   2.174e-05
+  worst surviving quantity at the fastest pool: 6.677e-02   FAIL (bar 1e-4)

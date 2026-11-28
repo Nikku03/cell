@@ -1,0 +1,75 @@
+{
+ "test": "the additive residual is double-centred, so context-blind models are pinned at zero",
+ "L1": {
+  "ceiling": 0.0002699861427900574,
+  "rows": 29396,
+  "groups": 3801
+ },
+ "L2": {
+  "ceiling": 1.68783704631581e-05,
+  "rows": 29396,
+  "groups": 8
+ },
+ "L3": {
+  "gated_val_mse_removed": 0.195,
+  "one_way_ceiling": 0.0002699861427900574
+ },
+ "L4": {
+  "construct_ceiling": 0.2487
+ },
+ "gates": {
+  "L1": true,
+  "L2": true,
+  "L3": true
+ },
+ "void": [],
+ "seconds": 8.340726613998413,
+ "log": [
+  "========================================================================================================",
+  "LOOP 260 -- WHY THE CONTEXT-BLIND CONTROLS SCORED EXACTLY ZERO",
+  "========================================================================================================",
+  "     Loop 257 rerun: K=1 removed 0.0% of validation MSE, K=8 with context held",
+  "     constant removed 0.0%, and the gated arm removed 19.5%. I called that defect H,",
+  "     an ablation that never trained. The VOID was right; the reason was wrong.",
+  "     The target R = Y - (gene_mean + line_mean - grand) is DOUBLE-CENTRED, so it is",
+  "     orthogonal to gene-only and line-only functions by construction. The controls",
+  "     were not under-trained. They were fitting a target holding nothing they can see.",
+  "     residual R over the 8 training lines: 29,396 x 978, total variance 0.2566",
+  "L1 IS THE RESIDUAL ORTHOGONAL TO GENE-ONLY FUNCTIONS?",
+  "     best possible gene-only model explains 0.000270 of residual variance",
+  "     (3,801 genes over 29,396 rows, and this is the IN-SAMPLE ceiling)",
+  "     L1 PASS -- 0.0270% of the residual is reachable by ANY gene-only function, so a context-blind arm is pinned at zero by geometry",
+  "L2 IS THE RESIDUAL ORTHOGONAL TO LINE-ONLY FUNCTIONS?",
+  "     best possible line-only model explains 0.000017 of residual variance (8 lines)",
+  "     L2 PASS -- 0.0017%; the line main effect is already removed too",
+  "L3 DOES THE GATED NETWORK EXCEED BOTH CEILINGS?",
+  "     loop 257's gated arm removed 19.5% of validation MSE",
+  "     against a best-case one-way ceiling of 0.0270%",
+  "     L3 PASS -- 19.5% is 722x the one-way ceiling, so what it learned is genuinely three-way (gene x landmark x line)",
+  "L4 HOW MUCH OF THE RESIDUAL IS REACHABLE AT ALL?",
+  "     loop 254's construct split put the profile-level ceiling at 0.2487 -- what two DISJOINT shRNA hairpin sets agree on for the",
+  "     same (gene, line). Reported, not gated. Every number in this arc lives under it.",
+  "L5 WHAT THIS CHANGES, AND WHAT IT DOES NOT",
+  "     CHANGES: 'does context matter?' is not a question this target can answer. Double-",
+  "     centring forces the answer to yes before any network exists. Loop 257's I3 and",
+  "     loop 256's H4 both asked it, and both comparisons were degenerate by construction,",
+  "     not merely under-trained. Defect H's remedy -- train the control harder -- is",
+  "     useless here; no amount of capacity reaches a variance component that is absent.",
+  "     The answerable question is whether context is used in a way that TRANSFERS to a",
+  "     line never seen, which is what a wrong-line control and an out-of-sample blend",
+  "     weight actually test.",
+  "     DOES NOT CHANGE: loop 257's I2. The gated model still loses 0.0152 to the additive",
+  "     baseline on a held-out line, and that comparison never involved a blind arm.",
+  "     DOES NOT CHANGE: the 19.5% is measured on held-out ROWS from lines the model",
+  "     trained on. It is real three-way structure, and it still transfers negatively.",
+  "     The gap between those two facts is the whole problem, stated precisely.",
+  "     This is algebra about the TARGET, not a claim about biology. A different target --",
+  "     the raw profile, or a residual centred differently -- has different geometry.",
+  "========================================================================================================",
+  "  L1  PASS",
+  "  L2  PASS",
+  "  L3  PASS",
+  "  3/3   [8s]",
+  "========================================================================================================"
+ ]
+}

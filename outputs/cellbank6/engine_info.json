@@ -1,0 +1,16 @@
+{
+ "heldout_train_r": {
+  "E3": [
+   0.2774,
+   0.2644,
+   0.2374
+  ],
+  "E4": [
+   0.2508,
+   0.2604,
+   0.2327
+  ]
+ },
+ "drug_feature_genes": 4837,
+ "drug_response_genes": 47
+}

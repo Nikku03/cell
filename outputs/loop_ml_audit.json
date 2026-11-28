@@ -1,0 +1,239 @@
+{
+ "test": "loop_ml_audit",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "colab/data/ml/kcat_records.tsv",
+    "bytes": 1376344,
+    "hash": "130cb6f337cb17e6",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/ml/esm2_8M_mean.npy",
+    "bytes": 5027968,
+    "hash": "077dfe7c9708fafc",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/ml/substrate_ecfp.npy",
+    "bytes": 692608,
+    "hash": "83d31b1f0980aa4c",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/ml/seq_features.npy",
+    "bytes": 785728,
+    "hash": "10b259ee48383f82",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 17004,
+   "used": 17004,
+   "selection": "all",
+   "fraction": 1.0
+  },
+  "seed": 13200,
+  "controls": [
+   "bootstrap over CLUSTERS, because records are not independent",
+   "nested CV: MLP configuration and early stopping on an inner cluster split of the training folds only",
+   "a target-balanced re-split to test whether the answer moves",
+   "substrate shuffled WITHIN protein to separate chemistry from a per-protein average",
+   "the between/within variance decomposition as a method-free ceiling",
+   "per-fold results reported, not only the pooled number"
+  ],
+  "note": "loop 131 reported a 9% gain with no error bar; this attaches one",
+  "warnings": []
+ },
+ "gates": {
+  "A1": true,
+  "A2": true,
+  "A3": true,
+  "A4": true,
+  "A5": true,
+  "A6": true
+ },
+ "model_rmse": 1.3768263740087427,
+ "constant_rmse": 1.5090860292875687,
+ "ec_rmse": 1.5015377566146224,
+ "mlp_tuned_rmse": 1.3867215456859623,
+ "a1": {
+  "per_fold_gain": [
+   0.1270720730207031,
+   0.07801680292693325,
+   0.11597112053538061,
+   0.13545626381129772,
+   0.20137247881124898
+  ],
+  "boot_mean": 0.13229049047105587,
+  "boot_lo": 0.10029573458110118,
+  "boot_hi": 0.16681991756016107
+ },
+ "a2": {
+  "boot_mean": 0.12474359175400804,
+  "boot_lo": 0.08524087504512035,
+  "boot_hi": 0.16480784001661475
+ },
+ "a3": {
+  "tuned_rmse": 1.3867215456859623,
+  "untuned_rmse": 1.4374,
+  "vs_xgb": [
+   0.009546593688911245,
+   -0.014316574423367572,
+   0.03452278029788722
+  ],
+  "configs": [
+   [
+    [
+     1024,
+     256,
+     0.0005,
+     0.4
+    ],
+    14,
+    1.355055134604599
+   ],
+   [
+    [
+     512,
+     128,
+     0.001,
+     0.3
+    ],
+    13,
+    1.3694948174718307
+   ],
+   [
+    [
+     512,
+     128,
+     0.001,
+     0.3
+    ],
+    13,
+    1.3283429497534684
+   ],
+   [
+    [
+     1024,
+     256,
+     0.0005,
+     0.4
+    ],
+    22,
+    1.3638346458549344
+   ],
+   [
+    [
+     512,
+     128,
+     0.001,
+     0.3
+    ],
+    15,
+    1.4382083672951411
+   ]
+  ]
+ },
+ "a4": {
+  "drift": [
+   -0.0107937598222142,
+   -0.06999325403435447,
+   0.10724392475588373,
+   0.03965221460134105,
+   -0.07607615275245477
+  ],
+  "rmse_rebalanced": 1.3609500394748968,
+  "shift": 0.01587633453384596
+ },
+ "a5": {
+  "shuffled_rmse": 1.395829464804112,
+  "delta": [
+   0.019075568720891126,
+   0.006345161558800027,
+   0.03229560450428208
+  ],
+  "n_shufflable": 12747
+ },
+ "a6": {
+  "var_total": 2.263472065210683,
+  "var_between": 1.9470099093076008,
+  "var_within": 0.3164621559030817,
+  "between_share": 0.8601872933326326,
+  "per_protein_ceiling_rmse": 0.562549691941149
+ },
+ "seconds": 486.51827573776245,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 132 -- audit loop 131: is the gain real, was the MLP mistreated, what was learned?",
+  "====================================================================================================",
+  "",
+  "  17,004 records | 7,856 sequences | 3,006 clusters | X (17004, 2393)",
+  "  records per cluster: median 2, max 161",
+  "",
+  "  refitting the best model (XGB all) under the committed split",
+  "    model 1.3768 | constant 1.5091 | EC median 1.5015",
+  "",
+  "A1 IS THE GAIN SIGNIFICANT AT ALL?",
+  "     fold 0: n= 3,580  model 1.3209  constant 1.4480  delta +0.1271",
+  "     fold 1: n= 3,345  model 1.3722  constant 1.4502  delta +0.0780",
+  "     fold 2: n= 3,137  model 1.3836  constant 1.4996  delta +0.1160",
+  "     fold 3: n= 3,581  model 1.4416  constant 1.5770  delta +0.1355",
+  "     fold 4: n= 3,361  model 1.3627  constant 1.5641  delta +0.2014",
+  "     per-fold gain: mean +0.1316, sd 0.0400, all five positive: True",
+  "     CLUSTER bootstrap on (constant - model): +0.1323  95% [+0.1003, +0.1668]",
+  "     resampling clusters, not records -- 17,004 records on 3,006 clusters are not 17,004 independent observations",
+  "     A1 PASS -- the interval excludes zero",
+  "",
+  "A2 AND AGAINST THE BEST BASELINE?",
+  "     (EC median - model): +0.1247  95% [+0.0852, +0.1648]",
+  "     A2 PASS",
+  "",
+  "A3 THE MLP, TRAINED PROPERLY",
+  "     fold 0: cfg h1=1024 lr=0.0005 dr=0.4, stopped ep 14, inner RMSE 1.3551",
+  "     fold 1: cfg h1=512 lr=0.001 dr=0.3, stopped ep 13, inner RMSE 1.3695",
+  "     fold 2: cfg h1=512 lr=0.001 dr=0.3, stopped ep 13, inner RMSE 1.3283",
+  "     fold 3: cfg h1=1024 lr=0.0005 dr=0.4, stopped ep 22, inner RMSE 1.3638",
+  "     fold 4: cfg h1=512 lr=0.001 dr=0.3, stopped ep 15, inner RMSE 1.4382",
+  "     tuned MLP  RMSE 1.3867  R2 +0.1504",
+  "     loop 131's untuned MLP 1.4374 | gradient boosting 1.3768",
+  "     (MLP - XGB): +0.0095  95% [-0.0143, +0.0345]  they are indistinguishable",
+  "     configuration and stopping epoch chosen on an INNER cluster split of the training folds only -- never on the fold being scored",
+  "     A3 PASS -- the comparison is now fair; whether the MLP won is the finding, not the gate",
+  "",
+  "A4 DOES THE SPLIT'S DRIFT CHANGE THE ANSWER?",
+  "     rebalanced fold means: -0.011  -0.070  +0.107  +0.040  -0.076",
+  "     worst drift 0.107 against the committed split's 0.207",
+  "     model under the rebalanced split: RMSE 1.3610 against 1.3768",
+  "     shift 0.0159; the A1 interval is 0.0665 wide",
+  "     A4 PASS -- the conclusion does not depend on which clusters landed where",
+  "",
+  "A5 DID IT LEARN CHEMISTRY OR A PER-PROTEIN AVERAGE?",
+  "     12,747 records sit on a protein with more than one substrate and can be shuffled",
+  "     substrate shuffled WITHIN protein: RMSE 1.3958 against the real 1.3768",
+  "     (shuffled - real): +0.0191  95% [+0.0063, +0.0323]",
+  "     A5 PASS -- the substrate channel carries real enzyme-substrate information",
+  "",
+  "A6 THE CEILING NOBODY CAN BEAT",
+  "     total variance 2.2635 = between-protein 1.9470 + within-protein 0.3165",
+  "     between-protein share 86.0%, within-protein 14.0%",
+  "     a PERFECT per-protein predictor -- one number per enzyme, ignoring the substrate --",
+  "     would score RMSE 0.5625, and no such model can do better",
+  "     the experimental floor is 0.0607, so most of the within-protein spread is real",
+  "     biology across substrates, not measurement noise",
+  "     for scale: this model is at 1.3768 and a constant at 1.504",
+  "     A6 PASS",
+  "",
+  "====================================================================================================",
+  "  A1  PASS",
+  "  A2  PASS",
+  "  A3  PASS",
+  "  A4  PASS",
+  "  A5  PASS",
+  "  A6  PASS",
+  "  6/6",
+  "====================================================================================================",
+  "    manifest: 4 inputs, coverage 17004/17004 (100.0%) by 'all', seed 13200, controls 6"
+ ]
+}

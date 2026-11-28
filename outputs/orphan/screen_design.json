@@ -1,0 +1,310 @@
+{
+ "n_intermediates": 1372,
+ "n_needing_perturbation": 1284,
+ "top50pct_genes": 119,
+ "top90pct_genes": 837,
+ "top30": [
+  {
+   "gene": "CAPZB",
+   "chains_unlocked": 136,
+   "hub_knockouts_served": 17,
+   "via_regulatory": 0,
+   "already_perturbed_effectively": false,
+   "measurable_as_target": true,
+   "is_TF": false,
+   "essential": 1.0
+  },
+  {
+   "gene": "CCNC",
+   "chains_unlocked": 78,
+   "hub_knockouts_served": 7,
+   "via_regulatory": 0,
+   "already_perturbed_effectively": false,
+   "measurable_as_target": true,
+   "is_TF": false,
+   "essential": 0.0
+  },
+  {
+   "gene": "CCNH",
+   "chains_unlocked": 75,
+   "hub_knockouts_served": 9,
+   "via_regulatory": 0,
+   "already_perturbed_effectively": false,
+   "measurable_as_target": true,
+   "is_TF": false,
+   "essential": 1.0
+  },
+  {
+   "gene": "TP53",
+   "chains_unlocked": 61,
+   "hub_knockouts_served": 15,
+   "via_regulatory": 54,
+   "already_perturbed_effectively": false,
+   "measurable_as_target": false,
+   "is_TF": true,
+   "essential": 0.0
+  },
+  {
+   "gene": "CDK7",
+   "chains_unlocked": 57,
+   "hub_knockouts_served": 10,
+   "via_regulatory": 40,
+   "already_perturbed_effectively": false,
+   "measurable_as_target": true,
+   "is_TF": false,
+   "essential": 1.0
+  },
+  {
+   "gene": "REL",
+   "chains_unlocked": 53,
+   "hub_knockouts_served": 14,
+   "via_regulatory": 49,
+   "already_perturbed_effectively": false,
+   "measurable_as_target": true,
+   "is_TF": true,
+   "essential": 0.0
+  },
+  {
+   "gene": "MYC",
+   "chains_unlocked": 52,
+   "hub_knockouts_served": 14,
+   "via_regulatory": 52,
+   "already_perturbed_effectively": false,
+   "measurable_as_target": true,
+   "is_TF": true,
+   "essential": 1.0
+  },
+  {
+   "gene": "ESR1",
+   "chains_unlocked": 51,
+   "hub_knockouts_served": 11,
+   "via_regulatory": 50,
+   "already_perturbed_effectively": false,
+   "measurable_as_target": false,
+   "is_TF": true,
+   "essential": 0.0
+  },
+  {
+   "gene": "CHMP1A",
+   "chains_unlocked": 48,
+   "hub_knockouts_served": 1,
+   "via_regulatory": 0,
+   "already_perturbed_effectively": false,
+   "measurable_as_target": true,
+   "is_TF": false,
+   "essential": 0.0
+  },
+  {
+   "gene": "BCAS2",
+   "chains_unlocked": 45,
+   "hub_knockouts_served": 2,
+   "via_regulatory": 0,
+   "already_perturbed_effectively": false,
+   "measurable_as_target": true,
+   "is_TF": false,
+   "essential": 1.0
+  },
+  {
+   "gene": "ATF4",
+   "chains_unlocked": 42,
+   "hub_knockouts_served": 2,
+   "via_regulatory": 35,
+   "already_perturbed_effectively": false,
+   "measurable_as_target": true,
+   "is_TF": true,
+   "essential": 1.0
+  },
+  {
+   "gene": "DDOST",
+   "chains_unlocked": 40,
+   "hub_knockouts_served": 3,
+   "via_regulatory": 0,
+   "already_perturbed_effectively": false,
+   "measurable_as_target": true,
+   "is_TF": false,
+   "essential": 1.0
+  },
+  {
+   "gene": "CSNK2A1",
+   "chains_unlocked": 40,
+   "hub_knockouts_served": 8,
+   "via_regulatory": 18,
+   "already_perturbed_effectively": false,
+   "measurable_as_target": true,
+   "is_TF": false,
+   "essential": 0.0
+  },
+  {
+   "gene": "CD44",
+   "chains_unlocked": 34,
+   "hub_knockouts_served": 3,
+   "via_regulatory": 0,
+   "already_perturbed_effectively": false,
+   "measurable_as_target": false,
+   "is_TF": false,
+   "essential": 0.0
+  },
+  {
+   "gene": "AR",
+   "chains_unlocked": 32,
+   "hub_knockouts_served": 15,
+   "via_regulatory": 32,
+   "already_perturbed_effectively": false,
+   "measurable_as_target": false,
+   "is_TF": true,
+   "essential": 0.0
+  },
+  {
+   "gene": "FOXP3",
+   "chains_unlocked": 31,
+   "hub_knockouts_served": 1,
+   "via_regulatory": 20,
+   "already_perturbed_effectively": false,
+   "measurable_as_target": false,
+   "is_TF": true,
+   "essential": 0.0
+  },
+  {
+   "gene": "CTNNB1",
+   "chains_unlocked": 30,
+   "hub_knockouts_served": 7,
+   "via_regulatory": 21,
+   "already_perturbed_effectively": false,
+   "measurable_as_target": true,
+   "is_TF": true,
+   "essential": 0.0
+  },
+  {
+   "gene": "ATP6V1D",
+   "chains_unlocked": 28,
+   "hub_knockouts_served": 1,
+   "via_regulatory": 0,
+   "already_perturbed_effectively": false,
+   "measurable_as_target": true,
+   "is_TF": false,
+   "essential": 1.0
+  },
+  {
+   "gene": "APOA1",
+   "chains_unlocked": 27,
+   "hub_knockouts_served": 1,
+   "via_regulatory": 0,
+   "already_perturbed_effectively": false,
+   "measurable_as_target": false,
+   "is_TF": false,
+   "essential": 0.0
+  },
+  {
+   "gene": "BIRC5",
+   "chains_unlocked": 27,
+   "hub_knockouts_served": 4,
+   "via_regulatory": 2,
+   "already_perturbed_effectively": false,
+   "measurable_as_target": true,
+   "is_TF": false,
+   "essential": 1.0
+  },
+  {
+   "gene": "BCL2L1",
+   "chains_unlocked": 27,
+   "hub_knockouts_served": 1,
+   "via_regulatory": 0,
+   "already_perturbed_effectively": false,
+   "measurable_as_target": true,
+   "is_TF": false,
+   "essential": 1.0
+  },
+  {
+   "gene": "AGGF1",
+   "chains_unlocked": 25,
+   "hub_knockouts_served": 2,
+   "via_regulatory": 0,
+   "already_perturbed_effectively": false,
+   "measurable_as_target": true,
+   "is_TF": false,
+   "essential": 0.0
+  },
+  {
+   "gene": "HDAC1",
+   "chains_unlocked": 24,
+   "hub_knockouts_served": 7,
+   "via_regulatory": 9,
+   "already_perturbed_effectively": false,
+   "measurable_as_target": true,
+   "is_TF": true,
+   "essential": 0.0
+  },
+  {
+   "gene": "CCDC57",
+   "chains_unlocked": 24,
+   "hub_knockouts_served": 1,
+   "via_regulatory": 0,
+   "already_perturbed_effectively": false,
+   "measurable_as_target": true,
+   "is_TF": false,
+   "essential": 0.0
+  },
+  {
+   "gene": "CDK9",
+   "chains_unlocked": 24,
+   "hub_knockouts_served": 5,
+   "via_regulatory": 10,
+   "already_perturbed_effectively": false,
+   "measurable_as_target": true,
+   "is_TF": false,
+   "essential": 1.0
+  },
+  {
+   "gene": "GYPA",
+   "chains_unlocked": 22,
+   "hub_knockouts_served": 3,
+   "via_regulatory": 0,
+   "already_perturbed_effectively": false,
+   "measurable_as_target": true,
+   "is_TF": false,
+   "essential": 0.0
+  },
+  {
+   "gene": "SP1",
+   "chains_unlocked": 22,
+   "hub_knockouts_served": 12,
+   "via_regulatory": 22,
+   "already_perturbed_effectively": false,
+   "measurable_as_target": true,
+   "is_TF": true,
+   "essential": 0.0
+  },
+  {
+   "gene": "CDK8",
+   "chains_unlocked": 21,
+   "hub_knockouts_served": 7,
+   "via_regulatory": 14,
+   "already_perturbed_effectively": false,
+   "measurable_as_target": true,
+   "is_TF": false,
+   "essential": 0.0
+  },
+  {
+   "gene": "ERCC3",
+   "chains_unlocked": 21,
+   "hub_knockouts_served": 6,
+   "via_regulatory": 0,
+   "already_perturbed_effectively": false,
+   "measurable_as_target": true,
+   "is_TF": false,
+   "essential": 1.0
+  },
+  {
+   "gene": "CD80",
+   "chains_unlocked": 20,
+   "hub_knockouts_served": 3,
+   "via_regulatory": 0,
+   "already_perturbed_effectively": false,
+   "measurable_as_target": false,
+   "is_TF": false,
+   "essential": 0.0
+  }
+ ],
+ "verdict": "SCREEN DESIGN (screen_design.py): the targeted screen specified rather than gestured at. Auditing the 25 strongest K562 knockouts, 1372 distinct intermediate proteins carry chain-load (a measured specific mover routes through them), and 1284 (94%) have NO effective knockout in any existing panel -- that gap IS the experiment. The load is concentrated: the top 119 genes cover 50% of all currently-unverifiable chain load and the top 837 cover 90%, so this is a few-hundred-gene screen, not a genome-wide one, and it is chosen by the measured graph rather than by annotation. Each row carries why it was picked (chains unlocked, hub knockouts served, whether the route is regulatory -- which the honesty guard showed is the layer that retains discrimination at depth -- plus TF status, essentiality, and whether the gene is even detectable as a readout target). Full ranked list written to outputs/orphan/screen_design.csv. Deterministic.",
+ "note": "SCREEN DESIGN (screen_design.py): the targeted screen specified rather than gestured at. Auditing the 25 strongest K562 knockouts, 1372 distinct intermediate proteins carry chain-load (a measured specific mover routes through them), and 1284 (94%) have NO effective knockout in any existing panel -- that gap IS the experiment. The load is concentrated: the top 119 genes cover 50% of all currently-unverifiable chain load and the top 837 cover 90%, so this is a few-hundred-gene screen, not a genome-wide one, and it is chosen by the measured graph rather than by annotation. Each row carries why it was picked (chains unlocked, hub knockouts served, whether the route is regulatory -- which the honesty guard showed is the layer that retains discrimination at depth -- plus TF status, essentiality, and whether the gene is even detectable as a readout target). Full ranked list written to outputs/orphan/screen_design.csv. Deterministic."
+}

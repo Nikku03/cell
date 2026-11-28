@@ -1,0 +1,28 @@
+{
+ "n_tfs": 392,
+ "n_genes": 7031,
+ "promoter_bp": 2000,
+ "output_type": "conservative IDR thresholded peaks",
+ "n_causal_edges_testable": 28820,
+ "n_direct": 9118,
+ "n_indirect": 19702,
+ "bound_background": 0.24976634089847005,
+ "binding_enrichment_at_causal": 1.2666939607477543,
+ "enrichment_p": 8.264016498060267e-143,
+ "transfer": {
+  "n_draws": 20,
+  "n_matched": 5670,
+  "n_direct": 2835,
+  "mag_direct": 1.6294045679012346,
+  "mag_indirect": 1.3837874779541446,
+  "sign_direct": 0.6953439153439154,
+  "sign_indirect": 0.6559611992945327,
+  "mag_p_median": 7.67965791460262e-08,
+  "sign_p_median": 0.001803729988665492,
+  "frac_draws_mag_p05": 1.0,
+  "frac_draws_sign_p05": 1.0,
+  "residual_z_p": 0.9671519342015932,
+  "residual_nb_p": 0.6977455828754541
+ },
+ "verdict": "DIRECTNESS IS A REAL ADMISSION CRITERION. Only 31.6% of causal edges are bound at the promoter -- most transcriptional consequences of knocking down a TF are downstream, not direct -- though binding is 1.27x enriched at causal targets (p 8.26e-143) against a 25.0% background, which is itself high: the median promoter here carries peaks from ~96 of 392 TFs. Matched on effect size and promoter busyness over 20 draws, DIRECT edges transfer to RPE1 better on BOTH halves of the signed prediction: magnitude 1.629 vs 1.384 (100% of draws p<0.05) and sign 69.5% vs 65.6% (100% of draws p<0.05)."
+}

@@ -1,0 +1,680 @@
+{
+ "test": "loop 150b -- post-hoc controls on the q-continued-fraction loop",
+ "post_hoc": true,
+ "predeclared": false,
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "outputs/loop_qchain.json",
+    "bytes": 18309,
+    "hash": "bc51a6e9b2f2f7c4",
+    "method": "sha256:full"
+   },
+   {
+    "path": "outputs/loop_capacity_ratio.json",
+    "bytes": 13968,
+    "hash": "2a9bbe03961188a9",
+    "method": "sha256:full"
+   },
+   {
+    "path": "outputs/loop_pulse_equation.json",
+    "bytes": 11233,
+    "hash": "05f5dd83ae13fda3",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 21,
+   "used": 21,
+   "selection": "all",
+   "fraction": 1.0
+  },
+  "seed": 15001,
+  "controls": [
+   "exact rational arithmetic, so the continued fraction is settled with no floating point at all (S1a)",
+   "absolute error substituted for relative on a quantity spanning eighteen orders (S1b)",
+   "the q/s predicate tested on a grid it was never fitted to (S2)",
+   "every conclusion in this module emitted through a helper that takes its gate as an argument (S3)"
+  ],
+  "note": "POST-HOC. R1's FAIL was two bad instruments and the mathematics is exact. R3's gate was right and its sentence was wrong, and the real constraint is on q/s -- the trimming-to-elongation ratio must not drift along the chain -- which holds on data it was not fitted to. Loop 150's n = 8 and its r^c ceiling are untouched.",
+  "warnings": []
+ },
+ "gates": {
+  "S1": true,
+  "S2": false,
+  "S3": true
+ },
+ "s1": {
+  "exact_settings": 20,
+  "exact_disagreements": 0,
+  "worst_absolute": 1.6486811915683575e-14,
+  "worst_relative": 1.5189091627518632e-05,
+  "smallest_transform": 2.0367810812646266e-18,
+  "r1_reported_mfpt": 2.664002820886549e-09,
+  "r1_reported_transform": 1.5189091627518632e-05,
+  "diagnosis": "gate tolerance incompatible with its own conditioning fence (a); relative error on a near-zero quantity (b)",
+  "pass": true
+ },
+ "s2": {
+  "interval": [
+   0.7142857142857143,
+   1.5
+  ],
+  "separates_original": true,
+  "held_out_n": 64,
+  "held_out_misclassified": 8,
+  "held_out_accuracy": 0.875,
+  "rows": [
+   {
+    "q": 0.55,
+    "s": 0.55,
+    "q_over_s": 1.0,
+    "k_u": 38068.612268653225,
+    "in_band": false,
+    "predicted": true
+   },
+   {
+    "q": 0.55,
+    "s": 0.65,
+    "q_over_s": 0.8461538461538461,
+    "k_u": 142153.77757075155,
+    "in_band": false,
+    "predicted": true
+   },
+   {
+    "q": 0.55,
+    "s": 0.75,
+    "q_over_s": 0.7333333333333334,
+    "k_u": 838695.5543735954,
+    "in_band": false,
+    "predicted": true
+   },
+   {
+    "q": 0.55,
+    "s": 0.9,
+    "q_over_s": 0.6111111111111112,
+    "k_u": 12731781.647342894,
+    "in_band": false,
+    "predicted": false
+   },
+   {
+    "q": 0.55,
+    "s": 1.1,
+    "q_over_s": 0.5,
+    "k_u": 325366115.9357351,
+    "in_band": false,
+    "predicted": false
+   },
+   {
+    "q": 0.55,
+    "s": 1.35,
+    "q_over_s": 0.40740740740740744,
+    "k_u": 10918045625.894997,
+    "in_band": false,
+    "predicted": false
+   },
+   {
+    "q": 0.55,
+    "s": 1.75,
+    "q_over_s": 0.31428571428571433,
+    "k_u": 4687050305055.317,
+    "in_band": false,
+    "predicted": false
+   },
+   {
+    "q": 0.55,
+    "s": 2.5,
+    "q_over_s": 0.22000000000000003,
+    "k_u": 8.70677367134092e+16,
+    "in_band": false,
+    "predicted": false
+   },
+   {
+    "q": 0.65,
+    "s": 0.55,
+    "q_over_s": 1.1818181818181817,
+    "k_u": 14654.894529447813,
+    "in_band": true,
+    "predicted": true
+   },
+   {
+    "q": 0.65,
+    "s": 0.65,
+    "q_over_s": 1.0,
+    "k_u": 14684.865574124045,
+    "in_band": true,
+    "predicted": true
+   },
+   {
+    "q": 0.65,
+    "s": 0.75,
+    "q_over_s": 0.8666666666666667,
+    "k_u": 44495.76698046407,
+    "in_band": false,
+    "predicted": true
+   },
+   {
+    "q": 0.65,
+    "s": 0.9,
+    "q_over_s": 0.7222222222222222,
+    "k_u": 354806.8228824041,
+    "in_band": false,
+    "predicted": true
+   },
+   {
+    "q": 0.65,
+    "s": 1.1,
+    "q_over_s": 0.5909090909090908,
+    "k_u": 6580564.2672950635,
+    "in_band": false,
+    "predicted": false
+   },
+   {
+    "q": 0.65,
+    "s": 1.35,
+    "q_over_s": 0.48148148148148145,
+    "k_u": 188406542.74968925,
+    "in_band": false,
+    "predicted": false
+   },
+   {
+    "q": 0.65,
+    "s": 1.75,
+    "q_over_s": 0.37142857142857144,
+    "k_u": 44215970104.913216,
+    "in_band": false,
+    "predicted": false
+   },
+   {
+    "q": 0.65,
+    "s": 2.5,
+    "q_over_s": 0.26,
+    "k_u": 813821320694469.5,
+    "in_band": false,
+    "predicted": false
+   },
+   {
+    "q": 0.75,
+    "s": 0.55,
+    "q_over_s": 1.3636363636363635,
+    "k_u": 25212.341288654086,
+    "in_band": true,
+    "predicted": true
+   },
+   {
+    "q": 0.75,
+    "s": 0.65,
+    "q_over_s": 1.1538461538461537,
+    "k_u": 7967.664036960624,
+    "in_band": true,
+    "predicted": true
+   },
+   {
+    "q": 0.75,
+    "s": 0.75,
+    "q_over_s": 1.0,
+    "k_u": 7725.5295759287055,
+    "in_band": true,
+    "predicted": true
+   },
+   {
+    "q": 0.75,
+    "s": 0.9,
+    "q_over_s": 0.8333333333333333,
+    "k_u": 26909.55557982466,
+    "in_band": true,
+    "predicted": true
+   },
+   {
+    "q": 0.75,
+    "s": 1.1,
+    "q_over_s": 0.6818181818181818,
+    "k_u": 305584.3124630694,
+    "in_band": false,
+    "predicted": false
+   },
+   {
+    "q": 0.75,
+    "s": 1.35,
+    "q_over_s": 0.5555555555555555,
+    "k_u": 6380069.736962828,
+    "in_band": false,
+    "predicted": false
+   },
+   {
+    "q": 0.75,
+    "s": 1.75,
+    "q_over_s": 0.42857142857142855,
+    "k_u": 817138815.3178488,
+    "in_band": false,
+    "predicted": false
+   },
+   {
+    "q": 0.75,
+    "s": 2.5,
+    "q_over_s": 0.3,
+    "k_u": 14878325538635.502,
+    "in_band": false,
+    "predicted": false
+   },
+   {
+    "q": 0.9,
+    "s": 0.55,
+    "q_over_s": 1.6363636363636362,
+    "k_u": 223569.42122811606,
+    "in_band": false,
+    "predicted": false
+   },
+   {
+    "q": 0.9,
+    "s": 0.65,
+    "q_over_s": 1.3846153846153846,
+    "k_u": 26564.43623193457,
+    "in_band": true,
+    "predicted": true
+   },
+   {
+    "q": 0.9,
+    "s": 0.75,
+    "q_over_s": 1.2,
+    "k_u": 6985.737629856783,
+    "in_band": true,
+    "predicted": true
+   },
+   {
+    "q": 0.9,
+    "s": 0.9,
+    "q_over_s": 1.0,
+    "k_u": 4033.4748500526653,
+    "in_band": true,
+    "predicted": true
+   },
+   {
+    "q": 0.9,
+    "s": 1.1,
+    "q_over_s": 0.8181818181818181,
+    "k_u": 10635.21206121512,
+    "in_band": true,
+    "predicted": true
+   },
+   {
+    "q": 0.9,
+    "s": 1.35,
+    "q_over_s": 0.6666666666666666,
+    "k_u": 115787.6281439059,
+    "in_band": false,
+    "predicted": false
+   },
+   {
+    "q": 0.9,
+    "s": 1.75,
+    "q_over_s": 0.5142857142857143,
+    "k_u": 6871327.406377642,
+    "in_band": false,
+    "predicted": false
+   },
+   {
+    "q": 0.9,
+    "s": 2.5,
+    "q_over_s": 0.36,
+    "k_u": 90986455117.2666,
+    "in_band": false,
+    "predicted": false
+   },
+   {
+    "q": 1.1,
+    "s": 0.55,
+    "q_over_s": 2.0,
+    "k_u": 5073590.810222743,
+    "in_band": false,
+    "predicted": false
+   },
+   {
+    "q": 1.1,
+    "s": 0.65,
+    "q_over_s": 1.6923076923076923,
+    "k_u": 372311.7889781056,
+    "in_band": false,
+    "predicted": false
+   },
+   {
+    "q": 1.1,
+    "s": 0.75,
+    "q_over_s": 1.4666666666666668,
+    "k_u": 43806.75771415932,
+    "in_band": false,
+    "predicted": true
+   },
+   {
+    "q": 1.1,
+    "s": 0.9,
+    "q_over_s": 1.2222222222222223,
+    "k_u": 5785.921541440672,
+    "in_band": true,
+    "predicted": true
+   },
+   {
+    "q": 1.1,
+    "s": 1.1,
+    "q_over_s": 1.0,
+    "k_u": 1814.9978490604935,
+    "in_band": true,
+    "predicted": true
+   },
+   {
+    "q": 1.1,
+    "s": 1.35,
+    "q_over_s": 0.8148148148148149,
+    "k_u": 3851.485337055526,
+    "in_band": true,
+    "predicted": true
+   },
+   {
+    "q": 1.1,
+    "s": 1.75,
+    "q_over_s": 0.6285714285714287,
+    "k_u": 74559.30087097111,
+    "in_band": false,
+    "predicted": false
+   },
+   {
+    "q": 1.1,
+    "s": 2.5,
+    "q_over_s": 0.44000000000000006,
+    "k_u": 334487504.53992313,
+    "in_band": false,
+    "predicted": false
+   },
+   {
+    "q": 1.35,
+    "s": 0.55,
+    "q_over_s": 2.4545454545454546,
+    "k_u": 165988691.91576934,
+    "in_band": false,
+    "predicted": false
+   },
+   {
+    "q": 1.35,
+    "s": 0.65,
+    "q_over_s": 2.076923076923077,
+    "k_u": 8935168.866320612,
+    "in_band": false,
+    "predicted": false
+   },
+   {
+    "q": 1.35,
+    "s": 0.75,
+    "q_over_s": 1.8,
+    "k_u": 887144.8717204557,
+    "in_band": false,
+    "predicted": false
+   },
+   {
+    "q": 1.35,
+    "s": 0.9,
+    "q_over_s": 1.5,
+    "k_u": 52629.872171731244,
+    "in_band": false,
+    "predicted": false
+   },
+   {
+    "q": 1.35,
+    "s": 1.1,
+    "q_over_s": 1.2272727272727273,
+    "k_u": 4407.080602245134,
+    "in_band": true,
+    "predicted": true
+   },
+   {
+    "q": 1.35,
+    "s": 1.35,
+    "q_over_s": 1.0,
+    "k_u": 1107.4098723704212,
+    "in_band": true,
+    "predicted": true
+   },
+   {
+    "q": 1.35,
+    "s": 1.75,
+    "q_over_s": 0.7714285714285715,
+    "k_u": 2194.3844232906076,
+    "in_band": true,
+    "predicted": true
+   },
+   {
+    "q": 1.35,
+    "s": 2.5,
+    "q_over_s": 0.54,
+    "k_u": 1108468.3289904082,
+    "in_band": false,
+    "predicted": false
+   },
+   {
+    "q": 1.75,
+    "s": 0.55,
+    "q_over_s": 3.1818181818181817,
+    "k_u": 15637941688.348803,
+    "in_band": false,
+    "predicted": false
+   },
+   {
+    "q": 1.75,
+    "s": 0.65,
+    "q_over_s": 2.692307692307692,
+    "k_u": 836306185.4654754,
+    "in_band": false,
+    "predicted": false
+   },
+   {
+    "q": 1.75,
+    "s": 0.75,
+    "q_over_s": 2.3333333333333335,
+    "k_u": 61158052.8107919,
+    "in_band": false,
+    "predicted": false
+   },
+   {
+    "q": 1.75,
+    "s": 0.9,
+    "q_over_s": 1.9444444444444444,
+    "k_u": 3058660.4444548716,
+    "in_band": false,
+    "predicted": false
+   },
+   {
+    "q": 1.75,
+    "s": 1.1,
+    "q_over_s": 1.5909090909090908,
+    "k_u": 115118.03501151517,
+    "in_band": false,
+    "predicted": false
+   },
+   {
+    "q": 1.75,
+    "s": 1.35,
+    "q_over_s": 1.2962962962962963,
+    "k_u": 6645.422399618663,
+    "in_band": true,
+    "predicted": true
+   },
+   {
+    "q": 1.75,
+    "s": 1.75,
+    "q_over_s": 1.0,
+    "k_u": 580.0520789599607,
+    "in_band": true,
+    "predicted": true
+   },
+   {
+    "q": 1.75,
+    "s": 2.5,
+    "q_over_s": 0.7,
+    "k_u": 1155.6664020323785,
+    "in_band": true,
+    "predicted": false
+   },
+   {
+    "q": 2.5,
+    "s": 0.55,
+    "q_over_s": 4.545454545454545,
+    "k_u": 10448840160925.922,
+    "in_band": false,
+    "predicted": false
+   },
+   {
+    "q": 2.5,
+    "s": 0.65,
+    "q_over_s": 3.846153846153846,
+    "k_u": 479656271911.3749,
+    "in_band": false,
+    "predicted": false
+   },
+   {
+    "q": 2.5,
+    "s": 0.75,
+    "q_over_s": 3.3333333333333335,
+    "k_u": 34901931582.16292,
+    "in_band": false,
+    "predicted": false
+   },
+   {
+    "q": 2.5,
+    "s": 0.9,
+    "q_over_s": 2.7777777777777777,
+    "k_u": 1490829996.3712707,
+    "in_band": false,
+    "predicted": false
+   },
+   {
+    "q": 2.5,
+    "s": 1.1,
+    "q_over_s": 2.2727272727272725,
+    "k_u": 40938531.00732743,
+    "in_band": false,
+    "predicted": false
+   },
+   {
+    "q": 2.5,
+    "s": 1.35,
+    "q_over_s": 1.8518518518518516,
+    "k_u": 1250410.6482304547,
+    "in_band": false,
+    "predicted": false
+   },
+   {
+    "q": 2.5,
+    "s": 1.75,
+    "q_over_s": 1.4285714285714286,
+    "k_u": 21363.314833234763,
+    "in_band": true,
+    "predicted": true
+   },
+   {
+    "q": 2.5,
+    "s": 2.5,
+    "q_over_s": 1.0,
+    "k_u": 302.7949371014451,
+    "in_band": false,
+    "predicted": true
+   }
+  ],
+  "r3_sentence_was_wrong": true,
+  "pass": false,
+  "refinement": {
+   "observed_after_the_run": "4 of the 8 held-out misses sit well inside the fitted interval, not at its edges: (q=0.55,s=0.55) and (q=2.5,s=2.5) both have q/s exactly 1.0 yet fall outside the rate band, at k_u = 3.81e4 and 302.8 against a band of 360-36000.",
+   "what_it_means": "band membership is TWO-dimensional, not one. It needs q/s near 1 AND q itself not extreme: when elongation is strongly length-dependent the chain's overall timescale shifts enough to push the first-step rate out of the physical band even when trimming tracks it exactly.",
+   "status": "S2's FAIL stands and is sharpened. The q/s predicate is incomplete rather than merely fuzzy at its boundary, and a single interval on q/s is the wrong shape for the constraint.",
+   "not_refitted": "no second predicate was fitted here. Naming the shape of a failure is not the same as fixing it, and fitting a two-parameter boundary to the 64 rows that broke the one-parameter version would be the mistake this loop exists to avoid."
+  }
+ },
+ "s3": {
+  "instances": [
+   {
+    "loop": "149 M5",
+    "printed": "processivity is a real requirement of this mechanism",
+    "contradicted_by": "its own sweep, flat from k_off = 0 to 10*lambda"
+   },
+   {
+    "loop": "150 R3",
+    "printed": "It does not depend on q",
+    "contradicted_by": "its own gate, failing 12 of 21 settings"
+   },
+   {
+    "loop": "148 K5",
+    "printed": "rho(pubs, fold-range) = -0.365 with no strike",
+    "contradicted_by": "loop 137's threshold of 0.20, which it was not wired to apply"
+   }
+  ],
+  "helper_added": "gate_guard.verdict",
+  "audit_by_module": {
+   "loop_capacity_ratio.py": 14,
+   "loop_capacity_ratio_controls.py": 5,
+   "loop_ubiquitin_markov.py": 5,
+   "loop_ubiquitin_markov_controls.py": 3,
+   "loop_qchain.py": 5
+  },
+  "audit_total": 32,
+  "audit_is_upper_bound": true,
+  "class_closed": false,
+  "pass": true
+ },
+ "seconds": 0.6860649585723877,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 150b -- POST-HOC controls on loop 150. One bad instrument, one bad sentence, and a defect that has now recurred three times.",
+  "====================================================================================================",
+  "",
+  "  loop 150 recorded 4/6: R1 and R3 FAILED.",
+  "",
+  "S1 R1's TWO GATES WERE THE WRONG INSTRUMENTS",
+  "     R1(a) reported 2.66e-09 against a 1e-10 gate, while fencing conditioning at 1e12. cond(A) = 1e12 with eps = 2.2e-16 permits about 1e-4, so the",
+  "     gate demanded six orders more than its own fence allows. Settled below without any floating point at all.",
+  "     EXACT RATIONAL: continued fraction vs Gaussian elimination on the generator, 20 settings: 0 disagreements",
+  "     they are the SAME RATIONAL NUMBER. The continued fraction is exact.",
+  "     R1(b): the transform on that grid runs down to 2.04e-18. Worst ABSOLUTE disagreement 1.65e-14; worst RELATIVE 1.52e-05.",
+  "       the 1.52e-05 sits at q=0.5, n=8, z=1 where the transform is 1.2e-14 and cond(zI-A) is 17.2 -- nothing ill-conditioned, just a rounding error over a near-zero number.",
+  "     on the right instrument the transform agrees to 1.65e-14, gate < 1e-12. R1's FAIL was mine, not the mathematics'.",
+  "     S1 PASS",
+  "",
+  "S2 R3's GATE WAS RIGHT AND ITS SENTENCE WAS WRONG",
+  "     R3 found 9 of 21 settings inside the physical rate band, FAILED correctly, and printed 'It does not depend on q' anyway.",
+  "     q/s of the surviving settings: 0.833 to 1.429",
+  "     q/s of the failing settings:   0.333, 0.467, 0.500, 0.567, 0.667, 0.700, 0.714, 1.500, 1.786, 2.000, 2.143, 2.857",
+  "     a single interval on q/s: (0.714, 1.500). Separates loop 150's rows perfectly: True",
+  "     HELD OUT: 64 settings on a grid the interval never saw -- 8 misclassifications, accuracy 87.5%",
+  "     q/s separates the rows it was read off and then fails on fresh ones (87.5%), so it is a description of 21 numbers and not a constraint.",
+  "     S2 FAIL",
+  "",
+  "S3 THE DEFECT THAT HAS NOW HAPPENED THREE TIMES",
+  "       149 M5   \"processivity is a real requirement of this mechanism\"",
+  "                  contradicted by its own sweep, flat from k_off = 0 to 10*lambda",
+  "       150 R3   \"It does not depend on q\"",
+  "                  contradicted by its own gate, failing 12 of 21 settings",
+  "       148 K5   \"rho(pubs, fold-range) = -0.365 with no strike\"",
+  "                  contradicted by loop 137's threshold of 0.20, which it was not wired to apply",
+  "     all three are one shape: a conclusion that does not take its gate as an input, and",
+  "     all three were caught by re-reading output. That is luck and it does not scale.",
+  "     gate_guard.verdict(gate, if_true, if_false) is now in the repo and every conclusion",
+  "     in this module is emitted through it, including this one.",
+  "     AUDIT of the arc's own source for narration lines that assert without a gate in scope:",
+  "       loop_capacity_ratio.py                 14",
+  "       loop_capacity_ratio_controls.py        5",
+  "       loop_ubiquitin_markov.py               5",
+  "       loop_ubiquitin_markov_controls.py      3",
+  "       loop_qchain.py                         5",
+  "     32 candidate lines across 5 modules. This is a REGEX over prose and",
+  "     it cannot tell an assertion from a caveat, so the number is an upper bound and a",
+  "     prompt to look, not a verdict.",
+  "     the class is NOT closed -- 32 lines still state things outside any gate, and saying otherwise would be the same mistake one level up.",
+  "     S3 PASS",
+  "",
+  "====================================================================================================",
+  "  S1  PASS",
+  "  S2  FAIL",
+  "  S3  PASS",
+  "  2/3   [POST-HOC -- written after loop 150's output]",
+  "====================================================================================================",
+  "    manifest: 3 inputs, coverage 21/21 (100.0%) by 'all', seed 15001, controls 4"
+ ]
+}

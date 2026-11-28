@@ -1,0 +1,10 @@
+{
+  "id": "cho_2022_opencell",
+  "type": "database",
+  "citation": "Cho NH, Cheveralls KC, Brunner AD, et al. OpenCell: Endogenous tagging for the cartography of human cellular organization. Science 375, eabi6983 (2022).",
+  "url": "https://opencell.sf.czbiohub.org/download",
+  "organism": "human (HEK293T)",
+  "authority": "primary",
+  "licence": "CC BY-SA 4.0 (AWS Open Data registry entry czb-opencell)",
+  "notes": "Chan Zuckerberg Biohub. 1,310 endogenously tagged proteins: graded localization annotations, IP-MS interactions from 1,260 pull-downs (29,922 bait-prey pairs), HEK293T RNA and absolute protein abundance (19,255 genes), library metadata. Processed CSVs pulled by rem/atlas/biohubbank.py into the cellbrain bank (local cache). Raw microscopy on AWS s3://czb-opencell; raw MS PRIDE PXD024909 / PXD029191; RNA-seq GEO GSE186192 (not pulled)."
+}

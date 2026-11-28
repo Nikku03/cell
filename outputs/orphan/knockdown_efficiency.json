@@ -1,0 +1,40 @@
+{
+ "results": [
+  {
+   "line": "RPE1",
+   "threshold": 13.0,
+   "n_measurable": 1377,
+   "median_self_z": -8.221073150634766,
+   "frac_clear_kd": 0.8641975308641975,
+   "n_null": 1077,
+   "null_with_good_kd": 914,
+   "null_frac_dispensable": 0.8486536675951718,
+   "responsive_frac_good_kd": 0.92
+  },
+  {
+   "line": "HepG2",
+   "threshold": 11.75,
+   "n_measurable": 974,
+   "median_self_z": -8.660392761230469,
+   "frac_clear_kd": 0.8572895277207392,
+   "n_null": 752,
+   "null_with_good_kd": 623,
+   "null_frac_dispensable": 0.8284574468085106,
+   "responsive_frac_good_kd": 0.954954954954955
+  },
+  {
+   "line": "Jurkat",
+   "threshold": 16.0,
+   "n_measurable": 1608,
+   "median_self_z": -9.352522850036621,
+   "frac_clear_kd": 0.8812189054726368,
+   "n_null": 1549,
+   "null_with_good_kd": 1359,
+   "null_frac_dispensable": 0.8773402194964494,
+   "responsive_frac_good_kd": 0.9830508474576272
+  }
+ ],
+ "null_frac_dispensable_mean": 0.8514837779667106,
+ "verdict": "KNOCKDOWN EFFICIENCY (knockdown_efficiency.py): a direct test of MY OWN recommendation, and it refutes it. I had argued that because ~83% of profiled knockouts move almost nothing, the null rate was mostly FAILED KNOCKDOWN and that QC'd guides were the biggest cheap multiplier available. CRISPRi lowers the target's own transcript, so this is checkable: RPE1 86% of knockouts show a clear self-knockdown (median self-z -8.2); HepG2 86% of knockouts show a clear self-knockdown (median self-z -8.7); Jurkat 88% of knockouts show a clear self-knockdown (median self-z -9.4). THE DECISIVE SPLIT: among NULL knockouts, 85% nonetheless show a clear self-knockdown -- the gene WAS silenced and the cell simply did not respond. Those are genuinely DISPENSABLE genes, not reagent failures, and no amount of guide QC recovers them. Only the remaining ~15% lack a clear knockdown and are addressable by better reagents. CONSEQUENCE: 'better perturbations' is a much smaller lever than I claimed -- it is worth doing for the minority of poorly-silenced targets, but it will NOT convert the null majority into usable sources, because those knockouts already worked. The reason most of the genome yields no transcriptional response is biology (dispensability and buffering), not technique. Deterministic.",
+ "note": "KNOCKDOWN EFFICIENCY (knockdown_efficiency.py): a direct test of MY OWN recommendation, and it refutes it. I had argued that because ~83% of profiled knockouts move almost nothing, the null rate was mostly FAILED KNOCKDOWN and that QC'd guides were the biggest cheap multiplier available. CRISPRi lowers the target's own transcript, so this is checkable: RPE1 86% of knockouts show a clear self-knockdown (median self-z -8.2); HepG2 86% of knockouts show a clear self-knockdown (median self-z -8.7); Jurkat 88% of knockouts show a clear self-knockdown (median self-z -9.4). THE DECISIVE SPLIT: among NULL knockouts, 85% nonetheless show a clear self-knockdown -- the gene WAS silenced and the cell simply did not respond. Those are genuinely DISPENSABLE genes, not reagent failures, and no amount of guide QC recovers them. Only the remaining ~15% lack a clear knockdown and are addressable by better reagents. CONSEQUENCE: 'better perturbations' is a much smaller lever than I claimed -- it is worth doing for the minority of poorly-silenced targets, but it will NOT convert the null majority into usable sources, because those knockouts already worked. The reason most of the genome yields no transcriptional response is biology (dispensability and buffering), not technique. Deterministic."
+}

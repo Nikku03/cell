@@ -1,0 +1,3426 @@
+{
+ "model": "adrn2a-v1",
+ "smoke": true,
+ "config": {
+  "seeds": 2,
+  "rounds": 2,
+  "block": 40,
+  "budget": 30000,
+  "delay": 4,
+  "t_win": 8,
+  "n_classes": 4,
+  "d_in": 8,
+  "k_slots": 6,
+  "pre_n": 2048,
+  "pre_epochs": 10,
+  "meta_iters": 15,
+  "eval_n": 64,
+  "p_flip": 0.12,
+  "noise": 0.4,
+  "max_steps": 4,
+  "theta_h": 0.5,
+  "theta_new": 0.4,
+  "min_obs_create": 25,
+  "create_cooldown": 22,
+  "protect_steps": 20,
+  "persist": 3,
+  "warm": 20,
+  "pre_restarts": 2,
+  "probe_blocks": 2,
+  "lam_e": 0.8,
+  "beta_lik": 1.5,
+  "gamma_ws": 2.0,
+  "stick": 0.02,
+  "probe_len": 15,
+  "ceiling": 0.99,
+  "chance": 0.25
+ },
+ "unit_of_replication": "seed (independent initialisation AND independent environment draw)",
+ "primary_metric": "online_acc = prequential held-out accuracy over the online stream (raw)",
+ "secondary_metric": "retention_acc = accuracy on fresh examples per context, learning off",
+ "mde_rule": "3*sd/sqrt(n) on the PAIRED per-seed gap; a positive gap whose paired sample sd is exactly zero has an UNESTIMABLE MDE and is reported UNSUPPORTED, never as a pass. Ceiling/floor is adjudicated per METRIC (online_acc AND retention_acc) with the declared max(MDE, 0.02) tolerance, and gates read on a floored metric are UNSUPPORTED rather than counted.",
+ "arms": {
+  "frozen": {
+   "flags": {
+    "workspace": true,
+    "halting": true,
+    "context": false,
+    "fast": false,
+    "consolidate": false,
+    "controller": false,
+    "eligibility": false,
+    "oracle_context": false,
+    "sgd": "none"
+   },
+   "params": {
+    "width_d_h": 73,
+    "trainable": 29774,
+    "adaptive": 36,
+    "total": 29810
+   },
+   "results": {
+    "immediate": {
+     "online_acc": {
+      "mean": 0.2640625,
+      "sd": 0.01546796083845575,
+      "per_seed": [
+       0.253125,
+       0.275
+      ]
+     },
+     "retention_acc": {
+      "mean": 0.2421875,
+      "sd": 0.03314563036811941,
+      "per_seed": [
+       0.21875,
+       0.265625
+      ]
+     },
+     "revisit_acc": {
+      "mean": 0.2833333333333333,
+      "sd": 0.07071067811865474,
+      "per_seed": [
+       0.23333333333333334,
+       0.3333333333333333
+      ]
+     },
+     "mean_steps": {
+      "mean": 2.425,
+      "sd": 0.07954951288348679,
+      "per_seed": [
+       2.36875,
+       2.48125
+      ]
+     },
+     "steps_sd": {
+      "mean": 1.301518629903562,
+      "sd": 0.26366718989648574,
+      "per_seed": [
+       1.4879594878557683,
+       1.1150777719513558
+      ]
+     },
+     "n_contexts": {
+      "mean": 1.0,
+      "sd": 0.0,
+      "per_seed": [
+       1,
+       1
+      ]
+     },
+     "calibrated": [
+      null,
+      null
+     ]
+    },
+    "delayed": {
+     "online_acc": {
+      "mean": 0.265625,
+      "sd": 0.013258252147247797,
+      "per_seed": [
+       0.25625,
+       0.275
+      ]
+     },
+     "retention_acc": {
+      "mean": 0.25,
+      "sd": 0.02209708691207961,
+      "per_seed": [
+       0.234375,
+       0.265625
+      ]
+     },
+     "revisit_acc": {
+      "mean": 0.29166666666666663,
+      "sd": 0.08249579113843053,
+      "per_seed": [
+       0.23333333333333334,
+       0.35
+      ]
+     },
+     "mean_steps": {
+      "mean": 2.40625,
+      "sd": 0.06187184335382316,
+      "per_seed": [
+       2.3625,
+       2.45
+      ]
+     },
+     "steps_sd": {
+      "mean": 1.2930121373126293,
+      "sd": 0.2689479048523208,
+      "per_seed": [
+       1.4831870246196197,
+       1.102837250005639
+      ]
+     },
+     "n_contexts": {
+      "mean": 1.0,
+      "sd": 0.0,
+      "per_seed": [
+       1,
+       1
+      ]
+     },
+     "calibrated": [
+      null,
+      null
+     ]
+    }
+   }
+  },
+  "sgd_head": {
+   "flags": {
+    "workspace": true,
+    "halting": true,
+    "context": false,
+    "fast": false,
+    "consolidate": false,
+    "controller": false,
+    "eligibility": false,
+    "oracle_context": false,
+    "sgd": "head"
+   },
+   "params": {
+    "width_d_h": 73,
+    "trainable": 29774,
+    "adaptive": 36,
+    "total": 29810
+   },
+   "results": {
+    "immediate": {
+     "online_acc": {
+      "mean": 0.4203125,
+      "sd": 0.01546796083845575,
+      "per_seed": [
+       0.409375,
+       0.43125
+      ]
+     },
+     "retention_acc": {
+      "mean": 0.271484375,
+      "sd": 0.01933495104806966,
+      "per_seed": [
+       0.2578125,
+       0.28515625
+      ]
+     },
+     "revisit_acc": {
+      "mean": 0.13333333333333333,
+      "sd": 0.07071067811865475,
+      "per_seed": [
+       0.18333333333333332,
+       0.08333333333333333
+      ]
+     },
+     "mean_steps": {
+      "mean": 2.446875,
+      "sd": 0.11932426932523002,
+      "per_seed": [
+       2.3625,
+       2.53125
+      ]
+     },
+     "steps_sd": {
+      "mean": 1.3087185949635398,
+      "sd": 0.2467356194255645,
+      "per_seed": [
+       1.4831870246196197,
+       1.13425016530746
+      ]
+     },
+     "n_contexts": {
+      "mean": 1.0,
+      "sd": 0.0,
+      "per_seed": [
+       1,
+       1
+      ]
+     },
+     "calibrated": [
+      0.03,
+      0.03
+     ]
+    },
+    "delayed": {
+     "online_acc": {
+      "mean": 0.3359375,
+      "sd": 0.024306795603287603,
+      "per_seed": [
+       0.31875,
+       0.353125
+      ]
+     },
+     "retention_acc": {
+      "mean": 0.279296875,
+      "sd": 0.030383494504109463,
+      "per_seed": [
+       0.2578125,
+       0.30078125
+      ]
+     },
+     "revisit_acc": {
+      "mean": 0.09999999999999999,
+      "sd": 0.11785113019775792,
+      "per_seed": [
+       0.18333333333333332,
+       0.016666666666666666
+      ]
+     },
+     "mean_steps": {
+      "mean": 2.415625,
+      "sd": 0.07954951288348647,
+      "per_seed": [
+       2.359375,
+       2.471875
+      ]
+     },
+     "steps_sd": {
+      "mean": 1.2964296569490406,
+      "sd": 0.260718014176209,
+      "per_seed": [
+       1.4807851327505284,
+       1.1120741811475527
+      ]
+     },
+     "n_contexts": {
+      "mean": 1.0,
+      "sd": 0.0,
+      "per_seed": [
+       1,
+       1
+      ]
+     },
+     "calibrated": [
+      0.03,
+      0.03
+     ]
+    }
+   }
+  },
+  "sgd_full": {
+   "flags": {
+    "workspace": true,
+    "halting": true,
+    "context": false,
+    "fast": false,
+    "consolidate": false,
+    "controller": false,
+    "eligibility": false,
+    "oracle_context": false,
+    "sgd": "full"
+   },
+   "params": {
+    "width_d_h": 73,
+    "trainable": 29774,
+    "adaptive": 36,
+    "total": 29810
+   },
+   "results": {
+    "immediate": {
+     "online_acc": {
+      "mean": 0.34062499999999996,
+      "sd": 0.05745242597140698,
+      "per_seed": [
+       0.3,
+       0.38125
+      ]
+     },
+     "retention_acc": {
+      "mean": 0.21875,
+      "sd": 0.016572815184059706,
+      "per_seed": [
+       0.20703125,
+       0.23046875
+      ]
+     },
+     "revisit_acc": {
+      "mean": 0.16666666666666666,
+      "sd": 0.02357022603955158,
+      "per_seed": [
+       0.15,
+       0.18333333333333332
+      ]
+     },
+     "mean_steps": {
+      "mean": 2.8109374999999996,
+      "sd": 0.2143417430471723,
+      "per_seed": [
+       2.9625,
+       2.659375
+      ]
+     },
+     "steps_sd": {
+      "mean": 1.182380486223217,
+      "sd": 0.16476082960490815,
+      "per_seed": [
+       1.0658769863356652,
+       1.2988839861107688
+      ]
+     },
+     "n_contexts": {
+      "mean": 1.0,
+      "sd": 0.0,
+      "per_seed": [
+       1,
+       1
+      ]
+     },
+     "calibrated": [
+      0.003,
+      0.003
+     ]
+    },
+    "delayed": {
+     "online_acc": {
+      "mean": 0.3203125,
+      "sd": 0.02872621298570351,
+      "per_seed": [
+       0.340625,
+       0.3
+      ]
+     },
+     "retention_acc": {
+      "mean": 0.244140625,
+      "sd": 0.013810679320049757,
+      "per_seed": [
+       0.25390625,
+       0.234375
+      ]
+     },
+     "revisit_acc": {
+      "mean": 0.21666666666666667,
+      "sd": 0.09428090415820634,
+      "per_seed": [
+       0.15,
+       0.2833333333333333
+      ]
+     },
+     "mean_steps": {
+      "mean": 2.215625,
+      "sd": 0.6496543552151404,
+      "per_seed": [
+       2.675,
+       1.75625
+      ]
+     },
+     "steps_sd": {
+      "mean": 1.2359787721028708,
+      "sd": 0.15304864364691312,
+      "per_seed": [
+       1.3442005058770066,
+       1.1277570383287352
+      ]
+     },
+     "n_contexts": {
+      "mean": 1.0,
+      "sd": 0.0,
+      "per_seed": [
+       1,
+       1
+      ]
+     },
+     "calibrated": [
+      0.003,
+      0.003
+     ]
+    }
+   }
+  },
+  "global_fast": {
+   "flags": {
+    "workspace": true,
+    "halting": true,
+    "context": false,
+    "fast": true,
+    "consolidate": true,
+    "controller": true,
+    "eligibility": true,
+    "oracle_context": false,
+    "sgd": "none"
+   },
+   "params": {
+    "width_d_h": 72,
+    "trainable": 29396,
+    "adaptive": 332,
+    "total": 29728
+   },
+   "results": {
+    "immediate": {
+     "online_acc": {
+      "mean": 0.515625,
+      "sd": 0.03093592167691142,
+      "per_seed": [
+       0.49375,
+       0.5375
+      ]
+     },
+     "retention_acc": {
+      "mean": 0.263671875,
+      "sd": 0.04695630968816917,
+      "per_seed": [
+       0.23046875,
+       0.296875
+      ]
+     },
+     "revisit_acc": {
+      "mean": 0.26666666666666666,
+      "sd": 0.04714045207910316,
+      "per_seed": [
+       0.23333333333333334,
+       0.3
+      ]
+     },
+     "mean_steps": {
+      "mean": 1.8562500000000002,
+      "sd": 0.03093592167691142,
+      "per_seed": [
+       1.878125,
+       1.834375
+      ]
+     },
+     "steps_sd": {
+      "mean": 1.282186389500672,
+      "sd": 0.030999498519541972,
+      "per_seed": [
+       1.2602664338841214,
+       1.3041063451172223
+      ]
+     },
+     "n_contexts": {
+      "mean": 1.0,
+      "sd": 0.0,
+      "per_seed": [
+       1,
+       1
+      ]
+     },
+     "calibrated": [
+      null,
+      null
+     ]
+    },
+    "delayed": {
+     "online_acc": {
+      "mean": 0.275,
+      "sd": 0.04419417382415924,
+      "per_seed": [
+       0.24375,
+       0.30625
+      ]
+     },
+     "retention_acc": {
+      "mean": 0.244140625,
+      "sd": 0.013810679320049757,
+      "per_seed": [
+       0.25390625,
+       0.234375
+      ]
+     },
+     "revisit_acc": {
+      "mean": 0.275,
+      "sd": 0.10606601717798211,
+      "per_seed": [
+       0.2,
+       0.35
+      ]
+     },
+     "mean_steps": {
+      "mean": 1.859375,
+      "sd": 0.03535533905932725,
+      "per_seed": [
+       1.884375,
+       1.834375
+      ]
+     },
+     "steps_sd": {
+      "mean": 1.2898728687453547,
+      "sd": 0.020129175324812097,
+      "per_seed": [
+       1.2756393923734872,
+       1.3041063451172223
+      ]
+     },
+     "n_contexts": {
+      "mean": 1.0,
+      "sd": 0.0,
+      "per_seed": [
+       1,
+       1
+      ]
+     },
+     "calibrated": [
+      null,
+      null
+     ]
+    }
+   }
+  },
+  "no_consolidation": {
+   "flags": {
+    "workspace": true,
+    "halting": true,
+    "context": true,
+    "fast": true,
+    "consolidate": false,
+    "controller": true,
+    "eligibility": true,
+    "oracle_context": false,
+    "sgd": "none"
+   },
+   "params": {
+    "width_d_h": 71,
+    "trainable": 28444,
+    "adaptive": 1074,
+    "total": 29518
+   },
+   "results": {
+    "immediate": {
+     "online_acc": {
+      "mean": 0.3390625,
+      "sd": 0.011048543456039806,
+      "per_seed": [
+       0.346875,
+       0.33125
+      ]
+     },
+     "retention_acc": {
+      "mean": 0.2265625,
+      "sd": 0.060766989008218926,
+      "per_seed": [
+       0.18359375,
+       0.26953125
+      ]
+     },
+     "revisit_acc": {
+      "mean": 0.2583333333333333,
+      "sd": 0.01178511301977579,
+      "per_seed": [
+       0.25,
+       0.26666666666666666
+      ]
+     },
+     "mean_steps": {
+      "mean": 1.9359375,
+      "sd": 0.21876116042958826,
+      "per_seed": [
+       2.090625,
+       1.78125
+      ]
+     },
+     "steps_sd": {
+      "mean": 1.2200985641417277,
+      "sd": 0.21161175400621893,
+      "per_seed": [
+       1.3697306703783048,
+       1.0704664579051508
+      ]
+     },
+     "n_contexts": {
+      "mean": 6.0,
+      "sd": 0.0,
+      "per_seed": [
+       6,
+       6
+      ]
+     },
+     "calibrated": [
+      null,
+      null
+     ]
+    },
+    "delayed": {
+     "online_acc": {
+      "mean": 0.271875,
+      "sd": 0.03535533905932737,
+      "per_seed": [
+       0.296875,
+       0.246875
+      ]
+     },
+     "retention_acc": {
+      "mean": 0.212890625,
+      "sd": 0.04695630968816917,
+      "per_seed": [
+       0.24609375,
+       0.1796875
+      ]
+     },
+     "revisit_acc": {
+      "mean": 0.23333333333333334,
+      "sd": 0.07071067811865477,
+      "per_seed": [
+       0.18333333333333332,
+       0.2833333333333333
+      ]
+     },
+     "mean_steps": {
+      "mean": 2.00625,
+      "sd": 0.42426406871192845,
+      "per_seed": [
+       2.30625,
+       1.70625
+      ]
+     },
+     "steps_sd": {
+      "mean": 1.2914224744232268,
+      "sd": 0.20156353864025336,
+      "per_seed": [
+       1.4339494194357065,
+       1.1488955294107468
+      ]
+     },
+     "n_contexts": {
+      "mean": 4.0,
+      "sd": 1.4142135623730951,
+      "per_seed": [
+       3,
+       5
+      ]
+     },
+     "calibrated": [
+      null,
+      null
+     ]
+    }
+   }
+  },
+  "no_controller": {
+   "flags": {
+    "workspace": true,
+    "halting": true,
+    "context": true,
+    "fast": true,
+    "consolidate": true,
+    "controller": false,
+    "eligibility": true,
+    "oracle_context": false,
+    "sgd": "none"
+   },
+   "params": {
+    "width_d_h": 70,
+    "trainable": 27691,
+    "adaptive": 1938,
+    "total": 29629
+   },
+   "results": {
+    "immediate": {
+     "online_acc": {
+      "mean": 0.375,
+      "sd": 0.11490485194281395,
+      "per_seed": [
+       0.45625,
+       0.29375
+      ]
+     },
+     "retention_acc": {
+      "mean": 0.294921875,
+      "sd": 0.04143203796014927,
+      "per_seed": [
+       0.32421875,
+       0.265625
+      ]
+     },
+     "revisit_acc": {
+      "mean": 0.31666666666666665,
+      "sd": 0.04714045207910316,
+      "per_seed": [
+       0.2833333333333333,
+       0.35
+      ]
+     },
+     "mean_steps": {
+      "mean": 1.8312499999999998,
+      "sd": 0.2872621298570348,
+      "per_seed": [
+       1.628125,
+       2.034375
+      ]
+     },
+     "steps_sd": {
+      "mean": 1.2445465580043789,
+      "sd": 0.1774403383363169,
+      "per_seed": [
+       1.1190772915107339,
+       1.3700158244980238
+      ]
+     },
+     "n_contexts": {
+      "mean": 6.0,
+      "sd": 0.0,
+      "per_seed": [
+       6,
+       6
+      ]
+     },
+     "calibrated": [
+      0.4,
+      0.15
+     ]
+    },
+    "delayed": {
+     "online_acc": {
+      "mean": 0.275,
+      "sd": 0.03535533905932737,
+      "per_seed": [
+       0.3,
+       0.25
+      ]
+     },
+     "retention_acc": {
+      "mean": 0.2109375,
+      "sd": 0.07733980419227864,
+      "per_seed": [
+       0.15625,
+       0.265625
+      ]
+     },
+     "revisit_acc": {
+      "mean": 0.25,
+      "sd": 0.02357022603955158,
+      "per_seed": [
+       0.23333333333333334,
+       0.26666666666666666
+      ]
+     },
+     "mean_steps": {
+      "mean": 1.9390625,
+      "sd": 0.4397320295503842,
+      "per_seed": [
+       1.628125,
+       2.25
+      ]
+     },
+     "steps_sd": {
+      "mean": 1.2501355852199376,
+      "sd": 0.18140016953853058,
+      "per_seed": [
+       1.1218662952308533,
+       1.378404875209022
+      ]
+     },
+     "n_contexts": {
+      "mean": 4.5,
+      "sd": 2.1213203435596424,
+      "per_seed": [
+       3,
+       6
+      ]
+     },
+     "calibrated": [
+      0.05,
+      0.4
+     ]
+    }
+   }
+  },
+  "no_workspace": {
+   "flags": {
+    "workspace": false,
+    "halting": false,
+    "context": true,
+    "fast": true,
+    "consolidate": true,
+    "controller": true,
+    "eligibility": true,
+    "oracle_context": false,
+    "sgd": "none"
+   },
+   "params": {
+    "width_d_h": 70,
+    "trainable": 27886,
+    "adaptive": 1938,
+    "total": 29824
+   },
+   "results": {
+    "immediate": {
+     "online_acc": {
+      "mean": 0.5640624999999999,
+      "sd": 0.006629126073623899,
+      "per_seed": [
+       0.56875,
+       0.559375
+      ]
+     },
+     "retention_acc": {
+      "mean": 0.376953125,
+      "sd": 0.0027621358640099515,
+      "per_seed": [
+       0.375,
+       0.37890625
+      ]
+     },
+     "revisit_acc": {
+      "mean": 0.4166666666666667,
+      "sd": 0.04714045207910316,
+      "per_seed": [
+       0.45,
+       0.38333333333333336
+      ]
+     },
+     "mean_steps": {
+      "mean": 1.0,
+      "sd": 0.0,
+      "per_seed": [
+       1.0,
+       1.0
+      ]
+     },
+     "steps_sd": {
+      "mean": 0.0,
+      "sd": 0.0,
+      "per_seed": [
+       0.0,
+       0.0
+      ]
+     },
+     "n_contexts": {
+      "mean": 6.0,
+      "sd": 0.0,
+      "per_seed": [
+       6,
+       6
+      ]
+     },
+     "calibrated": [
+      null,
+      null
+     ]
+    },
+    "delayed": {
+     "online_acc": {
+      "mean": 0.2421875,
+      "sd": 0.03756504775053532,
+      "per_seed": [
+       0.26875,
+       0.215625
+      ]
+     },
+     "retention_acc": {
+      "mean": 0.23046875,
+      "sd": 0.04419417382415922,
+      "per_seed": [
+       0.26171875,
+       0.19921875
+      ]
+     },
+     "revisit_acc": {
+      "mean": 0.20833333333333331,
+      "sd": 0.08249579113843054,
+      "per_seed": [
+       0.26666666666666666,
+       0.15
+      ]
+     },
+     "mean_steps": {
+      "mean": 1.0,
+      "sd": 0.0,
+      "per_seed": [
+       1.0,
+       1.0
+      ]
+     },
+     "steps_sd": {
+      "mean": 0.0,
+      "sd": 0.0,
+      "per_seed": [
+       0.0,
+       0.0
+      ]
+     },
+     "n_contexts": {
+      "mean": 2.5,
+      "sd": 0.7071067811865476,
+      "per_seed": [
+       2,
+       3
+      ]
+     },
+     "calibrated": [
+      null,
+      null
+     ]
+    }
+   }
+  },
+  "no_halting": {
+   "flags": {
+    "workspace": true,
+    "halting": false,
+    "context": true,
+    "fast": true,
+    "consolidate": true,
+    "controller": true,
+    "eligibility": true,
+    "oracle_context": false,
+    "sgd": "none"
+   },
+   "params": {
+    "width_d_h": 70,
+    "trainable": 27886,
+    "adaptive": 1938,
+    "total": 29824
+   },
+   "results": {
+    "immediate": {
+     "online_acc": {
+      "mean": 0.396875,
+      "sd": 0.06629126073623882,
+      "per_seed": [
+       0.35,
+       0.44375
+      ]
+     },
+     "retention_acc": {
+      "mean": 0.345703125,
+      "sd": 0.06352912487222888,
+      "per_seed": [
+       0.30078125,
+       0.390625
+      ]
+     },
+     "revisit_acc": {
+      "mean": 0.24166666666666667,
+      "sd": 0.03535533905932737,
+      "per_seed": [
+       0.21666666666666667,
+       0.26666666666666666
+      ]
+     },
+     "mean_steps": {
+      "mean": 4.0,
+      "sd": 0.0,
+      "per_seed": [
+       4.0,
+       4.0
+      ]
+     },
+     "steps_sd": {
+      "mean": 0.0,
+      "sd": 0.0,
+      "per_seed": [
+       0.0,
+       0.0
+      ]
+     },
+     "n_contexts": {
+      "mean": 6.0,
+      "sd": 0.0,
+      "per_seed": [
+       6,
+       6
+      ]
+     },
+     "calibrated": [
+      null,
+      null
+     ]
+    },
+    "delayed": {
+     "online_acc": {
+      "mean": 0.2953125,
+      "sd": 0.02430679560328756,
+      "per_seed": [
+       0.3125,
+       0.278125
+      ]
+     },
+     "retention_acc": {
+      "mean": 0.251953125,
+      "sd": 0.04143203796014927,
+      "per_seed": [
+       0.28125,
+       0.22265625
+      ]
+     },
+     "revisit_acc": {
+      "mean": 0.19166666666666665,
+      "sd": 0.05892556509887897,
+      "per_seed": [
+       0.15,
+       0.23333333333333334
+      ]
+     },
+     "mean_steps": {
+      "mean": 4.0,
+      "sd": 0.0,
+      "per_seed": [
+       4.0,
+       4.0
+      ]
+     },
+     "steps_sd": {
+      "mean": 0.0,
+      "sd": 0.0,
+      "per_seed": [
+       0.0,
+       0.0
+      ]
+     },
+     "n_contexts": {
+      "mean": 4.0,
+      "sd": 1.4142135623730951,
+      "per_seed": [
+       3,
+       5
+      ]
+     },
+     "calibrated": [
+      null,
+      null
+     ]
+    }
+   }
+  },
+  "no_eligibility": {
+   "flags": {
+    "workspace": true,
+    "halting": true,
+    "context": true,
+    "fast": true,
+    "consolidate": true,
+    "controller": true,
+    "eligibility": false,
+    "oracle_context": false,
+    "sgd": "none"
+   },
+   "params": {
+    "width_d_h": 70,
+    "trainable": 27886,
+    "adaptive": 1938,
+    "total": 29824
+   },
+   "results": {
+    "immediate": {
+     "online_acc": {
+      "mean": 0.4390625,
+      "sd": 0.011048543456039806,
+      "per_seed": [
+       0.446875,
+       0.43125
+      ]
+     },
+     "retention_acc": {
+      "mean": 0.265625,
+      "sd": 0.09943689110435824,
+      "per_seed": [
+       0.1953125,
+       0.3359375
+      ]
+     },
+     "revisit_acc": {
+      "mean": 0.275,
+      "sd": 0.10606601717798211,
+      "per_seed": [
+       0.35,
+       0.2
+      ]
+     },
+     "mean_steps": {
+      "mean": 2.08125,
+      "sd": 0.5922019292437335,
+      "per_seed": [
+       1.6625,
+       2.5
+      ]
+     },
+     "steps_sd": {
+      "mean": 1.2306227011107218,
+      "sd": 0.14046097330540835,
+      "per_seed": [
+       1.1313017943944048,
+       1.3299436078270386
+      ]
+     },
+     "n_contexts": {
+      "mean": 6.0,
+      "sd": 0.0,
+      "per_seed": [
+       6,
+       6
+      ]
+     },
+     "calibrated": [
+      null,
+      null
+     ]
+    },
+    "delayed": {
+     "online_acc": {
+      "mean": 0.2234375,
+      "sd": 0.0022097086912079727,
+      "per_seed": [
+       0.221875,
+       0.225
+      ]
+     },
+     "retention_acc": {
+      "mean": 0.16015625,
+      "sd": 0.02209708691207961,
+      "per_seed": [
+       0.17578125,
+       0.14453125
+      ]
+     },
+     "revisit_acc": {
+      "mean": 0.2583333333333333,
+      "sd": 0.10606601717798213,
+      "per_seed": [
+       0.18333333333333332,
+       0.3333333333333333
+      ]
+     },
+     "mean_steps": {
+      "mean": 2.2765625,
+      "sd": 0.6076698900821891,
+      "per_seed": [
+       1.846875,
+       2.70625
+      ]
+     },
+     "steps_sd": {
+      "mean": 1.2743490536925535,
+      "sd": 0.0892056645106479,
+      "per_seed": [
+       1.2112711233968223,
+       1.3374269839882849
+      ]
+     },
+     "n_contexts": {
+      "mean": 6.0,
+      "sd": 0.0,
+      "per_seed": [
+       6,
+       6
+      ]
+     },
+     "calibrated": [
+      null,
+      null
+     ]
+    }
+   }
+  },
+  "adrn2a_full": {
+   "flags": {
+    "workspace": true,
+    "halting": true,
+    "context": true,
+    "fast": true,
+    "consolidate": true,
+    "controller": true,
+    "eligibility": true,
+    "oracle_context": false,
+    "sgd": "none"
+   },
+   "params": {
+    "width_d_h": 70,
+    "trainable": 27886,
+    "adaptive": 1938,
+    "total": 29824
+   },
+   "results": {
+    "immediate": {
+     "online_acc": {
+      "mean": 0.4390625,
+      "sd": 0.011048543456039806,
+      "per_seed": [
+       0.446875,
+       0.43125
+      ]
+     },
+     "retention_acc": {
+      "mean": 0.265625,
+      "sd": 0.09943689110435824,
+      "per_seed": [
+       0.1953125,
+       0.3359375
+      ]
+     },
+     "revisit_acc": {
+      "mean": 0.275,
+      "sd": 0.10606601717798211,
+      "per_seed": [
+       0.35,
+       0.2
+      ]
+     },
+     "mean_steps": {
+      "mean": 2.08125,
+      "sd": 0.5922019292437335,
+      "per_seed": [
+       1.6625,
+       2.5
+      ]
+     },
+     "steps_sd": {
+      "mean": 1.2306227011107218,
+      "sd": 0.14046097330540835,
+      "per_seed": [
+       1.1313017943944048,
+       1.3299436078270386
+      ]
+     },
+     "n_contexts": {
+      "mean": 6.0,
+      "sd": 0.0,
+      "per_seed": [
+       6,
+       6
+      ]
+     },
+     "calibrated": [
+      null,
+      null
+     ]
+    },
+    "delayed": {
+     "online_acc": {
+      "mean": 0.275,
+      "sd": 0.026516504294495556,
+      "per_seed": [
+       0.29375,
+       0.25625
+      ]
+     },
+     "retention_acc": {
+      "mean": 0.2421875,
+      "sd": 0.12153397801643785,
+      "per_seed": [
+       0.328125,
+       0.15625
+      ]
+     },
+     "revisit_acc": {
+      "mean": 0.26666666666666666,
+      "sd": 0.07071067811865474,
+      "per_seed": [
+       0.21666666666666667,
+       0.31666666666666665
+      ]
+     },
+     "mean_steps": {
+      "mean": 2.303125,
+      "sd": 0.8087533809821137,
+      "per_seed": [
+       1.73125,
+       2.875
+      ]
+     },
+     "steps_sd": {
+      "mean": 1.2629338351203556,
+      "sd": 0.12607415959022128,
+      "per_seed": [
+       1.1737859419417151,
+       1.352081728298996
+      ]
+     },
+     "n_contexts": {
+      "mean": 3.5,
+      "sd": 0.7071067811865476,
+      "per_seed": [
+       4,
+       3
+      ]
+     },
+     "calibrated": [
+      null,
+      null
+     ]
+    }
+   }
+  },
+  "oracle_context": {
+   "flags": {
+    "workspace": true,
+    "halting": true,
+    "context": true,
+    "fast": true,
+    "consolidate": true,
+    "controller": true,
+    "eligibility": true,
+    "oracle_context": true,
+    "sgd": "none"
+   },
+   "params": {
+    "width_d_h": 70,
+    "trainable": 27886,
+    "adaptive": 1938,
+    "total": 29824
+   },
+   "results": {
+    "immediate": {
+     "online_acc": {
+      "mean": 0.4671875,
+      "sd": 0.04198446513295127,
+      "per_seed": [
+       0.4375,
+       0.496875
+      ]
+     },
+     "retention_acc": {
+      "mean": 0.400390625,
+      "sd": 0.07457766832826869,
+      "per_seed": [
+       0.34765625,
+       0.453125
+      ]
+     },
+     "revisit_acc": {
+      "mean": 0.35,
+      "sd": 0.0,
+      "per_seed": [
+       0.35,
+       0.35
+      ]
+     },
+     "mean_steps": {
+      "mean": 2.2140625,
+      "sd": 0.46182911646246383,
+      "per_seed": [
+       1.8875,
+       2.540625
+      ]
+     },
+     "steps_sd": {
+      "mean": 1.3117700401715262,
+      "sd": 0.021496111085159825,
+      "per_seed": [
+       1.2965699942540703,
+       1.326970086088982
+      ]
+     },
+     "n_contexts": {
+      "mean": 4.0,
+      "sd": 0.0,
+      "per_seed": [
+       4,
+       4
+      ]
+     },
+     "calibrated": [
+      null,
+      null
+     ]
+    },
+    "delayed": {
+     "online_acc": {
+      "mean": 0.23124999999999998,
+      "sd": 0.07954951288348659,
+      "per_seed": [
+       0.175,
+       0.2875
+      ]
+     },
+     "retention_acc": {
+      "mean": 0.25,
+      "sd": 0.016572815184059706,
+      "per_seed": [
+       0.23828125,
+       0.26171875
+      ]
+     },
+     "revisit_acc": {
+      "mean": 0.21666666666666667,
+      "sd": 0.0,
+      "per_seed": [
+       0.21666666666666667,
+       0.21666666666666667
+      ]
+     },
+     "mean_steps": {
+      "mean": 2.215625,
+      "sd": 0.4684582425360878,
+      "per_seed": [
+       1.884375,
+       2.546875
+      ]
+     },
+     "steps_sd": {
+      "mean": 1.3097723779042048,
+      "sd": 0.017355976156083336,
+      "per_seed": [
+       1.2974998494701262,
+       1.3220449063382833
+      ]
+     },
+     "n_contexts": {
+      "mean": 4.0,
+      "sd": 0.0,
+      "per_seed": [
+       4,
+       4
+      ]
+     },
+     "calibrated": [
+      null,
+      null
+     ]
+    }
+   }
+  }
+ },
+ "mde": {
+  "immediate|G1": {
+   "gap": -0.07656249999999998,
+   "mde": 0.08906249999999992
+  },
+  "immediate|G1b": {
+   "gap": -0.005859375,
+   "mde": 0.169921875
+  },
+  "immediate|G2 context manager": {
+   "gap": -0.07656249999999998,
+   "mde": 0.08906249999999992
+  },
+  "immediate|G3 consolidation": {
+   "gap": 0.10000000000000003,
+   "mde": 0.0
+  },
+  "immediate|G3b consolidation (retention)": {
+   "gap": 0.0390625,
+   "mde": 0.08203124999999999
+  },
+  "immediate|G4 plasticity controller": {
+   "gap": 0.06406250000000002,
+   "mde": 0.22031249999999994
+  },
+  "immediate|G5 recurrent workspace": {
+   "gap": -0.12499999999999994,
+   "mde": 0.009374999999999967
+  },
+  "immediate|G6": {
+   "gap": 0.042187500000000044,
+   "mde": 0.16406249999999997
+  },
+  "immediate|G7": {
+   "gap": 0.0,
+   "mde": 0.0
+  },
+  "immediate|oracle_headroom": {
+   "gap": 0.028124999999999983,
+   "mde": 0.1125
+  },
+  "delayed|G1": {
+   "gap": -0.060937500000000006,
+   "mde": 0.10781250000000009
+  },
+  "delayed|G1b": {
+   "gap": -0.037109375,
+   "mde": 0.322265625
+  },
+  "delayed|G2 context manager": {
+   "gap": -1.3877787807814457e-17,
+   "mde": 0.15000000000000008
+  },
+  "delayed|G3 consolidation": {
+   "gap": 0.003124999999999989,
+   "mde": 0.018749999999999933
+  },
+  "delayed|G3b consolidation (retention)": {
+   "gap": 0.029296875,
+   "mde": 0.158203125
+  },
+  "delayed|G4 plasticity controller": {
+   "gap": 0.0,
+   "mde": 0.018749999999999933
+  },
+  "delayed|G5 recurrent workspace": {
+   "gap": 0.032812499999999994,
+   "mde": 0.023437499999999913
+  },
+  "delayed|G6": {
+   "gap": -0.02031250000000001,
+   "mde": 0.004687500000000067
+  },
+  "delayed|G7": {
+   "gap": 0.0515625,
+   "mde": 0.060937500000000075
+  },
+  "delayed|oracle_headroom": {
+   "gap": -0.04375000000000001,
+   "mde": 0.225
+  }
+ },
+ "gaps": {
+  "immediate|G1": {
+   "vs": "global_fast",
+   "gap": -0.07656249999999998,
+   "mde": 0.08906249999999992,
+   "status": "FAIL",
+   "full_raw": 0.4390625,
+   "other_raw": 0.515625
+  },
+  "immediate|G1b": {
+   "vs": "sgd_head",
+   "gap": -0.005859375,
+   "mde": 0.169921875,
+   "status": "UNSUPPORTED",
+   "full_raw": 0.265625,
+   "other_raw": 0.271484375
+  },
+  "immediate|G2 context manager": {
+   "vs": "global_fast",
+   "metric": "online_acc",
+   "gap": -0.07656249999999998,
+   "mde": 0.08906249999999992,
+   "status": "FAIL",
+   "full_raw": 0.4390625,
+   "other_raw": 0.515625
+  },
+  "immediate|G3 consolidation": {
+   "vs": "no_consolidation",
+   "metric": "online_acc",
+   "gap": 0.10000000000000003,
+   "mde": 0.0,
+   "status": "UNSUPPORTED",
+   "full_raw": 0.4390625,
+   "other_raw": 0.3390625
+  },
+  "immediate|G3b consolidation (retention)": {
+   "vs": "no_consolidation",
+   "metric": "retention_acc",
+   "gap": 0.0390625,
+   "mde": 0.08203124999999999,
+   "status": "UNSUPPORTED",
+   "full_raw": 0.265625,
+   "other_raw": 0.2265625
+  },
+  "immediate|G4 plasticity controller": {
+   "vs": "no_controller",
+   "metric": "online_acc",
+   "gap": 0.06406250000000002,
+   "mde": 0.22031249999999994,
+   "status": "FAIL",
+   "full_raw": 0.4390625,
+   "other_raw": 0.375
+  },
+  "immediate|G5 recurrent workspace": {
+   "vs": "no_workspace",
+   "metric": "online_acc",
+   "gap": -0.12499999999999994,
+   "mde": 0.009374999999999967,
+   "status": "FAIL",
+   "full_raw": 0.4390625,
+   "other_raw": 0.5640624999999999
+  },
+  "immediate|G6": {
+   "mean_steps": 2.08125,
+   "cap": 4,
+   "gap": 0.042187500000000044,
+   "mde": 0.16406249999999997
+  },
+  "immediate|G7": {
+   "gap": 0.0,
+   "mde": 0.0,
+   "delay": 0
+  },
+  "immediate|oracle_headroom": {
+   "gap": 0.028124999999999983,
+   "mde": 0.1125,
+   "oracle_raw": 0.4671875
+  },
+  "delayed|G1": {
+   "vs": "sgd_head",
+   "gap": -0.060937500000000006,
+   "mde": 0.10781250000000009,
+   "status": "UNSUPPORTED",
+   "full_raw": 0.275,
+   "other_raw": 0.3359375
+  },
+  "delayed|G1b": {
+   "vs": "sgd_head",
+   "gap": -0.037109375,
+   "mde": 0.322265625,
+   "status": "UNSUPPORTED",
+   "full_raw": 0.2421875,
+   "other_raw": 0.279296875
+  },
+  "delayed|G2 context manager": {
+   "vs": "global_fast",
+   "metric": "online_acc",
+   "gap": -1.3877787807814457e-17,
+   "mde": 0.15000000000000008,
+   "status": "UNSUPPORTED",
+   "full_raw": 0.275,
+   "other_raw": 0.275
+  },
+  "delayed|G3 consolidation": {
+   "vs": "no_consolidation",
+   "metric": "online_acc",
+   "gap": 0.003124999999999989,
+   "mde": 0.018749999999999933,
+   "status": "UNSUPPORTED",
+   "full_raw": 0.275,
+   "other_raw": 0.271875
+  },
+  "delayed|G3b consolidation (retention)": {
+   "vs": "no_consolidation",
+   "metric": "retention_acc",
+   "gap": 0.029296875,
+   "mde": 0.158203125,
+   "status": "UNSUPPORTED",
+   "full_raw": 0.2421875,
+   "other_raw": 0.212890625
+  },
+  "delayed|G4 plasticity controller": {
+   "vs": "no_controller",
+   "metric": "online_acc",
+   "gap": 0.0,
+   "mde": 0.018749999999999933,
+   "status": "UNSUPPORTED",
+   "full_raw": 0.275,
+   "other_raw": 0.275
+  },
+  "delayed|G5 recurrent workspace": {
+   "vs": "no_workspace",
+   "metric": "online_acc",
+   "gap": 0.032812499999999994,
+   "mde": 0.023437499999999913,
+   "status": "UNSUPPORTED",
+   "full_raw": 0.275,
+   "other_raw": 0.2421875
+  },
+  "delayed|G6": {
+   "mean_steps": 2.303125,
+   "cap": 4,
+   "gap": -0.02031250000000001,
+   "mde": 0.004687500000000067
+  },
+  "delayed|G7": {
+   "gap": 0.0515625,
+   "mde": 0.060937500000000075,
+   "delay": 4
+  },
+  "delayed|oracle_headroom": {
+   "gap": -0.04375000000000001,
+   "mde": 0.225,
+   "oracle_raw": 0.23124999999999998
+  }
+ },
+ "gates": {
+  "immediate | G1 full beats best control (global_fast) on online_acc": false,
+  "immediate | G2 context manager contributes": false,
+  "immediate | G4 plasticity controller contributes": false,
+  "immediate | G5 recurrent workspace contributes": false,
+  "immediate | G6 halting is live and not costly": true,
+  "immediate | G7 eligibility costs exactly nothing when gated off": true
+ },
+ "gates_unsupported": {
+  "immediate | G1b full beats best control (sgd_head) on retention_acc": "UNSUPPORTED",
+  "immediate | G3 consolidation contributes": "UNSUPPORTED",
+  "immediate | G3b consolidation (retention) contributes": "UNSUPPORTED",
+  "delayed | G1 full beats best control (sgd_head) on online_acc": "UNSUPPORTED",
+  "delayed | G1b full beats best control (sgd_head) on retention_acc": "UNSUPPORTED",
+  "delayed | G2 context manager contributes": "UNSUPPORTED",
+  "delayed | G3 consolidation contributes": "UNSUPPORTED",
+  "delayed | G3b consolidation (retention) contributes": "UNSUPPORTED",
+  "delayed | G4 plasticity controller contributes": "UNSUPPORTED",
+  "delayed | G5 recurrent workspace contributes": "UNSUPPORTED",
+  "delayed | G6 halting is live and not costly": "UNSUPPORTED",
+  "delayed | G7 eligibility earns its keep under delay": "UNSUPPORTED"
+ },
+ "ceiling_floor": {
+  "immediate": {
+   "online_acc": {
+    "metric": "online_acc",
+    "per_arm": {
+     "frozen": 0.2640625,
+     "sgd_head": 0.4203125,
+     "sgd_full": 0.34062499999999996,
+     "global_fast": 0.515625,
+     "no_consolidation": 0.3390625,
+     "no_controller": 0.375,
+     "no_workspace": 0.5640624999999999,
+     "no_halting": 0.396875,
+     "no_eligibility": 0.4390625,
+     "adrn2a_full": 0.4390625,
+     "oracle_context": 0.4671875
+    },
+    "best_arm": "no_workspace",
+    "best": 0.5640624999999999,
+    "chance": 0.25,
+    "floor_tolerance": 0.08906249999999992,
+    "at_ceiling": false,
+    "ceiling_hitters": [],
+    "informative_below_ceiling": [],
+    "all_at_floor": false,
+    "uninformative": false
+   },
+   "retention_acc": {
+    "metric": "retention_acc",
+    "per_arm": {
+     "frozen": 0.2421875,
+     "sgd_head": 0.271484375,
+     "sgd_full": 0.21875,
+     "global_fast": 0.263671875,
+     "no_consolidation": 0.2265625,
+     "no_controller": 0.294921875,
+     "no_workspace": 0.376953125,
+     "no_halting": 0.345703125,
+     "no_eligibility": 0.265625,
+     "adrn2a_full": 0.265625,
+     "oracle_context": 0.400390625
+    },
+    "best_arm": "oracle_context",
+    "best": 0.400390625,
+    "chance": 0.25,
+    "floor_tolerance": 0.169921875,
+    "at_ceiling": false,
+    "ceiling_hitters": [],
+    "informative_below_ceiling": [],
+    "all_at_floor": true,
+    "uninformative": true
+   },
+   "analytic_ceiling": 0.91,
+   "best_arm": "no_workspace",
+   "best_online_acc": 0.5640624999999999,
+   "chance": 0.25,
+   "at_ceiling": false,
+   "ceiling_hitters": [],
+   "informative_below_ceiling": [],
+   "all_at_floor": false,
+   "uninformative": false
+  },
+  "delayed": {
+   "online_acc": {
+    "metric": "online_acc",
+    "per_arm": {
+     "frozen": 0.265625,
+     "sgd_head": 0.3359375,
+     "sgd_full": 0.3203125,
+     "global_fast": 0.275,
+     "no_consolidation": 0.271875,
+     "no_controller": 0.275,
+     "no_workspace": 0.2421875,
+     "no_halting": 0.2953125,
+     "no_eligibility": 0.2234375,
+     "adrn2a_full": 0.275,
+     "oracle_context": 0.23124999999999998
+    },
+    "best_arm": "sgd_head",
+    "best": 0.3359375,
+    "chance": 0.25,
+    "floor_tolerance": 0.10781250000000009,
+    "at_ceiling": false,
+    "ceiling_hitters": [],
+    "informative_below_ceiling": [],
+    "all_at_floor": true,
+    "uninformative": true
+   },
+   "retention_acc": {
+    "metric": "retention_acc",
+    "per_arm": {
+     "frozen": 0.25,
+     "sgd_head": 0.279296875,
+     "sgd_full": 0.244140625,
+     "global_fast": 0.244140625,
+     "no_consolidation": 0.212890625,
+     "no_controller": 0.2109375,
+     "no_workspace": 0.23046875,
+     "no_halting": 0.251953125,
+     "no_eligibility": 0.16015625,
+     "adrn2a_full": 0.2421875,
+     "oracle_context": 0.25
+    },
+    "best_arm": "sgd_head",
+    "best": 0.279296875,
+    "chance": 0.25,
+    "floor_tolerance": 0.322265625,
+    "at_ceiling": false,
+    "ceiling_hitters": [],
+    "informative_below_ceiling": [],
+    "all_at_floor": true,
+    "uninformative": true
+   },
+   "analytic_ceiling": 0.91,
+   "best_arm": "sgd_head",
+   "best_online_acc": 0.3359375,
+   "chance": 0.25,
+   "at_ceiling": false,
+   "ceiling_hitters": [],
+   "informative_below_ceiling": [],
+   "all_at_floor": true,
+   "uninformative": true
+  }
+ },
+ "liveness": {
+  "digital_competence": {
+   "frozen": [
+    {
+     "offline_heldout_acc": 0.8020833134651184,
+     "workspace_probe_acc": 0.896484375,
+     "probe_per_context": [
+      0.8828125,
+      0.9296875,
+      0.890625,
+      0.8828125
+     ],
+     "analytic_ceiling": 0.91,
+     "pretrain_restarts": 0
+    },
+    {
+     "offline_heldout_acc": 0.8307291865348816,
+     "workspace_probe_acc": 0.908203125,
+     "probe_per_context": [
+      0.890625,
+      0.9140625,
+      0.90625,
+      0.921875
+     ],
+     "analytic_ceiling": 0.91,
+     "pretrain_restarts": 0
+    }
+   ],
+   "sgd_head": [
+    {
+     "offline_heldout_acc": 0.8020833134651184,
+     "workspace_probe_acc": 0.896484375,
+     "probe_per_context": [
+      0.8828125,
+      0.9296875,
+      0.890625,
+      0.8828125
+     ],
+     "analytic_ceiling": 0.91,
+     "pretrain_restarts": 0
+    },
+    {
+     "offline_heldout_acc": 0.8307291865348816,
+     "workspace_probe_acc": 0.908203125,
+     "probe_per_context": [
+      0.890625,
+      0.9140625,
+      0.90625,
+      0.921875
+     ],
+     "analytic_ceiling": 0.91,
+     "pretrain_restarts": 0
+    }
+   ],
+   "sgd_full": [
+    {
+     "offline_heldout_acc": 0.8020833134651184,
+     "workspace_probe_acc": 0.896484375,
+     "probe_per_context": [
+      0.8828125,
+      0.9296875,
+      0.890625,
+      0.8828125
+     ],
+     "analytic_ceiling": 0.91,
+     "pretrain_restarts": 0
+    },
+    {
+     "offline_heldout_acc": 0.8307291865348816,
+     "workspace_probe_acc": 0.908203125,
+     "probe_per_context": [
+      0.890625,
+      0.9140625,
+      0.90625,
+      0.921875
+     ],
+     "analytic_ceiling": 0.91,
+     "pretrain_restarts": 0
+    }
+   ],
+   "global_fast": [
+    {
+     "offline_heldout_acc": 0.7942708134651184,
+     "workspace_probe_acc": 0.89453125,
+     "probe_per_context": [
+      0.90625,
+      0.921875,
+      0.875,
+      0.875
+     ],
+     "analytic_ceiling": 0.91,
+     "pretrain_restarts": 0
+    },
+    {
+     "offline_heldout_acc": 0.8307291865348816,
+     "workspace_probe_acc": 0.904296875,
+     "probe_per_context": [
+      0.8984375,
+      0.90625,
+      0.90625,
+      0.90625
+     ],
+     "analytic_ceiling": 0.91,
+     "pretrain_restarts": 0
+    }
+   ],
+   "no_consolidation": [
+    {
+     "offline_heldout_acc": 0.8307291865348816,
+     "workspace_probe_acc": 0.90625,
+     "probe_per_context": [
+      0.90625,
+      0.9296875,
+      0.90625,
+      0.8828125
+     ],
+     "analytic_ceiling": 0.91,
+     "pretrain_restarts": 0
+    },
+    {
+     "offline_heldout_acc": 0.8307291865348816,
+     "workspace_probe_acc": 0.912109375,
+     "probe_per_context": [
+      0.8828125,
+      0.9140625,
+      0.9296875,
+      0.921875
+     ],
+     "analytic_ceiling": 0.91,
+     "pretrain_restarts": 0
+    }
+   ],
+   "no_controller": [
+    {
+     "offline_heldout_acc": 0.84375,
+     "workspace_probe_acc": 0.896484375,
+     "probe_per_context": [
+      0.8984375,
+      0.9296875,
+      0.8984375,
+      0.859375
+     ],
+     "analytic_ceiling": 0.91,
+     "pretrain_restarts": 0
+    },
+    {
+     "offline_heldout_acc": 0.8385416865348816,
+     "workspace_probe_acc": 0.927734375,
+     "probe_per_context": [
+      0.9140625,
+      0.921875,
+      0.9453125,
+      0.9296875
+     ],
+     "analytic_ceiling": 0.91,
+     "pretrain_restarts": 0
+    }
+   ],
+   "no_workspace": [
+    {
+     "offline_heldout_acc": 0.8098958134651184,
+     "workspace_probe_acc": 0.896484375,
+     "probe_per_context": [
+      0.8984375,
+      0.9296875,
+      0.875,
+      0.8828125
+     ],
+     "analytic_ceiling": 0.91,
+     "pretrain_restarts": 0
+    },
+    {
+     "offline_heldout_acc": 0.8411458134651184,
+     "workspace_probe_acc": 0.90625,
+     "probe_per_context": [
+      0.890625,
+      0.90625,
+      0.90625,
+      0.921875
+     ],
+     "analytic_ceiling": 0.91,
+     "pretrain_restarts": 0
+    }
+   ],
+   "no_halting": [
+    {
+     "offline_heldout_acc": 0.8098958134651184,
+     "workspace_probe_acc": 0.896484375,
+     "probe_per_context": [
+      0.8984375,
+      0.9296875,
+      0.875,
+      0.8828125
+     ],
+     "analytic_ceiling": 0.91,
+     "pretrain_restarts": 0
+    },
+    {
+     "offline_heldout_acc": 0.8411458134651184,
+     "workspace_probe_acc": 0.90625,
+     "probe_per_context": [
+      0.890625,
+      0.90625,
+      0.90625,
+      0.921875
+     ],
+     "analytic_ceiling": 0.91,
+     "pretrain_restarts": 0
+    }
+   ],
+   "no_eligibility": [
+    {
+     "offline_heldout_acc": 0.8098958134651184,
+     "workspace_probe_acc": 0.896484375,
+     "probe_per_context": [
+      0.8984375,
+      0.9296875,
+      0.875,
+      0.8828125
+     ],
+     "analytic_ceiling": 0.91,
+     "pretrain_restarts": 0
+    },
+    {
+     "offline_heldout_acc": 0.8411458134651184,
+     "workspace_probe_acc": 0.90625,
+     "probe_per_context": [
+      0.890625,
+      0.90625,
+      0.90625,
+      0.921875
+     ],
+     "analytic_ceiling": 0.91,
+     "pretrain_restarts": 0
+    }
+   ],
+   "adrn2a_full": [
+    {
+     "offline_heldout_acc": 0.8098958134651184,
+     "workspace_probe_acc": 0.896484375,
+     "probe_per_context": [
+      0.8984375,
+      0.9296875,
+      0.875,
+      0.8828125
+     ],
+     "analytic_ceiling": 0.91,
+     "pretrain_restarts": 0
+    },
+    {
+     "offline_heldout_acc": 0.8411458134651184,
+     "workspace_probe_acc": 0.90625,
+     "probe_per_context": [
+      0.890625,
+      0.90625,
+      0.90625,
+      0.921875
+     ],
+     "analytic_ceiling": 0.91,
+     "pretrain_restarts": 0
+    }
+   ],
+   "oracle_context": [
+    {
+     "offline_heldout_acc": 0.8098958134651184,
+     "workspace_probe_acc": 0.896484375,
+     "probe_per_context": [
+      0.8984375,
+      0.9296875,
+      0.875,
+      0.8828125
+     ],
+     "analytic_ceiling": 0.91,
+     "pretrain_restarts": 0
+    },
+    {
+     "offline_heldout_acc": 0.8411458134651184,
+     "workspace_probe_acc": 0.90625,
+     "probe_per_context": [
+      0.890625,
+      0.90625,
+      0.90625,
+      0.921875
+     ],
+     "analytic_ceiling": 0.91,
+     "pretrain_restarts": 0
+    }
+   ]
+  },
+  "immediate": {
+   "frozen": {
+    "fast_norm_final": 0.0,
+    "mean_steps": 2.36875,
+    "max_steps_cap": 4,
+    "steps_at_cap_frac": 0.45,
+    "steps_sd": 1.4879594878557683,
+    "elig_updates": 0,
+    "workspace_step_sd": 0.36980557520873847,
+    "mod_sd": 0.2820492677960197,
+    "encoder_moved": 0.0,
+    "retention_detail": {
+     "per_context": [
+      0.25,
+      0.265625,
+      0.171875,
+      0.1875
+     ],
+     "identified_slot": [
+      0,
+      0,
+      0,
+      0
+     ]
+    }
+   },
+   "sgd_head": {
+    "fast_norm_final": 0.0,
+    "mean_steps": 2.3625,
+    "max_steps_cap": 4,
+    "steps_at_cap_frac": 0.44375,
+    "steps_sd": 1.4831870246196197,
+    "elig_updates": 0,
+    "workspace_step_sd": 0.36956938691437247,
+    "mod_sd": 0.3274072820122765,
+    "encoder_moved": 0.0,
+    "retention_detail": {
+     "per_context": [
+      0.84375,
+      0.03125,
+      0.0625,
+      0.09375
+     ],
+     "identified_slot": [
+      0,
+      0,
+      0,
+      0
+     ]
+    }
+   },
+   "sgd_full": {
+    "fast_norm_final": 0.0,
+    "mean_steps": 2.9625,
+    "max_steps_cap": 4,
+    "steps_at_cap_frac": 0.446875,
+    "steps_sd": 1.0658769863356652,
+    "elig_updates": 0,
+    "workspace_step_sd": 0.44772381647489967,
+    "mod_sd": 0.1369393126821221,
+    "encoder_moved": 71.67626953125,
+    "retention_detail": {
+     "per_context": [
+      0.203125,
+      0.203125,
+      0.234375,
+      0.1875
+     ],
+     "identified_slot": [
+      0,
+      0,
+      0,
+      0
+     ]
+    }
+   },
+   "global_fast": {
+    "fast_updates": 320,
+    "fast_dW_rel_median": 0.1506903176696534,
+    "fast_norm_final": 0.8165833353996277,
+    "n_consolidations": 305,
+    "W_m_norm": 0.8058159947395325,
+    "W_m_vs_W_f_rel": 0.1096861022807221,
+    "mean_steps": 1.878125,
+    "max_steps_cap": 4,
+    "steps_at_cap_frac": 0.225,
+    "steps_sd": 1.2602664338841214,
+    "eta_mean": 0.42477587023749946,
+    "eta_sd": 0.003439147145238248,
+    "lam_mean": 0.9747002379968762,
+    "lam_sd": 0.0016093890933286871,
+    "eta_cv": 0.00809638067085911,
+    "lam_cv": 0.0016511631274823235,
+    "elig_updates": 0,
+    "workspace_step_sd": 0.34520992790348826,
+    "mod_sd": 0.19452978314193686,
+    "encoder_moved": 0.0,
+    "retention_detail": {
+     "per_context": [
+      0.71875,
+      0.0625,
+      0.078125,
+      0.0625
+     ],
+     "identified_slot": [
+      0,
+      0,
+      0,
+      0
+     ]
+    }
+   },
+   "no_consolidation": {
+    "fast_updates": 320,
+    "fast_dW_rel_median": 0.13191716255004865,
+    "fast_norm_final": 0.9778262972831726,
+    "posterior_marginal_entropy": 1.6369442072498452,
+    "posterior_conditional_entropy": 0.08127055685807882,
+    "posterior_information": 1.5556736503917663,
+    "contexts_created": 5,
+    "contexts_used": 6,
+    "log_k_used": 1.791759469228055,
+    "posterior_entropy_headroom_per_step": 1.3512088875222887,
+    "posterior_multi_slot_steps": 276,
+    "posterior_distinct_argmax_slots": 6,
+    "created_at": [
+     43,
+     89,
+     122,
+     165,
+     191
+    ],
+    "slot_utility": [
+     0.0009,
+     0.0026,
+     0.003,
+     0.0088,
+     0.0106,
+     1.1745
+    ],
+    "slot_best_loss": [
+     0.7969,
+     0.9699,
+     0.6801,
+     0.9643,
+     0.9767,
+     0.7204
+    ],
+    "base_loss_ema": 2.7204,
+    "mean_steps": 2.090625,
+    "max_steps_cap": 4,
+    "steps_at_cap_frac": 0.315625,
+    "steps_sd": 1.3697306703783048,
+    "eta_mean": 0.43009064737707375,
+    "eta_sd": 0.010056196908565974,
+    "lam_mean": 0.9632718814536929,
+    "lam_sd": 0.0010775211543813793,
+    "eta_cv": 0.023381575418796298,
+    "lam_cv": 0.0011186054271150015,
+    "elig_updates": 0,
+    "workspace_step_sd": 0.3629813592415303,
+    "mod_sd": 0.2537107268115633,
+    "encoder_moved": 0.0,
+    "retention_detail": {
+     "per_context": [
+      0.21875,
+      0.0625,
+      0.234375,
+      0.21875
+     ],
+     "identified_slot": [
+      5,
+      5,
+      3,
+      4
+     ]
+    }
+   },
+   "no_controller": {
+    "fast_updates": 320,
+    "fast_dW_rel_median": 0.10071231466720514,
+    "fast_norm_final": 0.8535041809082031,
+    "posterior_marginal_entropy": 1.7139249997717743,
+    "posterior_conditional_entropy": 0.0923456870233266,
+    "posterior_information": 1.6215793127484477,
+    "contexts_created": 5,
+    "contexts_used": 6,
+    "log_k_used": 1.791759469228055,
+    "posterior_entropy_headroom_per_step": 1.3465220304171281,
+    "posterior_multi_slot_steps": 276,
+    "posterior_distinct_argmax_slots": 6,
+    "created_at": [
+     43,
+     84,
+     122,
+     164,
+     191
+    ],
+    "slot_utility": [
+     0.1657,
+     0.173,
+     0.8291,
+     -0.1285,
+     0.0873,
+     0.8481
+    ],
+    "slot_best_loss": [
+     0.8233,
+     0.8889,
+     0.666,
+     0.7827,
+     0.9274,
+     0.6707
+    ],
+    "base_loss_ema": 2.275,
+    "n_consolidations": 225,
+    "W_m_norm": 1.602569341659546,
+    "W_m_vs_W_f_rel": 0.49468651176568473,
+    "mean_steps": 1.628125,
+    "max_steps_cap": 4,
+    "steps_at_cap_frac": 0.15,
+    "steps_sd": 1.1190772915107339,
+    "elig_updates": 0,
+    "workspace_step_sd": 0.37998455404303966,
+    "mod_sd": 0.26114582892331295,
+    "encoder_moved": 0.0,
+    "retention_detail": {
+     "per_context": [
+      0.734375,
+      0.09375,
+      0.25,
+      0.21875
+     ],
+     "identified_slot": [
+      2,
+      5,
+      1,
+      1
+     ]
+    }
+   },
+   "no_workspace": {
+    "fast_updates": 320,
+    "fast_dW_rel_median": 0.1432592120376321,
+    "fast_norm_final": 0.5461901426315308,
+    "posterior_marginal_entropy": 1.7254202084934829,
+    "posterior_conditional_entropy": 0.2105105721500998,
+    "posterior_information": 1.5149096363433832,
+    "contexts_created": 5,
+    "contexts_used": 6,
+    "log_k_used": 1.791759469228055,
+    "posterior_entropy_headroom_per_step": 1.201740146621568,
+    "posterior_multi_slot_steps": 276,
+    "posterior_distinct_argmax_slots": 6,
+    "created_at": [
+     43,
+     83,
+     122,
+     164,
+     205
+    ],
+    "slot_utility": [
+     -0.049,
+     0.0361,
+     0.8002,
+     -0.159,
+     -0.0101,
+     -0.1811
+    ],
+    "slot_best_loss": [
+     0.5704,
+     0.678,
+     0.744,
+     0.6704,
+     0.9516,
+     0.7013
+    ],
+    "base_loss_ema": 2.2921,
+    "n_consolidations": 201,
+    "W_m_norm": 0.8639615774154663,
+    "W_m_vs_W_f_rel": 0.461722126836545,
+    "mean_steps": 1.0,
+    "max_steps_cap": 4,
+    "steps_at_cap_frac": 0.0,
+    "steps_sd": 0.0,
+    "eta_mean": 0.4428918372839689,
+    "eta_sd": 0.008342527958990745,
+    "lam_mean": 0.9697414312511683,
+    "lam_sd": 0.0011496445653149314,
+    "eta_cv": 0.018836490665872823,
+    "lam_cv": 0.001185516600885713,
+    "elig_updates": 0,
+    "mod_sd": 0.17577336600070442,
+    "encoder_moved": 0.0,
+    "retention_detail": {
+     "per_context": [
+      0.328125,
+      0.171875,
+      0.421875,
+      0.578125
+     ],
+     "identified_slot": [
+      2,
+      0,
+      4,
+      5
+     ]
+    }
+   },
+   "no_halting": {
+    "fast_updates": 320,
+    "fast_dW_rel_median": 0.12317107482865583,
+    "fast_norm_final": 0.7184985280036926,
+    "posterior_marginal_entropy": 1.7268732687689705,
+    "posterior_conditional_entropy": 0.10081630427403851,
+    "posterior_information": 1.626056964494932,
+    "contexts_created": 5,
+    "contexts_used": 6,
+    "log_k_used": 1.791759469228055,
+    "posterior_entropy_headroom_per_step": 1.1404258938887923,
+    "posterior_multi_slot_steps": 295,
+    "posterior_distinct_argmax_slots": 6,
+    "created_at": [
+     24,
+     123,
+     164,
+     202,
+     242
+    ],
+    "slot_utility": [
+     0.7927,
+     0.1536,
+     0.2173,
+     -0.0419,
+     0.2253,
+     0.7322
+    ],
+    "slot_best_loss": [
+     0.8451,
+     0.9786,
+     1.0117,
+     1.0899,
+     0.8993,
+     1.3143
+    ],
+    "base_loss_ema": 2.5471,
+    "n_consolidations": 226,
+    "W_m_norm": 1.6232470273971558,
+    "W_m_vs_W_f_rel": 0.5846872061677655,
+    "mean_steps": 4.0,
+    "max_steps_cap": 4,
+    "steps_at_cap_frac": 1.0,
+    "steps_sd": 0.0,
+    "eta_mean": 0.43855044720694425,
+    "eta_sd": 0.014163729478875668,
+    "lam_mean": 0.9719841057434678,
+    "lam_sd": 0.0014867649555450556,
+    "eta_cv": 0.03229669373063494,
+    "lam_cv": 0.001529618588163881,
+    "elig_updates": 0,
+    "workspace_step_sd": 0.3372060417197645,
+    "mod_sd": 0.2742797014456045,
+    "encoder_moved": 0.0,
+    "retention_detail": {
+     "per_context": [
+      0.515625,
+      0.28125,
+      0.1875,
+      0.21875
+     ],
+     "identified_slot": [
+      0,
+      5,
+      3,
+      2
+     ]
+    }
+   },
+   "no_eligibility": {
+    "fast_updates": 320,
+    "fast_dW_rel_median": 0.11771667935134345,
+    "fast_norm_final": 0.747000515460968,
+    "posterior_marginal_entropy": 1.6550100476162708,
+    "posterior_conditional_entropy": 0.13150427681439697,
+    "posterior_information": 1.5235057708018738,
+    "contexts_created": 5,
+    "contexts_used": 6,
+    "log_k_used": 1.791759469228055,
+    "posterior_entropy_headroom_per_step": 1.3003122757632994,
+    "posterior_multi_slot_steps": 276,
+    "posterior_distinct_argmax_slots": 6,
+    "created_at": [
+     43,
+     84,
+     122,
+     165,
+     191
+    ],
+    "slot_utility": [
+     0.2382,
+     0.1017,
+     0.2729,
+     0.0952,
+     0.015,
+     1.4369
+    ],
+    "slot_best_loss": [
+     0.7699,
+     0.808,
+     0.6704,
+     0.8025,
+     0.876,
+     0.6937
+    ],
+    "base_loss_ema": 2.7938,
+    "n_consolidations": 224,
+    "W_m_norm": 1.4341990947723389,
+    "W_m_vs_W_f_rel": 0.5776272619645731,
+    "mean_steps": 1.6625,
+    "max_steps_cap": 4,
+    "steps_at_cap_frac": 0.165625,
+    "steps_sd": 1.1313017943944048,
+    "eta_mean": 0.4374614154919982,
+    "eta_sd": 0.012736853058780879,
+    "lam_mean": 0.970932743139565,
+    "lam_sd": 0.001503050710477955,
+    "eta_cv": 0.02911537476843796,
+    "lam_cv": 0.0015480482258923075,
+    "elig_updates": 0,
+    "workspace_step_sd": 0.36349562741816044,
+    "mod_sd": 0.26025480948163066,
+    "encoder_moved": 0.0,
+    "retention_detail": {
+     "per_context": [
+      0.40625,
+      0.015625,
+      0.15625,
+      0.203125
+     ],
+     "identified_slot": [
+      2,
+      5,
+      1,
+      1
+     ]
+    }
+   },
+   "adrn2a_full": {
+    "fast_updates": 320,
+    "fast_dW_rel_median": 0.11771667935134345,
+    "fast_norm_final": 0.747000515460968,
+    "posterior_marginal_entropy": 1.6550100476162708,
+    "posterior_conditional_entropy": 0.13150427681439697,
+    "posterior_information": 1.5235057708018738,
+    "contexts_created": 5,
+    "contexts_used": 6,
+    "log_k_used": 1.791759469228055,
+    "posterior_entropy_headroom_per_step": 1.3003122757632994,
+    "posterior_multi_slot_steps": 276,
+    "posterior_distinct_argmax_slots": 6,
+    "created_at": [
+     43,
+     84,
+     122,
+     165,
+     191
+    ],
+    "slot_utility": [
+     0.2382,
+     0.1017,
+     0.2729,
+     0.0952,
+     0.015,
+     1.4369
+    ],
+    "slot_best_loss": [
+     0.7699,
+     0.808,
+     0.6704,
+     0.8025,
+     0.876,
+     0.6937
+    ],
+    "base_loss_ema": 2.7938,
+    "n_consolidations": 224,
+    "W_m_norm": 1.4341990947723389,
+    "W_m_vs_W_f_rel": 0.5776272619645731,
+    "mean_steps": 1.6625,
+    "max_steps_cap": 4,
+    "steps_at_cap_frac": 0.165625,
+    "steps_sd": 1.1313017943944048,
+    "eta_mean": 0.4374614154919982,
+    "eta_sd": 0.012736853058780879,
+    "lam_mean": 0.970932743139565,
+    "lam_sd": 0.001503050710477955,
+    "eta_cv": 0.02911537476843796,
+    "lam_cv": 0.0015480482258923075,
+    "elig_updates": 0,
+    "workspace_step_sd": 0.36349562741816044,
+    "mod_sd": 0.26025480948163066,
+    "encoder_moved": 0.0,
+    "retention_detail": {
+     "per_context": [
+      0.40625,
+      0.015625,
+      0.15625,
+      0.203125
+     ],
+     "identified_slot": [
+      2,
+      5,
+      1,
+      1
+     ]
+    }
+   },
+   "oracle_context": {
+    "fast_updates": 320,
+    "fast_dW_rel_median": 0.1150012285099303,
+    "fast_norm_final": 0.7474560737609863,
+    "n_consolidations": 260,
+    "W_m_norm": 1.3465527296066284,
+    "W_m_vs_W_f_rel": 0.49872590626123475,
+    "mean_steps": 1.8875,
+    "max_steps_cap": 4,
+    "steps_at_cap_frac": 0.25625,
+    "steps_sd": 1.2965699942540703,
+    "eta_mean": 0.43326200982555746,
+    "eta_sd": 0.015261573463218795,
+    "lam_mean": 0.9708838870748877,
+    "lam_sd": 0.0017647519344435494,
+    "eta_cv": 0.035224813431861936,
+    "lam_cv": 0.0018176755819487897,
+    "elig_updates": 0,
+    "workspace_step_sd": 0.35894832159392537,
+    "mod_sd": 0.29798580530232716,
+    "encoder_moved": 0.0,
+    "retention_detail": {
+     "per_context": [
+      0.546875,
+      0.296875,
+      0.0625,
+      0.484375
+     ],
+     "identified_slot": [
+      0,
+      1,
+      2,
+      3
+     ]
+    }
+   }
+  },
+  "flag_effect": {
+   "immediate": {
+    "workspace": {
+     "steps_differing": 116,
+     "max_logit_delta": 2.469761371612549,
+     "acc_on": 0.384375,
+     "acc_off": 0.540625
+    },
+    "halting": {
+     "steps_differing": 70,
+     "max_logit_delta": 1.6133664846420288,
+     "acc_on": 0.384375,
+     "acc_off": 0.365625
+    },
+    "context": {
+     "steps_differing": 81,
+     "max_logit_delta": 3.2587549686431885,
+     "acc_on": 0.384375,
+     "acc_off": 0.46875
+    },
+    "fast": {
+     "steps_differing": 103,
+     "max_logit_delta": 2.966881036758423,
+     "acc_on": 0.384375,
+     "acc_off": 0.3
+    },
+    "consolidate": {
+     "steps_differing": 90,
+     "max_logit_delta": 0.8239798545837402,
+     "acc_on": 0.384375,
+     "acc_off": 0.321875
+    },
+    "controller": {
+     "steps_differing": 71,
+     "max_logit_delta": 1.1482523679733276,
+     "acc_on": 0.384375,
+     "acc_off": 0.29375
+    }
+   },
+   "delayed": {
+    "workspace": {
+     "steps_differing": 91,
+     "max_logit_delta": 1.7156224250793457,
+     "acc_on": 0.24375,
+     "acc_off": 0.321875
+    },
+    "halting": {
+     "steps_differing": 74,
+     "max_logit_delta": 4.422337532043457,
+     "acc_on": 0.24375,
+     "acc_off": 0.25
+    },
+    "context": {
+     "steps_differing": 99,
+     "max_logit_delta": 2.921205997467041,
+     "acc_on": 0.24375,
+     "acc_off": 0.278125
+    },
+    "fast": {
+     "steps_differing": 60,
+     "max_logit_delta": 3.2248616218566895,
+     "acc_on": 0.24375,
+     "acc_off": 0.2
+    },
+    "consolidate": {
+     "steps_differing": 8,
+     "max_logit_delta": 5.342034816741943,
+     "acc_on": 0.24375,
+     "acc_off": 0.25
+    },
+    "controller": {
+     "steps_differing": 67,
+     "max_logit_delta": 5.281026840209961,
+     "acc_on": 0.24375,
+     "acc_off": 0.253125
+    },
+    "eligibility": {
+     "steps_differing": 96,
+     "max_logit_delta": 3.8197598457336426,
+     "acc_on": 0.24375,
+     "acc_off": 0.2625
+    }
+   }
+  },
+  "delayed": {
+   "frozen": {
+    "fast_norm_final": 0.0,
+    "mean_steps": 2.3625,
+    "max_steps_cap": 4,
+    "steps_at_cap_frac": 0.44375,
+    "steps_sd": 1.4831870246196197,
+    "elig_updates": 0,
+    "workspace_step_sd": 0.36958775836974384,
+    "mod_sd": 0.2414418049744105,
+    "encoder_moved": 0.0,
+    "retention_detail": {
+     "per_context": [
+      0.28125,
+      0.265625,
+      0.1875,
+      0.203125
+     ],
+     "identified_slot": [
+      0,
+      0,
+      0,
+      0
+     ]
+    }
+   },
+   "sgd_head": {
+    "fast_norm_final": 0.0,
+    "mean_steps": 2.359375,
+    "max_steps_cap": 4,
+    "steps_at_cap_frac": 0.440625,
+    "steps_sd": 1.4807851327505284,
+    "elig_updates": 0,
+    "workspace_step_sd": 0.3693610333371907,
+    "mod_sd": 0.41102537846084514,
+    "encoder_moved": 0.0,
+    "retention_detail": {
+     "per_context": [
+      0.828125,
+      0.03125,
+      0.078125,
+      0.09375
+     ],
+     "identified_slot": [
+      0,
+      0,
+      0,
+      0
+     ]
+    }
+   },
+   "sgd_full": {
+    "fast_norm_final": 0.0,
+    "mean_steps": 2.675,
+    "max_steps_cap": 4,
+    "steps_at_cap_frac": 0.478125,
+    "steps_sd": 1.3442005058770066,
+    "elig_updates": 0,
+    "workspace_step_sd": 0.3956516047473997,
+    "mod_sd": 0.2046980949692129,
+    "encoder_moved": 97.732666015625,
+    "retention_detail": {
+     "per_context": [
+      0.359375,
+      0.15625,
+      0.1875,
+      0.3125
+     ],
+     "identified_slot": [
+      0,
+      0,
+      0,
+      0
+     ]
+    }
+   },
+   "global_fast": {
+    "fast_updates": 316,
+    "fast_dW_rel_median": 0.37106248711263784,
+    "fast_norm_final": 0.7527976036071777,
+    "n_consolidations": 41,
+    "W_m_norm": 0.42814427614212036,
+    "W_m_vs_W_f_rel": 0.6236641479893917,
+    "mean_steps": 1.884375,
+    "max_steps_cap": 4,
+    "steps_at_cap_frac": 0.234375,
+    "steps_sd": 1.2756393923734872,
+    "eta_mean": 0.43071792369024664,
+    "eta_sd": 0.0041764976175849965,
+    "lam_mean": 0.9743411514577986,
+    "lam_sd": 0.0015933769899792772,
+    "eta_cv": 0.009696595817982606,
+    "lam_cv": 0.0016353378768773996,
+    "elig_updates": 320,
+    "workspace_step_sd": 0.34641783447004854,
+    "mod_sd": 0.09350018803739962,
+    "encoder_moved": 0.0,
+    "retention_detail": {
+     "per_context": [
+      0.1875,
+      0.359375,
+      0.265625,
+      0.203125
+     ],
+     "identified_slot": [
+      0,
+      0,
+      0,
+      0
+     ]
+    }
+   },
+   "no_consolidation": {
+    "fast_updates": 316,
+    "fast_dW_rel_median": 0.31916172297965506,
+    "fast_norm_final": 0.6440905928611755,
+    "posterior_marginal_entropy": 1.084434399204978,
+    "posterior_conditional_entropy": 0.13218041569048983,
+    "posterior_information": 0.9522539835144883,
+    "contexts_created": 2,
+    "contexts_used": 3,
+    "log_k_used": 1.0986122886681098,
+    "posterior_entropy_headroom_per_step": 0.6706474370420338,
+    "posterior_multi_slot_steps": 222,
+    "posterior_distinct_argmax_slots": 3,
+    "created_at": [
+     97,
+     227
+    ],
+    "slot_utility": [
+     -0.0062,
+     -0.0033,
+     0.0543,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "slot_best_loss": [
+     1.2443,
+     1.3688,
+     1.2757,
+     Infinity,
+     Infinity,
+     Infinity
+    ],
+    "base_loss_ema": 1.5698,
+    "mean_steps": 2.30625,
+    "max_steps_cap": 4,
+    "steps_at_cap_frac": 0.39375,
+    "steps_sd": 1.4339494194357065,
+    "eta_mean": 0.43549512741686425,
+    "eta_sd": 0.006292187199059736,
+    "lam_mean": 0.9625520994768867,
+    "lam_sd": 0.0007160309630210417,
+    "eta_cv": 0.014448352697725443,
+    "lam_cv": 0.0007438880071116976,
+    "elig_updates": 320,
+    "workspace_step_sd": 0.3900273883715272,
+    "mod_sd": 0.234403269077295,
+    "encoder_moved": 0.0,
+    "retention_detail": {
+     "per_context": [
+      0.40625,
+      0.34375,
+      0.03125,
+      0.203125
+     ],
+     "identified_slot": [
+      1,
+      2,
+      2,
+      2
+     ]
+    }
+   },
+   "no_controller": {
+    "fast_updates": 316,
+    "fast_dW_rel_median": 0.16426224608087664,
+    "fast_norm_final": 0.12031840533018112,
+    "posterior_marginal_entropy": 1.0906254096825305,
+    "posterior_conditional_entropy": 0.1764221289467439,
+    "posterior_information": 0.9142032807357866,
+    "contexts_created": 2,
+    "contexts_used": 3,
+    "log_k_used": 1.0986122886681098,
+    "posterior_entropy_headroom_per_step": 0.6059526401233526,
+    "posterior_multi_slot_steps": 215,
+    "posterior_distinct_argmax_slots": 3,
+    "created_at": [
+     104,
+     226
+    ],
+    "slot_utility": [
+     -0.0003,
+     -0.0036,
+     0.0493,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "slot_best_loss": [
+     1.2613,
+     1.2926,
+     1.2412,
+     Infinity,
+     Infinity,
+     Infinity
+    ],
+    "base_loss_ema": 1.5163,
+    "n_consolidations": 25,
+    "W_m_norm": 0.1280737966299057,
+    "W_m_vs_W_f_rel": 0.19989911405115843,
+    "mean_steps": 1.628125,
+    "max_steps_cap": 4,
+    "steps_at_cap_frac": 0.153125,
+    "steps_sd": 1.1218662952308533,
+    "elig_updates": 320,
+    "workspace_step_sd": 0.38092061998322607,
+    "mod_sd": 0.1756414214307365,
+    "encoder_moved": 0.0,
+    "retention_detail": {
+     "per_context": [
+      0.078125,
+      0.28125,
+      0.0625,
+      0.203125
+     ],
+     "identified_slot": [
+      0,
+      2,
+      2,
+      1
+     ]
+    }
+   },
+   "no_workspace": {
+    "fast_updates": 316,
+    "fast_dW_rel_median": 0.31568260363806444,
+    "fast_norm_final": 0.7686320543289185,
+    "posterior_marginal_entropy": 0.6096141115958219,
+    "posterior_conditional_entropy": 0.22009906751760316,
+    "posterior_information": 0.38951504407821874,
+    "contexts_created": 1,
+    "contexts_used": 2,
+    "log_k_used": 0.6931471805599453,
+    "posterior_entropy_headroom_per_step": 0.36555787083621644,
+    "posterior_multi_slot_steps": 215,
+    "posterior_distinct_argmax_slots": 2,
+    "created_at": [
+     104
+    ],
+    "slot_utility": [
+     0.0155,
+     -0.0523,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "slot_best_loss": [
+     1.2212,
+     1.2529,
+     Infinity,
+     Infinity,
+     Infinity,
+     Infinity
+    ],
+    "base_loss_ema": 1.5206,
+    "n_consolidations": 23,
+    "W_m_norm": 0.4104299545288086,
+    "W_m_vs_W_f_rel": 0.6164445166554957,
+    "mean_steps": 1.0,
+    "max_steps_cap": 4,
+    "steps_at_cap_frac": 0.0,
+    "steps_sd": 0.0,
+    "eta_mean": 0.47384354198658013,
+    "eta_sd": 0.01941059578899388,
+    "lam_mean": 0.972714772518677,
+    "lam_sd": 0.0006172655058177785,
+    "eta_cv": 0.04096414548062705,
+    "lam_cv": 0.0006345801701144889,
+    "elig_updates": 320,
+    "mod_sd": 0.14387522012891804,
+    "encoder_moved": 0.0,
+    "retention_detail": {
+     "per_context": [
+      0.171875,
+      0.40625,
+      0.296875,
+      0.171875
+     ],
+     "identified_slot": [
+      1,
+      0,
+      0,
+      0
+     ]
+    }
+   },
+   "no_halting": {
+    "fast_updates": 316,
+    "fast_dW_rel_median": 0.3483553322228976,
+    "fast_norm_final": 0.5434525609016418,
+    "posterior_marginal_entropy": 1.0955438309506806,
+    "posterior_conditional_entropy": 0.23586745267542977,
+    "posterior_information": 0.8596763782752509,
+    "contexts_created": 2,
+    "contexts_used": 3,
+    "log_k_used": 1.0986122886681098,
+    "posterior_entropy_headroom_per_step": 0.6509392610340091,
+    "posterior_multi_slot_steps": 232,
+    "posterior_distinct_argmax_slots": 3,
+    "created_at": [
+     87,
+     157
+    ],
+    "slot_utility": [
+     -0.04,
+     -0.0157,
+     -0.0362,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "slot_best_loss": [
+     1.1379,
+     1.2314,
+     1.1988,
+     Infinity,
+     Infinity,
+     Infinity
+    ],
+    "base_loss_ema": 1.4678,
+    "n_consolidations": 37,
+    "W_m_norm": 0.5753452777862549,
+    "W_m_vs_W_f_rel": 0.7425952886341075,
+    "mean_steps": 4.0,
+    "max_steps_cap": 4,
+    "steps_at_cap_frac": 1.0,
+    "steps_sd": 0.0,
+    "eta_mean": 0.46362847853687744,
+    "eta_sd": 0.010975409441388754,
+    "lam_mean": 0.9727709800759449,
+    "lam_sd": 0.0007972109889068514,
+    "eta_cv": 0.023672854342392947,
+    "lam_cv": 0.0008195258752934967,
+    "elig_updates": 320,
+    "workspace_step_sd": 0.3326096367556602,
+    "mod_sd": 0.24896849659351966,
+    "encoder_moved": 0.0,
+    "retention_detail": {
+     "per_context": [
+      0.421875,
+      0.453125,
+      0.03125,
+      0.21875
+     ],
+     "identified_slot": [
+      1,
+      2,
+      2,
+      2
+     ]
+    }
+   },
+   "no_eligibility": {
+    "fast_updates": 316,
+    "fast_dW_rel_median": 0.16163571604309931,
+    "fast_norm_final": 0.49596449732780457,
+    "posterior_marginal_entropy": 1.5000016241524756,
+    "posterior_conditional_entropy": 0.1514953660114272,
+    "posterior_information": 1.3485062581410485,
+    "contexts_created": 5,
+    "contexts_used": 6,
+    "log_k_used": 1.791759469228055,
+    "posterior_entropy_headroom_per_step": 0.9889884363312407,
+    "posterior_multi_slot_steps": 288,
+    "posterior_distinct_argmax_slots": 5,
+    "created_at": [
+     31,
+     144,
+     170,
+     230,
+     319
+    ],
+    "slot_utility": [
+     0.0828,
+     0.1325,
+     0.2028,
+     0.2178,
+     0.5179,
+     0.0
+    ],
+    "slot_best_loss": [
+     1.3852,
+     1.2821,
+     1.3417,
+     1.3903,
+     1.2752,
+     Infinity
+    ],
+    "base_loss_ema": 2.0983,
+    "n_consolidations": 236,
+    "W_m_norm": 0.9982419013977051,
+    "W_m_vs_W_f_rel": 0.5723498141008978,
+    "mean_steps": 1.846875,
+    "max_steps_cap": 4,
+    "steps_at_cap_frac": 0.209375,
+    "steps_sd": 1.2112711233968223,
+    "eta_mean": 0.4452326848537107,
+    "eta_sd": 0.00803738501277144,
+    "lam_mean": 0.9730769793821287,
+    "lam_sd": 0.0010652154112131633,
+    "eta_cv": 0.018052100140429423,
+    "lam_cv": 0.0010946877110272811,
+    "elig_updates": 0,
+    "workspace_step_sd": 0.3738664811477065,
+    "mod_sd": 0.25593552258623903,
+    "encoder_moved": 0.0,
+    "retention_detail": {
+     "per_context": [
+      0.296875,
+      0.03125,
+      0.1875,
+      0.1875
+     ],
+     "identified_slot": [
+      3,
+      3,
+      3,
+      1
+     ]
+    }
+   },
+   "adrn2a_full": {
+    "fast_updates": 316,
+    "fast_dW_rel_median": 0.2991636521542156,
+    "fast_norm_final": 0.6745650172233582,
+    "posterior_marginal_entropy": 1.2284469823340605,
+    "posterior_conditional_entropy": 0.23408764053297787,
+    "posterior_information": 0.9943593418010825,
+    "contexts_created": 3,
+    "contexts_used": 4,
+    "log_k_used": 1.3862943611198906,
+    "posterior_entropy_headroom_per_step": 0.665834672149233,
+    "posterior_multi_slot_steps": 232,
+    "posterior_distinct_argmax_slots": 4,
+    "created_at": [
+     87,
+     196,
+     254
+    ],
+    "slot_utility": [
+     0.0397,
+     0.0434,
+     -0.0175,
+     -0.0101,
+     0.0,
+     0.0
+    ],
+    "slot_best_loss": [
+     1.2314,
+     1.2485,
+     1.2561,
+     1.2402,
+     Infinity,
+     Infinity
+    ],
+    "base_loss_ema": 1.7212,
+    "n_consolidations": 28,
+    "W_m_norm": 0.4263884127140045,
+    "W_m_vs_W_f_rel": 0.6780945316049469,
+    "mean_steps": 1.73125,
+    "max_steps_cap": 4,
+    "steps_at_cap_frac": 0.184375,
+    "steps_sd": 1.1737859419417151,
+    "eta_mean": 0.4619823337732991,
+    "eta_sd": 0.013052216229669797,
+    "lam_mean": 0.9727031528195248,
+    "lam_sd": 0.0006713132161404768,
+    "eta_cv": 0.028252630621314393,
+    "lam_cv": 0.0006901521951425526,
+    "elig_updates": 320,
+    "workspace_step_sd": 0.34671098752878604,
+    "mod_sd": 0.20874652112496134,
+    "encoder_moved": 0.0,
+    "retention_detail": {
+     "per_context": [
+      0.390625,
+      0.28125,
+      0.234375,
+      0.40625
+     ],
+     "identified_slot": [
+      2,
+      0,
+      3,
+      3
+     ]
+    }
+   },
+   "oracle_context": {
+    "fast_updates": 316,
+    "fast_dW_rel_median": 0.31614495652167535,
+    "fast_norm_final": 0.5924508571624756,
+    "n_consolidations": 42,
+    "W_m_norm": 0.6834725141525269,
+    "W_m_vs_W_f_rel": 0.6869690441778449,
+    "mean_steps": 1.884375,
+    "max_steps_cap": 4,
+    "steps_at_cap_frac": 0.25625,
+    "steps_sd": 1.2974998494701262,
+    "eta_mean": 0.4589237646211552,
+    "eta_sd": 0.009317085069280624,
+    "lam_mean": 0.9732619614540776,
+    "lam_sd": 0.0006296215668015555,
+    "eta_cv": 0.020302032249238485,
+    "lam_cv": 0.0006469189095409473,
+    "elig_updates": 320,
+    "workspace_step_sd": 0.35913700559176504,
+    "mod_sd": 0.20804084516201873,
+    "encoder_moved": 0.0,
+    "retention_detail": {
+     "per_context": [
+      0.25,
+      0.21875,
+      0.03125,
+      0.453125
+     ],
+     "identified_slot": [
+      0,
+      1,
+      2,
+      3
+     ]
+    }
+   }
+  }
+ },
+ "verdict": "SMOKE RUN -- plumbing and liveness check, NOT a result. ADRN-2A: 2/6 predeclared gates pass. In the immediate-feedback condition ADRN-2A reaches a raw held-out prequential accuracy of 0.4391, against 0.5156 for the best control (global_fast), a paired per-seed gap of -0.0766 against an MDE of 0.0891; the oracle-context upper reference sits at 0.4672 and chance is 0.250. Removing the context manager costs -0.0766 (MDE 0.0891), removing consolidation costs +0.1000 on the stream and +0.0391 on held-out retention, removing the plasticity controller costs +0.0641, and removing the recurrent workspace costs -0.1250. Realised workspace steps averaged 2.08 against a cap of 4. THE retention_acc METRIC IS DECLARED UNINFORMATIVE IN THIS CONDITION, and every gate read on it is excluded from the tally rather than reported as a result: every arm sits within 0.1699 of chance (0.250) -- best arm oracle_context at 0.4004 -- so the metric separates nothing. In the delayed-feedback condition ADRN-2A reaches a raw held-out prequential accuracy of 0.2750, against 0.3359 for the best control (sgd_head), a paired per-seed gap of -0.0609 against an MDE of 0.1078; the oracle-context upper reference sits at 0.2312 and chance is 0.250. Removing the context manager costs -0.0000 (MDE 0.1500), removing consolidation costs +0.0031 on the stream and +0.0293 on held-out retention, removing the plasticity controller costs +0.0000, and removing the recurrent workspace costs +0.0328. Realised workspace steps averaged 2.30 against a cap of 4. THE online_acc METRIC IS DECLARED UNINFORMATIVE IN THIS CONDITION, and every gate read on it is excluded from the tally rather than reported as a result: every arm sits within 0.1078 of chance (0.250) -- best arm sgd_head at 0.3359 -- so the metric separates nothing. THE retention_acc METRIC IS DECLARED UNINFORMATIVE IN THIS CONDITION, and every gate read on it is excluded from the tally rather than reported as a result: every arm sits within 0.3223 of chance (0.250) -- best arm sgd_head at 0.2793 -- so the metric separates nothing. Every arm was built to a matched budget of ~30,000 parameters by bisection with the realised counts printed, and the per-context adapter banks are counted as capacity, so an ablation that drops a mechanism is compensated with a wider encoder rather than quietly handicapped; the two SGD controls additionally receive an exact stored input for delayed feedback while the local arms receive only a decaying eligibility trace, and every free scalar step size (both SGD controls, the no-controller ablation) was calibrated on a separate validation environment draw over the same grid, so no control loses for being untuned. The unit of replication is the SEED (2 independent initialisations AND independent environment draws -- fresh prototypes, fresh permutations, fresh stream order), never a step or a batch, and every MDE is 3*sd/sqrt(n) on the PAIRED per-seed gap. Before any number above was allowed into the table, each arm-run had to pass a mechanism liveness assertion proving numerically that its fast adapters moved between updates, that its context posterior was neither collapsed onto one context nor flat uniform, that its consolidated adapter existed and differed from the fast adapter, that its plasticity controller emitted a varying rate, that its workspace state moved across internal steps and did not simply run to the halting cap, that eligibility was maintained when and only when feedback was delayed, and that the encoder did not move for any arm claiming no backprop through it; separately, every component flag was toggled on one pretrained model and required to move the output logits, and no two differently-configured arms were permitted to return identical per-seed metrics except the one pair the specification requires to be identical.",
+ "limits": [
+  "FALSIFIER: the environment is synthetic. The latent contexts are label PERMUTATIONS over a fixed encoder representation, which is the friendliest possible form of context change for a linear per-context adapter. If contexts instead changed the input statistics or required a different feature, the fast adapter would have nothing linear to fix and the result should not be expected to transfer. Nothing here is evidence about biology data.",
+  "FALSIFIER: consolidation is only useful because lambda_f is applied to every slot on every step, so a fast adapter left alone for one block decays by lambda^block. If fast weights were instead decayed only when their context is active, W_f would never forget and G3 should collapse to zero. That single line is the load-bearing modelling choice behind the consolidation claim and it is stated, not hidden.",
+  "FALSIFIER: the online contexts are the cyclic permutations, chosen so that a context-blind model's Bayes rate is exactly chance. If the contexts partially agreed, the frozen and global-fast controls would rise and the context manager's margin would shrink accordingly.",
+  "FALSIFIER: ablation arms are given a WIDER encoder because they do not pay for the machinery they lack. That biases every ablation gap against the full model, so a passing G2-G5 is conservative and a failing one may partly reflect the extra capacity.",
+  "the offline pretraining supplies the TRUE context slot to the workspace, while online the workspace receives a posterior-weighted mixture. That is a train/test mismatch in the digital half and it is not corrected for.",
+  "the eligibility comparison is not a like-for-like credit-assignment comparison: the SGD controls buffer the exact delayed example and take a true gradient step, whereas the local arms pair the delayed error with a decaying trace. This favours the controls.",
+  "one example per step means each seed's prequential accuracy carries a binomial standard error of about 0.02 at this stream length; the MDE is computed on the PAIRED gap, which removes most of that, but a single seed's raw value should not be over-read.",
+  "compute is matched only in parameters, not in wall-clock: the workspace runs up to 4 internal steps per example and the context manager evaluates every slot's head on every step.",
+  "context creation uses a fixed loss threshold rather than a proper model-selection criterion; too low and it fragments contexts, too high and it merges them, and the realised number of allocated contexts is reported per arm so that failure mode is visible.",
+  "STAGE 2A ONLY: no dendrites, no episodic memory, no world model, no planner. Any claim about those is out of scope for this file and is not supported by anything in it."
+ ],
+ "runtime_sec": 176.47271728515625,
+ "log": [
+  "============================================================================================================",
+  "ADRN-2A -- context manager + fast/consolidated adapters on a recurring-context stream",
+  "============================================================================================================",
+  "  *** SMOKE RUN -- plumbing and liveness check, NOT a result. ***",
+  "  GATE, declared before any number exists: an arm is credited only if its PAIRED per-seed",
+  "  gap over the comparison arm exceeds MDE = 3*sd/sqrt(n), n = 2 SEEDS, where one",
+  "  seed is an independent initialisation AND an independent environment draw. The effect size",
+  "  reported everywhere is the RAW held-out prequential accuracy, never net of a control.",
+  "  Ceiling 0.99; floor (chance) 0.250; parameter budget 30,000 matched by bisection per arm, realised counts printed.",
+  "\n  PARAMETER BUDGET (bisected per architecture; adapters counted as capacity)",
+  "    frozen             d_h   73   trainable  29,774   adaptive     36   total  29,810",
+  "    sgd_head           d_h   73   trainable  29,774   adaptive     36   total  29,810",
+  "    sgd_full           d_h   73   trainable  29,774   adaptive     36   total  29,810",
+  "    global_fast        d_h   72   trainable  29,396   adaptive    332   total  29,728",
+  "    no_consolidation   d_h   71   trainable  28,444   adaptive  1,074   total  29,518",
+  "    no_controller      d_h   70   trainable  27,691   adaptive  1,938   total  29,629",
+  "    no_workspace       d_h   70   trainable  27,886   adaptive  1,938   total  29,824",
+  "    no_halting         d_h   70   trainable  27,886   adaptive  1,938   total  29,824",
+  "    no_eligibility     d_h   70   trainable  27,886   adaptive  1,938   total  29,824",
+  "    adrn2a_full        d_h   70   trainable  27,886   adaptive  1,938   total  29,824",
+  "    oracle_context     d_h   70   trainable  27,886   adaptive  1,938   total  29,824",
+  "\n  \u2500\u2500 seed 0  (8 blocks x 40 steps = 320 online examples, 4 recurring contexts) \u2500\u2500",
+  "    digital half: offline held-out (context known) 0.8113, per-context ridge probe on w 0.8972, analytic ceiling 0.910, chance 0.250, restarts 0",
+  "\n    FLAG-EFFECT PROBE (immediate): toggling each component on one pretrained model and requiring the output to move",
+  "      workspace      steps differing   116   max|dlogit|    2.4698   acc on/off 0.384/0.541",
+  "      halting        steps differing    70   max|dlogit|    1.6134   acc on/off 0.384/0.366",
+  "      context        steps differing    81   max|dlogit|    3.2588   acc on/off 0.384/0.469",
+  "      fast           steps differing   103   max|dlogit|    2.9669   acc on/off 0.384/0.300",
+  "      consolidate    steps differing    90   max|dlogit|    0.8240   acc on/off 0.384/0.322",
+  "      controller     steps differing    71   max|dlogit|    1.1483   acc on/off 0.384/0.294",
+  "\n    FLAG-EFFECT PROBE (delayed): toggling each component on one pretrained model and requiring the output to move",
+  "      workspace      steps differing    91   max|dlogit|    1.7156   acc on/off 0.244/0.322",
+  "      halting        steps differing    74   max|dlogit|    4.4223   acc on/off 0.244/0.250",
+  "      context        steps differing    99   max|dlogit|    2.9212   acc on/off 0.244/0.278",
+  "      fast           steps differing    60   max|dlogit|    3.2249   acc on/off 0.244/0.200",
+  "      consolidate    steps differing     8   max|dlogit|    5.3420   acc on/off 0.244/0.250",
+  "      controller     steps differing    67   max|dlogit|    5.2810   acc on/off 0.244/0.253",
+  "      eligibility    steps differing    96   max|dlogit|    3.8198   acc on/off 0.244/0.263",
+  "\n  \u2500\u2500 seed 1  (8 blocks x 40 steps = 320 online examples, 4 recurring contexts) \u2500\u2500",
+  "    digital half: offline held-out (context known) 0.8362, per-context ridge probe on w 0.9091, analytic ceiling 0.910, chance 0.250, restarts 0",
+  "\n============================================================================================================",
+  "  CONDITION: immediate feedback (delay = 0 steps)",
+  "  ----------------------------------------------------------------------------------------------------------",
+  "    arm                        online_acc    retention    revisit         steps   ctx    params",
+  "    frozen                0.2641 \u00b1 0.0155       0.2422     0.2833   2.42\u00b11.30     1.0    29,810",
+  "    sgd_head              0.4203 \u00b1 0.0155       0.2715     0.1333   2.45\u00b11.31     1.0    29,810",
+  "    sgd_full              0.3406 \u00b1 0.0575       0.2188     0.1667   2.81\u00b11.18     1.0    29,810",
+  "    global_fast           0.5156 \u00b1 0.0309       0.2637     0.2667   1.86\u00b11.28     1.0    29,728",
+  "    no_consolidation      0.3391 \u00b1 0.0110       0.2266     0.2583   1.94\u00b11.22     6.0    29,518",
+  "    no_controller         0.3750 \u00b1 0.1149       0.2949     0.3167   1.83\u00b11.24     6.0    29,629",
+  "    no_workspace          0.5641 \u00b1 0.0066       0.3770     0.4167   1.00\u00b10.00     6.0    29,824",
+  "    no_halting            0.3969 \u00b1 0.0663       0.3457     0.2417   4.00\u00b10.00     6.0    29,824",
+  "    no_eligibility        0.4391 \u00b1 0.0110       0.2656     0.2750   2.08\u00b11.23     6.0    29,824",
+  "    adrn2a_full           0.4391 \u00b1 0.0110       0.2656     0.2750   2.08\u00b11.23     6.0    29,824",
+  "    oracle_context        0.4672 \u00b1 0.0420       0.4004     0.3500   2.21\u00b11.31     4.0    29,824",
+  "\n    *** FLOOR on retention_acc: every arm is within 0.1699 of chance (0.250). This metric cannot separate the arms at this scale; every gate read on it is UNINFORMATIVE and is not a result. ***",
+  "\n============================================================================================================",
+  "  CONDITION: delayed feedback (delay = 4 steps)",
+  "  ----------------------------------------------------------------------------------------------------------",
+  "    arm                        online_acc    retention    revisit         steps   ctx    params",
+  "    frozen                0.2656 \u00b1 0.0133       0.2500     0.2917   2.41\u00b11.29     1.0    29,810",
+  "    sgd_head              0.3359 \u00b1 0.0243       0.2793     0.1000   2.42\u00b11.30     1.0    29,810",
+  "    sgd_full              0.3203 \u00b1 0.0287       0.2441     0.2167   2.22\u00b11.24     1.0    29,810",
+  "    global_fast           0.2750 \u00b1 0.0442       0.2441     0.2750   1.86\u00b11.29     1.0    29,728",
+  "    no_consolidation      0.2719 \u00b1 0.0354       0.2129     0.2333   2.01\u00b11.29     4.0    29,518",
+  "    no_controller         0.2750 \u00b1 0.0354       0.2109     0.2500   1.94\u00b11.25     4.5    29,629",
+  "    no_workspace          0.2422 \u00b1 0.0376       0.2305     0.2083   1.00\u00b10.00     2.5    29,824",
+  "    no_halting            0.2953 \u00b1 0.0243       0.2520     0.1917   4.00\u00b10.00     4.0    29,824",
+  "    no_eligibility        0.2234 \u00b1 0.0022       0.1602     0.2583   2.28\u00b11.27     6.0    29,824",
+  "    adrn2a_full           0.2750 \u00b1 0.0265       0.2422     0.2667   2.30\u00b11.26     3.5    29,824",
+  "    oracle_context        0.2312 \u00b1 0.0795       0.2500     0.2167   2.22\u00b11.31     4.0    29,824",
+  "\n    *** FLOOR on online_acc: every arm is within 0.1078 of chance (0.250). This metric cannot separate the arms at this scale; every gate read on it is UNINFORMATIVE and is not a result. ***",
+  "\n    *** FLOOR on retention_acc: every arm is within 0.3223 of chance (0.250). This metric cannot separate the arms at this scale; every gate read on it is UNINFORMATIVE and is not a result. ***",
+  "\n  PREDECLARED GATES",
+  "    FAIL  immediate | G1 full beats best control (global_fast) on online_acc",
+  "    FAIL  immediate | G2 context manager contributes",
+  "    FAIL  immediate | G4 plasticity controller contributes",
+  "    FAIL  immediate | G5 recurrent workspace contributes",
+  "    PASS  immediate | G6 halting is live and not costly",
+  "    PASS  immediate | G7 eligibility costs exactly nothing when gated off",
+  "\n  GATES THAT ARE NOT READABLE, AND ARE THEREFORE NEITHER PASSED NOR FAILED",
+  "    (a metric on which every arm sits within max(MDE, 0.02) of chance cannot separate",
+  "     anything, and a positive gap whose paired sample sd is exactly zero has no",
+  "     estimable MDE. Both are excluded from the tally rather than counted either way.)",
+  "    UNSUPPORTED  immediate | G1b full beats best control (sgd_head) on retention_acc",
+  "    UNSUPPORTED  immediate | G3 consolidation contributes",
+  "    UNSUPPORTED  immediate | G3b consolidation (retention) contributes",
+  "    UNSUPPORTED  delayed | G1 full beats best control (sgd_head) on online_acc",
+  "    UNSUPPORTED  delayed | G1b full beats best control (sgd_head) on retention_acc",
+  "    UNSUPPORTED  delayed | G2 context manager contributes",
+  "    UNSUPPORTED  delayed | G3 consolidation contributes",
+  "    UNSUPPORTED  delayed | G3b consolidation (retention) contributes",
+  "    UNSUPPORTED  delayed | G4 plasticity controller contributes",
+  "    UNSUPPORTED  delayed | G5 recurrent workspace contributes",
+  "    UNSUPPORTED  delayed | G6 halting is live and not costly",
+  "    UNSUPPORTED  delayed | G7 eligibility earns its keep under delay",
+  "\n============================================================================================================",
+  "  VERDICT: SMOKE RUN -- plumbing and liveness check, NOT a result. ADRN-2A: 2/6 predeclared gates pass. In the immediate-feedback condition ADRN-2A reaches a raw held-out prequential accuracy of 0.4391, against 0.5156 for the best control (global_fast), a paired per-seed gap of -0.0766 against an MDE of 0.0891; the oracle-context upper reference sits at 0.4672 and chance is 0.250. Removing the context manager costs -0.0766 (MDE 0.0891), removing consolidation costs +0.1000 on the stream and +0.0391 on held-out retention, removing the plasticity controller costs +0.0641, and removing the recurrent workspace costs -0.1250. Realised workspace steps averaged 2.08 against a cap of 4. THE retention_acc METRIC IS DECLARED UNINFORMATIVE IN THIS CONDITION, and every gate read on it is excluded from the tally rather than reported as a result: every arm sits within 0.1699 of chance (0.250) -- best arm oracle_context at 0.4004 -- so the metric separates nothing. In the delayed-feedback condition ADRN-2A reaches a raw held-out prequential accuracy of 0.2750, against 0.3359 for the best control (sgd_head), a paired per-seed gap of -0.0609 against an MDE of 0.1078; the oracle-context upper reference sits at 0.2312 and chance is 0.250. Removing the context manager costs -0.0000 (MDE 0.1500), removing consolidation costs +0.0031 on the stream and +0.0293 on held-out retention, removing the plasticity controller costs +0.0000, and removing the recurrent workspace costs +0.0328. Realised workspace steps averaged 2.30 against a cap of 4. THE online_acc METRIC IS DECLARED UNINFORMATIVE IN THIS CONDITION, and every gate read on it is excluded from the tally rather than reported as a result: every arm sits within 0.1078 of chance (0.250) -- best arm sgd_head at 0.3359 -- so the metric separates nothing. THE retention_acc METRIC IS DECLARED UNINFORMATIVE IN THIS CONDITION, and every gate read on it is excluded from the tally rather than reported as a result: every arm sits within 0.3223 of chance (0.250) -- best arm sgd_head at 0.2793 -- so the metric separates nothing. Every arm was built to a matched budget of ~30,000 parameters by bisection with the realised counts printed, and the per-context adapter banks are counted as capacity, so an ablation that drops a mechanism is compensated with a wider encoder rather than quietly handicapped; the two SGD controls additionally receive an exact stored input for delayed feedback while the local arms receive only a decaying eligibility trace, and every free scalar step size (both SGD controls, the no-controller ablation) was calibrated on a separate validation environment draw over the same grid, so no control loses for being untuned. The unit of replication is the SEED (2 independent initialisations AND independent environment draws -- fresh prototypes, fresh permutations, fresh stream order), never a step or a batch, and every MDE is 3*sd/sqrt(n) on the PAIRED per-seed gap. Before any number above was allowed into the table, each arm-run had to pass a mechanism liveness assertion proving numerically that its fast adapters moved between updates, that its context posterior was neither collapsed onto one context nor flat uniform, that its consolidated adapter existed and differed from the fast adapter, that its plasticity controller emitted a varying rate, that its workspace state moved across internal steps and did not simply run to the halting cap, that eligibility was maintained when and only when feedback was delayed, and that the encoder did not move for any arm claiming no backprop through it; separately, every component flag was toggled on one pretrained model and required to move the output logits, and no two differently-configured arms were permitted to return identical per-seed metrics except the one pair the specification requires to be identical."
+ ]
+}

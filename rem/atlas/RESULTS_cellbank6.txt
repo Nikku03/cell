@@ -1,0 +1,52 @@
+=================================================================================================
+DRUG DEVELOPMENT IN THE MEMORY BANK: DRUG RESPONSES IN K562, TARGETS, TRIALS AND SAFETY
+=================================================================================================
+  sci-Plex3 K562: 173,652 cells (3,935 vehicle), 188 compounds x 4 doses, 5,924 expressed genes mapped
+  compounds matched to ChEMBL 144; with a loss-of-function target 90
+  Open Targets: 13,128 drugs (5,052 with a mechanism), 17,095 target genes, 20,433 stopped-trial records, 3,019 warnings
+  bank: 12,501 records (752 drug records), 3.8 MB
+  T1 PRIMARY drug response vs its targets' knockdowns, 62 compounds: median r_target +0.015 vs null -0.018; higher for 35, lower for 27; median gain +0.018, p 0.37 -> NO DIFFERENCE
+     targets' median percentile among all 5,052 knockdowns: 53%
+     Nilotinib (AMN-107)                targets BCR                            r +0.733 (null -0.119, percentile 100%)
+     Bosutinib (SKI-606)                targets BCR                            r +0.401 (null -0.098, percentile 98%)
+     Avagacestat (BMS-708163)           targets APH1A,PSEN1,PSENEN             r +0.340 (null +0.076, percentile 86%)
+     Veliparib (ABT-888)                targets PARP1,PARP2                    r +0.331 (null +0.132, percentile 72%)
+     Mercaptopurine (6-MP)              targets PPAT                           r +0.302 (null -0.126, percentile 94%)
+     MK-5108 (VX-689)                   targets AURKA                          r +0.258 (null +0.064, percentile 86%)
+     AMG-900                            targets AURKA,AURKB                    r +0.202 (null +0.086, percentile 73%)
+     SNS-314                            targets AURKA,AURKB                    r +0.199 (null +0.088, percentile 67%)
+  T2 the 30 strongest drug responses and the knockdowns they most resemble (UNVALIDATED):
+     Bisindolylmaleimide IX (Ro 31-8220 targets -                            | like knockdown of RAD1 +0.53, HUS1 +0.51, SLC25A46 +0.51 | stage -, stopped trials 0, warnings 0
+     Dacinostat (LAQ824)                targets -                            | like knockdown of ATR +0.51, ATRIP +0.50, SH3KBP1 +0.45 | stage PHASE_3, stopped trials 0, warnings 0
+     Flavopiridol HCl                   targets CDK1,CDK2,CDK4,CDK6,CDK7,CDK | like knockdown of FDX2 +0.52, GABRG3 +0.52, NDUFC1 +0.51 | stage PHASE_3, stopped trials 7, warnings 0
+     Panobinostat (LBH589)              targets HDAC1,HDAC10,HDAC11,HDAC2,HD | like knockdown of ATRIP +0.47, MRPS36 +0.46, RAD9A +0.45 | stage APPROVAL, stopped trials 15, warnings 2
+     Quisinostat (JNJ-26481585) 2HCl    targets HDAC1,HDAC10,HDAC11,HDAC2,HD | like knockdown of ATRIP +0.50, ATR +0.50, MIS18BP1 +0.48 | stage PHASE_2, stopped trials 1, warnings 0
+     Givinostat (ITF2357)               targets HDAC1,HDAC10,HDAC11,HDAC2,HD | like knockdown of ATR +0.54, ATRIP +0.51, MIS18BP1 +0.47 | stage APPROVAL, stopped trials 6, warnings 0
+     Pracinostat (SB939)                targets -                            | like knockdown of ATR +0.54, ATRIP +0.52, MIS18BP1 +0.47 | stage PHASE_3, stopped trials 2, warnings 0
+     Mocetinostat (MGCD0103)            targets HDAC1,HDAC11,HDAC2,HDAC3,HDA | like knockdown of CTR9 +0.57, HJURP +0.52, CDC73 +0.51 | stage PHASE_2, stopped trials 9, warnings 0
+     M344                               targets -                            | like knockdown of ATR +0.52, ATRIP +0.51, CTR9 +0.50 | stage -, stopped trials 0, warnings 0
+     Tucidinostat (Chidamide)           targets -                            | like knockdown of SSRP1 +0.57, DYNC1H1 +0.57, PMF1 +0.56 | stage APPROVAL, stopped trials 6, warnings 0
+     CUDC-907                           targets HDAC1,HDAC10,HDAC11,HDAC2,HD | like knockdown of ATRIP +0.50, ATR +0.49, OIP5 +0.44 | stage PHASE_2, stopped trials 1, warnings 0
+     Trichostatin A (TSA)               targets -                            | like knockdown of ATRIP +0.58, ATR +0.56, PMF1 +0.55 | stage -, stopped trials 0, warnings 0
+     Resminostat                        targets -                            | like knockdown of ATR +0.58, ATRIP +0.56, PMF1 +0.50 | stage APPROVAL, stopped trials 0, warnings 0
+     CUDC-101                           targets EGFR,ERBB2,HDAC1,HDAC10,HDAC | like knockdown of MIS18BP1 +0.48, HNRNPM +0.46, HAUS6 +0.45 | stage PHASE_1, stopped trials 0, warnings 0
+     AT9283                             targets ABL1,AURKA,AURKB,FLT3,JAK2,J | like knockdown of THOC5 +0.51, LIMD2 +0.47, PPP1R11 +0.46 | stage PHASE_3, stopped trials 1, warnings 0
+     AR-42                              targets -                            | like knockdown of ATRIP +0.54, ATR +0.53, SH3KBP1 +0.47 | stage PHASE_2_3, stopped trials 3, warnings 0
+     Azacitidine                        targets DNMT1,DNMT3A                 | like knockdown of SPHK2 +0.62, HBS1L +0.59, EIF2S1 +0.57 | stage APPROVAL, stopped trials 15, warnings 0
+     Abexinostat (PCI-24781)            targets HDAC1,HDAC10,HDAC11,HDAC2,HD | like knockdown of ATR +0.52, MIS18BP1 +0.49, ATRIP +0.49 | stage PHASE_3, stopped trials 1, warnings 0
+     JNJ-7706621                        targets -                            | like knockdown of RNF113A +0.69, XAB2 +0.68, NSRP1 +0.65 | stage -, stopped trials 0, warnings 0
+     Belinostat (PXD101)                targets HDAC1,HDAC10,HDAC11,HDAC2,HD | like knockdown of HNRNPM +0.48, CTR9 +0.45, MIS18BP1 +0.45 | stage APPROVAL, stopped trials 11, warnings 0
+     Entinostat (MS-275)                targets HDAC1,HDAC10,HDAC11,HDAC2,HD | like knockdown of DYNC1H1 +0.58, PMF1 +0.56, CENPK +0.56 | stage APPROVAL, stopped trials 15, warnings 0
+     Tanespimycin (17-AAG)              targets HSP90AA1,HSP90AB1            | like knockdown of PPAT +0.64, TPX2 +0.63, NUP133 +0.62 | stage PHASE_3, stopped trials 2, warnings 0
+     PHA-680632                         targets -                            | like knockdown of ALDOA +0.73, PPAT +0.72, ORC5 +0.71 | stage -, stopped trials 0, warnings 0
+     Hesperadin                         targets -                            | like knockdown of PPAT +0.64, CDK6 +0.61, CCND3 +0.60 | stage -, stopped trials 0, warnings 0
+     Luminespib (AUY-922, NVP-AUY922)   targets HSP90AA1,HSP90AB1            | like knockdown of TPX2 +0.67, PKM +0.67, ALDOA +0.64 | stage PHASE_2, stopped trials 5, warnings 0
+     TG101209                           targets -                            | like knockdown of XPO1 +0.56, CENPK +0.54, DCTN5 +0.54 | stage -, stopped trials 0, warnings 0
+     Rigosertib (ON-01910)              targets -                            | like knockdown of BET1 +0.67, TRAPPC5 +0.62, TRAPPC11 +0.62 | stage PHASE_3, stopped trials 2, warnings 0
+     Bosutinib (SKI-606)                targets ABL1,BCR,HCK,LYN,SRC         | like knockdown of RNPC3 +0.54, TRPM7 +0.53, RANBP3 +0.52 | stage APPROVAL, stopped trials 7, warnings 0
+     Regorafenib (BAY 73-4506)          targets ABL1,BRAF,DDR2,EPHA2,FGFR1,F | like knockdown of PTCD3 +0.56, CTNNB1 +0.56, HSPE1 +0.53 | stage APPROVAL, stopped trials 15, warnings 1
+     (+)-JQ1                            targets -                            | like knockdown of CEP135 +0.46, KANSL2 +0.43, RNPC3 +0.43 | stage -, stopped trials 0, warnings 0
+     150 hypotheses written to memory_bank/cell_v6/journal.jsonl
+  G8 PRIMARY, all TEST genes               n  2525: E4 +0.257 vs E3 +0.259; better 1202 / worse 1323, median -0.0010, p 0.017 -> NO DIFFERENCE
+     genes with a drug response (descr.)   n    24: E4 +0.185 vs E3 +0.219; better 5 / worse 19, median -0.0274, p 0.0066 -> (descriptive)
+     genes with any drug data (descr.)     n  2421: E4 +0.258 vs E3 +0.260; better 1151 / worse 1270, median -0.0010, p 0.016 -> (descriptive)

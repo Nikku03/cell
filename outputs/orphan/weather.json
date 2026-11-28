@@ -1,0 +1,98 @@
+{
+ "n_pairs": 25121,
+ "n_knockouts": 237,
+ "base_rate": 0.0766,
+ "calibration_reliability": [
+  {
+   "bin": "0.0-0.1",
+   "predicted": 0.02,
+   "observed": 0.024,
+   "n": 22670
+  },
+  {
+   "bin": "0.1-0.2",
+   "predicted": 0.13,
+   "observed": 0.095,
+   "n": 391
+  },
+  {
+   "bin": "0.2-0.3",
+   "predicted": 0.253,
+   "observed": 0.242,
+   "n": 186
+  },
+  {
+   "bin": "0.3-0.4",
+   "predicted": 0.352,
+   "observed": 0.373,
+   "n": 142
+  },
+  {
+   "bin": "0.4-0.5",
+   "predicted": 0.453,
+   "observed": 0.486,
+   "n": 216
+  },
+  {
+   "bin": "0.5-0.6",
+   "predicted": 0.549,
+   "observed": 0.488,
+   "n": 299
+  },
+  {
+   "bin": "0.6-0.7",
+   "predicted": 0.648,
+   "observed": 0.617,
+   "n": 214
+  },
+  {
+   "bin": "0.7-0.8",
+   "predicted": 0.756,
+   "observed": 0.743,
+   "n": 268
+  },
+  {
+   "bin": "0.8-0.9",
+   "predicted": 0.851,
+   "observed": 0.897,
+   "n": 439
+  },
+  {
+   "bin": "0.9-1.0",
+   "predicted": 0.94,
+   "observed": 0.949,
+   "n": 296
+  }
+ ],
+ "expected_calibration_error": 0.0063,
+ "confidence_precision_curve": {
+  "top_2pct": {
+   "precision": 0.934,
+   "lift": 12.19
+  },
+  "top_5pct": {
+   "precision": 0.814,
+   "lift": 10.63
+  },
+  "top_10pct": {
+   "precision": 0.557,
+   "lift": 7.27
+  },
+  "top_25pct": {
+   "precision": 0.255,
+   "lift": 3.32
+  }
+ },
+ "confident_vs_uncertain_precision": {
+  "confident (low ensemble spread)": 0.591,
+  "uncertain (high ensemble spread)": 0.524
+ },
+ "predictability_horizon": {
+  "near_field (regulon target or PPI neighbour)": 4.6,
+  "far_field (everything else)": 9.14,
+  "_n_near": 139,
+  "_n_far": 24982
+ },
+ "verdict": "WEATHER FORECAST ON THE CELL -- and this is the FORM the answer should take. We do NOT beat the wall on point prediction (naming the specific distal gene stays chaos); instead we deliver a proper probabilistic forecast, and it passes the weather tests. (1) CALIBRATION: the forecast is WELL-CALIBRATED (ECE 0.006) -- when CellOS says a gene has a p% chance of moving, it moves about p% of the time, so the probabilities are HONEST (the single most important property of a forecast, and the thing point-accuracy metrics never showed). (2) CONFIDENCE: committing only the most confident genes gives real precision -- the top-2% most-probable move 93% of the time (12.19x base) -- so an ABSTAINING forecast ('here are the few I'm sure of') is genuinely useful even though a blanket top-10 is not. (3) HORIZON (honest caveat): near-field genes (regulon/PPI neighbours) simply MOVE MORE -- they have a high base rate -- so the lift-over-base is LOWER there (4.6x) than in the far field (9.14x), where the forecast is pure CLIMATOLOGY (the tide) against a sparse base. That is a base-rate artifact, NOT the far field being more predictable: 'it usually rains in Seattle' is a high-lift forecast against a dry baseline, while a rainforest's daily rain is high-base-low-lift. Both are honestly forecast -- near-field by mechanism (high base), far-field by climatology (the tide) -- and the one thing neither predicts is the specific distal gene identity. BOTTOM LINE: weather forecasting is the RIGHT paradigm because it stops pretending to predict the microstate and instead issues a calibrated, confidence-weighted, horizon-aware forecast. CellOS can do exactly that: an honest knockout WEATHER REPORT -- a calibrated move-probability per gene, a high-confidence subset it will commit to, a magnitude (how big the storm) and a tide (which program), and an explicit 'beyond here it's climatology' for the chaotic far field. That is the correct final form of the predictor -- not a GPS route, a weather report.",
+ "note": "Applied the weather-forecast stance (accept microstate chaos; deliver calibrated probabilities + confidence + a predictability horizon). Held-out by knockout. RESULTS: (1) the probabilistic forecast is well-calibrated (ECE 0.006) -- when it says p%, the gene moves ~p% of the time (honest probabilities, which point-accuracy never showed). (2) confidence: top-2% most-probable genes move 93% (12.19x base) -- an abstaining forecast is useful where a blanket top-10 is not. (3) horizon: near-field (regulon/PPI) genes move more (high base -> lift 4.6x) vs far-field climatology (lift 9.14x over a sparse base) -- a base-rate effect, not the far field being more predictable; both honestly forecast, neither predicts the specific distal gene. CONCLUSION: weather forecasting is the right PARADIGM -- it does not break the wall but gives the correct output FORM: an honest knockout weather report (calibrated per-gene move-probability + high-confidence committed subset + magnitude/tide + explicit climatology-only far field). Not a GPS route -- a weather report."
+}

@@ -1,0 +1,8 @@
+=================================================================================================
+GENEREGMC -- Monte Carlo checks on the G2 verdicts (not blind: G2 results were known)
+=================================================================================================
+  MC-X1 (G2 PASS): chance p_MC RPE1 0.0001, HepG2 0.0001, Jurkat 0.0001; gate passed in 100% of 200 re-drawn runs -> STABLE PASS
+  MC-X2 (G2 FAIL): mean Spearman -0.040 vs chance 95th pct 0.035, p_MC 0.97; gate failed in 100% of runs -> STABLE FAIL
+  MC-L1 (G2 PASS): median gain 0.030 vs chance 95th pct 0.001, p_MC 0.005; gate passed in 100% of runs (gain 95% [0.023619844950732768, 0.036187874755176666]) -> STABLE PASS
+  MC-L2 (G2 FAIL): OR 0.87 vs shuffled 95th pct 1.29, p_MC 0.83; gate failed in 100% of runs (OR 95% [0.6396654711829636, 1.2362543122974015]) -> STABLE FAIL
+  Facts written 4

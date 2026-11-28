@@ -1,0 +1,30 @@
+{
+ "counts": {
+  "canonical": 20083,
+  "exam_queries": 4327,
+  "exam_queries_partner_in_top_k": 2648,
+  "genes_with_rooms": 13455,
+  "genes_without_sequence": 0,
+  "isoforms": 22088,
+  "length_differs": 0,
+  "pairs": 47671,
+  "sequences": 42171
+ },
+ "declared_model": "biohub/ESMC-600M",
+ "fasta_sha256": "96a0fc42f6dbba02386eaae1d0241407eef335876bf0ddc6b1aa91144cb961ae",
+ "files": {
+  "genes.json.gz": "474299430ee9c9c18efb8c18bc9a7ce72603c3d1074d9416f9e42ba7ebbf8dfb",
+  "ppi.tsv.gz": "535368acc69fcdf27680a7b221b43e749210f1716518caf0d729baa6ec7b6261",
+  "proteins.tsv.gz": "8ad2206d38f29319a6749811a12f8ba91fbfa3ad9330cf7cacb174678390446c",
+  "shortlist.npz": "721cb18247cdf1f968541bc323ab7d7e348e2ac1d27509e955f41ca4ec1dfe07"
+ },
+ "shortlist_k": 500,
+ "sources": {
+  "Complex Portal": "CC0",
+  "G9 shortlists (derived; also DepMap, ProCan, Nadig 2025 CC BY 4.0)": "CC BY-SA 4.0 as a derived work",
+  "HPA subcellular location, interactions": "CC BY-SA 3.0",
+  "OpenCell localization, interactions": "CC BY-SA 4.0",
+  "UniProt 2026_04 sequences, tags": "CC BY 4.0"
+ },
+ "uniprot_release": "2026_04"
+}

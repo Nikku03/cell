@@ -1,0 +1,48 @@
+=================================================================================================
+TRAIT2CELL -- use 4: disease variants -> cell types (Open Targets credible sets x ENCODE open chromatin)
+=================================================================================================
+  V1 PRIMARY (known answers): 7 of 8 traits' top biosample in the expected category (chance expectation 0.97, p = 6.8e-08) -> PASS
+  * LDL cholesterol              -> left lobe of liver                           t   20.0  expected liver     HIT  (first expected at rank 1)
+      next: right lobe of liver; right lobe of liver; right lobe of liver; right lobe of liver
+  * lymphocyte count             -> lower lobe of left lung                      t    5.3  expected lymphoid  miss (first expected at rank 29)
+      next: upper lobe of left lung; dorsolateral prefrontal cortex; pancreas; frontal cortex
+  * red blood cell count         -> CMK                                          t   12.8  expected erythroid HIT  (first expected at rank 1)
+      next: hematopoietic multipotent prog; hematopoietic multipotent prog; hematopoietic multipotent prog; hematopoietic multipotent prog
+  * inflammatory bowel disease   -> stimulated activated CD8-positive, alpha-bet t    6.4  expected immune    HIT  (first expected at rank 1)
+      next: stimulated activated CD4-posit; T-helper 1 cell; CD4-positive, alpha-beta T cel; activated CD4-positive, alpha-
+  * atrial fibrillation          -> heart                                        t   12.8  expected heart     HIT  (first expected at rank 1)
+      next: left cardiac atrium; heart; heart; heart
+  * schizophrenia                -> dorsolateral prefrontal cortex               t    5.2  expected brain     HIT  (first expected at rank 1)
+      next: putamen; vagina; inferior parietal cortex; effector memory CD4-positive, 
+  * monocyte count               -> CD14-positive monocyte                       t   18.9  expected myeloid   HIT  (first expected at rank 1)
+      next: CD14-positive monocyte; CD14-positive monocyte; CD14-positive monocyte; HL-60
+  * eGFR                         -> kidney                                       t   11.4  expected kidney    HIT  (first expected at rank 1)
+      next: renal pelvis; lower lobe of left lung; right lobe of liver; right kidney
+    Alzheimer's disease          -> heart right ventricle                        t    6.6  expected myeloid   miss (first expected at rank 2)
+      next: CD14-positive monocyte; T-cell; CD1c-positive myeloid dendriti; right lobe of liver
+    type 2 diabetes              -> lower lobe of left lung                      t   10.4  expected pancreas  miss (first expected at rank 5)
+      next: upper lobe of left lung; chorion; right kidney; pancreas
+    platelet count               -> CMK                                          t   15.5  expected erythroid HIT  (first expected at rank 1)
+      next: hematopoietic multipotent prog; spleen; hematopoietic multipotent prog; common myeloid progenitor, CD3
+    height                       -> left hindlimb                                t   15.6  expected None      miss (first expected at rank None)
+      next: femur; right forelimb; right hindlimb; upper lobe of left lung
+  (* gated; the others are descriptive. Score = t statistic of 'open in this biosample' for the trait's PIP, controlling for how many biosamples the element is open in.)
+
+  V2 VARIANT -> GENE (GTEx v11 fine-mapped eQTLs, PIP >= 0.9, in open elements; 5,397 variants, 35 tissues, 45 candidate genes each)
+     model 64.4% right vs nearest gene 62.4%; model-only 414, nearest-only 303, McNemar p = 3.9e-05 -> BETTER
+     top-3 89.5%; variants > 10 kb from every TSS (1,472): model 52.3% vs nearest 46.3%
+
+  CHAIN (descriptive): trait -> top cell type -> genes (sum of PIP x model score) -> drugs on those genes
+   LDL cholesterol -> left lobe of liver: GSEC, ST3GAL4, APOB [mipomersen sodium, approval], APOA5, PCSK9 [alirocumab, approval], SLC22A1, ENSG00000261012, HNF1A, APOC1, HNF1A-AS1
+   lymphocyte count -> lower lobe of left lung: LAMC2 [ocriplasmin, approval], RASSF5, ENSG00000262786, ENSG00000261000, HS3ST3B1, PRPF18, ENSG00000266709, RPL36AL, SMIM14, SMIM14-DT
+   red blood cell count -> CMK: TMC8, TMC6, HBZ, LNCRNA-IUR, MEF2C-AS1, JAK2 [ruxolitinib phosphate, approval], ATXN2-AS, LIMD2, BGLT3, KLF6
+   inflammatory bowel disease -> stimulated activated CD8-positive, alpha-beta memory T cell: CDYL2, ENSG00000283286, MAP3K8 [tilpisertib, phase_2], FOSL2, BAK1, THBS3-AS1, ENSG00000285040, PRKCB [midostaurin, approval], LINC00336, MUC1 [tecemotide, phase_3]
+   atrial fibrillation -> heart: HEY2-AS1, STRN, HEY2, LINC01426, PITX2, NFATC1, CCND2-AS1, SPEG, FLNC, LINC02941
+   schizophrenia -> dorsolateral prefrontal cortex: ZNF823, ANG, RNASE4, ENSG00000259171, ENSG00000266922, LINC02033, ACE [quinapril hydrochloride, approval], EGILA, ZNF835, PLCH2
+   monocyte count -> CD14-positive monocyte: S1PR4 [fingolimod hydrochloride, approval], NCLN, CCDC26, MTHFS, ACKR1, CADM3-AS1, GNA15, SELL [rivipansel, phase_3], MTF2, CSF1R [pazopanib hydrochloride, approval]
+   eGFR -> kidney: SIM2, RRAGD, ZNF827, PRKCE [midostaurin, approval], ENSG00000224269, CDK11B [at-7519, phase_2], TMEM176B, TMEM176A, ENSG00000272004, SHH
+   Alzheimer's disease -> heart right ventricle: APH1B [nirogacestat, approval], MAF1, WDR97, SHARPIN, LINC02695, CYC1, ACE [quinapril hydrochloride, approval], CLU [custirsen, phase_3], EED, GPAA1
+   type 2 diabetes -> lower lobe of left lung: SCTR [secretin, approval], ENSG00000273958, VEGFA [pegaptanib sodium, approval], CFAP221, KCNK17, TMC8, BMF, TOMM7, BCL2L11, SIPA1
+   platelet count -> CMK: MEF2C-AS1, ENSG00000274737, MEF2C, PRIM1 [clofarabine, approval], LINC02354, NFE2, HSD17B6, SLFN14, B3GNT5, PDLIM1
+   height -> left hindlimb: NFATC4, HHIP, PGP, BRICD5, HHIP-AS1, MLST8 [indoximod, phase_2_3], ENSG00000261532, MET [cabozantinib s-malate, approval], PDE3A [anagrelide hydrochloride, approval], LNC-LBCS
+   LDL known drug targets, rank among scored genes: HMGCR None, PCSK9 5, NPC1L1 None, APOB 3, LDLR 111, ANGPTL3 None, ACLY None, CETP 18

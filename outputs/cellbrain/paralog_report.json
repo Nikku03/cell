@@ -1,0 +1,35 @@
+{
+ "added": "2026-11-22",
+ "facts_written": 4,
+ "layers": {
+  "ENSEMBL_COMPARA_RAW": "LAYER-ENSEMBL_COMPARA_RAW/0662cc6a85526697e266",
+  "DEPMAP_EXPR_RAW": "LAYER-DEPMAP_EXPR_RAW/f6638cce133be0bacf0f",
+  "PARALOGS_ENSEMBL": "LAYER-PARALOGS_ENSEMBL/3c205e31dd77e900af6c",
+  "EXPR_DEPMAP": "LAYER-EXPR_DEPMAP/e654a38cd6349dc72255"
+ },
+ "build": {
+  "paralogs": {
+   "pairs": 141164,
+   "genes": 15700,
+   "min_identity_ge_30": 54343,
+   "types": [
+    "other_paralog",
+    "within_species_paralog"
+   ]
+  },
+  "depmap_expr": {
+   "genes": 19147,
+   "cell_lines": 1673,
+   "first_ids": [
+    "ACH-001113",
+    "ACH-001289",
+    "ACH-001339"
+   ],
+   "model_rows": 2105
+  }
+ },
+ "licences": {
+  "ensembl_compara": "no restrictions",
+  "depmap_expr": "CC BY 4.0"
+ }
+}

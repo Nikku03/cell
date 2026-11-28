@@ -1,0 +1,634 @@
+{
+ "test": "MLP on all 19.3M (gene, line) pairs, held out by cell line",
+ "per_seed": {
+  "0": {
+   "A0_CATALOGUE": {
+    "ALL": 0.0014420151406353587,
+    "STRICT": -0.0034722291856570204,
+    "MINORITY": -0.0021403758137679024
+   },
+   "A5_NEIGHBOUR": {
+    "ALL": 0.21767604194255605,
+    "STRICT": 0.3684713604334624,
+    "MINORITY": 0.34267198218211886
+   },
+   "L1_PAIR_RIDGE": {
+    "ALL": 0.21806987256657853,
+    "STRICT": 0.36879342043139196,
+    "MINORITY": 0.34428795419164265
+   },
+   "M1_PAIR_MLP": {
+    "ALL": 0.20088232042447843,
+    "STRICT": 0.35326882288987,
+    "MINORITY": 0.32550875408913477
+   },
+   "L2_PROFILE_RIDGE": {
+    "ALL": 0.23014325341832487,
+    "STRICT": 0.38982810184684563,
+    "MINORITY": 0.3540822263847306
+   },
+   "M2_PROFILE_MLP": {
+    "ALL": 0.20838274883737276,
+    "STRICT": 0.3727942721901564,
+    "MINORITY": 0.33198092196835205
+   }
+  },
+  "1": {
+   "A0_CATALOGUE": {
+    "ALL": 0.0014420151406353587,
+    "STRICT": -0.0034722291856570204,
+    "MINORITY": -0.0021403758137679024
+   },
+   "A5_NEIGHBOUR": {
+    "ALL": 0.21767604194255605,
+    "STRICT": 0.3684713604334624,
+    "MINORITY": 0.34267198218211886
+   },
+   "L1_PAIR_RIDGE": {
+    "ALL": 0.21806987256657853,
+    "STRICT": 0.36879342043139196,
+    "MINORITY": 0.34428795419164265
+   },
+   "M1_PAIR_MLP": {
+    "ALL": 0.20626170616052833,
+    "STRICT": 0.35948207262216475,
+    "MINORITY": 0.33292033531805476
+   },
+   "L2_PROFILE_RIDGE": {
+    "ALL": 0.23014325341832487,
+    "STRICT": 0.38982810184684563,
+    "MINORITY": 0.3540822263847306
+   },
+   "M2_PROFILE_MLP": {
+    "ALL": 0.20834732493876867,
+    "STRICT": 0.3732015104670037,
+    "MINORITY": 0.3326207321378676
+   }
+  },
+  "2": {
+   "A0_CATALOGUE": {
+    "ALL": 0.0014420151406353587,
+    "STRICT": -0.0034722291856570204,
+    "MINORITY": -0.0021403758137679024
+   },
+   "A5_NEIGHBOUR": {
+    "ALL": 0.21767604194255605,
+    "STRICT": 0.3684713604334624,
+    "MINORITY": 0.34267198218211886
+   },
+   "L1_PAIR_RIDGE": {
+    "ALL": 0.21806987256657853,
+    "STRICT": 0.36879342043139196,
+    "MINORITY": 0.34428795419164265
+   },
+   "M1_PAIR_MLP": {
+    "ALL": 0.16914412783569543,
+    "STRICT": 0.3353672442607117,
+    "MINORITY": 0.3043787323948854
+   },
+   "L2_PROFILE_RIDGE": {
+    "ALL": 0.23014325341832487,
+    "STRICT": 0.38982810184684563,
+    "MINORITY": 0.3540822263847306
+   },
+   "M2_PROFILE_MLP": {
+    "ALL": 0.20962045336450316,
+    "STRICT": 0.375240638066316,
+    "MINORITY": 0.3345502730096313
+   }
+  }
+ },
+ "W1": {
+  "reproduction": 0.37641903348142114,
+  "loop240": 0.3762,
+  "operative": 0.3684713604334624
+ },
+ "W7": {
+  "A0_CATALOGUE": {
+   "ALL": 0.0014420151406353587,
+   "STRICT": -0.00347222918565702,
+   "MINORITY": -0.0021403758137679024
+  },
+  "A5_NEIGHBOUR": {
+   "ALL": 0.21767604194255605,
+   "STRICT": 0.3684713604334624,
+   "MINORITY": 0.34267198218211886
+  },
+  "L1_PAIR_RIDGE": {
+   "ALL": 0.21806987256657853,
+   "STRICT": 0.3687934204313919,
+   "MINORITY": 0.34428795419164265
+  },
+  "M1_PAIR_MLP": {
+   "ALL": 0.19209605147356737,
+   "STRICT": 0.3493727132575821,
+   "MINORITY": 0.3209359406006917
+  },
+  "L2_PROFILE_RIDGE": {
+   "ALL": 0.23014325341832487,
+   "STRICT": 0.38982810184684563,
+   "MINORITY": 0.3540822263847306
+  },
+  "M2_PROFILE_MLP": {
+   "ALL": 0.20878350904688156,
+   "STRICT": 0.37374547357449206,
+   "MINORITY": 0.3330506423719503
+  }
+ },
+ "W2": {
+  "best_neural": "M2_PROFILE_MLP",
+  "delta": 0.00432291175669395,
+  "se": 0.0029798688945778568,
+  "z": 1.4507053530307599
+ },
+ "W3": {
+  "M1_PAIR_MLP": {
+   "delta": -0.015524597541521988,
+   "se": 0.0016833868176873502,
+   "z": -9.222240175819959
+  },
+  "M2_PROFILE_MLP": {
+   "delta": -0.017033829656689252,
+   "se": 0.0017296313790132023,
+   "z": -9.84824273158566
+  }
+ },
+ "W4": {
+  "seed_sd": {
+   "M1_PAIR_MLP": 0.012520622565419418,
+   "M2_PROFILE_MLP": 0.001310762524922364
+  }
+ },
+ "early_stopping": [
+  {
+   "tag": "",
+   "seed": 0,
+   "fold": 0,
+   "M1_PAIR_MLP": [
+    2,
+    6,
+    0.3239283560262632
+   ],
+   "M2_PROFILE_MLP": [
+    95,
+    135,
+    0.352425764870736
+   ]
+  },
+  {
+   "tag": "",
+   "seed": 0,
+   "fold": 1,
+   "M1_PAIR_MLP": [
+    1,
+    5,
+    0.36261893274955626
+   ],
+   "M2_PROFILE_MLP": [
+    90,
+    130,
+    0.37074350825575897
+   ]
+  },
+  {
+   "tag": "",
+   "seed": 0,
+   "fold": 2,
+   "M1_PAIR_MLP": [
+    10,
+    14,
+    0.3768022584100795
+   ],
+   "M2_PROFILE_MLP": [
+    85,
+    125,
+    0.3959307687053847
+   ]
+  },
+  {
+   "tag": "",
+   "seed": 0,
+   "fold": 3,
+   "M1_PAIR_MLP": [
+    2,
+    6,
+    0.3504232132533031
+   ],
+   "M2_PROFILE_MLP": [
+    80,
+    120,
+    0.3729524887203015
+   ]
+  },
+  {
+   "tag": "",
+   "seed": 0,
+   "fold": 4,
+   "M1_PAIR_MLP": [
+    1,
+    5,
+    0.3503424728852372
+   ],
+   "M2_PROFILE_MLP": [
+    80,
+    120,
+    0.371363583894432
+   ]
+  },
+  {
+   "tag": "",
+   "seed": 1,
+   "fold": 0,
+   "M1_PAIR_MLP": [
+    1,
+    5,
+    0.333570620027017
+   ],
+   "M2_PROFILE_MLP": [
+    100,
+    140,
+    0.34900478065706964
+   ]
+  },
+  {
+   "tag": "",
+   "seed": 1,
+   "fold": 1,
+   "M1_PAIR_MLP": [
+    3,
+    7,
+    0.361716045646986
+   ],
+   "M2_PROFILE_MLP": [
+    80,
+    120,
+    0.36436073708730615
+   ]
+  },
+  {
+   "tag": "",
+   "seed": 1,
+   "fold": 2,
+   "M1_PAIR_MLP": [
+    3,
+    7,
+    0.3806237432268239
+   ],
+   "M2_PROFILE_MLP": [
+    75,
+    115,
+    0.3924779020856286
+   ]
+  },
+  {
+   "tag": "",
+   "seed": 1,
+   "fold": 3,
+   "M1_PAIR_MLP": [
+    1,
+    5,
+    0.3513348195774033
+   ],
+   "M2_PROFILE_MLP": [
+    95,
+    135,
+    0.36807160215206847
+   ]
+  },
+  {
+   "tag": "",
+   "seed": 1,
+   "fold": 4,
+   "M1_PAIR_MLP": [
+    3,
+    7,
+    0.35470159559941644
+   ],
+   "M2_PROFILE_MLP": [
+    90,
+    130,
+    0.36719899480195006
+   ]
+  },
+  {
+   "tag": "",
+   "seed": 2,
+   "fold": 0,
+   "M1_PAIR_MLP": [
+    1,
+    5,
+    0.27892883553064984
+   ],
+   "M2_PROFILE_MLP": [
+    105,
+    145,
+    0.3513729179552359
+   ]
+  },
+  {
+   "tag": "",
+   "seed": 2,
+   "fold": 1,
+   "M1_PAIR_MLP": [
+    3,
+    7,
+    0.36005187381145565
+   ],
+   "M2_PROFILE_MLP": [
+    90,
+    130,
+    0.36342192475878915
+   ]
+  },
+  {
+   "tag": "",
+   "seed": 2,
+   "fold": 2,
+   "M1_PAIR_MLP": [
+    4,
+    8,
+    0.3544254383548748
+   ],
+   "M2_PROFILE_MLP": [
+    85,
+    125,
+    0.3897366853531941
+   ]
+  },
+  {
+   "tag": "",
+   "seed": 2,
+   "fold": 3,
+   "M1_PAIR_MLP": [
+    1,
+    5,
+    0.27224246084025894
+   ],
+   "M2_PROFILE_MLP": [
+    95,
+    135,
+    0.3787505587909457
+   ]
+  },
+  {
+   "tag": "",
+   "seed": 2,
+   "fold": 4,
+   "M1_PAIR_MLP": [
+    1,
+    5,
+    0.3544538406467484
+   ],
+   "M2_PROFILE_MLP": [
+    85,
+    125,
+    0.3640257707217622
+   ]
+  },
+  {
+   "tag": "genehold ",
+   "seed": 0,
+   "fold": 0,
+   "M1_PAIR_MLP": [
+    4,
+    8,
+    0.2980909695095378
+   ]
+  },
+  {
+   "tag": "genehold ",
+   "seed": 0,
+   "fold": 1,
+   "M1_PAIR_MLP": [
+    1,
+    5,
+    0.36056638398214946
+   ]
+  },
+  {
+   "tag": "genehold ",
+   "seed": 0,
+   "fold": 2,
+   "M1_PAIR_MLP": [
+    1,
+    5,
+    0.37185517376443994
+   ]
+  },
+  {
+   "tag": "genehold ",
+   "seed": 0,
+   "fold": 3,
+   "M1_PAIR_MLP": [
+    6,
+    10,
+    0.23453693476874676
+   ]
+  },
+  {
+   "tag": "genehold ",
+   "seed": 0,
+   "fold": 4,
+   "M1_PAIR_MLP": [
+    2,
+    6,
+    0.3668102450251883
+   ]
+  },
+  {
+   "tag": "wrongfac ",
+   "seed": 0,
+   "fold": 0,
+   "M1_PAIR_MLP": [
+    1,
+    5,
+    0.3414930272053263
+   ],
+   "M2_PROFILE_MLP": [
+    80,
+    120,
+    0.35091654953452966
+   ]
+  },
+  {
+   "tag": "wrongfac ",
+   "seed": 0,
+   "fold": 1,
+   "M1_PAIR_MLP": [
+    3,
+    7,
+    0.31295480242706547
+   ],
+   "M2_PROFILE_MLP": [
+    85,
+    125,
+    0.36343671899115626
+   ]
+  },
+  {
+   "tag": "wrongfac ",
+   "seed": 0,
+   "fold": 2,
+   "M1_PAIR_MLP": [
+    1,
+    5,
+    0.38079066775277143
+   ],
+   "M2_PROFILE_MLP": [
+    80,
+    120,
+    0.39012146778693496
+   ]
+  },
+  {
+   "tag": "wrongfac ",
+   "seed": 0,
+   "fold": 3,
+   "M1_PAIR_MLP": [
+    1,
+    5,
+    0.34668930217103905
+   ],
+   "M2_PROFILE_MLP": [
+    90,
+    130,
+    0.3697736243565762
+   ]
+  },
+  {
+   "tag": "wrongfac ",
+   "seed": 0,
+   "fold": 4,
+   "M1_PAIR_MLP": [
+    2,
+    6,
+    0.3615330657091483
+   ],
+   "M2_PROFILE_MLP": [
+    85,
+    125,
+    0.3717032056121343
+   ]
+  }
+ ],
+ "W5": {
+  "full": 0.35674105207552703,
+  "gene_holdout": 0.329635369039631,
+  "retained": 0.9240186043120223
+ },
+ "W6": {
+  "real": 0.3933003310325026,
+  "shuffled": -0.0028021433562838574,
+  "fraction": -0.007124691069869164,
+  "arm": "L2_PROFILE_RIDGE"
+ },
+ "gates": {
+  "W1": true,
+  "W2": false,
+  "W3": false,
+  "W4": false,
+  "W5": true,
+  "W6": true
+ },
+ "void": [
+  "W4"
+ ],
+ "seconds": 2057.2965936660767,
+ "log": [
+  "========================================================================================================",
+  "LOOP 241 -- A NEURAL NETWORK ON ALL OF IT, AGAINST THE LINEAR MODEL THAT ALREADY WORKS",
+  "========================================================================================================",
+  "     W3 is the gate this loop exists for: every MLP is paired with a LINEAR TWIN that",
+  "     receives the identical feature vector. Loop 225's E6 reported an MLP win that",
+  "     loops 226 and 229 both reversed, with across-split sd 0.1394 against ridge's 0.0288.",
+  "     1,076 cell lines x 17,916 genes = 19,277,616 (gene, line) pairs",
+  "     catalogue: 213,696 paralogue pairs, 1,503,980 BioGRID entries",
+  "     line features: 50 expression components (61.2% of variance) + 29 lineages",
+  "     ALL       17,916 genes, mean effect -0.1434",
+  "     STRICT       355 genes, mean effect -0.5153",
+  "     MINORITY     546 genes, mean effect -0.1763",
+  "     MINORITY contains SOX10, IRF4, PAX8, MITF, GATA3, BRAF, NRAS, MYCN",
+  "     training ... 5 folds x 3 seeds for the neural arms",
+  "       seed 0 fold 1/5 done  M1 best ep 2/6 val +0.3239  M2 best ep 95/135 val +0.3524  [138s]",
+  "       seed 0 fold 2/5 done  M1 best ep 1/5 val +0.3626  M2 best ep 90/130 val +0.3707  [238s]",
+  "       seed 0 fold 3/5 done  M1 best ep 10/14 val +0.3768  M2 best ep 85/125 val +0.3959  [370s]",
+  "       seed 0 fold 4/5 done  M1 best ep 2/6 val +0.3504  M2 best ep 80/120 val +0.3730  [469s]",
+  "       seed 0 fold 5/5 done  M1 best ep 1/5 val +0.3503  M2 best ep 80/120 val +0.3714  [556s]",
+  "       seed 1 fold 1/5 done  M1 best ep 1/5 val +0.3336  M2 best ep 100/140 val +0.3490  [628s]",
+  "       seed 1 fold 2/5 done  M1 best ep 3/7 val +0.3617  M2 best ep 80/120 val +0.3644  [709s]",
+  "       seed 1 fold 3/5 done  M1 best ep 3/7 val +0.3806  M2 best ep 75/115 val +0.3925  [786s]",
+  "       seed 1 fold 4/5 done  M1 best ep 1/5 val +0.3513  M2 best ep 95/135 val +0.3681  [859s]",
+  "       seed 1 fold 5/5 done  M1 best ep 3/7 val +0.3547  M2 best ep 90/130 val +0.3672  [935s]",
+  "       seed 2 fold 1/5 done  M1 best ep 1/5 val +0.2789  M2 best ep 105/145 val +0.3514  [1006s]",
+  "       seed 2 fold 2/5 done  M1 best ep 3/7 val +0.3601  M2 best ep 90/130 val +0.3634  [1082s]",
+  "       seed 2 fold 3/5 done  M1 best ep 4/8 val +0.3544  M2 best ep 85/125 val +0.3897  [1165s]",
+  "       seed 2 fold 4/5 done  M1 best ep 1/5 val +0.2722  M2 best ep 95/135 val +0.3788  [1234s]",
+  "       seed 2 fold 5/5 done  M1 best ep 1/5 val +0.3545  M2 best ep 85/125 val +0.3640  [1305s]",
+  "W1 IS THIS THE SAME HARNESS LOOP 240 USED?",
+  "     W1 reruns A5 under LOOP 240's configuration -- 10 folds, neighbours drawn from every",
+  "     training line, no inner validation split -- because this loop deliberately differs on",
+  "     all three, and a gate that failed on a design change I made on purpose would void the",
+  "     run while measuring nothing. The reproduction tests the DATA AND TARGET pipeline.",
+  "     A5 under loop 240's configuration: +0.3764 against loop 240's +0.3762  (difference +0.0002)",
+  "     A5 under THIS loop's configuration (5 folds, 15% of training lines held back",
+  "     for early stopping, so 731 neighbour",
+  "     candidates instead of 968): +0.3685. That is the operative",
+  "     baseline every arm below is compared against.",
+  "     W1 PASS -- the pipeline reproduces loop 240 to 0.0002",
+  "W7 EVERY ARM ON EVERY GENE SET -- reported, not gated",
+  "     arm                        ALL      STRICT    MINORITY",
+  "     A0_CATALOGUE           +0.0014     -0.0035     -0.0021",
+  "     A5_NEIGHBOUR           +0.2177     +0.3685     +0.3427",
+  "     L1_PAIR_RIDGE          +0.2181     +0.3688     +0.3443",
+  "     M1_PAIR_MLP            +0.1921     +0.3494     +0.3209",
+  "     L2_PROFILE_RIDGE       +0.2301     +0.3898     +0.3541",
+  "     M2_PROFILE_MLP         +0.2088     +0.3737     +0.3331",
+  "W2 DOES ANY NETWORK BEAT PROFILE MATCHING?",
+  "     best neural arm M2_PROFILE_MLP +0.3728 vs A5 +0.3685",
+  "     paired +0.0043 +/- 0.0030  (+1.5 se)",
+  "     W2 FAIL -- the best network is +0.0043 against profile matching",
+  "W3 DID THE NETWORK HELP, OR DID THE FEATURES?",
+  "     M1_PAIR_MLP +0.3533 vs its linear twin L1_PAIR_RIDGE +0.3688   paired -0.0155 +/- 0.0017 (-9.2 se)",
+  "     M2_PROFILE_MLP +0.3728 vs its linear twin L2_PROFILE_RIDGE +0.3898   paired -0.0170 +/- 0.0017 (-9.8 se)",
+  "     W3 FAIL -- the best MLP beats its linear twin by -0.0155 against a 0.02 bar; the signal is in the features, not the network",
+  "W4 IS THE ADVANTAGE LARGER THAN THE SEED NOISE?",
+  "     M1_PAIR_MLP across 3 seeds: +0.3533, +0.3595, +0.3354   sd 0.0125",
+  "     M2_PROFILE_MLP across 3 seeds: +0.3728, +0.3732, +0.3752   sd 0.0013",
+  "     W4 VOID -- W3 found no advantage (-0.0155); a seed spread has nothing to be compared against",
+  "W5 A GENE THE NETWORK NEVER SAW",
+  "       genehold seed 0 fold 1/5 done  M1 best ep 4/8 val +0.2981  [1371s]",
+  "       genehold seed 0 fold 2/5 done  M1 best ep 1/5 val +0.3606  [1417s]",
+  "       genehold seed 0 fold 3/5 done  M1 best ep 1/5 val +0.3719  [1465s]",
+  "       genehold seed 0 fold 4/5 done  M1 best ep 6/10 val +0.2345  [1534s]",
+  "       genehold seed 0 fold 5/5 done  M1 best ep 2/6 val +0.3668  [1587s]",
+  "     M1 over A0: +0.3567 with all genes, +0.3296 +/- 0.0068 when the",
+  "     weights never saw the scored genes -- 92% retained",
+  "     W5 PASS -- 92% survives on genes the network never saw",
+  "W6 CONTROL: THE WRONG FACTORY",
+  "       wrongfac seed 0 fold 1/5 done  M1 best ep 1/5 val +0.3415  M2 best ep 80/120 val +0.3509  [1680s]",
+  "       wrongfac seed 0 fold 2/5 done  M1 best ep 3/7 val +0.3130  M2 best ep 85/125 val +0.3634  [1776s]",
+  "       wrongfac seed 0 fold 3/5 done  M1 best ep 1/5 val +0.3808  M2 best ep 80/120 val +0.3901  [1865s]",
+  "       wrongfac seed 0 fold 4/5 done  M1 best ep 1/5 val +0.3467  M2 best ep 90/130 val +0.3698  [1958s]",
+  "       wrongfac seed 0 fold 5/5 done  M1 best ep 2/6 val +0.3615  M2 best ep 85/125 val +0.3717  [2057s]",
+  "     L2_PROFILE_RIDGE with a random training line's transcriptome and lineage: -0.0028 against a real +0.3933  (-1%)",
+  "     W6 PASS -- collapses to -1% on the wrong factory",
+  "W8 WHAT THIS CANNOT SHOW",
+  "     A held-out line still shares lineage, culture and screening batch with the training",
+  "     lines. W6 bounds the transcriptome's contribution, not the batch's.",
+  "     Gene effect is a growth phenotype integrated over weeks; nothing here speaks to the",
+  "     immediate consequence of a knockout.",
+  "     The PROFILE arms cannot be applied to an unseen gene at all -- a gene IS an output",
+  "     unit -- so W5 speaks only for the PAIR arms.",
+  "     Four CPU threads and a fixed epoch budget. A negative W3 is a statement about what",
+  "     these architectures reach here, not a proof that no network can beat a linear model.",
+  "========================================================================================================",
+  "  W1  PASS",
+  "  W2  FAIL",
+  "  W3  FAIL",
+  "  W4  VOID",
+  "  W5  PASS",
+  "  W6  PASS",
+  "  3/5   [2057s]   (1 VOID: W4)",
+  "========================================================================================================"
+ ]
+}

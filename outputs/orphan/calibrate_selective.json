@@ -1,0 +1,17 @@
+{
+ "n": 112,
+ "coverage_recall": {
+  "25%": 0.6769,
+  "50%": 0.5171,
+  "75%": 0.4503,
+  "100%": 0.4019
+ },
+ "selective_lift_at_50pct": 0.1152,
+ "per_gene_precision": {
+  "high (>=0.6)": 1.0,
+  "med (0.3-0.6)": 0.8506,
+  "low (<0.3)": 0.1811
+ },
+ "verdict": "CALIBRATE SELECTIVE (calibrate_selective.py): the honest win at the data ceiling -- report WHICH predictions to trust, without a new model or new data. Held-out K562, 112 KOs. PER-KO: confidence = retrieval margin x neighbour agreement (no truth leakage). Answering only the most-confident 50% of knockouts raises recall@50 to 0.52 vs 0.40 answering all (+0.12); the top 25% reach 0.68. So the tool can say 'I can call this knockout' vs 'measure this one'. PER-GENE: neighbour consensus splits each top-50 into trustworthy vs speculative -- the ~1 consensus-backed names per 50 (consensus>=0.3) hit 0.87 precision vs 0.18 for the speculative rest, so the few confident calls on each list are flaggable. This converts a flat ~0.5 recall into a calibrated tool: high precision on the subset it is sure about, honest abstention on the broad/private knockouts it provably cannot get (which error_localization/denoise_test showed are the non-reproducing ones). Deterministic.",
+ "note": "CALIBRATE SELECTIVE (calibrate_selective.py): the honest win at the data ceiling -- report WHICH predictions to trust, without a new model or new data. Held-out K562, 112 KOs. PER-KO: confidence = retrieval margin x neighbour agreement (no truth leakage). Answering only the most-confident 50% of knockouts raises recall@50 to 0.52 vs 0.40 answering all (+0.12); the top 25% reach 0.68. So the tool can say 'I can call this knockout' vs 'measure this one'. PER-GENE: neighbour consensus splits each top-50 into trustworthy vs speculative -- the ~1 consensus-backed names per 50 (consensus>=0.3) hit 0.87 precision vs 0.18 for the speculative rest, so the few confident calls on each list are flaggable. This converts a flat ~0.5 recall into a calibrated tool: high precision on the subset it is sure about, honest abstention on the broad/private knockouts it provably cannot get (which error_localization/denoise_test showed are the non-reproducing ones). Deterministic."
+}

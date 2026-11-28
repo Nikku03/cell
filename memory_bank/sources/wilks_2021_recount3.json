@@ -1,0 +1,10 @@
+{
+  "id": "wilks_2021_recount3",
+  "type": "database",
+  "citation": "Wilks, C. et al. recount3: summaries and queries for large-scale RNA-seq expression and splicing. Genome Biology 22, 323 (2021).",
+  "doi": "10.1186/s13059-021-02533-6",
+  "url": "https://rna.recount.bio",
+  "organism": "human, mouse",
+  "authority": "primary",
+  "licence": "not checked (verify before redistributing or commercial use)"
+}

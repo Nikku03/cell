@@ -1,0 +1,426 @@
+{
+ "test": "enhancer two-tower",
+ "gates": {
+  "V1": false,
+  "V2": false,
+  "V3": false,
+  "V4": false,
+  "V5": false,
+  "V6": true,
+  "V7": false,
+  "V8": true,
+  "V9": true
+ },
+ "n_pairs": 11933,
+ "n_proven": 8045,
+ "proven_base_rate": 0.016656308266003728,
+ "n_evaluable_proven": 90,
+ "arms": {
+  "distance": {
+   "r1": [
+    0.5777777777777777,
+    0.5777777777777777,
+    0.5666666666666667,
+    0.5888888888888889,
+    0.5666666666666667
+   ],
+   "ap": [
+    0.14990156902877463,
+    0.14247481089667632,
+    0.1472543541011666,
+    0.1542081547104545,
+    0.14322044115904478
+   ]
+  },
+  "gbm_all": {
+   "r1": [
+    0.5666666666666667,
+    0.5666666666666667,
+    0.5555555555555556,
+    0.6,
+    0.5555555555555556
+   ],
+   "ap": [
+    0.14484685600822908,
+    0.1573810300423602,
+    0.14759622370284997,
+    0.14175283231860875,
+    0.14496613401044794
+   ]
+  },
+  "gbm_proven": {
+   "r1": [
+    0.5111111111111111,
+    0.6111111111111112,
+    0.5666666666666667,
+    0.5444444444444444,
+    0.5888888888888889
+   ],
+   "ap": [
+    0.09657215170002867,
+    0.10339039582938475,
+    0.09594060603786994,
+    0.10339843819756232,
+    0.10085000020242006
+   ]
+  },
+  "flat_proven": {
+   "r1": [
+    0.5,
+    0.5111111111111111,
+    0.5777777777777777,
+    0.5,
+    0.5222222222222223
+   ],
+   "ap": [
+    0.07959604420037938,
+    0.11843559494375398,
+    0.09338891798073941,
+    0.08534135738121898,
+    0.08809472354512521
+   ]
+  },
+  "tower_proven": {
+   "r1": [
+    0.2777777777777778,
+    0.28888888888888886,
+    0.26666666666666666,
+    0.23333333333333334,
+    0.28888888888888886
+   ],
+   "ap": [
+    0.01893996673327044,
+    0.026671444381179504,
+    0.01750576093592572,
+    0.017466948080264957,
+    0.020309906370759204
+   ]
+  },
+  "seq_compl": {
+   "r1": [
+    0.5111111111111111,
+    0.6111111111111112,
+    0.5666666666666667,
+    0.5444444444444444,
+    0.5888888888888889
+   ],
+   "ap": [
+    0.09657215170002867,
+    0.10339039582938475,
+    0.09594060603786994,
+    0.10339843819756232,
+    0.10085000020242006
+   ]
+  },
+  "str_compl": {
+   "r1": [
+    0.5111111111111111,
+    0.5888888888888889,
+    0.5222222222222223,
+    0.6111111111111112,
+    0.5222222222222223
+   ],
+   "ap": [
+    0.0953897004044762,
+    0.0993957622273466,
+    0.09356047671771757,
+    0.09854079407582414,
+    0.0969345887920968
+   ]
+  },
+  "str_compl_conf": {
+   "r1": [
+    0.5333333333333333,
+    0.5777777777777777,
+    0.5333333333333333,
+    0.5666666666666667,
+    0.5333333333333333
+   ],
+   "ap": [
+    0.09926055342497456,
+    0.09341860358534951,
+    0.09467025290599167,
+    0.09159749629879377,
+    0.09976468455263487
+   ]
+  },
+  "best_shuffled": {
+   "r1": [
+    0.5666666666666667,
+    0.5333333333333333,
+    0.5111111111111111,
+    0.5777777777777777,
+    0.5111111111111111
+   ],
+   "ap": [
+    0.10576417436261858,
+    0.09621370804594424,
+    0.10206277616870757,
+    0.09422615386701388,
+    0.09085812669329796
+   ]
+  }
+ },
+ "deltas": {
+  "V2": {
+   "d_r1": [
+    -0.05555555555555558,
+    0.04444444444444451,
+    0.011111111111111072,
+    -0.05555555555555558,
+    0.033333333333333326
+   ],
+   "d_ap": [
+    -0.04827470430820041,
+    -0.05399063421297545,
+    -0.05165561766498003,
+    -0.03835439412104642,
+    -0.04411613380802788
+   ],
+   "mean_r1": -0.0044444444444444505,
+   "sem_r1": 0.02154524381073925,
+   "mean_ap": -0.04727829682304604,
+   "n_pos_r1": 3,
+   "n_ap_pass": 0
+  },
+  "V3": {
+   "d_r1": [
+    -0.011111111111111072,
+    -0.10000000000000009,
+    0.011111111111111072,
+    -0.0444444444444444,
+    -0.06666666666666665
+   ],
+   "d_ap": [
+    -0.016976107499649284,
+    0.015045199114369232,
+    -0.002551688057130533,
+    -0.018057080816343343,
+    -0.012755276657294853
+   ],
+   "mean_r1": -0.04222222222222223,
+   "sem_r1": 0.01968893905185484,
+   "mean_ap": -0.007058990783209757,
+   "n_pos_r1": 1,
+   "n_ap_pass": 1
+  },
+  "V4": {
+   "d_r1": [
+    -0.2222222222222222,
+    -0.2222222222222222,
+    -0.31111111111111106,
+    -0.26666666666666666,
+    -0.2333333333333334
+   ],
+   "d_ap": [
+    -0.060656077467108944,
+    -0.09176415056257448,
+    -0.07588315704481369,
+    -0.06787440930095402,
+    -0.067784817174366
+   ],
+   "mean_r1": -0.2511111111111111,
+   "sem_r1": 0.01706921277304134,
+   "mean_ap": -0.07279252230996343,
+   "n_pos_r1": 0,
+   "n_ap_pass": 0
+  },
+  "V5": {
+   "d_r1": [
+    0.0,
+    -0.022222222222222254,
+    -0.0444444444444444,
+    0.06666666666666676,
+    -0.06666666666666665
+   ],
+   "d_ap": [
+    -0.0011824512955524724,
+    -0.003994633602038153,
+    -0.0023801293201523716,
+    -0.004857644121738183,
+    -0.003915411410323255
+   ],
+   "mean_r1": -0.013333333333333308,
+   "sem_r1": 0.022879178091082236,
+   "mean_ap": -0.003266053949960887,
+   "n_pos_r1": 1,
+   "n_ap_pass": 0
+  },
+  "V7": {
+   "d_r1": [
+    -0.011111111111111072,
+    -0.011111111111111072,
+    -0.011111111111111072,
+    0.011111111111111072,
+    -0.011111111111111072
+   ],
+   "d_ap": [
+    -0.005054713020545554,
+    0.01490621914568388,
+    0.00034186960168336444,
+    -0.012455322391845741,
+    0.0017456928514031633
+   ],
+   "mean_r1": -0.006666666666666643,
+   "sem_r1": 0.004444444444444429,
+   "mean_ap": -0.00010325076272417744,
+   "n_pos_r1": 1,
+   "n_ap_pass": 1
+  },
+  "V8": {
+   "d_r1": [
+    0.0,
+    0.033333333333333326,
+    0.04444444444444451,
+    0.022222222222222254,
+    0.04444444444444451
+   ],
+   "d_ap": [
+    0.039082681645610504,
+    0.06116732199641596,
+    0.0455334475341424,
+    0.04752667845159486,
+    0.054108007317149986
+   ],
+   "mean_r1": 0.02888888888888892,
+   "sem_r1": 0.008314794192830991,
+   "mean_ap": 0.049483627388982744,
+   "n_pos_r1": 4,
+   "n_ap_pass": 5
+  }
+ },
+ "structure_increment": {
+  "all": -0.013333333333333308,
+  "confident": -0.015555555555555567
+ },
+ "best_arm": "gbm_all",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "colab/data/tf_structures.json",
+    "bytes": 214009,
+    "hash": "5f26b45e34d772f0",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/tf_domains.json",
+    "bytes": 317744,
+    "hash": "19829e4c188e98e1",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 11933,
+   "used": 8045,
+   "selection": "PowerAtEffectSize15 >= 0.8",
+   "fraction": 0.6741808430403083
+  },
+  "seed": 91173,
+  "controls": [
+   "the same columns under a tree, a flat network and the towers",
+   "sequence-derived against AlphaFold-derived complementarity, everything else fixed",
+   "the structure block re-run with pLDDT < 70.0 zeroed",
+   "the shuffle run on the arm selected by measured R@1"
+  ],
+  "note": "two-tower network, proven-power training, measured domain geometry",
+  "warnings": [
+   "selection 'PowerAtEffectSize15 >= 0.8' is not one of ('all', 'random', 'stratified', 'prefix', 'filtered', 'manual'); coverage cannot be interpreted"
+  ]
+ },
+ "seconds": 292.2170617580414,
+ "log": [
+  "========================================================================================================",
+  "LOOP 182  TWO-TOWER NETWORK ON PROVEN EXAMPLES, WITH MEASURED DOMAIN GEOMETRY",
+  "========================================================================================================",
+  "  PREDECLARED: the proven subset must keep >= 100 evaluable genes and a positive",
+  "  rate within 2x of 0.0404; every arm on loop 173's E3 bar -- paired R@1 positive in",
+  "  >= 4/5 past 3 sem AND paired AUPRC >= +0.01 in >= 4/5; the",
+  "  structure block must not lose its increment when restricted to pLDDT >= 70.0;",
+  "  and V8's shuffle runs on the arm selected by measured R@1, printed before the",
+  "  comparison, which is the defect loop 178's P7 committed.",
+  "",
+  "  ALREADY KNOWN TO BOUND THIS: loop 178's P1 put the learnable element-intrinsic ceiling",
+  "  at R@1 0.4422, below distance's 0.5930; loop 181 measured that 33.9% of within-gene",
+  "  decisions are between candidates sharing a 5 kb contact bin. No architecture moves",
+  "  either.",
+  "",
+  "    scan cache: enh_scan.npz (218.1 MB)",
+  "V1 IS THE PROVEN SUBSET USABLE?",
+  "     PowerAtEffectSize15 >= 0.8: 8,045/11,933 pairs (67.4%), 134 positives, base rate 0.0167 against the full set's 0.0404",
+  "     evaluable genes inside the proven subset: 90",
+  "     V1 FAIL -- 90 genes at base rate 0.0167; the restriction has changed the task rather than cleaned it",
+  "",
+  "   building features",
+  "    element frame (el): 27 intrinsic + 51 class/family columns",
+  "    element frame (sh): 27 intrinsic + 51 class/family columns",
+  "    towers: element (11933, 736), promoter (11933, 736); aggregated columns 85",
+  "    structure block over 734/736 matrices",
+  "    structure block over 704/736 matrices with pLDDT >= 70.0",
+  "    distance (tree)                          R@1 0.5756 +/- 0.0042   AUPRC 0.1474",
+  "    aggregated cols, tree, trained on ALL    R@1 0.5689 +/- 0.0082   AUPRC 0.1473",
+  "    aggregated cols, tree, trained on PROVEN R@1 0.5644 +/- 0.0174   AUPRC 0.1000",
+  "    aggregated cols, network                 R@1 0.5222 +/- 0.0145   AUPRC 0.0930",
+  "    TWO-TOWER on the raw 736-vectors         R@1 0.2711 +/- 0.0103   AUPRC 0.0202",
+  "    + sequence-derived complementarity       R@1 0.5644 +/- 0.0174   AUPRC 0.1000",
+  "    + AlphaFold-derived complementarity      R@1 0.5511 +/- 0.0204   AUPRC 0.0968",
+  "    + AlphaFold, pLDDT >= 70 only            R@1 0.5489 +/- 0.0097   AUPRC 0.0957",
+  "",
+  "V2 DOES TRAINING ON PROVEN EXAMPLES HELP?",
+  "     gbm_proven vs gbm_all   dR@1 -0.0044 +/- 0.0215 (3/5 up)   dAUPRC -0.0473 (0/5 >= 0.01)",
+  "     V2 FAIL -- the extra 3,881 lower-powered pairs were not hurting; the restriction only costs training data",
+  "",
+  "V3 DOES A NETWORK BEAT THE TREE ON IDENTICAL COLUMNS?",
+  "     flat_proven vs gbm_proven   dR@1 -0.0422 +/- 0.0197 (1/5 up)   dAUPRC -0.0071 (1/5 >= 0.01)",
+  "     V3 FAIL -- the network matches or loses to the ensemble on identical columns, as loop 177 found on stage one; the learner is not the constraint",
+  "",
+  "V4 DOES THE RAW TWO-TOWER BEAT THE AGGREGATED COLUMNS?",
+  "     tower_proven vs flat_proven   dR@1 -0.2511 +/- 0.0171 (0/5 up)   dAUPRC -0.0728 (0/5 >= 0.01)",
+  "     V4 FAIL -- even at full resolution, matching the promoter's factors against the element's adds nothing over the aggregated columns",
+  "",
+  "V5 DOES MEASURED GEOMETRY BEAT THE SEQUENCE PROXIES?",
+  "     str_compl vs seq_compl   dR@1 -0.0133 +/- 0.0229 (1/5 up)   dAUPRC -0.0033 (0/5 >= 0.01)",
+  "     V5 FAIL -- measured domain geometry does no better than the sequence proxies, so the complementarity block's failures were not about the proxies",
+  "",
+  "V6 IS THE GEOMETRY REAL OR PREDICTED?",
+  "     structure increment, all domains        dR@1 -0.0133 +/- 0.0229 (1/5 up)   dAUPRC -0.0033 (0/5 >= 0.01)",
+  "     structure increment, pLDDT >= 70 only  dR@1 -0.0156 +/- 0.0159 (2/5 up)   dAUPRC -0.0043 (0/5 >= 0.01)",
+  "     V6 PASS -- the structure block does not depend on domains AlphaFold was unsure about",
+  "",
+  "V7 THE DECISIVE ONE",
+  "     best arm gbm_all at R@1 0.5689 / AUPRC 0.1473 against distance 0.5756 / 0.1474",
+  "     dR@1 -0.0067 +/- 0.0044 (1/5 up)   dAUPRC -0.0001 (1/5 >= 0.01)",
+  "     V7 FAIL -- stage two is still distance",
+  "",
+  "V8 THE SHUFFLE, ON THE ARM SELECTED BY MEASURED R@1",
+  "     selected arm: gbm_all",
+  "    gbm_all, SHUFFLED elements               R@1 0.5400 +/- 0.0139   AUPRC 0.0978",
+  "     real vs dinucleotide-shuffled   dR@1 +0.0289 +/- 0.0083 (4/5 up)   dAUPRC +0.0495 (5/5 >= 0.01)",
+  "     V8 PASS -- on the arm that actually won, real sequence beats a composition-matched shuffle",
+  "",
+  "V9 WHAT THIS CANNOT SHOW",
+  "     The towers use the promoter's motif profile, which is a 1 kb window of sequence.",
+  "     Whether a factor is actually present at that promoter in K562 is not known here and",
+  "     no expression or ChIP filter is applied.",
+  "     AlphaFold geometry is an unbound monomer prediction. A DNA-binding domain changes",
+  "     conformation on binding, and nothing here models that.",
+  "     The proven subset is defined by statistical power, not by mechanism; a well-powered",
+  "     negative is still only a negative for the effect size the screen could see.",
+  "     Loop 178's element-intrinsic ceiling of 0.4422 and loop 181's 5 kb resolution limit",
+  "     bound every number above, and no architecture in this loop addresses either.",
+  "     V9 PASS",
+  "",
+  "========================================================================================================",
+  "  V1  FAIL",
+  "  V2  FAIL",
+  "  V3  FAIL",
+  "  V4  FAIL",
+  "  V5  FAIL",
+  "  V6  PASS",
+  "  V7  FAIL",
+  "  V8  PASS",
+  "  V9  PASS",
+  "  3/9   [292s]",
+  "========================================================================================================"
+ ]
+}

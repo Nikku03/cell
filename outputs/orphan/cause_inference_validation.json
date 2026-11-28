@@ -1,0 +1,89 @@
+{
+  "signature": {
+    "n_up": 26,
+    "n_down": 21
+  },
+  "top5": {
+    "A": [
+      "DDIT3",
+      "STAT6",
+      "CEBPE",
+      "STAT3",
+      "CEBPB"
+    ],
+    "B": [
+      "CRP",
+      "DDIT3",
+      "CEBPE",
+      "NFKBIB",
+      "IL17A"
+    ],
+    "C": [
+      "STAT3",
+      "REL",
+      "CRP",
+      "KLF4",
+      "RUNX3"
+    ]
+  },
+  "precision": {
+    "A": {
+      "at5": 0.2,
+      "at10": 0.2
+    },
+    "C": {
+      "at5": 0.8,
+      "at10": 0.9
+    }
+  },
+  "confound_ranks": {
+    "A": {
+      "DDIT3": 1,
+      "STAT6": 2,
+      "CEBPE": 3,
+      "CRP": null
+    },
+    "C": {
+      "DDIT3": 11,
+      "STAT6": 50,
+      "CEBPE": 12,
+      "CRP": 3
+    }
+  },
+  "net_driver_ranks": {
+    "A": {
+      "RORC": 25,
+      "RORA": null,
+      "RELA": 12,
+      "NFKB1": 14,
+      "NFKB2": 11,
+      "IRF4": 32,
+      "BATF": null,
+      "AHR": 26,
+      "TNF": null,
+      "IL6": null,
+      "JAK2": null
+    },
+    "C": {
+      "RORC": 57,
+      "RORA": 1120,
+      "RELA": 64,
+      "NFKB1": 101,
+      "NFKB2": 56,
+      "IRF4": 102,
+      "BATF": 1931,
+      "AHR": 112,
+      "TNF": 968,
+      "IL6": null,
+      "JAK2": 1018
+    }
+  },
+  "verdict": {
+    "moa_kills_wrongdir_confound": true,
+    "top_shortlist_cleaner": true,
+    "precisionA5": 0.2,
+    "precisionC5": 0.8,
+    "network_alone_finds_cause": false,
+    "note": "MoA fixes wrong-DIRECTION confounds and the genetic prior cleans the top-5, but the network alone does NOT out-rank the naive baseline on non-prior drivers -> this is evidence INTEGRATION (network+genetics), not autonomous network cause-discovery."
+  }
+}

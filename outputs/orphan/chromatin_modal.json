@@ -1,0 +1,99 @@
+{
+  "n_atoms": 13625,
+  "n_modes": 294,
+  "t_eig": 108.09491539001465,
+  "marks": {
+    "5mC": {
+      "lowest": [
+        0.33939381426956583,
+        0.2700460324903026,
+        0.22315648069792085,
+        0.20764846737044637,
+        0.2045465397983332,
+        0.20225845307173324,
+        0.20033751774404215
+      ],
+      "random": [
+        0.9999213756763567,
+        0.9934534638373818,
+        0.984666751709034,
+        0.6870855029403248,
+        0.947512355299597,
+        0.7435052582836802,
+        0.20033751774404215
+      ],
+      "ks": [
+        10,
+        25,
+        50,
+        100,
+        150,
+        200,
+        300
+      ]
+    },
+    "acetyl": {
+      "lowest": [
+        0.970900065692867,
+        0.3936743435897055,
+        0.2661527894899597,
+        0.1712144554398477,
+        0.17003712789512454,
+        0.15515129220150012,
+        0.14256659269220337
+      ],
+      "random": [
+        0.998070052707923,
+        0.9716812499071891,
+        0.9913182749132181,
+        0.6081897888220555,
+        0.3818650026298005,
+        0.8200887178522419,
+        0.1425665926922034
+      ],
+      "ks": [
+        10,
+        25,
+        50,
+        100,
+        150,
+        200,
+        300
+      ]
+    }
+  },
+  "iter_flops_per_mark": 39900000000.0,
+  "log": [
+    "====================================================================================================",
+    "STOP INTEGRATING TIME -- diagonalise once, then marks and instants are nearly free",
+    "====================================================================================================",
+    "  Sphere tiling made one static solve cheaper but did nothing about 4D, whose cost is the",
+    "  NUMBER of solves: ~10^9 steps per microsecond times ~350M marks. Cheaper steps cannot fix",
+    "  needing a billion of them. But the system is LINEAR, and a linear system is diagonalised,",
+    "  not integrated: each mode evolves in closed form, so any instant is an expression. The",
+    "  eigenbasis belongs to the STRUCTURE, so it is computed once and every mark reuses it.",
+    "  The only real question is HOW MANY MODES, and that is measured here against the exact field.",
+    "\n  1KX5 no waters: 13625 atoms, 40875 degrees of freedom, 263765 springs",
+    "\n  Computing the lowest 300 modes (sparse Lanczos)...",
+    "    294 internal modes in 108.1 s | eigenvalue range 2.049e-05 to 2.467e-01",
+    "\n  RECONSTRUCTION ERROR against the exact solve, using the lowest k modes.",
+    "  random_k draws k modes at random from the same computed set -- if that does as well, the",
+    "  gain is rank rather than physics and the 'soft collective motion' story is wrong.",
+    "    mark              arm                10       25       50      100      150      200      300",
+    "    5mC     steric    lowest k        0.339    0.270    0.223    0.208    0.205    0.202    0.200",
+    "                      random k        1.000    0.993    0.985    0.687    0.948    0.744    0.200",
+    "    acetyl  charge    lowest k        0.971    0.394    0.266    0.171    0.170    0.155    0.143",
+    "                      random k        0.998    0.972    0.991    0.608    0.382    0.820    0.143",
+    "\n  COST, and the comparison that matters.",
+    "  Per mark, the modal route is a projection onto k modes: 2*k*3N flops. The iterative route",
+    "  measured in chromatin_sphere_scaling was 3.99e10 flops per mark at its cheapest.",
+    "    k= 100:   8.18e+06 flops/mark   speedup      4881x",
+    "    k= 200:   1.64e+07 flops/mark   speedup      2440x",
+    "    k= 400:   3.27e+07 flops/mark   speedup      1220x",
+    "\n  modes needed for 5% accuracy: 5mC None, acetyl None",
+    "\n  READING",
+    "    NO MODE COUNT UP TO 300 REACHES 5%. The response is not low-rank, the",
+    "    eigendecomposition costs more than it saves, and this route does not beat solving",
+    "    each mark directly. The timestep wall stands."
+  ]
+}

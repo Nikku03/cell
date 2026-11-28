@@ -1,0 +1,52 @@
+{
+ "K562": {
+  "links": 293913,
+  "genes": 30316,
+  "elements": 125282
+ },
+ "HepG2": {
+  "links": 237446,
+  "genes": 30725,
+  "elements": 85198
+ },
+ "Jurkat, Clone E6-1": {
+  "links": 187557,
+  "genes": 31457,
+  "elements": 87725
+ },
+ "HCT116": {
+  "links": 311184,
+  "genes": 30873,
+  "elements": 137800
+ },
+ "HEK293T": {
+  "links": 147342,
+  "genes": 30306,
+  "elements": 71105
+ },
+ "H1": {
+  "links": 222052,
+  "genes": 32529,
+  "elements": 78989
+ },
+ "H9": {
+  "links": 269449,
+  "genes": 32440,
+  "elements": 131246
+ },
+ "WTC11": {
+  "links": 232063,
+  "genes": 32357,
+  "elements": 83029
+ },
+ "GM12878": {
+  "links": 283766,
+  "genes": 28722,
+  "elements": 101215
+ },
+ "retinal pigment epithelial cell": {
+  "links": 160231,
+  "genes": 31464,
+  "elements": 74921
+ }
+}

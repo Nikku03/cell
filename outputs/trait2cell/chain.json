@@ -1,0 +1,1633 @@
+{
+ "ldl": {
+  "cell_type": "left lobe of liver",
+  "variants": 94,
+  "genes": [
+   {
+    "gene": "GSEC",
+    "ensembl": "ENSG00000280832",
+    "weight": 1.363,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "ST3GAL4",
+    "ensembl": "ENSG00000110080",
+    "weight": 1.317,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "APOB",
+    "ensembl": "ENSG00000084674",
+    "weight": 1.163,
+    "drugs": 2,
+    "best_stage": "APPROVAL",
+    "examples": [
+     "MIPOMERSEN SODIUM",
+     "MIPOMERSEN"
+    ]
+   },
+   {
+    "gene": "APOA5",
+    "ensembl": "ENSG00000110243",
+    "weight": 1.14,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "PCSK9",
+    "ensembl": "ENSG00000169174",
+    "weight": 1.023,
+    "drugs": 11,
+    "best_stage": "APPROVAL",
+    "examples": [
+     "ALIROCUMAB",
+     "EVOLOCUMAB",
+     "INCLISIRAN"
+    ]
+   },
+   {
+    "gene": "SLC22A1",
+    "ensembl": "ENSG00000175003",
+    "weight": 0.901,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "ENSG00000261012",
+    "ensembl": "ENSG00000261012",
+    "weight": 0.855,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "HNF1A",
+    "ensembl": "ENSG00000135100",
+    "weight": 0.832,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "APOC1",
+    "ensembl": "ENSG00000130208",
+    "weight": 0.78,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "HNF1A-AS1",
+    "ensembl": "ENSG00000241388",
+    "weight": 0.774,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "CYP26A1",
+    "ensembl": "ENSG00000095596",
+    "weight": 0.74,
+    "drugs": 1,
+    "best_stage": "PHASE_2",
+    "examples": [
+     "TALAROZOLE"
+    ]
+   },
+   {
+    "gene": "GLTPD2",
+    "ensembl": "ENSG00000182327",
+    "weight": 0.724,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "APOE",
+    "ensembl": "ENSG00000130203",
+    "weight": 0.724,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "LNC-RHL1",
+    "ensembl": "ENSG00000236267",
+    "weight": 0.717,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "GCKR",
+    "ensembl": "ENSG00000084734",
+    "weight": 0.652,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   }
+  ],
+  "known_target_ranks": {
+   "HMGCR": null,
+   "PCSK9": 5,
+   "NPC1L1": null,
+   "APOB": 3,
+   "LDLR": 111,
+   "ANGPTL3": null,
+   "ACLY": null,
+   "CETP": 18
+  }
+ },
+ "lymph": {
+  "cell_type": "lower lobe of left lung",
+  "variants": 82,
+  "genes": [
+   {
+    "gene": "LAMC2",
+    "ensembl": "ENSG00000058085",
+    "weight": 0.983,
+    "drugs": 1,
+    "best_stage": "APPROVAL",
+    "examples": [
+     "OCRIPLASMIN"
+    ]
+   },
+   {
+    "gene": "RASSF5",
+    "ensembl": "ENSG00000266094",
+    "weight": 0.956,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "ENSG00000262786",
+    "ensembl": "ENSG00000262786",
+    "weight": 0.905,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "ENSG00000261000",
+    "ensembl": "ENSG00000261000",
+    "weight": 0.902,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "HS3ST3B1",
+    "ensembl": "ENSG00000125430",
+    "weight": 0.902,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "PRPF18",
+    "ensembl": "ENSG00000165630",
+    "weight": 0.887,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "ENSG00000266709",
+    "ensembl": "ENSG00000266709",
+    "weight": 0.883,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "RPL36AL",
+    "ensembl": "ENSG00000165502",
+    "weight": 0.872,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "SMIM14",
+    "ensembl": "ENSG00000163683",
+    "weight": 0.869,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "SMIM14-DT",
+    "ensembl": "ENSG00000255458",
+    "weight": 0.844,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "MGAT2",
+    "ensembl": "ENSG00000168282",
+    "weight": 0.844,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "TMEFF1",
+    "ensembl": "ENSG00000241697",
+    "weight": 0.843,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "ANP32A",
+    "ensembl": "ENSG00000140350",
+    "weight": 0.816,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "RPH3AL-AS2",
+    "ensembl": "ENSG00000262294",
+    "weight": 0.812,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "LRFN2",
+    "ensembl": "ENSG00000156564",
+    "weight": 0.798,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   }
+  ]
+ },
+ "rbc": {
+  "cell_type": "CMK",
+  "variants": 184,
+  "genes": [
+   {
+    "gene": "TMC8",
+    "ensembl": "ENSG00000167895",
+    "weight": 1.41,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "TMC6",
+    "ensembl": "ENSG00000141524",
+    "weight": 1.266,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "HBZ",
+    "ensembl": "ENSG00000130656",
+    "weight": 0.855,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "LNCRNA-IUR",
+    "ensembl": "ENSG00000245552",
+    "weight": 0.775,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "MEF2C-AS1",
+    "ensembl": "ENSG00000248309",
+    "weight": 0.77,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "JAK2",
+    "ensembl": "ENSG00000096968",
+    "weight": 0.761,
+    "drugs": 32,
+    "best_stage": "APPROVAL",
+    "examples": [
+     "RUXOLITINIB PHOSPHATE",
+     "RUXOLITINIB",
+     "DEURUXOLITINIB PHOSPHATE"
+    ]
+   },
+   {
+    "gene": "ATXN2-AS",
+    "ensembl": "ENSG00000258099",
+    "weight": 0.737,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "LIMD2",
+    "ensembl": "ENSG00000136490",
+    "weight": 0.734,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "BGLT3",
+    "ensembl": "ENSG00000260629",
+    "weight": 0.733,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "KLF6",
+    "ensembl": "ENSG00000067082",
+    "weight": 0.701,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "FAM234A",
+    "ensembl": "ENSG00000167930",
+    "weight": 0.69,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "ZSCAN25",
+    "ensembl": "ENSG00000197037",
+    "weight": 0.686,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "ATXN2",
+    "ensembl": "ENSG00000204842",
+    "weight": 0.659,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "HBB",
+    "ensembl": "ENSG00000244734",
+    "weight": 0.648,
+    "drugs": 4,
+    "best_stage": "APPROVAL",
+    "examples": [
+     "EFAPROXIRAL",
+     "VOXELOTOR",
+     "BETIBEGLOGENE AUTOTEMCEL"
+    ]
+   },
+   {
+    "gene": "LMO2",
+    "ensembl": "ENSG00000135363",
+    "weight": 0.613,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   }
+  ]
+ },
+ "ibd": {
+  "cell_type": "stimulated activated CD8-positive, alpha-beta memory T cell",
+  "variants": 40,
+  "genes": [
+   {
+    "gene": "CDYL2",
+    "ensembl": "ENSG00000166446",
+    "weight": 0.94,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "ENSG00000283286",
+    "ensembl": "ENSG00000283286",
+    "weight": 0.909,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "MAP3K8",
+    "ensembl": "ENSG00000107968",
+    "weight": 0.811,
+    "drugs": 1,
+    "best_stage": "PHASE_2",
+    "examples": [
+     "TILPISERTIB"
+    ]
+   },
+   {
+    "gene": "FOSL2",
+    "ensembl": "ENSG00000075426",
+    "weight": 0.78,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "BAK1",
+    "ensembl": "ENSG00000030110",
+    "weight": 0.713,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "THBS3-AS1",
+    "ensembl": "ENSG00000231064",
+    "weight": 0.697,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "ENSG00000285040",
+    "ensembl": "ENSG00000285040",
+    "weight": 0.686,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "PRKCB",
+    "ensembl": "ENSG00000166501",
+    "weight": 0.668,
+    "drugs": 8,
+    "best_stage": "APPROVAL",
+    "examples": [
+     "MIDOSTAURIN",
+     "ENZASTAURIN",
+     "RUBOXISTAURIN"
+    ]
+   },
+   {
+    "gene": "LINC00336",
+    "ensembl": "ENSG00000197251",
+    "weight": 0.643,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "MUC1",
+    "ensembl": "ENSG00000185499",
+    "weight": 0.636,
+    "drugs": 16,
+    "best_stage": "PHASE_3",
+    "examples": [
+     "TECEMOTIDE",
+     "HUHMFG1",
+     "SONTUZUMAB"
+    ]
+   },
+   {
+    "gene": "ENSG00000270640",
+    "ensembl": "ENSG00000270640",
+    "weight": 0.63,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "IL19",
+    "ensembl": "ENSG00000142224",
+    "weight": 0.626,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "FOS",
+    "ensembl": "ENSG00000170345",
+    "weight": 0.607,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "HSPA6",
+    "ensembl": "ENSG00000173110",
+    "weight": 0.603,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "FOSL2-AS1",
+    "ensembl": "ENSG00000229951",
+    "weight": 0.559,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   }
+  ]
+ },
+ "af": {
+  "cell_type": "heart",
+  "variants": 197,
+  "genes": [
+   {
+    "gene": "HEY2-AS1",
+    "ensembl": "ENSG00000237742",
+    "weight": 0.779,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "STRN",
+    "ensembl": "ENSG00000115808",
+    "weight": 0.744,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "HEY2",
+    "ensembl": "ENSG00000135547",
+    "weight": 0.728,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "LINC01426",
+    "ensembl": "ENSG00000234380",
+    "weight": 0.66,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "PITX2",
+    "ensembl": "ENSG00000164093",
+    "weight": 0.645,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "NFATC1",
+    "ensembl": "ENSG00000131196",
+    "weight": 0.603,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "CCND2-AS1",
+    "ensembl": "ENSG00000255920",
+    "weight": 0.602,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "SPEG",
+    "ensembl": "ENSG00000072195",
+    "weight": 0.593,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "FLNC",
+    "ensembl": "ENSG00000128591",
+    "weight": 0.579,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "LINC02941",
+    "ensembl": "ENSG00000236013",
+    "weight": 0.574,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "ENSG00000272330",
+    "ensembl": "ENSG00000272330",
+    "weight": 0.551,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "ENSG00000235427",
+    "ensembl": "ENSG00000235427",
+    "weight": 0.55,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "SPAAR",
+    "ensembl": "ENSG00000235387",
+    "weight": 0.532,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "FOXK1",
+    "ensembl": "ENSG00000164916",
+    "weight": 0.525,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "MYH6",
+    "ensembl": "ENSG00000197616",
+    "weight": 0.514,
+    "drugs": 3,
+    "best_stage": "APPROVAL",
+    "examples": [
+     "OMECAMTIV MECARBIL",
+     "MAVACAMTEN",
+     "DANICAMTIV"
+    ]
+   }
+  ]
+ },
+ "scz": {
+  "cell_type": "dorsolateral prefrontal cortex",
+  "variants": 31,
+  "genes": [
+   {
+    "gene": "ZNF823",
+    "ensembl": "ENSG00000197933",
+    "weight": 0.669,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "ANG",
+    "ensembl": "ENSG00000214274",
+    "weight": 0.584,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "RNASE4",
+    "ensembl": "ENSG00000258818",
+    "weight": 0.538,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "ENSG00000259171",
+    "ensembl": "ENSG00000259171",
+    "weight": 0.493,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "ENSG00000266922",
+    "ensembl": "ENSG00000266922",
+    "weight": 0.445,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "LINC02033",
+    "ensembl": "ENSG00000279727",
+    "weight": 0.305,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "ACE",
+    "ensembl": "ENSG00000159640",
+    "weight": 0.279,
+    "drugs": 26,
+    "best_stage": "APPROVAL",
+    "examples": [
+     "QUINAPRIL HYDROCHLORIDE",
+     "QUINAPRIL",
+     "TRANDOLAPRIL"
+    ]
+   },
+   {
+    "gene": "EGILA",
+    "ensembl": "ENSG00000258451",
+    "weight": 0.269,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "ZNF835",
+    "ensembl": "ENSG00000127903",
+    "weight": 0.267,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "PLCH2",
+    "ensembl": "ENSG00000149527",
+    "weight": 0.239,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "OR6S1",
+    "ensembl": "ENSG00000181803",
+    "weight": 0.221,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "ENSG00000264813",
+    "ensembl": "ENSG00000264813",
+    "weight": 0.201,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "SMIM17",
+    "ensembl": "ENSG00000268182",
+    "weight": 0.169,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "EDDM3A",
+    "ensembl": "ENSG00000181562",
+    "weight": 0.166,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "TTC7B-AS1",
+    "ensembl": "ENSG00000259163",
+    "weight": 0.159,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   }
+  ]
+ },
+ "mono": {
+  "cell_type": "CD14-positive monocyte",
+  "variants": 259,
+  "genes": [
+   {
+    "gene": "S1PR4",
+    "ensembl": "ENSG00000125910",
+    "weight": 2.751,
+    "drugs": 8,
+    "best_stage": "APPROVAL",
+    "examples": [
+     "FINGOLIMOD HYDROCHLORIDE",
+     "FINGOLIMOD",
+     "FINGOLIMOD LAURYL SULFATE"
+    ]
+   },
+   {
+    "gene": "NCLN",
+    "ensembl": "ENSG00000125912",
+    "weight": 1.952,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "CCDC26",
+    "ensembl": "ENSG00000229140",
+    "weight": 1.638,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "MTHFS",
+    "ensembl": "ENSG00000136371",
+    "weight": 1.478,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "ACKR1",
+    "ensembl": "ENSG00000213088",
+    "weight": 1.38,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "CADM3-AS1",
+    "ensembl": "ENSG00000225670",
+    "weight": 1.236,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "GNA15",
+    "ensembl": "ENSG00000060558",
+    "weight": 1.108,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "SELL",
+    "ensembl": "ENSG00000188404",
+    "weight": 1.061,
+    "drugs": 3,
+    "best_stage": "PHASE_3",
+    "examples": [
+     "RIVIPANSEL",
+     "BIMOSIAMOSE",
+     "ASELIZUMAB"
+    ]
+   },
+   {
+    "gene": "MTF2",
+    "ensembl": "ENSG00000143033",
+    "weight": 0.986,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "CSF1R",
+    "ensembl": "ENSG00000182578",
+    "weight": 0.981,
+    "drugs": 21,
+    "best_stage": "APPROVAL",
+    "examples": [
+     "PAZOPANIB HYDROCHLORIDE",
+     "PAZOPANIB",
+     "SUNITINIB MALATE"
+    ]
+   },
+   {
+    "gene": "GNA15-DT",
+    "ensembl": "ENSG00000267551",
+    "weight": 0.978,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "BCL2L11",
+    "ensembl": "ENSG00000153094",
+    "weight": 0.959,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "BCL2A1",
+    "ensembl": "ENSG00000140379",
+    "weight": 0.949,
+    "drugs": 2,
+    "best_stage": "PHASE_3",
+    "examples": [
+     "OBATOCLAX MESYLATE",
+     "OBATOCLAX"
+    ]
+   },
+   {
+    "gene": "ITGA4",
+    "ensembl": "ENSG00000115232",
+    "weight": 0.949,
+    "drugs": 7,
+    "best_stage": "APPROVAL",
+    "examples": [
+     "NATALIZUMAB",
+     "VEDOLIZUMAB",
+     "FIRATEGRAST"
+    ]
+   },
+   {
+    "gene": "CXCR4",
+    "ensembl": "ENSG00000121966",
+    "weight": 0.944,
+    "drugs": 8,
+    "best_stage": "APPROVAL",
+    "examples": [
+     "PLERIXAFOR",
+     "MOTIXAFORTIDE",
+     "MAVORIXAFOR"
+    ]
+   }
+  ]
+ },
+ "egfr": {
+  "cell_type": "kidney",
+  "variants": 226,
+  "genes": [
+   {
+    "gene": "SIM2",
+    "ensembl": "ENSG00000159263",
+    "weight": 0.978,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "RRAGD",
+    "ensembl": "ENSG00000025039",
+    "weight": 0.899,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "ZNF827",
+    "ensembl": "ENSG00000151612",
+    "weight": 0.888,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "PRKCE",
+    "ensembl": "ENSG00000171132",
+    "weight": 0.813,
+    "drugs": 7,
+    "best_stage": "APPROVAL",
+    "examples": [
+     "MIDOSTAURIN",
+     "SOTRASTAURIN",
+     "UCN-01"
+    ]
+   },
+   {
+    "gene": "ENSG00000224269",
+    "ensembl": "ENSG00000224269",
+    "weight": 0.809,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "CDK11B",
+    "ensembl": "ENSG00000248333",
+    "weight": 0.8,
+    "drugs": 4,
+    "best_stage": "PHASE_2",
+    "examples": [
+     "AT-7519",
+     "RONICICLIB",
+     "AZD-5438"
+    ]
+   },
+   {
+    "gene": "TMEM176B",
+    "ensembl": "ENSG00000106565",
+    "weight": 0.796,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "TMEM176A",
+    "ensembl": "ENSG00000002933",
+    "weight": 0.782,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "ENSG00000272004",
+    "ensembl": "ENSG00000272004",
+    "weight": 0.76,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "SHH",
+    "ensembl": "ENSG00000164690",
+    "weight": 0.745,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "HOXD10",
+    "ensembl": "ENSG00000128710",
+    "weight": 0.739,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "ENSG00000263237",
+    "ensembl": "ENSG00000263237",
+    "weight": 0.738,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "PLEKHG1",
+    "ensembl": "ENSG00000120278",
+    "weight": 0.737,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "ENSG00000232891",
+    "ensembl": "ENSG00000232891",
+    "weight": 0.732,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "PRIM1",
+    "ensembl": "ENSG00000198056",
+    "weight": 0.695,
+    "drugs": 7,
+    "best_stage": "APPROVAL",
+    "examples": [
+     "CLOFARABINE",
+     "CYTARABINE",
+     "FLUDARABINE PHOSPHATE"
+    ]
+   }
+  ]
+ },
+ "alz": {
+  "cell_type": "heart right ventricle",
+  "variants": 19,
+  "genes": [
+   {
+    "gene": "APH1B",
+    "ensembl": "ENSG00000138613",
+    "weight": 0.778,
+    "drugs": 7,
+    "best_stage": "APPROVAL",
+    "examples": [
+     "NIROGACESTAT",
+     "NIROGACESTAT HYDROBROMIDE",
+     "TARENFLURBIL"
+    ]
+   },
+   {
+    "gene": "MAF1",
+    "ensembl": "ENSG00000179632",
+    "weight": 0.661,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "WDR97",
+    "ensembl": "ENSG00000179698",
+    "weight": 0.581,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "SHARPIN",
+    "ensembl": "ENSG00000179526",
+    "weight": 0.524,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "LINC02695",
+    "ensembl": "ENSG00000254699",
+    "weight": 0.395,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "CYC1",
+    "ensembl": "ENSG00000179091",
+    "weight": 0.373,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "ACE",
+    "ensembl": "ENSG00000159640",
+    "weight": 0.35,
+    "drugs": 26,
+    "best_stage": "APPROVAL",
+    "examples": [
+     "QUINAPRIL HYDROCHLORIDE",
+     "QUINAPRIL",
+     "TRANDOLAPRIL"
+    ]
+   },
+   {
+    "gene": "CLU",
+    "ensembl": "ENSG00000120885",
+    "weight": 0.32,
+    "drugs": 2,
+    "best_stage": "PHASE_3",
+    "examples": [
+     "CUSTIRSEN",
+     "CUSTIRSEN SODIUM"
+    ]
+   },
+   {
+    "gene": "EED",
+    "ensembl": "ENSG00000074266",
+    "weight": 0.264,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "GPAA1",
+    "ensembl": "ENSG00000197858",
+    "weight": 0.257,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "EXOSC4",
+    "ensembl": "ENSG00000178896",
+    "weight": 0.252,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "ENSG00000264813",
+    "ensembl": "ENSG00000264813",
+    "weight": 0.229,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "ENSG00000255224",
+    "ensembl": "ENSG00000255224",
+    "weight": 0.213,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "SCARA3",
+    "ensembl": "ENSG00000168077",
+    "weight": 0.185,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "HGH1",
+    "ensembl": "ENSG00000235173",
+    "weight": 0.183,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   }
+  ]
+ },
+ "t2d": {
+  "cell_type": "lower lobe of left lung",
+  "variants": 108,
+  "genes": [
+   {
+    "gene": "SCTR",
+    "ensembl": "ENSG00000080293",
+    "weight": 0.93,
+    "drugs": 3,
+    "best_stage": "APPROVAL",
+    "examples": [
+     "SECRETIN",
+     "SECRETIN SYNTHETIC HUMAN",
+     "SECRETIN SYNTHETIC PORCINE"
+    ]
+   },
+   {
+    "gene": "ENSG00000273958",
+    "ensembl": "ENSG00000273958",
+    "weight": 0.885,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "VEGFA",
+    "ensembl": "ENSG00000112715",
+    "weight": 0.773,
+    "drugs": 15,
+    "best_stage": "APPROVAL",
+    "examples": [
+     "PEGAPTANIB SODIUM",
+     "RANIBIZUMAB",
+     "AFLIBERCEPT"
+    ]
+   },
+   {
+    "gene": "CFAP221",
+    "ensembl": "ENSG00000163075",
+    "weight": 0.77,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "KCNK17",
+    "ensembl": "ENSG00000124780",
+    "weight": 0.752,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "TMC8",
+    "ensembl": "ENSG00000167895",
+    "weight": 0.709,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "BMF",
+    "ensembl": "ENSG00000104081",
+    "weight": 0.701,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "TOMM7",
+    "ensembl": "ENSG00000196683",
+    "weight": 0.697,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "BCL2L11",
+    "ensembl": "ENSG00000153094",
+    "weight": 0.689,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "SIPA1",
+    "ensembl": "ENSG00000213445",
+    "weight": 0.66,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "ENSG00000271009",
+    "ensembl": "ENSG00000271009",
+    "weight": 0.647,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "ENSG00000272114",
+    "ensembl": "ENSG00000272114",
+    "weight": 0.612,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "PCBD1",
+    "ensembl": "ENSG00000166228",
+    "weight": 0.58,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "TMC6",
+    "ensembl": "ENSG00000141524",
+    "weight": 0.556,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "ANGPTL4",
+    "ensembl": "ENSG00000167772",
+    "weight": 0.537,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   }
+  ]
+ },
+ "plt": {
+  "cell_type": "CMK",
+  "variants": 226,
+  "genes": [
+   {
+    "gene": "MEF2C-AS1",
+    "ensembl": "ENSG00000248309",
+    "weight": 1.544,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "ENSG00000274737",
+    "ensembl": "ENSG00000274737",
+    "weight": 1.541,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "MEF2C",
+    "ensembl": "ENSG00000081189",
+    "weight": 1.192,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "PRIM1",
+    "ensembl": "ENSG00000198056",
+    "weight": 1.154,
+    "drugs": 7,
+    "best_stage": "APPROVAL",
+    "examples": [
+     "CLOFARABINE",
+     "CYTARABINE",
+     "FLUDARABINE PHOSPHATE"
+    ]
+   },
+   {
+    "gene": "LINC02354",
+    "ensembl": "ENSG00000257488",
+    "weight": 0.959,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "NFE2",
+    "ensembl": "ENSG00000123405",
+    "weight": 0.938,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "HSD17B6",
+    "ensembl": "ENSG00000025423",
+    "weight": 0.91,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "SLFN14",
+    "ensembl": "ENSG00000236320",
+    "weight": 0.845,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "B3GNT5",
+    "ensembl": "ENSG00000176597",
+    "weight": 0.795,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "PDLIM1",
+    "ensembl": "ENSG00000107438",
+    "weight": 0.781,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "APOBR",
+    "ensembl": "ENSG00000184730",
+    "weight": 0.781,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "KDM7A",
+    "ensembl": "ENSG00000006459",
+    "weight": 0.719,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "CHI3L2",
+    "ensembl": "ENSG00000064886",
+    "weight": 0.706,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "IFITM1",
+    "ensembl": "ENSG00000185885",
+    "weight": 0.705,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "KDM7A-DT",
+    "ensembl": "ENSG00000260231",
+    "weight": 0.694,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   }
+  ]
+ },
+ "height": {
+  "cell_type": "left hindlimb",
+  "variants": 282,
+  "genes": [
+   {
+    "gene": "NFATC4",
+    "ensembl": "ENSG00000100968",
+    "weight": 1.255,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "HHIP",
+    "ensembl": "ENSG00000164161",
+    "weight": 1.163,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "PGP",
+    "ensembl": "ENSG00000184207",
+    "weight": 1.162,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "BRICD5",
+    "ensembl": "ENSG00000182685",
+    "weight": 1.047,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "HHIP-AS1",
+    "ensembl": "ENSG00000248890",
+    "weight": 1.029,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "MLST8",
+    "ensembl": "ENSG00000167965",
+    "weight": 0.987,
+    "drugs": 1,
+    "best_stage": "PHASE_2_3",
+    "examples": [
+     "INDOXIMOD"
+    ]
+   },
+   {
+    "gene": "ENSG00000261532",
+    "ensembl": "ENSG00000261532",
+    "weight": 0.939,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "MET",
+    "ensembl": "ENSG00000105976",
+    "weight": 0.903,
+    "drugs": 40,
+    "best_stage": "APPROVAL",
+    "examples": [
+     "CABOZANTINIB S-MALATE",
+     "CABOZANTINIB",
+     "CRIZOTINIB"
+    ]
+   },
+   {
+    "gene": "PDE3A",
+    "ensembl": "ENSG00000172572",
+    "weight": 0.885,
+    "drugs": 21,
+    "best_stage": "APPROVAL",
+    "examples": [
+     "ANAGRELIDE HYDROCHLORIDE",
+     "ANAGRELIDE",
+     "AMINOPHYLLINE"
+    ]
+   },
+   {
+    "gene": "LNC-LBCS",
+    "ensembl": "ENSG00000228412",
+    "weight": 0.862,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "FIBIN",
+    "ensembl": "ENSG00000176971",
+    "weight": 0.858,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "TGFB2",
+    "ensembl": "ENSG00000092969",
+    "weight": 0.856,
+    "drugs": 5,
+    "best_stage": "APPROVAL",
+    "examples": [
+     "LUSPATERCEPT",
+     "BINTRAFUSP ALFA",
+     "TRABEDERSEN"
+    ]
+   },
+   {
+    "gene": "B4GALNT3",
+    "ensembl": "ENSG00000139044",
+    "weight": 0.848,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "PDE3A-AS1",
+    "ensembl": "ENSG00000256879",
+    "weight": 0.826,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   },
+   {
+    "gene": "ID4",
+    "ensembl": "ENSG00000172201",
+    "weight": 0.825,
+    "drugs": 0,
+    "best_stage": null,
+    "examples": []
+   }
+  ]
+ }
+}

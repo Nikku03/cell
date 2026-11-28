@@ -1,0 +1,66 @@
+{
+ "enrich": {
+  "AND-partner (both essential)": {
+   "n": 511,
+   "hits": 2,
+   "obs": 0.003913894324853229,
+   "ctrl": 0.0018590998043052837,
+   "lift": 2.1052631578947367
+  },
+  "OR-partner (knockout is redundant)": {
+   "n": 1189,
+   "hits": 3,
+   "obs": 0.002523128679562658,
+   "ctrl": 0.0011143818334735072,
+   "lift": 2.2641509433962264
+  },
+  "ANY reaction partner (the naive edge)": {
+   "n": 1737,
+   "hits": 5,
+   "obs": 0.0028785261945883708,
+   "ctrl": 0.0018998272884283246,
+   "lift": 1.5151515151515151
+  }
+ },
+ "arms": {
+  "GPR-aware: only BROKEN reactions": {
+   "coverage": 0.0015384615384615385,
+   "cov_ci": [
+    0.0,
+    0.004615384615384615
+   ],
+   "precision": 0.0014792899408284025,
+   "mean_partners": 9.5,
+   "n": 26
+  },
+  "naive: shares ANY reaction": {
+   "coverage": 0.0015384615384615385,
+   "cov_ci": [
+    0.0,
+    0.004615384615384615
+   ],
+   "precision": 0.0011312217194570135,
+   "mean_partners": 13.192307692307692,
+   "n": 26
+  },
+  "isozyme partners (buffered -- expect ~0)": {
+   "coverage": 0.0,
+   "cov_ci": [
+    0.0,
+    0.0
+   ],
+   "precision": 0.0,
+   "mean_partners": 2.1923076923076925,
+   "n": 26
+  }
+ },
+ "frequency_same_subset": 0.3842790630799389,
+ "gpr_minus_naive_precision": {
+  "delta": 0.0003480682213713889,
+  "ci": [
+   0.0,
+   0.0010442046641141666
+  ],
+  "n": 26
+ }
+}

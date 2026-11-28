@@ -1,0 +1,82 @@
+{
+ "genome": 16509,
+ "k562_base": 8696,
+ "k562_base_pct": 0.5267,
+ "stacked_total": 11504,
+ "stacked_pct": 0.6968,
+ "gain": 2808,
+ "n_sources": 10,
+ "per_source": [
+  {
+   "source": "K562 (Replogle genome-wide)",
+   "genes_in_source": 8696,
+   "new_added": 8696,
+   "cumulative": 8696,
+   "cumulative_pct": 0.5267
+  },
+  {
+   "source": "CD4+ T cell (Zhu 2025 genome-scale)",
+   "genes_in_source": 11039,
+   "new_added": 2765,
+   "cumulative": 11461,
+   "cumulative_pct": 0.6942
+  },
+  {
+   "source": "scPerturb:DatlingerBock2017",
+   "genes_in_source": 22,
+   "new_added": 0,
+   "cumulative": 11461,
+   "cumulative_pct": 0.6942
+  },
+  {
+   "source": "scPerturb:FrangiehIzar2021_RNA",
+   "genes_in_source": 209,
+   "new_added": 16,
+   "cumulative": 11477,
+   "cumulative_pct": 0.6952
+  },
+  {
+   "source": "scPerturb:PapalexiSatija2021_eccite_arrayed_RNA",
+   "genes_in_source": 7,
+   "new_added": 0,
+   "cumulative": 11477,
+   "cumulative_pct": 0.6952
+  },
+  {
+   "source": "scPerturb:SchraivogelSteinmetz2020_TAP_SCREEN__chromosome_11_screen",
+   "genes_in_source": 9,
+   "new_added": 0,
+   "cumulative": 11477,
+   "cumulative_pct": 0.6952
+  },
+  {
+   "source": "scPerturb:TianKampmann2019_day7neuron",
+   "genes_in_source": 10,
+   "new_added": 0,
+   "cumulative": 11477,
+   "cumulative_pct": 0.6952
+  },
+  {
+   "source": "scPerturb:TianKampmann2019_iPSC",
+   "genes_in_source": 7,
+   "new_added": 0,
+   "cumulative": 11477,
+   "cumulative_pct": 0.6952
+  },
+  {
+   "source": "scPerturb:TianKampmann2021_CRISPRa",
+   "genes_in_source": 89,
+   "new_added": 21,
+   "cumulative": 11498,
+   "cumulative_pct": 0.6965
+  },
+  {
+   "source": "scPerturb:TianKampmann2021_CRISPRi",
+   "genes_in_source": 167,
+   "new_added": 6,
+   "cumulative": 11504,
+   "cumulative_pct": 0.6968
+  }
+ ],
+ "note": "targeted scPerturb screens add little over the two genome-wide screens \u2014 a new GENOME-WIDE screen in a new lineage is worth far more than many targeted ones."
+}

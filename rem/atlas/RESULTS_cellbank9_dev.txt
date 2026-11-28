@@ -1,0 +1,21 @@
+=================================================================================================
+CELLBANK9 -- engine v2 + the Drive datasets: DEVELOPMENT SET (open)
+=================================================================================================
+  DEV genes 1194; ceiling r 0.443, specific 0.322
+  coverage on these genes: record elsewhere v8 1190, v9 1193, LINCS-sh 386, LINCS-xpr 315, Tahoe 41, Geneformer 1170, ARCHS4 1175
+     arm                                        median r | specific r | fraction of ceiling
+     M2  cellbank8 model, rerun                 +0.260 | +0.098 | 59%
+     M9L + LINCS screens                        +0.256 | +0.100 | 58%
+     M9N + Tahoe/Geneformer/ARCHS4 neighbours   +0.259 | +0.099 | 58%
+     M9  + both                                 +0.257 | +0.099 | 58%
+     (cellbank8 M2 as scored there)             +0.260
+     genes weak-record half (v8)              n  604: M2 +0.228, M9L +0.233, M9N +0.224, M9 +0.228
+     genes strong-record half (v8)            n  590: M2 +0.318, M9L +0.317, M9N +0.313, M9 +0.312
+     genes with no record elsewhere (v8)      n    4: M2 +0.107, M9L +0.116, M9N +0.119, M9 +0.116
+     genes with none (v8) but a LINCS record  n    3: M2 +0.089, M9L +0.091, M9N +0.083, M9 +0.095
+     DEV M9   vs M2, all      : better 534 / worse 660, median -0.0022, p 0.00029
+     DEV M9   vs M2, weak half: better 268 / worse 336, median -0.0023, p 0.0064
+     DEV M9L  vs M2, all      : better 577 / worse 617, median -0.0005, p 0.26
+     DEV M9L  vs M2, weak half: better 297 / worse 307, median -0.0002, p 0.71
+     DEV M9N  vs M2, all      : better 513 / worse 681, median -0.0021, p 1.3e-06
+     DEV M9N  vs M2, weak half: better 257 / worse 347, median -0.0019, p 0.00029

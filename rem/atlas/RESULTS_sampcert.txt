@@ -1,0 +1,123 @@
+=================================================================================================
+CAN THE CERTIFICATE BE VERIFIED WITHOUT SCANNING EVERY STATE?
+=================================================================================================
+  If verifying costs a full scan it costs what exact DP costs, and no speed-up of the
+  approximation can rescue that. This prices the three ways out.
+
+  10 controllers, n = 1024 states, L = 6, 200 targets. sha 9b909319ccc8.
+  one real pruning level: 3,000 parents x 1024 children = 3,072,000 candidates.
+  keeping the top 3,000 by bound, the FULL-SCAN certificate over the 3,069,000 dropped candidates is 1.306979e-76.
+
+=================================================================================================
+C0  THE CEILING GATE: HOW EVEN IS THE SUM BEING SAMPLED?
+=================================================================================================
+
+      heaviest fraction   share of the certificate
+                 0.001%                      0.17%
+                 0.010%                      1.73%
+                 0.100%                     13.77%
+                 1.000%                     54.10%
+                10.000%                     93.37%
+
+  C0: the heaviest 0.1% carries 13.77% of the sum -- the sum is even enough that uniform sampling has a chance.
+  MY PREDECLARED EXPECTATION WAS WRONG, AND THE REASON IS WORTH KEEPING. I expected the
+  certificate sum to inherit the tail's concentration -- pathbound measured the top 1%
+  of PATHS carrying 91% of the TAIL. It does not. The tail is concentrated because a
+  few paths have large ON-probability; the certificate is a sum over the DROPPED
+  candidates, which are precisely the ones that do not, so it is dominated by the many
+  rather than the few. Concentration in the observable does not transfer to the
+  residual, and I assumed it would.
+
+=================================================================================================
+C1  UNIFORM SAMPLING, WITH A VALID ONE-SIDED BOUND
+=================================================================================================
+  A certificate is a guarantee, so the quantity is a 95% empirical-Bernstein UPPER bound
+  on the sum, not an unbiased estimate.
+
+        sample   fraction  estimate/true   95% UCB/true
+           306      0.01%          1.474          7.090
+         3,069      0.10%          0.876          1.832
+        30,690      1.00%          1.011          1.189
+       306,900     10.00%          1.003          1.045
+     1,534,500     50.00%          1.005          1.022
+
+  C1 AS PREDECLARED: the UCB reaches 2x the true sum at a sample fraction of 0.10%
+
+=================================================================================================
+C2  IMPORTANCE SAMPLING AGAINST THE CHEAP PROXY, CORRELATION FIRST
+=================================================================================================
+  correlation of log path mass with log bound over the dropped set: r = 0.9434
+
+        sample   fraction  estimate/true   95% UCB/true
+           306      0.01%          0.947          1.296
+         3,069      0.10%          1.001          1.078
+        30,690      1.00%          0.997          1.016
+       306,900     10.00%          0.999          1.004
+
+  C2: importance sampling reaches 2x at 0.01%
+
+=================================================================================================
+C3  THE AGGREGATE BOUND: EXAMINE k CHILDREN PER PARENT, BOUND THE REST WITHOUT TOUCHING
+=================================================================================================
+  For each parent, take its k heaviest children and bound every other child in ONE term:
+  their total remaining mass times the largest ON-probability any child could have. That
+  largest is itself a box bound over the child space -- max over c of g.v_c is bounded by
+  sum_j max(g_j,0)*max_c v_c[j] -- which costs O(targets) per parent and touches NO child.
+
+         k   children touched     certificate   / full scan
+         1              3,000    2.550553e-74       195.149
+         2              6,000    2.419057e-74       185.088
+         4             12,000    2.200803e-74       168.389
+         8             24,000    1.884869e-74       144.216
+        16             48,000    1.507067e-74       115.309
+        32             96,000    1.057666e-74        80.924
+        64            192,000    6.113019e-75        46.772
+      1024          3,072,000    1.306979e-76         1.000
+
+=================================================================================================
+C2b  THE CIRCULARITY IN C1 AND C2, AND THE VERSION THAT DOES NOT HAVE IT
+=================================================================================================
+  C1 and C2 sampled from the DROPPED set. Knowing which candidates are dropped means
+  having ranked them all by the bound -- which is the full scan. Their saving is illusory
+  as stated: they cheapen the verification of a partition whose construction already paid
+  the cost. My setup's defect, not sampling's.
+
+  THE NON-CIRCULAR VERSION: select by path MASS, which needs no bound evaluations -- the
+  child ordering under any parent is that column of the transition matrix, so one sort of
+  the columns gives every parent's heaviest children and a global top-k is a merge. Then
+  certify that partition by importance sampling, evaluating the bound only where sampled.
+
+  selecting by mass instead of by bound: the full-scan certificate for THAT partition is
+  1.421285e-76, against 1.306979e-76 for the bound-selected one (1.09x).
+
+     bound evals  vs full scan  estimate/true   95% UCB/true
+              30       0.0010%          0.997          2.807
+             306       0.0100%          1.044          1.424
+           3,069       0.1000%          0.988          1.063
+          30,690       1.0000%          0.994          1.013
+
+  C2b: a valid 95% upper bound within 2x costs 306 bound evaluations against
+  3,072,000 for the full scan -- a factor of 10,039. The scan IS avoidable,
+  and the thing that avoids it is the cheap proxy plus sampling, NOT the aggregate
+  bound this module was built expecting to work.
+
+  AND THE GUARANTEE IS WEAKER IN KIND, WHICH MUST NOT BE GLOSSED. The full scan gives an
+  EXACT sum. This gives a 95% confidence upper bound. That is a real demotion -- a
+  certificate that holds one time in twenty is not the same object -- and whether it is
+  acceptable is a decision about what the engine's guarantee is for, not a measurement.
+
+=================================================================================================
+C4  THE VERDICT, AND C5 WHAT IT DOES NOT SETTLE
+=================================================================================================
+  Read C3's last column against C1's and C2's. A certificate is a guarantee; the sampling
+  gates produce confidence statements and only the aggregate bound produces a certificate
+  at all, so if C3 stays close to the full scan at small k the scan is avoidable and if it
+  does not, item 2 is unresolved and the approximation cannot beat exact DP.
+
+  NOT SETTLED.
+  1. One pruning level at one width. The aggregate term's looseness compounds across
+     levels and that is not measured here.
+  2. Sorting the transition matrix's columns once is O(n^2 log n), paid before any of this
+     helps. At n = 1024 that is cheap; it is not free at every width.
+  3. This asks only whether the SCAN can be avoided. exactcert already showed the bound
+     being verified is 25 orders looser than the tail, and nothing here changes that.

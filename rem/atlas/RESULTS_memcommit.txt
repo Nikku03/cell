@@ -1,0 +1,81 @@
+=================================================================================================
+MEMORY FOR THE NETWORK, TESTED AGAINST THE MOUSE'S OPTOGENETIC COMMITMENT CURVE
+=================================================================================================
+  H0 tanh     gradient / tolerance 0.036   broken copy 1.37e+04 (caught)
+  H0 channel  gradient / tolerance 0.017   broken copy 3.06e+03 (caught)
+  H0 bump     gradient / tolerance 0.005   broken copy 1.27e+05 (caught)
+  H0: PASS
+  H1 committing latch  index mean +0.440, positive on 10/10 -> COMMITS
+  H1 pure latch        index mean -0.003, positive on 3/10 -> NO COMMITMENT
+  H1: PASS
+
+  regime B trial mix from the mice (15 trial types): l -0.8 Full:0.068, l -0.8 Mini:0.055, l -1.6 Full:0.052, l -1.6 Mini:0.068, l -2.5 Mini:0.067, l -3.8 Full:0.046, l -3.8 Mini:0.062, l:0.154, r -0.8 Full:0.064, r -0.8 Mini:0.042, r -1.6 Full:0.046, r -1.6 Mini:0.044, r -3.8 Full:0.038, r -3.8 Mini:0.044, r:0.150
+
+=================================================================================================
+REGIME A: ZERO-SHOT (never trained on a distractor), bar 0.95
+=================================================================================================
+  P(lick right), no-sample trials, mean over learnt seeds
+                                  none   -3.8 Full   -3.8 Mini   -2.5 Mini   -1.6 Full   -1.6 Mini   -0.8 Full   -0.8 Mini
+    MOUSE                        0.186       0.610       0.214       0.337       0.578       0.317       0.322       0.179
+    tanh (10/10 learnt)          0.010       0.486       0.083       0.186       0.574       0.072       0.245       0.018
+    channel (10/10 learnt)       0.000       1.000       0.067       0.124       0.999       0.038       0.635       0.001
+    bump (10/10 learnt)          0.000       0.400       0.016       0.100       0.262       0.000       0.035       0.000
+
+  C1 COMMITMENT INDEX = fooling(-1.6 Full) - fooling(-0.8 Full)   (mouse +0.256)
+    tanh     index +0.329 (positive 7/10)  early fooling +0.564  pre-sample fooling +0.476  MAE to mouse 0.229  -> NO COMMITMENT
+    channel  index +0.364 (positive 8/10)  early fooling +0.999  pre-sample fooling +1.000  MAE to mouse 0.233  -> NO COMMITMENT
+    bump     index +0.228 (positive 4/10)  early fooling +0.262  pre-sample fooling +0.400  MAE to mouse 0.257  -> NO COMMITMENT
+
+  C2 CLOSER TO THE MOUSE? (paired per seed, lower MAE on >= 9/10)
+    bump vs channel: bump closer on 3/10, mean MAE diff +0.024  -> NO CLEAR DIFFERENCE
+    bump vs tanh: bump closer on 3/10, mean MAE diff +0.028  -> NO CLEAR DIFFERENCE
+    channel vs tanh: channel closer on 3/10, mean MAE diff +0.004  -> NO CLEAR DIFFERENCE
+
+  C3 FINE FOOLING CURVE, Full pulse on no-sample trials (mean over learnt seeds), seconds before go:
+                 4.0   3.8   3.6   3.4   3.2   3.0   2.8   2.6   2.4   2.2   2.0   1.8   1.6   1.4   1.2   1.0   0.8   0.6   0.4
+    tanh       +0.39 +0.47 +0.55 +0.64 +0.80 +0.94 +0.98 +0.99 +0.98 +0.88 +0.78 +0.62 +0.56 +0.52 +0.45 +0.36 +0.23 +0.11 +0.00
+    channel    +1.00 +1.00 +1.00 +1.00 +1.00 +1.00 +1.00 +1.00 +1.00 +1.00 +1.00 +1.00 +1.00 +1.00 +0.94 +0.79 +0.64 +0.28 +0.10
+    bump       +0.50 +0.40 +0.30 +0.30 +0.40 +0.60 +0.89 +1.00 +1.00 +0.85 +0.59 +0.38 +0.26 +0.13 +0.10 +0.09 +0.04 +0.01 +0.00
+
+=================================================================================================
+REGIME B: MOUSE EXPERIENCE (mice's trial mix and labels), stopped at the mice's 0.82
+=================================================================================================
+  P(lick right), no-sample trials, mean over learnt seeds
+                                  none   -3.8 Full   -3.8 Mini   -2.5 Mini   -1.6 Full   -1.6 Mini   -0.8 Full   -0.8 Mini
+    MOUSE                        0.186       0.610       0.214       0.337       0.578       0.317       0.322       0.179
+    tanh (10/10 learnt)          0.002       0.109       0.013       0.016       0.156       0.002       0.001       0.002
+    channel (10/10 learnt)       0.000       0.603       0.010       0.009       0.537       0.001       0.174       0.001
+    bump (10/10 learnt)          0.000       0.001       0.000       0.002       0.082       0.000       0.000       0.000
+
+  C1 COMMITMENT INDEX = fooling(-1.6 Full) - fooling(-0.8 Full)   (mouse +0.256)
+    tanh     index +0.155 (positive 7/10)  early fooling +0.154  pre-sample fooling +0.107  MAE to mouse 0.241  -> NO COMMITMENT
+    channel  index +0.364 (positive 10/10)  early fooling +0.537  pre-sample fooling +0.603  MAE to mouse 0.207  -> COMMITS
+    bump     index +0.081 (positive 4/10)  early fooling +0.082  pre-sample fooling +0.001  MAE to mouse 0.245  -> NO COMMITMENT
+
+  C2 CLOSER TO THE MOUSE? (paired per seed, lower MAE on >= 9/10)
+    bump vs channel: bump closer on 0/10, mean MAE diff +0.038  -> CHANNEL CLOSER
+    bump vs tanh: bump closer on 3/10, mean MAE diff +0.004  -> NO CLEAR DIFFERENCE
+    channel vs tanh: channel closer on 8/10, mean MAE diff -0.034  -> NO CLEAR DIFFERENCE
+
+  C3 FINE FOOLING CURVE, Full pulse on no-sample trials (mean over learnt seeds), seconds before go:
+                 4.0   3.8   3.6   3.4   3.2   3.0   2.8   2.6   2.4   2.2   2.0   1.8   1.6   1.4   1.2   1.0   0.8   0.6   0.4
+    tanh       +0.10 +0.11 +0.14 +0.28 +0.47 +0.68 +0.92 +0.99 +0.95 +0.86 +0.66 +0.32 +0.15 +0.05 +0.01 -0.00 -0.00 -0.00 +0.01
+    channel    +0.59 +0.60 +0.67 +0.79 +0.85 +0.92 +0.93 +0.92 +0.86 +0.76 +0.68 +0.63 +0.54 +0.44 +0.37 +0.28 +0.17 +0.08 +0.05
+    bump       +0.10 +0.00 +0.05 +0.24 +0.49 +0.71 +0.86 +1.00 +1.00 +0.96 +0.58 +0.19 +0.08 +0.10 +0.10 +0.04 +0.00 +0.00 +0.00
+
+  artifact: outputs/memcommit.json   runtime 93s
+
+=================================================================================================
+C4  WHAT THIS IS AND IS NOT
+=================================================================================================
+  One task, one noise level (0.1), one leak (0.5), not swept. A network that ignores every distractor
+  is a better memory than the mouse and a worse model of it; both readings are reported.
+
+  POST-RUN CHECK (after the run, recorded): REGIME B WAS NOT SKILL-MATCHED. The stopping rule ran as
+  written (stop at the first check, every 50 steps, with basic accuracy >= 0.82), but every network
+  learnt within 50-150 steps and was already at 0.86-1.00 when first checked (median ~0.99; mice 0.82).
+  Regime A likewise stopped at 50-100 steps. So: (1) "stopped at the mice's skill" is NOT true --
+  every network is more accurate than the mice on plain trials (P(right | none) 0.000-0.002 vs the
+  mice's 0.186); (2) all verdicts describe networks after only 50-150 optimisation steps. The
+  per-seed verdicts stand as measurements of these networks; the skill-matched comparison is still
+  owed (finer stopping, or noise calibrated so plain-trial accuracy is ~0.82).

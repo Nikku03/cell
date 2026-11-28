@@ -1,0 +1,198 @@
+{
+ "items": 5397,
+ "model_acc": 0.6442468037798778,
+ "nearest_acc": 0.6236798221234019,
+ "model_only": 414,
+ "nearest_only": 303,
+ "mcnemar_p": 3.8605555148323315e-05,
+ "verdict": "BETTER",
+ "top3_acc": 0.8949416342412452,
+ "distal": {
+  "n": 1472,
+  "model": 0.5230978260869565,
+  "nearest": 0.4633152173913043
+ },
+ "mean_candidates": 45.46785251065407,
+ "dropped": {
+  "not in an open element": 56657,
+  "true gene not a candidate": 1249
+ },
+ "by_tissue": {
+  "Liver": {
+   "n": 204,
+   "model": 0.7549019607843137,
+   "nearest": 0.7303921568627451
+  },
+  "Cells_EBV-transformed_lymphocytes": {
+   "n": 448,
+   "model": 0.6785714285714286,
+   "nearest": 0.6540178571428571
+  },
+  "Lung": {
+   "n": 555,
+   "model": 0.6666666666666666,
+   "nearest": 0.6648648648648648
+  },
+  "Heart_Left_Ventricle": {
+   "n": 284,
+   "model": 0.6795774647887324,
+   "nearest": 0.647887323943662
+  },
+  "Heart_Atrial_Appendage": {
+   "n": 87,
+   "model": 0.6436781609195402,
+   "nearest": 0.6436781609195402
+  },
+  "Muscle_Skeletal": {
+   "n": 342,
+   "model": 0.6695906432748538,
+   "nearest": 0.6257309941520468
+  },
+  "Thyroid": {
+   "n": 534,
+   "model": 0.6479400749063671,
+   "nearest": 0.6217228464419475
+  },
+  "Adrenal_Gland": {
+   "n": 176,
+   "model": 0.5909090909090909,
+   "nearest": 0.5397727272727273
+  },
+  "Stomach": {
+   "n": 131,
+   "model": 0.6564885496183206,
+   "nearest": 0.648854961832061
+  },
+  "Pancreas": {
+   "n": 229,
+   "model": 0.6812227074235808,
+   "nearest": 0.6768558951965066
+  },
+  "Spleen": {
+   "n": 154,
+   "model": 0.6818181818181818,
+   "nearest": 0.6038961038961039
+  },
+  "Colon_Transverse": {
+   "n": 93,
+   "model": 0.6451612903225806,
+   "nearest": 0.6451612903225806
+  },
+  "Colon_Sigmoid": {
+   "n": 56,
+   "model": 0.5357142857142857,
+   "nearest": 0.5892857142857143
+  },
+  "Esophagus_Muscularis": {
+   "n": 32,
+   "model": 0.5625,
+   "nearest": 0.625
+  },
+  "Esophagus_Mucosa": {
+   "n": 38,
+   "model": 0.631578947368421,
+   "nearest": 0.6052631578947368
+  },
+  "Artery_Tibial": {
+   "n": 202,
+   "model": 0.698019801980198,
+   "nearest": 0.6584158415841584
+  },
+  "Artery_Aorta": {
+   "n": 80,
+   "model": 0.575,
+   "nearest": 0.5375
+  },
+  "Artery_Coronary": {
+   "n": 7,
+   "model": 0.7142857142857143,
+   "nearest": 0.7142857142857143
+  },
+  "Nerve_Tibial": {
+   "n": 185,
+   "model": 0.6270270270270271,
+   "nearest": 0.5783783783783784
+  },
+  "Skin_Sun_Exposed_Lower_leg": {
+   "n": 194,
+   "model": 0.6752577319587629,
+   "nearest": 0.654639175257732
+  },
+  "Skin_Not_Sun_Exposed_Suprapubic": {
+   "n": 46,
+   "model": 0.6521739130434783,
+   "nearest": 0.6304347826086957
+  },
+  "Breast_Mammary_Tissue": {
+   "n": 26,
+   "model": 0.6538461538461539,
+   "nearest": 0.5769230769230769
+  },
+  "Prostate": {
+   "n": 18,
+   "model": 0.5555555555555556,
+   "nearest": 0.5555555555555556
+  },
+  "Testis": {
+   "n": 312,
+   "model": 0.6698717948717948,
+   "nearest": 0.657051282051282
+  },
+  "Uterus": {
+   "n": 15,
+   "model": 0.26666666666666666,
+   "nearest": 0.4
+  },
+  "Vagina": {
+   "n": 3,
+   "model": 0.3333333333333333,
+   "nearest": 0.3333333333333333
+  },
+  "Ovary": {
+   "n": 52,
+   "model": 0.5769230769230769,
+   "nearest": 0.5769230769230769
+  },
+  "Adipose_Visceral_Omentum": {
+   "n": 27,
+   "model": 0.7037037037037037,
+   "nearest": 0.6666666666666666
+  },
+  "Small_Intestine_Terminal_Ileum": {
+   "n": 19,
+   "model": 0.42105263157894735,
+   "nearest": 0.42105263157894735
+  },
+  "Cells_Cultured_fibroblasts": {
+   "n": 388,
+   "model": 0.6134020618556701,
+   "nearest": 0.595360824742268
+  },
+  "Brain_Caudate_basal_ganglia": {
+   "n": 91,
+   "model": 0.5054945054945055,
+   "nearest": 0.5054945054945055
+  },
+  "Brain_Putamen_basal_ganglia": {
+   "n": 49,
+   "model": 0.40816326530612246,
+   "nearest": 0.4489795918367347
+  },
+  "Brain_Cerebellum": {
+   "n": 217,
+   "model": 0.5207373271889401,
+   "nearest": 0.5299539170506913
+  },
+  "Brain_Frontal_Cortex_BA9": {
+   "n": 99,
+   "model": 0.5858585858585859,
+   "nearest": 0.5454545454545454
+  },
+  "Bladder": {
+   "n": 4,
+   "model": 0.0,
+   "nearest": 0.0
+  }
+ },
+ "scored": "2026-11-18 06:50"
+}

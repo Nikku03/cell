@@ -1,0 +1,53 @@
+{
+ "added": "2026-11-24",
+ "facts_written": 2,
+ "layers": {
+  "APEX_SEQ_RAW": "LAYER-APEX_SEQ_RAW/db311adc083ad6e085f1",
+  "APEX_SEQ_HEK293T": "LAYER-APEX_SEQ_HEK293T/f6b5d24f544e1f21348e"
+ },
+ "build": {
+  "genes": 60675,
+  "columns": [
+   "ERM_count",
+   "ERM_lfc",
+   "ERM_p",
+   "KDEL_count",
+   "KDEL_lfc",
+   "KDEL_p",
+   "LMA_count",
+   "LMA_lfc",
+   "LMA_p",
+   "MITO_count",
+   "MITO_lfc",
+   "MITO_p",
+   "NES_basal_lfc",
+   "NES_cccp_lfc",
+   "NES_count",
+   "NES_cyc_lfc",
+   "NES_lfc",
+   "NES_p",
+   "NES_puro_lfc",
+   "NIK_count",
+   "NIK_lfc",
+   "NIK_p",
+   "NLS_count",
+   "NLS_lfc",
+   "NLS_p",
+   "NUCP_count",
+   "NUCP_lfc",
+   "NUCP_p",
+   "OMM_basal_lfc",
+   "OMM_cccp_count",
+   "OMM_cccp_lfc",
+   "OMM_count",
+   "OMM_cyc_count",
+   "OMM_cyc_lfc",
+   "OMM_lfc",
+   "OMM_p",
+   "OMM_puro_count",
+   "OMM_puro_lfc"
+  ],
+  "with_erm": 28278,
+  "with_omm_puro": 30928
+ }
+}

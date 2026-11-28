@@ -1,0 +1,22 @@
+{
+  "gof_burials": {
+    "BRAF": 167.0,
+    "KRAS": 142.0,
+    "JAK2": 117.0,
+    "PIK3CA": 141.0,
+    "EGFR": 141.0,
+    "KIT": 113.0
+  },
+  "lof_burials": {
+    "TP53": 182.0,
+    "VHL": 161.0,
+    "PTEN": 212.0,
+    "STK11": 79.0,
+    "BRCA1": 140.0,
+    "RB1": 183.0
+  },
+  "mean_burial_gof": 129.1,
+  "mean_burial_lof": 159.5,
+  "separation": 30.4,
+  "verdict": "GOF mutations are less buried than LOF (surface/interface vs core) -- a real but MODEST structural signal ESM misses; combine with ESM + recurrence. Re-folding the mutant does NOT work (AlphaFold/Foldseek are point-mutation-insensitive); the WT scaffold does."
+}

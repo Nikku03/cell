@@ -1,0 +1,394 @@
+{
+ "stage": "EXAM",
+ "t1": {
+  "per_cell": {
+   "K562": {
+    "knockdowns_fit": 748,
+    "knockdowns_scored": 680,
+    "weights": {
+     "generic": 0.03500066697597504,
+     "strength x generic": 0.9718217849731445,
+     "RPE1 pattern": 0.07157667726278305,
+     "HepG2 pattern": 0.09391967952251434,
+     "Jurkat pattern": 0.10494309663772583
+    },
+    "r_generic_median": 0.21207541227340698,
+    "r_model_median": 0.2631697654724121,
+    "real": {
+     "n": 680,
+     "median": 0.04693940281867981,
+     "share_positive": 0.7985294117647059,
+     "p": 2.4284278899315998e-58,
+     "passed": true
+    },
+    "negative": {
+     "n": 680,
+     "median": -9.191036224365234e-05,
+     "share_positive": 0.4323529411764706,
+     "p": 0.9998225584670242,
+     "passed": false
+    },
+    "planted": {
+     "n": 680,
+     "median": 0.33564361929893494,
+     "share_positive": 1.0,
+     "p": 1.9934389902195135e-205,
+     "passed": true
+    }
+   },
+   "RPE1": {
+    "knockdowns_fit": 967,
+    "knockdowns_scored": 878,
+    "weights": {
+     "generic": 0.3978177309036255,
+     "strength x generic": 0.6094056963920593,
+     "K562 pattern": 0.1371549665927887,
+     "HepG2 pattern": 0.11805270612239838,
+     "Jurkat pattern": 0.08518277853727341
+    },
+    "r_generic_median": 0.5452806949615479,
+    "r_model_median": 0.5562441349029541,
+    "real": {
+     "n": 878,
+     "median": 0.006658673286437988,
+     "share_positive": 0.643507972665148,
+     "p": 7.350793246207214e-18,
+     "passed": false
+    },
+    "negative": {
+     "n": 878,
+     "median": -4.500150680541992e-06,
+     "share_positive": 0.4806378132118451,
+     "p": 0.8812456988703774,
+     "passed": false
+    },
+    "planted": {
+     "n": 878,
+     "median": 0.3603568822145462,
+     "share_positive": 1.0,
+     "p": 4.962080516648048e-265,
+     "passed": true
+    }
+   },
+   "HepG2": {
+    "knockdowns_fit": 699,
+    "knockdowns_scored": 615,
+    "weights": {
+     "generic": 0.1854337453842163,
+     "strength x generic": 0.8196234703063965,
+     "K562 pattern": 0.18208108842372894,
+     "RPE1 pattern": 0.12660275399684906,
+     "Jurkat pattern": 0.08823960274457932
+    },
+    "r_generic_median": 0.41752657294273376,
+    "r_model_median": 0.44384878873825073,
+    "real": {
+     "n": 615,
+     "median": 0.018085047602653503,
+     "share_positive": 0.6943089430894309,
+     "p": 1.2090856228475489e-22,
+     "passed": true
+    },
+    "negative": {
+     "n": 615,
+     "median": -4.3779611587524414e-05,
+     "share_positive": 0.4373983739837398,
+     "p": 0.9991810603751923,
+     "passed": false
+    },
+    "planted": {
+     "n": 615,
+     "median": 0.26961034536361694,
+     "share_positive": 1.0,
+     "p": 7.354491775826673e-186,
+     "passed": true
+    }
+   },
+   "Jurkat": {
+    "knockdowns_fit": 652,
+    "knockdowns_scored": 611,
+    "weights": {
+     "generic": 0.35134926438331604,
+     "strength x generic": 0.6504232883453369,
+     "K562 pattern": 0.19278521835803986,
+     "RPE1 pattern": 0.08359192311763763,
+     "HepG2 pattern": 0.08937305212020874
+    },
+    "r_generic_median": 0.26518407464027405,
+    "r_model_median": 0.29686063528060913,
+    "real": {
+     "n": 611,
+     "median": 0.036299318075180054,
+     "share_positive": 0.7430441898527005,
+     "p": 1.0770435909874487e-34,
+     "passed": true
+    },
+    "negative": {
+     "n": 611,
+     "median": -4.908442497253418e-05,
+     "share_positive": 0.4746317512274959,
+     "p": 0.9022882238917331,
+     "passed": false
+    },
+    "planted": {
+     "n": 611,
+     "median": 0.3063121438026428,
+     "share_positive": 1.0,
+     "p": 1.1767186841322676e-184,
+     "passed": true
+    }
+   }
+  },
+  "k562_two_experiment_ceiling_r": 0.23917244374752045,
+  "genes": 6642,
+  "gate": {
+   "real": false,
+   "controls_ok": true,
+   "verdict": "FAIL"
+  }
+ },
+ "t2": {
+  "per_cell": {
+   "RPE1": {
+    "knockdowns_fit": 1140,
+    "knockdowns_scored": 1052,
+    "weights": {
+     "generic": 0.682102620601654,
+     "strength x generic": 0.32547181844711304,
+     "K562 genome-wide pattern": 0.17146477103233337
+    },
+    "r_generic_median": 0.516730785369873,
+    "r_model_median": 0.5200515985488892,
+    "real": {
+     "n": 1052,
+     "median": 0.0021000802516937256,
+     "share_positive": 0.6216730038022814,
+     "p": 1.3868758043234192e-15,
+     "passed": false
+    },
+    "negative": {
+     "n": 1052,
+     "median": -1.173466444015503e-06,
+     "share_positive": 0.47664442326024786,
+     "p": 0.9386983772580744,
+     "passed": false
+    },
+    "planted": {
+     "n": 1052,
+     "median": 0.4117024540901184,
+     "share_positive": 1.0,
+     "p": 2.0722615e-317,
+     "passed": true
+    }
+   },
+   "HepG2": {
+    "knockdowns_fit": 860,
+    "knockdowns_scored": 763,
+    "weights": {
+     "generic": 0.6506533622741699,
+     "strength x generic": 0.35325825214385986,
+     "K562 genome-wide pattern": 0.1774940937757492
+    },
+    "r_generic_median": 0.3564664423465729,
+    "r_model_median": 0.36469411849975586,
+    "real": {
+     "n": 763,
+     "median": 0.006761014461517334,
+     "share_positive": 0.6985583224115334,
+     "p": 7.555332928931411e-29,
+     "passed": false
+    },
+    "negative": {
+     "n": 763,
+     "median": -2.6226043701171875e-06,
+     "share_positive": 0.4927916120576671,
+     "p": 0.6679975833463903,
+     "passed": false
+    },
+    "planted": {
+     "n": 763,
+     "median": 0.402191698551178,
+     "share_positive": 1.0,
+     "p": 2.0611676062710827e-230,
+     "passed": true
+    }
+   },
+   "Jurkat": {
+    "knockdowns_fit": 806,
+    "knockdowns_scored": 766,
+    "weights": {
+     "generic": 0.6118245720863342,
+     "strength x generic": 0.3891422152519226,
+     "K562 genome-wide pattern": 0.21953006088733673
+    },
+    "r_generic_median": 0.2423979640007019,
+    "r_model_median": 0.26548629999160767,
+    "real": {
+     "n": 766,
+     "median": 0.018078021705150604,
+     "share_positive": 0.7127937336814621,
+     "p": 4.1241304902168934e-33,
+     "passed": true
+    },
+    "negative": {
+     "n": 766,
+     "median": -5.520880222320557e-06,
+     "share_positive": 0.4751958224543081,
+     "p": 0.9206235507663654,
+     "passed": false
+    },
+    "planted": {
+     "n": 766,
+     "median": 0.45090603828430176,
+     "share_positive": 1.0,
+     "p": 2.5764595078388533e-231,
+     "passed": true
+    }
+   }
+  },
+  "gate": {
+   "real": false,
+   "controls_ok": true,
+   "verdict": "FAIL"
+  }
+ },
+ "c1": {
+  "input_genes": 3515,
+  "output_genes": 4051,
+  "knockdowns_fit": 943,
+  "knockdowns_scored": 885,
+  "weights": {
+   "generic": 0.0161224864423275,
+   "strength_x_generic": 0.9861418604850769,
+   "next_step": 0.013339466415345669
+  },
+  "r_generic_median": 0.2710567116737366,
+  "r_model_median": 0.27025938034057617,
+  "r_shuffled_median": 0.2699163556098938,
+  "real_vs_generic": {
+   "n": 885,
+   "median": 0.00040081143379211426,
+   "share_positive": 0.5231638418079096,
+   "p": 0.08936308933421604,
+   "passed": false
+  },
+  "real_vs_shuffled": {
+   "n": 885,
+   "median": 0.0009110569953918457,
+   "share_positive": 0.5536723163841808,
+   "p": 0.0007822129865681333,
+   "passed": false
+  },
+  "negative": {
+   "n": 885,
+   "median": -0.0002627372741699219,
+   "share_positive": 0.43728813559322033,
+   "p": 0.9999182244141668,
+   "passed": false
+  },
+  "planted": {
+   "n": 885,
+   "median": 0.49457597732543945,
+   "share_positive": 1.0,
+   "p": 3.8766254036312874e-267,
+   "passed": true
+  },
+  "most_helped": [
+   {
+    "knockdown": "POU3F1",
+    "r_generic": 0.039,
+    "r_next_step": 0.183,
+    "inputs_changed": 46
+   },
+   {
+    "knockdown": "ARID1A",
+    "r_generic": -0.063,
+    "r_next_step": 0.079,
+    "inputs_changed": 21
+   },
+   {
+    "knockdown": "FBXW7",
+    "r_generic": -0.067,
+    "r_next_step": 0.073,
+    "inputs_changed": 37
+   },
+   {
+    "knockdown": "CIAO1",
+    "r_generic": -0.045,
+    "r_next_step": 0.075,
+    "inputs_changed": 27
+   },
+   {
+    "knockdown": "CNOT11",
+    "r_generic": -0.044,
+    "r_next_step": 0.065,
+    "inputs_changed": 55
+   },
+   {
+    "knockdown": "FIGLA",
+    "r_generic": -0.05,
+    "r_next_step": 0.057,
+    "inputs_changed": 18
+   },
+   {
+    "knockdown": "ACIN1",
+    "r_generic": 0.099,
+    "r_next_step": 0.203,
+    "inputs_changed": 27
+   },
+   {
+    "knockdown": "PCBP2",
+    "r_generic": -0.046,
+    "r_next_step": 0.057,
+    "inputs_changed": 28
+   },
+   {
+    "knockdown": "ASXL1",
+    "r_generic": -0.007,
+    "r_next_step": 0.095,
+    "inputs_changed": 25
+   },
+   {
+    "knockdown": "SPEN",
+    "r_generic": -0.054,
+    "r_next_step": 0.047,
+    "inputs_changed": 45
+   },
+   {
+    "knockdown": "DDX5",
+    "r_generic": -0.043,
+    "r_next_step": 0.057,
+    "inputs_changed": 41
+   },
+   {
+    "knockdown": "UBE2D3",
+    "r_generic": -0.045,
+    "r_next_step": 0.049,
+    "inputs_changed": 34
+   },
+   {
+    "knockdown": "SRF",
+    "r_generic": -0.024,
+    "r_next_step": 0.056,
+    "inputs_changed": 12
+   },
+   {
+    "knockdown": "PTDSS2",
+    "r_generic": 0.039,
+    "r_next_step": 0.109,
+    "inputs_changed": 15
+   },
+   {
+    "knockdown": "RAP1A",
+    "r_generic": -0.025,
+    "r_next_step": 0.035,
+    "inputs_changed": 19
+   }
+  ],
+  "gate": {
+   "real": false,
+   "controls_ok": true,
+   "verdict": "FAIL"
+  }
+ }
+}

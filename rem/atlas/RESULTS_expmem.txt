@@ -1,0 +1,24 @@
+=================================================================================================
+A CELL MODEL WHOSE MEMORY IS MEASURED EXPERIMENTS -- AND DOES THE PROTEIN ATLAS HELP?
+=================================================================================================
+  knockdowns with a phenotype 5,052: TRAIN 2,527, TEST 2,525; genes 8,248
+  HPA coverage of these knockdowns: location 4,347, protein class 5,038, K-562 RNA 5,038 of 5,052 (49 locations, 25 classes)
+  inner CV (TRAIN): MEM-F k 100 tau 0.1 alpha 1.0 (cv median r 0.146); MEM-R k 100 tau 0.1 alpha 0.25 (cv median r 0.158); MEM-RR k 100 tau 0.1 alpha 0.25 (cv median r 0.145)
+
+  TEST knockdowns: median / mean Pearson r of the predicted SPECIFIC response
+     RIDGE-base               +0.170 / +0.169
+     RIDGE                    +0.169 / +0.158
+     MEM-F                    +0.152 / +0.163
+     MEM-R                    +0.169 / +0.158
+     MEM-RR                   +0.153 / +0.150
+     MEM-R shuffled memory    +0.145 / +0.142
+     shuffled-answer RIDGE    -0.009 / -0.012
+     CEILING: screen B        +0.315 / +0.346   (857 TEST proteins also in B)
+     tide                     +0.000 (predicts no specific response)
+  H0 shuffled-answer median r -0.009 < 0.02 and RIDGE-base > 0 -> PASS
+  E1 experiment memory vs plain learner (MEM-R vs RIDGE): better 1,413 / worse 1,112, median diff +0.0053, p 2.3e-09 -> NO DIFFERENCE
+  E2 second hop (MEM-RR vs MEM-R): better 1,122 / worse 1,403, median diff -0.0008, p 2.4e-08 -> NO DIFFERENCE
+  E3 memory content (MEM-R vs shuffled memory): better 1,615 / worse 910, median diff +0.0158, p 3.6e-45 -> BETTER
+  E4 Protein Atlas (RIDGE vs RIDGE-base): better 1,235 / worse 1,290, median diff -0.0012, p 0.28 -> NO DIFFERENCE
+  E5 retrieval by features alone (MEM-F vs RIDGE): better 1,138 / worse 1,387, median diff -0.0083, p 7.8e-07 -> NO DIFFERENCE
+  runtime 296s; data: Replogle 2022 (CC BY 4.0), HPA v25 (CC BY 4.0), DepMap 24Q4 (CC BY 4.0)

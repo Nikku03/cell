@@ -1,0 +1,68 @@
+========================================================================================================
+LOOP 258 -- THE NETWORK AS AN AID, NOT A STAGE EVERYTHING MUST PASS THROUGH
+========================================================================================================
+     Loop 256 forced every prediction through the network and it lost by -0.1517;
+     its LINEAR twin on identical inputs also lost, by -0.0494, so the framing was
+     wrong rather than the capacity. Here the baseline is the standing answer and the
+     network only proposes a correction, weighted by an alpha fitted on a held-out line.
+     DECLARED BEFORE THE RUN: fitting alpha makes a small gain nearly automatic, so J2
+     is machinery and NOT evidence. J3 -- real correction against its own row
+     permutation, same magnitudes, wrong pairing -- is the only gate that means anything.
+     33,197 (gene, line) pairs, 3,801 genes, 978 landmarks
+     context vector: 101 measured dims, PCs fitted on the full DepMap panel
+     alpha is fitted on a CALIBRATION line the network never trained on, then applied
+     to the outer held-out line, which neither the network nor alpha ever saw
+     9 outer folds x 3 seeds; network trains on 7 lines, alpha on the 8th ...
+       seed 0: base 0.4433  aided 0.4432  permuted 0.4433  forced 0.4221  [801s]
+       seed 1: base 0.4433  aided 0.4423  permuted 0.4433  forced 0.4327  [1597s]
+       seed 2: base 0.4433  aided 0.4434  permuted 0.4433  forced 0.4298  [2268s]
+       stratified real 0.4427   stratified permuted 0.4433   linear correction 0.4432
+J1 DOES THE HARNESS REPRODUCE THE BASELINE?
+     additive here 0.4433 against loop 252's 0.4477
+     J1 PASS -- reproduces to 0.0044
+J2 MACHINERY ONLY -- DOES THE AIDED MODEL AT LEAST NOT LOSE?
+     aided 0.4432 vs baseline 0.4433   -0.0001 +/- 0.0001
+     THIS GATE IS NOT EVIDENCE. A fitted blend weight makes a small gain nearly
+     automatic; it exists only to catch a broken alpha fit. J3 decides the science.
+     J2 PASS (machinery) -- the aid is worth -0.0001, inside the -0.002 machinery floor. This says the plumbing works and says NOTHING about whether the network helped.
+J3 LOAD-BEARING -- DOES THE REAL CORRECTION BEAT ITS OWN ROW PERMUTATION?
+     real 0.4432 vs permuted 0.4433   -0.0001 +/- 0.0001 (-0.8 se)
+     the permuted arm has identical magnitudes and distribution and the wrong pairing,
+     so whatever it scores is the free lunch from fitting a blend weight at all
+     J3 FAIL -- -0.0001 over its own permutation. Every gain came from fitting alpha; the network contributed nothing a random correction of the same size would not have.
+J4 IS THE BLEND WEIGHT DISTINGUISHABLE FROM ZERO?
+     alpha per fold: +0.249, +0.632, +0.957, -0.181, +0.174, -0.405, +0.012, -0.152, -0.234
+     mean +0.1170 +/- 0.1471
+     J4 FAIL -- alpha +0.1170 +/- 0.1471; the calibration line could not decide the network was worth listening to
+J5 DOES THE NETWORK CORRECTION BEAT A LINEAR CORRECTION?
+     network-aided 0.4432 vs linear-aided 0.4432   +0.0001 +/- 0.0001 (+0.6 se)
+     J5 FAIL -- the network is worth +0.0001 over a ridge; the AID framing is doing the work, not the network
+J6 IS THERE A STRATUM WHERE IT HELPS, EVEN IF THE AVERAGE IS FLAT?
+     stratified real 0.4427 vs stratified permuted 0.4433   -0.0006 +/- 0.0001 (-6.2 se)
+     deciles with a non-zero alpha, per fold: 10, 10, 10, 0, 10, 0, 7, 5, 3   (out of 10)
+     J6 FAIL -- -0.0006 over deciles fitted on noise; per-stratum abstention does not find a subset the network genuinely helps on
+J7 CONTROL: THE WRONG CELL LINE
+     J7 VOID -- J3 did not pass, so there is nothing here to test
+J8 WHAT THIS CANNOT SHOW
+     J2 passing is not a result. A fitted blend weight buys a gain from any correction,
+     including the permuted one, and the permuted arm's own score is printed above so
+     that free lunch is visible rather than absorbed into a headline.
+     The network trains on SEVEN lines here, not eight, so it is slightly weaker than
+     loop 257's. That is the price of fitting alpha on a line it never saw.
+     Nine lines means the hypernetwork still generalises from seven examples; J7 is the
+     only thing standing between a positive and memorisation.
+     A stratum where the network helps names WHERE the interaction is learnable. It does
+     not name WHAT the interaction is, and nothing here recovers the mechanism loops
+     253 and 255 failed to find.
+     978 landmarks and shRNA, not a transcriptome and not a clean knockout.
+========================================================================================================
+  J1  PASS
+  J2  PASS
+  J3  FAIL
+  J4  FAIL
+  J5  FAIL
+  J6  FAIL
+  J7  VOID
+  2/6   [2268s]   (1 VOID: J7)
+========================================================================================================
+     written outputs/loop_network_as_aid.json

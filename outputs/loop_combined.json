@@ -1,0 +1,131 @@
+{
+  "test": "loop_combined",
+  "manifest": {
+    "manifest_version": 1,
+    "inputs": [
+      {
+        "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/_sphere_chain_v2.pkl",
+        "bytes": 8085619,
+        "hash": "c16be4b8707dbbc1",
+        "method": "sha256:full"
+      },
+      {
+        "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/_disto_feats.pkl",
+        "bytes": 6811264,
+        "hash": "82efa4a3a627779f",
+        "method": "sha256:full"
+      }
+    ],
+    "coverage": {
+      "available": 29286,
+      "used": 29286,
+      "selection": "all",
+      "fraction": 1.0
+    },
+    "seed": 1904,
+    "controls": [
+      "blocks joined on variant identity, not row position",
+      "byte-identical duplicate columns detected programmatically",
+      "allele frequency excluded as an ACMG criterion",
+      "Bonferroni bar 0.0025 for the fourth test of one hypothesis",
+      "30 within-gene label permutations with the pipeline refitted",
+      "structural columns shuffled within gene as a second null"
+    ],
+    "note": "nothing is recomputed here; both feature blocks were built and cached by loops 54 and 55 and this loop only fits",
+    "warnings": []
+  },
+  "gates": {
+    "C1 blocks join by key": true,
+    "C2 the combination adds": false,
+    "C3 the interaction adds": false,
+    "C4 the nulls collapse it": true
+  },
+  "arms": {
+    "per-residue": 0.9223811160711883,
+    "+pairwise": 0.92593682187822,
+    "+spheres": 0.9227481316486601,
+    "+both": 0.9258307081041246
+  },
+  "with_products": 0.9247766994608433,
+  "best_single": "+pairwise",
+  "mde": 0.013361396294395369,
+  "C2": {
+    "n": 136,
+    "p": 0.5525623620080503,
+    "win": 0.5147058823529411,
+    "delta": -0.00010611377409544705
+  },
+  "C3": {
+    "n": 136,
+    "p": 0.7087199102934201,
+    "win": 0.5073529411764706,
+    "delta": -0.0011601224173767698
+  },
+  "structure_shuffled": 0.9157433559941349,
+  "null_mean": 0.499759786211388,
+  "null_95": 0.5069234700438503,
+  "products": [
+    "dg_selfxcentrality",
+    "dg_selfxpae_min_far",
+    "dg_selfxnc12",
+    "dg_totalxcentrality",
+    "dg_totalxpae_min_far",
+    "dg_totalxnc12",
+    "dg_reachxcentrality",
+    "dg_reachxpae_min_far",
+    "dg_reachxnc12"
+  ],
+  "duplicates_removed": [],
+  "n_variants": 29286,
+  "n_genes": 141,
+  "seconds": 604.012451171875,
+  "log": [
+    "====================================================================================================",
+    "  LOOP 56 -- the sphere chain and the distogram together",
+    "====================================================================================================",
+    "\n  C1 THE BLOCKS JOIN BY KEY AND NOTHING IS SILENTLY MISSING",
+    "     29,286 variants, 141 genes, 55.7% pathogenic, keys unique: True",
+    "     lowest finite coverage: esm at 100.0%",
+    "     byte-identical duplicate columns found and removed: none",
+    "     C1 PASS",
+    "\n  the arms, all refitted here on the same gene-grouped folds",
+    "     per-residue only                  0.9224   (136 genes, 7 features)   11s",
+    "     + pairwise (distogram/PAE)        0.9259   (136 genes, 14 features)   32s",
+    "     + spheres (chain perturbation)    0.9227   (136 genes, 10 features)   43s",
+    "     + BOTH                            0.9258   (136 genes, 17 features)   64s",
+    "\n  C2 THE COMBINATION ADDS OVER THE BEST SINGLE BLOCK",
+    "     best single block: +pairwise at 0.9259",
+    "     minimum detectable effect +0.0134 (per-gene sd 0.0556) -- printed BEFORE the comparison",
+    "     BOTH over +pairwise: delta -0.0001, wins 51.5%, p 5.53e-01",
+    "     bar is Bonferroni-corrected to 0.0025, because this is the FOURTH test of 'does structure add'",
+    "     C2 FAIL  -- a fail means the pair adds less than +0.0134 together",
+    "\n  C3 THE INTERACTION IS TESTED EXPLICITLY",
+    "     9 explicit products: dg_selfxcentrality, dg_selfxpae_min_far, dg_selfxnc12, dg_totalxcentrality ...",
+    "     + BOTH + products                 0.9248   (136 genes, 26 features)",
+    "     over +pairwise: delta -0.0012, wins 50.7%, p 7.09e-01",
+    "     C3 FAIL",
+    "\n  C4 THE NULLS COLLAPSE IT",
+    "     labels permuted within gene, refitted 30x: mean 0.4998, 95th 0.5069",
+    "     all structural columns shuffled within gene (marginals kept, alignment destroyed): 0.9157",
+    "     against the real 0.9258 and the per-residue-only 0.9224",
+    "     C4 PASS",
+    "\n====================================================================================================",
+    "  C1 blocks join by key                   PASS",
+    "  C2 the combination adds                 FAIL",
+    "  C3 the interaction adds                 FAIL",
+    "  C4 the nulls collapse it                PASS",
+    "  TWO NULLS, ADDED, ARE STILL NULL. The distogram block adds +0.0036 on its",
+    "  own, the sphere chain +0.0004 on its own, and together +0.0034 over per-residue",
+    "  features alone. Writing the interaction down explicitly as 9 product columns",
+    "  gives 0.9248, which is -0.0012 against the best single block.",
+    "  Shuffling every structural column within gene -- keeping their marginals and destroying",
+    "  their alignment to the fold -- costs +0.0101. That is the whole finding in one",
+    "  number: the structure columns are carrying almost nothing that depends on being aligned",
+    "  to the structure.",
+    "  FOUR TESTS OF ONE HYPOTHESIS, all negative, on 29,286 variants in 141 genes. The point-",
+    "  mutation row is answered by WHERE a residue sits and how conserved it is, and three",
+    "  different ways of asking what the fold does about it have each come back inside the noise.",
+    "====================================================================================================",
+    "    manifest: 2 inputs, coverage 29286/29286 (100.0%) by 'all', seed 1904, controls 6"
+  ]
+}

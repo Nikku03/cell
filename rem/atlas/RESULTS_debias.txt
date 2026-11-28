@@ -1,0 +1,179 @@
+====================================================================================================
+ITEM 2 -- AGGREGATE DEBIAS CORRECTION, SPEC SECTION 5.2 RULE A
+====================================================================================================
+  sigma = 0.40   exp(sigma)-1 = 49.2% (the spec's '49%')   CV = 41.7%
+  debias factor exp(sigma^2/2) = 1.083287   predicted bias = 8.329%
+  declared seed = 20260902   realisations per distributional claim = 4000
+
+----------------------------------------------------------------------------------------------------
+GENE ENSEMBLE -- calibrated ONLY to the spec's error-free column, then checked
+----------------------------------------------------------------------------------------------------
+  lambda log-uniform on [1.0, 8.6789]; LAM_HI solved so mean log10 P = -0.825116
+  achieved ensemble mean log10 P = -0.825116
+  per-gene tail probability: min 0.1000  median 0.1453  max 0.3017   (O(0.1-0.9) band)
+  genes whose q90 fails 'smallest count with CDF >= 0.9': 0
+  genes with a vacuous question (P = 1): 0
+  EVENT-DEFINITION ARITHMETIC: with X >= q90, true log10 P(m=10) = -7.72;
+    with the strict reading X > q90 it is -10.86, and can never exceed -10.00,
+    so the strict reading is incompatible with the spec's own -7.87. X >= q90 it is.
+
+  PREDICTION CHECK -- true (error-free) log10 P; only the m=16000 value was fitted:
+           m        spec true         measured      rel err
+          10            -7.87            -7.72       1.96%
+         100           -82.67           -81.20       1.78%
+        1000          -831.90          -824.64       0.87%
+       16000        -13201.85        -13227.78       0.20%  <- calibrated
+
+----------------------------------------------------------------------------------------------------
+E-exact  IS THE PER-GENE FORM ACTUALLY EXACT?  (the spec's premise, gated not assumed)
+----------------------------------------------------------------------------------------------------
+  birth-death law vs closed-form Poisson, worst RELATIVE error : 2.522e-13
+  numerical mean vs k/mu, worst RELATIVE error                 : 6.140e-16
+  tail probabilities vs 60-digit mpmath, worst RELATIVE error  : 2.564e-15
+  (truncation from truncation_cap(), i.e. T + max(40, 3 sigma), not the fixed T+40)
+
+----------------------------------------------------------------------------------------------------
+SPEC 5.1 AGGREGATE TABLE -- reproduced. NOTE: the spec's column is ONE realisation and
+its seed is not given, so the per-N values cannot be matched draw for draw; what is
+reproducible is the SHAPE (fall, then park) and the LIMIT. Both columns are shown.
+----------------------------------------------------------------------------------------------------
+           N     spec |err|     seed |err|    seed-mean err        seed sd
+           1          51.6%         48.57%           8.868%        43.409%
+          10           5.2%         21.31%           9.738%        16.159%
+         100             --          6.01%           8.223%         5.313%
+        1000           6.9%          6.83%           8.419%         1.743%
+       16000           7.9%          8.75%           8.361%         0.418%
+
+----------------------------------------------------------------------------------------------------
+G4.1 / T10  DEBIASED AGGREGATE ERROR AT N = 16,000
+----------------------------------------------------------------------------------------------------
+  raw      : +8.7501%
+  debiased : +0.3890%   (Rule A, divided by exp(sigma^2/2) = 1.083287)
+  CEILING CHECK: residual is pure noise, predicted sd = 0.3843% so the 1% bar sits at 2.6 sd.
+  across 1000 seeds: median 0.2429%  p90 0.6288%  WORST 1.2482%  P(|err| > 1%) = 0.3%
+  the gate is therefore a 99.7%-probability gate, not a guarantee: the worst of the 1000 seeds
+  lands at 1.2482%, so a single passing realisation is not proof the rule always
+  clears 1%. It clears it for all but the noisiest few realisations in 1000.
+  DECIDED ON THE WORST OF 1000 SEEDS (1.2482%), not the declared seed (0.3890%, which would PASS).
+
+----------------------------------------------------------------------------------------------------
+D-control  NEGATIVE CONTROL (mandatory)
+----------------------------------------------------------------------------------------------------
+  (a) sigma = 0
+      multipliers all exactly 1.0            : True
+      debias factor exp(0/2)                 : 1.0
+      raw aggregate error                    : 0.0
+      DEBIASED aggregate error               : 0.0
+      conjunctive log10 P shift at m = 1000  : 0.0
+      the bug this catches, executed: a debias wired to a hard-coded sigma = 0.4
+      instead of the per-gene sigma leaves -7.688% here.
+  (b) sigma = 0.4, N = 10 -- the debias must NOT remove noise
+      Rule A            median |err| : 10.233%   (noise sd 15.4%, so median |.| = 10.4%)
+      empirical rescale median |err| : 0.000e+00%   <- fits noise, learns nothing
+      the two are separated by 1.0e+299x, so the control can tell them apart
+
+----------------------------------------------------------------------------------------------------
+D-bias  MECHANISM: does the raw error converge to exp(sigma^2/2) - 1 = 8.329%?
+----------------------------------------------------------------------------------------------------
+            N     seed raw err    seed-mean raw      spread sd        theory sd
+           10         -21.307%           7.829%        16.233%          16.652%
+          100           6.008%           8.389%         5.386%           5.266%
+         1000           6.832%           8.316%         1.640%           1.665%
+        16000           8.750%           8.328%         0.414%           0.416%
+       160000           8.528%           8.331%         0.122%           0.132%
+  spec measured park: 7.87%   predicted exp(sigma^2/2)-1: 8.329%
+  noise dies as 1/sqrt(N), the bias does not -- that is the whole mechanism.
+  ARITHMETIC ON THE SPEC'S OWN GAP: it reports predicted 8.33% vs measured 7.87%
+  as though the prediction fell short. At N = 16,000 one realisation has sd 0.414%,
+  so 7.87% sits 1.11 sd below 8.33%. That gap is seed noise, not a defect in the
+  formula: at N = 160,000 the mean over seeds lands at 8.331%.
+
+----------------------------------------------------------------------------------------------------
+SPEC 5.1 CONJUNCTIVE TABLE -- reproduced on the declared seed
+----------------------------------------------------------------------------------------------------
+           m     spec true          true    spec assem     assembled   err/spec
+          10         -7.87         -7.72         -9.87        -12.83      5.11/2.0
+         100        -82.67        -81.20        -90.42        -90.84      9.64/7.8
+        1000       -831.90       -824.64       -990.77       -929.06    104.41/158.9
+       16000     -13201.85     -13227.78     -15513.27     -14497.40   1269.62/2311.4
+  per-gene log10 shift: measured mean -0.0794 sd 0.567 min -4.74 max +0.99
+  spec-implied per-gene shift: -0.14446  (= (-15513.27 + 13201.85)/16000)
+  ratio measured/spec = 0.549
+
+  REPORTED, NOT GATED -- the spec sets no bar at m = 1000 or 16,000, but this run
+  falls short of its error column there and that must not be buried:
+    m = 1000   measured    104.41 orders   spec     158.9   ratio 0.657
+    m = 16000  measured   1269.62 orders   spec    2311.4   ratio 0.549
+  DIAGNOSIS, with the arithmetic. At large m the error is m * (per-gene log-tail bias),
+  so the whole shortfall is one number: my ensemble biases each gene by -0.0794
+  orders, the spec's by -0.14446. The question is whether the information the spec
+  gives PINS that number. It does not -- every ensemble in the sweep below reproduces
+  the ENTIRE error-free column, and the error column still moves by more than 10x:
+    ensemble (all match the true column)     mean log10 P   per-gene shift   err at 16000
+    log-uniform [1.0, 8.679]                  -0.824968         -0.08266           1323  <- GATED
+    log-uniform [0.9, 11.586]                 -0.825450         -0.09797           1568
+    log-uniform [0.8, 14.326]                 -0.825471         -0.11005           1761
+    log-uniform [0.7, 15.697]                 -0.824170         -0.11261           1802
+    log-uniform [0.6, --]                cannot reach the true column at any upper edge
+    mix 54% at 1.5, rest at 20                -0.825449         -0.23430           3749
+    mix 51% at 1.5, rest at 50                -0.825256         -0.55648           8904
+    mix 37% at 1.0, rest at 100               -0.825454         -1.30661          20906
+    the spec's (not stated)                   -0.825116         -0.14446         2311.4  <- SPEC
+  Every ensemble above reproduces the spec's ERROR-FREE column and none was fitted to
+  its error column, yet the error at m = 16,000 spans 1323 to 20906 orders -- a
+  factor of 16. The spec's 2311.4 lies inside that span. So its conjunctive error
+  magnitudes are UNDER-DETERMINED by section 5.1 as written: they depend on the
+  gene-mean distribution, which the spec never states, and no choice of it can be
+  read off the numbers given. This is a gap in the spec, not a defect in Rule A, and
+  it does not touch the SCALING EXPONENT, which is what item 7's cap actually rests
+  on: every ensemble above gives error = m * (a fixed per-gene bias), i.e. a = 1.
+
+  T12  CONJUNCTIVE ERROR AT m = 10
+    declared-seed single draw : 5.11 orders
+    across 4000 draws: median 1.23  sd 1.28  [p10 0.23, p90 3.32]
+    spec 2.0 orders lies inside the [p10, p90] band: True
+    CEILING NOTE: the sd of a single 10-gene draw is 1.28 orders, i.e. the same
+    size as the quantity gated, so a one-draw equality test could not have decided.
+
+----------------------------------------------------------------------------------------------------
+D-scaling  EXPONENT OF error ~ m^a  OVER m IN {10, 100, 1000}
+----------------------------------------------------------------------------------------------------
+    spec's claimed exponent                          : 1.060
+    THE SPEC'S OWN TABLE refit on m in {10,100,1000} : 0.950
+    THE SPEC'S OWN TABLE refit on all four m         : 0.991
+    this run, declared seed                          : 0.655
+    this run, median over 4000 draws                 : 0.913  [p10 0.694, p90 1.278]
+    SHARP DISCRIMINATOR at large m, where bias dominates and noise is negligible:
+      error(16000)/error(1000): linear predicts 16.00, sqrt predicts 4.00
+      spec 14.55 (a = 0.966)   this run 12.16 (a = 0.901)
+    => LINEAR in gene count. The module-size cap of item 7 is justified: conjunctive
+       error has no ceiling, it accumulates one biased log-tail per gene added.
+    median 0.913  [p10 0.694, p90 1.278]  declared seed 0.663
+    DECIDED ON THE FURTHER TAIL OF THAT DISTRIBUTION (0.694), not the median.
+    A3: the 3-point fit is downward-biased -- the across-seed large-m exponent is
+    a = 1.0016, ABOVE the spec's own table refit of 0.950. The attack on the spec's
+    1.06 is withdrawn; the LINEAR-not-sqrt conclusion stands.
+
+----------------------------------------------------------------------------------------------------
+EXTRA FINDING (not a required gate) -- RULE A IS WRITTEN ON THE WRONG VARIABLE
+----------------------------------------------------------------------------------------------------
+  if the lognormal error lands on mu (a denominator rate), E[1/L] = exp(s^2/2) too,
+  so the raw aggregate bias is still +7.788%.
+  Rule A applied LITERALLY (mu_corrected = mu_raw / exp(s^2/2)) : +16.766%
+  dividing the estimated MEAN by exp(s^2/2) instead             : -0.499%
+  exp(s^2/2)^2 - 1 = 17.351% -- the literal rule DOUBLES the bias it was meant to
+  remove. The invariant statement is 'divide the estimated MEAN', not 'divide mu'.
+
+====================================================================================================
+GATE SUMMARY -- EXPECTED IS THE SPEC NUMBER, MEASURED IS THIS RUN
+====================================================================================================
+  GATE                       EXPECTED               MEASURED   VERDICT
+  E-exact                     < 1e-12               2.52e-13   PASS
+  G4.1/T10     < 1.000% (worst of 1000) +1.2482% worst / +0.3890% seed   FAIL
+  D-control-a             exactly 0.0                    0.0   PASS
+  D-control-b                  > 5.0%                10.233%   PASS
+  D-bias                       8.329%                 8.331%   PASS
+  T12                      2.0 orders             1.23 (med)   PASS
+  D-scaling    1.060 in [0.80,1.30] (further tail)   0.694 (median 0.913)   FAIL
+====================================================================================================
+  5 of 7 gates pass

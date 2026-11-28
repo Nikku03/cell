@@ -1,0 +1,27 @@
+{
+ "n_genes": 7211,
+ "spearman_CONTROL_ppi_only": 0.108,
+ "spearman_EXPRESSION_only": 0.15,
+ "spearman_ACCESSIBILITY_only": 0.068,
+ "spearman_NEIGHBOURHOOD_only": 0.05,
+ "spearman_ctrl_plus_expr": 0.203,
+ "spearman_ctrl_expr_plus_ACCESS": 0.221,
+ "spearman_ctrl_expr_plus_NEIGH": 0.2,
+ "spearman_FULL": 0.219,
+ "importance": {
+  "atac_promoter": 0.097,
+  "enh": 0.086,
+  "log_ppm": 0.155,
+  "ppi_deg": 0.309,
+  "regulon": 0.125,
+  "dep_frac": 0.103,
+  "is_tf": 0.02,
+  "neigh_tide": 0.105
+ },
+ "corr_atac_vs_expr": 0.042,
+ "corr_atac_vs_tide": -0.095,
+ "corr_ppi_vs_tide": 0.095,
+ "corr_expr_vs_tide": 0.126,
+ "verdict": "MISSING-WIRE TEST -- HONEST NEGATIVE on the promoter-ATAC hypothesis, with real caveats. Predicting each gene's TIDE score (usual-suspect mover frequency, 7211 genes): baseline EXPRESSION reaches Spearman 0.15, PPI/regulon control 0.108, and ACCESSIBILITY (ATAC promoter signal + enhancer count) only 0.068 -- accessibility is the WEAKEST group, not the strongest. It does NOT beat the protein circuits, and it barely adds beyond them: expression+PPI = 0.203, +ATAC -> 0.221 (delta +0.018). Strikingly, ATAC promoter signal correlates NEGATIVELY with the tide (-0.095): the most-open promoters are HOUSEKEEPING genes that are STABLE and do NOT move -- the opposite of the 'open doors get bound' prediction. The tide movers are inducible/poised stress genes, not the constitutively wide-open ones. Top feature importance is PPI degree (0.309), then expression, then regulon; ATAC and enhancer-count are near the bottom. SO: promoter chromatin accessibility is NOT the missing wire for the tide. BUT two honest caveats keep the broader idea alive: (1) NO static per-gene feature explains the tide well -- even the FULL model is only 0.219, so the 'usual suspects' are only weakly a fixed per-gene property; (2) I tested promoter ATAC + a crude genomic-neighbourhood TAD PROXY (Spearman 0.05, weak) -- I did NOT test real Hi-C 3D TAD co-localisation or the metabolic-messenger (Acetyl-CoA/ATP -> HAT -> global chromatin) wire, which are the genuinely untested parts of the hypothesis and the honest next steps. NET: the specific 'open chromatin routes the tide' claim is falsified here (accessibility underperforms and anti-correlates), the tide stays weakly-and-best explained by network connectivity + expression, and the real 3D-Hi-C and metabolite versions of the missing-wire idea remain open and worth a dedicated fetch.",
+ "note": "MISSING-WIRE TEST -- HONEST NEGATIVE on the promoter-ATAC hypothesis, with real caveats. Predicting each gene's TIDE score (usual-suspect mover frequency, 7211 genes): baseline EXPRESSION reaches Spearman 0.15, PPI/regulon control 0.108, and ACCESSIBILITY (ATAC promoter signal + enhancer count) only 0.068 -- accessibility is the WEAKEST group, not the strongest. It does NOT beat the protein circuits, and it barely adds beyond them: expression+PPI = 0.203, +ATAC -> 0.221 (delta +0.018). Strikingly, ATAC promoter signal correlates NEGATIVELY with the tide (-0.095): the most-open promoters are HOUSEKEEPING genes that are STABLE and do NOT move -- the opposite of the 'open doors get bound' prediction. The tide movers are inducible/poised stress genes, not the constitutively wide-open ones. Top feature importance is PPI degree (0.309), then expression, then regulon; ATAC and enhancer-count are near the bottom. SO: promoter chromatin accessibility is NOT the missing wire for the tide. BUT two honest caveats keep the broader idea alive: (1) NO static per-gene feature explains the tide well -- even the FULL model is only 0.219, so the 'usual suspects' are only weakly a fixed per-gene property; (2) I tested promoter ATAC + a crude genomic-neighbourhood TAD PROXY (Spearman 0.05, weak) -- I did NOT test real Hi-C 3D TAD co-localisation or the metabolic-messenger (Acetyl-CoA/ATP -> HAT -> global chromatin) wire, which are the genuinely untested parts of the hypothesis and the honest next steps. NET: the specific 'open chromatin routes the tide' claim is falsified here (accessibility underperforms and anti-correlates), the tide stays weakly-and-best explained by network connectivity + expression, and the real 3D-Hi-C and metabolite versions of the missing-wire idea remain open and worth a dedicated fetch."
+}

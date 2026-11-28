@@ -1,0 +1,8 @@
+{
+ "epi + TF identity (311)": 0.6075574090157142,
+ "+ CTCF-count contact  [the 0.663 bar]": 0.6631813437390706,
+ "+ ROUSE only": 0.6106824474493515,
+ "+ ROUSE + CTCF-count": 0.6681144453774874,
+ "+ ROUSE [shuffled CTCF]": 0.5975510116521655,
+ "verdict": "PARTIAL -- Rouse contact is real (beats its shuffled anchors) but adds nothing beyond the CTCF-count feature. The topology is already captured by counting; the physics is redundant."
+}

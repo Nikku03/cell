@@ -1,0 +1,196 @@
+{
+ "turn": 2,
+ "track": "cell",
+ "fingerprint": "575904808907e69b",
+ "fingerprint_files": {
+  "cell_run.json": "093ccfb37eae5baf",
+  "cell_model_audit.json": "4330ced2ff9220f7",
+  "capability_audit.json": "92eb44584d7d60d4",
+  "loop_b4_fix.json": "b20eaea39cf215da",
+  "cell_record_fix.json": "2777fa6fc702d308",
+  "cell_layers.json": "f33e057e84e53d48",
+  "colab/cell_assembled.py": "1a10a15ac041d424"
+ },
+ "check_source_hash": "aa6bb3d2acb28162",
+ "stalled": true,
+ "plan": [
+  {
+   "id": "C1",
+   "change": "correct the kcat layer to cite loop 134 C3, not the leaking B4",
+   "kind": "record",
+   "depends_on": [],
+   "needs_files": [
+    "colab/cell_assembled.py",
+    "outputs/loop_b4_fix.json"
+   ],
+   "targets_layer": "what the kcat model actually learned",
+   "gate": "the layer's evidence field must cite a test whose control was shown capable of moving before its result was read -- loop 134 C4 then C3",
+   "mechanism": "the layer currently asserts 'EVERYTHING THE MODEL KNOWS IS ALREADY IN THE EC NUMBER' on the strength of a residual that leaked and a baseline that was in-sample. The conclusion survived; the evidence for it did not",
+   "cites": "record_behind_measurement",
+   "derivation": null,
+   "predicted_gain": 0.0,
+   "nearest_refuted": "650M with mean pooling",
+   "distinguisher": "this corrects a record rather than proposing a model change",
+   "falsifier": "loop 134 C3 does not in fact support the layer's claim, in which case the layer's STATUS is wrong too and not merely its citation",
+   "cost_min": 5,
+   "promised_rmse": null,
+   "layer_exists": true,
+   "deficit_evidence": "layer cites the B4 residual (True); loop_b4_fix.json present (True)",
+   "missing_inputs": [],
+   "blockers": [],
+   "checks": {
+    "T1_cites_measured_deficit": true,
+    "T2_gain_exceeds_noise": null,
+    "T3_has_falsifier": true,
+    "T4_not_already_refuted": true,
+    "T5_not_circular": true,
+    "T6_respects_bounds": null,
+    "T7_gain_is_derived": null,
+    "T8_inputs_exist": true,
+    "T10_names_layer_and_gate": true
+   },
+   "checks_not_applicable": [
+    "T2_gain_exceeds_noise",
+    "T6_respects_bounds",
+    "T7_gain_is_derived"
+   ],
+   "observed": {
+    "value": {
+     "before": "FAILED",
+     "after": "FAILED"
+    },
+    "ci": null,
+    "what": "status unchanged by the correction, G2",
+    "from": "cell_record_fix.json"
+   },
+   "rejected_on": [],
+   "verdict": "MEASURED",
+   "blocked_on": [],
+   "measured_note": "{'before': 'FAILED', 'after': 'FAILED'} (status unchanged by the correction, G2)"
+  },
+  {
+   "id": "C2",
+   "change": "record per-layer status in cell_run.json, not only four counts",
+   "kind": "record",
+   "depends_on": [],
+   "needs_files": [
+    "colab/cell_assembled.py"
+   ],
+   "targets_layer": null,
+   "gate": "a rerun must be able to show WHICH layer changed status, not only that a count moved",
+   "mechanism": "cell_run.json stores {'RUNS': 11, 'CLOSES': 9, 'FAILED': 12, 'STATIC': 10}. Two layers swapping status is invisible to that artefact, so the improver's Q3 on this track cannot answer 'what changed' from the record",
+   "cites": "artefact_cannot_show_change",
+   "derivation": null,
+   "predicted_gain": 0.0,
+   "nearest_refuted": "more kcat records",
+   "distinguisher": "changes what is RECORDED, not what is measured",
+   "falsifier": "the counts already differ from the current table, which would mean the artefact is not merely coarse but stale",
+   "cost_min": 5,
+   "promised_rmse": null,
+   "layer_exists": true,
+   "deficit_evidence": "cell_run.json['layers'] = {'RUNS': 11, 'CLOSES': 9, 'FAILED': 12, 'STATIC': 10}; per-layer status present: False",
+   "missing_inputs": [],
+   "blockers": [],
+   "checks": {
+    "T1_cites_measured_deficit": true,
+    "T2_gain_exceeds_noise": null,
+    "T3_has_falsifier": true,
+    "T4_not_already_refuted": true,
+    "T5_not_circular": true,
+    "T6_respects_bounds": null,
+    "T7_gain_is_derived": null,
+    "T8_inputs_exist": true,
+    "T10_names_layer_and_gate": true
+   },
+   "checks_not_applicable": [
+    "T2_gain_exceeds_noise",
+    "T6_respects_bounds",
+    "T7_gain_is_derived"
+   ],
+   "observed": {
+    "value": 47,
+    "ci": null,
+    "what": "per-layer artefact written, G4",
+    "from": "cell_record_fix.json"
+   },
+   "rejected_on": [],
+   "verdict": "MEASURED",
+   "blocked_on": [],
+   "measured_note": "47 (per-layer artefact written, G4)"
+  },
+  {
+   "id": "C3",
+   "change": "find the non-transcriptional source of protein dynamics",
+   "kind": "explicit",
+   "depends_on": [],
+   "needs_files": [
+    "colab/data/protein_dynamics_source.tsv.gz"
+   ],
+   "targets_layer": "protein dynamics from transcription alone",
+   "gate": "a candidate mechanism must predict, on held-out genes, which of the 362 proteins that oscillate without their transcript will do so",
+   "mechanism": "three FAILED layers converge on this and none of them names a replacement. Loops 121, 122 and 123 eliminated degrons, translation control and relocalisation in turn",
+   "cites": "three_failed_layers",
+   "derivation": null,
+   "predicted_gain": 0.0,
+   "nearest_refuted": "predict kcat/KM instead",
+   "distinguisher": "different subsystem entirely",
+   "falsifier": "no dataset distinguishes the 362 from the 38, in which case this is not a plan but a wish",
+   "cost_min": 240,
+   "promised_rmse": null,
+   "layer_exists": true,
+   "deficit_evidence": "5 FAILED layers on that axis: ['protein dynamics from transcription alone', 'chromatin->transcription', 'regulation->transcription', 'TF network as a predictor of transcript dynamics', 'CollecTRI as a replacement network']",
+   "missing_inputs": [],
+   "blockers": [],
+   "checks": {
+    "T1_cites_measured_deficit": true,
+    "T2_gain_exceeds_noise": null,
+    "T3_has_falsifier": true,
+    "T4_not_already_refuted": true,
+    "T5_not_circular": true,
+    "T6_respects_bounds": null,
+    "T7_gain_is_derived": null,
+    "T8_inputs_exist": true,
+    "T10_names_layer_and_gate": true
+   },
+   "checks_not_applicable": [
+    "T2_gain_exceeds_noise",
+    "T6_respects_bounds",
+    "T7_gain_is_derived"
+   ],
+   "observed": null,
+   "rejected_on": [],
+   "verdict": "ACCEPT",
+   "blocked_on": []
+  }
+ ],
+ "n_rejected": 0,
+ "n_blocked": 0,
+ "n_executable": 0,
+ "stall_reason": "input fingerprint unchanged since the previous turn and nothing was executed in between, so any plan emitted here would be a copy of the last one",
+ "reflection": {
+  "R1_fingerprint": {
+   "changed": false,
+   "moved_artefacts": [],
+   "why": "NOTHING CHANGED -- no new measurement has entered this track"
+  },
+  "R2_predictions_measured": [],
+  "R2_note": "no prediction has been measured yet; every predicted_gain in this track is still an unfalsified opinion",
+  "R3_plan_changed": {
+   "changed": false,
+   "detail": "IDENTICAL to the previous turn -- this turn added nothing"
+  },
+  "R4_drift": {
+   "events": [],
+   "n_rejected": 0,
+   "n_blocked": 0,
+   "check_source_hash": "aa6bb3d2acb28162",
+   "verdict": "no drift detected"
+  },
+  "R5_waiting_on": [],
+  "R6_finished": {
+   "stalled": true,
+   "executable_remaining": 0,
+   "verdict": "FINISHED -- no executable item and no artefact can change without new data"
+  }
+ }
+}

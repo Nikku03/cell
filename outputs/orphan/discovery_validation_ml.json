@@ -1,0 +1,7 @@
+{
+  "ml_combiner_auc_overall": 0.753,
+  "ml_combiner_auc_hard": 0.522,
+  "n_hard": 479,
+  "fixed_scorer_hard": 0.516,
+  "note": "discovery holdout re-run with the trained signal_combiner ML model"
+}

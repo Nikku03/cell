@@ -1,0 +1,413 @@
+{
+ "test": "enhancer co-binding",
+ "gates": {
+  "Z1": true,
+  "Z2": false,
+  "Z3": true,
+  "Z4": true,
+  "Z5": false,
+  "Z6": false,
+  "Z7": true,
+  "Z8": true
+ },
+ "n_factors": 191,
+ "promoter_cover": 0.9759637188208616,
+ "frac_cells_bound_elements": 0.1305267609121769,
+ "frac_cells_bound_promoters": 0.2931675986275837,
+ "arms": {
+  "distance": {
+   "r1": [
+    0.5829145728643216,
+    0.5879396984924623,
+    0.5979899497487438,
+    0.5979899497487438,
+    0.5979899497487438
+   ],
+   "ap": [
+    0.2829050454204365,
+    0.28170448972840684,
+    0.28917222758182526,
+    0.28982639252315684,
+    0.2786115917902298
+   ]
+  },
+  "base": {
+   "r1": [
+    0.592964824120603,
+    0.6130653266331658,
+    0.5778894472361809,
+    0.6180904522613065,
+    0.6080402010050251
+   ],
+   "ap": [
+    0.30260185577031584,
+    0.3287847881594063,
+    0.32348946945808404,
+    0.3204824357258981,
+    0.3345418287490969
+   ]
+  },
+  "l183_motif": {
+   "r1": [
+    0.5979899497487438,
+    0.6381909547738693,
+    0.6582914572864321,
+    0.6130653266331658,
+    0.628140703517588
+   ],
+   "ap": [
+    0.3346869930792272,
+    0.3354873672099305,
+    0.33021231791665456,
+    0.32918119024048825,
+    0.35887860005697003
+   ]
+  },
+  "chip_reg": {
+   "r1": [
+    0.592964824120603,
+    0.6130653266331658,
+    0.5778894472361809,
+    0.6180904522613065,
+    0.6080402010050251
+   ],
+   "ap": [
+    0.30260185577031584,
+    0.3287847881594063,
+    0.32348946945808404,
+    0.3204824357258981,
+    0.3345418287490969
+   ]
+  },
+  "+overlap": {
+   "r1": [
+    0.6432160804020101,
+    0.6331658291457286,
+    0.6381909547738693,
+    0.628140703517588,
+    0.6331658291457286
+   ],
+   "ap": [
+    0.42797100425084017,
+    0.4530107585980063,
+    0.43863234417291325,
+    0.4475403171666596,
+    0.4492859971585015
+   ]
+  },
+  "+pmi": {
+   "r1": [
+    0.6582914572864321,
+    0.6884422110552764,
+    0.6432160804020101,
+    0.6633165829145728,
+    0.6432160804020101
+   ],
+   "ap": [
+    0.4331706023839301,
+    0.4531113367278872,
+    0.4582862709693576,
+    0.4586605862069447,
+    0.4515811320513431
+   ]
+  },
+  "+intrinsic": {
+   "r1": [
+    0.6683417085427136,
+    0.6834170854271356,
+    0.6482412060301508,
+    0.6834170854271356,
+    0.6733668341708543
+   ],
+   "ap": [
+    0.45393104505801923,
+    0.45118421479819215,
+    0.43765901964611503,
+    0.442003557006506,
+    0.4560148802569989
+   ]
+  },
+  "ALL": {
+   "r1": [
+    0.6884422110552764,
+    0.6683417085427136,
+    0.6683417085427136,
+    0.6633165829145728,
+    0.678391959798995
+   ],
+   "ap": [
+    0.4728131959672758,
+    0.4851845184173767,
+    0.4896759808510832,
+    0.49214614724538935,
+    0.5004481858942802
+   ]
+  },
+  "+pmi_perm": {
+   "r1": [
+    0.6532663316582915,
+    0.6733668341708543,
+    0.6582914572864321,
+    0.6381909547738693,
+    0.6633165829145728
+   ],
+   "ap": [
+    0.4155983382683681,
+    0.40242894872793983,
+    0.40360182947730333,
+    0.39508525811860984,
+    0.4178833898888341
+   ]
+  }
+ },
+ "deltas": {
+  "Z2": {
+   "d_r1": [
+    -0.005025125628140725,
+    -0.025125628140703515,
+    -0.08040201005025127,
+    0.005025125628140725,
+    -0.0201005025125629
+   ],
+   "d_ap": [
+    -0.03208513730891138,
+    -0.006702579050524182,
+    -0.006722848458570518,
+    -0.008698754514590179,
+    -0.02433677130787315
+   ],
+   "mean_r1": -0.025125628140703536,
+   "sem_r1": 0.01482199115955038,
+   "mean_ap": -0.015709218128093883,
+   "n_pos_r1": 1,
+   "n_ap_pass": 0
+  },
+  "Z3": {
+   "d_r1": [
+    0.05025125628140703,
+    0.02010050251256279,
+    0.06030150753768848,
+    0.01005025125628145,
+    0.025125628140703515
+   ],
+   "d_ap": [
+    0.12536914848052433,
+    0.12422597043860001,
+    0.1151428747148292,
+    0.12705788144076152,
+    0.1147441684094046
+   ],
+   "mean_r1": 0.03316582914572865,
+   "sem_r1": 0.009481388072418698,
+   "mean_ap": 0.12130800869682394,
+   "n_pos_r1": 5,
+   "n_ap_pass": 5
+  },
+  "Z4": {
+   "d_r1": [
+    0.0653266331658291,
+    0.07537688442211055,
+    0.0653266331658292,
+    0.045226130653266305,
+    0.035175879396984966
+   ],
+   "d_ap": [
+    0.13056874661361428,
+    0.12432654856848091,
+    0.13479680151127355,
+    0.13817815048104665,
+    0.11703930330224621
+   ],
+   "mean_r1": 0.05728643216080402,
+   "sem_r1": 0.007385396209396512,
+   "mean_ap": 0.12898191009533233,
+   "n_pos_r1": 5,
+   "n_ap_pass": 5
+  },
+  "Z5": {
+   "d_r1": [
+    0.005025125628140614,
+    0.015075376884422065,
+    -0.015075376884422065,
+    0.025125628140703515,
+    -0.02010050251256279
+   ],
+   "d_ap": [
+    0.01757226411556201,
+    0.0506823879999474,
+    0.05468444149205426,
+    0.06357532808833488,
+    0.03369774216250898
+   ],
+   "mean_r1": 0.0020100502512562677,
+   "sem_r1": 0.008645553032203632,
+   "mean_ap": 0.0440424327716815,
+   "n_pos_r1": 3,
+   "n_ap_pass": 5
+  },
+  "Z6": {
+   "d_r1": [
+    0.07537688442211055,
+    0.07035175879396982,
+    0.07035175879396993,
+    0.0653266331658291,
+    0.0653266331658292
+   ],
+   "d_ap": [
+    0.1513291892877034,
+    0.12239942663878584,
+    0.11416955018803099,
+    0.12152112128060794,
+    0.121473051507902
+   ],
+   "mean_r1": 0.06934673366834172,
+   "sem_r1": 0.0018802298425999696,
+   "mean_ap": 0.12617846778060604,
+   "n_pos_r1": 5,
+   "n_ap_pass": 5
+  },
+  "Z7": {
+   "d_r1": [
+    0.10552763819095479,
+    0.08040201005025127,
+    0.07035175879396982,
+    0.0653266331658291,
+    0.08040201005025127
+   ],
+   "d_ap": [
+    0.1899081505468393,
+    0.20348002868896986,
+    0.20050375326925796,
+    0.20231975472223251,
+    0.22183659410405038
+   ],
+   "mean_r1": 0.08040201005025124,
+   "sem_r1": 0.006926657664366956,
+   "mean_ap": 0.20360965626627,
+   "n_pos_r1": 5,
+   "n_ap_pass": 5
+  }
+ },
+ "best_arm": "ALL",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "colab/data/tf_domains.json",
+    "bytes": 317744,
+    "hash": "19829e4c188e98e1",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 11933,
+   "used": 11933,
+   "selection": "loop 173's pairs",
+   "fraction": 1.0
+  },
+  "seed": 91173,
+  "controls": [
+   "the overlap re-expressed as PMI against both degrees",
+   "promoter factor sets permuted across genes, counts held exactly",
+   "the element-intrinsic arm gated on the pattern loop 178 predicts",
+   "measured presence put head to head with motif presence"
+  ],
+  "note": "measured co-binding and accessibility on the stage-two task",
+  "warnings": [
+   "selection 'loop 173's pairs' is not one of ('all', 'random', 'stratified', 'prefix', 'filtered', 'manual'); coverage cannot be interpreted"
+  ]
+ },
+ "seconds": 170.3754870891571,
+ "log": [
+  "========================================================================================================",
+  "LOOP 185  CAN MEASURED CO-BINDING AND ACCESSIBILITY CLOSE STAGE TWO?",
+  "========================================================================================================",
+  "  PREDECLARED: >= 90% of promoters must carry a bound factor; every arm",
+  "  on loop 173's E3 bar -- paired R@1 positive in >= 4/5 past 3 sem AND paired",
+  "  AUPRC >= +0.01 in >= 4/5; the overlap must survive being expressed as",
+  "  pointwise mutual information against its own two degrees; the promoter factor sets must",
+  "  not be permutable at no cost; the element-intrinsic arm is predeclared to move AUPRC and",
+  "  NOT R@1, because loop 178 put that ceiling at 0.4422; and the winner must clear",
+  "  distance-only R@1 0.593.",
+  "",
+  "    scan cache: enh_scan.npz (218.1 MB)",
+  "    ChIP matrix from cache: 191 factors x 4,482 elements",
+  "    ENCODE: 1,169 released K562 'conservative IDR thresholded peaks' files over 519 targets",
+  "    191/519 ENCODE targets also carry a matrix in this project (26.4% of the 723 distinct factor names)",
+  "      50/191 factors  [7s, eta 21s]",
+  "      100/191 factors  [14s, eta 12s]",
+  "      150/191 factors  [20s, eta 5s]",
+  "    occupancy: 191 factors x 2,205 elements, 29.3% of cells bound",
+  "      factors per element: median 57 (IQR 40-74), 2.4% of elements bound by none",
+  "      elements per factor: median 536 (IQR 214-974)",
+  "    -> /tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/enh_chip_k562_promoters.npz (0.1 MB)",
+  "",
+  "Z1 DOES THE PROMOTER SIDE JOIN?",
+  "     191 factors x 2,205 promoters, 29.3% of cells bound",
+  "     factors per promoter: median 57 (IQR 40-74); 97.6% of promoters carry at least one",
+  "     Z1 PASS -- 97.6% of promoters carry a measured factor, so the overlap is defined for essentially every pair",
+  "",
+  "   building features",
+  "    base 85 columns; overlap 4; pmi 4; chip-regulator 3; intrinsic 3",
+  "    distance                                   R@1 0.5930 +/- 0.0032   AUPRC 0.2844",
+  "    base stack                                 R@1 0.6020 +/- 0.0074   AUPRC 0.3220",
+  "    loop 183 block (MOTIF presence)            R@1 0.6271 +/- 0.0103   AUPRC 0.3377",
+  "    same block, MEASURED presence              R@1 0.6020 +/- 0.0074   AUPRC 0.3220",
+  "    + element-promoter shared factors          R@1 0.6352 +/- 0.0026   AUPRC 0.4433",
+  "    + shared factors as PMI over both degrees  R@1 0.6593 +/- 0.0083   AUPRC 0.4510",
+  "    + accessibility and bound-factor count     R@1 0.6714 +/- 0.0065   AUPRC 0.4482",
+  "    everything measured                        R@1 0.6734 +/- 0.0045   AUPRC 0.4881",
+  "",
+  "Z2 MEASURED PRESENCE OR PREDICTED PRESENCE?",
+  "     chip_reg vs l183_motif   dR@1 -0.0251 +/- 0.0148 (1/5 up)   dAUPRC -0.0157 (0/5 >= 0.01)",
+  "     Z2 FAIL -- measured presence does no better than predicted presence, even though a motif only predicts real binding at AUC 0.62",
+  "",
+  "Z3 DOES THE ELEMENT-PROMOTER SHARED-FACTOR OVERLAP HELP?",
+  "     +overlap vs base   dR@1 +0.0332 +/- 0.0095 (5/5 up)   dAUPRC +0.1213 (5/5 >= 0.01)",
+  "     Z3 PASS -- sharing measured factors with this gene's own promoter adds over the sequence stack",
+  "",
+  "Z4 IS IT THE OVERLAP OR THE TWO MARGINALS?",
+  "     +pmi vs base   dR@1 +0.0573 +/- 0.0074 (5/5 up)   dAUPRC +0.1290 (5/5 >= 0.01)",
+  "     Z4 PASS -- the overlap survives being normalised by the two degrees it could have come from",
+  "",
+  "Z5 WHOSE PROMOTER?",
+  "    +pmi, promoter sets permuted               R@1 0.6573   AUPRC 0.4069",
+  "     real vs permuted   dR@1 +0.0020 +/- 0.0086 (3/5 up)   dAUPRC +0.0440 (5/5 >= 0.01)",
+  "     Z5 FAIL -- any promoter's factor set works as well, so the block reads how many factors are around and not which gene they belong to",
+  "",
+  "Z6 THE ELEMENT-INTRINSIC ARM (predeclared as bounded)",
+  "     +intrinsic vs base   dR@1 +0.0693 +/- 0.0019 (5/5 up)   dAUPRC +0.1262 (5/5 >= 0.01)",
+  "     Z6 FAIL -- AUPRC bar cleared, R@1 bar cleared; the pattern is not the one an element-intrinsic column should show and needs explaining",
+  "",
+  "Z7 THE DECISIVE ONE",
+  "     best arm ALL at R@1 0.6734 / AUPRC 0.4881 against distance 0.5930 / 0.2844",
+  "     dR@1 +0.0804 +/- 0.0069 (5/5 up)   dAUPRC +0.2036 (5/5 >= 0.01)",
+  "     for reference, loop 183's binding-tier arm reached R@1 0.6271 / AUPRC 0.3377",
+  "     Z7 PASS -- ALL clears the bar every stage-two loop has been held to",
+  "",
+  "Z8 WHAT THIS CANNOT SHOW",
+  "     ChIP is crosslinked proximity in a population. A factor tethered indirectly at an",
+  "     element looks identical to one that binds it, and the overlap block cannot tell a",
+  "     shared direct contact from two independent tetherings.",
+  "     191 of 723 factor names have a K562 track and ENCODE's roster is enriched for the",
+  "     factors people study, so the overlap is computed over a biased slice of the proteome.",
+  "     The dinucleotide shuffle that gated every sequence loop has no meaning here --",
+  "     shuffling DNA does not move a peak call -- so Z5's permutation is the control that",
+  "     carries the weight, and it tests only the gene axis.",
+  "     Accessibility, crowding and validated-enhancer status are all properties of the same",
+  "     4,482 elements the screens pre-selected for looking regulatory.",
+  "     Z8 PASS",
+  "",
+  "========================================================================================================",
+  "  Z1  PASS",
+  "  Z2  FAIL",
+  "  Z3  PASS",
+  "  Z4  PASS",
+  "  Z5  FAIL",
+  "  Z6  FAIL",
+  "  Z7  PASS",
+  "  Z8  PASS",
+  "  5/8   [170s]",
+  "========================================================================================================"
+ ]
+}

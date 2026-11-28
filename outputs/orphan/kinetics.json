@@ -1,0 +1,271 @@
+{
+ "validation": {
+  "chrom": "chr22",
+  "tfs": [
+   "CTCF",
+   "GATA1",
+   "GATA2",
+   "SPI1",
+   "JUND",
+   "MAX",
+   "YY1",
+   "NRF1",
+   "USF1",
+   "EGR1"
+  ],
+  "n_bound_sites": 2101,
+  "pooled_r_affinity_polII": 0.017,
+  "pooled_r_affinity_eRNA": -0.013,
+  "pooled_r_occupancy_polII": 0.205,
+  "pooled_r_occupancy_eRNA": 0.292,
+  "affinity_quartiles": [
+   {
+    "affinity_quartile": "Q1 low",
+    "n": 526,
+    "polII_frac": 0.065,
+    "eRNA_frac": 0.203
+   },
+   {
+    "affinity_quartile": "Q2",
+    "n": 525,
+    "polII_frac": 0.124,
+    "eRNA_frac": 0.223
+   },
+   {
+    "affinity_quartile": "Q3",
+    "n": 525,
+    "polII_frac": 0.08,
+    "eRNA_frac": 0.166
+   },
+   {
+    "affinity_quartile": "Q4 high",
+    "n": 525,
+    "polII_frac": 0.091,
+    "eRNA_frac": 0.202
+   }
+  ],
+  "per_tf": [
+   {
+    "tf": "CTCF",
+    "n_bound": 188,
+    "polII_frac": 0.021,
+    "eRNA_frac": 0.032,
+    "r_aff_polII": 0.053,
+    "r_aff_eRNA": 0.084,
+    "r_occupancy_polII": 0.178,
+    "r_occupancy_eRNA": 0.001
+   },
+   {
+    "tf": "GATA1",
+    "n_bound": 130,
+    "polII_frac": 0.046,
+    "eRNA_frac": 0.223,
+    "r_aff_polII": 0.086,
+    "r_aff_eRNA": 0.048,
+    "r_occupancy_polII": -0.013,
+    "r_occupancy_eRNA": 0.047
+   },
+   {
+    "tf": "GATA2",
+    "n_bound": 184,
+    "polII_frac": 0.054,
+    "eRNA_frac": 0.228,
+    "r_aff_polII": 0.062,
+    "r_aff_eRNA": 0.153,
+    "r_occupancy_polII": 0.176,
+    "r_occupancy_eRNA": 0.323
+   },
+   {
+    "tf": "SPI1",
+    "n_bound": 139,
+    "polII_frac": 0.014,
+    "eRNA_frac": 0.022,
+    "r_aff_polII": -0.104,
+    "r_aff_eRNA": -0.044,
+    "r_occupancy_polII": 0.213,
+    "r_occupancy_eRNA": 0.303
+   },
+   {
+    "tf": "JUND",
+    "n_bound": 328,
+    "polII_frac": 0.04,
+    "eRNA_frac": 0.146,
+    "r_aff_polII": -0.107,
+    "r_aff_eRNA": -0.165,
+    "r_occupancy_polII": 0.144,
+    "r_occupancy_eRNA": 0.355
+   },
+   {
+    "tf": "MAX",
+    "n_bound": 504,
+    "polII_frac": 0.075,
+    "eRNA_frac": 0.135,
+    "r_aff_polII": NaN,
+    "r_aff_eRNA": NaN,
+    "r_occupancy_polII": 0.369,
+    "r_occupancy_eRNA": 0.48
+   },
+   {
+    "tf": "YY1",
+    "n_bound": 69,
+    "polII_frac": 0.464,
+    "eRNA_frac": 0.638,
+    "r_aff_polII": 0.052,
+    "r_aff_eRNA": -0.123,
+    "r_occupancy_polII": 0.24,
+    "r_occupancy_eRNA": 0.376
+   },
+   {
+    "tf": "NRF1",
+    "n_bound": 127,
+    "polII_frac": 0.378,
+    "eRNA_frac": 0.693,
+    "r_aff_polII": 0.148,
+    "r_aff_eRNA": -0.049,
+    "r_occupancy_polII": 0.361,
+    "r_occupancy_eRNA": 0.453
+   },
+   {
+    "tf": "USF1",
+    "n_bound": 139,
+    "polII_frac": 0.029,
+    "eRNA_frac": 0.086,
+    "r_aff_polII": 0.107,
+    "r_aff_eRNA": -0.009,
+    "r_occupancy_polII": 0.495,
+    "r_occupancy_eRNA": 0.521
+   },
+   {
+    "tf": "EGR1",
+    "n_bound": 293,
+    "polII_frac": 0.109,
+    "eRNA_frac": 0.263,
+    "r_aff_polII": -0.023,
+    "r_aff_eRNA": 0.003,
+    "r_occupancy_polII": 0.085,
+    "r_occupancy_eRNA": 0.214
+   }
+  ],
+  "params": {
+   "tau_max_s": 12.0,
+   "tau_appoint_s": 30.0
+  }
+ },
+ "measured_residence_test": {
+  "rows": [
+   {
+    "tf": "CTCF",
+    "tau_res_s": 90.0,
+    "tier": "measured",
+    "src": "Hansen 2017 eLife (SMT, ~1-2 min; architectural)",
+    "model_P_productive": 0.75,
+    "measured_eRNA_frac": 0.032,
+    "measured_polII_frac": 0.021,
+    "n_bound": 188
+   },
+   {
+    "tf": "GATA1",
+    "tau_res_s": 10.0,
+    "tier": "class-typical",
+    "src": "sequence-specific consensus ~5-20s",
+    "model_P_productive": 0.25,
+    "measured_eRNA_frac": 0.223,
+    "measured_polII_frac": 0.046,
+    "n_bound": 130
+   },
+   {
+    "tf": "SPI1",
+    "tau_res_s": 10.0,
+    "tier": "class-typical",
+    "src": "sequence-specific consensus ~5-20s",
+    "model_P_productive": 0.25,
+    "measured_eRNA_frac": 0.022,
+    "measured_polII_frac": 0.014,
+    "n_bound": 139
+   },
+   {
+    "tf": "MAX",
+    "tau_res_s": 10.0,
+    "tier": "class-typical",
+    "src": "sequence-specific consensus ~5-20s",
+    "model_P_productive": 0.25,
+    "measured_eRNA_frac": 0.135,
+    "measured_polII_frac": 0.075,
+    "n_bound": 504
+   },
+   {
+    "tf": "YY1",
+    "tau_res_s": 10.0,
+    "tier": "class-typical",
+    "src": "sequence-specific consensus ~5-20s",
+    "model_P_productive": 0.25,
+    "measured_eRNA_frac": 0.638,
+    "measured_polII_frac": 0.464,
+    "n_bound": 69
+   },
+   {
+    "tf": "NRF1",
+    "tau_res_s": 10.0,
+    "tier": "class-typical",
+    "src": "sequence-specific consensus ~5-20s",
+    "model_P_productive": 0.25,
+    "measured_eRNA_frac": 0.693,
+    "measured_polII_frac": 0.378,
+    "n_bound": 127
+   },
+   {
+    "tf": "JUND",
+    "tau_res_s": 10.0,
+    "tier": "class-typical",
+    "src": "sequence-specific consensus ~5-20s",
+    "model_P_productive": 0.25,
+    "measured_eRNA_frac": 0.146,
+    "measured_polII_frac": 0.04,
+    "n_bound": 328
+   },
+   {
+    "tf": "USF1",
+    "tau_res_s": 10.0,
+    "tier": "class-typical",
+    "src": "sequence-specific consensus ~5-20s",
+    "model_P_productive": 0.25,
+    "measured_eRNA_frac": 0.086,
+    "measured_polII_frac": 0.029,
+    "n_bound": 139
+   },
+   {
+    "tf": "EGR1",
+    "tau_res_s": 10.0,
+    "tier": "class-typical",
+    "src": "sequence-specific consensus ~5-20s",
+    "model_P_productive": 0.25,
+    "measured_eRNA_frac": 0.263,
+    "measured_polII_frac": 0.109,
+    "n_bound": 293
+   },
+   {
+    "tf": "GATA2",
+    "tau_res_s": 8.0,
+    "tier": "measured",
+    "src": "SMT long-lived stable fraction >5s",
+    "model_P_productive": 0.211,
+    "measured_eRNA_frac": 0.228,
+    "measured_polII_frac": 0.054,
+    "n_bound": 184
+   }
+  ],
+  "r_measured_residence_vs_eRNA": -0.319,
+  "r_measured_residence_vs_polII": -0.219,
+  "ctcf": {
+   "tf": "CTCF",
+   "tau_res_s": 90.0,
+   "tier": "measured",
+   "src": "Hansen 2017 eLife (SMT, ~1-2 min; architectural)",
+   "model_P_productive": 0.75,
+   "measured_eRNA_frac": 0.032,
+   "measured_polII_frac": 0.021,
+   "n_bound": 188
+  }
+ },
+ "note": "Kinetic-competition model of productive initiation: P(productive)=tau_res/(tau_res+tau_appoint), with tau_res from PWM relative affinity under the diffusion-limited (k_on const) assumption. HONEST: affinity (Kd=k_off/k_on) is NOT residence time (1/k_off); the bridge needs the k_on-const assumption, and true residence needs single-molecule tracking (per-TF, not genome-wide). MEASURED on real K562 ChIP-bound sites whether higher predicted residence => more Pol II/eRNA. The model output is a RELATIVE propensity; parameters are order-of-magnitude literature values. Many functional enhancers use deliberately LOW-affinity sites, so affinity may predict productivity only weakly -- whatever the data shows is reported."
+}

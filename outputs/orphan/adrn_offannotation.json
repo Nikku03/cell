@@ -1,0 +1,89 @@
+{
+  "test": "adrn_offannotation",
+  "means": {
+    "cohort1": {
+      "model": {
+        "on": 0.25620594544897335,
+        "off": 0.16960651289009498
+      },
+      "frequency": {
+        "on": 0.1675708257986739,
+        "off": 0.13196480938416422
+      },
+      "chance": {
+        "on": 0.0025672292293678666,
+        "off": 0.0028405895904676636
+      }
+    },
+    "_holdout": {
+      "model": {
+        "on": 0.3057876818322501,
+        "off": 0.2106631989596879
+      },
+      "frequency": {
+        "on": 0.20210526315789473,
+        "off": 0.1837037037037037
+      },
+      "chance": {
+        "on": 0.004958830728096766,
+        "off": 0.005237542663181985
+      }
+    }
+  },
+  "cohorts": {
+    "cohort1": {
+      "gate": {
+        "off_prec": 0.16960651289009498,
+        "ci": [
+          0.14382632293080055,
+          0.19674355495251017
+        ],
+        "chance": 0.0028405895904676636,
+        "verdict": "BEATS CHANCE"
+      },
+      "novelty_share": 0.14646113940592467,
+      "off_slot_share": 0.18425
+    },
+    "_holdout": {
+      "gate": {
+        "off_prec": 0.2106631989596879,
+        "ci": [
+          0.18205461638491546,
+          0.24057217165149544
+        ],
+        "chance": 0.005237542663181985,
+        "verdict": "BEATS CHANCE"
+      },
+      "novelty_share": 0.1681902881390056,
+      "off_slot_share": 0.19225
+    }
+  },
+  "gate_pass": true,
+  "log": [
+    "====================================================================================================",
+    "IS IT A PARROT? off-annotation predictions vs chance",
+    "====================================================================================================",
+    "  PREDECLARED: off-annotation precision must beat CHANCE on both cohorts, else 'lookup' is correct.",
+    "  named channels: 170 kept of 170 built (120 pathways, 12 compartments, 9 lesion classes, rest structural); mean channels per gene 13.3",
+    "  extra channels: 575 kept of 691 built  (TIER A 566, TIER B 9); 250 GO, 120 complexes, 120 pfam, 120 domains",
+    "  channel matrix (9052, 736) over 9,052 symbols",
+    "  response genes with at least one channel: 8,246 of 8,246",
+    "\n  === cohort1 (200 knockouts) ===",
+    "  arm               on-annotation   off-annotation",
+    "  model                    0.2562           0.1696   (n=3263/737)",
+    "  frequency                0.1676           0.1320   (n=3318/682)",
+    "  CHANCE                   0.0026           0.0028   <- the null, not a competitor",
+    "\n  off-annotation precision 0.1696  95% CI [0.1438,0.1967]  vs chance 0.0028   -> BEATS CHANCE",
+    "  NOVELTY SHARE: 14.6% of the model's correct calls share no annotation with the knockout",
+    "  (it spends 18.4% of its 20 slots on off-annotation genes)",
+    "\n  === _holdout (200 knockouts) ===",
+    "  arm               on-annotation   off-annotation",
+    "  model                    0.3058           0.2107   (n=3231/769)",
+    "  frequency                0.2021           0.1837   (n=3325/675)",
+    "  CHANCE                   0.0050           0.0052   <- the null, not a competitor",
+    "\n  off-annotation precision 0.2107  95% CI [0.1821,0.2406]  vs chance 0.0052   -> BEATS CHANCE",
+    "  NOVELTY SHARE: 16.8% of the model's correct calls share no annotation with the knockout",
+    "  (it spends 19.2% of its 20 slots on off-annotation genes)",
+    "\n  GATE: PASS -- it predicts correctly OFF its own annotations"
+  ]
+}

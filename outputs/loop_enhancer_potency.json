@@ -1,0 +1,430 @@
+{
+ "test": "enhancer potency for stage two",
+ "gates": {
+  "P1": true,
+  "P2": false,
+  "P3": false,
+  "P4": false,
+  "P5": true,
+  "P6": true,
+  "P7": false,
+  "P8": true
+ },
+ "oracle": {
+  "raw_r1": 0.8844221105527639,
+  "loo_r1": 0.44221105527638194,
+  "singleton_elements": 2015,
+  "n_elements": 4482
+ },
+ "arms": {
+  "distance": {
+   "r1": [
+    0.5829145728643216,
+    0.5879396984924623,
+    0.5979899497487438,
+    0.5979899497487438,
+    0.5979899497487438
+   ],
+   "ap": [
+    0.2829050454204365,
+    0.28170448972840684,
+    0.28917222758182526,
+    0.28982639252315684,
+    0.2786115917902298
+   ]
+  },
+  "base34": {
+   "r1": [
+    0.5979899497487438,
+    0.6180904522613065,
+    0.5979899497487438,
+    0.6080402010050251,
+    0.6030150753768844
+   ],
+   "ap": [
+    0.30063384044060354,
+    0.29319084623905695,
+    0.2838649878514959,
+    0.30920983427895177,
+    0.2984446872817107
+   ]
+  },
+  "+family": {
+   "r1": [
+    0.592964824120603,
+    0.6130653266331658,
+    0.5778894472361809,
+    0.6180904522613065,
+    0.6080402010050251
+   ],
+   "ap": [
+    0.30260185577031584,
+    0.3287847881594063,
+    0.32348946945808404,
+    0.3204824357258981,
+    0.3345418287490969
+   ]
+  },
+  "+family+spectrum": {
+   "r1": [
+    0.5879396984924623,
+    0.6331658291457286,
+    0.6130653266331658,
+    0.6180904522613065,
+    0.6130653266331658
+   ],
+   "ap": [
+    0.3107941072257498,
+    0.3176998514063419,
+    0.3083432045150729,
+    0.3082710161266881,
+    0.32855283240001903
+   ]
+  },
+  "+potency": {
+   "r1": [
+    0.4723618090452261,
+    0.457286432160804,
+    0.5175879396984925,
+    0.4723618090452261,
+    0.4623115577889447
+   ],
+   "ap": [
+    0.13725309509541278,
+    0.14074583001411475,
+    0.135817463160893,
+    0.12413422651670827,
+    0.14190846556117737
+   ]
+  },
+  "+potency_leaky": {
+   "r1": [
+    0.8241206030150754,
+    0.8291457286432161,
+    0.8391959798994975,
+    0.8140703517587939,
+    0.8140703517587939
+   ],
+   "ap": [
+    0.6200098682264349,
+    0.6530253756334917,
+    0.659547910048178,
+    0.6381160060653233,
+    0.6487082585361706
+   ]
+  },
+  "+cluster": {
+   "r1": [
+    0.6180904522613065,
+    0.6130653266331658,
+    0.6130653266331658,
+    0.6231155778894473,
+    0.6030150753768844
+   ],
+   "ap": [
+    0.31051482498435434,
+    0.31587139683140514,
+    0.3269855502908992,
+    0.3206007399322073,
+    0.33447864957640666
+   ]
+  },
+  "ALL": {
+   "r1": [
+    0.48743718592964824,
+    0.457286432160804,
+    0.5025125628140703,
+    0.46733668341708545,
+    0.4723618090452261
+   ],
+   "ap": [
+    0.13801840694949358,
+    0.14272310776177297,
+    0.1397178438956859,
+    0.1258518271452974,
+    0.1388084815437429
+   ]
+  },
+  "ALL_shuffled": {
+   "r1": [
+    0.5628140703517588,
+    0.5678391959798995,
+    0.5628140703517588,
+    0.5879396984924623,
+    0.592964824120603
+   ],
+   "ap": [
+    0.29385378573584076,
+    0.26858346448986803,
+    0.28013728842452384,
+    0.288123244156507,
+    0.3037668420488256
+   ]
+  }
+ },
+ "deltas": {
+  "P2": {
+   "d_r1": [
+    -0.01005025125628145,
+    0.015075376884422065,
+    0.015075376884422065,
+    0.01005025125628145,
+    0.01005025125628145
+   ],
+   "d_ap": [
+    0.010160266785146255,
+    0.024509005167284936,
+    0.024478216663577024,
+    -0.0009388181522636541,
+    0.030108145118308338
+   ],
+   "mean_r1": 0.008040201005025116,
+   "sem_r1": 0.004660109796731512,
+   "mean_ap": 0.01766336311641058,
+   "n_pos_r1": 4,
+   "n_ap_pass": 4
+  },
+  "P3": {
+   "d_r1": [
+    -0.12060301507537691,
+    -0.15577889447236182,
+    -0.06030150753768837,
+    -0.14572864321608042,
+    -0.14572864321608037
+   ],
+   "d_ap": [
+    -0.16534876067490306,
+    -0.18803895814529156,
+    -0.18767200629719105,
+    -0.1963482092091898,
+    -0.19263336318791952
+   ],
+   "mean_r1": -0.12562814070351758,
+   "sem_r1": 0.01733486262377925,
+   "mean_ap": -0.18600825950289898,
+   "n_pos_r1": 0,
+   "n_ap_pass": 0
+  },
+  "P4": {
+   "d_r1": [
+    0.025125628140703515,
+    0.0,
+    0.035175879396984966,
+    0.005025125628140725,
+    -0.005025125628140725
+   ],
+   "d_ap": [
+    0.007912969214038501,
+    -0.012913391328001178,
+    0.0034960808328151627,
+    0.00011830420630920546,
+    -6.317917269021978e-05
+   ],
+   "mean_r1": 0.012060301507537697,
+   "sem_r1": 0.007719744470219714,
+   "mean_ap": -0.0002898432495057057,
+   "n_pos_r1": 3,
+   "n_ap_pass": 0
+  },
+  "P5": {
+   "d_r1": [
+    0.035175879396984966,
+    0.025125628140703515,
+    0.015075376884422065,
+    0.025125628140703515,
+    0.005025125628140614
+   ],
+   "d_ap": [
+    0.027609779563917858,
+    0.0341669071029983,
+    0.03781332270907395,
+    0.03077434740905044,
+    0.055867057786176844
+   ],
+   "mean_r1": 0.021105527638190937,
+   "sem_r1": 0.005124642727228951,
+   "mean_ap": 0.03724628291424348,
+   "n_pos_r1": 5,
+   "n_ap_pass": 5
+  },
+  "P6": {
+   "d_r1": [
+    -0.35175879396984927,
+    -0.3718592964824121,
+    -0.321608040201005,
+    -0.3417085427135678,
+    -0.3517587939698492
+   ],
+   "d_ap": [
+    -0.4827567731310221,
+    -0.5122795456193769,
+    -0.523730446887285,
+    -0.513981779548615,
+    -0.5067997929749932
+   ],
+   "mean_r1": -0.34773869346733666,
+   "sem_r1": 0.008164862718227113,
+   "mean_ap": -0.5079096676322584,
+   "n_pos_r1": 0,
+   "n_ap_pass": 0
+  },
+  "P7": {
+   "d_r1": [
+    -0.07537688442211055,
+    -0.11055276381909551,
+    -0.06030150753768848,
+    -0.12060301507537685,
+    -0.12060301507537691
+   ],
+   "d_ap": [
+    -0.15583537878634718,
+    -0.12586035672809506,
+    -0.14041944452883795,
+    -0.16227141701120956,
+    -0.1649583605050827
+   ],
+   "mean_r1": -0.09748743718592966,
+   "sem_r1": 0.012472033815066182,
+   "mean_ap": -0.1498689915119145,
+   "n_pos_r1": 0,
+   "n_ap_pass": 0
+  }
+ },
+ "best_arm": "+cluster",
+ "gc_aligned": true,
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "colab/data/dna_shape.npz",
+    "bytes": 22686,
+    "hash": "bfd83511037c6d26",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/tf_domains.json",
+    "bytes": 317744,
+    "hash": "19829e4c188e98e1",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 11933,
+   "used": 11933,
+   "selection": "loop 173's pairs",
+   "fraction": 1.0
+  },
+  "seed": 91173,
+  "controls": [
+   "leave-one-gene-out recomputation of the M2 oracle",
+   "the potency model refitted per fold on training chromosomes only, with the unrestricted variant reported beside it",
+   "the spectrum projection fitted inside each training fold",
+   "dinucleotide shuffle through the whole stack including potency"
+  ],
+  "note": "does an explicit sequence-predicted enhancer potency score move stage two",
+  "warnings": [
+   "selection 'loop 173's pairs' is not one of ('all', 'random', 'stratified', 'prefix', 'filtered', 'manual'); coverage cannot be interpreted"
+  ]
+ },
+ "seconds": 575.1843061447144,
+ "log": [
+  "========================================================================================================",
+  "LOOP 178  AN EXPLICIT SEQUENCE-PREDICTED ENHANCER POTENCY COLUMN FOR STAGE TWO",
+  "========================================================================================================",
+  "  PREDECLARED: the leave-one-gene-out oracle must land below 0.7 for M2's 0.8844 to",
+  "  have been mostly memorisation; every arm judged on loop 173's E3 bar -- paired R@1",
+  "  positive in >= 4/5 past 3 sem AND paired AUPRC >= +0.01 in >= 4/5;",
+  "  the winner must clear distance-only R@1 0.593; the potency column must not",
+  "  out-score its own leaky variant; and the shuffle must still cost the best arm.",
+  "",
+  "    scan cache: enh_scan.npz (218.1 MB)",
+  "    736 distinct motifs, width 5-29 (median 9)",
+  "    EPCrisprBenchmark_combined_data.training_K562.GRCh38.tsv.gz: 10,356 K562 pairs",
+  "    EPCrisprBenchmark_combined_data.heldout_5_cell_types.GRCh38.tsv.gz: 1,918 K562 pairs",
+  "    12,274 -> 12,274 valid -> 12,040 powered at PowerAtEffectSize25 >= 0.8",
+  "    sequence from cache: elem_d9665c6b59788cdf.npz",
+  "    clustering el: 4,482 elements, 3,174,395 bp",
+  "      el cluster motif 200/736  [34s, eta 92s]",
+  "      el cluster motif 400/736  [76s, eta 64s]",
+  "      el cluster motif 600/736  [127s, eta 29s]",
+  "    clusters: homotypic best median 3 sites in 100 bp, 8 motifs with >= 2; heterotypic density median 0.14 motifs/bp",
+  "    clustering sh: 4,482 elements, 3,174,395 bp",
+  "      sh cluster motif 200/736  [32s, eta 87s]",
+  "      sh cluster motif 400/736  [72s, eta 60s]",
+  "      sh cluster motif 600/736  [121s, eta 28s]",
+  "    clusters: homotypic best median 2 sites in 100 bp, 5 motifs with >= 2; heterotypic density median 0.12 motifs/bp",
+  "    -> /tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/enh_scan/enh_element_clusters.npz [347s]",
+  "",
+  "P1 WHAT DOES THE ORACLE MEASURE?",
+  "     2,015/4,482 elements (45.0%) were tested against exactly one gene; for those the M2 oracle's score IS the label",
+  "     M2 oracle as reported (sees the pair): R@1 0.8844",
+  "     leave-one-gene-out oracle (never sees the pair): R@1 0.4422   AUPRC 0.0590",
+  "     P1 PASS -- 0.8844 falls to 0.4422 once the pair's own label is removed, so most of the reported ceiling was memorisation and the learnable gene-blind ceiling is 0.4422, not 0.8844",
+  "",
+  "   building frames",
+  "    element frame (el): 27 intrinsic + 51 class/family columns",
+  "    element frame (sh): 27 intrinsic + 51 class/family columns",
+  "     element cluster stats align with the cached scan bit for bit: True",
+  "     columns: base 34, +family 85, +cluster 91",
+  "    scan cache: enh_vs_genome_v2.npz (291.8 MB)",
+  "     stage-one transfer set: 27 intrinsic + 51 class/family columns shared between genomic windows and benchmark elements",
+  "    distance                           R@1 0.5930 +/- 0.0032   AUPRC 0.2844",
+  "    loop 173's 34 columns              R@1 0.6050 +/- 0.0038   AUPRC 0.2971",
+  "    +class/family occupancy            R@1 0.6020 +/- 0.0074   AUPRC 0.3220",
+  "    +class/family+spectrum             R@1 0.6131 +/- 0.0073   AUPRC 0.3147",
+  "    +predicted enhancer potency        R@1 0.4764 +/- 0.0107   AUPRC 0.1360",
+  "    +potency, LEAKY control            R@1 0.8241 +/- 0.0048   AUPRC 0.6439",
+  "    +clustering                        R@1 0.6141 +/- 0.0033   AUPRC 0.3217",
+  "    everything                         R@1 0.4774 +/- 0.0079   AUPRC 0.1370",
+  "",
+  "P2 DOES THE LOOP-177 REPRESENTATION HELP STAGE TWO?",
+  "     +class/family+spectrum vs the 34 columns   dR@1 +0.0080 +/- 0.0047 (4/5 up)   dAUPRC +0.0177 (4/5 >= 0.01)",
+  "     (family alone: dR@1 -0.0030 +/- 0.0052 (2/5 up)   dAUPRC +0.0249 (4/5 >= 0.01))",
+  "     P2 FAIL -- resolving the matrices by class and family, which was worth +0.17 AUC on stage one, does nothing for gene assignment",
+  "",
+  "P3 DOES AN EXPLICIT SEQUENCE-PREDICTED POTENCY COLUMN HELP?",
+  "     +potency vs +class/family   dR@1 -0.1256 +/- 0.0173 (0/5 up)   dAUPRC -0.1860 (0/5 >= 0.01)",
+  "     P3 FAIL -- handing stage two an explicit potency score changes nothing, so potency was not the missing variable",
+  "",
+  "P4 DOES CLUSTERING HELP STAGE TWO? (it cost -0.0061 AUC on stage one)",
+  "     +clustering vs +class/family   dR@1 +0.0121 +/- 0.0077 (3/5 up)   dAUPRC -0.0003 (0/5 >= 0.01)",
+  "     P4 FAIL -- clustering adds nothing on either task",
+  "",
+  "P5 THE DECISIVE ONE: does anything clear the distance floor?",
+  "     best arm is +cluster at R@1 0.6141 against distance 0.5930",
+  "     dR@1 +0.0211 +/- 0.0051 (5/5 up)   dAUPRC +0.0372 (5/5 >= 0.01)",
+  "     P5 PASS -- +cluster clears the bar loops 173 and 175 both failed",
+  "",
+  "P6 IS THE POTENCY COLUMN LEAKING?",
+  "     honest minus leaky   dR@1 -0.3477 +/- 0.0082 (0/5 up)   dAUPRC -0.5079 (0/5 >= 0.01)",
+  "     P6 PASS -- the chromosome-restricted potency model does not out-score the one trained on every chromosome, which is the only possible ordering",
+  "",
+  "P7 THE SHUFFLE STILL DECIDES",
+  "    everything, SHUFFLED               R@1 0.5749 +/- 0.0065   AUPRC 0.2869",
+  "     real vs dinucleotide-shuffled   dR@1 -0.0975 +/- 0.0125 (0/5 up)   dAUPRC -0.1499 (0/5 >= 0.01)",
+  "     P7 FAIL -- the composition-matched shuffle matches it, so on stage two the sequence columns are still not reading binding sites",
+  "",
+  "P8 WHAT THIS CANNOT SHOW",
+  "     The potency column is trained against GENOMIC decoys, so it predicts 'is this an",
+  "     enhancer', not 'is this a strong enhancer'. A graded potency label would need an",
+  "     assay that measures element strength directly -- STARR-seq or MPRA -- and none is",
+  "     joined here.",
+  "     Stage two's real missing variable is physical contact: which promoter the element is",
+  "     looped to. Nothing in this loop measures Hi-C, TAD boundaries or CTCF anchors, and",
+  "     no sequence feature is a substitute for them.",
+  "     K562 only; JASPAR in-vitro preferences; no expression filter on the factor set.",
+  "     P8 PASS",
+  "",
+  "========================================================================================================",
+  "  P1  PASS",
+  "  P2  FAIL",
+  "  P3  FAIL",
+  "  P4  FAIL",
+  "  P5  PASS",
+  "  P6  PASS",
+  "  P7  FAIL",
+  "  P8  PASS",
+  "  4/8   [575s]",
+  "========================================================================================================"
+ ]
+}

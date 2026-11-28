@@ -1,0 +1,36 @@
+{
+ "built": "2026-11-22",
+ "deep": {
+  "cells": 155,
+  "proteins_universe": 19215,
+  "median_proteins_per_cell": 12591.0,
+  "interacting_same_room_pairs": 32157,
+  "complexes": 2134,
+  "median_complete_machines": 1310.0,
+  "pathways": 1714
+ },
+ "cancerprot": {
+  "cells": 949,
+  "proteins_universe": 8401,
+  "median_proteins_per_cell": 5205.0,
+  "interacting_same_room_pairs": 25146,
+  "complexes": 1342,
+  "median_complete_machines": 685.0,
+  "pathways": 1363
+ },
+ "tf_confirmed": 39,
+ "tf_tested": 287,
+ "predicted_roles": 7157,
+ "complexes_with_comovement": 1297,
+ "facts_written": 32415,
+ "g8_verdicts": {
+  "G8-P1": "PASS",
+  "G8-P2": "FAIL",
+  "G8-D1": "PASS",
+  "G8-I1": "FAIL",
+  "G8-A1": "FAIL",
+  "G8-U1": "PASS",
+  "G8-M1": "FAIL",
+  "G8-M2": "FAIL"
+ }
+}

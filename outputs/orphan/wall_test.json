@@ -1,0 +1,54 @@
+{
+ "cell_type": "K562",
+ "n_knockouts": 1400,
+ "n_scored": 378,
+ "tau": 1.0,
+ "K": 50,
+ "tide_frac": 0.05,
+ "n_tide_genes": 43,
+ "recall_specific_movers_byK": {
+  "@20": {
+   "rand": 0.0024954072171267153,
+   "tide": 0.13338015289635652,
+   "model": 0.2528193562788012,
+   "oracle": 0.45815418985700807
+  },
+  "@50": {
+   "rand": 0.006935128330633535,
+   "tide": 0.26026626949112974,
+   "model": 0.3752249900645787,
+   "oracle": 0.6167660938278526
+  },
+  "@100": {
+   "rand": 0.014251716624643697,
+   "tide": 0.40251162351889785,
+   "model": 0.4735893943687542,
+   "oracle": 0.7164576978381417
+  }
+ },
+ "recall_all_movers": {
+  "rand": 0.0064525801574521705,
+  "tide": 0.27798944024192723,
+  "model": 0.37295285177762255,
+  "oracle": 0.6113049577785987
+ },
+ "recall_specific_movers": {
+  "rand": 0.006935128330633535,
+  "tide": 0.26026626949112974,
+  "model": 0.3752249900645787,
+  "oracle": 0.6167660938278526
+ },
+ "specific_model_over_tide_null": 1.4416965778862363,
+ "specific_oracle_over_tide_null": 2.369750390758465,
+ "model_beats_tide_null_frac": 0.5767195767195767,
+ "oracle_beats_random_frac": 0.9841269841269841,
+ "wall_solved_inside_cell_type": false,
+ "oracle_priors_gap": true,
+ "caveats": [
+  "ORACLE* is an OPTIMISTIC upper bound: it peeks at the held-out knockout's own profile to pick its 10 nearest measured knockouts, so it is mildly circular (neighbours partly chosen for sharing x's movers). The qualitative conclusion (specific responses ARE shared across similar knockouts, so not irreducible) is robust; the 0.62 absolute is a ceiling, not a deployable number.",
+  "profiles are top-250 movers/knockout and the z is compressed control-relative (p95|z|=1.04), so 'movers' are the strongest effects in ONE readout (steady-state mRNA); a different readout (protein/phospho/time-resolved) could move all numbers.",
+  "this is the SINGLE-knockout, WITHIN-one-data-rich-cell-type case only. It says NOTHING about the harder cases the virtual wet lab needs: combinations, point mutations, drugs, cross-cell-type transfer, or a real (multi-alteration) cancer genotype."
+ ],
+ "verdict": "IS THE WALL SOLVED INSIDE A DATA-RICH CELL TYPE (K562, 1400 measured knockouts)? MEASURED ANSWER: NO -- but the wall is LOWERED, not solved, and the reason matters. CONTROL: on the TIDE (all movers) even the same-forecast-for-everyone tide baseline scores recall@50=0.28 -- 'enough KO data' buys the generic stress signature cheaply, as expected. DECISIVE TEST (knockout-SPECIFIC far field, tide removed; comparator = the tide baseline, i.e. the 'no specific prediction' null): the network MODEL recalls 0.38 of a knockout's specific movers vs the null's 0.26 (1.4x), winning in 218/378 knockouts. That is a MODEST-BUT-REAL edge from knockout identity -- not nothing, but small: the model still MISSES ~60% of each knockout's specific movers, so this is not prediction you could deploy as a virtual assay. UPPER BOUND: the OPTIMISTIC ORACLE* (permitted to PEEK at the held-out knockout to pick its 10 nearest measured knockouts) reaches 0.62 (2.4x the null) -- decisively above the model, which is the KEY RESULT: the specific signal DOES exist in the measured single-KO mRNA data and IS shared across similar knockouts (so it is NOT information-theoretically irreducible here); our curated priors (PPI/complex/pathway/regulon) simply UNDER-REACH it. The wall inside a data-rich cell type is therefore largely a MODELLING / similarity-representation gap (model 0.38 -> oracle 0.62 head-room), not a data-impossibility -- the genuinely hopeful reading, and it says where to push: learn perturbation similarity from the data instead of trusting the graph. BOTTOM LINE: 'enough KO data for a cell type' solves the TIDE and is a LOOKUP TABLE for knockouts already measured; the SPECIFIC response of an UNMEASURED knockout is only weakly predictable from priors (1.4x the null) though the oracle shows real head-room. So no, the wall is not solved even here -- but it looks crackable-with-a-better-model, not fundamental, for the single-KO-within-a-cell-type case. (It says nothing yet about the harder cases the virtual wet lab needs: combinations, mutations, drugs, cross-cell-type, a real cancer genotype.)",
+ "note": "IS THE WALL SOLVED INSIDE A DATA-RICH CELL TYPE (K562, 1400 measured knockouts)? MEASURED ANSWER: NO -- but the wall is LOWERED, not solved, and the reason matters. CONTROL: on the TIDE (all movers) even the same-forecast-for-everyone tide baseline scores recall@50=0.28 -- 'enough KO data' buys the generic stress signature cheaply, as expected. DECISIVE TEST (knockout-SPECIFIC far field, tide removed; comparator = the tide baseline, i.e. the 'no specific prediction' null): the network MODEL recalls 0.38 of a knockout's specific movers vs the null's 0.26 (1.4x), winning in 218/378 knockouts. That is a MODEST-BUT-REAL edge from knockout identity -- not nothing, but small: the model still MISSES ~60% of each knockout's specific movers, so this is not prediction you could deploy as a virtual assay. UPPER BOUND: the OPTIMISTIC ORACLE* (permitted to PEEK at the held-out knockout to pick its 10 nearest measured knockouts) reaches 0.62 (2.4x the null) -- decisively above the model, which is the KEY RESULT: the specific signal DOES exist in the measured single-KO mRNA data and IS shared across similar knockouts (so it is NOT information-theoretically irreducible here); our curated priors (PPI/complex/pathway/regulon) simply UNDER-REACH it. The wall inside a data-rich cell type is therefore largely a MODELLING / similarity-representation gap (model 0.38 -> oracle 0.62 head-room), not a data-impossibility -- the genuinely hopeful reading, and it says where to push: learn perturbation similarity from the data instead of trusting the graph. BOTTOM LINE: 'enough KO data for a cell type' solves the TIDE and is a LOOKUP TABLE for knockouts already measured; the SPECIFIC response of an UNMEASURED knockout is only weakly predictable from priors (1.4x the null) though the oracle shows real head-room. So no, the wall is not solved even here -- but it looks crackable-with-a-better-model, not fundamental, for the single-KO-within-a-cell-type case. (It says nothing yet about the harder cases the virtual wet lab needs: combinations, mutations, drugs, cross-cell-type, a real cancer genotype.)"
+}

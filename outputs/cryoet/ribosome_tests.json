@@ -1,0 +1,406 @@
+{
+ "G14-R1": {
+  "exam": {
+   "f1": 0.4581005586592179,
+   "precision": 0.5774647887323944,
+   "recall": 0.37962962962962965,
+   "picks": 426,
+   "hand_picked": 648
+  },
+  "control": {
+   "f1": 0.13282001924927817,
+   "precision": 0.17647058823529413,
+   "recall": 0.10648148148148148,
+   "picks": 391,
+   "hand_picked": 648
+  },
+  "dev": {
+   "real": {
+    "sign": -1,
+    "z": 3.75,
+    "dev_f1": 0.48218527315914494,
+    "dev_f1_other_sign": 0.07226354941551541
+   },
+   "control": {
+    "sign": -1,
+    "z": 3.5,
+    "dev_f1": 0.18015963511972638,
+    "dev_f1_other_sign": 0.15417558886509633
+   }
+  },
+  "reported_portal_automated_vs_hand": {
+   "f1": 0.7369901547116737,
+   "precision": 0.6770025839793282,
+   "recall": 0.808641975308642
+  },
+  "gate": {
+   "real": false,
+   "controls_ok": true,
+   "verdict": "FAIL"
+  }
+ },
+ "G14-R2": {
+  "jurkat": {
+   "tomograms": 12,
+   "found": 35130,
+   "control_found": 47977,
+   "membrane_near": 8384,
+   "with_mask": 24075,
+   "volume_um3": 22.943710484375003,
+   "per_tomogram": [
+    {
+     "run": "cwl2011-10-23-1",
+     "found": 3092,
+     "control": 4911,
+     "membrane_near": null,
+     "volume_um3": 2.2638,
+     "central_box_only": false
+    },
+    {
+     "run": "cwl2011-10-23-2",
+     "found": 2792,
+     "control": 4433,
+     "membrane_near": null,
+     "volume_um3": 2.18,
+     "central_box_only": false
+    },
+    {
+     "run": "cwl2011-10-23-3",
+     "found": 2985,
+     "control": 5239,
+     "membrane_near": null,
+     "volume_um3": 2.5,
+     "central_box_only": true
+    },
+    {
+     "run": "cwl2011-10-23-4",
+     "found": 2186,
+     "control": 5724,
+     "membrane_near": null,
+     "volume_um3": 2.4939,
+     "central_box_only": true
+    },
+    {
+     "run": "cwl2011-12-12-1",
+     "found": 2379,
+     "control": 3208,
+     "membrane_near": 849,
+     "volume_um3": 1.617,
+     "central_box_only": false
+    },
+    {
+     "run": "cwl2011-12-12-10",
+     "found": 2289,
+     "control": 2839,
+     "membrane_near": 706,
+     "volume_um3": 1.5431,
+     "central_box_only": false
+    },
+    {
+     "run": "cwl2011-12-12-11",
+     "found": 3217,
+     "control": 3481,
+     "membrane_near": 1573,
+     "volume_um3": 1.5985,
+     "central_box_only": false
+    },
+    {
+     "run": "cwl2011-12-12-12",
+     "found": 2626,
+     "control": 3177,
+     "membrane_near": 1045,
+     "volume_um3": 1.6632,
+     "central_box_only": false
+    },
+    {
+     "run": "cwl2012-08-16-1",
+     "found": 1969,
+     "control": 5572,
+     "membrane_near": 1503,
+     "volume_um3": 2.4918,
+     "central_box_only": true
+    },
+    {
+     "run": "cwl2012-08-16-10",
+     "found": 3515,
+     "control": 3005,
+     "membrane_near": 922,
+     "volume_um3": 1.3846,
+     "central_box_only": false
+    },
+    {
+     "run": "cwl2012-08-16-11",
+     "found": 3786,
+     "control": 3150,
+     "membrane_near": 381,
+     "volume_um3": 1.419,
+     "central_box_only": false
+    },
+    {
+     "run": "cwl2012-08-16-12",
+     "found": 4294,
+     "control": 3238,
+     "membrane_near": 1405,
+     "volume_um3": 1.7888,
+     "central_box_only": false
+    }
+   ],
+   "control_near": 12002,
+   "control_with_mask": 27670,
+   "random_near": 3929,
+   "random_with_mask": 16000,
+   "per_um3": 1531.1385673177856,
+   "membrane_near_share": 0.34824506749740397,
+   "control_ratio": 1.3656988329063477,
+   "predicted_er_share": 0.1883,
+   "control_membrane_near_share": 0.43375496928080953,
+   "random_membrane_near_share": 0.2455625
+  },
+  "predicted": 0.1883,
+  "difference": 0.15994506749740398,
+  "gate": {
+   "real": false,
+   "controls_ok": false,
+   "verdict": "VOID (controls)"
+  }
+ },
+ "reported_lines": {
+  "Jurkat": {
+   "tomograms": 12,
+   "found": 35130,
+   "control_found": 47977,
+   "membrane_near": 8384,
+   "with_mask": 24075,
+   "volume_um3": 22.943710484375003,
+   "per_tomogram": [
+    {
+     "run": "cwl2011-10-23-1",
+     "found": 3092,
+     "control": 4911,
+     "membrane_near": null,
+     "volume_um3": 2.2638,
+     "central_box_only": false
+    },
+    {
+     "run": "cwl2011-10-23-2",
+     "found": 2792,
+     "control": 4433,
+     "membrane_near": null,
+     "volume_um3": 2.18,
+     "central_box_only": false
+    },
+    {
+     "run": "cwl2011-10-23-3",
+     "found": 2985,
+     "control": 5239,
+     "membrane_near": null,
+     "volume_um3": 2.5,
+     "central_box_only": true
+    },
+    {
+     "run": "cwl2011-10-23-4",
+     "found": 2186,
+     "control": 5724,
+     "membrane_near": null,
+     "volume_um3": 2.4939,
+     "central_box_only": true
+    },
+    {
+     "run": "cwl2011-12-12-1",
+     "found": 2379,
+     "control": 3208,
+     "membrane_near": 849,
+     "volume_um3": 1.617,
+     "central_box_only": false
+    },
+    {
+     "run": "cwl2011-12-12-10",
+     "found": 2289,
+     "control": 2839,
+     "membrane_near": 706,
+     "volume_um3": 1.5431,
+     "central_box_only": false
+    },
+    {
+     "run": "cwl2011-12-12-11",
+     "found": 3217,
+     "control": 3481,
+     "membrane_near": 1573,
+     "volume_um3": 1.5985,
+     "central_box_only": false
+    },
+    {
+     "run": "cwl2011-12-12-12",
+     "found": 2626,
+     "control": 3177,
+     "membrane_near": 1045,
+     "volume_um3": 1.6632,
+     "central_box_only": false
+    },
+    {
+     "run": "cwl2012-08-16-1",
+     "found": 1969,
+     "control": 5572,
+     "membrane_near": 1503,
+     "volume_um3": 2.4918,
+     "central_box_only": true
+    },
+    {
+     "run": "cwl2012-08-16-10",
+     "found": 3515,
+     "control": 3005,
+     "membrane_near": 922,
+     "volume_um3": 1.3846,
+     "central_box_only": false
+    },
+    {
+     "run": "cwl2012-08-16-11",
+     "found": 3786,
+     "control": 3150,
+     "membrane_near": 381,
+     "volume_um3": 1.419,
+     "central_box_only": false
+    },
+    {
+     "run": "cwl2012-08-16-12",
+     "found": 4294,
+     "control": 3238,
+     "membrane_near": 1405,
+     "volume_um3": 1.7888,
+     "central_box_only": false
+    }
+   ],
+   "control_near": 12002,
+   "control_with_mask": 27670,
+   "random_near": 3929,
+   "random_with_mask": 16000,
+   "per_um3": 1531.1385673177856,
+   "membrane_near_share": 0.34824506749740397,
+   "control_ratio": 1.3656988329063477,
+   "predicted_er_share": 0.1883,
+   "control_membrane_near_share": 0.43375496928080953,
+   "random_membrane_near_share": 0.2455625
+  },
+  "RPE1": {
+   "tomograms": 3,
+   "found": 10399,
+   "control_found": 9317,
+   "membrane_near": 1262,
+   "with_mask": 10399,
+   "volume_um3": 3.581304500000001,
+   "per_tomogram": [
+    {
+     "run": "00004",
+     "found": 4088,
+     "control": 3099,
+     "membrane_near": 631,
+     "volume_um3": 1.3203,
+     "central_box_only": false
+    },
+    {
+     "run": "00011",
+     "found": 3004,
+     "control": 2971,
+     "membrane_near": 318,
+     "volume_um3": 1.1305,
+     "central_box_only": false
+    },
+    {
+     "run": "00012",
+     "found": 3307,
+     "control": 3247,
+     "membrane_near": 313,
+     "volume_um3": 1.1305,
+     "central_box_only": false
+    }
+   ],
+   "control_near": 1044,
+   "control_with_mask": 9317,
+   "random_near": 264,
+   "random_with_mask": 6000,
+   "per_um3": 2903.690540695436,
+   "membrane_near_share": 0.12135782286758343,
+   "control_ratio": 0.8959515338013271,
+   "predicted_er_share": 0.2399,
+   "control_membrane_near_share": 0.11205323602017817,
+   "random_membrane_near_share": 0.044
+  },
+  "HeLa": {
+   "tomograms": 6,
+   "found": 5062,
+   "control_found": 3764,
+   "membrane_near": 1103,
+   "with_mask": 5062,
+   "volume_um3": 1.8718217812500002,
+   "per_tomogram": [
+    {
+     "run": "20220718_P10_ts_002",
+     "found": 827,
+     "control": 698,
+     "membrane_near": 52,
+     "volume_um3": 0.312,
+     "central_box_only": false
+    },
+    {
+     "run": "20220718_P10_ts_003",
+     "found": 915,
+     "control": 764,
+     "membrane_near": 45,
+     "volume_um3": 0.312,
+     "central_box_only": false
+    },
+    {
+     "run": "20220718_P10_ts_004",
+     "found": 634,
+     "control": 585,
+     "membrane_near": 202,
+     "volume_um3": 0.312,
+     "central_box_only": false
+    },
+    {
+     "run": "20220718_P10_ts_005",
+     "found": 918,
+     "control": 801,
+     "membrane_near": 49,
+     "volume_um3": 0.312,
+     "central_box_only": false
+    },
+    {
+     "run": "20220718_P11_ts_002",
+     "found": 862,
+     "control": 471,
+     "membrane_near": 389,
+     "volume_um3": 0.312,
+     "central_box_only": false
+    },
+    {
+     "run": "20220718_P11_ts_003",
+     "found": 906,
+     "control": 445,
+     "membrane_near": 366,
+     "volume_um3": 0.312,
+     "central_box_only": false
+    }
+   ],
+   "control_near": 768,
+   "control_with_mask": 3764,
+   "random_near": 1852,
+   "random_with_mask": 12000,
+   "per_um3": 2704.3172863495597,
+   "membrane_near_share": 0.2178980640063216,
+   "control_ratio": 0.7435796128012643,
+   "predicted_er_share": null,
+   "control_membrane_near_share": 0.20403825717321997,
+   "random_membrane_near_share": 0.15433333333333332
+  }
+ },
+ "meta": {
+  "code_sha": "5c77def2f8d95f82",
+  "trial": false,
+  "device": "cuda",
+  "gpu": "NVIDIA L4",
+  "rotations": 301,
+  "minutes": 56.5,
+  "finished": "2026-11-25T18:17:32Z"
+ }
+}

@@ -1,0 +1,9 @@
+=================================================================================================
+GENEREGPPI -- interact in one cell + made + same room in another -> work together there? (with Monte Carlo)
+=================================================================================================
+  G4-R1 same room matters (median r ON vs OFF-ROOM): K562 0.102 vs 0.017 (p 0.0001), RPE1 0.060 vs 0.022 (p 0.0001), HepG2 0.068 vs 0.027 (p 0.0001), Jurkat 0.061 vs 0.024 (p 0.0001), K562 genome-wide 0.060 vs 0.011 (p 0.0001) -> PASS
+  G4-R2 interaction from HEK293T carries over (OpenCell ON vs random same-room): K562 0.045 vs -0.008 (p 0.001), RPE1 0.034 vs -0.004 (p 0.001), HepG2 0.033 vs -0.004 (p 0.001), Jurkat 0.024 vs -0.004 (p 0.001) -> PASS
+  G4-R3 not made -> no partnership: diff 0.016, p 0.0001 -> FAIL
+  G4-P1 partners help prediction on top of G3: K562 0.288->0.339 (p_MC 0.005), RPE1 0.594->0.600 (p_MC 0.005), HepG2 0.480->0.494 (p_MC 0.005), Jurkat 0.319->0.345 (p_MC 0.005) -> FAIL
+  G4-P2 partners alone predict an unmeasured gene: K562 0.225->0.305 (p_MC 0.005), RPE1 0.581->0.588 (p_MC 0.005), HepG2 0.460->0.477 (p_MC 0.005), Jurkat 0.278->0.325 (p_MC 0.005) -> FAIL
+  Facts written 5

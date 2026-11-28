@@ -1,0 +1,84 @@
+{
+ "sweep": [
+  {
+   "n_ko": 237,
+   "median_movers": 6,
+   "mean_movers": 11.2,
+   "full_stack_avg10": 1.0,
+   "prior_avg10": 1.07,
+   "full_stack_best": 7,
+   "pct_ge1": 56.0,
+   "mech_adds": -0.06,
+   "dataset": "genome-wide (shallow) \u2014 baseline",
+   "file": "gwps.h5ad",
+   "threshold": 2.0
+  },
+  {
+   "n_ko": 507,
+   "median_movers": 6,
+   "mean_movers": 15.6,
+   "full_stack_avg10": 1.17,
+   "prior_avg10": 1.21,
+   "full_stack_best": 8,
+   "pct_ge1": 59.0,
+   "mech_adds": -0.04,
+   "dataset": "genome-wide (shallow) \u2014 baseline",
+   "file": "gwps.h5ad",
+   "threshold": 1.5
+  },
+  {
+   "n_ko": 1125,
+   "median_movers": 10,
+   "mean_movers": 31.1,
+   "full_stack_avg10": 1.77,
+   "prior_avg10": 1.81,
+   "full_stack_best": 9,
+   "pct_ge1": 64.0,
+   "mech_adds": -0.04,
+   "dataset": "genome-wide (shallow) \u2014 baseline",
+   "file": "gwps.h5ad",
+   "threshold": 1.0
+  },
+  {
+   "n_ko": 232,
+   "median_movers": 6,
+   "mean_movers": 12.0,
+   "full_stack_avg10": 1.33,
+   "prior_avg10": 1.34,
+   "full_stack_best": 5,
+   "pct_ge1": 68.0,
+   "mech_adds": -0.01,
+   "dataset": "essential (DEEP) \u2014 better resolved",
+   "file": "k562.h5ad",
+   "threshold": 2.0
+  },
+  {
+   "n_ko": 448,
+   "median_movers": 8,
+   "mean_movers": 17.5,
+   "full_stack_avg10": 1.56,
+   "prior_avg10": 1.57,
+   "full_stack_best": 8,
+   "pct_ge1": 65.0,
+   "mech_adds": -0.01,
+   "dataset": "essential (DEEP) \u2014 better resolved",
+   "file": "k562.h5ad",
+   "threshold": 1.5
+  },
+  {
+   "n_ko": 824,
+   "median_movers": 16,
+   "mean_movers": 39.8,
+   "full_stack_avg10": 2.04,
+   "prior_avg10": 2.05,
+   "full_stack_best": 9,
+   "pct_ge1": 67.0,
+   "mech_adds": -0.01,
+   "dataset": "essential (DEEP) \u2014 better resolved",
+   "file": "k562.h5ad",
+   "threshold": 1.0
+  }
+ ],
+ "verdict": "BETTER-RESOLVED GROUND TRUTH, measured. Baseline (genome-wide shallow gwps, thr 2.0) was 1.0/10 with a median of 6 movers/KO. Switching to the DEEPER K562 screen and/or a richer mover set lifts the median to 16 movers/KO and the full stack to 2.04/10 (best config 2.04/10 at k562.h5ad thr 1.0, 16 movers/KO). So the precision@10 ceiling IS partly a data-resolution/sparsity artifact -- richer, better-powered ground truth raises the absolute count, exactly as predicted: with only ~6 measured movers a top-10 physically cannot score high; with more real movers it can. BUT two honest caveats keep this from being a break of the wall: (1) the gain comes from having MORE true movers to hit, and the hits are still dominated by the generic responsiveness prior -- mechanism adds -0.01/10 even here, so it is more of the same GENERIC signal, not new knockout-specific transmission; (2) a lower z-threshold also admits more noise, so part of the lift is easier targets, not purely real signal. NET: the ~1/10 headline was depressed by pseudobulk sparsity -- with deeper data the honest number is higher, but it is still the generic prior doing the work, and the far-field specific-transmission wall is unchanged. The lever that would raise the SPECIFIC count (per-edge magnitude from a degron/4sU time-course) is still the missing measurement.",
+ "note": "Re-ran the full-stack 10-prediction forward test against better-resolved ground truth to test whether the ~1/10 ceiling is data-sparsity (median 6 movers/KO at genome-wide pseudobulk) not model. We lack raw single-cell K562, so the proxy = the DEEPER Replogle K562 essential screen (k562.h5ad, more cells/perturbation, wider z-range) vs the shallow genome-wide gwps, plus a mover-threshold sweep. RESULT: richer/better-powered ground truth raises median movers/KO and lifts full-stack precision@10 above the ~1/10 gwps baseline -- so the headline was partly depressed by pseudobulk sparsity (a top-10 cannot score high against only 6 measured movers). HONEST CAVEATS: the lift is (a) still dominated by the generic responsiveness prior (mechanism adds ~0/10 even here -> more generic signal, not knockout-specific transmission) and (b) partly from a looser threshold admitting easier targets. The far-field specific-transmission wall is unchanged; denser per-edge magnitude (degron/4sU) remains the missing measurement."
+}

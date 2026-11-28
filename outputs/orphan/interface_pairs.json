@@ -1,0 +1,1128 @@
+{
+ "note": "honest discovery set: in_pdb=0 real PPIs (0-shared) vs degree-matched zero-evidence non-edges",
+ "baseline_domain_auc": 0.61,
+ "baseline_topology_auc": 0.5,
+ "predictomes_contacts_auc_genuine": 0.5,
+ "pairs": [
+  {
+   "gene_a": "TMEM176A",
+   "gene_b": "CERS4",
+   "acc_a": "Q96HP8",
+   "acc_b": "Q9HA82",
+   "label": 1
+  },
+  {
+   "gene_a": "SYPL2",
+   "gene_b": "ATP13A1",
+   "acc_a": "Q5VXT5",
+   "acc_b": "Q9HD20",
+   "label": 1
+  },
+  {
+   "gene_a": "ITPRIP",
+   "gene_b": "TCTN2",
+   "acc_a": "Q8IWB1",
+   "acc_b": "Q96GX1",
+   "label": 1
+  },
+  {
+   "gene_a": "POLRMT",
+   "gene_b": "TRIM10",
+   "acc_a": "O00411",
+   "acc_b": "Q9UDY6",
+   "label": 1
+  },
+  {
+   "gene_a": "PLXNB2",
+   "gene_b": "CD160",
+   "acc_a": "O15031",
+   "acc_b": "O95971",
+   "label": 1
+  },
+  {
+   "gene_a": "NTS",
+   "gene_b": "MFF",
+   "acc_a": "P30990",
+   "acc_b": "Q9GZY8",
+   "label": 1
+  },
+  {
+   "gene_a": "SH3PXD2A",
+   "gene_b": "MIB1",
+   "acc_a": "Q5TCZ1",
+   "acc_b": "Q86YT6",
+   "label": 1
+  },
+  {
+   "gene_a": "POTEF",
+   "gene_b": "FCN1",
+   "acc_a": "A5A3E0",
+   "acc_b": "O00602",
+   "label": 1
+  },
+  {
+   "gene_a": "FCGR3A",
+   "gene_b": "SLC25A30",
+   "acc_a": "P08637",
+   "acc_b": "Q5SVS4",
+   "label": 1
+  },
+  {
+   "gene_a": "TRIM39",
+   "gene_b": "ZNF223",
+   "acc_a": "Q9HCM9",
+   "acc_b": "Q9UK11",
+   "label": 1
+  },
+  {
+   "gene_a": "PCYT1A",
+   "gene_b": "IP6K3",
+   "acc_a": "P49585",
+   "acc_b": "Q96PC2",
+   "label": 1
+  },
+  {
+   "gene_a": "GALNS",
+   "gene_b": "LYZL2",
+   "acc_a": "P34059",
+   "acc_b": "Q7Z4W2",
+   "label": 1
+  },
+  {
+   "gene_a": "PLCD3",
+   "gene_b": "LRRC46",
+   "acc_a": "Q8N3E9",
+   "acc_b": "Q96FV0",
+   "label": 1
+  },
+  {
+   "gene_a": "GIMAP5",
+   "gene_b": "TMX1",
+   "acc_a": "Q96F15",
+   "acc_b": "Q9H3N1",
+   "label": 1
+  },
+  {
+   "gene_a": "NOTCH3",
+   "gene_b": "NEU2",
+   "acc_a": "Q9UM47",
+   "acc_b": "Q9Y3R4",
+   "label": 1
+  },
+  {
+   "gene_a": "DLK1",
+   "gene_b": "TUBB8",
+   "acc_a": "P80370",
+   "acc_b": "Q3ZCM7",
+   "label": 1
+  },
+  {
+   "gene_a": "ZMYM6",
+   "gene_b": "BEND2",
+   "acc_a": "O95789",
+   "acc_b": "Q8NDZ0",
+   "label": 1
+  },
+  {
+   "gene_a": "UBB",
+   "gene_b": "CPA6",
+   "acc_a": "P0CG47",
+   "acc_b": "Q8N4T0",
+   "label": 1
+  },
+  {
+   "gene_a": "PTX3",
+   "gene_b": "PCBP3",
+   "acc_a": "P26022",
+   "acc_b": "P57721",
+   "label": 1
+  },
+  {
+   "gene_a": "NGFR",
+   "gene_b": "BEX3",
+   "acc_a": "P08138",
+   "acc_b": "Q00994",
+   "label": 1
+  },
+  {
+   "gene_a": "STX17",
+   "gene_b": "PPP1R13L",
+   "acc_a": "P56962",
+   "acc_b": "Q8WUF5",
+   "label": 1
+  },
+  {
+   "gene_a": "AP2S1",
+   "gene_b": "RAN",
+   "acc_a": "P53680",
+   "acc_b": "P62826",
+   "label": 1
+  },
+  {
+   "gene_a": "HTRA1",
+   "gene_b": "OPTC",
+   "acc_a": "Q92743",
+   "acc_b": "Q9UBM4",
+   "label": 1
+  },
+  {
+   "gene_a": "EHHADH",
+   "gene_b": "RIOK2",
+   "acc_a": "Q08426",
+   "acc_b": "Q9BVS4",
+   "label": 1
+  },
+  {
+   "gene_a": "FUT3",
+   "gene_b": "SEC22A",
+   "acc_a": "P21217",
+   "acc_b": "Q96IW7",
+   "label": 1
+  },
+  {
+   "gene_a": "MATN2",
+   "gene_b": "BANP",
+   "acc_a": "O00339",
+   "acc_b": "Q8N9N5",
+   "label": 1
+  },
+  {
+   "gene_a": "ASXL2",
+   "gene_b": "MBD6",
+   "acc_a": "Q76L83",
+   "acc_b": "Q96DN6",
+   "label": 1
+  },
+  {
+   "gene_a": "FMOD",
+   "gene_b": "UGT8",
+   "acc_a": "Q06828",
+   "acc_b": "Q16880",
+   "label": 1
+  },
+  {
+   "gene_a": "SCGB2A2",
+   "gene_b": "COQ6",
+   "acc_a": "Q13296",
+   "acc_b": "Q9Y2Z9",
+   "label": 1
+  },
+  {
+   "gene_a": "UBE2B",
+   "gene_b": "HERPUD2",
+   "acc_a": "P63146",
+   "acc_b": "Q9BSE4",
+   "label": 1
+  },
+  {
+   "gene_a": "MPPE1",
+   "gene_b": "TMEM59L",
+   "acc_a": "Q53F39",
+   "acc_b": "Q9UK28",
+   "label": 1
+  },
+  {
+   "gene_a": "ARHGEF2",
+   "gene_b": "SPSB4",
+   "acc_a": "Q92974",
+   "acc_b": "Q96A44",
+   "label": 1
+  },
+  {
+   "gene_a": "SOX12",
+   "gene_b": "MTR",
+   "acc_a": "O15370",
+   "acc_b": "Q99707",
+   "label": 1
+  },
+  {
+   "gene_a": "ARHGAP5",
+   "gene_b": "KAZN",
+   "acc_a": "Q13017",
+   "acc_b": "Q674X7",
+   "label": 1
+  },
+  {
+   "gene_a": "TRIM3",
+   "gene_b": "TMIE",
+   "acc_a": "O75382",
+   "acc_b": "Q8NEW7",
+   "label": 1
+  },
+  {
+   "gene_a": "MTERF3",
+   "gene_b": "ADGRE2",
+   "acc_a": "Q96E29",
+   "acc_b": "Q9UHX3",
+   "label": 1
+  },
+  {
+   "gene_a": "BIK",
+   "gene_b": "BRICD5",
+   "acc_a": "Q13323",
+   "acc_b": "Q6PL45",
+   "label": 1
+  },
+  {
+   "gene_a": "SERPINB5",
+   "gene_b": "NAA50",
+   "acc_a": "P36952",
+   "acc_b": "Q9GZZ1",
+   "label": 1
+  },
+  {
+   "gene_a": "UBASH3A",
+   "gene_b": "PMEPA1",
+   "acc_a": "P57075",
+   "acc_b": "Q969W9",
+   "label": 1
+  },
+  {
+   "gene_a": "CPLX3",
+   "gene_b": "ARL8B",
+   "acc_a": "Q8WVH0",
+   "acc_b": "Q9NVJ2",
+   "label": 1
+  },
+  {
+   "gene_a": "ZNF430",
+   "gene_b": "ZNF223",
+   "acc_a": "Q9H8G1",
+   "acc_b": "Q9UK11",
+   "label": 1
+  },
+  {
+   "gene_a": "EVI2B",
+   "gene_b": "TRAM1L1",
+   "acc_a": "P34910",
+   "acc_b": "Q8N609",
+   "label": 1
+  },
+  {
+   "gene_a": "SHISA3",
+   "gene_b": "PTGES2",
+   "acc_a": "A0PJX4",
+   "acc_b": "Q9H7Z7",
+   "label": 1
+  },
+  {
+   "gene_a": "CAPZB",
+   "gene_b": "SMTN",
+   "acc_a": "P47756",
+   "acc_b": "P53814",
+   "label": 1
+  },
+  {
+   "gene_a": "YKT6",
+   "gene_b": "TAS2R41",
+   "acc_a": "O15498",
+   "acc_b": "P59536",
+   "label": 1
+  },
+  {
+   "gene_a": "MTOR",
+   "gene_b": "NPY2R",
+   "acc_a": "P42345",
+   "acc_b": "P49146",
+   "label": 1
+  },
+  {
+   "gene_a": "ACOT1",
+   "gene_b": "HHATL",
+   "acc_a": "Q86TX2",
+   "acc_b": "Q9HCP6",
+   "label": 1
+  },
+  {
+   "gene_a": "C11orf87",
+   "gene_b": "HBS1L",
+   "acc_a": "Q6NUJ2",
+   "acc_b": "Q9Y450",
+   "label": 1
+  },
+  {
+   "gene_a": "DLG2",
+   "gene_b": "RPF2",
+   "acc_a": "Q15700",
+   "acc_b": "Q9H7B2",
+   "label": 1
+  },
+  {
+   "gene_a": "VCAM1",
+   "gene_b": "BCKDHB",
+   "acc_a": "P19320",
+   "acc_b": "P21953",
+   "label": 1
+  },
+  {
+   "gene_a": "EP300",
+   "gene_b": "CITED4",
+   "acc_a": "Q09472",
+   "acc_b": "Q96RK1",
+   "label": 1
+  },
+  {
+   "gene_a": "SUSD4",
+   "gene_b": "UBQLN2",
+   "acc_a": "Q5VX71",
+   "acc_b": "Q9UHD9",
+   "label": 1
+  },
+  {
+   "gene_a": "ELF1",
+   "gene_b": "ARL2BP",
+   "acc_a": "P32519",
+   "acc_b": "Q9Y2Y0",
+   "label": 1
+  },
+  {
+   "gene_a": "TAX1BP1",
+   "gene_b": "MED4",
+   "acc_a": "Q86VP1",
+   "acc_b": "Q9NPJ6",
+   "label": 1
+  },
+  {
+   "gene_a": "BCAS2",
+   "gene_b": "PAX5",
+   "acc_a": "O75934",
+   "acc_b": "Q02548",
+   "label": 1
+  },
+  {
+   "gene_a": "LAMP2",
+   "gene_b": "DYNC2LI1",
+   "acc_a": "P13473",
+   "acc_b": "Q8TCX1",
+   "label": 1
+  },
+  {
+   "gene_a": "FAM81A",
+   "gene_b": "RCOR3",
+   "acc_a": "Q8TBF8",
+   "acc_b": "Q9P2K3",
+   "label": 1
+  },
+  {
+   "gene_a": "ETFDH",
+   "gene_b": "ZNF581",
+   "acc_a": "Q16134",
+   "acc_b": "Q9P0T4",
+   "label": 1
+  },
+  {
+   "gene_a": "TAS2R19",
+   "gene_b": "GOLGA5",
+   "acc_a": "P59542",
+   "acc_b": "Q8TBA6",
+   "label": 1
+  },
+  {
+   "gene_a": "RASSF3",
+   "gene_b": "CBX8",
+   "acc_a": "Q86WH2",
+   "acc_b": "Q9HC52",
+   "label": 1
+  },
+  {
+   "gene_a": "ATL3",
+   "gene_b": "HS3ST3B1",
+   "acc_a": "Q6DD88",
+   "acc_b": "Q9Y662",
+   "label": 1
+  },
+  {
+   "gene_a": "EGFL7",
+   "gene_b": "PNMA2",
+   "acc_a": "Q9UHF1",
+   "acc_b": "Q9UL42",
+   "label": 1
+  },
+  {
+   "gene_a": "TRIM28",
+   "gene_b": "ZNF555",
+   "acc_a": "Q13263",
+   "acc_b": "Q8NEP9",
+   "label": 1
+  },
+  {
+   "gene_a": "NFKBIA",
+   "gene_b": "PPP1R9A",
+   "acc_a": "P25963",
+   "acc_b": "Q9ULJ8",
+   "label": 1
+  },
+  {
+   "gene_a": "ACP2",
+   "gene_b": "C5AR1",
+   "acc_a": "P11117",
+   "acc_b": "P21730",
+   "label": 1
+  },
+  {
+   "gene_a": "POTEF",
+   "gene_b": "NEUROD4",
+   "acc_a": "A5A3E0",
+   "acc_b": "Q9HD90",
+   "label": 1
+  },
+  {
+   "gene_a": "TLX3",
+   "gene_b": "ZBTB32",
+   "acc_a": "O43711",
+   "acc_b": "Q9Y2Y4",
+   "label": 1
+  },
+  {
+   "gene_a": "LAMP1",
+   "gene_b": "SLC38A7",
+   "acc_a": "P11279",
+   "acc_b": "Q9NVC3",
+   "label": 1
+  },
+  {
+   "gene_a": "PRKCE",
+   "gene_b": "ZG16B",
+   "acc_a": "Q02156",
+   "acc_b": "Q96DA0",
+   "label": 1
+  },
+  {
+   "gene_a": "SYT2",
+   "gene_b": "SLC35A4",
+   "acc_a": "Q8N9I0",
+   "acc_b": "Q96G79",
+   "label": 1
+  },
+  {
+   "gene_a": "GNAZ",
+   "gene_b": "DAAM1",
+   "acc_a": "P19086",
+   "acc_b": "Q9Y4D1",
+   "label": 1
+  },
+  {
+   "gene_a": "PCM1",
+   "gene_b": "NECAB2",
+   "acc_a": "Q15154",
+   "acc_b": "Q7Z6G3",
+   "label": 1
+  },
+  {
+   "gene_a": "PIK3C2A",
+   "gene_b": "CRYL1",
+   "acc_a": "O00443",
+   "acc_b": "Q9Y2S2",
+   "label": 1
+  },
+  {
+   "gene_a": "EMB",
+   "gene_b": "LGALS12",
+   "acc_a": "Q6PCB8",
+   "acc_b": "Q96DT0",
+   "label": 1
+  },
+  {
+   "gene_a": "ADRB2",
+   "gene_b": "USP20",
+   "acc_a": "P07550",
+   "acc_b": "Q9Y2K6",
+   "label": 1
+  },
+  {
+   "gene_a": "SORBS3",
+   "gene_b": "CHERP",
+   "acc_a": "O60504",
+   "acc_b": "Q8IWX8",
+   "label": 1
+  },
+  {
+   "gene_a": "CLEC5A",
+   "gene_b": "PTRH2",
+   "acc_a": "Q9NY25",
+   "acc_b": "Q9Y3E5",
+   "label": 1
+  },
+  {
+   "gene_a": "NRSN1",
+   "gene_b": "CHST14",
+   "acc_a": "Q8IZ57",
+   "acc_b": "Q8NCH0",
+   "label": 1
+  },
+  {
+   "gene_a": "VAC14",
+   "gene_b": "NGB",
+   "acc_a": "Q08AM6",
+   "acc_b": "Q9NPG2",
+   "label": 1
+  },
+  {
+   "gene_a": "FITM2",
+   "gene_b": "CMKLR1",
+   "acc_a": "Q8N6M3",
+   "acc_b": "Q99788",
+   "label": 1
+  },
+  {
+   "gene_a": "IFNB1",
+   "gene_b": "HMOX1",
+   "acc_a": "P01574",
+   "acc_b": "P09601",
+   "label": 0
+  },
+  {
+   "gene_a": "ATP1A2",
+   "gene_b": "ATP11C",
+   "acc_a": "P50993",
+   "acc_b": "Q8NB49",
+   "label": 0
+  },
+  {
+   "gene_a": "INTS10",
+   "gene_b": "TFIP11",
+   "acc_a": "Q9NVR2",
+   "acc_b": "Q9UBB9",
+   "label": 0
+  },
+  {
+   "gene_a": "OLIG2",
+   "gene_b": "OLIG3",
+   "acc_a": "Q13516",
+   "acc_b": "Q7RTU3",
+   "label": 0
+  },
+  {
+   "gene_a": "ALB",
+   "gene_b": "AFF1",
+   "acc_a": "P02768",
+   "acc_b": "P51825",
+   "label": 0
+  },
+  {
+   "gene_a": "PRKCG",
+   "gene_b": "UBC",
+   "acc_a": "P05129",
+   "acc_b": "P0CG48",
+   "label": 0
+  },
+  {
+   "gene_a": "MED26",
+   "gene_b": "MIS18BP1",
+   "acc_a": "O95402",
+   "acc_b": "Q6P0N0",
+   "label": 0
+  },
+  {
+   "gene_a": "FBLL1",
+   "gene_b": "HNRNPAB",
+   "acc_a": "A6NHQ2",
+   "acc_b": "Q99729",
+   "label": 0
+  },
+  {
+   "gene_a": "RNASE3",
+   "gene_b": "ARSB",
+   "acc_a": "P12724",
+   "acc_b": "P15848",
+   "label": 0
+  },
+  {
+   "gene_a": "RPL27",
+   "gene_b": "AP5S1",
+   "acc_a": "P61353",
+   "acc_b": "Q9NUS5",
+   "label": 0
+  },
+  {
+   "gene_a": "KCNA3",
+   "gene_b": "VDAC2",
+   "acc_a": "P22001",
+   "acc_b": "P45880",
+   "label": 0
+  },
+  {
+   "gene_a": "TPM2",
+   "gene_b": "MFAP5",
+   "acc_a": "P07951",
+   "acc_b": "Q13361",
+   "label": 0
+  },
+  {
+   "gene_a": "RSPO2",
+   "gene_b": "CLSTN2",
+   "acc_a": "Q6UXX9",
+   "acc_b": "Q9H4D0",
+   "label": 0
+  },
+  {
+   "gene_a": "SFN",
+   "gene_b": "FXR2",
+   "acc_a": "P31947",
+   "acc_b": "P51116",
+   "label": 0
+  },
+  {
+   "gene_a": "CD6",
+   "gene_b": "CD68",
+   "acc_a": "P30203",
+   "acc_b": "P34810",
+   "label": 0
+  },
+  {
+   "gene_a": "CMPK1",
+   "gene_b": "EIF4G1",
+   "acc_a": "P30085",
+   "acc_b": "Q04637",
+   "label": 0
+  },
+  {
+   "gene_a": "KDM6B",
+   "gene_b": "CDYL2",
+   "acc_a": "O15054",
+   "acc_b": "Q8N8U2",
+   "label": 0
+  },
+  {
+   "gene_a": "CACNG3",
+   "gene_b": "CALN1",
+   "acc_a": "O60359",
+   "acc_b": "Q9BXU9",
+   "label": 0
+  },
+  {
+   "gene_a": "MMP9",
+   "gene_b": "PLXNA1",
+   "acc_a": "P14780",
+   "acc_b": "Q9UIW2",
+   "label": 0
+  },
+  {
+   "gene_a": "ADIPOQ",
+   "gene_b": "APPL2",
+   "acc_a": "Q15848",
+   "acc_b": "Q8NEU8",
+   "label": 0
+  },
+  {
+   "gene_a": "PRPF6",
+   "gene_b": "TOPBP1",
+   "acc_a": "O94906",
+   "acc_b": "Q92547",
+   "label": 0
+  },
+  {
+   "gene_a": "RPS6KA2",
+   "gene_b": "NEK6",
+   "acc_a": "Q15349",
+   "acc_b": "Q9HC98",
+   "label": 0
+  },
+  {
+   "gene_a": "CCL5",
+   "gene_b": "IL10RB",
+   "acc_a": "P13501",
+   "acc_b": "Q08334",
+   "label": 0
+  },
+  {
+   "gene_a": "IGFALS",
+   "gene_b": "APOC4",
+   "acc_a": "P35858",
+   "acc_b": "P55056",
+   "label": 0
+  },
+  {
+   "gene_a": "XRCC6",
+   "gene_b": "SNRPG",
+   "acc_a": "P12956",
+   "acc_b": "P62308",
+   "label": 0
+  },
+  {
+   "gene_a": "GPX1",
+   "gene_b": "UBB",
+   "acc_a": "P07203",
+   "acc_b": "P0CG47",
+   "label": 0
+  },
+  {
+   "gene_a": "TNS3",
+   "gene_b": "NHS",
+   "acc_a": "Q68CZ2",
+   "acc_b": "Q6T4R5",
+   "label": 0
+  },
+  {
+   "gene_a": "S100A8",
+   "gene_b": "PFN1",
+   "acc_a": "P05109",
+   "acc_b": "P07737",
+   "label": 0
+  },
+  {
+   "gene_a": "CLCN6",
+   "gene_b": "TBC1D20",
+   "acc_a": "P51797",
+   "acc_b": "Q96BZ9",
+   "label": 0
+  },
+  {
+   "gene_a": "SFI1",
+   "gene_b": "IL36RN",
+   "acc_a": "A8K8P3",
+   "acc_b": "Q9UBH0",
+   "label": 0
+  },
+  {
+   "gene_a": "H3-5",
+   "gene_b": "SIAH1",
+   "acc_a": "Q6NXT2",
+   "acc_b": "Q8IUQ4",
+   "label": 0
+  },
+  {
+   "gene_a": "ITGB2",
+   "gene_b": "GJA1",
+   "acc_a": "P05107",
+   "acc_b": "P17302",
+   "label": 0
+  },
+  {
+   "gene_a": "PXK",
+   "gene_b": "LRRC45",
+   "acc_a": "Q7Z7A4",
+   "acc_b": "Q96CN5",
+   "label": 0
+  },
+  {
+   "gene_a": "CD80",
+   "gene_b": "EIF2AK4",
+   "acc_a": "P33681",
+   "acc_b": "Q9P2K8",
+   "label": 0
+  },
+  {
+   "gene_a": "POLR2B",
+   "gene_b": "UBAP1",
+   "acc_a": "P30876",
+   "acc_b": "Q9NZ09",
+   "label": 0
+  },
+  {
+   "gene_a": "IRF4",
+   "gene_b": "ZBTB33",
+   "acc_a": "Q15306",
+   "acc_b": "Q86T24",
+   "label": 0
+  },
+  {
+   "gene_a": "NBR1",
+   "gene_b": "KLHL24",
+   "acc_a": "Q14596",
+   "acc_b": "Q6TFL4",
+   "label": 0
+  },
+  {
+   "gene_a": "CD36",
+   "gene_b": "CLEC12A",
+   "acc_a": "P16671",
+   "acc_b": "Q5QGZ9",
+   "label": 0
+  },
+  {
+   "gene_a": "GTF2E1",
+   "gene_b": "HJURP",
+   "acc_a": "P29083",
+   "acc_b": "Q8NCD3",
+   "label": 0
+  },
+  {
+   "gene_a": "ZNF195",
+   "gene_b": "H2BC12",
+   "acc_a": "O14628",
+   "acc_b": "O60814",
+   "label": 0
+  },
+  {
+   "gene_a": "UBB",
+   "gene_b": "PCDHA8",
+   "acc_a": "P0CG47",
+   "acc_b": "Q9Y5H6",
+   "label": 0
+  },
+  {
+   "gene_a": "SDHB",
+   "gene_b": "HADHB",
+   "acc_a": "P21912",
+   "acc_b": "P55084",
+   "label": 0
+  },
+  {
+   "gene_a": "PTH",
+   "gene_b": "SLC2A9",
+   "acc_a": "P01270",
+   "acc_b": "Q9NRM0",
+   "label": 0
+  },
+  {
+   "gene_a": "ARSJ",
+   "gene_b": "AS3MT",
+   "acc_a": "Q5FYB0",
+   "acc_b": "Q9HBK9",
+   "label": 0
+  },
+  {
+   "gene_a": "ATF7",
+   "gene_b": "IRF4",
+   "acc_a": "P17544",
+   "acc_b": "Q15306",
+   "label": 0
+  },
+  {
+   "gene_a": "CDCA8",
+   "gene_b": "DIDO1",
+   "acc_a": "Q53HL2",
+   "acc_b": "Q9BTC0",
+   "label": 0
+  },
+  {
+   "gene_a": "GRM3",
+   "gene_b": "DLGAP2",
+   "acc_a": "Q14832",
+   "acc_b": "Q9P1A6",
+   "label": 0
+  },
+  {
+   "gene_a": "GRK3",
+   "gene_b": "SYK",
+   "acc_a": "P35626",
+   "acc_b": "P43405",
+   "label": 0
+  },
+  {
+   "gene_a": "ST18",
+   "gene_b": "EED",
+   "acc_a": "O60284",
+   "acc_b": "O75530",
+   "label": 0
+  },
+  {
+   "gene_a": "SLPI",
+   "gene_b": "SORT1",
+   "acc_a": "P03973",
+   "acc_b": "Q99523",
+   "label": 0
+  },
+  {
+   "gene_a": "MLN",
+   "gene_b": "F2RL3",
+   "acc_a": "P12872",
+   "acc_b": "Q96RI0",
+   "label": 0
+  },
+  {
+   "gene_a": "FCAR",
+   "gene_b": "CD40",
+   "acc_a": "P24071",
+   "acc_b": "P25942",
+   "label": 0
+  },
+  {
+   "gene_a": "ENO2",
+   "gene_b": "WDR54",
+   "acc_a": "P09104",
+   "acc_b": "Q9H977",
+   "label": 0
+  },
+  {
+   "gene_a": "CDH3",
+   "gene_b": "VAMP3",
+   "acc_a": "P22223",
+   "acc_b": "Q15836",
+   "label": 0
+  },
+  {
+   "gene_a": "RAP1B",
+   "gene_b": "LRIG1",
+   "acc_a": "P61224",
+   "acc_b": "Q96JA1",
+   "label": 0
+  },
+  {
+   "gene_a": "SNCG",
+   "gene_b": "DNM1",
+   "acc_a": "O76070",
+   "acc_b": "Q05193",
+   "label": 0
+  },
+  {
+   "gene_a": "CD2BP2",
+   "gene_b": "H2AZ1",
+   "acc_a": "O95400",
+   "acc_b": "P0C0S5",
+   "label": 0
+  },
+  {
+   "gene_a": "FGA",
+   "gene_b": "BCHE",
+   "acc_a": "P02671",
+   "acc_b": "P06276",
+   "label": 0
+  },
+  {
+   "gene_a": "POLD1",
+   "gene_b": "NOP10",
+   "acc_a": "P28340",
+   "acc_b": "Q9NPE3",
+   "label": 0
+  },
+  {
+   "gene_a": "GRIA2",
+   "gene_b": "SCN3B",
+   "acc_a": "P42262",
+   "acc_b": "Q9NY72",
+   "label": 0
+  },
+  {
+   "gene_a": "GCG",
+   "gene_b": "FSHR",
+   "acc_a": "P01275",
+   "acc_b": "P23945",
+   "label": 0
+  },
+  {
+   "gene_a": "CTLA4",
+   "gene_b": "FPR2",
+   "acc_a": "P16410",
+   "acc_b": "P25090",
+   "label": 0
+  },
+  {
+   "gene_a": "NID2",
+   "gene_b": "APLN",
+   "acc_a": "Q14112",
+   "acc_b": "Q9ULZ1",
+   "label": 0
+  },
+  {
+   "gene_a": "SNCG",
+   "gene_b": "SERPINA1",
+   "acc_a": "O76070",
+   "acc_b": "P01009",
+   "label": 0
+  },
+  {
+   "gene_a": "HLA-DRB1",
+   "gene_b": "GNAS",
+   "acc_a": "P01911",
+   "acc_b": "P63092",
+   "label": 0
+  },
+  {
+   "gene_a": "S100A11",
+   "gene_b": "GBP5",
+   "acc_a": "P31949",
+   "acc_b": "Q96PP8",
+   "label": 0
+  },
+  {
+   "gene_a": "SPAG6",
+   "gene_b": "OAZ3",
+   "acc_a": "O75602",
+   "acc_b": "Q9UMX2",
+   "label": 0
+  },
+  {
+   "gene_a": "CLDN1",
+   "gene_b": "GSK3B",
+   "acc_a": "O95832",
+   "acc_b": "P49841",
+   "label": 0
+  },
+  {
+   "gene_a": "FLNA",
+   "gene_b": "SYT1",
+   "acc_a": "P21333",
+   "acc_b": "P21579",
+   "label": 0
+  },
+  {
+   "gene_a": "NHERF2",
+   "gene_b": "SNTG2",
+   "acc_a": "Q15599",
+   "acc_b": "Q9NY99",
+   "label": 0
+  },
+  {
+   "gene_a": "EPHB6",
+   "gene_b": "NTN1",
+   "acc_a": "O15197",
+   "acc_b": "O95631",
+   "label": 0
+  },
+  {
+   "gene_a": "SCT",
+   "gene_b": "BMP7",
+   "acc_a": "P09683",
+   "acc_b": "P18075",
+   "label": 0
+  },
+  {
+   "gene_a": "IKZF4",
+   "gene_b": "PRDM16",
+   "acc_a": "Q9H2S9",
+   "acc_b": "Q9HAZ2",
+   "label": 0
+  },
+  {
+   "gene_a": "KLF3",
+   "gene_b": "HIVEP3",
+   "acc_a": "P57682",
+   "acc_b": "Q5T1R4",
+   "label": 0
+  },
+  {
+   "gene_a": "ISG15",
+   "gene_b": "SFTPC",
+   "acc_a": "P05161",
+   "acc_b": "P11686",
+   "label": 0
+  },
+  {
+   "gene_a": "MCM3AP",
+   "gene_b": "INTS6",
+   "acc_a": "O60318",
+   "acc_b": "Q9UL03",
+   "label": 0
+  },
+  {
+   "gene_a": "TCOF1",
+   "gene_b": "CENPK",
+   "acc_a": "Q13428",
+   "acc_b": "Q9BS16",
+   "label": 0
+  },
+  {
+   "gene_a": "PSTPIP1",
+   "gene_b": "HLA-DRB5",
+   "acc_a": "O43586",
+   "acc_b": "Q30154",
+   "label": 0
+  },
+  {
+   "gene_a": "CDH20",
+   "gene_b": "PCDHB14",
+   "acc_a": "Q9HBT6",
+   "acc_b": "Q9Y5E9",
+   "label": 0
+  },
+  {
+   "gene_a": "BTAF1",
+   "gene_b": "XAB2",
+   "acc_a": "O14981",
+   "acc_b": "Q9HCS7",
+   "label": 0
+  }
+ ]
+}

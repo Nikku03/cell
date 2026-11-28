@@ -1,0 +1,225 @@
+{
+ "test": "full cell costing",
+ "counts": {
+  "regulatory_gains": 612133,
+  "ppi_affinities": 191447,
+  "reaction_kcat": 12931,
+  "metabolite_conc": 8461,
+  "genes": 16492,
+  "complexes": 2039
+ },
+ "cost": {
+  "measured_gain_hours": 2.8670792266666663,
+  "sweep": {
+   "1e+02": {
+    "reaction_kcat (QM/MM barrier)": 1293100.0,
+    "ppi_affinities (FEP)": 19144700.0,
+    "complex_rates (MD)": 203900.0,
+    "regulatory_gains (MEASURED)": 2.8670792266666663
+   },
+   "1e+03": {
+    "reaction_kcat (QM/MM barrier)": 12931000.0,
+    "ppi_affinities (FEP)": 191447000.0,
+    "complex_rates (MD)": 2039000.0,
+    "regulatory_gains (MEASURED)": 2.8670792266666663
+   },
+   "1e+04": {
+    "reaction_kcat (QM/MM barrier)": 129310000.0,
+    "ppi_affinities (FEP)": 1914470000.0,
+    "complex_rates (MD)": 20390000.0,
+    "regulatory_gains (MEASURED)": 2.8670792266666663
+   },
+   "1e+05": {
+    "reaction_kcat (QM/MM barrier)": 1293100000.0,
+    "ppi_affinities (FEP)": 19144700000.0,
+    "complex_rates (MD)": 203900000.0,
+    "regulatory_gains (MEASURED)": 2.8670792266666663
+   },
+   "1e+06": {
+    "reaction_kcat (QM/MM barrier)": 12931000000.0,
+    "ppi_affinities (FEP)": 191447000000.0,
+    "complex_rates (MD)": 2039000000.0,
+    "regulatory_gains (MEASURED)": 2.8670792266666663
+   }
+  },
+  "ordering_stable": true
+ },
+ "routes": [
+  {
+   "route": "kcat from perfect chemistry",
+   "source": "loop 205 C3",
+   "result": "7.83x median, 54.7% within 10x",
+   "usable": true
+  },
+  {
+   "route": "kcat from sequence",
+   "source": "loops 131-133",
+   "result": "adds NOTHING beyond the EC number",
+   "usable": false
+  },
+  {
+   "route": "kcat from 8,184 measured values",
+   "source": "loop 124 k2",
+   "result": "LOSES to a global constant (12.95x vs 9.42x, p 0.5535)",
+   "usable": false
+  },
+  {
+   "route": "TF gain from thermodynamics",
+   "source": "loop 206 Y5",
+   "result": "r -0.0133 vs measured +0.2932 = 5% of it",
+   "usable": false
+  },
+  {
+   "route": "TF binding from AlphaFold geometry",
+   "source": "loop 184",
+   "result": "explains 0% of the spread (all q > 0.36)",
+   "usable": false
+  },
+  {
+   "route": "chromatin contact from polymer physics",
+   "source": "loop 90",
+   "result": "0.8229 vs distance-only null 0.8283 -- BELOW it",
+   "usable": false
+  },
+  {
+   "route": "protein degradation from sequence",
+   "source": "loop 156",
+   "result": "rho +0.3237 vs composition +0.2090",
+   "usable": false
+  },
+  {
+   "route": "metabolite completion (static, not a rate)",
+   "source": "loop 170",
+   "result": "hit@1 0.8506 vs base 0.7266",
+   "usable": true
+  }
+ ],
+ "propagation": {
+  "sigma_decades": 0.8937617620579434,
+  "chain": {
+   "1": {
+    "independent": 7.830000000000001,
+    "correlated": 7.830000000000001
+   },
+   "2": {
+    "independent": 18.364115071282356,
+    "correlated": 61.308900000000015
+   },
+   "3": {
+    "independent": 35.321633646442514,
+    "correlated": 480.04868700000014
+   },
+   "5": {
+    "independent": 99.6579743970912,
+    "correlated": 29431.256946414316
+   },
+   "10": {
+    "independent": 670.3827854737831,
+    "correlated": 866198885.4458609
+   },
+   "20": {
+    "independent": 9931.711860931282,
+    "correlated": 7.503005091476516e+17
+   }
+  }
+ },
+ "requirement": {
+  "required_r": 0.9081,
+  "measured_r": 0.2932,
+  "computed_r": -0.0133,
+  "ceiling_r": 0.9788,
+  "gap": 0.6149
+ },
+ "gates": {
+  "Z1": true,
+  "Z2": true,
+  "Z3": true,
+  "Z4": false,
+  "Z5": true,
+  "Z6": false
+ },
+ "void": [
+  "Z6"
+ ],
+ "seconds": 0.7651419639587402,
+ "log": [
+  "========================================================================================================",
+  "LOOP 207 -- THE WHOLE CELL FROM SCRATCH: THE TIME, AND WHAT IT WOULD BE WORTH",
+  "========================================================================================================",
+  "Z1 IS THE LEDGER RIGHT?",
+  "     regulatory_gains       612,133",
+  "     ppi_affinities         191,447",
+  "     reaction_kcat           12,931",
+  "     metabolite_conc          8,461",
+  "     genes                   16,492",
+  "     complexes                2,039",
+  "     Z1 PASS -- the counts reproduce from the repo's own sources",
+  "Z2 WHAT WOULD THE COMPUTE COST?",
+  "     regulatory gains: MEASURED at 0.712 ms per promoter-motif pair",
+  "       16,492 promoters x 879 human motifs = 14,496,468 pairs -> 2.9 CPU-hours (2.9 h)",
+  "     everything else uses ASSUMED per-unit costs, swept 1e2..1e6 CPU-hours:",
+  "       at 1e+02 CPU-h/unit:  ppi_affinities 2,185 years   reaction_kcat 148 years   complex_rates 23 years   regulatory_gains 2.9 h",
+  "       at 1e+03 CPU-h/unit:  ppi_affinities 21,855 years   reaction_kcat 1,476 years   complex_rates 233 years   regulatory_gains 2.9 h",
+  "       at 1e+04 CPU-h/unit:  ppi_affinities 218,547 years   reaction_kcat 14,761 years   complex_rates 2,328 years   regulatory_gains 2.9 h",
+  "       at 1e+05 CPU-h/unit:  ppi_affinities 2,185,468 years   reaction_kcat 147,614 years   complex_rates 23,276 years   regulatory_gains 2.9 h",
+  "       at 1e+06 CPU-h/unit:  ppi_affinities 21,854,680 years   reaction_kcat 1,476,142 years   complex_rates 232,763 years   regulatory_gains 2.9 h",
+  "     Z2 PASS -- the class ordering is identical at every assumed unit cost, so the assumption is not deciding the answer",
+  "Z3 WHAT ACCURACY WOULD COME OUT?  (every route this project actually measured)",
+  "     kcat from perfect chemistry                loop 205 C3      7.83x median, 54.7% within 10x",
+  "     kcat from sequence                         loops 131-133    adds NOTHING beyond the EC number",
+  "     kcat from 8,184 measured values            loop 124 k2      LOSES to a global constant (12.95x vs 9.42x, p 0.5535)",
+  "     TF gain from thermodynamics                loop 206 Y5      r -0.0133 vs measured +0.2932 = 5% of it",
+  "     TF binding from AlphaFold geometry         loop 184         explains 0% of the spread (all q > 0.36)",
+  "     chromatin contact from polymer physics     loop 90          0.8229 vs distance-only null 0.8283 -- BELOW it",
+  "     protein degradation from sequence          loop 156         rho +0.3237 vs composition +0.2090",
+  "     metabolite completion (static, not a rate) loop 170         hit@1 0.8506 vs base 0.7266",
+  "     Z3 PASS -- at least one measured route is usable on its own quantity",
+  "Z4 WHAT SURVIVES A CHAIN?",
+  "     per-parameter error sigma = log10(7.83) = 0.894 decades -- the BEST case anyone has",
+  "        n    independent (sqrt n)      correlated (n)",
+  "         1                7.8x                    7.83x",
+  "         2               18.4x                    61.3x",
+  "         3               35.3x                     480x",
+  "         5               99.7x                2.94e+04x",
+  "        10              670.4x                8.66e+08x",
+  "        20            9,931.7x                 7.5e+17x",
+  "     Z4 FAIL -- a 10-step chain reaches 670x even with INDEPENDENT errors, and 8.66e+08x if they correlate. No multi-step cell prediction survives its own parameters",
+  "Z5 HOW ACCURATE WOULD THE PARAMETERS HAVE TO BE?",
+  "     loop 206 measured the requirement directly: set point r >= 0.9081",
+  "     best MEASURED route on that task (nine tracks, same cells): r +0.2932",
+  "     best COMPUTED route on that task:                          r -0.0133",
+  "     the target's own reproducibility ceiling:                  r 0.9788",
+  "     gap from the best measurement to the requirement: +0.6149 in r",
+  "     Z5 PASS -- the requirement 0.908 sits between what measurement reaches (0.293) and what the data can support (0.979), so measurement COULD in principle close it -- 0.615 of r away",
+  "Z6 THE BOTTOM LINE: TIME AGAINST ACCURACY",
+  "     the ONE class that is cheap:  regulatory gains, 2.9 h on one core",
+  "       and its measured accuracy is r -0.0133 -- noise (loop 206 Y5)",
+  "     the classes with any accuracy at all are the EXPENSIVE ones:",
+  "       whole cell at 1e+03 CPU-h/unit: 23,564 years on one core, 86.0 days on 100,000 cores",
+  "       whole cell at 1e+04 CPU-h/unit: 235,636 years on one core, 2 years on 100,000 cores",
+  "     and Z4 says the OUTPUT of that spend is 670x off over ten steps",
+  "     Z6 VOID -- Z4 did not pass, so there is nothing here to test",
+  "Z7 WHAT THIS CANNOT SHOW",
+  "     The per-unit costs for QM/MM, FEP and MD are ASSUMED at literature scale and not",
+  "     measured here. Z2 swept them over four orders of magnitude and the class ordering",
+  "     did not move, which is the only claim this loop makes about them.",
+  "     Better methods exist and will keep arriving. Nothing here says the barrier problem",
+  "     is permanently unsolvable -- only that no route THIS PROJECT MEASURED reaches a",
+  "     usable accuracy on a rate.",
+  "     Z4's chain model assumes multiplicative log-normal errors. A constrained system can",
+  "     do much better: loop 156 measured growth-rate sensitivity to median kcat at 0.0034",
+  "     against 0.9966 for elongation rate, and loop 101 got a doubling time of 13.3 h",
+  "     against a measured 24 h with NO kcat at all. Conservation laws do not propagate",
+  "     error the way rate chains do, and that is the loophole this whole costing leaves",
+  "     open.",
+  "========================================================================================================",
+  "  Z1  PASS",
+  "  Z2  PASS",
+  "  Z3  PASS",
+  "  Z4  FAIL",
+  "  Z5  PASS",
+  "  Z6  VOID",
+  "  4/5   [1s]   (1 VOID: Z6)",
+  "========================================================================================================"
+ ]
+}

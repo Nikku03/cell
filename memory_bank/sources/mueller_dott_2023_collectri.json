@@ -1,0 +1,10 @@
+{
+  "id": "mueller_dott_2023_collectri",
+  "type": "database",
+  "citation": "Mueller-Dott S, Tsirvouli E, Vazquez M, et al. Expanding the coverage of regulons from high-confidence prior knowledge for accurate estimation of transcription factor activities. Nucleic Acids Research 51, 10934 (2023).",
+  "url": "https://omnipathdb.org (datasets=collectri)",
+  "organism": "human",
+  "authority": "curated",
+  "licence": "mixed source licences, academic use; kept local (rem/atlas/_cache), never committed",
+  "notes": "Signed transcription factor -> target interactions compiled from 12 resources (64,516 rows; 47,479 mapped to Ensembl; 1,176 TFs). Used only as a check on which knockdown links are direct (generegx G2-L2). Layer REG_COLLECTRI (local only)."
+}

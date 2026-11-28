@@ -1,0 +1,20 @@
+{
+ "added": "2026-11-27",
+ "facts_written": 4,
+ "layers": {
+  "LAYER-LAGTAG_RAW_GEO": "LAYER-LAGTAG_RAW_GEO/21b3057cd69d58f53bff",
+  "LAYER-LAGTAG_RAW_GENCODE": "LAYER-LAGTAG_RAW_GENCODE/99dd6cb81426c02c0f97",
+  "LAYER-LAGTAG_RAW_MGI": "LAYER-LAGTAG_RAW_MGI/8802edbf7f5404ef0a82",
+  "LAYER-LAGTAG_GATA4": "LAYER-LAGTAG_GATA4/9d0c442c8ac569459c64"
+ },
+ "build": {
+  "genes": 21859,
+  "with_human_ortholog": 16806,
+  "samples": {
+   "after": 6,
+   "before": 6,
+   "lagtag_endpoint_after": 3,
+   "lagtag_recorded_before": 3
+  }
+ }
+}

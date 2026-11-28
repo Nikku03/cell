@@ -1,0 +1,992 @@
+{
+  "A375 melanoma": {
+    "panel": [
+      [
+        "BRAF",
+        600
+      ],
+      [
+        "CDKN2A",
+        58
+      ],
+      [
+        "TTN",
+        20000
+      ]
+    ],
+    "layers_active": {
+      "ddg": "on",
+      "emask": true,
+      "cellgraph": true,
+      "depmap": true
+    },
+    "A_molecular": [
+      {
+        "gene": "BRAF",
+        "role": "oncogene",
+        "effect": "GOF (activated)",
+        "clamp": 1,
+        "in_domain": [
+          "Protein kinase"
+        ],
+        "selective_dep_rank": 4,
+        "ddg": 0.51,
+        "ddg_note": "stability-neutral"
+      },
+      {
+        "gene": "CDKN2A",
+        "role": "suppressor",
+        "effect": "LOF (lost)",
+        "clamp": -1,
+        "in_domain": null,
+        "selective_dep_rank": 12801,
+        "ddg": 0.56,
+        "ddg_note": "stability-neutral"
+      },
+      {
+        "gene": "TTN",
+        "role": "unknown",
+        "effect": "LOF? (disease-linked)",
+        "clamp": -1,
+        "in_domain": [
+          "Fibronectin type-III 44"
+        ],
+        "selective_dep_rank": 3097,
+        "ddg": null
+      }
+    ],
+    "B_pathway": {
+      "up": [
+        {
+          "pathway": "Signalling to p38 via RIT and RIN",
+          "delta": 0.331,
+          "n_perturbed": 3,
+          "score": 0.574
+        },
+        {
+          "pathway": "Negative feedback regulation of MAPK pathway",
+          "delta": 0.196,
+          "n_perturbed": 6,
+          "score": 0.479
+        },
+        {
+          "pathway": "ARMS-mediated activation",
+          "delta": 0.166,
+          "n_perturbed": 6,
+          "score": 0.406
+        },
+        {
+          "pathway": "Gain-of-function MRAS complexes activate RAF signaling",
+          "delta": 0.142,
+          "n_perturbed": 7,
+          "score": 0.375
+        },
+        {
+          "pathway": "SHOC2 M1731 mutant abolishes MRAS complex function",
+          "delta": 0.142,
+          "n_perturbed": 7,
+          "score": 0.375
+        },
+        {
+          "pathway": "Signaling by MRAS-complex mutants",
+          "delta": 0.142,
+          "n_perturbed": 7,
+          "score": 0.375
+        }
+      ],
+      "lost": [
+        {
+          "pathway": "Diseases of Cellular Senescence",
+          "delta": -0.277,
+          "n_perturbed": 3,
+          "score": -0.479
+        },
+        {
+          "pathway": "Diseases of cellular response to stress",
+          "delta": -0.277,
+          "n_perturbed": 3,
+          "score": -0.479
+        },
+        {
+          "pathway": "Evasion of Oncogene Induced Senescence Due to Defective p16INK4A binding to CDK4 and CDK6",
+          "delta": -0.277,
+          "n_perturbed": 3,
+          "score": -0.479
+        },
+        {
+          "pathway": "Evasion of Oncogene Induced Senescence Due to p16INK4A Defects",
+          "delta": -0.277,
+          "n_perturbed": 3,
+          "score": -0.479
+        },
+        {
+          "pathway": "Evasion of Oxidative Stress Induced Senescence Due to Defective p16INK4A binding to CDK4 and CDK6",
+          "delta": -0.277,
+          "n_perturbed": 3,
+          "score": -0.479
+        },
+        {
+          "pathway": "Evasion of Oxidative Stress Induced Senescence Due to p16INK4A Defects",
+          "delta": -0.277,
+          "n_perturbed": 3,
+          "score": -0.479
+        }
+      ],
+      "n_genes_perturbed": 36
+    },
+    "C_regulatory": [],
+    "D_complexes_disrupted": [
+      {
+        "complex": "Titin-Telethonin complex",
+        "lost_subunits": [
+          "TTN"
+        ]
+      }
+    ],
+    "E_metabolic_genes_hit": [],
+    "F_dependency": {
+      "coessential_with_driver": {
+        "BRAF": [
+          [
+            0.679,
+            "MAPK1"
+          ],
+          [
+            0.59,
+            "SOX10"
+          ],
+          [
+            0.5,
+            "DUSP4"
+          ],
+          [
+            0.453,
+            "MAP2K1"
+          ],
+          [
+            0.345,
+            "MITF"
+          ]
+        ]
+      },
+      "synthetic_lethal_of_lost_suppressors": [],
+      "context_selective_dependencies_genomewide": [
+        [
+          "PAX8",
+          -6.9
+        ],
+        [
+          "SOX10",
+          -7.2
+        ],
+        [
+          "HNF1B",
+          -5.7
+        ],
+        [
+          "EBF1",
+          -7.3
+        ],
+        [
+          "BRAF",
+          -6.6
+        ],
+        [
+          "KRAS",
+          -6.4
+        ],
+        [
+          "IRF4",
+          -8.3
+        ],
+        [
+          "PAX5",
+          -11.3
+        ],
+        [
+          "TCF7L2",
+          -6.1
+        ],
+        [
+          "MYB",
+          -6.2
+        ],
+        [
+          "CCND2",
+          -8.4
+        ],
+        [
+          "SMARCA2",
+          -8.7
+        ]
+      ]
+    },
+    "G_cellgraph_perturbation": {
+      "n_affected": 13824,
+      "top_down": [
+        [
+          "CDKN1A",
+          -17.375
+        ],
+        [
+          "TRIP12",
+          -16.0
+        ],
+        [
+          "CHD1L",
+          -15.75
+        ],
+        [
+          "MBNL1",
+          -15.75
+        ],
+        [
+          "TGIF1",
+          -15.625
+        ],
+        [
+          "TP53",
+          -15.625
+        ],
+        [
+          "NKIRAS1",
+          -15.25
+        ],
+        [
+          "HNRNPH1",
+          -14.875
+        ]
+      ],
+      "top_up": [
+        [
+          "CCNA2",
+          3.375
+        ],
+        [
+          "CDK2",
+          2.75
+        ],
+        [
+          "CDK4",
+          2.625
+        ],
+        [
+          "CDK1",
+          2.625
+        ],
+        [
+          "BIRC5",
+          2.125
+        ],
+        [
+          "PCK1",
+          2.125
+        ],
+        [
+          "BCL2",
+          2.0
+        ],
+        [
+          "RUNX2",
+          1.875
+        ]
+      ]
+    },
+    "H_tissue_baseline": {
+      "tissue_types_matched": [
+        "skin fibroblast"
+      ],
+      "n_types": 1
+    },
+    "conclusion": {
+      "driver": "BRAF",
+      "phenotype_pathways_up": [
+        "Signalling to p38 via RIT and RIN",
+        "Negative feedback regulation of MAPK pathway",
+        "ARMS-mediated activation",
+        "Gain-of-function MRAS complexes activate RAF signaling"
+      ],
+      "phenotype_pathways_lost": [
+        "Diseases of Cellular Senescence",
+        "Diseases of cellular response to stress",
+        "Evasion of Oncogene Induced Senescence Due to Defective p16INK4A binding to CDK4 and CDK6",
+        "Evasion of Oncogene Induced Senescence Due to p16INK4A Defects"
+      ],
+      "dependency_targets": {
+        "coessential_with_driver": {
+          "BRAF": [
+            [
+              0.679,
+              "MAPK1"
+            ],
+            [
+              0.59,
+              "SOX10"
+            ],
+            [
+              0.5,
+              "DUSP4"
+            ],
+            [
+              0.453,
+              "MAP2K1"
+            ],
+            [
+              0.345,
+              "MITF"
+            ]
+          ]
+        },
+        "synthetic_lethal_of_lost_suppressors": [],
+        "context_selective_dependencies_genomewide": [
+          [
+            "PAX8",
+            -6.9
+          ],
+          [
+            "SOX10",
+            -7.2
+          ],
+          [
+            "HNF1B",
+            -5.7
+          ],
+          [
+            "EBF1",
+            -7.3
+          ],
+          [
+            "BRAF",
+            -6.6
+          ],
+          [
+            "KRAS",
+            -6.4
+          ],
+          [
+            "IRF4",
+            -8.3
+          ],
+          [
+            "PAX5",
+            -11.3
+          ],
+          [
+            "TCF7L2",
+            -6.1
+          ],
+          [
+            "MYB",
+            -6.2
+          ],
+          [
+            "CCND2",
+            -8.4
+          ],
+          [
+            "SMARCA2",
+            -8.7
+          ]
+        ]
+      }
+    }
+  },
+  "MSI-H colorectal": {
+    "panel": [
+      [
+        "MLH1",
+        300
+      ],
+      [
+        "MSH6",
+        1088
+      ],
+      [
+        "PMS2",
+        600
+      ],
+      [
+        "TGFBR2",
+        128
+      ],
+      [
+        "ACVR2A",
+        400
+      ],
+      [
+        "RNF43",
+        117
+      ],
+      [
+        "BAX",
+        41
+      ],
+      [
+        "BRAF",
+        600
+      ],
+      [
+        "B2M",
+        50
+      ],
+      [
+        "JAK1",
+        860
+      ],
+      [
+        "WRN",
+        577
+      ]
+    ],
+    "layers_active": {
+      "ddg": "on",
+      "emask": true,
+      "cellgraph": true,
+      "depmap": true
+    },
+    "A_molecular": [
+      {
+        "gene": "MLH1",
+        "role": "suppressor",
+        "effect": "LOF (lost)",
+        "clamp": -1,
+        "in_domain": null,
+        "selective_dep_rank": 2127,
+        "ddg": 0.54,
+        "ddg_note": "stability-neutral"
+      },
+      {
+        "gene": "MSH6",
+        "role": "suppressor",
+        "effect": "LOF (lost)",
+        "clamp": -1,
+        "in_domain": null,
+        "selective_dep_rank": 11597,
+        "ddg": 1.05,
+        "ddg_note": "mildly destabilizing"
+      },
+      {
+        "gene": "PMS2",
+        "role": "suppressor",
+        "effect": "LOF (lost)",
+        "clamp": -1,
+        "in_domain": null,
+        "selective_dep_rank": null,
+        "ddg": null
+      },
+      {
+        "gene": "TGFBR2",
+        "role": "suppressor",
+        "effect": "LOF (lost)",
+        "clamp": -1,
+        "in_domain": null,
+        "selective_dep_rank": 635,
+        "ddg": 0.56,
+        "ddg_note": "stability-neutral"
+      },
+      {
+        "gene": "ACVR2A",
+        "role": "suppressor",
+        "effect": "LOF (lost)",
+        "clamp": -1,
+        "in_domain": [
+          "Protein kinase"
+        ],
+        "selective_dep_rank": 1569,
+        "ddg": null
+      },
+      {
+        "gene": "RNF43",
+        "role": "suppressor",
+        "effect": "LOF (lost)",
+        "clamp": -1,
+        "in_domain": null,
+        "selective_dep_rank": null,
+        "ddg": null
+      },
+      {
+        "gene": "BAX",
+        "role": "suppressor",
+        "effect": "LOF (lost)",
+        "clamp": -1,
+        "in_domain": null,
+        "selective_dep_rank": null,
+        "ddg": null
+      },
+      {
+        "gene": "BRAF",
+        "role": "oncogene",
+        "effect": "GOF (activated)",
+        "clamp": 1,
+        "in_domain": [
+          "Protein kinase"
+        ],
+        "selective_dep_rank": 4,
+        "ddg": 0.51,
+        "ddg_note": "stability-neutral"
+      },
+      {
+        "gene": "B2M",
+        "role": "unknown",
+        "effect": "neutral / passenger",
+        "clamp": 0,
+        "in_domain": [
+          "Ig-like C1-type"
+        ],
+        "selective_dep_rank": 12038,
+        "ddg": -0.7,
+        "ddg_note": "stability-neutral"
+      },
+      {
+        "gene": "JAK1",
+        "role": "oncogene",
+        "effect": "GOF (activated)",
+        "clamp": 1,
+        "in_domain": null,
+        "selective_dep_rank": 1375,
+        "ddg": 0.09,
+        "ddg_note": "stability-neutral"
+      },
+      {
+        "gene": "WRN",
+        "role": "unknown",
+        "effect": "neutral / passenger",
+        "clamp": 0,
+        "in_domain": [
+          "Helicase ATP-binding"
+        ],
+        "selective_dep_rank": 92,
+        "ddg": 1.06,
+        "ddg_note": "mildly destabilizing"
+      }
+    ],
+    "B_pathway": {
+      "up": [
+        {
+          "pathway": "Signalling to p38 via RIT and RIN",
+          "delta": 0.248,
+          "n_perturbed": 4,
+          "score": 0.497
+        },
+        {
+          "pathway": "Negative feedback regulation of MAPK pathway",
+          "delta": 0.189,
+          "n_perturbed": 6,
+          "score": 0.464
+        },
+        {
+          "pathway": "MAPK1 (ERK2) activation",
+          "delta": 0.158,
+          "n_perturbed": 8,
+          "score": 0.446
+        },
+        {
+          "pathway": "IFNG signaling activates MAPKs",
+          "delta": 0.157,
+          "n_perturbed": 8,
+          "score": 0.444
+        },
+        {
+          "pathway": "Interleukin-27 signaling",
+          "delta": 0.153,
+          "n_perturbed": 8,
+          "score": 0.434
+        },
+        {
+          "pathway": "Interleukin-6 signaling",
+          "delta": 0.143,
+          "n_perturbed": 9,
+          "score": 0.428
+        }
+      ],
+      "lost": [
+        {
+          "pathway": "Diseases of Mismatch Repair (MMR)",
+          "delta": -0.75,
+          "n_perturbed": 4,
+          "score": -1.499
+        },
+        {
+          "pathway": "Mismatch Repair",
+          "delta": -0.231,
+          "n_perturbed": 13,
+          "score": -0.831
+        },
+        {
+          "pathway": "Mismatch repair (MMR) directed by MSH2:MSH6 (MutSalpha)",
+          "delta": -0.231,
+          "n_perturbed": 13,
+          "score": -0.831
+        },
+        {
+          "pathway": "SMAD2/3 Phosphorylation Motif Mutants in Cancer",
+          "delta": -0.29,
+          "n_perturbed": 6,
+          "score": -0.711
+        },
+        {
+          "pathway": "TGFBR1 KD Mutants in Cancer",
+          "delta": -0.29,
+          "n_perturbed": 6,
+          "score": -0.711
+        },
+        {
+          "pathway": "Somatic hypermutation of immunoglobulin genes by error-prone mismatch repair (MMR)",
+          "delta": -0.166,
+          "n_perturbed": 18,
+          "score": -0.706
+        }
+      ],
+      "n_genes_perturbed": 96
+    },
+    "C_regulatory": [],
+    "D_complexes_disrupted": [
+      {
+        "complex": "MutLalpha endonuclease complex",
+        "lost_subunits": [
+          "MLH1",
+          "PMS2"
+        ]
+      },
+      {
+        "complex": "MutLabeta endonuclease complex",
+        "lost_subunits": [
+          "MLH1"
+        ]
+      },
+      {
+        "complex": "MutLgamma endonuclease complex",
+        "lost_subunits": [
+          "MLH1"
+        ]
+      },
+      {
+        "complex": "DNA mismatch repair MutSalpha complex",
+        "lost_subunits": [
+          "MSH6"
+        ]
+      },
+      {
+        "complex": "TGF-beta-1-TGFR complex",
+        "lost_subunits": [
+          "TGFBR2"
+        ]
+      },
+      {
+        "complex": "TGF-beta-2-TGFR complex",
+        "lost_subunits": [
+          "TGFBR2"
+        ]
+      },
+      {
+        "complex": "TGF-beta-3-TGFR complex",
+        "lost_subunits": [
+          "TGFBR2"
+        ]
+      }
+    ],
+    "E_metabolic_genes_hit": [],
+    "F_dependency": {
+      "coessential_with_driver": {
+        "BRAF": [
+          [
+            0.679,
+            "MAPK1"
+          ],
+          [
+            0.59,
+            "SOX10"
+          ],
+          [
+            0.5,
+            "DUSP4"
+          ],
+          [
+            0.453,
+            "MAP2K1"
+          ],
+          [
+            0.345,
+            "MITF"
+          ]
+        ],
+        "JAK1": [
+          [
+            0.403,
+            "IRF9"
+          ],
+          [
+            0.391,
+            "IL6ST"
+          ],
+          [
+            0.371,
+            "STAT2"
+          ],
+          [
+            0.357,
+            "TYK2"
+          ],
+          [
+            0.347,
+            "IFNAR2"
+          ]
+        ]
+      },
+      "synthetic_lethal_of_lost_suppressors": [
+        [
+          "TGFBR2",
+          "TGFBR1",
+          0.7
+        ]
+      ],
+      "context_selective_dependencies_genomewide": [
+        [
+          "PAX8",
+          -6.9
+        ],
+        [
+          "SOX10",
+          -7.2
+        ],
+        [
+          "HNF1B",
+          -5.7
+        ],
+        [
+          "EBF1",
+          -7.3
+        ],
+        [
+          "BRAF",
+          -6.6
+        ],
+        [
+          "KRAS",
+          -6.4
+        ],
+        [
+          "IRF4",
+          -8.3
+        ],
+        [
+          "PAX5",
+          -11.3
+        ],
+        [
+          "TCF7L2",
+          -6.1
+        ],
+        [
+          "MYB",
+          -6.2
+        ],
+        [
+          "CCND2",
+          -8.4
+        ],
+        [
+          "SMARCA2",
+          -8.7
+        ]
+      ]
+    },
+    "G_cellgraph_perturbation": {
+      "n_affected": 13837,
+      "top_down": [
+        [
+          "CCNA2",
+          -2.125
+        ],
+        [
+          "CCN2",
+          -2.0
+        ],
+        [
+          "BIRC5",
+          -2.0
+        ],
+        [
+          "SMAD2",
+          -2.0
+        ],
+        [
+          "TGFB1",
+          -2.0
+        ],
+        [
+          "ACTG2",
+          -1.75
+        ],
+        [
+          "MMP13",
+          -1.625
+        ],
+        [
+          "CCNE1",
+          -1.625
+        ]
+      ],
+      "top_up": [
+        [
+          "CDKN1A",
+          14.625
+        ],
+        [
+          "TRIP12",
+          14.375
+        ],
+        [
+          "MFSD11",
+          13.625
+        ],
+        [
+          "CHD1L",
+          13.25
+        ],
+        [
+          "MUC1",
+          13.0
+        ],
+        [
+          "MBNL1",
+          12.875
+        ],
+        [
+          "DPP9",
+          12.875
+        ],
+        [
+          "HNRNPH1",
+          12.875
+        ]
+      ]
+    },
+    "H_tissue_baseline": {
+      "tissue_types_matched": [
+        "enterocyte"
+      ],
+      "n_types": 1
+    },
+    "conclusion": {
+      "driver": "JAK1",
+      "phenotype_pathways_up": [
+        "Signalling to p38 via RIT and RIN",
+        "Negative feedback regulation of MAPK pathway",
+        "MAPK1 (ERK2) activation",
+        "IFNG signaling activates MAPKs"
+      ],
+      "phenotype_pathways_lost": [
+        "Diseases of Mismatch Repair (MMR)",
+        "Mismatch Repair",
+        "Mismatch repair (MMR) directed by MSH2:MSH6 (MutSalpha)",
+        "SMAD2/3 Phosphorylation Motif Mutants in Cancer"
+      ],
+      "dependency_targets": {
+        "coessential_with_driver": {
+          "BRAF": [
+            [
+              0.679,
+              "MAPK1"
+            ],
+            [
+              0.59,
+              "SOX10"
+            ],
+            [
+              0.5,
+              "DUSP4"
+            ],
+            [
+              0.453,
+              "MAP2K1"
+            ],
+            [
+              0.345,
+              "MITF"
+            ]
+          ],
+          "JAK1": [
+            [
+              0.403,
+              "IRF9"
+            ],
+            [
+              0.391,
+              "IL6ST"
+            ],
+            [
+              0.371,
+              "STAT2"
+            ],
+            [
+              0.357,
+              "TYK2"
+            ],
+            [
+              0.347,
+              "IFNAR2"
+            ]
+          ]
+        },
+        "synthetic_lethal_of_lost_suppressors": [
+          [
+            "TGFBR2",
+            "TGFBR1",
+            0.7
+          ]
+        ],
+        "context_selective_dependencies_genomewide": [
+          [
+            "PAX8",
+            -6.9
+          ],
+          [
+            "SOX10",
+            -7.2
+          ],
+          [
+            "HNF1B",
+            -5.7
+          ],
+          [
+            "EBF1",
+            -7.3
+          ],
+          [
+            "BRAF",
+            -6.6
+          ],
+          [
+            "KRAS",
+            -6.4
+          ],
+          [
+            "IRF4",
+            -8.3
+          ],
+          [
+            "PAX5",
+            -11.3
+          ],
+          [
+            "TCF7L2",
+            -6.1
+          ],
+          [
+            "MYB",
+            -6.2
+          ],
+          [
+            "CCND2",
+            -8.4
+          ],
+          [
+            "SMARCA2",
+            -8.7
+          ]
+        ]
+      }
+    }
+  }
+}

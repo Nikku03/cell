@@ -1,0 +1,165 @@
+{
+ "G17-C1": {
+  "genes": 375,
+  "sign_p": 1.0941036790067175e-28,
+  "median": 0.6350853118825119,
+  "share_positive": 0.7786666666666666,
+  "p_mc": 0.000999000999000999,
+  "null_median_95": 0.09661636979657852,
+  "passed": true,
+  "controls": {
+   "planted_pass_rate": 1.0,
+   "null_pass_rate": 0.04,
+   "runs": 50,
+   "ok": true
+  },
+  "gate": {
+   "real": true,
+   "controls_ok": true,
+   "verdict": "PASS"
+  }
+ },
+ "G17-L1": {
+  "genes": 251,
+  "sign_p": 0.4497878353175603,
+  "median": 0.05505430832141567,
+  "share_positive": 0.5059760956175299,
+  "p_mc": 0.24475524475524477,
+  "null_median_95": 0.12597580005290365,
+  "passed": false,
+  "controls": {
+   "planted_pass_rate": 0.9,
+   "null_pass_rate": 0.04,
+   "runs": 50,
+   "ok": true
+  },
+  "gate": {
+   "real": false,
+   "controls_ok": true,
+   "verdict": "FAIL"
+  }
+ },
+ "G17-T1": {
+  "genes": 606,
+  "pairs": 974,
+  "FL": {
+   "30": 0.13091785589324495,
+   "60": 0.2615128861165293,
+   "90": 0.1947326084382006,
+   "120": 0.32109570521514397,
+   "240": 0.3933761375236812,
+   "360": 0.4156929858679515
+  },
+  "FY": {
+   "30": 0.11784500948319443,
+   "60": 0.21639979346859572,
+   "90": 0.31905655346021256,
+   "120": 0.45599764944094406,
+   "240": 0.676933416006762,
+   "360": 0.7380878779391316
+  },
+  "d": 0.13449868679068147,
+  "d_boot_5": 0.047368521007414045,
+  "p_boot": 0.004997501249375313,
+  "passed": true,
+  "controls": {
+   "equal_timing_pass_rate": 0.045,
+   "planted_lead_pass_rate": 1.0,
+   "runs": 200,
+   "ok": true
+  },
+  "gate": {
+   "real": true,
+   "controls_ok": true,
+   "verdict": "PASS"
+  }
+ },
+ "reported": {
+  "C1_at_120min": {
+   "genes": 334,
+   "sign_p": 1.4091997223651822e-14,
+   "median": 0.15875320198949977,
+   "share_positive": 0.7065868263473054,
+   "p_mc": 0.000999000999000999,
+   "null_median_95": 0.03374365860714975,
+   "passed": true
+  },
+  "C1_at_360min": {
+   "genes": 356,
+   "sign_p": 4.645119020124393e-23,
+   "median": 0.3324521404079353,
+   "share_positive": 0.7556179775280899,
+   "p_mc": 0.000999000999000999,
+   "null_median_95": 0.06693255696977857,
+   "passed": true
+  },
+  "C1_intron_signal": {
+   "genes": 260,
+   "sign_p": 5.583535920499614e-23,
+   "median": 0.687945969909129,
+   "share_positive": 0.7961538461538461,
+   "p_mc": 0.000999000999000999,
+   "null_median_95": 0.10151023557870835,
+   "passed": true
+  },
+  "bins": {
+   "valid": 28023,
+   "flip_B_to_A": 745,
+   "flip_A_to_B": 966,
+   "corr_E1_0h_24h": 0.9701367105018169
+  },
+  "rank_corr_E1_change_vs_expression_change": 0.20734056456351355,
+  "L1_at_each_loop_peak_time": {
+   "genes": 251,
+   "sign_p": 0.4497878353175603,
+   "median": 0.007690743215521753,
+   "share_positive": 0.5059760956175299,
+   "passed_gain_rule": false
+  },
+  "L1_intron_signal": {
+   "genes": 185,
+   "sign_p": 0.4415748463707168,
+   "median": 0.01416282296045749,
+   "share_positive": 0.5081081081081081,
+   "p_mc": 0.3876123876123876,
+   "null_median_95": 0.16543486516450134,
+   "passed": false
+  },
+  "loops": {
+   "changing": 938,
+   "gained_24h": 433,
+   "lost_24h": 505,
+   "authors_up.early": 91,
+   "authors_up.late": 129,
+   "authors_down.early": 99,
+   "authors_down.late": 183,
+   "authors_clusters_among_changing": 0.535181236673774
+  },
+  "rank_corr_loop_sign_vs_expression_change": 0.0428587354378408,
+  "T1_mRNA_instead_of_intron": {
+   "genes": 914,
+   "pairs": 1451,
+   "FL": {
+    "30": 0.07004311513997412,
+    "60": 0.24401550450696374,
+    "90": 0.17198331736438882,
+    "120": 0.33215559237192094,
+    "240": 0.4227151376808491,
+    "360": 0.4549773058984841
+   },
+   "FY": {
+    "30": 0.04200856975262798,
+    "60": 0.09836043206999645,
+    "90": 0.1869053878673754,
+    "120": 0.29767676699223306,
+    "240": 0.5976849388612552,
+    "360": 0.6943768007753518
+   },
+   "d": 0.036853820559376506,
+   "d_boot_5": -0.025867610334062117,
+   "p_boot": 0.17541229385307347,
+   "passed": false
+  },
+  "genes_expressed_in_half": 6486
+ }
+}

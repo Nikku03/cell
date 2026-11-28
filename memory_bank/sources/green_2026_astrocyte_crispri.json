@@ -1,0 +1,9 @@
+{
+  "id": "green_2026_astrocyte_crispri",
+  "type": "peer_reviewed_paper",
+  "citation": "Green, N. F. O. et al. CRISPRi screening in cultured human astrocytes uncovers distal enhancers controlling genes dysregulated in Alzheimer's disease. Nature Neuroscience 29, 703-716 (2026).",
+  "organism": "human",
+  "authority": "primary",
+  "licence": "not checked (verify before redistributing or commercial use)",
+  "notes": "Astrocyte CRISPRi enhancer screen (also its scRNA-seq is in the AG2 training corpus as 'E2G Primary Astrocytes')."
+}

@@ -1,0 +1,20 @@
+{
+ "pairs": 10356,
+ "positives": 471,
+ "auprc": {
+  "dist": 0.41498800760924515,
+  "abc": 0.48007624221204,
+  "coact": 0.09539711983589914,
+  "activity": 0.068337741339258,
+  "final_in_sample": 0.5013914801687401
+ },
+ "coef": {
+  "log_abc": 0.861,
+  "log_dist": 0.625,
+  "activity": 1.727,
+  "coact": 0.884,
+  "coact_x_activity": 0.975
+ },
+ "intercept": 6.750104738298282,
+ "threshold_precision_50": 0.27440423457369983
+}

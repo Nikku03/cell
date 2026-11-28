@@ -1,0 +1,147 @@
+{
+ "G11-K1": {
+  "versions": "address",
+  "per_line": {
+   "K562": {
+    "units": 175,
+    "splicing_knockdowns": 42,
+    "other_knockdowns": 186,
+    "median_gain": 0.036003600360036025
+   },
+   "HepG2": {
+    "units": 222,
+    "splicing_knockdowns": 46,
+    "other_knockdowns": 186,
+    "median_gain": 0.026804688510875918
+   }
+  },
+  "splicing_vs_other": {
+   "n": 397,
+   "median": 0.031967213114754145,
+   "share_positive": 0.7153652392947103,
+   "p": 2.1601433758634514e-18,
+   "passed": true
+  },
+  "p_mc": 0.000999000999000999,
+  "null_median_95": 0.009829359513791453,
+  "negative": {
+   "n": 398,
+   "median": -0.007133548790658889,
+   "share_positive": 0.4321608040201005,
+   "p": 0.9971164414515864,
+   "passed": false
+  },
+  "planted": {
+   "n": 397,
+   "median": 0.3790322580645161,
+   "share_positive": 0.9974811083123426,
+   "p": 1.233033265688023e-117,
+   "passed": true
+  },
+  "gate": {
+   "real": true,
+   "controls_ok": true,
+   "verdict": "PASS"
+  },
+  "reported_other_versions": {
+   "versions": "other versions",
+   "per_line": {
+    "K562": {
+     "units": 3634,
+     "splicing_knockdowns": 42,
+     "other_knockdowns": 186,
+     "median_gain": 0.037640733712839936
+    },
+    "HepG2": {
+     "units": 3841,
+     "splicing_knockdowns": 46,
+     "other_knockdowns": 186,
+     "median_gain": 0.03664658634538154
+    }
+   },
+   "splicing_vs_other": {
+    "n": 7475,
+    "median": 0.037186379928315416,
+    "share_positive": 0.7159517426273458,
+    "p": 7.48002226e-315,
+    "passed": true
+   },
+   "p_mc": 0.000999000999000999,
+   "null_median_95": 0.010990322871458954,
+   "negative": {
+    "n": 7568,
+    "median": -0.0026050762937770144,
+    "share_positive": 0.4826581943341276,
+    "p": 0.9987620067791418,
+    "passed": false
+   },
+   "planted": {
+    "n": 7475,
+    "median": 0.3404356060606061,
+    "share_positive": 0.9994648829431438,
+    "p": 0.0,
+    "passed": true
+   }
+  }
+ },
+ "G11-K2": {
+  "genes_tissue_varying": 190,
+  "per_line": {
+   "K562": {
+    "units": 77,
+    "splicing_knockdowns": 42,
+    "median_rho": -0.010697354104727464
+   },
+   "HepG2": {
+    "units": 100,
+    "splicing_knockdowns": 46,
+    "median_rho": 0.02106613706983735
+   }
+  },
+  "rho": {
+   "n": 177,
+   "median": -0.0017018517893884599,
+   "share_positive": 0.4915254237288136,
+   "p": 0.6181129705670629,
+   "passed": false
+  },
+  "p_mc": 0.5684315684315684,
+  "null_median_95": 0.030184674923150617,
+  "negative": {
+   "n": 177,
+   "median": 0.01393897656070548,
+   "share_positive": 0.5227272727272727,
+   "p": 0.298936224527833,
+   "passed": false
+  },
+  "planted": {
+   "n": 177,
+   "median": 0.5921002385681288,
+   "share_positive": 1.0,
+   "p": 5.22024357439882e-54,
+   "passed": true
+  },
+  "gate": {
+   "real": false,
+   "controls_ok": true,
+   "verdict": "FAIL"
+  }
+ },
+ "reported_measured_governors": {
+  "genes_with_hits": 205,
+  "hit_rate": {
+   "K562": {
+    "splicing": 0.136034255599473,
+    "other": 0.10887922670595422,
+    "hits": 3856,
+    "measured_pairs": 33901
+   },
+   "HepG2": {
+    "splicing": 0.1348627042057699,
+    "other": 0.11181702668360864,
+    "hits": 5212,
+    "measured_pairs": 44833
+   }
+  }
+ }
+}

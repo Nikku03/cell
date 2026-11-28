@@ -1,0 +1,501 @@
+{
+  "test": "dock_diagnose",
+  "weights": [
+    0.0,
+    1.0,
+    3.0,
+    5.0,
+    10.0,
+    15.0,
+    30.0,
+    50.0,
+    100.0
+  ],
+  "complexes": [
+    {
+      "pdb": "1ACB",
+      "chains": [
+        "E",
+        "I"
+      ],
+      "native_interlock": 8.00003719329834,
+      "native_clash": 5.551688445848413e-06,
+      "rand_interlock": 52.00000762939453,
+      "rand_clash": 14.000005722045898,
+      "max_interlock": 988.9999389648438,
+      "max_clash_at_argmax_inter": 312.0,
+      "true_atom_contacts_5A": 509,
+      "sweep": {
+        "0.0": {
+          "native_score": 8.00003719329834,
+          "pct": 0.9333428276909722,
+          "n_better": 58973,
+          "max": 988.9999389648438
+        },
+        "1.0": {
+          "native_score": 8.000031471252441,
+          "pct": 0.9360261140046297,
+          "n_better": 56599,
+          "max": 679.0
+        },
+        "3.0": {
+          "native_score": 8.000020980834961,
+          "pct": 0.9817584002459491,
+          "n_better": 16128,
+          "max": 112.0
+        },
+        "5.0": {
+          "native_score": 8.000009536743164,
+          "pct": 0.9985713252314815,
+          "n_better": 1257,
+          "max": 34.0
+        },
+        "10.0": {
+          "native_score": 7.999981880187988,
+          "pct": 0.9994348596643519,
+          "n_better": 497,
+          "max": 32.999916076660156
+        },
+        "15.0": {
+          "native_score": 7.999953746795654,
+          "pct": 0.9994845920138888,
+          "n_better": 455,
+          "max": 32.999874114990234
+        },
+        "30.0": {
+          "native_score": 7.999870777130127,
+          "pct": 0.9994766800491898,
+          "n_better": 462,
+          "max": 32.9997444152832
+        },
+        "50.0": {
+          "native_score": 7.999759674072266,
+          "pct": 0.9994642469618056,
+          "n_better": 473,
+          "max": 32.999576568603516
+        },
+        "100.0": {
+          "native_score": 7.999482154846191,
+          "pct": 0.9994608561197916,
+          "n_better": 476,
+          "max": 32.99915313720703
+        }
+      },
+      "best_w": 15.0,
+      "best_pct": 0.9994845920138888
+    },
+    {
+      "pdb": "1AK4",
+      "chains": [
+        "A",
+        "B"
+      ],
+      "native_interlock": -9.636913091526367e-06,
+      "native_clash": -2.874890014936682e-08,
+      "rand_interlock": 0.9999970197677612,
+      "rand_clash": 0.9999938011169434,
+      "max_interlock": 1873.0,
+      "max_clash_at_argmax_inter": 648.0,
+      "true_atom_contacts_5A": 0,
+      "sweep": {
+        "0.0": {
+          "native_score": -9.636913091526367e-06,
+          "pct": 0.1915283203125,
+          "n_better": 715283,
+          "max": 1873.0
+        },
+        "1.0": {
+          "native_score": -9.608163964003325e-06,
+          "pct": 0.20273279260706017,
+          "n_better": 705370,
+          "max": 1225.0
+        },
+        "3.0": {
+          "native_score": -9.550666618451942e-06,
+          "pct": 0.3124932183159722,
+          "n_better": 608261,
+          "max": 109.9998779296875
+        },
+        "5.0": {
+          "native_score": -9.493168363405857e-06,
+          "pct": 0.4073203757957176,
+          "n_better": 524364,
+          "max": 42.999961853027344
+        },
+        "10.0": {
+          "native_score": -9.349423635285348e-06,
+          "pct": 0.48530183015046297,
+          "n_better": 455371,
+          "max": 23.00005340576172
+        },
+        "15.0": {
+          "native_score": -9.20567981665954e-06,
+          "pct": 0.5137736002604166,
+          "n_better": 430181,
+          "max": 23.000085830688477
+        },
+        "30.0": {
+          "native_score": -8.774446541792713e-06,
+          "pct": 0.5417265715422453,
+          "n_better": 405450,
+          "max": 23.000181198120117
+        },
+        "50.0": {
+          "native_score": -8.199467629310675e-06,
+          "pct": 0.5530361599392362,
+          "n_better": 395444,
+          "max": 23.000308990478516
+        },
+        "100.0": {
+          "native_score": -6.762023076589685e-06,
+          "pct": 0.5614635326244213,
+          "n_better": 387988,
+          "max": 23.000625610351562
+        }
+      },
+      "best_w": 100.0,
+      "best_pct": 0.5614635326244213
+    },
+    {
+      "pdb": "1B2S",
+      "chains": [
+        "A",
+        "B"
+      ],
+      "native_interlock": 2.0000081062316895,
+      "native_clash": -9.735425692269928e-07,
+      "rand_interlock": -2.791354290820891e-06,
+      "rand_clash": -4.2673661937442375e-07,
+      "max_interlock": 1138.0,
+      "max_clash_at_argmax_inter": 417.0,
+      "true_atom_contacts_5A": 140,
+      "sweep": {
+        "0.0": {
+          "native_score": 2.0000081062316895,
+          "pct": 0.9306233723958334,
+          "n_better": 61361,
+          "max": 1138.0
+        },
+        "1.0": {
+          "native_score": 2.000009059906006,
+          "pct": 0.9317683467158565,
+          "n_better": 60344,
+          "max": 739.0001220703125
+        },
+        "3.0": {
+          "native_score": 2.0000109672546387,
+          "pct": 0.9677304868344907,
+          "n_better": 28532,
+          "max": 104.00006103515625
+        },
+        "5.0": {
+          "native_score": 2.0000128746032715,
+          "pct": 0.9914742928964121,
+          "n_better": 7533,
+          "max": 34.00001907348633
+        },
+        "10.0": {
+          "native_score": 2.0000178813934326,
+          "pct": 0.9948741771556713,
+          "n_better": 4524,
+          "max": 26.000024795532227
+        },
+        "15.0": {
+          "native_score": 2.0000226497650146,
+          "pct": 0.9952019585503472,
+          "n_better": 4242,
+          "max": 26.000030517578125
+        },
+        "30.0": {
+          "native_score": 2.000037431716919,
+          "pct": 0.9952234338831019,
+          "n_better": 4223,
+          "max": 26.000049591064453
+        },
+        "50.0": {
+          "native_score": 2.000056743621826,
+          "pct": 0.9952008282696759,
+          "n_better": 4244,
+          "max": 26.00007438659668
+        },
+        "100.0": {
+          "native_score": 2.000105381011963,
+          "pct": 0.9951816134982638,
+          "n_better": 4262,
+          "max": 26.000139236450195
+        }
+      },
+      "best_w": 30.0,
+      "best_pct": 0.9952234338831019
+    },
+    {
+      "pdb": "1B2U",
+      "chains": [
+        "A",
+        "B"
+      ],
+      "native_interlock": 1.0649363503034692e-05,
+      "native_clash": 1.0728836059570312e-06,
+      "rand_interlock": -3.1789145396032836e-06,
+      "rand_clash": 4.004820766567718e-06,
+      "max_interlock": 1133.0,
+      "max_clash_at_argmax_inter": 404.0,
+      "true_atom_contacts_5A": 161,
+      "sweep": {
+        "0.0": {
+          "native_score": 1.0649363503034692e-05,
+          "pct": 0.8565233018663194,
+          "n_better": 126909,
+          "max": 1133.0
+        },
+        "1.0": {
+          "native_score": 9.576479897077661e-06,
+          "pct": 0.8268116138599537,
+          "n_better": 153216,
+          "max": 729.0
+        },
+        "3.0": {
+          "native_score": 7.4307126851635985e-06,
+          "pct": 0.7373306839554398,
+          "n_better": 232383,
+          "max": 87.0
+        },
+        "5.0": {
+          "native_score": 5.284945473249536e-06,
+          "pct": 0.6433116771556713,
+          "n_better": 315572,
+          "max": 31.999977111816406
+        },
+        "10.0": {
+          "native_score": -7.947255653562024e-08,
+          "pct": 0.5010116012008102,
+          "n_better": 441470,
+          "max": 24.999988555908203
+        },
+        "15.0": {
+          "native_score": -5.4438905863207765e-06,
+          "pct": 0.4474249945746528,
+          "n_better": 488881,
+          "max": 24.99997901916504
+        },
+        "30.0": {
+          "native_score": -2.1537143766181543e-05,
+          "pct": 0.3942215530960648,
+          "n_better": 535953,
+          "max": 24.999956130981445
+        },
+        "50.0": {
+          "native_score": -4.299481588532217e-05,
+          "pct": 0.37418845847800924,
+          "n_better": 553676,
+          "max": 24.999923706054688
+        },
+        "100.0": {
+          "native_score": -9.663899982115254e-05,
+          "pct": 0.36000117549189814,
+          "n_better": 566218,
+          "max": 24.999845504760742
+        }
+      },
+      "best_w": 0.0,
+      "best_pct": 0.8565233018663194
+    },
+    {
+      "pdb": "1B3S",
+      "chains": [
+        "A",
+        "B"
+      ],
+      "native_interlock": 3.5762786865234375e-07,
+      "native_clash": 4.162391178397229e-06,
+      "rand_interlock": 9.000020980834961,
+      "rand_clash": 4.0,
+      "max_interlock": 1095.0,
+      "max_clash_at_argmax_inter": 389.0,
+      "true_atom_contacts_5A": 145,
+      "sweep": {
+        "0.0": {
+          "native_score": 3.5762786865234375e-07,
+          "pct": 0.4656089500144676,
+          "n_better": 472787,
+          "max": 1095.0
+        },
+        "1.0": {
+          "native_score": -3.804763309744885e-06,
+          "pct": 0.25701113100405093,
+          "n_better": 657348,
+          "max": 720.0
+        },
+        "3.0": {
+          "native_score": -1.2129545211791992e-05,
+          "pct": 0.1301280834056713,
+          "n_better": 769606,
+          "max": 102.99996948242188
+        },
+        "5.0": {
+          "native_score": -2.0454328478081152e-05,
+          "pct": 0.1294182671440972,
+          "n_better": 770234,
+          "max": 32.000022888183594
+        },
+        "10.0": {
+          "native_score": -4.126628482481465e-05,
+          "pct": 0.12398613823784722,
+          "n_better": 775040,
+          "max": 30.999937057495117
+        },
+        "15.0": {
+          "native_score": -6.207823753356934e-05,
+          "pct": 0.12332605432581019,
+          "n_better": 775624,
+          "max": 30.999910354614258
+        },
+        "30.0": {
+          "native_score": -0.00012451410293579102,
+          "pct": 0.12317346643518519,
+          "n_better": 775759,
+          "max": 30.999832153320312
+        },
+        "50.0": {
+          "native_score": -0.000207761928322725,
+          "pct": 0.12342890986689815,
+          "n_better": 775532,
+          "max": 30.999727249145508
+        },
+        "100.0": {
+          "native_score": -0.00041588148451410234,
+          "pct": 0.12372730396412036,
+          "n_better": 775269,
+          "max": 30.999465942382812
+        }
+      },
+      "best_w": 0.0,
+      "best_pct": 0.4656089500144676
+    },
+    {
+      "pdb": "1BRS",
+      "chains": [
+        "A",
+        "B"
+      ],
+      "native_interlock": 2.00000262260437,
+      "native_clash": 1.043081283569336e-06,
+      "rand_interlock": 296.0,
+      "rand_clash": 99.00001525878906,
+      "max_interlock": 1147.0,
+      "max_clash_at_argmax_inter": 386.0,
+      "true_atom_contacts_5A": 153,
+      "sweep": {
+        "0.0": {
+          "native_score": 2.00000262260437,
+          "pct": 0.9318508572048612,
+          "n_better": 60242,
+          "max": 1147.0
+        },
+        "1.0": {
+          "native_score": 2.0000016689300537,
+          "pct": 0.9325798882378472,
+          "n_better": 59614,
+          "max": 761.0
+        },
+        "3.0": {
+          "native_score": 1.9999995231628418,
+          "pct": 0.9681859899450231,
+          "n_better": 28128,
+          "max": 121.00006103515625
+        },
+        "5.0": {
+          "native_score": 1.9999973773956299,
+          "pct": 0.9904638219762731,
+          "n_better": 8431,
+          "max": 30.0
+        },
+        "10.0": {
+          "native_score": 1.9999921321868896,
+          "pct": 0.9940942834924769,
+          "n_better": 5221,
+          "max": 23.000001907348633
+        },
+        "15.0": {
+          "native_score": 1.999987006187439,
+          "pct": 0.9945023148148148,
+          "n_better": 4863,
+          "max": 23.0
+        },
+        "30.0": {
+          "native_score": 1.9999713897705078,
+          "pct": 0.994598388671875,
+          "n_better": 4777,
+          "max": 22.9999942779541
+        },
+        "50.0": {
+          "native_score": 1.9999504089355469,
+          "pct": 0.994598388671875,
+          "n_better": 4777,
+          "max": 22.99998664855957
+        },
+        "100.0": {
+          "native_score": 1.9998983144760132,
+          "pct": 0.9945961281105324,
+          "n_better": 4779,
+          "max": 22.99996566772461
+        }
+      },
+      "best_w": 30.0,
+      "best_pct": 0.994598388671875
+    }
+  ],
+  "median_clash_over_interlock": 6.077488936483301e-07,
+  "median_pct_by_weight": {
+    "0.0": 0.8935733371310763,
+    "1.0": 0.8792899802879051,
+    "3.0": 0.8525305853949652,
+    "5.0": 0.8168877495659722,
+    "10.0": 0.7475529423466436,
+    "15.0": 0.7541379575376157,
+    "30.0": 0.7681624801070601,
+    "50.0": 0.7738172743055556,
+    "100.0": 0.7780298303674769
+  },
+  "best_weight": 0.0,
+  "log": [
+    "====================================================================================================",
+    "IS THE SHAPE SCORE BROKEN OR MERELY WEAK? -- native-pose components + clash-weight sweep",
+    "====================================================================================================",
+    "  PREDECLARED: native clash large => MY BUG, grid too fat, dock_fft is void.",
+    "               native clash ~0 and percentile poor at EVERY w => score is weak, not broken.",
+    "               percentile good at some w => the weight was wrong; re-run dock_fft with it.",
+    "    1ACB E/I: native interlock        8 clash        0 | random-shift interlock     52 clash       14 | max interlock anywhere      989 | true 5A atom contacts 509",
+    "    1AK4 A/B: native interlock       -0 clash       -0 | random-shift interlock      1 clash        1 | max interlock anywhere     1873 | true 5A atom contacts 0",
+    "    1B2S A/B: native interlock        2 clash       -0 | random-shift interlock     -0 clash       -0 | max interlock anywhere     1138 | true 5A atom contacts 140",
+    "    1B2U A/B: native interlock        0 clash        0 | random-shift interlock     -0 clash        0 | max interlock anywhere     1133 | true 5A atom contacts 161",
+    "    1B3S A/B: native interlock        0 clash        0 | random-shift interlock      9 clash        4 | max interlock anywhere     1095 | true 5A atom contacts 145",
+    "    1BRS A/B: native interlock        2 clash        0 | random-shift interlock    296 clash       99 | max interlock anywhere     1147 | true 5A atom contacts 153",
+    "\n  IS THE NATIVE POSE BEING CHARGED A CLASH PENALTY?",
+    "    pdb     native clash  native interlock  clash/interlock",
+    "    1ACB               0                 8            0.000",
+    "    1AK4              -0                -0          -28.749",
+    "    1B2S              -0                 2           -0.000",
+    "    1B2U               0                 0            0.101",
+    "    1B3S               0                 0           11.639",
+    "    1BRS               0                 2            0.000",
+    "\n  CLASH-WEIGHT SWEEP -- percentile of the native pose among all 884,736 placements",
+    "    pdb         w=0      w=1      w=3      w=5     w=10     w=15     w=30     w=50    w=100",
+    "    1ACB     0.9333   0.9360   0.9818   0.9986   0.9994   0.9995   0.9995   0.9995   0.9995",
+    "    1AK4     0.1915   0.2027   0.3125   0.4073   0.4853   0.5138   0.5417   0.5530   0.5615",
+    "    1B2S     0.9306   0.9318   0.9677   0.9915   0.9949   0.9952   0.9952   0.9952   0.9952",
+    "    1B2U     0.8565   0.8268   0.7373   0.6433   0.5010   0.4474   0.3942   0.3742   0.3600",
+    "    1B3S     0.4656   0.2570   0.1301   0.1294   0.1240   0.1233   0.1232   0.1234   0.1237",
+    "    1BRS     0.9319   0.9326   0.9682   0.9905   0.9941   0.9945   0.9946   0.9946   0.9946",
+    "    MEDIAN   0.8936   0.8793   0.8525   0.8169   0.7476   0.7541   0.7682   0.7738   0.7780",
+    "\n    best weight by median percentile: w=0 at 0.8936   (w=0, no clash penalty at all: 0.8936)",
+    "    placements scoring BETTER than the native at w=0: [58973, 715283, 61361, 126909, 472787, 60242]",
+    "\n  READING",
+    "  Native clash is 0.000x interlock -- the true pose is NOT being penalised, so the",
+    "  grid is fine. And the native percentile never exceeds 0.8936 at ANY weight from 0 to 100,",
+    "  with 94,135 placements scoring",
+    "  higher at the best one. So the score is WEAK, not broken, and no tuning of the clash penalty",
+    "  rescues it: a protein surface simply has many spots with more raw contact area than the real",
+    "  binding site. FFT sampling is sound; the ranking has to come from an energy, not a shape."
+  ]
+}

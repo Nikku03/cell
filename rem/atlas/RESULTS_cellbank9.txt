@@ -1,0 +1,20 @@
+=================================================================================================
+CELLBANK9 -- THE EXAM HALF, SECOND READ (scored once for these gates)
+=================================================================================================
+  EXAM genes 1181; ceiling r 0.458, specific 0.338
+  coverage on these genes: record elsewhere v8 1175, v9 1175, LINCS-sh 422, LINCS-xpr 291, Tahoe 37, Geneformer 1164, ARCHS4 1168
+     arm                                        median r | specific r | fraction of ceiling
+     M2  cellbank8 model, rerun                 +0.269 | +0.106 | 59%
+     M9L + LINCS screens                        +0.268 | +0.107 | 58%
+     M9N + Tahoe/Geneformer/ARCHS4 neighbours   +0.268 | +0.103 | 58%
+     M9  + both                                 +0.267 | +0.103 | 58%
+     (cellbank8 M2 as scored there)             +0.269
+     genes weak-record half (v8)              n  586: M2 +0.234, M9L +0.239, M9N +0.236, M9 +0.239
+     genes strong-record half (v8)            n  595: M2 +0.317, M9L +0.317, M9N +0.319, M9 +0.314
+     genes with no record elsewhere (v8)      n    6: M2 +0.146, M9L +0.111, M9N +0.155, M9 +0.132
+     genes with none (v8) but a LINCS record  n    0: M2 +nan, M9L +nan, M9N +nan, M9 +nan
+  Y1 PRIMARY M9 vs M2, r                better 515 / worse 666, median -0.0026, p 1.2e-05 -> NO DIFFERENCE
+  Y2 M9 vs M2, r, weak-record half      better 258 / worse 328, median -0.0023, p 0.0043 -> NO DIFFERENCE
+  Y3 M9 vs M2, specific r               better 513 / worse 668, median -0.0045, p 7.2e-06 -> NO DIFFERENCE
+  (descriptive) M9L vs M2, r: better 567 / worse 614, median -0.0007, p 0.18
+  (descriptive) M9N vs M2, r: better 542 / worse 639, median -0.0010, p 0.0052

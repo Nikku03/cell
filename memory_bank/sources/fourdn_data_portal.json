@@ -1,0 +1,10 @@
+{
+  "id": "fourdn_data_portal",
+  "type": "database",
+  "citation": "4D Nucleome Data Portal (Micro-C contact maps); Orca maps: Zhou, J. Nature Genetics 54, 725-734 (2022).",
+  "url": "https://data.4dnucleome.org",
+  "organism": "human, mouse",
+  "authority": "primary",
+  "licence": "not checked (verify before redistributing or commercial use)",
+  "notes": "Micro-C contact maps, including H1 ESC and human foreskin fibroblast maps used by Orca."
+}

@@ -1,0 +1,25 @@
+{
+ "n_complexes": 82,
+ "n_mutations": 2456,
+ "nsplits": 3,
+ "node_only_pearson": 0.542,
+ "node_only_std": 0.014,
+ "node_plus_dmasif_pearson": 0.476,
+ "node_plus_dmasif_std": 0.035,
+ "gain": -0.066,
+ "per_split": [
+  {
+   "base": 0.526,
+   "comb": 0.524
+  },
+  {
+   "base": 0.54,
+   "comb": 0.44
+  },
+  {
+   "base": 0.561,
+   "comb": 0.465
+  }
+ ],
+ "verdict": "Complementary layers, measured honestly and leakage-free (dMaSIF trained only on TRAIN complexes; \u0394\u0394G scored on held-out TEST complexes; 3 random splits, node-only baseline on the SAME splits). LAYER 2 alone \u2014 the physics+research \u0394\u0394G node \u2014 predicts held-out alanine \u0394\u0394G at Pearson 0.54. Adding LAYER 1 \u2014 the dMaSIF geodesic SURFACE EMBEDDING at the mutation site (32-d, out-of-sample) \u2014 gives 0.48, a change of -0.066. So the surface layer does NOT meaningfully improve the \u0394\u0394G magnitude (-0.066) \u2014 as predicted, because the node already encodes the local interface geometry (buried vdW/contacts) that the dMaSIF embedding mostly re-expresses; dMaSIF's real strength is LOCALISATION (which surface/partner), not the ENERGETIC MAGNITUDE of a specific substitution, which stays the node's job. The honest architecture is therefore a PIPELINE, not a fusion: use dMaSIF to find/confirm the interface and the right partner, then the \u0394\u0394G node to score the mutation \u2014 each does the half it is good at. HONEST LIMITS: 82 complexes / 2456 alanine mutations; dMaSIF is the compact CPU geodesic net (subsampled points, Gaussian surface); a few splits, not full nested CV. The leakage control and the controlled baseline are the point \u2014 the number is what it is."
+}

@@ -1,0 +1,402 @@
+{
+ "test": "enhancer contact",
+ "gates": {
+  "T1": true,
+  "T2": false,
+  "T3": false,
+  "T4": false,
+  "T5": false,
+  "T6": false,
+  "T7": false,
+  "T8": false,
+  "T9": true
+ },
+ "coverage": 0.9166177826196262,
+ "spearman_dist_contact": -0.8007356498440406,
+ "arms": {
+  "distance": {
+   "r1": [
+    0.5829145728643216,
+    0.5879396984924623,
+    0.5979899497487438,
+    0.5979899497487438,
+    0.5979899497487438
+   ],
+   "ap": [
+    0.2829050454204365,
+    0.28170448972840684,
+    0.28917222758182526,
+    0.28982639252315684,
+    0.2786115917902298
+   ]
+  },
+  "dist+contact": {
+   "r1": [
+    0.5376884422110553,
+    0.5326633165829145,
+    0.5678391959798995,
+    0.5527638190954773,
+    0.5628140703517588
+   ],
+   "ap": [
+    0.33141597698084957,
+    0.326567994968267,
+    0.3297170566596742,
+    0.33750590215749654,
+    0.3187561192336379
+   ]
+  },
+  "dist+oe": {
+   "r1": [
+    0.6080402010050251,
+    0.5979899497487438,
+    0.592964824120603,
+    0.5728643216080402,
+    0.592964824120603
+   ],
+   "ap": [
+    0.28564708918721743,
+    0.2750442812633253,
+    0.27981224528429866,
+    0.29279387105411,
+    0.2773611274301561
+   ]
+  },
+  "stack": {
+   "r1": [
+    0.592964824120603,
+    0.6130653266331658,
+    0.5778894472361809,
+    0.6180904522613065,
+    0.6080402010050251
+   ],
+   "ap": [
+    0.30260185577031584,
+    0.3287847881594063,
+    0.32348946945808404,
+    0.3204824357258981,
+    0.3345418287490969
+   ]
+  },
+  "stack+contact": {
+   "r1": [
+    0.5879396984924623,
+    0.6482412060301508,
+    0.6130653266331658,
+    0.5829145728643216,
+    0.5829145728643216
+   ],
+   "ap": [
+    0.36198425895760855,
+    0.3621113936961849,
+    0.3610187476706235,
+    0.351512665362955,
+    0.3641572887469082
+   ]
+  },
+  "stack+contact+struct": {
+   "r1": [
+    0.6130653266331658,
+    0.6180904522613065,
+    0.6180904522613065,
+    0.5778894472361809,
+    0.5979899497487438
+   ],
+   "ap": [
+    0.35680618628747635,
+    0.351613972020968,
+    0.3553519210008476,
+    0.3467998050988091,
+    0.3543270781833171
+   ]
+  },
+  "ABC": {
+   "r1": [
+    0.48743718592964824,
+    0.4623115577889447,
+    0.4824120603015075,
+    0.5226130653266332,
+    0.48743718592964824
+   ],
+   "ap": [
+    0.1540798777481469,
+    0.1639212824887487,
+    0.1494812629734803,
+    0.14086962388261032,
+    0.1536354826850607
+   ]
+  }
+ },
+ "deltas": {
+  "T2": {
+   "d_r1": [
+    -0.045226130653266305,
+    -0.055276381909547756,
+    -0.03015075376884424,
+    -0.045226130653266416,
+    -0.035175879396984966
+   ],
+   "d_ap": [
+    0.048510931560413084,
+    0.04486350523986016,
+    0.040544829077848954,
+    0.0476795096343397,
+    0.04014452744340807
+   ],
+   "mean_r1": -0.042211055276381935,
+   "sem_r1": 0.004380802958332333,
+   "mean_ap": 0.044348660591174,
+   "n_pos_r1": 0,
+   "n_ap_pass": 5
+  },
+  "T3": {
+   "d_r1": [
+    0.025125628140703515,
+    0.01005025125628145,
+    -0.005025125628140725,
+    -0.025125628140703515,
+    -0.005025125628140725
+   ],
+   "d_ap": [
+    0.002742043766780944,
+    -0.00666020846508153,
+    -0.009359982297526603,
+    0.002967478530953138,
+    -0.0012504643600736998
+   ],
+   "mean_r1": 0.0,
+   "sem_r1": 0.008408643482754531,
+   "mean_ap": -0.00231222656498955,
+   "n_pos_r1": 2,
+   "n_ap_pass": 0
+  },
+  "T4": {
+   "d_r1": [
+    -0.005025125628140725,
+    0.035175879396984966,
+    0.035175879396984966,
+    -0.035175879396984966,
+    -0.025125628140703515
+   ],
+   "d_ap": [
+    0.05938240318729271,
+    0.033326605536778575,
+    0.03752927821253943,
+    0.031030229637056927,
+    0.029615459997811344
+   ],
+   "mean_r1": 0.0010050251256281451,
+   "sem_r1": 0.014770792418793047,
+   "mean_ap": 0.0381767953142958,
+   "n_pos_r1": 2,
+   "n_ap_pass": 5
+  },
+  "T5": {
+   "d_r1": [
+    0.025125628140703515,
+    -0.03015075376884424,
+    0.005025125628140725,
+    -0.005025125628140725,
+    0.015075376884422176
+   ],
+   "d_ap": [
+    -0.0051780726701322055,
+    -0.01049742167521689,
+    -0.00566682666977586,
+    -0.004712860264145913,
+    -0.009830210563591124
+   ],
+   "mean_r1": 0.0020100502512562903,
+   "sem_r1": 0.009481388072418705,
+   "mean_ap": -0.007177078368572398,
+   "n_pos_r1": 3,
+   "n_ap_pass": 0
+  },
+  "T6": {
+   "d_r1": [
+    -0.12562814070351758,
+    -0.15577889447236182,
+    -0.13567839195979903,
+    -0.055276381909547645,
+    -0.11055276381909551
+   ],
+   "d_ap": [
+    -0.20272630853932944,
+    -0.1876926895322193,
+    -0.20587065802736731,
+    -0.20593018121619877,
+    -0.2006915954982564
+   ],
+   "mean_r1": -0.11658291457286432,
+   "sem_r1": 0.016996517110841988,
+   "mean_ap": -0.20058228656267424,
+   "n_pos_r1": 0,
+   "n_ap_pass": 0
+  },
+  "T7": {
+   "d_r1": [
+    0.03015075376884424,
+    0.03015075376884424,
+    0.02010050251256279,
+    -0.0201005025125629,
+    0.0
+   ],
+   "d_ap": [
+    0.07390114086703986,
+    0.06990948229256116,
+    0.06617969341902236,
+    0.05697341257565225,
+    0.07571548639308728
+   ],
+   "mean_r1": 0.012060301507537674,
+   "sem_r1": 0.009744080115409724,
+   "mean_ap": 0.06853584310947258,
+   "n_pos_r1": 3,
+   "n_ap_pass": 5
+  }
+ },
+ "swap_draws": [
+  0.6180904522613067,
+  0.6,
+  0.5969849246231156,
+  0.607035175879397,
+  0.6150753768844222,
+  0.6050251256281407,
+  0.6090452261306533,
+  0.6130653266331658,
+  0.6010050251256281,
+  0.614070351758794,
+  0.6040201005025125,
+  0.5969849246231156,
+  0.6160804020100501,
+  0.6100502512562814,
+  0.5949748743718593,
+  0.6060301507537688,
+  0.614070351758794,
+  0.6120603015075377,
+  0.6040201005025125,
+  0.5969849246231156
+ ],
+ "swap_frac_beaten": 0.0,
+ "best_arm": "stack+contact+struct",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "colab/data/dna_shape.npz",
+    "bytes": 22686,
+    "hash": "bfd83511037c6d26",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 11933,
+   "used": 11933,
+   "selection": "loop 173's pairs",
+   "fraction": 1.0
+  },
+  "seed": 91173,
+  "controls": [
+   "observed-over-expected gated separately from raw contact",
+   "20 chromosome- and size-matched contact-profile swaps",
+   "the stage-one activity model refitted per fold on training chromosomes only",
+   "identical folds and seeds as every earlier stage-two loop"
+  ],
+  "note": "K562 Hi-C, HiCCUPS loops and Arrowhead domains on the stage-two task",
+  "warnings": [
+   "selection 'loop 173's pairs' is not one of ('all', 'random', 'stratified', 'prefix', 'filtered', 'manual'); coverage cannot be interpreted"
+  ]
+ },
+ "seconds": 295.6467273235321,
+ "log": [
+  "========================================================================================================",
+  "LOOP 181  CLOSE STAGE TWO WITH PHYSICAL CONTACT: K562 Hi-C, loops and contact domains",
+  "========================================================================================================",
+  "  PREDECLARED: >= 90% of pairs must receive a contact value and log contact",
+  "  must fall with log distance past Spearman -0.5; every arm on loop 173's E3 bar --",
+  "  paired R@1 positive in >= 4/5 past 3 sem AND paired AUPRC >= +0.01 in",
+  "  >= 4/5; the observed-over-expected column gated on its own so a raw-contact",
+  "  gain cannot be read as more than distance; the winner must clear 0.593; and",
+  "  the real contact profile must beat a swapped one in >= 90% of 20 draws.",
+  "",
+  "    scan cache: enh_scan.npz (218.1 MB)",
+  "    contact strips from cache: k562_strips_5000.npz (11.6 MB)",
+  "    expected-by-distance curve over 8,822 (chromosome, separation) cells",
+  "    GSE63525_K562_HiCCUPS_looplist.txt.gz: 6,057 records",
+  "    GSE63525_K562_Arrowhead_domainlist.txt.gz: 5,975 records",
+  "    contact assigned to 0.9166 of pairs; loop_connects on 0.0047, same_domain on 0.2517",
+  "",
+  "T1 DID THE CONTACT DATA LOAD, AND IS IT THE RIGHT DATA?",
+  "     coverage 0.9166; Spearman(log distance, log contact) = -0.8007",
+  "     median contact 2.80, p90 15.73, max 380.6",
+  "     T1 PASS -- contact reaches 91.7% of pairs and falls with separation at rho -0.801, so the join produced contact and not noise",
+  "    element frame (el): 27 intrinsic + 51 class/family columns",
+  "    stack 85 columns, contact 5, structure 6",
+  "    stage-one transfer set: 78 columns shared with the genomic windows",
+  "    distance                               R@1 0.5930 +/- 0.0032   AUPRC 0.2844",
+  "    distance + contact                     R@1 0.5508 +/- 0.0069   AUPRC 0.3288",
+  "    distance + observed/expected only      R@1 0.5930 +/- 0.0057   AUPRC 0.2821",
+  "    sequence stack                         R@1 0.6020 +/- 0.0074   AUPRC 0.3220",
+  "    stack + contact                        R@1 0.6030 +/- 0.0126   AUPRC 0.3602",
+  "    stack + contact + loops/domains        R@1 0.6050 +/- 0.0077   AUPRC 0.3530",
+  "    + activity x contact (ABC)             R@1 0.4884 +/- 0.0097   AUPRC 0.1524",
+  "",
+  "T2 DOES CONTACT ADD OVER DISTANCE?",
+  "     distance+contact vs distance   dR@1 -0.0422 +/- 0.0044 (0/5 up)   dAUPRC +0.0443 (5/5 >= 0.01)",
+  "     T2 FAIL -- contact adds nothing over distance",
+  "",
+  "T3 IS IT CONTACT, OR DISTANCE MEASURED BETTER?",
+  "     distance+observed/expected vs distance   dR@1 +0.0000 +/- 0.0084 (2/5 up)   dAUPRC -0.0023 (0/5 >= 0.01)",
+  "     T3 FAIL -- once the distance decay is divided out the contact column stops helping, so Hi-C here is re-encoding distance",
+  "",
+  "T4 DOES CONTACT ADD OVER THE SEQUENCE STACK?",
+  "     stack+contact vs stack   dR@1 +0.0010 +/- 0.0148 (2/5 up)   dAUPRC +0.0382 (5/5 >= 0.01)",
+  "     T4 FAIL -- contact adds nothing the sequence stack did not already have",
+  "",
+  "T5 DO LOOPS AND DOMAINS ADD OVER RAW CONTACT?",
+  "     +loops/domains vs contact alone   dR@1 +0.0020 +/- 0.0095 (3/5 up)   dAUPRC -0.0072 (0/5 >= 0.01)",
+  "     T5 FAIL -- the called loops and domains add nothing over the contact values they were called from",
+  "",
+  "T6 DOES ACTIVITY x CONTACT BEAT THE ADDITIVE FORM?",
+  "     ABC vs the same blocks entered additively   dR@1 -0.1166 +/- 0.0170 (0/5 up)   dAUPRC -0.2006 (0/5 >= 0.01)",
+  "     T6 FAIL -- the product form adds nothing a tree could not build from the two columns separately",
+  "",
+  "T7 THE DECISIVE ONE",
+  "     best arm stack+contact+struct at R@1 0.6050 and AUPRC 0.3530, against distance 0.5930 / 0.2844",
+  "     dR@1 +0.0121 +/- 0.0097 (3/5 up)   dAUPRC +0.0685 (5/5 >= 0.01)",
+  "     T7 FAIL -- even with the folded chromosome measured, stage two is distance",
+  "",
+  "T8 THE CONTACT SWAP: 20 draws giving each gene a stranger's contact profile",
+  "     draw 5/20  R@1 0.6151",
+  "     draw 10/20  R@1 0.6141",
+  "     draw 15/20  R@1 0.5950",
+  "     draw 20/20  R@1 0.5970",
+  "     real 0.5508 against swapped mean 0.6067 (min 0.5950, max 0.6181); real beats 0%",
+  "     T8 FAIL -- a distance- and chromosome-matched stranger's contact profile works as well, so the gain is neighbourhood geometry, not this pair",
+  "",
+  "T9 WHAT THIS CANNOT SHOW",
+  "     The Hi-C is a population average over millions of K562 nuclei. A contact value is a",
+  "     frequency across cells, not a statement that these two loci touch in any one of them.",
+  "     Contact is measured at 5 kb, and the median element here is 500 bp, so several",
+  "     elements share a bin and cannot be told apart by this map at all.",
+  "     Rao's K562 Hi-C and the CRISPR benchmark are the same cell line but different",
+  "     laboratories and different cultures, and K562 is aneuploid with rearrangements that",
+  "     a reference-genome contact map represents imperfectly.",
+  "     Contact does not establish causation. An element and a promoter can share a domain",
+  "     and a loop and still not regulate one another.",
+  "     T9 PASS",
+  "",
+  "========================================================================================================",
+  "  T1  PASS",
+  "  T2  FAIL",
+  "  T3  FAIL",
+  "  T4  FAIL",
+  "  T5  FAIL",
+  "  T6  FAIL",
+  "  T7  FAIL",
+  "  T8  FAIL",
+  "  T9  PASS",
+  "  2/9   [296s]",
+  "========================================================================================================"
+ ]
+}

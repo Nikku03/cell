@@ -1,0 +1,303 @@
+{
+ "cells": [
+  {
+   "dataset": "10169",
+   "line": "Jurkat",
+   "membrane_prefix": null,
+   "run": "cwl2011-10-23-1",
+   "tilt_max": 60.0,
+   "tomo_prefix": "10169/cwl2011-10-23-1/Reconstructions/VoxelSpacing20.000/Tomograms/100/cwl2011-10-23-1.zarr/0/",
+   "vox": 20.0,
+   "vox_folder": 20.0
+  },
+  {
+   "dataset": "10169",
+   "line": "Jurkat",
+   "membrane_prefix": null,
+   "run": "cwl2011-10-23-2",
+   "tilt_max": 60.0,
+   "tomo_prefix": "10169/cwl2011-10-23-2/Reconstructions/VoxelSpacing20.000/Tomograms/100/cwl2011-10-23-2.zarr/0/",
+   "vox": 20.0,
+   "vox_folder": 20.0
+  },
+  {
+   "dataset": "10169",
+   "line": "Jurkat",
+   "membrane_prefix": null,
+   "run": "cwl2011-10-23-3",
+   "tilt_max": 60.0,
+   "tomo_prefix": "10169/cwl2011-10-23-3/Reconstructions/VoxelSpacing20.000/Tomograms/100/cwl2011-10-23-3.zarr/0/",
+   "vox": 20.0,
+   "vox_folder": 20.0
+  },
+  {
+   "dataset": "10169",
+   "line": "Jurkat",
+   "membrane_prefix": null,
+   "run": "cwl2011-10-23-4",
+   "tilt_max": 60.0,
+   "tomo_prefix": "10169/cwl2011-10-23-4/Reconstructions/VoxelSpacing20.000/Tomograms/100/cwl2011-10-23-4.zarr/0/",
+   "vox": 20.0,
+   "vox_folder": 20.0
+  },
+  {
+   "dataset": "10170",
+   "line": "Jurkat",
+   "membrane_prefix": "10170/cwl2011-12-12-1/Reconstructions/VoxelSpacing18.920/Annotations/101/membrain_seg_prediction-1.0_segmentationmask.zarr/0/",
+   "run": "cwl2011-12-12-1",
+   "tilt_max": 60.0,
+   "tomo_prefix": "10170/cwl2011-12-12-1/Reconstructions/VoxelSpacing18.920/Tomograms/100/cwl2011-12-12-1.zarr/0/",
+   "vox": 18.92,
+   "vox_folder": 18.92
+  },
+  {
+   "dataset": "10170",
+   "line": "Jurkat",
+   "membrane_prefix": "10170/cwl2011-12-12-10/Reconstructions/VoxelSpacing18.920/Annotations/101/membrain_seg_prediction-1.0_segmentationmask.zarr/0/",
+   "run": "cwl2011-12-12-10",
+   "tilt_max": 60.0,
+   "tomo_prefix": "10170/cwl2011-12-12-10/Reconstructions/VoxelSpacing18.920/Tomograms/100/cwl2011-12-12-10.zarr/0/",
+   "vox": 18.92,
+   "vox_folder": 18.92
+  },
+  {
+   "dataset": "10170",
+   "line": "Jurkat",
+   "membrane_prefix": "10170/cwl2011-12-12-11/Reconstructions/VoxelSpacing18.920/Annotations/101/membrain_seg_prediction-1.0_segmentationmask.zarr/0/",
+   "run": "cwl2011-12-12-11",
+   "tilt_max": 60.0,
+   "tomo_prefix": "10170/cwl2011-12-12-11/Reconstructions/VoxelSpacing18.920/Tomograms/100/cwl2011-12-12-11.zarr/0/",
+   "vox": 18.92,
+   "vox_folder": 18.92
+  },
+  {
+   "dataset": "10170",
+   "line": "Jurkat",
+   "membrane_prefix": "10170/cwl2011-12-12-12/Reconstructions/VoxelSpacing18.920/Annotations/101/membrain_seg_prediction-1.0_segmentationmask.zarr/0/",
+   "run": "cwl2011-12-12-12",
+   "tilt_max": 60.0,
+   "tomo_prefix": "10170/cwl2011-12-12-12/Reconstructions/VoxelSpacing18.920/Tomograms/100/cwl2011-12-12-12.zarr/0/",
+   "vox": 18.92,
+   "vox_folder": 18.92
+  },
+  {
+   "dataset": "10171",
+   "line": "Jurkat",
+   "membrane_prefix": "10171/cwl2012-08-16-1/Reconstructions/VoxelSpacing29.600/Annotations/101/membrain_seg_prediction-1.0_segmentationmask.zarr/0/",
+   "run": "cwl2012-08-16-1",
+   "tilt_max": 60.0,
+   "tomo_prefix": "10171/cwl2012-08-16-1/Reconstructions/VoxelSpacing29.600/Tomograms/100/cwl2012-08-16-1.zarr/0/",
+   "vox": 29.6,
+   "vox_folder": 29.6
+  },
+  {
+   "dataset": "10171",
+   "line": "Jurkat",
+   "membrane_prefix": "10171/cwl2012-08-16-10/Reconstructions/VoxelSpacing19.733/Annotations/101/membrain_seg_prediction-1.0_segmentationmask.zarr/0/",
+   "run": "cwl2012-08-16-10",
+   "tilt_max": 60.0,
+   "tomo_prefix": "10171/cwl2012-08-16-10/Reconstructions/VoxelSpacing19.733/Tomograms/100/cwl2012-08-16-10.zarr/0/",
+   "vox": 19.733,
+   "vox_folder": 19.733
+  },
+  {
+   "dataset": "10171",
+   "line": "Jurkat",
+   "membrane_prefix": "10171/cwl2012-08-16-11/Reconstructions/VoxelSpacing19.733/Annotations/101/membrain_seg_prediction-1.0_segmentationmask.zarr/0/",
+   "run": "cwl2012-08-16-11",
+   "tilt_max": 60.0,
+   "tomo_prefix": "10171/cwl2012-08-16-11/Reconstructions/VoxelSpacing19.733/Tomograms/100/cwl2012-08-16-11.zarr/0/",
+   "vox": 19.733,
+   "vox_folder": 19.733
+  },
+  {
+   "dataset": "10171",
+   "line": "Jurkat",
+   "membrane_prefix": "10171/cwl2012-08-16-12/Reconstructions/VoxelSpacing19.733/Annotations/100/membrain_seg_prediction-1.0_segmentationmask.zarr/0/",
+   "run": "cwl2012-08-16-12",
+   "tilt_max": 60.0,
+   "tomo_prefix": "10171/cwl2012-08-16-12/Reconstructions/VoxelSpacing19.733/Tomograms/100/cwl2012-08-16-12.zarr/0/",
+   "vox": 19.733,
+   "vox_folder": 19.733
+  },
+  {
+   "dataset": "10002",
+   "line": "RPE1",
+   "membrane_prefix": "10002/00004/Reconstructions/VoxelSpacing13.480/Annotations/103/membrain_seg_prediction-1.0_segmentationmask.zarr/1/",
+   "run": "00004",
+   "tilt_max": 60.0,
+   "tomo_prefix": "10002/00004/Reconstructions/VoxelSpacing13.480/Tomograms/100/00004.zarr/1/",
+   "vox": 26.96,
+   "vox_folder": 13.48
+  },
+  {
+   "dataset": "10002",
+   "line": "RPE1",
+   "membrane_prefix": "10002/00011/Reconstructions/VoxelSpacing13.800/Annotations/103/membrain_seg_prediction-1.0_segmentationmask.zarr/1/",
+   "run": "00011",
+   "tilt_max": 60.0,
+   "tomo_prefix": "10002/00011/Reconstructions/VoxelSpacing13.800/Tomograms/100/00011.zarr/1/",
+   "vox": 27.6,
+   "vox_folder": 13.8
+  },
+  {
+   "dataset": "10002",
+   "line": "RPE1",
+   "membrane_prefix": "10002/00012/Reconstructions/VoxelSpacing13.800/Annotations/103/membrain_seg_prediction-1.0_segmentationmask.zarr/1/",
+   "run": "00012",
+   "tilt_max": 60.0,
+   "tomo_prefix": "10002/00012/Reconstructions/VoxelSpacing13.800/Tomograms/100/00012.zarr/1/",
+   "vox": 27.6,
+   "vox_folder": 13.8
+  },
+  {
+   "dataset": "10476",
+   "line": "HeLa",
+   "membrane_prefix": "10476/20220718_P10_ts_002/Reconstructions/VoxelSpacing10.012/Annotations/100/membrane-1.0_segmentationmask.zarr/1/",
+   "run": "20220718_P10_ts_002",
+   "tilt_max": 65.98,
+   "tomo_prefix": "10476/20220718_P10_ts_002/Reconstructions/VoxelSpacing10.012/Tomograms/100/20220718_P10_ts_002.zarr/1/",
+   "vox": 20.024,
+   "vox_folder": 10.012
+  },
+  {
+   "dataset": "10476",
+   "line": "HeLa",
+   "membrane_prefix": "10476/20220718_P10_ts_003/Reconstructions/VoxelSpacing10.012/Annotations/100/membrane-1.0_segmentationmask.zarr/1/",
+   "run": "20220718_P10_ts_003",
+   "tilt_max": 65.98,
+   "tomo_prefix": "10476/20220718_P10_ts_003/Reconstructions/VoxelSpacing10.012/Tomograms/100/20220718_P10_ts_003.zarr/1/",
+   "vox": 20.024,
+   "vox_folder": 10.012
+  },
+  {
+   "dataset": "10476",
+   "line": "HeLa",
+   "membrane_prefix": "10476/20220718_P10_ts_004/Reconstructions/VoxelSpacing10.012/Annotations/100/membrane-1.0_segmentationmask.zarr/1/",
+   "run": "20220718_P10_ts_004",
+   "tilt_max": 65.98,
+   "tomo_prefix": "10476/20220718_P10_ts_004/Reconstructions/VoxelSpacing10.012/Tomograms/100/20220718_P10_ts_004.zarr/1/",
+   "vox": 20.024,
+   "vox_folder": 10.012
+  },
+  {
+   "dataset": "10476",
+   "line": "HeLa",
+   "membrane_prefix": "10476/20220718_P10_ts_005/Reconstructions/VoxelSpacing10.012/Annotations/100/membrane-1.0_segmentationmask.zarr/1/",
+   "run": "20220718_P10_ts_005",
+   "tilt_max": 65.98,
+   "tomo_prefix": "10476/20220718_P10_ts_005/Reconstructions/VoxelSpacing10.012/Tomograms/100/20220718_P10_ts_005.zarr/1/",
+   "vox": 20.024,
+   "vox_folder": 10.012
+  },
+  {
+   "dataset": "10476",
+   "line": "HeLa",
+   "membrane_prefix": "10476/20220718_P11_ts_002/Reconstructions/VoxelSpacing10.012/Annotations/100/membrane-1.0_segmentationmask.zarr/1/",
+   "run": "20220718_P11_ts_002",
+   "tilt_max": 65.98,
+   "tomo_prefix": "10476/20220718_P11_ts_002/Reconstructions/VoxelSpacing10.012/Tomograms/100/20220718_P11_ts_002.zarr/1/",
+   "vox": 20.024,
+   "vox_folder": 10.012
+  },
+  {
+   "dataset": "10476",
+   "line": "HeLa",
+   "membrane_prefix": "10476/20220718_P11_ts_003/Reconstructions/VoxelSpacing10.012/Annotations/100/membrane-1.0_segmentationmask.zarr/1/",
+   "run": "20220718_P11_ts_003",
+   "tilt_max": 65.98,
+   "tomo_prefix": "10476/20220718_P11_ts_003/Reconstructions/VoxelSpacing10.012/Tomograms/100/20220718_P11_ts_003.zarr/1/",
+   "vox": 20.024,
+   "vox_folder": 10.012
+  }
+ ],
+ "ground_truth": [
+  {
+   "dataset": "10426",
+   "gt_path": "10426/tomo155/Reconstructions/VoxelSpacing8.660/Annotations/100/cytosolic_ribosome-1.0_point.ndjson",
+   "gt_vox": 8.66,
+   "membrane_prefix": "10426/tomo155/Reconstructions/VoxelSpacing8.660/Annotations/104/membrane-1.0_segmentationmask.zarr/1/",
+   "portal_auto_path": "10426/tomo155/Reconstructions/VoxelSpacing8.660/Annotations/101/cytosolic_ribosome-1.0_orientedpoint.ndjson",
+   "run": "tomo155",
+   "split": "dev",
+   "tilt_max": 50.0009,
+   "tomo_prefix": "10426/tomo155/Reconstructions/VoxelSpacing8.660/Tomograms/100/tomo155.zarr/1/",
+   "vox": 17.32,
+   "vox_folder": 8.66
+  },
+  {
+   "dataset": "10426",
+   "gt_path": "10426/tomo156/Reconstructions/VoxelSpacing8.660/Annotations/100/cytosolic_ribosome-1.0_point.ndjson",
+   "gt_vox": 8.66,
+   "membrane_prefix": "10426/tomo156/Reconstructions/VoxelSpacing8.660/Annotations/104/membrane-1.0_segmentationmask.zarr/1/",
+   "portal_auto_path": "10426/tomo156/Reconstructions/VoxelSpacing8.660/Annotations/101/cytosolic_ribosome-1.0_orientedpoint.ndjson",
+   "run": "tomo156",
+   "split": "dev",
+   "tilt_max": 49.9994,
+   "tomo_prefix": "10426/tomo156/Reconstructions/VoxelSpacing8.660/Tomograms/100/tomo156.zarr/1/",
+   "vox": 17.32,
+   "vox_folder": 8.66
+  },
+  {
+   "dataset": "10426",
+   "gt_path": "10426/tomo154/Reconstructions/VoxelSpacing8.660/Annotations/100/cytosolic_ribosome-1.0_point.ndjson",
+   "gt_vox": 8.66,
+   "membrane_prefix": "10426/tomo154/Reconstructions/VoxelSpacing8.660/Annotations/104/membrane-1.0_segmentationmask.zarr/1/",
+   "portal_auto_path": "10426/tomo154/Reconstructions/VoxelSpacing8.660/Annotations/101/cytosolic_ribosome-1.0_orientedpoint.ndjson",
+   "run": "tomo154",
+   "split": "dev",
+   "tilt_max": 50.0004,
+   "tomo_prefix": "10426/tomo154/Reconstructions/VoxelSpacing8.660/Tomograms/100/tomo154.zarr/1/",
+   "vox": 17.32,
+   "vox_folder": 8.66
+  },
+  {
+   "dataset": "10426",
+   "gt_path": "10426/tomo158/Reconstructions/VoxelSpacing8.660/Annotations/100/cytosolic_ribosome-1.0_point.ndjson",
+   "gt_vox": 8.66,
+   "membrane_prefix": "10426/tomo158/Reconstructions/VoxelSpacing8.660/Annotations/104/membrane-1.0_segmentationmask.zarr/1/",
+   "portal_auto_path": "10426/tomo158/Reconstructions/VoxelSpacing8.660/Annotations/101/cytosolic_ribosome-1.0_orientedpoint.ndjson",
+   "run": "tomo158",
+   "split": "exam",
+   "tilt_max": 49.9994,
+   "tomo_prefix": "10426/tomo158/Reconstructions/VoxelSpacing8.660/Tomograms/100/tomo158.zarr/1/",
+   "vox": 17.32,
+   "vox_folder": 8.66
+  },
+  {
+   "dataset": "10426",
+   "gt_path": "10426/tomo153/Reconstructions/VoxelSpacing8.660/Annotations/100/cytosolic_ribosome-1.0_point.ndjson",
+   "gt_vox": 8.66,
+   "membrane_prefix": "10426/tomo153/Reconstructions/VoxelSpacing8.660/Annotations/104/membrane-1.0_segmentationmask.zarr/1/",
+   "portal_auto_path": "10426/tomo153/Reconstructions/VoxelSpacing8.660/Annotations/101/cytosolic_ribosome-1.0_orientedpoint.ndjson",
+   "run": "tomo153",
+   "split": "exam",
+   "tilt_max": 49.9994,
+   "tomo_prefix": "10426/tomo153/Reconstructions/VoxelSpacing8.660/Tomograms/100/tomo153.zarr/1/",
+   "vox": 17.32,
+   "vox_folder": 8.66
+  },
+  {
+   "dataset": "10426",
+   "gt_path": "10426/tomo157/Reconstructions/VoxelSpacing8.660/Annotations/100/cytosolic_ribosome-1.0_point.ndjson",
+   "gt_vox": 8.66,
+   "membrane_prefix": "10426/tomo157/Reconstructions/VoxelSpacing8.660/Annotations/104/membrane-1.0_segmentationmask.zarr/1/",
+   "portal_auto_path": "10426/tomo157/Reconstructions/VoxelSpacing8.660/Annotations/101/cytosolic_ribosome-1.0_orientedpoint.ndjson",
+   "run": "tomo157",
+   "split": "exam",
+   "tilt_max": 49.9994,
+   "tomo_prefix": "10426/tomo157/Reconstructions/VoxelSpacing8.660/Tomograms/100/tomo157.zarr/1/",
+   "vox": 17.32,
+   "vox_folder": 8.66
+  }
+ ],
+ "note": "paths are in the public CryoET Data Portal bucket; no image data is stored here",
+ "prediction": {
+  "HepG2": 0.2292,
+  "Jurkat": 0.1883,
+  "K562": 0.1935,
+  "RPE1": 0.2399
+ },
+ "template": "EMD-54265",
+ "working_voxel_A": 25.0
+}

@@ -1,0 +1,154 @@
+{
+  "passed": true,
+  "summary": {
+    "n_diseases": 6,
+    "mean_corroboration": 0.611,
+    "diseases_with_a_hit": 4,
+    "random_baseline": 0.0025,
+    "source": "Open Targets (GWAS + expression/GEO + literature, evidence-integrated)"
+  },
+  "diseases": [
+    {
+      "disease": "psoriasis (IL23/IL17)",
+      "opentargets": "psoriasis",
+      "n_ot_genes": 50,
+      "predictions": [
+        "IL23A",
+        "IL23R",
+        "STAT4"
+      ],
+      "corroborated": [
+        "IL23A",
+        "IL23R"
+      ],
+      "corroboration_rate": 0.667,
+      "random_baseline": 0.0025,
+      "top_ot_genes": [
+        "CARD14",
+        "IL36RN",
+        "IL12B",
+        "TYK2",
+        "IL17RA",
+        "IL23A",
+        "TRAF3IP2",
+        "AP1S3"
+      ]
+    },
+    {
+      "disease": "atopic dermatitis (Type-2)",
+      "opentargets": "atopic eczema",
+      "n_ot_genes": 50,
+      "predictions": [
+        "IL4R",
+        "IL13"
+      ],
+      "corroborated": [
+        "IL4R",
+        "IL13"
+      ],
+      "corroboration_rate": 1.0,
+      "random_baseline": 0.0025,
+      "top_ot_genes": [
+        "FLG",
+        "IL13",
+        "NR3C1",
+        "IL4R",
+        "FKBP1A",
+        "PDE4D",
+        "PDE4A",
+        "JAK1"
+      ]
+    },
+    {
+      "disease": "rheumatoid arthritis (IL6/TNF/JAK)",
+      "opentargets": "rheumatoid arthritis",
+      "n_ot_genes": 50,
+      "predictions": [
+        "IL6",
+        "STAT3"
+      ],
+      "corroborated": [],
+      "corroboration_rate": 0.0,
+      "random_baseline": 0.0025,
+      "top_ot_genes": [
+        "TYK2",
+        "IL6R",
+        "IL12B",
+        "TNF",
+        "JAK1",
+        "TRAF3IP2",
+        "JAK2",
+        "MIF"
+      ]
+    },
+    {
+      "disease": "severe eosinophilic asthma (Type-2/IL5)",
+      "opentargets": "asthma",
+      "n_ot_genes": 50,
+      "predictions": [
+        "IL4R"
+      ],
+      "corroborated": [
+        "IL4R"
+      ],
+      "corroboration_rate": 1.0,
+      "random_baseline": 0.0025,
+      "top_ot_genes": [
+        "FLG",
+        "IL4R",
+        "ADORA1",
+        "IL33",
+        "TSLP",
+        "IL5",
+        "IL13",
+        "PDE4D"
+      ]
+    },
+    {
+      "disease": "systemic lupus (Type-I IFN/BAFF)",
+      "opentargets": "systemic lupus erythematosus",
+      "n_ot_genes": 50,
+      "predictions": [
+        "IFNA1"
+      ],
+      "corroborated": [],
+      "corroboration_rate": 0.0,
+      "random_baseline": 0.0025,
+      "top_ot_genes": [
+        "TREX1",
+        "DNASE1L3",
+        "TLR7",
+        "BLK",
+        "TYK2",
+        "CTLA4",
+        "TNFSF13B",
+        "PTPN22"
+      ]
+    },
+    {
+      "disease": "Crohn's / IBD (TNF/IL23/integrin)",
+      "opentargets": "Crohn disease",
+      "n_ot_genes": 50,
+      "predictions": [
+        "TNF"
+      ],
+      "corroborated": [
+        "TNF"
+      ],
+      "corroboration_rate": 1.0,
+      "random_baseline": 0.0025,
+      "top_ot_genes": [
+        "NOD2",
+        "IL12B",
+        "ITGA4",
+        "JAK2",
+        "TYK2",
+        "TNF",
+        "IL23A",
+        "IL10"
+      ]
+    }
+  ],
+  "bar": "pipeline's blind predictions corroborated by real Open Targets disease genes: mean>=0.4 & a hit in >=n-1 diseases",
+  "note": "Open Targets is the independent real-disease validator; it corroborates/annotates predictions, it does not overwrite the model. To use raw per-series GEO instead, swap disease_genes() for a GEO2R signature \u2014 Open Targets already folds GEO expression evidence into these scores."
+}

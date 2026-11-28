@@ -1,0 +1,116 @@
+{
+ "K562": {
+  "ppi_hub": {
+   "20": 2.62,
+   "30": 3.57,
+   "50": 4.15,
+   "100": 5.28,
+   "200": 5.88,
+   "400": 7.37
+  },
+  "essential": {
+   "20": 3.93,
+   "30": 4.45,
+   "50": 5.62,
+   "100": 6.1,
+   "200": 7.45,
+   "400": 7.07
+  },
+  "diverse": {
+   "20": 3.92,
+   "30": 4.28,
+   "50": 4.73,
+   "100": 5.7,
+   "200": 6.27,
+   "400": 7.02
+  },
+  "random": {
+   "20": 4.1,
+   "30": 4.57,
+   "50": 5.09,
+   "100": 6.23,
+   "200": 6.37,
+   "400": 7.1
+  }
+ },
+ "HCT116": {
+  "ppi_hub": {
+   "20": 4.8,
+   "30": 4.93,
+   "50": 6.35,
+   "100": 6.95,
+   "200": 7.88,
+   "400": 8.42
+  },
+  "essential": {
+   "20": 4.98,
+   "30": 5.92,
+   "50": 6.57,
+   "100": 6.8,
+   "200": 7.98,
+   "400": 8.13
+  },
+  "diverse": {
+   "20": 4.77,
+   "30": 4.82,
+   "50": 6.8,
+   "100": 7.93,
+   "200": 8.28,
+   "400": 8.63
+  },
+  "random": {
+   "20": 5.01,
+   "30": 5.36,
+   "50": 6.32,
+   "100": 7.42,
+   "200": 7.85,
+   "400": 8.33
+  }
+ },
+ "summary": {
+  "K562": {
+   "best_top10": 7.45,
+   "target_90pct": 6.71,
+   "n_to_reach_90pct": {
+    "random": 400,
+    "ppi_hub": 400,
+    "essential": 200,
+    "diverse": 400
+   }
+  },
+  "HCT116": {
+   "best_top10": 8.63,
+   "target_90pct": 7.77,
+   "n_to_reach_90pct": {
+    "random": 200,
+    "ppi_hub": 200,
+    "essential": 200,
+    "diverse": 100
+   }
+  }
+ },
+ "per_strategy_mean_delta_vs_random": {
+  "ppi_hub": -0.46,
+  "essential": 0.1,
+  "diverse": -0.05
+ },
+ "per_strategy_delta_by_line": {
+  "ppi_hub": {
+   "K562": -0.76,
+   "HCT116": -0.16
+  },
+  "essential": {
+   "K562": 0.19,
+   "HCT116": 0.02
+  },
+  "diverse": {
+   "K562": -0.26,
+   "HCT116": 0.16
+  }
+ },
+ "best_strategy": "essential",
+ "smart_reliably_beats_random": false,
+ "ppi_hub_hurts": true,
+ "verdict": "SMART GUIDE SELECTION IS ESSENTIALLY A WASH -- the reliable cost lever is running FEWER knockouts, not choosing them cleverly. I corrected my own auto-verdict here: a 90%-of-best threshold made it look like smart selection 'halved' the screen, but that was a single noisy spike; the robust metric (mean held-out top-10 delta vs random, pooled over both lines and all screen sizes) says otherwise. Per-strategy mean delta vs random: ppi_hub -0.46 (pure network-hub selection actually HURTS, especially at small n -- e.g. K562 n=20 drops to 2.62 vs random 4.1), essential +0.1 (negligible), diverse -0.05 (a wash -- it helps HCT116 but hurts K562). No single a-priori strategy reliably beats random across both cell lines -- the wins are scattered and within run-to-run noise, and the one clear signal is that pure PPI-hub selection is WORSE. So which specific genes you knock out (by annotation) does NOT reliably matter; a modest RANDOM targeted panel works about as well as any clever guide list, and if you want a mild hedge, pick pathway-DIVERSE / essential genes rather than pure network hubs. THE REAL COST ANSWER is the SIZE of the screen, and that lever is strong: a 500-800-gene screen at ~$200-400k is ~$400-500/knockout; the celltype_scaling plateau shows ~50-100 knockouts reach ~70-90% of full deployable accuracy (K562 50->5.1/100->6.2 vs 400->7.1; HCT116 50->6.3/100->7.4 vs 400->8.3), cutting cost to ~$20-40k (~10x) -- and even ~20-30 random KOs already give a usable model (K562 ~4.1-4.6, HCT116 ~5.0-5.4 top-10). HONEST LIMITS: (1) this still needs SOME of the target cell type's own perturbations -- cheaper, not free (the annotation-only prior recovers just ~21-31% of the ceiling); (2) the gain is on the deployable top-10/tide, not the specific far field (still walled); (3) small-n forecasts are noisy, which is exactly why the smart-vs-random differences wash out. BOTTOM LINE: the cheapest reliable route to a per-cell-type model is a SMALL RANDOM (or mildly pathway-diverse) targeted screen of a few tens of knockouts (~$10-40k) -- an order-of-magnitude cheaper than a 500-800-gene screen -- and being clever about WHICH genes buys little; the money is saved by running fewer, not smarter.",
+ "note": "SMART GUIDE SELECTION IS ESSENTIALLY A WASH -- the reliable cost lever is running FEWER knockouts, not choosing them cleverly. I corrected my own auto-verdict here: a 90%-of-best threshold made it look like smart selection 'halved' the screen, but that was a single noisy spike; the robust metric (mean held-out top-10 delta vs random, pooled over both lines and all screen sizes) says otherwise. Per-strategy mean delta vs random: ppi_hub -0.46 (pure network-hub selection actually HURTS, especially at small n -- e.g. K562 n=20 drops to 2.62 vs random 4.1), essential +0.1 (negligible), diverse -0.05 (a wash -- it helps HCT116 but hurts K562). No single a-priori strategy reliably beats random across both cell lines -- the wins are scattered and within run-to-run noise, and the one clear signal is that pure PPI-hub selection is WORSE. So which specific genes you knock out (by annotation) does NOT reliably matter; a modest RANDOM targeted panel works about as well as any clever guide list, and if you want a mild hedge, pick pathway-DIVERSE / essential genes rather than pure network hubs. THE REAL COST ANSWER is the SIZE of the screen, and that lever is strong: a 500-800-gene screen at ~$200-400k is ~$400-500/knockout; the celltype_scaling plateau shows ~50-100 knockouts reach ~70-90% of full deployable accuracy (K562 50->5.1/100->6.2 vs 400->7.1; HCT116 50->6.3/100->7.4 vs 400->8.3), cutting cost to ~$20-40k (~10x) -- and even ~20-30 random KOs already give a usable model (K562 ~4.1-4.6, HCT116 ~5.0-5.4 top-10). HONEST LIMITS: (1) this still needs SOME of the target cell type's own perturbations -- cheaper, not free (the annotation-only prior recovers just ~21-31% of the ceiling); (2) the gain is on the deployable top-10/tide, not the specific far field (still walled); (3) small-n forecasts are noisy, which is exactly why the smart-vs-random differences wash out. BOTTOM LINE: the cheapest reliable route to a per-cell-type model is a SMALL RANDOM (or mildly pathway-diverse) targeted screen of a few tens of knockouts (~$10-40k) -- an order-of-magnitude cheaper than a 500-800-gene screen -- and being clever about WHICH genes buys little; the money is saved by running fewer, not smarter."
+}

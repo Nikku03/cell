@@ -1,0 +1,161 @@
+{
+ "ceiling_median": 0.4509846491474659,
+ "ridge_lambda": 1.0,
+ "ridge_cv": {
+  "0.1": 0.5858091307568908,
+  "1.0": 0.6523335457740236,
+  "10.0": 0.6346579699821422,
+  "100.0": 0.5424806242395379
+ },
+ "baselines": {
+  "has an RPE1 record": {
+   "n": 980,
+   "ceiling": 0.5916588688599009,
+   "copy_RPE1": 0.18648538037657872,
+   "copy_HepG2": 0.18831404597824036,
+   "copy_Jurkat": 0.2664575365436672,
+   "average_of_own": 0.25414924795798843,
+   "ridge_from_own": 0.37779511888584444,
+   "partner_mean": 0.2672658381548529,
+   "coessential_mean": 0.2358408049479848,
+   "replicate_B": 0.4373712031401602,
+   "ridge_from_RPE1_only": 0.34986621287759245
+  },
+  "has a HepG2 or Jurkat record": {
+   "n": 922,
+   "ceiling": 0.6010242886605398,
+   "copy_RPE1": 0.20283265050418567,
+   "copy_HepG2": 0.1885417940279877,
+   "copy_Jurkat": 0.26553628808994667,
+   "average_of_own": 0.2716619648485311,
+   "ridge_from_own": 0.39993043271789813,
+   "partner_mean": 0.2798094233790307,
+   "coessential_mean": 0.2476922477948295,
+   "replicate_B": 0.4492614245011828,
+   "ridge_from_RPE1_only": 0.3693202307489694
+  },
+  "has all three (RPE1, HepG2, Jurkat)": {
+   "n": 668,
+   "ceiling": 0.6292119242841363,
+   "copy_RPE1": 0.22226970459114614,
+   "copy_HepG2": 0.19270847181283696,
+   "copy_Jurkat": 0.2807102753574801,
+   "average_of_own": 0.3046619131211613,
+   "ridge_from_own": 0.45412638177565096,
+   "partner_mean": 0.3407205277770914,
+   "coessential_mean": 0.29142777792956864,
+   "replicate_B": 0.47939802017103383,
+   "ridge_from_RPE1_only": 0.41813337586631005
+  },
+  "has none (unmeasured elsewhere)": {
+   "n": 1518,
+   "ceiling": 0.40631968751031333,
+   "copy_RPE1": null,
+   "copy_HepG2": null,
+   "copy_Jurkat": null,
+   "average_of_own": null,
+   "ridge_from_own": 0.13112974477274256,
+   "partner_mean": 0.056614072846611366,
+   "coessential_mean": 0.11156906346295507,
+   "replicate_B": 0.30802624794430933,
+   "ridge_from_RPE1_only": null
+  },
+  "all TEST genes": {
+   "n": 2525,
+   "ceiling": 0.4509846491474659,
+   "copy_RPE1": 0.18648538037657872,
+   "copy_HepG2": 0.1885417940279877,
+   "copy_Jurkat": 0.26553628808994667,
+   "average_of_own": 0.25113765047911024,
+   "ridge_from_own": 0.18694083086438637,
+   "partner_mean": 0.12669321686791984,
+   "coessential_mean": 0.1409063247582809,
+   "replicate_B": 0.4313009157316993,
+   "ridge_from_RPE1_only": 0.34986621287759245
+  }
+ },
+ "recall_cellbank4": [
+  [
+   "YWHAE",
+   46
+  ],
+  [
+   "DECR1",
+   41
+  ],
+  [
+   "YWHAZ",
+   22
+  ],
+  [
+   "PTEN [RPE1]",
+   20
+  ],
+  [
+   "RAN [RPE1]",
+   7
+  ],
+  [
+   "RAN [K562-ess]",
+   6
+  ],
+  [
+   "SNRPD3 [RPE1]",
+   2
+  ],
+  [
+   "SNRPD3 [K562-ess]",
+   2
+  ],
+  [
+   "RB1",
+   1
+  ],
+  [
+   "RPSA [K562-ess]",
+   1
+  ]
+ ],
+ "recall_claudeloop": [
+  [
+   "M-RBAK",
+   65
+  ],
+  [
+   "M-RB1",
+   63
+  ],
+  [
+   "M-TCF15",
+   54
+  ],
+  [
+   "M-ZNF300",
+   26
+  ],
+  [
+   "M-DMRT2",
+   21
+  ],
+  [
+   "M-CDKN1B",
+   15
+  ],
+  [
+   "M-AR",
+   13
+  ],
+  [
+   "M-IFT46",
+   8
+  ],
+  [
+   "M-ABI2",
+   7
+  ],
+  [
+   "M-TRIM71",
+   4
+  ]
+ ]
+}

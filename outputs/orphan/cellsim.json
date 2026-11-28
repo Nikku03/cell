@@ -1,0 +1,44 @@
+{
+ "rows": [
+  {
+   "K": 0.0,
+   "n_checkpoints": 0,
+   "r_data": 0.2523057947442526,
+   "r_mech": 0.0014844440161499379,
+   "r_mech_fair": 0.0013635645547546767,
+   "r_hybrid": 0.2501331191050518,
+   "r_baseline": 0.2523057947442526
+  },
+  {
+   "K": 0.1,
+   "n_checkpoints": 390,
+   "r_data": 0.41954662747698057,
+   "r_mech": 0.005451942517820615,
+   "r_mech_fair": 0.006681276261271435,
+   "r_hybrid": 0.41063286397903764,
+   "r_baseline": 0.25305028557138665
+  },
+  {
+   "K": 0.25,
+   "n_checkpoints": 975,
+   "r_data": 0.47622560003163716,
+   "r_mech": 0.010892602059835402,
+   "r_mech_fair": 0.01273126164254323,
+   "r_hybrid": 0.4405013239913676,
+   "r_baseline": 0.25198553220621983
+  },
+  {
+   "K": 0.5,
+   "n_checkpoints": 1951,
+   "r_data": 0.5003369902581458,
+   "r_mech": 0.01230680333441884,
+   "r_mech_fair": 0.014497571509916938,
+   "r_hybrid": 0.4287371046803376,
+   "r_baseline": 0.2564339505497546
+  }
+ ],
+ "n_holdout": 150,
+ "n_core_genes": 3902,
+ "rank": 60,
+ "verdict": "CHECKPOINTS ARE THE SIGNAL, MECHANISM IS SCAFFOLD: data anchors lift reconstruction to r=0.50 (from baseline 0.25), but the regulatory simulation does NOT beat pure data completion (mech 0.01). The sim runs on the rails the data lays \u2014 honest."
+}

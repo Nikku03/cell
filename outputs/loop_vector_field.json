@@ -1,0 +1,136 @@
+{
+ "test": "is dS/dt = F(S) identifiable from this data",
+ "identifiability": {
+  "change_mean": 0.09197038212026243,
+  "level_mean": 0.4617457929855471,
+  "change_pairs": [
+   0.05174596498072487,
+   0.04170851883827741,
+   0.04070221822079806,
+   0.32985594578891825,
+   0.049760630348040374,
+   0.03804901454481555
+  ],
+  "level_pairs": [
+   0.5396462859183758,
+   0.4657294698624939,
+   0.41826942765207603,
+   0.54812400835838,
+   0.424453878102926,
+   0.37425168801903064
+  ]
+ },
+ "autonomy": {
+  "STATE": {
+   "mean": 0.23047457968154603,
+   "sd": 0.017905996781278515
+  },
+  "CLOCK": {
+   "mean": 0.08219220793027143,
+   "sd": 0.006019947483618056
+  },
+  "BOTH": {
+   "mean": 0.24215473246578045,
+   "sd": 0.016992503230947913
+  },
+  "paired_state_minus_clock": 0.14828237175127462
+ },
+ "stationarity": {
+  "ordered": 0.21447797801016444,
+  "random": 0.19761837708620486,
+  "delta": -0.016859600923959585,
+  "se": 0.010004050291951434,
+  "z": -1.6852775058041893
+ },
+ "geometry": {
+  "curl_fraction": 0.5400027737734607,
+  "cond": 471.4610861707876,
+  "var_captured": 0.9489157113028179
+ },
+ "control": {
+  "arm": "BOTH",
+  "real": 0.2448072423262082,
+  "shuffled": 0.006397034230047907,
+  "min_margin": 0.21073710241792523
+ },
+ "gates": {
+  "L1": false,
+  "L2": false,
+  "L3": false,
+  "L4": true,
+  "L5": false
+ },
+ "void": [
+  "L2",
+  "L3",
+  "L5"
+ ],
+ "seconds": 6.5865678787231445,
+ "log": [
+  "========================================================================================================",
+  "LOOP 231 -- TESTING THE FRAMEWORK: IS THE VECTOR FIELD IDENTIFIABLE?",
+  "========================================================================================================",
+  "     The proposal makes four measurable commitments: that F is a function of STATE",
+  "     (autonomy), that theta adapts (non-stationarity), that the flow is a gradient plus",
+  "     a driven part (symmetric Jacobian), and -- underneath all of them -- that dS/dt is",
+  "     measurable at all. L1 tests the last one first because it gates the rest.",
+  "     12,768 genes, 9 timepoints, 8 intervals, 4 replicates",
+  "L1 IS THE DERIVATIVE MEASURABLE AT ALL?",
+  "     cross-replicate agreement, all six pairs:",
+  "       1 vs 2   change +0.0517   level +0.5396",
+  "       1 vs 3   change +0.0417   level +0.4657",
+  "       1 vs 4   change +0.0407   level +0.4183",
+  "       2 vs 3   change +0.3299   level +0.5481",
+  "       2 vs 4   change +0.0498   level +0.4245",
+  "       3 vs 4   change +0.0380   level +0.3743",
+  "     mean over pairs: change +0.0920   level +0.4617",
+  "     loop 216 measured the plateau ceiling +0.83380 and the change ceiling -0.54028",
+  "     L1 FAIL -- the derivative reproduces at +0.0920 against a 0.30 bar while the LEVEL reproduces at +0.4617. dS/dt is not measurable in this data, so F cannot be inferred from it by any method. That is a fact about the data, not about the framework",
+  "L2 IS dS/dt A FUNCTION OF STATE, OR OF THE CLOCK?",
+  "     89,376 gene-by-interval observations; held out BY GENE so no gene appears in both train and test",
+  "       STATE  held-out |r| 0.2305 +/- 0.0179",
+  "       CLOCK  held-out |r| 0.0822 +/- 0.0060",
+  "       BOTH   held-out |r| 0.2422 +/- 0.0170",
+  "     PAIRED STATE - CLOCK +0.1483 +/- 0.0043 (+34.5 standard errors)",
+  "     L2 VOID -- L1 did not pass, so there is nothing here to test",
+  "L3 IS F STATIONARY, OR DOES theta ADAPT?",
+  "     fit early intervals, test late:      0.2145 +/- 0.0188",
+  "     fit random half, test the other:     0.1976 +/- 0.0413",
+  "     PAIRED random - ordered -0.0169 +/- 0.0100 (-1.7 standard errors)",
+  "     direction is REPORTED, not gated: positive means theta adapts, zero means a static",
+  "     F is sufficient",
+  "     L3 VOID -- L1 did not pass, so there is nothing here to test",
+  "L4 IS THE FLOW GRADIENT-LIKE?",
+  "     state projected onto 6 leading components, capturing 94.9% of trajectory variance",
+  "     linear map J from state to derivative, condition number 4.71e+02",
+  "     ||J_antisymmetric|| / ||J|| = 0.5400",
+  "     a pure -grad U flow has a SYMMETRIC Jacobian and a curl fraction of 0",
+  "     REPORTED, not gated: there is no principled bar and inventing one would be the",
+  "     same error as gating on a direction",
+  "     L4 PASS -- J is estimable (condition 4.7e+02), so the decomposition is meaningful; curl fraction 0.540",
+  "L5 CONTROL: DOES ANY OF THIS SURVIVE SHUFFLING?",
+  "     best arm BOTH: real 0.2448, gene-shuffled 0.0064",
+  "     per-split margin: min +0.2107, mean +0.2384",
+  "     L5 VOID -- L1 did not pass, so there is nothing here to test",
+  "L6 WHAT THIS CANNOT SHOW",
+  "     A negative on L2 is about THESE coordinates -- 1,336 genes' log2 levels -- not about",
+  "     the framework. The state the theory names includes protein, PTM, metabolite,",
+  "     localisation and mechanics, none of which this series measures. Failing to find an",
+  "     autonomous field in a projection is EXPECTED if the projection omits the variables",
+  "     that make it autonomous, and that is the most likely reading of a FAIL.",
+  "     L4's Jacobian is LINEAR. A curl-free nonlinear flow can look rotational under a",
+  "     linear fit, so the antisymmetric part bounds how well a linear potential describes",
+  "     the flow, not how well any potential does.",
+  "     L3 cannot separate theta adapting from the environment changing: dexamethasone's",
+  "     effect is itself time-varying, so a non-stationary F is consistent with a static",
+  "     controller driven by a changing input.",
+  "========================================================================================================",
+  "  L1  FAIL",
+  "  L2  VOID",
+  "  L3  VOID",
+  "  L4  PASS",
+  "  L5  VOID",
+  "  1/2   (3 VOID: L2, L3, L5)",
+  "========================================================================================================"
+ ]
+}

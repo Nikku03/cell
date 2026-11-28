@@ -1,0 +1,243 @@
+{
+ "x1": {
+  "knockdowns_common": 2048,
+  "targets_common": 6546,
+  "knockdowns_eligible": 167,
+  "rho_ref_median": 1.1244924068450928,
+  "r_ref_median": 0.5571911931037903,
+  "per_cell": {
+   "RPE1": {
+    "rho_median": 0.4138403534889221,
+    "r_median": 0.2586989998817444,
+    "gap": {
+     "n": 167,
+     "median": 0.7103948593139648,
+     "share_positive": 1.0,
+     "p": 5.345529420184391e-51
+    },
+    "passed": true
+   },
+   "HepG2": {
+    "rho_median": 0.48569610714912415,
+    "r_median": 0.28359344601631165,
+    "gap": {
+     "n": 167,
+     "median": 0.6520530581474304,
+     "share_positive": 1.0,
+     "p": 5.345529420184391e-51
+    },
+    "passed": true
+   },
+   "Jurkat": {
+    "rho_median": 0.7795823812484741,
+    "r_median": 0.37998732924461365,
+    "gap": {
+     "n": 167,
+     "median": 0.356850266456604,
+     "share_positive": 0.9940119760479041,
+     "p": 8.980489425909777e-49
+    },
+    "passed": true
+   }
+  },
+  "negative": {
+   "RPE1": {
+    "gap": {
+     "n": 166,
+     "median": 0.0018647611141204834,
+     "share_positive": 0.5240963855421686,
+     "p": 0.2935267819584953
+    },
+    "passed": false
+   },
+   "HepG2": {
+    "gap": {
+     "n": 167,
+     "median": -0.0016641616821289062,
+     "share_positive": 0.46107784431137727,
+     "p": 0.86069396539322
+    },
+    "passed": false
+   },
+   "Jurkat": {
+    "gap": {
+     "n": 167,
+     "median": 0.0006361603736877441,
+     "share_positive": 0.5149700598802395,
+     "p": 0.37851308359198055
+    },
+    "passed": false
+   }
+  },
+  "planted": {
+   "RPE1": {
+    "gap": {
+     "n": 167,
+     "median": 0.551054835319519,
+     "share_positive": 0.9880239520958084,
+     "p": 7.499243223576683e-47
+    },
+    "passed": true
+   },
+   "HepG2": {
+    "gap": {
+     "n": 167,
+     "median": 0.5645444393157959,
+     "share_positive": 1.0,
+     "p": 5.345529420184391e-51
+    },
+    "passed": true
+   },
+   "Jurkat": {
+    "gap": {
+     "n": 167,
+     "median": 0.5607624053955078,
+     "share_positive": 1.0,
+     "p": 5.345529420184391e-51
+    },
+    "passed": true
+   }
+  },
+  "rho_matrix": {
+   "K562 ~ RPE1": 0.4138403534889221,
+   "K562 ~ HepG2": 0.48569610714912415,
+   "K562 ~ Jurkat": 0.7795823812484741,
+   "K562 ~ K562 genome-wide": 1.1244924068450928,
+   "RPE1 ~ HepG2": 0.8453023433685303,
+   "RPE1 ~ Jurkat": 0.4670063853263855,
+   "RPE1 ~ K562 genome-wide": 0.5466881990432739,
+   "HepG2 ~ Jurkat": 0.5426459908485413,
+   "HepG2 ~ K562 genome-wide": 0.6059694886207581,
+   "Jurkat ~ K562 genome-wide": 0.8300807476043701
+  },
+  "gate": {
+   "real": true,
+   "controls_ok": true,
+   "verdict": "PASS"
+  }
+ },
+ "x2": {
+  "knockdowns": 2048,
+  "variable": 764,
+  "real": {
+   "n": 763,
+   "mean_spearman": -0.04014738601839276,
+   "p": 0.9695152423788106,
+   "passed": false
+  },
+  "negative": {
+   "n": 763,
+   "mean_spearman": 0.02058739856720697,
+   "p": 0.15792103948025987,
+   "passed": false
+  },
+  "planted": {
+   "n": 759,
+   "mean_spearman": 0.4350453316119499,
+   "p": 0.0004997501249375312,
+   "passed": true
+  },
+  "gate": {
+   "controls_ok": true,
+   "verdict": "FAIL"
+  }
+ },
+ "l1": {
+  "links_total": 391395,
+  "links_tested": 300000,
+  "d_raw_median": 0.34535286416319755,
+  "d_dose_median": 0.3592385351657892,
+  "d_rand_median": 0.3953295870046484,
+  "real": {
+   "n": 300000,
+   "median": 0.03074106574053198,
+   "share_positive": 0.5426933333333334,
+   "p": 0.0,
+   "passed": true
+  },
+  "negative": {
+   "n": 300000,
+   "median": 0.0,
+   "share_positive": 0.4997614909650109,
+   "p": 0.6037261172488723,
+   "passed": false
+  },
+  "planted": {
+   "n": 300000,
+   "median": 0.19257235527038574,
+   "share_positive": 0.77918,
+   "p": 0.0,
+   "passed": true
+  },
+  "gate": {
+   "controls_ok": true,
+   "verdict": "PASS"
+  }
+ },
+ "l2": {
+  "tfs": 761,
+  "links": 20120,
+  "direct": 14837,
+  "indirect": 5283,
+  "collectri_share_direct": 0.010244658623710993,
+  "collectri_share_indirect": 0.012871474540980504,
+  "mh_odds_ratio": 0.8722689123430236,
+  "cmh_p": 0.41668004686943283,
+  "negative_mh_odds_ratio": 1.0237989690099492,
+  "shuffled_odds_ratios": [
+   1.0645224662863095,
+   0.9871360943165434,
+   0.9612742408095044,
+   1.236720658272187,
+   0.9796794045326269,
+   1.0656735922688263,
+   0.8022162093207577,
+   0.802997774124587,
+   1.3052332176043542,
+   0.8621748863099081,
+   1.2192763004284013,
+   1.2115938709709266,
+   1.213900389269924,
+   1.0744977084209544,
+   0.9123532933310761,
+   0.9299893352995593,
+   1.065696710834828,
+   0.8626855089866389,
+   1.0955580025548057,
+   1.0280997900652142
+  ],
+  "empirical_p": 0.8095238095238095,
+  "planted_indirect": 1.0,
+  "planted_n": 200,
+  "sign_agreement_direct": [
+   98,
+   149
+  ],
+  "sign_agreement_indirect": [
+   34,
+   67
+  ],
+  "gate": {
+   "real": false,
+   "controls_ok": true,
+   "verdict": "FAIL"
+  }
+ },
+ "catalogue": {
+  "pairs_measured_anywhere": 24342436,
+  "links_anywhere": 2321183,
+  "everywhere": 26760,
+  "shared_some": 417219,
+  "flips_sign": 48566,
+  "one_cell_type_only": 223221,
+  "only_measurable_in_one": 227548,
+  "one_cell_type_only_by_cell": {
+   "K562": 49480,
+   "RPE1": 121841,
+   "HepG2": 32216,
+   "Jurkat": 19684
+  },
+  "flip_rate_k562_two_experiments": 0.004942420797706717,
+  "flip_rate_across_cell_types_mean": 0.07922337348592971
+ }
+}

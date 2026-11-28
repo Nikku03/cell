@@ -1,0 +1,28 @@
+{
+ "run": "3-seed held-out K562, Colab GPU (user-run of committed transformer_ko6.py)",
+ "v5_no_reg": 0.484,
+ "v5_no_reg_sd": 0.02,
+ "plus_reg_features": 0.464,
+ "plus_reg_features_sd": 0.011,
+ "plus_direct_channel": 0.464,
+ "reg_features_minus_v5": -0.021,
+ "per_seed_v5": [
+  0.511,
+  0.48,
+  0.462
+ ],
+ "per_seed_reg": [
+  0.479,
+  0.458,
+  0.454
+ ],
+ "tf_subset_mean": 0.342,
+ "tf_subset_fused": 0.342,
+ "channel_on_subset": 0.0,
+ "beta_tuned": 0.0,
+ "oracle": 0.594,
+ "tide": 0.257,
+ "helps": false,
+ "verdict": "TRANSFORMER v6 (transformer_ko6.py), 3-seed GPU: v5 (multi-line+Replogle metric encoder) + the mRNA/REGULATORY layer is an HONEST NEGATIVE. Regulatory token features (is-TF, in/out-degree from TRRUST+60k SIGNOR/CollecTRI+ChIP) HURT: v5 0.484+/-0.020 -> +reg-features 0.464+/-0.011 = -0.021, WORSE on every seed (0.511/0.480/0.462 -> 0.479/0.458/0.454). The DIRECT TF->target channel is DEAD: val tuned beta to 0.0 on all 3 seeds, and on the TF-KO subset (the ~23% of KOs that are regulatory sources, n~20-25) fused == mean (0.342 -> 0.342, +0.000). MECHANISM: (1) the 3 regulatory scalars appended per token DILUTE the DepMap/network features that actually carry the signal and add noise the 2-layer encoder can't ignore -> small consistent degradation; (2) the direct channel is null because coverage is thin (median 2 measured targets per source) AND those curated targets are either already captured by retrieval or sit in the tide -- so known TF->target edges do NOT predict tide-removed SPECIFIC movers better than behavioural retrieval. IMPORTANT: this CONTRADICTS the single-seed CPU smoke (+0.011) -- another case where a 1-seed/few-epoch number was noise and the honest 3-seed answer is negative. CONCLUSION: the regulatory layer is conceptually the right layer (same modality as the readout) but does NOT help on THIS KO panel/readout -- confirming yet again that the bottleneck is DATA (thin regulatory coverage of the KO panel + the ~85%-context-specific far field), not the feature set. Best model remains v5 (multi-line data + retrieval), bounded by the ~0.62 oracle. Deterministic.",
+ "note": "TRANSFORMER v6 (transformer_ko6.py), 3-seed GPU: v5 (multi-line+Replogle metric encoder) + the mRNA/REGULATORY layer is an HONEST NEGATIVE. Regulatory token features (is-TF, in/out-degree from TRRUST+60k SIGNOR/CollecTRI+ChIP) HURT: v5 0.484+/-0.020 -> +reg-features 0.464+/-0.011 = -0.021, WORSE on every seed (0.511/0.480/0.462 -> 0.479/0.458/0.454). The DIRECT TF->target channel is DEAD: val tuned beta to 0.0 on all 3 seeds, and on the TF-KO subset (the ~23% of KOs that are regulatory sources, n~20-25) fused == mean (0.342 -> 0.342, +0.000). MECHANISM: (1) the 3 regulatory scalars appended per token DILUTE the DepMap/network features that actually carry the signal and add noise the 2-layer encoder can't ignore -> small consistent degradation; (2) the direct channel is null because coverage is thin (median 2 measured targets per source) AND those curated targets are either already captured by retrieval or sit in the tide -- so known TF->target edges do NOT predict tide-removed SPECIFIC movers better than behavioural retrieval. IMPORTANT: this CONTRADICTS the single-seed CPU smoke (+0.011) -- another case where a 1-seed/few-epoch number was noise and the honest 3-seed answer is negative. CONCLUSION: the regulatory layer is conceptually the right layer (same modality as the readout) but does NOT help on THIS KO panel/readout -- confirming yet again that the bottleneck is DATA (thin regulatory coverage of the KO panel + the ~85%-context-specific far field), not the feature set. Best model remains v5 (multi-line data + retrieval), bounded by the ~0.62 oracle. Deterministic."
+}

@@ -1,0 +1,17 @@
+=================================================================================================
+MORE CELL TYPES IN THE MEMORY BANK: HEPG2 AND JURKAT JOIN K562 AND RPE1
+=================================================================================================
+  HepG2 (liver): 2,393 knockdowns, 2,051 with features, 1,631 stored (>= 20 genes at p < 0.001); 7,427 measured genes mapped
+     H2 agreement with K562-essential on 654 TRAIN knockdowns: median r +0.459 (shuffled -0.012) -> PASS
+  Jurkat (T cell): 2,392 knockdowns, 2,051 with features, 1,563 stored (>= 20 genes at p < 0.001); 7,355 measured genes mapped
+     H2 agreement with K562-essential on 609 TRAIN knockdowns: median r +0.574 (shuffled -0.007) -> PASS
+  bank: 11,749 records, 3.7 MB
+  TEST genes with their own record in RPE1 980, HepG2 812, Jurkat 787; in HepG2 or Jurkat 922, of which without RPE1 27
+  R  E2 here +0.248 vs cellbank4's E2 +0.250 (all TEST, median r)
+  G5 E3 vs E2, PRIMARY, genes with a HepG2 or Jurkat record n   922: E3 +0.377 vs E2 +0.355; better 525 / worse 397, per-gene median +0.0061, p 2.8e-05 -> NO DIFFERENCE
+  G6 E3 vs E2, all TEST genes                               n  2525: E3 +0.255 vs E2 +0.248; better 1354 / worse 1171, per-gene median +0.0009, p 0.00029 -> NO DIFFERENCE
+  G7 E3 vs E2, newly covered (no RPE1 record), descr.       n    27: E3 +0.299 vs E2 +0.283; better 16 / worse 11, per-gene median +0.0073, p 0.44 -> (descriptive)
+     E3 on genes with their own record in 0 other cell type(s): n  1518, median r +0.217 (E2 +0.213)
+     E3 on genes with their own record in 1 other cell type(s): n   103, median r +0.219 (E2 +0.217)
+     E3 on genes with their own record in 2 other cell type(s): n   236, median r +0.245 (E2 +0.250)
+     E3 on genes with their own record in 3 other cell type(s): n   668, median r +0.430 (E2 +0.419)

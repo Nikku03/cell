@@ -1,0 +1,35 @@
+{
+ "mean_sd": {
+  "TIDE-null": [
+   0.2488,
+   0.0118
+  ],
+  "v1 transformer (baseline)": [
+   0.4758,
+   0.0336
+  ],
+  "v2 CLS+distill+weighted": [
+   0.4827,
+   0.0461
+  ],
+  "v2 shuffle (control)": [
+   0.1107,
+   0.0144
+  ],
+  "ORACLE* (ceiling)": [
+   0.607,
+   0.0322
+  ]
+ },
+ "v2_minus_v1": [
+  0.0376,
+  -0.0126,
+  -0.0042
+ ],
+ "v2_improves_all_splits": false,
+ "shuffle_control_passes": true,
+ "headroom_v1": 0.634,
+ "headroom_v2": 0.653,
+ "verdict": "IMPROVED knockout-context transformer (transformer_ko2.py): v1's set-of-tokens transformer + four upgrades (CLS cross-attention pooling, a distillation/InfoNCE objective distilling the response-neighbour distribution into the embedding, val-tuned similarity-weighted top-K transfer, and a val-tuned hybrid with raw DepMap cosine). 3-split held-out K562 (tide-removed specific recall@50): v1 baseline 0.476 -> v2 0.483 (oracle 0.607, tide 0.249). v2 - v1 = +0.007+/-0.022 -- NO stable improvement: the upgrades do not beat v1 by a reliable margin, so v1's mean-pool + cosine-MSE + mean-transfer was already near the best this representation supports; the remaining gap to the oracle is representation/data-limited, not a readout/objective problem. Gene-identity control PASSES (wrong-KO 0.111 < v2). Single cell type, steady-state mRNA, magnitude target, CPU; deterministic per split.",
+ "note": "IMPROVED knockout-context transformer (transformer_ko2.py): v1's set-of-tokens transformer + four upgrades (CLS cross-attention pooling, a distillation/InfoNCE objective distilling the response-neighbour distribution into the embedding, val-tuned similarity-weighted top-K transfer, and a val-tuned hybrid with raw DepMap cosine). 3-split held-out K562 (tide-removed specific recall@50): v1 baseline 0.476 -> v2 0.483 (oracle 0.607, tide 0.249). v2 - v1 = +0.007+/-0.022 -- NO stable improvement: the upgrades do not beat v1 by a reliable margin, so v1's mean-pool + cosine-MSE + mean-transfer was already near the best this representation supports; the remaining gap to the oracle is representation/data-limited, not a readout/objective problem. Gene-identity control PASSES (wrong-KO 0.111 < v2). Single cell type, steady-state mRNA, magnitude target, CPU; deterministic per split."
+}

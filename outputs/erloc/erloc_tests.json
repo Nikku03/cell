@@ -1,0 +1,135 @@
+{
+ "G12-A2": {
+  "erm": {
+   "auroc": 0.6898562493514278,
+   "null_95": 0.5097412608618491,
+   "p_mc": 0.000999000999000999,
+   "n_in": 3137,
+   "n_out": 8374,
+   "passed": false
+  },
+  "nucleus_control": {
+   "auroc": 0.42047504167084676,
+   "null_95": 0.5099132835234996,
+   "p_mc": 1.0,
+   "n_in": 3203,
+   "n_out": 8611,
+   "passed": false
+  },
+  "planted": {
+   "auroc": 0.7668942662135841,
+   "null_95": 0.5101575329288196,
+   "p_mc": 0.000999000999000999,
+   "n_in": 3137,
+   "n_out": 8374,
+   "passed": true
+  },
+  "reported_er_lumen": {
+   "auroc": 0.5677376373298153,
+   "null_95": 0.5100234120603949,
+   "p_mc": 0.000999000999000999,
+   "n_in": 3247,
+   "n_out": 8597,
+   "passed": false
+  },
+  "median_enrichment": {
+   "er_made": 0.6604222059249878,
+   "other": -0.08020259067416191
+  },
+  "gate": {
+   "real": false,
+   "controls_ok": true,
+   "verdict": "FAIL"
+  }
+ },
+ "G12-A3": {
+  "omm": {
+   "auroc": 0.41892589129785024,
+   "null_95": 0.517470253019161,
+   "p_mc": 1.0,
+   "n_in": 766,
+   "n_out": 8456,
+   "passed": false
+  },
+  "nucleus_control": {
+   "auroc": 0.3893324304310253,
+   "null_95": 0.5180327035640007,
+   "p_mc": 1.0,
+   "n_in": 770,
+   "n_out": 8611,
+   "passed": false
+  },
+  "planted": {
+   "auroc": 0.7587351265095805,
+   "null_95": 0.5183539937035454,
+   "p_mc": 0.000999000999000999,
+   "n_in": 766,
+   "n_out": 8456,
+   "passed": true
+  },
+  "reported_matrix": {
+   "auroc": 0.47141122701103955,
+   "null_95": 0.5178002371925169,
+   "p_mc": 0.996003996003996,
+   "n_in": 770,
+   "n_out": 8536,
+   "passed": false
+  },
+  "median_enrichment": {
+   "mito": -0.34093455970287323,
+   "other": -0.10959150642156601
+  },
+  "gate": {
+   "real": false,
+   "controls_ok": true,
+   "verdict": "FAIL"
+  }
+ },
+ "G12-T1": {
+  "puromycin": {
+   "auroc": 0.5703107012562075,
+   "null_95": 0.5183552902917049,
+   "p_mc": 0.000999000999000999,
+   "n_in": 764,
+   "n_out": 8391,
+   "passed": false
+  },
+  "cycloheximide_control": {
+   "auroc": 0.38764511071855656,
+   "null_95": 0.5187639019354507,
+   "p_mc": 1.0,
+   "n_in": 758,
+   "n_out": 8230,
+   "passed": false
+  },
+  "planted": {
+   "auroc": 0.7645072537828801,
+   "null_95": 0.5191707598080966,
+   "p_mc": 0.000999000999000999,
+   "n_in": 764,
+   "n_out": 8391,
+   "passed": true
+  },
+  "median_drop": {
+   "mito": -0.03601718274876475,
+   "other": -0.13283014297485352
+  },
+  "reported_transit_vs_none_inside_mito": {
+   "auroc": 0.5096742608120035,
+   "null_95": 0.5351572843115623,
+   "p_mc": 0.3356643356643357,
+   "n_in": 412,
+   "n_out": 352,
+   "passed": false
+  },
+  "gate": {
+   "real": false,
+   "controls_ok": true,
+   "verdict": "FAIL"
+  }
+ },
+ "reported_lists": {
+  "hidden_er_clients": 289,
+  "mito_rna_without_growing_protein": 0
+ }
+}

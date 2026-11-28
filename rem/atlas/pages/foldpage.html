@@ -1,0 +1,276 @@
+<title>How a Chromosome Folds</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* layout: one reading column; the simulator and the map comparison break out as full-width instrument panels */
+:root{
+  --bg:#f6f7f9; --panel:#ffffff; --ink:#16191d; --ink2:#5d6570; --line:#dfe3e8; --axis:#b9c0c9;
+  --blue:#257de0; --orange:#f47230; --map-lo:#ffffff; --map-hi:#0e3d7e; --open:#cfe3fb; --closed:#d9dce1; --good:#0a8f20; --bad:#c93435;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif; --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0d0f12; --panel:#181b1f; --ink:#eceef1; --ink2:#9aa2ad; --line:#2c3138; --axis:#474e57;
+  --blue:#338ced; --orange:#e76624; --map-lo:#181b1f; --map-hi:#9dc8f7; --open:#1b3a5e; --closed:#2a2e34; --good:#0aac23; --bad:#eb6263; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#0d0f12; --panel:#181b1f; --ink:#eceef1; --ink2:#9aa2ad; --line:#2c3138; --axis:#474e57;
+  --blue:#338ced; --orange:#e76624; --map-lo:#181b1f; --map-hi:#9dc8f7; --open:#1b3a5e; --closed:#2a2e34; --good:#0aac23; --bad:#eb6263; color-scheme:dark }
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.55}
+.wrap{max-width:1040px;margin:0 auto;padding-block:28px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:36px}
+h1{font-size:clamp(28px,5vw,42px);line-height:1.1;font-weight:600;margin:0;text-wrap:balance;letter-spacing:-0.01em}
+h2{font-size:22px;font-weight:600;margin:0 0 4px;text-wrap:balance}
+h3{font-size:15px;font-weight:600;margin:0}
+p{margin:0;max-width:68ch}
+.lede{font-size:18px;color:var(--ink)}
+.muted{color:var(--ink2)} .small{font-size:13.5px}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+section{display:flex;flex-direction:column;gap:14px}
+.rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.rule{border-top:2px solid var(--ink);padding-top:10px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.rule b{font-weight:600}
+.rule .k{font-family:var(--mono);font-size:12px;color:var(--ink2);letter-spacing:.04em;text-transform:uppercase}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.sim{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:760px){.sim{grid-template-columns:minmax(0,1fr)}}
+.col{display:flex;flex-direction:column;gap:10px;min-width:0}
+canvas{display:block;max-width:100%;border-radius:3px}
+#track{width:100%;height:190px;touch-action:manipulation;cursor:pointer;background:var(--panel)}
+.maps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media (max-width:640px){.maps{grid-template-columns:minmax(0,1fr)}}
+.sq{width:100%;aspect-ratio:1/1;max-width:100%;image-rendering:pixelated;border:1px solid var(--line)}
+.controls{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
+button,.seg label{font:inherit;font-size:14px;border:1px solid var(--axis);background:var(--panel);color:var(--ink);padding:6px 11px;border-radius:4px;cursor:pointer}
+button:hover,.seg label:hover{border-color:var(--ink)}
+button:focus-visible,input:focus-visible,.seg input:focus-visible+label,[tabindex]:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+button[aria-pressed="true"]{background:var(--ink);color:var(--panel);border-color:var(--ink)}
+.seg{display:inline-flex;flex-wrap:wrap;gap:6px} .seg input{position:absolute;opacity:0;pointer-events:none}
+.seg input:checked+label{background:var(--ink);color:var(--panel);border-color:var(--ink)}
+.slider{display:flex;flex-direction:column;gap:2px;font-size:13.5px;min-width:150px;flex:1 1 150px}
+.slider input{width:100%;accent-color:var(--blue)}
+.read{font-family:var(--mono);font-size:13px;color:var(--ink2);font-variant-numeric:tabular-nums}
+.key{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--ink2);align-items:center}
+.sw{display:inline-block;width:22px;height:10px;border-radius:2px;vertical-align:middle;margin-right:5px}
+.ramp{display:inline-block;width:90px;height:10px;border-radius:2px;vertical-align:middle;margin:0 6px;background:linear-gradient(90deg,var(--map-lo),var(--map-hi));border:1px solid var(--line)}
+.charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.chart{display:flex;flex-direction:column;gap:10px;min-width:0}
+.bars{display:flex;flex-direction:column;gap:7px}
+.row{display:grid;grid-template-columns:minmax(0,11.5em) minmax(0,1fr) 3.6em;gap:8px;align-items:center;font-size:13.5px}
+.row .lab{color:var(--ink);overflow-wrap:anywhere}
+.row .trk{position:relative;height:14px;border-left:1px solid var(--axis)}
+.row .bar{position:absolute;left:0;top:1px;bottom:1px;background:var(--blue);border-radius:0 4px 4px 0;min-width:2px}
+.row .bar.alt{background:var(--orange)}
+.row .ref{position:absolute;top:-3px;bottom:-3px;width:0;border-left:1.5px dashed var(--ink2)}
+.row .val{font-family:var(--mono);font-size:12.5px;text-align:right;color:var(--ink);font-variant-numeric:tabular-nums}
+.note{font-size:13px;color:var(--ink2)}
+table{border-collapse:collapse;font-size:14px;width:100%} th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:600;font-size:13px;color:var(--ink2)} .tw{overflow-x:auto}
+.pass{color:var(--good);font-weight:600} .fail{color:var(--bad);font-weight:600}
+ul{margin:0;padding-left:1.15em;display:flex;flex-direction:column;gap:6px;max-width:70ch}
+#tip{position:fixed;z-index:20;pointer-events:none;background:var(--ink);color:var(--panel);font-size:12.5px;padding:5px 8px;border-radius:4px;max-width:260px;line-height:1.35}
+a{color:var(--blue)}
+</style>
+
+<div class="wrap">
+<header style="display:flex;flex-direction:column;gap:12px">
+  <div class="mono small muted">K562 · HCT116 · THP-1 · A549 &nbsp;|&nbsp; tests G16–G21</div>
+  <h1>How a chromosome folds</h1>
+  <p class="lede">Two metres of DNA fold inside each cell by a few simple rules. We tested each rule on real measurements, then built a simulator from the rules alone and checked it against DNA it had never seen.</p>
+</header>
+
+<section aria-label="The rules">
+  <div class="rules">
+    <div class="rule"><span class="k">Loops</span><b>A motor pulls, stop signs hold.</b><span>A ring-shaped motor (cohesin) reels DNA through itself. It stops at CTCF proteins whose sites point into the loop, so a loop sits between two signs facing each other.</span></div>
+    <div class="rule"><span class="k">Zones</span><b>Like sticks with like.</b><span>Active, open DNA gathers with other open DNA, and closed with closed. This needs no motor.</span></div>
+    <div class="rule"><span class="k">Change</span><b>Activity moves first.</b><span>When a cell gets a signal, genes switch and the DNA opens. Loops and zones are redrawn afterwards.</span></div>
+    <div class="rule"><span class="k">Effect</span><b>Loops work by contact.</b><span>A loop brings a distant switch next to a gene. Genes follow the switches they are looped to.</span></div>
+  </div>
+</section>
+
+<section aria-label="Simulator">
+  <h2>Try it: build a stretch of DNA and watch it fold</h2>
+  <p class="muted">Click the DNA line to add a stop sign. Click a sign to turn it around. Loops only hold between signs that face each other: <span class="mono">▶ … ◀</span>.</p>
+  <div class="panel">
+    <div class="sim">
+      <div class="col">
+        <canvas id="track" role="img" aria-label="DNA line with stop signs and moving motors"></canvas>
+        <div class="key"><span><span class="sw" style="background:var(--orange)"></span>motor and its loop</span><span><span class="mono">▶ ◀</span> stop signs</span><span><span class="sw" style="background:var(--open)"></span>open zone</span><span><span class="sw" style="background:var(--closed)"></span>closed zone</span></div>
+        <div class="controls">
+          <div class="seg" role="radiogroup" aria-label="Click action">
+            <input type="radio" name="tool" id="tool-add" checked><label for="tool-add">Add / turn a sign</label>
+            <input type="radio" name="tool" id="tool-del"><label for="tool-del">Remove a sign</label>
+          </div>
+          <button id="btn-motor" aria-pressed="false">Remove the motors</button>
+          <button id="btn-zones" aria-pressed="false">Show zones</button>
+          <button id="btn-pause" aria-pressed="false">Pause</button>
+        </div>
+        <div class="controls">
+          <span class="small muted">Examples:</span>
+          <button data-preset="two">Two neighbourhoods</button>
+          <button data-preset="flip">One sign turned around</button>
+          <button data-preset="del">Middle signs removed</button>
+          <button data-preset="none">No stop signs</button>
+        </div>
+        <div class="controls">
+          <label class="slider" for="s-motors">Motors on the DNA <input id="s-motors" type="range" min="0" max="24" value="10"></label>
+          <label class="slider" for="s-reach">How far a motor reels <input id="s-reach" type="range" min="10" max="240" value="130"></label>
+          <label class="slider" for="s-zone">Zone stickiness <input id="s-zone" type="range" min="0" max="100" value="55"></label>
+        </div>
+        <div class="read" id="readout" aria-live="off"></div>
+      </div>
+      <div class="col">
+        <h3>Contact map of your DNA</h3>
+        <canvas id="simmap" class="sq" width="80" height="80" role="img" aria-label="Simulated contact map"></canvas>
+        <div class="key"><span>fewer contacts than expected<span class="ramp"></span>more</span></div>
+        <p class="note">Each square shows how often two places touch, compared with what their distance alone would give. Dark squares along the diagonal are neighbourhoods; a dark dot at a corner is a held loop.</p>
+      </div>
+    </div>
+  </div>
+  <p class="note">This is a small in-browser version of the simulator we tested (same rules, a shorter piece of DNA).</p>
+</section>
+
+<section aria-label="Real cells">
+  <h2>Does it match real cells?</h2>
+  <p class="muted" id="real-intro"></p>
+  <div class="panel">
+    <div class="controls"><span class="small muted">Region:</span><div class="seg" id="region-seg" role="radiogroup" aria-label="Region"></div></div>
+    <div class="maps">
+      <div class="col"><h3>Measured, motor present</h3><canvas class="sq" id="m-unt" width="120" height="120" role="img" aria-label="Measured contact map with cohesin"></canvas></div>
+      <div class="col"><h3>Simulated from stop signs</h3><canvas class="sq" id="m-sim" width="120" height="120" role="img" aria-label="Simulated contact map"></canvas></div>
+      <div class="col"><h3>Measured, motor destroyed</h3><canvas class="sq" id="m-aux" width="120" height="120" role="img" aria-label="Measured contact map without cohesin"></canvas></div>
+    </div>
+    <div class="read" id="real-read"></div>
+    <p class="note" id="real-note"></p>
+  </div>
+</section>
+
+<section aria-label="Evidence">
+  <h2>The evidence, rule by rule</h2>
+  <p class="muted">Every test was written down before it ran and scored once on chromosomes kept aside (the even-numbered ones).</p>
+  <div class="charts" id="charts"></div>
+</section>
+
+<section aria-label="Simulator tests">
+  <h2>How the simulator scored on unseen DNA</h2>
+  <div class="tw panel"><table id="simtable"><thead><tr><th>Question</th><th>Result</th><th>Numbers</th></tr></thead><tbody></tbody></table></div>
+  <p class="note" id="fitnote"></p>
+</section>
+
+<section aria-label="Open questions">
+  <h2>What is still open</h2>
+  <ul id="open"></ul>
+</section>
+
+<section aria-label="Sources">
+  <h2>Where the data came from</h2>
+  <p class="small muted">K562 time course: Bond et al. 2023, Genome Research (GEO GSE213909). THP-1: Reed et al. 2022, Cell Reports (GSE201376). A549 and HCT116 maps, CTCF and histone data: ENCODE (Reddy, Aiden and Bernstein labs; Rao et al. 2017, Cell). CTCF motif: JASPAR MA0139.1. Genome: UCSC hg38. The real maps shown on this page are from ENCODE.</p>
+</section>
+</div>
+<div id="tip" hidden></div>
+
+<script>
+const DATA = __DATA__;
+const $ = s => document.querySelector(s);
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+function hex(h){h=h.replace('#','');return [0,2,4].map(i=>parseInt(h.substr(i,2),16));}
+let RAMP=[hex('#ffffff'),hex('#0e3d7e')];
+function readTheme(){RAMP=[hex(css('--map-lo')||'#ffffff'),hex(css('--map-hi')||'#0e3d7e')];}
+function ramp(t){t=Math.max(0,Math.min(1,t));return [0,1,2].map(i=>Math.round(RAMP[0][i]+(RAMP[1][i]-RAMP[0][i])*t));}
+const tip=$('#tip');
+function showTip(e,txt){tip.textContent=txt;tip.hidden=false;const x=Math.min(e.clientX+12,innerWidth-270),y=Math.min(e.clientY+14,innerHeight-60);tip.style.left=Math.max(4,x)+'px';tip.style.top=y+'px';}
+function hideTip(){tip.hidden=true;}
+
+/* ---------------- simulator (same rules as foldsim.py, on 240 sites) ---------------- */
+const NS=240,BS=3,NB=NS/BS,W=0.3;
+let signs=[],motors=[],occ=new Uint8Array(NS),pl=new Float32Array(NS),pr=new Float32Array(NS);
+let life=65,nMotors=10,motorsOn=true,zonesOn=false,zoneK=0.55,paused=false;
+const zone=new Float32Array(NB);for(let i=0;i<NB;i++)zone[i]=(Math.floor(i/16)%2===0)?1:-1;
+const EMA=new Float32Array(NB*NB),D=new Float32Array(NB*NB),ra=new Float32Array(NB),rb=new Float32Array(NB);let emaN=0;
+const PRESETS={two:[[22,1],[112,-1],[126,1],[216,-1]],flip:[[22,1],[112,1],[126,1],[216,-1]],del:[[22,1],[216,-1]],none:[]};
+function setSigns(list){signs=list.map(s=>({x:s[0],d:s[1]}));caps();}
+function caps(){pl.fill(0);pr.fill(0);for(const s of signs){if(s.d>0)pl[s.x]=0.9;else pr[s.x]=0.9;}for(const m of motors){m.sl=false;m.sr=false;}}
+function land(m){for(let k=0;k<40;k++){const x=Math.floor(Math.random()*(NS-1));if(!occ[x]&&!occ[x+1]){m.l=x;m.r=x+1;m.sl=m.sr=false;m.off=false;occ[x]=occ[x+1]=1;return;}}m.off=true;}
+function setMotors(n){while(motors.length>n){const m=motors.pop();if(!m.off){occ[m.l]=0;occ[m.r]=0;}}while(motors.length<n){const m={off:true};motors.push(m);land(m);}}
+function step(){
+  for(const m of motors){if(m.off){land(m);continue;}if(Math.random()<1/life){occ[m.l]=0;occ[m.r]=0;land(m);}}
+  for(const m of motors){if(m.off)continue;
+    if(!m.sr&&m.r+1<NS&&!occ[m.r+1]){occ[m.r]=0;m.r++;occ[m.r]=1;if(Math.random()<pr[m.r])m.sr=true;}
+    if(!m.sl&&m.l-1>=0&&!occ[m.l-1]){occ[m.l]=0;m.l--;occ[m.l]=1;if(Math.random()<pl[m.l])m.sl=true;}}
+}
+function snapshot(){
+  for(let i=0;i<NB;i++)for(let j=0;j<NB;j++)D[i*NB+j]=Math.abs(i-j);
+  for(const m of motors){if(m.off)continue;const a=Math.floor(m.l/BS),b=Math.floor(m.r/BS);if(a===b)continue;
+    for(let j=0;j<NB;j++){ra[j]=D[a*NB+j];rb[j]=D[b*NB+j];}
+    for(let i=0;i<NB;i++){const dia=D[i*NB+a]+W,dib=D[i*NB+b]+W;for(let j=0;j<NB;j++){const v1=dia+rb[j],v2=dib+ra[j],v=v1<v2?v1:v2;if(v<D[i*NB+j])D[i*NB+j]=v;}}}
+  const al=emaN<60?1/(emaN+1):0.025;emaN++;
+  for(let i=0;i<NB;i++)for(let j=0;j<NB;j++){let c=1/(D[i*NB+j]+1);if(zonesOn)c*=Math.exp(zoneK*zone[i]*zone[j]);const k=i*NB+j;EMA[k]+=(c-EMA[k])*al;}
+}
+function drawMapFrom(cv,get,n,lo,hi){const ctx=cv.getContext('2d'),im=ctx.createImageData(n,n);
+  for(let i=0;i<n;i++)for(let j=0;j<n;j++){const v=get(i,j),k=(i*n+j)*4;let c;if(v===null){c=ramp(0.0);im.data[k+3]=40;}else{c=ramp((v-lo)/(hi-lo));im.data[k+3]=255;}im.data[k]=c[0];im.data[k+1]=c[1];im.data[k+2]=c[2];}
+  ctx.putImageData(im,0,0);}
+function drawSimMap(){const mean=new Float32Array(NB),cnt=new Float32Array(NB);
+  for(let i=0;i<NB;i++)for(let j=i;j<NB;j++){mean[j-i]+=EMA[i*NB+j];cnt[j-i]++;}
+  for(let k=0;k<NB;k++)mean[k]/=Math.max(cnt[k],1);
+  drawMapFrom($('#simmap'),(i,j)=>{const k=Math.abs(i-j);return Math.log2(EMA[i*NB+j]/Math.max(mean[k],1e-9));},NB,-0.45,0.85);}
+const track=$('#track');let TW=600,TH=190,dpr=1;
+function sizeTrack(){dpr=Math.min(window.devicePixelRatio||1,2);TW=track.clientWidth||600;TH=190;track.width=Math.round(TW*dpr);track.height=Math.round(TH*dpr);}
+const X=s=>14+(s+0.5)/NS*(TW-28),BASE=()=>TH-46;
+function drawTrack(){const c=track.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,TW,TH);const by=BASE(),ink=css('--ink'),ink2=css('--ink2');
+  if(zonesOn){for(let b=0;b<NB;b++){c.fillStyle=zone[b]>0?css('--open'):css('--closed');c.fillRect(X(b*BS)-((TW-28)/NS)/2,by+10,(TW-28)/NB+0.6,9);}}
+  c.strokeStyle=ink;c.lineWidth=2;c.beginPath();c.moveTo(X(0),by);c.lineTo(X(NS-1),by);c.stroke();
+  c.strokeStyle=css('--orange');c.fillStyle=css('--orange');c.lineWidth=2;
+  if(motorsOn)for(const m of motors){if(m.off)continue;const x1=X(m.l),x2=X(m.r),r=(x2-x1)/2,h=Math.min(by-12,6+r*0.9);c.beginPath();c.ellipse((x1+x2)/2,by,Math.max(r,1),h,0,Math.PI,0);c.stroke();c.beginPath();c.arc(x1,by,2.6,0,7);c.arc(x2,by,2.6,0,7);c.fill();}
+  c.fillStyle=ink;for(const s of signs){const x=X(s.x),w=9;c.beginPath();if(s.d>0){c.moveTo(x-w/2,by+12);c.lineTo(x-w/2,by+30);c.lineTo(x+w,by+21);}else{c.moveTo(x+w/2,by+12);c.lineTo(x+w/2,by+30);c.lineTo(x-w,by+21);}c.closePath();c.fill();c.fillRect(x-0.75,by-6,1.5,18);}
+  c.fillStyle=ink2;c.font='12px '+(css('--mono')||'monospace');c.textBaseline='top';c.fillText('0 Mb',X(0)-10,by+34);const t='2.4 Mb';c.fillText(t,X(NS-1)-c.measureText(t).width+10,by+34);
+}
+function readout(){let held=0,on=0;for(const m of motors){if(m.off)continue;on++;if(m.sl&&m.sr)held++;}
+  $('#readout').textContent=(motorsOn?on:0)+' motors on the DNA · '+(motorsOn?held:0)+' loops held between facing signs';}
+function applyMotors(){setMotors(motorsOn?nMotors:0);}
+function boot(){setSigns(PRESETS.two);applyMotors();for(let k=0;k<700;k++){step();if(k>100&&k%2===0)snapshot();}sizeTrack();readTheme();drawTrack();drawSimMap();readout();}
+let last=0;function loop(ts){if(!paused&&ts-last>33){last=ts;step();step();snapshot();drawTrack();drawSimMap();readout();}requestAnimationFrame(loop);}
+track.addEventListener('click',e=>{const r=track.getBoundingClientRect(),s=Math.round((e.clientX-r.left-14)/(TW-28)*NS-0.5);if(s<1||s>NS-2)return;
+  let hit=-1,best=7;signs.forEach((g,i)=>{const d=Math.abs(g.x-s);if(d<best){best=d;hit=i;}});
+  if($('#tool-del').checked){if(hit>=0)signs.splice(hit,1);}else if(hit>=0){signs[hit].d*=-1;}else signs.push({x:s,d:1});
+  caps();drawTrack();});
+document.querySelectorAll('[data-preset]').forEach(b=>b.addEventListener('click',()=>{setSigns(PRESETS[b.dataset.preset]);drawTrack();}));
+function toggle(btn,fn){btn.addEventListener('click',()=>{const on=btn.getAttribute('aria-pressed')!=='true';btn.setAttribute('aria-pressed',on);fn(on);drawTrack();drawSimMap();readout();});}
+toggle($('#btn-motor'),on=>{motorsOn=!on;$('#btn-motor').textContent=on?'Motors removed · put back':'Remove the motors';applyMotors();});
+toggle($('#btn-zones'),on=>{zonesOn=on;});
+toggle($('#btn-pause'),on=>{paused=on;$('#btn-pause').textContent=on?'Play':'Pause';});
+$('#s-motors').addEventListener('input',e=>{nMotors=+e.target.value;applyMotors();});
+$('#s-reach').addEventListener('input',e=>{life=+e.target.value/2;});
+$('#s-zone').addEventListener('input',e=>{zoneK=+e.target.value/100;});
+
+/* ---------------- real maps ---------------- */
+let MAPS=null,cur=0;
+function b64(s){const b=atob(s),a=new Uint8Array(b.length);for(let i=0;i<b.length;i++)a[i]=b.charCodeAt(i);return a;}
+function drawReal(){if(!MAPS)return;const R=MAPS.regions[cur],n=MAPS.n;
+  [['#m-unt','untreated'],['#m-sim','sim'],['#m-aux','auxin']].forEach(([id,k])=>{const a=R[k+'_a']||(R[k+'_a']=b64(R[k])),g=MAPS.ranges[k],w=MAPS.windows[k];drawMapFrom($(id),(i,j)=>a[i*n+j]===0?null:g[0]+a[i*n+j]/255*(g[1]-g[0]),n,w[0],w[1]);});
+  $('#real-read').textContent='chr'+R.chrom+': '+R.start_mb.toFixed(1)+'–'+R.end_mb.toFixed(1)+' Mb · match with motor '+R.score.toFixed(2)+' · match after the motor is destroyed '+R.score_auxin.toFixed(2);}
+function initReal(m){MAPS=m;const seg=$('#region-seg');m.regions.forEach((R,i)=>{const id='rg'+i;seg.insertAdjacentHTML('beforeend','<input type="radio" name="rg" id="'+id+'"'+(i===0?' checked':'')+'><label for="'+id+'">'+R.label+'</label>');
+    seg.querySelector('#'+id).addEventListener('change',()=>{cur=i;drawReal();});});
+  ['#m-unt','#m-sim','#m-aux'].forEach((id,q)=>{const cv=$(id);cv.addEventListener('mousemove',e=>{const r=cv.getBoundingClientRect(),n=MAPS.n,i=Math.floor((e.clientY-r.top)/r.height*n),j=Math.floor((e.clientX-r.left)/r.width*n);if(i<0||j<0||i>=n||j>=n)return;
+      const kk=['untreated','sim','auxin'][q],R=MAPS.regions[cur],a=R[kk+'_a'],v=a[i*n+j],g=MAPS.ranges[kk];showTip(e,(R.start_mb+i*0.025).toFixed(2)+' Mb × '+(R.start_mb+j*0.025).toFixed(2)+' Mb: '+(v===0?'no data':Math.pow(2,g[0]+v/255*(g[1]-g[0])).toFixed(2)+'× expected'));});cv.addEventListener('mouseleave',hideTip);});
+  drawReal();}
+
+/* ---------------- charts ---------------- */
+function chart(c){const el=document.createElement('div');el.className='panel chart';el.innerHTML='<h3></h3><div class="bars"></div><p class="note"></p>';el.querySelector('h3').textContent=c.title;el.querySelector('.note').textContent=c.note||'';
+  const max=c.max||Math.max(...c.items.map(d=>d.v));const bars=el.querySelector('.bars');
+  c.items.forEach(d=>{const row=document.createElement('div');row.className='row';row.tabIndex=0;
+    row.innerHTML='<span class="lab"></span><span class="trk"><span class="bar'+(d.alt?' alt':'')+'" style="width:'+(Math.max(d.v,0)/max*100).toFixed(1)+'%"></span>'+(c.ref!=null?'<span class="ref" style="left:'+(c.ref/max*100).toFixed(1)+'%"></span>':'')+'</span><span class="val"></span>';
+    row.querySelector('.lab').textContent=d.label;row.querySelector('.val').textContent=c.fmt==='pct'?Math.round(d.v*100)+'%':d.v.toFixed(2);
+    const t=d.label+': '+(c.fmt==='pct'?Math.round(d.v*100)+'%':d.v.toFixed(2))+(d.tip?' — '+d.tip:'')+(c.ref!=null?' (dashed line: '+c.refLabel+')':'');
+    row.addEventListener('mousemove',e=>showTip(e,t));row.addEventListener('mouseleave',hideTip);row.addEventListener('focus',()=>{const r=row.getBoundingClientRect();showTip({clientX:r.left+40,clientY:r.bottom-6},t);});row.addEventListener('blur',hideTip);
+    bars.appendChild(row);});
+  $('#charts').appendChild(el);}
+function fill(){DATA.charts.forEach(chart);
+  const tb=$('#simtable tbody');DATA.sim.forEach(r=>{const tr=document.createElement('tr');tr.innerHTML='<td></td><td class="'+(r.verdict==='PASS'?'pass':(r.verdict==='FAIL'?'fail':'muted'))+'"></td><td class="mono small"></td>';tr.children[0].textContent=r.q;tr.children[1].textContent=r.verdict==='PASS'?'Yes':(r.verdict==='FAIL'?'No':'Not counted');tr.children[2].textContent=r.n;tb.appendChild(tr);});
+  $('#fitnote').textContent=DATA.fitnote;$('#real-intro').textContent=DATA.real_intro;$('#real-note').textContent=DATA.real_note;
+  DATA.open.forEach(t=>{const li=document.createElement('li');li.textContent=t;$('#open').appendChild(li);});}
+
+function start(){fill();boot();requestAnimationFrame(loop);
+  fetch('maps.json').then(r=>r.json()).then(initReal).catch(()=>{$('#real-read').textContent='The real maps could not be loaded.';});
+  const redraw=()=>{readTheme();drawTrack();drawSimMap();drawReal();};
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change',redraw);new MutationObserver(redraw).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+  addEventListener('resize',()=>{sizeTrack();drawTrack();});
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches){paused=true;$('#btn-pause').setAttribute('aria-pressed','true');$('#btn-pause').textContent='Play';}}
+start();
+</script>

@@ -1,0 +1,120 @@
+{
+  "disease": "psoriasis (IL23/IL17 axis)",
+  "layer3": [
+    {
+      "gene": "IL23R",
+      "rescue": 1.0,
+      "best_dir": "disable",
+      "influence": 0.031,
+      "protein_class": "cell-surface receptor",
+      "modality": "antagonist antibody or small molecule",
+      "family": "Belongs to the type I cytokine receptor family. Type 2 subfamily",
+      "location": [
+        "Cell membrane"
+      ],
+      "n_pdb": 4,
+      "druggable_for_direction": "HIGH",
+      "actionable_target": true
+    },
+    {
+      "gene": "IL23A",
+      "rescue": 1.0,
+      "best_dir": "disable",
+      "influence": 0.017,
+      "protein_class": "secreted cytokine/ligand",
+      "modality": "neutralizing antibody / ligand trap",
+      "family": "Belongs to the IL-6 superfamily",
+      "location": [
+        "Secreted"
+      ],
+      "n_pdb": 15,
+      "druggable_for_direction": "HIGH",
+      "actionable_target": true
+    },
+    {
+      "gene": "STAT4",
+      "rescue": 0.6,
+      "best_dir": "disable",
+      "influence": 0.101,
+      "protein_class": "transcription factor",
+      "modality": "no ligand pocket (PROTAC/PPI only)",
+      "family": "Belongs to the transcription factor STAT family",
+      "location": [
+        "Cytoplasm",
+        "Nucleus"
+      ],
+      "n_pdb": 0,
+      "druggable_for_direction": "LOW",
+      "actionable_target": false
+    },
+    {
+      "gene": "STAT3",
+      "rescue": 0.2,
+      "best_dir": "disable",
+      "influence": 0.125,
+      "protein_class": "transcription factor",
+      "modality": "no ligand pocket (PROTAC/PPI only)",
+      "family": "Belongs to the transcription factor STAT family",
+      "location": [
+        "Cytoplasm",
+        "Nucleus"
+      ],
+      "n_pdb": 6,
+      "druggable_for_direction": "LOW",
+      "actionable_target": false
+    },
+    {
+      "gene": "STAT1",
+      "rescue": 0.2,
+      "best_dir": "activate",
+      "influence": 0.045,
+      "protein_class": "transcription factor",
+      "modality": "no ligand pocket (PROTAC/PPI only)",
+      "family": "Belongs to the transcription factor STAT family",
+      "location": [
+        "Cytoplasm",
+        "Nucleus"
+      ],
+      "n_pdb": 8,
+      "druggable_for_direction": "LOW",
+      "actionable_target": false
+    },
+    {
+      "gene": "IRF4",
+      "rescue": 0.0,
+      "best_dir": "disable",
+      "influence": 0.113,
+      "protein_class": "transcription factor",
+      "modality": "no ligand pocket (PROTAC/PPI only)",
+      "family": "Belongs to the IRF family",
+      "location": [
+        "Cytoplasm",
+        "Nucleus"
+      ],
+      "n_pdb": 7,
+      "druggable_for_direction": "LOW",
+      "actionable_target": false
+    },
+    {
+      "gene": "JAK2",
+      "rescue": 0.0,
+      "best_dir": "disable",
+      "influence": 0.012,
+      "protein_class": "kinase/enzyme",
+      "modality": "small-molecule inhibitor",
+      "family": "Belongs to the protein kinase superfamily. Tyr protein kinase family. JAK subfamily",
+      "location": [
+        "Cytoplasm",
+        "Endomembrane system",
+        "Nucleus"
+      ],
+      "n_pdb": 164,
+      "druggable_for_direction": "HIGH",
+      "actionable_target": false
+    }
+  ],
+  "final_targets": [
+    "IL23R",
+    "IL23A"
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "all_pass": true,
+  "checks": {
+    "link_prediction_ppi": {
+      "value": 0.8261,
+      "bar": 0.7,
+      "ok": true
+    },
+    "perturbation_direction": {
+      "value": 0.8088,
+      "bar": 0.7,
+      "ok": true
+    },
+    "drug_polypharmacology": {
+      "value": 0.8032,
+      "bar": 0.7,
+      "ok": true
+    },
+    "structure_predicts_function": {
+      "value": 0.749,
+      "bar": 0.65,
+      "ok": true
+    }
+  },
+  "summary": {
+    "link_ppi_auc": 0.8261,
+    "perturb_direction_acc": 0.8088,
+    "drug_auc": 0.8032,
+    "structure_function_auc": 0.749
+  }
+}

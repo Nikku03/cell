@@ -1,0 +1,29 @@
+{
+ "verdicts": {
+  "Y1": {
+   "better": 515,
+   "worse": 666,
+   "p": 1.2401227960429496e-05,
+   "median_diff": -0.002593994140625,
+   "verdict": "NO DIFFERENCE"
+  },
+  "Y2": {
+   "better": 258,
+   "worse": 328,
+   "p": 0.004327241448072746,
+   "median_diff": -0.002266623079776764,
+   "verdict": "NO DIFFERENCE"
+  },
+  "Y3": {
+   "better": 513,
+   "worse": 668,
+   "p": 7.213626882811978e-06,
+   "median_diff": -0.004540979862213135,
+   "verdict": "NO DIFFERENCE"
+  }
+ },
+ "predictions_sha256": "a6a9497c02071df0b9860039b5a4ec0f23563b97796e1e35328efa152aa8585a",
+ "genes": 1181,
+ "exam_read": "second (first: cellbank8)",
+ "scored": "2026-11-14 21:19"
+}

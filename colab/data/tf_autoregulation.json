@@ -1,0 +1,4479 @@
+{
+ "matrices": {
+  "MA0002.3": {
+   "name": "RUNX1",
+   "cls": "NO_SELF",
+   "outdeg": 42,
+   "self_modes": []
+  },
+  "MA0004.1": {
+   "name": "ARNT",
+   "cls": "NO_SELF",
+   "outdeg": 22,
+   "self_modes": []
+  },
+  "MA0006.2": {
+   "name": "AHR",
+   "cls": "NO_SELF",
+   "outdeg": 26,
+   "self_modes": []
+  },
+  "MA0007.4": {
+   "name": "AR",
+   "cls": "NO_SELF",
+   "outdeg": 105,
+   "self_modes": []
+  },
+  "MA0009.2": {
+   "name": "TBXT",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0014.4": {
+   "name": "PAX5",
+   "cls": "NO_SELF",
+   "outdeg": 24,
+   "self_modes": []
+  },
+  "MA0018.5": {
+   "name": "CREB1",
+   "cls": "NO_SELF",
+   "outdeg": 96,
+   "self_modes": []
+  },
+  "MA0019.2": {
+   "name": "DDIT3",
+   "cls": "NO_SELF",
+   "outdeg": 20,
+   "self_modes": []
+  },
+  "MA0024.3": {
+   "name": "E2F1",
+   "cls": "SELF",
+   "outdeg": 155,
+   "self_modes": [
+    "Unknown"
+   ]
+  },
+  "MA0025.3": {
+   "name": "NFIL3",
+   "cls": "NO_SELF",
+   "outdeg": 10,
+   "self_modes": []
+  },
+  "MA0027.3": {
+   "name": "EN1",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0029.2": {
+   "name": "MECOM",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0030.2": {
+   "name": "FOXF2",
+   "cls": "NO_SELF",
+   "outdeg": 8,
+   "self_modes": []
+  },
+  "MA0031.2": {
+   "name": "FOXD1",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0032.2": {
+   "name": "FOXC1",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA0033.2": {
+   "name": "FOXL1",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0035.5": {
+   "name": "GATA1",
+   "cls": "SELF",
+   "outdeg": 66,
+   "self_modes": [
+    "Activation",
+    "Unknown"
+   ]
+  },
+  "MA0036.4": {
+   "name": "GATA2",
+   "cls": "NO_SELF",
+   "outdeg": 20,
+   "self_modes": []
+  },
+  "MA0037.5": {
+   "name": "GATA3",
+   "cls": "SELF",
+   "outdeg": 39,
+   "self_modes": [
+    "Unknown"
+   ]
+  },
+  "MA0038.3": {
+   "name": "GFI1",
+   "cls": "NO_SELF",
+   "outdeg": 6,
+   "self_modes": []
+  },
+  "MA0039.5": {
+   "name": "KLF4",
+   "cls": "NO_SELF",
+   "outdeg": 45,
+   "self_modes": []
+  },
+  "MA0040.2": {
+   "name": "FOXQ1",
+   "cls": "NO_SELF",
+   "outdeg": 6,
+   "self_modes": []
+  },
+  "MA0041.3": {
+   "name": "FOXD3",
+   "cls": "NO_SELF",
+   "outdeg": 8,
+   "self_modes": []
+  },
+  "MA0042.2": {
+   "name": "FOXI1",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA0043.4": {
+   "name": "HLF",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA0046.3": {
+   "name": "HNF1A",
+   "cls": "NO_SELF",
+   "outdeg": 27,
+   "self_modes": []
+  },
+  "MA0047.4": {
+   "name": "FOXA2",
+   "cls": "NO_SELF",
+   "outdeg": 18,
+   "self_modes": []
+  },
+  "MA0050.4": {
+   "name": "IRF1",
+   "cls": "NO_SELF",
+   "outdeg": 57,
+   "self_modes": []
+  },
+  "MA0051.2": {
+   "name": "IRF2",
+   "cls": "NO_SELF",
+   "outdeg": 9,
+   "self_modes": []
+  },
+  "MA0052.5": {
+   "name": "MEF2A",
+   "cls": "SELF",
+   "outdeg": 13,
+   "self_modes": [
+    "Unknown"
+   ]
+  },
+  "MA0056.3": {
+   "name": "MZF1",
+   "cls": "NO_SELF",
+   "outdeg": 7,
+   "self_modes": []
+  },
+  "MA0058.4": {
+   "name": "MAX",
+   "cls": "NO_SELF",
+   "outdeg": 5,
+   "self_modes": []
+  },
+  "MA0059.2": {
+   "name": "MAX",
+   "cls": "NO_SELF",
+   "outdeg": 5,
+   "self_modes": []
+  },
+  "MA0060.4": {
+   "name": "NFYA",
+   "cls": "NO_SELF",
+   "outdeg": 22,
+   "self_modes": []
+  },
+  "MA0062.4": {
+   "name": "GABPA",
+   "cls": "NO_SELF",
+   "outdeg": 5,
+   "self_modes": []
+  },
+  "MA0063.3": {
+   "name": "NKX2-5",
+   "cls": "NO_SELF",
+   "outdeg": 9,
+   "self_modes": []
+  },
+  "MA0066.2": {
+   "name": "PPARG",
+   "cls": "NO_SELF",
+   "outdeg": 79,
+   "self_modes": []
+  },
+  "MA0067.3": {
+   "name": "PAX2",
+   "cls": "NO_SELF",
+   "outdeg": 6,
+   "self_modes": []
+  },
+  "MA0068.2": {
+   "name": "PAX4",
+   "cls": "NO_SELF",
+   "outdeg": 4,
+   "self_modes": []
+  },
+  "MA0069.1": {
+   "name": "PAX6",
+   "cls": "NO_SELF",
+   "outdeg": 11,
+   "self_modes": []
+  },
+  "MA0070.2": {
+   "name": "PBX1",
+   "cls": "NO_SELF",
+   "outdeg": 5,
+   "self_modes": []
+  },
+  "MA0071.1": {
+   "name": "RORA",
+   "cls": "NO_SELF",
+   "outdeg": 5,
+   "self_modes": []
+  },
+  "MA0073.2": {
+   "name": "RREB1",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA0074.1": {
+   "name": "RXRA",
+   "cls": "NO_SELF",
+   "outdeg": 21,
+   "self_modes": []
+  },
+  "MA0075.4": {
+   "name": "PRRX2",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0076.3": {
+   "name": "ELK4",
+   "cls": "NO_SELF",
+   "outdeg": 4,
+   "self_modes": []
+  },
+  "MA0077.2": {
+   "name": "SOX9",
+   "cls": "NO_SELF",
+   "outdeg": 29,
+   "self_modes": []
+  },
+  "MA0078.3": {
+   "name": "SOX17",
+   "cls": "NO_SELF",
+   "outdeg": 6,
+   "self_modes": []
+  },
+  "MA0079.5": {
+   "name": "SP1",
+   "cls": "NO_SELF",
+   "outdeg": 557,
+   "self_modes": []
+  },
+  "MA0080.7": {
+   "name": "SPI1",
+   "cls": "NO_SELF",
+   "outdeg": 71,
+   "self_modes": []
+  },
+  "MA0081.3": {
+   "name": "SPIB",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA0083.3": {
+   "name": "SRF",
+   "cls": "NO_SELF",
+   "outdeg": 27,
+   "self_modes": []
+  },
+  "MA0084.2": {
+   "name": "SRY",
+   "cls": "NO_SELF",
+   "outdeg": 7,
+   "self_modes": []
+  },
+  "MA0087.3": {
+   "name": "SOX5",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0088.2": {
+   "name": "ZNF143",
+   "cls": "NO_SELF",
+   "outdeg": 4,
+   "self_modes": []
+  },
+  "MA0089.3": {
+   "name": "MAFG",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA0090.4": {
+   "name": "TEAD1",
+   "cls": "NO_SELF",
+   "outdeg": 5,
+   "self_modes": []
+  },
+  "MA0093.4": {
+   "name": "USF1",
+   "cls": "NO_SELF",
+   "outdeg": 75,
+   "self_modes": []
+  },
+  "MA0095.4": {
+   "name": "YY1",
+   "cls": "NO_SELF",
+   "outdeg": 105,
+   "self_modes": []
+  },
+  "MA0098.4": {
+   "name": "ETS1",
+   "cls": "NO_SELF",
+   "outdeg": 89,
+   "self_modes": []
+  },
+  "MA0100.4": {
+   "name": "MYB",
+   "cls": "SELF",
+   "outdeg": 41,
+   "self_modes": [
+    "Unknown"
+   ]
+  },
+  "MA0101.1": {
+   "name": "REL",
+   "cls": "NO_SELF",
+   "outdeg": 22,
+   "self_modes": []
+  },
+  "MA0103.4": {
+   "name": "ZEB1",
+   "cls": "NO_SELF",
+   "outdeg": 15,
+   "self_modes": []
+  },
+  "MA0104.5": {
+   "name": "MYCN",
+   "cls": "NO_SELF",
+   "outdeg": 50,
+   "self_modes": []
+  },
+  "MA0105.4": {
+   "name": "NFKB1",
+   "cls": "SELF",
+   "outdeg": 399,
+   "self_modes": [
+    "Unknown"
+   ]
+  },
+  "MA0106.3": {
+   "name": "TP53",
+   "cls": "SELF",
+   "outdeg": 201,
+   "self_modes": [
+    "Activation",
+    "Unknown"
+   ]
+  },
+  "MA0107.1": {
+   "name": "RELA",
+   "cls": "NO_SELF",
+   "outdeg": 394,
+   "self_modes": []
+  },
+  "MA0108.3": {
+   "name": "TBP",
+   "cls": "NO_SELF",
+   "outdeg": 15,
+   "self_modes": []
+  },
+  "MA0111.1": {
+   "name": "SPZ1",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0112.4": {
+   "name": "ESR1",
+   "cls": "SELF",
+   "outdeg": 86,
+   "self_modes": [
+    "Unknown"
+   ]
+  },
+  "MA0113.4": {
+   "name": "NR3C1",
+   "cls": "SELF",
+   "outdeg": 40,
+   "self_modes": [
+    "Unknown"
+   ]
+  },
+  "MA0115.1": {
+   "name": "NR1H2",
+   "cls": "NO_SELF",
+   "outdeg": 3,
+   "self_modes": []
+  },
+  "MA0116.1": {
+   "name": "ZNF423",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0117.3": {
+   "name": "MAFB",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0119.1": {
+   "name": "NFIC",
+   "cls": "NO_SELF",
+   "outdeg": 28,
+   "self_modes": []
+  },
+  "MA0122.4": {
+   "name": "NKX3-2",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0124.3": {
+   "name": "NKX3-1",
+   "cls": "NO_SELF",
+   "outdeg": 10,
+   "self_modes": []
+  },
+  "MA0125.2": {
+   "name": "NOBOX",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0130.1": {
+   "name": "ZNF354C",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0131.3": {
+   "name": "HINFP",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0132.3": {
+   "name": "PDX1",
+   "cls": "NO_SELF",
+   "outdeg": 3,
+   "self_modes": []
+  },
+  "MA0135.2": {
+   "name": "LHX3",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA0136.4": {
+   "name": "ELF5",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0137.4": {
+   "name": "STAT1",
+   "cls": "NO_SELF",
+   "outdeg": 98,
+   "self_modes": []
+  },
+  "MA0138.3": {
+   "name": "REST",
+   "cls": "NO_SELF",
+   "outdeg": 35,
+   "self_modes": []
+  },
+  "MA0139.2": {
+   "name": "CTCF",
+   "cls": "NO_SELF",
+   "outdeg": 36,
+   "self_modes": []
+  },
+  "MA0140.3": {
+   "name": "GATA1",
+   "cls": "SELF",
+   "outdeg": 66,
+   "self_modes": [
+    "Activation",
+    "Unknown"
+   ]
+  },
+  "MA0141.4": {
+   "name": "ESRRB",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0142.1": {
+   "name": "POU5F1",
+   "cls": "NO_SELF",
+   "outdeg": 25,
+   "self_modes": []
+  },
+  "MA0144.3": {
+   "name": "STAT3",
+   "cls": "NO_SELF",
+   "outdeg": 185,
+   "self_modes": []
+  },
+  "MA0145.2": {
+   "name": "TFCP2L1",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0146.3": {
+   "name": "ZFX",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0148.5": {
+   "name": "FOXA1",
+   "cls": "NO_SELF",
+   "outdeg": 21,
+   "self_modes": []
+  },
+  "MA0150.3": {
+   "name": "NFE2L2",
+   "cls": "NO_SELF",
+   "outdeg": 23,
+   "self_modes": []
+  },
+  "MA0151.1": {
+   "name": "ARID3A",
+   "cls": "NO_SELF",
+   "outdeg": 6,
+   "self_modes": []
+  },
+  "MA0152.3": {
+   "name": "NFATC2",
+   "cls": "NO_SELF",
+   "outdeg": 7,
+   "self_modes": []
+  },
+  "MA0153.2": {
+   "name": "HNF1B",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA0154.5": {
+   "name": "EBF1",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0155.1": {
+   "name": "INSM1",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0156.4": {
+   "name": "FEV",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0157.4": {
+   "name": "FOXO3",
+   "cls": "NO_SELF",
+   "outdeg": 19,
+   "self_modes": []
+  },
+  "MA0158.2": {
+   "name": "HOXA5",
+   "cls": "NO_SELF",
+   "outdeg": 4,
+   "self_modes": []
+  },
+  "MA0159.1": {
+   "name": "RARA",
+   "cls": "NO_SELF",
+   "outdeg": 28,
+   "self_modes": []
+  },
+  "MA0160.3": {
+   "name": "NR4A2",
+   "cls": "NO_SELF",
+   "outdeg": 5,
+   "self_modes": []
+  },
+  "MA0162.5": {
+   "name": "EGR1",
+   "cls": "NO_SELF",
+   "outdeg": 108,
+   "self_modes": []
+  },
+  "MA0163.1": {
+   "name": "PLAG1",
+   "cls": "NO_SELF",
+   "outdeg": 5,
+   "self_modes": []
+  },
+  "MA0164.2": {
+   "name": "NR2E3",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA0258.2": {
+   "name": "ESR2",
+   "cls": "NO_SELF",
+   "outdeg": 20,
+   "self_modes": []
+  },
+  "MA0259.2": {
+   "name": "ARNT",
+   "cls": "NO_SELF",
+   "outdeg": 22,
+   "self_modes": []
+  },
+  "MA0442.3": {
+   "name": "SOX10",
+   "cls": "NO_SELF",
+   "outdeg": 16,
+   "self_modes": []
+  },
+  "MA0461.3": {
+   "name": "ATOH1",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA0463.3": {
+   "name": "BCL6",
+   "cls": "SELF",
+   "outdeg": 18,
+   "self_modes": [
+    "Repression"
+   ]
+  },
+  "MA0464.3": {
+   "name": "BHLHE40",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0465.3": {
+   "name": "CDX2",
+   "cls": "NO_SELF",
+   "outdeg": 36,
+   "self_modes": []
+  },
+  "MA0466.4": {
+   "name": "CEBPB",
+   "cls": "NO_SELF",
+   "outdeg": 71,
+   "self_modes": []
+  },
+  "MA0467.3": {
+   "name": "CRX",
+   "cls": "NO_SELF",
+   "outdeg": 7,
+   "self_modes": []
+  },
+  "MA0468.1": {
+   "name": "DUX4",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0469.4": {
+   "name": "E2F3",
+   "cls": "NO_SELF",
+   "outdeg": 13,
+   "self_modes": []
+  },
+  "MA0470.3": {
+   "name": "E2F4",
+   "cls": "NO_SELF",
+   "outdeg": 26,
+   "self_modes": []
+  },
+  "MA0471.3": {
+   "name": "E2F6",
+   "cls": "NO_SELF",
+   "outdeg": 7,
+   "self_modes": []
+  },
+  "MA0472.2": {
+   "name": "EGR2",
+   "cls": "NO_SELF",
+   "outdeg": 9,
+   "self_modes": []
+  },
+  "MA0473.4": {
+   "name": "ELF1",
+   "cls": "NO_SELF",
+   "outdeg": 9,
+   "self_modes": []
+  },
+  "MA0474.4": {
+   "name": "ERG",
+   "cls": "SELF",
+   "outdeg": 30,
+   "self_modes": [
+    "Activation"
+   ]
+  },
+  "MA0475.3": {
+   "name": "FLI1",
+   "cls": "SELF",
+   "outdeg": 26,
+   "self_modes": [
+    "Activation"
+   ]
+  },
+  "MA0476.2": {
+   "name": "FOS",
+   "cls": "SELF",
+   "outdeg": 63,
+   "self_modes": [
+    "Repression"
+   ]
+  },
+  "MA0478.2": {
+   "name": "FOSL2",
+   "cls": "NO_SELF",
+   "outdeg": 15,
+   "self_modes": []
+  },
+  "MA0479.2": {
+   "name": "FOXH1",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA0481.4": {
+   "name": "FOXP1",
+   "cls": "NO_SELF",
+   "outdeg": 3,
+   "self_modes": []
+  },
+  "MA0482.3": {
+   "name": "GATA4",
+   "cls": "NO_SELF",
+   "outdeg": 20,
+   "self_modes": []
+  },
+  "MA0483.2": {
+   "name": "GFI1B",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0484.3": {
+   "name": "HNF4G",
+   "cls": "NO_SELF",
+   "outdeg": 3,
+   "self_modes": []
+  },
+  "MA0485.3": {
+   "name": "HOXC9",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0486.2": {
+   "name": "HSF1",
+   "cls": "NO_SELF",
+   "outdeg": 33,
+   "self_modes": []
+  },
+  "MA0493.3": {
+   "name": "KLF1",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA0495.4": {
+   "name": "MAFF",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0496.4": {
+   "name": "MAFK",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0497.2": {
+   "name": "MEF2C",
+   "cls": "NO_SELF",
+   "outdeg": 10,
+   "self_modes": []
+  },
+  "MA0498.3": {
+   "name": "MEIS1",
+   "cls": "NO_SELF",
+   "outdeg": 4,
+   "self_modes": []
+  },
+  "MA0499.3": {
+   "name": "MYOD1",
+   "cls": "NO_SELF",
+   "outdeg": 3,
+   "self_modes": []
+  },
+  "MA0500.3": {
+   "name": "MYOG",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA0501.2": {
+   "name": "MAF",
+   "cls": "NO_SELF",
+   "outdeg": 7,
+   "self_modes": []
+  },
+  "MA0502.3": {
+   "name": "NFYB",
+   "cls": "NO_SELF",
+   "outdeg": 14,
+   "self_modes": []
+  },
+  "MA0504.2": {
+   "name": "NR2C2",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA0505.3": {
+   "name": "NR5A2",
+   "cls": "SELF",
+   "outdeg": 13,
+   "self_modes": [
+    "Activation"
+   ]
+  },
+  "MA0506.3": {
+   "name": "NRF1",
+   "cls": "NO_SELF",
+   "outdeg": 16,
+   "self_modes": []
+  },
+  "MA0507.3": {
+   "name": "POU2F2",
+   "cls": "NO_SELF",
+   "outdeg": 10,
+   "self_modes": []
+  },
+  "MA0508.4": {
+   "name": "PRDM1",
+   "cls": "NO_SELF",
+   "outdeg": 6,
+   "self_modes": []
+  },
+  "MA0509.3": {
+   "name": "RFX1",
+   "cls": "NO_SELF",
+   "outdeg": 15,
+   "self_modes": []
+  },
+  "MA0510.3": {
+   "name": "RFX5",
+   "cls": "NO_SELF",
+   "outdeg": 18,
+   "self_modes": []
+  },
+  "MA0511.2": {
+   "name": "RUNX2",
+   "cls": "NO_SELF",
+   "outdeg": 21,
+   "self_modes": []
+  },
+  "MA0514.3": {
+   "name": "SOX3",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0515.1": {
+   "name": "SOX6",
+   "cls": "NO_SELF",
+   "outdeg": 6,
+   "self_modes": []
+  },
+  "MA0516.3": {
+   "name": "SP2",
+   "cls": "NO_SELF",
+   "outdeg": 9,
+   "self_modes": []
+  },
+  "MA0517.2": {
+   "name": "STAT1",
+   "cls": "NO_SELF",
+   "outdeg": 98,
+   "self_modes": []
+  },
+  "MA0518.2": {
+   "name": "STAT4",
+   "cls": "NO_SELF",
+   "outdeg": 11,
+   "self_modes": []
+  },
+  "MA0519.2": {
+   "name": "STAT5A",
+   "cls": "NO_SELF",
+   "outdeg": 13,
+   "self_modes": []
+  },
+  "MA0520.2": {
+   "name": "STAT6",
+   "cls": "NO_SELF",
+   "outdeg": 42,
+   "self_modes": []
+  },
+  "MA0522.4": {
+   "name": "TCF3",
+   "cls": "NO_SELF",
+   "outdeg": 16,
+   "self_modes": []
+  },
+  "MA0523.2": {
+   "name": "TCF7L2",
+   "cls": "NO_SELF",
+   "outdeg": 12,
+   "self_modes": []
+  },
+  "MA0525.2": {
+   "name": "TP63",
+   "cls": "NO_SELF",
+   "outdeg": 16,
+   "self_modes": []
+  },
+  "MA0526.5": {
+   "name": "USF2",
+   "cls": "NO_SELF",
+   "outdeg": 55,
+   "self_modes": []
+  },
+  "MA0527.2": {
+   "name": "ZBTB33",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0528.3": {
+   "name": "ZNF263",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0592.4": {
+   "name": "ESRRA",
+   "cls": "NO_SELF",
+   "outdeg": 10,
+   "self_modes": []
+  },
+  "MA0593.2": {
+   "name": "FOXP2",
+   "cls": "NO_SELF",
+   "outdeg": 8,
+   "self_modes": []
+  },
+  "MA0594.3": {
+   "name": "HOXA9",
+   "cls": "NO_SELF",
+   "outdeg": 9,
+   "self_modes": []
+  },
+  "MA0595.1": {
+   "name": "SREBF1",
+   "cls": "NO_SELF",
+   "outdeg": 30,
+   "self_modes": []
+  },
+  "MA0596.1": {
+   "name": "SREBF2",
+   "cls": "NO_SELF",
+   "outdeg": 22,
+   "self_modes": []
+  },
+  "MA0597.3": {
+   "name": "THAP1",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0598.4": {
+   "name": "EHF",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA0599.1": {
+   "name": "KLF5",
+   "cls": "NO_SELF",
+   "outdeg": 13,
+   "self_modes": []
+  },
+  "MA0600.3": {
+   "name": "RFX2",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA0601.2": {
+   "name": "ARID3B",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0602.2": {
+   "name": "ARID5A",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0604.1": {
+   "name": "ATF1",
+   "cls": "NO_SELF",
+   "outdeg": 26,
+   "self_modes": []
+  },
+  "MA0605.3": {
+   "name": "ATF3",
+   "cls": "NO_SELF",
+   "outdeg": 17,
+   "self_modes": []
+  },
+  "MA0606.3": {
+   "name": "NFAT5",
+   "cls": "NO_SELF",
+   "outdeg": 4,
+   "self_modes": []
+  },
+  "MA0607.2": {
+   "name": "BHLHA15",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0608.1": {
+   "name": "CREB3L2",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0609.3": {
+   "name": "CREM",
+   "cls": "NO_SELF",
+   "outdeg": 28,
+   "self_modes": []
+  },
+  "MA0610.2": {
+   "name": "DMRT3",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0612.3": {
+   "name": "EMX1",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0613.1": {
+   "name": "FOXG1",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0614.1": {
+   "name": "FOXJ2",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0615.2": {
+   "name": "GMEB1",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0616.3": {
+   "name": "HES2",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0618.2": {
+   "name": "LBX1",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0619.2": {
+   "name": "LIN54",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0620.4": {
+   "name": "MITF",
+   "cls": "NO_SELF",
+   "outdeg": 30,
+   "self_modes": []
+  },
+  "MA0622.2": {
+   "name": "MLXIP",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0623.2": {
+   "name": "NEUROG1",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0624.3": {
+   "name": "NFATC1",
+   "cls": "NO_SELF",
+   "outdeg": 8,
+   "self_modes": []
+  },
+  "MA0625.3": {
+   "name": "NFATC3",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA0626.2": {
+   "name": "NPAS2",
+   "cls": "NO_SELF",
+   "outdeg": 4,
+   "self_modes": []
+  },
+  "MA0627.3": {
+   "name": "POU2F3",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0628.2": {
+   "name": "POU6F1",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0630.2": {
+   "name": "SHOX",
+   "cls": "NO_SELF",
+   "outdeg": 4,
+   "self_modes": []
+  },
+  "MA0631.2": {
+   "name": "SIX3",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0632.3": {
+   "name": "TCFL5",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0633.3": {
+   "name": "TWIST2",
+   "cls": "NO_SELF",
+   "outdeg": 27,
+   "self_modes": []
+  },
+  "MA0634.2": {
+   "name": "ALX3",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0635.2": {
+   "name": "BARHL2",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0636.1": {
+   "name": "BHLHE41",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA0638.2": {
+   "name": "CREB3",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0639.2": {
+   "name": "DBP",
+   "cls": "NO_SELF",
+   "outdeg": 4,
+   "self_modes": []
+  },
+  "MA0640.3": {
+   "name": "ELF3",
+   "cls": "NO_SELF",
+   "outdeg": 9,
+   "self_modes": []
+  },
+  "MA0641.1": {
+   "name": "ELF4",
+   "cls": "NO_SELF",
+   "outdeg": 6,
+   "self_modes": []
+  },
+  "MA0642.3": {
+   "name": "EN2",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0643.2": {
+   "name": "ESRRG",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0644.3": {
+   "name": "ESX1",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0645.2": {
+   "name": "ETV6",
+   "cls": "NO_SELF",
+   "outdeg": 5,
+   "self_modes": []
+  },
+  "MA0646.2": {
+   "name": "GCM1",
+   "cls": "NO_SELF",
+   "outdeg": 4,
+   "self_modes": []
+  },
+  "MA0647.2": {
+   "name": "GRHL1",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0648.2": {
+   "name": "GSC",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0649.2": {
+   "name": "HEY2",
+   "cls": "NO_SELF",
+   "outdeg": 3,
+   "self_modes": []
+  },
+  "MA0650.4": {
+   "name": "HOXA13",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0651.3": {
+   "name": "HOXC11",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA0652.2": {
+   "name": "IRF8",
+   "cls": "NO_SELF",
+   "outdeg": 11,
+   "self_modes": []
+  },
+  "MA0653.1": {
+   "name": "IRF9",
+   "cls": "NO_SELF",
+   "outdeg": 8,
+   "self_modes": []
+  },
+  "MA0654.2": {
+   "name": "ISX",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0655.1": {
+   "name": "JDP2",
+   "cls": "NO_SELF",
+   "outdeg": 3,
+   "self_modes": []
+  },
+  "MA0657.2": {
+   "name": "KLF13",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA0658.2": {
+   "name": "LHX6",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0660.1": {
+   "name": "MEF2B",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0661.2": {
+   "name": "MEOX1",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0662.2": {
+   "name": "MIXL1",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0663.1": {
+   "name": "MLX",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0664.2": {
+   "name": "MLXIPL",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0665.1": {
+   "name": "MSC",
+   "cls": "NO_SELF",
+   "outdeg": 11,
+   "self_modes": []
+  },
+  "MA0666.3": {
+   "name": "MSX1",
+   "cls": "NO_SELF",
+   "outdeg": 6,
+   "self_modes": []
+  },
+  "MA0667.1": {
+   "name": "MYF6",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0669.1": {
+   "name": "NEUROG2",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0670.2": {
+   "name": "NFIA",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA0671.2": {
+   "name": "NFIX",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA0672.2": {
+   "name": "NKX2-3",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0673.2": {
+   "name": "NKX2-8",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0674.2": {
+   "name": "NKX6-1",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0675.2": {
+   "name": "NKX6-2",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0676.1": {
+   "name": "NR2E1",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0678.1": {
+   "name": "OLIG2",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0679.3": {
+   "name": "ONECUT1",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA0680.3": {
+   "name": "PAX7",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0681.3": {
+   "name": "PHOX2B",
+   "cls": "NO_SELF",
+   "outdeg": 7,
+   "self_modes": []
+  },
+  "MA0682.3": {
+   "name": "PITX1",
+   "cls": "NO_SELF",
+   "outdeg": 16,
+   "self_modes": []
+  },
+  "MA0683.2": {
+   "name": "POU4F2",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA0684.3": {
+   "name": "RUNX3",
+   "cls": "NO_SELF",
+   "outdeg": 32,
+   "self_modes": []
+  },
+  "MA0685.2": {
+   "name": "SP4",
+   "cls": "NO_SELF",
+   "outdeg": 12,
+   "self_modes": []
+  },
+  "MA0686.2": {
+   "name": "SPDEF",
+   "cls": "NO_SELF",
+   "outdeg": 10,
+   "self_modes": []
+  },
+  "MA0687.2": {
+   "name": "SPIC",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0688.2": {
+   "name": "TBX2",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA0689.1": {
+   "name": "TBX20",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0690.3": {
+   "name": "TBX21",
+   "cls": "NO_SELF",
+   "outdeg": 14,
+   "self_modes": []
+  },
+  "MA0691.1": {
+   "name": "TFAP4",
+   "cls": "NO_SELF",
+   "outdeg": 7,
+   "self_modes": []
+  },
+  "MA0692.2": {
+   "name": "TFEB",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA0694.2": {
+   "name": "ZBTB7B",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0696.1": {
+   "name": "ZIC1",
+   "cls": "NO_SELF",
+   "outdeg": 4,
+   "self_modes": []
+  },
+  "MA0697.3": {
+   "name": "ZIC3",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0698.2": {
+   "name": "ZBTB18",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0699.2": {
+   "name": "LBX2",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0700.3": {
+   "name": "LHX2",
+   "cls": "NO_SELF",
+   "outdeg": 3,
+   "self_modes": []
+  },
+  "MA0701.3": {
+   "name": "LHX9",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0702.3": {
+   "name": "LMX1A",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0703.3": {
+   "name": "LMX1B",
+   "cls": "NO_SELF",
+   "outdeg": 6,
+   "self_modes": []
+  },
+  "MA0704.2": {
+   "name": "LHX4",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0705.2": {
+   "name": "LHX8",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0706.2": {
+   "name": "MEOX2",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0707.3": {
+   "name": "MNX1",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0708.3": {
+   "name": "MSX2",
+   "cls": "NO_SELF",
+   "outdeg": 7,
+   "self_modes": []
+  },
+  "MA0710.2": {
+   "name": "NOTO",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0711.2": {
+   "name": "OTX1",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0712.3": {
+   "name": "OTX2",
+   "cls": "NO_SELF",
+   "outdeg": 14,
+   "self_modes": []
+  },
+  "MA0713.1": {
+   "name": "PHOX2A",
+   "cls": "NO_SELF",
+   "outdeg": 3,
+   "self_modes": []
+  },
+  "MA0714.2": {
+   "name": "PITX3",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA0715.1": {
+   "name": "PROP1",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0716.2": {
+   "name": "PRRX1",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0717.2": {
+   "name": "RAX2",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0718.2": {
+   "name": "RAX",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0719.2": {
+   "name": "RHOXF1",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0720.2": {
+   "name": "SHOX2",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA0721.2": {
+   "name": "UNCX",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0722.2": {
+   "name": "VAX1",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0723.3": {
+   "name": "VAX2",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0724.1": {
+   "name": "VENTX",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0725.2": {
+   "name": "VSX1",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0726.2": {
+   "name": "VSX2",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0727.2": {
+   "name": "NR3C2",
+   "cls": "NO_SELF",
+   "outdeg": 8,
+   "self_modes": []
+  },
+  "MA0728.1": {
+   "name": "NR2F6",
+   "cls": "NO_SELF",
+   "outdeg": 5,
+   "self_modes": []
+  },
+  "MA0731.1": {
+   "name": "BCL6B",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0732.2": {
+   "name": "EGR3",
+   "cls": "NO_SELF",
+   "outdeg": 3,
+   "self_modes": []
+  },
+  "MA0733.2": {
+   "name": "EGR4",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0734.4": {
+   "name": "GLI2",
+   "cls": "NO_SELF",
+   "outdeg": 19,
+   "self_modes": []
+  },
+  "MA0735.2": {
+   "name": "GLIS1",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0736.1": {
+   "name": "GLIS2",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0737.1": {
+   "name": "GLIS3",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0738.2": {
+   "name": "HIC2",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0739.2": {
+   "name": "HIC1",
+   "cls": "NO_SELF",
+   "outdeg": 11,
+   "self_modes": []
+  },
+  "MA0740.2": {
+   "name": "KLF14",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0741.1": {
+   "name": "KLF16",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0742.2": {
+   "name": "KLF12",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA0743.3": {
+   "name": "SCRT1",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0744.3": {
+   "name": "SCRT2",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0745.3": {
+   "name": "SNAI2",
+   "cls": "NO_SELF",
+   "outdeg": 15,
+   "self_modes": []
+  },
+  "MA0746.3": {
+   "name": "SP3",
+   "cls": "NO_SELF",
+   "outdeg": 120,
+   "self_modes": []
+  },
+  "MA0747.2": {
+   "name": "SP8",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0748.3": {
+   "name": "YY2",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0749.2": {
+   "name": "ZBED1",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0750.3": {
+   "name": "ZBTB7A",
+   "cls": "NO_SELF",
+   "outdeg": 6,
+   "self_modes": []
+  },
+  "MA0751.2": {
+   "name": "ZIC4",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0752.2": {
+   "name": "ZNF410",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0753.3": {
+   "name": "ZNF740",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0754.3": {
+   "name": "CUX1",
+   "cls": "NO_SELF",
+   "outdeg": 8,
+   "self_modes": []
+  },
+  "MA0755.2": {
+   "name": "CUX2",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0756.3": {
+   "name": "ONECUT2",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA0757.2": {
+   "name": "ONECUT3",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0758.1": {
+   "name": "E2F7",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0759.3": {
+   "name": "ELK3",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0760.2": {
+   "name": "ERF",
+   "cls": "NO_SELF",
+   "outdeg": 3,
+   "self_modes": []
+  },
+  "MA0761.3": {
+   "name": "ETV1",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA0762.2": {
+   "name": "ETV2",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0763.2": {
+   "name": "ETV3",
+   "cls": "NO_SELF",
+   "outdeg": 3,
+   "self_modes": []
+  },
+  "MA0764.4": {
+   "name": "ETV4",
+   "cls": "NO_SELF",
+   "outdeg": 24,
+   "self_modes": []
+  },
+  "MA0765.4": {
+   "name": "ETV5",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA0766.3": {
+   "name": "GATA5",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0767.2": {
+   "name": "GCM2",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA0768.3": {
+   "name": "LEF1",
+   "cls": "NO_SELF",
+   "outdeg": 31,
+   "self_modes": []
+  },
+  "MA0769.3": {
+   "name": "TCF7",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0770.1": {
+   "name": "HSF2",
+   "cls": "NO_SELF",
+   "outdeg": 8,
+   "self_modes": []
+  },
+  "MA0771.1": {
+   "name": "HSF4",
+   "cls": "NO_SELF",
+   "outdeg": 5,
+   "self_modes": []
+  },
+  "MA0772.2": {
+   "name": "IRF7",
+   "cls": "NO_SELF",
+   "outdeg": 14,
+   "self_modes": []
+  },
+  "MA0773.1": {
+   "name": "MEF2D",
+   "cls": "NO_SELF",
+   "outdeg": 6,
+   "self_modes": []
+  },
+  "MA0774.1": {
+   "name": "MEIS2",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0775.2": {
+   "name": "MEIS3",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0776.1": {
+   "name": "MYBL1",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA0777.1": {
+   "name": "MYBL2",
+   "cls": "SELF",
+   "outdeg": 8,
+   "self_modes": [
+    "Unknown"
+   ]
+  },
+  "MA0778.2": {
+   "name": "NFKB2",
+   "cls": "NO_SELF",
+   "outdeg": 6,
+   "self_modes": []
+  },
+  "MA0779.2": {
+   "name": "PAX1",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0780.1": {
+   "name": "PAX3",
+   "cls": "NO_SELF",
+   "outdeg": 8,
+   "self_modes": []
+  },
+  "MA0781.2": {
+   "name": "PAX9",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0782.3": {
+   "name": "PKNOX1",
+   "cls": "NO_SELF",
+   "outdeg": 4,
+   "self_modes": []
+  },
+  "MA0783.1": {
+   "name": "PKNOX2",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0784.3": {
+   "name": "POU1F1",
+   "cls": "SELF",
+   "outdeg": 14,
+   "self_modes": [
+    "Activation"
+   ]
+  },
+  "MA0786.2": {
+   "name": "POU3F1",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0787.1": {
+   "name": "POU3F2",
+   "cls": "NO_SELF",
+   "outdeg": 9,
+   "self_modes": []
+  },
+  "MA0788.1": {
+   "name": "POU3F3",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0789.1": {
+   "name": "POU3F4",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0790.2": {
+   "name": "POU4F1",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA0791.2": {
+   "name": "POU4F3",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0792.1": {
+   "name": "POU5F1B",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0793.2": {
+   "name": "POU6F2",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0794.1": {
+   "name": "PROX1",
+   "cls": "NO_SELF",
+   "outdeg": 11,
+   "self_modes": []
+  },
+  "MA0795.1": {
+   "name": "SMAD3",
+   "cls": "NO_SELF",
+   "outdeg": 35,
+   "self_modes": []
+  },
+  "MA0796.1": {
+   "name": "TGIF1",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA0797.1": {
+   "name": "TGIF2",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0798.3": {
+   "name": "RFX3",
+   "cls": "NO_SELF",
+   "outdeg": 3,
+   "self_modes": []
+  },
+  "MA0799.3": {
+   "name": "RFX4",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0800.2": {
+   "name": "EOMES",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0801.1": {
+   "name": "MGA",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0802.2": {
+   "name": "TBR1",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0803.1": {
+   "name": "TBX15",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0804.2": {
+   "name": "TBX19",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0805.1": {
+   "name": "TBX1",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0806.1": {
+   "name": "TBX4",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0807.1": {
+   "name": "TBX5",
+   "cls": "NO_SELF",
+   "outdeg": 5,
+   "self_modes": []
+  },
+  "MA0808.1": {
+   "name": "TEAD3",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0809.3": {
+   "name": "TEAD4",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0813.1": {
+   "name": "TFAP2B",
+   "cls": "NO_SELF",
+   "outdeg": 5,
+   "self_modes": []
+  },
+  "MA0815.1": {
+   "name": "TFAP2C",
+   "cls": "NO_SELF",
+   "outdeg": 11,
+   "self_modes": []
+  },
+  "MA0816.1": {
+   "name": "ASCL2",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0817.2": {
+   "name": "BHLHE23",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0818.2": {
+   "name": "BHLHE22",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0819.3": {
+   "name": "CLOCK",
+   "cls": "NO_SELF",
+   "outdeg": 18,
+   "self_modes": []
+  },
+  "MA0821.2": {
+   "name": "HES5",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0822.1": {
+   "name": "HES7",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0823.1": {
+   "name": "HEY1",
+   "cls": "NO_SELF",
+   "outdeg": 7,
+   "self_modes": []
+  },
+  "MA0825.2": {
+   "name": "MNT",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0826.1": {
+   "name": "OLIG1",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0827.1": {
+   "name": "OLIG3",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0830.3": {
+   "name": "TCF4",
+   "cls": "NO_SELF",
+   "outdeg": 27,
+   "self_modes": []
+  },
+  "MA0831.3": {
+   "name": "TFE3",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0833.3": {
+   "name": "ATF4",
+   "cls": "NO_SELF",
+   "outdeg": 41,
+   "self_modes": []
+  },
+  "MA0834.2": {
+   "name": "ATF7",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA0835.3": {
+   "name": "BATF3",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0836.3": {
+   "name": "CEBPD",
+   "cls": "NO_SELF",
+   "outdeg": 18,
+   "self_modes": []
+  },
+  "MA0837.3": {
+   "name": "CEBPE",
+   "cls": "NO_SELF",
+   "outdeg": 7,
+   "self_modes": []
+  },
+  "MA0838.1": {
+   "name": "CEBPG",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA0839.2": {
+   "name": "CREB3L1",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0840.2": {
+   "name": "CREB5",
+   "cls": "NO_SELF",
+   "outdeg": 13,
+   "self_modes": []
+  },
+  "MA0842.3": {
+   "name": "NRL",
+   "cls": "NO_SELF",
+   "outdeg": 5,
+   "self_modes": []
+  },
+  "MA0843.2": {
+   "name": "TEF",
+   "cls": "NO_SELF",
+   "outdeg": 3,
+   "self_modes": []
+  },
+  "MA0844.2": {
+   "name": "XBP1",
+   "cls": "NO_SELF",
+   "outdeg": 20,
+   "self_modes": []
+  },
+  "MA0845.1": {
+   "name": "FOXB1",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0846.2": {
+   "name": "FOXC2",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0847.4": {
+   "name": "FOXD2",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0848.1": {
+   "name": "FOXO4",
+   "cls": "NO_SELF",
+   "outdeg": 6,
+   "self_modes": []
+  },
+  "MA0849.1": {
+   "name": "FOXO6",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0850.1": {
+   "name": "FOXP3",
+   "cls": "NO_SELF",
+   "outdeg": 11,
+   "self_modes": []
+  },
+  "MA0851.2": {
+   "name": "FOXJ3",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0852.3": {
+   "name": "FOXK1",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0853.2": {
+   "name": "ALX4",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0854.2": {
+   "name": "ALX1",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0855.1": {
+   "name": "RXRB",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0856.1": {
+   "name": "RXRG",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0857.1": {
+   "name": "RARB",
+   "cls": "SELF",
+   "outdeg": 3,
+   "self_modes": [
+    "Activation"
+   ]
+  },
+  "MA0860.1": {
+   "name": "RARG",
+   "cls": "NO_SELF",
+   "outdeg": 5,
+   "self_modes": []
+  },
+  "MA0861.2": {
+   "name": "TP73",
+   "cls": "NO_SELF",
+   "outdeg": 14,
+   "self_modes": []
+  },
+  "MA0862.1": {
+   "name": "GMEB2",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0863.1": {
+   "name": "MTF1",
+   "cls": "NO_SELF",
+   "outdeg": 7,
+   "self_modes": []
+  },
+  "MA0864.3": {
+   "name": "E2F2",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA0865.3": {
+   "name": "E2F8",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA0866.1": {
+   "name": "SOX21",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0867.3": {
+   "name": "SOX4",
+   "cls": "NO_SELF",
+   "outdeg": 8,
+   "self_modes": []
+  },
+  "MA0868.3": {
+   "name": "SOX8",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0869.3": {
+   "name": "SOX11",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA0870.1": {
+   "name": "SOX1",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0871.3": {
+   "name": "TFEC",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0872.1": {
+   "name": "TFAP2A",
+   "cls": "NO_SELF",
+   "outdeg": 79,
+   "self_modes": []
+  },
+  "MA0873.2": {
+   "name": "HOXD12",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0874.2": {
+   "name": "ARX",
+   "cls": "NO_SELF",
+   "outdeg": 4,
+   "self_modes": []
+  },
+  "MA0875.2": {
+   "name": "BARX1",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0876.2": {
+   "name": "BSX",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0877.4": {
+   "name": "BARHL1",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0878.3": {
+   "name": "CDX1",
+   "cls": "NO_SELF",
+   "outdeg": 8,
+   "self_modes": []
+  },
+  "MA0879.3": {
+   "name": "DLX1",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0880.2": {
+   "name": "DLX3",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0881.2": {
+   "name": "DLX4",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0882.2": {
+   "name": "DLX6",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0883.2": {
+   "name": "DMBX1",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0884.2": {
+   "name": "DUXA",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0885.3": {
+   "name": "DLX2",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0886.2": {
+   "name": "EMX2",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0887.2": {
+   "name": "EVX1",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0888.2": {
+   "name": "EVX2",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0889.2": {
+   "name": "GBX1",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0890.2": {
+   "name": "GBX2",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0891.2": {
+   "name": "GSC2",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0892.2": {
+   "name": "GSX1",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0893.3": {
+   "name": "GSX2",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0894.2": {
+   "name": "HESX1",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0895.2": {
+   "name": "HMBOX1",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0896.2": {
+   "name": "HMX1",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0897.2": {
+   "name": "HMX2",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0898.2": {
+   "name": "HMX3",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0899.2": {
+   "name": "HOXA10",
+   "cls": "NO_SELF",
+   "outdeg": 16,
+   "self_modes": []
+  },
+  "MA0901.3": {
+   "name": "HOXB13",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0903.2": {
+   "name": "HOXB3",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0904.3": {
+   "name": "HOXB5",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0905.2": {
+   "name": "HOXC10",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0906.2": {
+   "name": "HOXC12",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0907.2": {
+   "name": "HOXC13",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA0908.2": {
+   "name": "HOXD11",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0909.4": {
+   "name": "HOXD13",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0910.3": {
+   "name": "HOXD8",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA0911.2": {
+   "name": "HOXA11",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA0912.2": {
+   "name": "HOXD3",
+   "cls": "NO_SELF",
+   "outdeg": 5,
+   "self_modes": []
+  },
+  "MA0913.3": {
+   "name": "HOXD9",
+   "cls": "SELF",
+   "outdeg": 1,
+   "self_modes": [
+    "Activation"
+   ]
+  },
+  "MA0914.2": {
+   "name": "ISL2",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1099.3": {
+   "name": "HES1",
+   "cls": "NO_SELF",
+   "outdeg": 8,
+   "self_modes": []
+  },
+  "MA1100.3": {
+   "name": "ASCL1",
+   "cls": "NO_SELF",
+   "outdeg": 7,
+   "self_modes": []
+  },
+  "MA1101.3": {
+   "name": "BACH2",
+   "cls": "NO_SELF",
+   "outdeg": 3,
+   "self_modes": []
+  },
+  "MA1102.3": {
+   "name": "CTCFL",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA1103.3": {
+   "name": "FOXK2",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA1104.3": {
+   "name": "GATA6",
+   "cls": "NO_SELF",
+   "outdeg": 10,
+   "self_modes": []
+  },
+  "MA1105.3": {
+   "name": "GRHL2",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1107.3": {
+   "name": "KLF9",
+   "cls": "NO_SELF",
+   "outdeg": 3,
+   "self_modes": []
+  },
+  "MA1108.3": {
+   "name": "MXI1",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA1109.2": {
+   "name": "NEUROD1",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA1111.2": {
+   "name": "NR2F2",
+   "cls": "NO_SELF",
+   "outdeg": 7,
+   "self_modes": []
+  },
+  "MA1112.3": {
+   "name": "NR4A1",
+   "cls": "NO_SELF",
+   "outdeg": 16,
+   "self_modes": []
+  },
+  "MA1113.3": {
+   "name": "PBX2",
+   "cls": "NO_SELF",
+   "outdeg": 6,
+   "self_modes": []
+  },
+  "MA1114.2": {
+   "name": "PBX3",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1116.2": {
+   "name": "RBPJ",
+   "cls": "NO_SELF",
+   "outdeg": 5,
+   "self_modes": []
+  },
+  "MA1117.2": {
+   "name": "RELB",
+   "cls": "NO_SELF",
+   "outdeg": 4,
+   "self_modes": []
+  },
+  "MA1118.2": {
+   "name": "SIX1",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA1119.2": {
+   "name": "SIX2",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1120.2": {
+   "name": "SOX13",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1121.2": {
+   "name": "TEAD2",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1122.2": {
+   "name": "TFDP1",
+   "cls": "NO_SELF",
+   "outdeg": 10,
+   "self_modes": []
+  },
+  "MA1123.3": {
+   "name": "TWIST1",
+   "cls": "NO_SELF",
+   "outdeg": 38,
+   "self_modes": []
+  },
+  "MA1124.1": {
+   "name": "ZNF24",
+   "cls": "NO_SELF",
+   "outdeg": 5,
+   "self_modes": []
+  },
+  "MA1125.2": {
+   "name": "ZNF384",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1127.1": {
+   "name": "FOSB",
+   "cls": "NO_SELF",
+   "outdeg": 4,
+   "self_modes": []
+  },
+  "MA1129.1": {
+   "name": "FOSL1",
+   "cls": "NO_SELF",
+   "outdeg": 9,
+   "self_modes": []
+  },
+  "MA1136.1": {
+   "name": "FOSB",
+   "cls": "NO_SELF",
+   "outdeg": 4,
+   "self_modes": []
+  },
+  "MA1141.2": {
+   "name": "FOS",
+   "cls": "SELF",
+   "outdeg": 63,
+   "self_modes": [
+    "Repression"
+   ]
+  },
+  "MA1146.2": {
+   "name": "NR1H4",
+   "cls": "NO_SELF",
+   "outdeg": 20,
+   "self_modes": []
+  },
+  "MA1148.2": {
+   "name": "PPARA",
+   "cls": "NO_SELF",
+   "outdeg": 43,
+   "self_modes": []
+  },
+  "MA1150.2": {
+   "name": "RORB",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1151.2": {
+   "name": "RORC",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA1152.2": {
+   "name": "SOX15",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1153.2": {
+   "name": "SMAD4",
+   "cls": "NO_SELF",
+   "outdeg": 26,
+   "self_modes": []
+  },
+  "MA1154.2": {
+   "name": "ZNF282",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1155.1": {
+   "name": "ZSCAN4",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1418.2": {
+   "name": "IRF3",
+   "cls": "NO_SELF",
+   "outdeg": 17,
+   "self_modes": []
+  },
+  "MA1419.2": {
+   "name": "IRF4",
+   "cls": "NO_SELF",
+   "outdeg": 5,
+   "self_modes": []
+  },
+  "MA1420.1": {
+   "name": "IRF5",
+   "cls": "NO_SELF",
+   "outdeg": 3,
+   "self_modes": []
+  },
+  "MA1421.1": {
+   "name": "TCF7L1",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1463.2": {
+   "name": "ARGFX",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1464.2": {
+   "name": "ARNT2",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1466.2": {
+   "name": "ATF6",
+   "cls": "NO_SELF",
+   "outdeg": 14,
+   "self_modes": []
+  },
+  "MA1468.1": {
+   "name": "ATOH7",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1471.2": {
+   "name": "BARX2",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA1473.2": {
+   "name": "CDX4",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1474.2": {
+   "name": "CREB3L4",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA1476.3": {
+   "name": "DLX5",
+   "cls": "NO_SELF",
+   "outdeg": 5,
+   "self_modes": []
+  },
+  "MA1478.2": {
+   "name": "DMRTA2",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1479.2": {
+   "name": "DMRTC2",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1480.2": {
+   "name": "DPRX",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1481.2": {
+   "name": "DRGX",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1483.3": {
+   "name": "ELF2",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA1484.2": {
+   "name": "ETS2",
+   "cls": "NO_SELF",
+   "outdeg": 32,
+   "self_modes": []
+  },
+  "MA1485.1": {
+   "name": "FERD3L",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1487.3": {
+   "name": "FOXE1",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA1489.1": {
+   "name": "FOXN3",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1491.3": {
+   "name": "GLI3",
+   "cls": "NO_SELF",
+   "outdeg": 3,
+   "self_modes": []
+  },
+  "MA1493.1": {
+   "name": "HES6",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA1494.2": {
+   "name": "HNF4A",
+   "cls": "NO_SELF",
+   "outdeg": 46,
+   "self_modes": []
+  },
+  "MA1496.2": {
+   "name": "HOXA4",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA1497.2": {
+   "name": "HOXA6",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1498.3": {
+   "name": "HOXA7",
+   "cls": "NO_SELF",
+   "outdeg": 5,
+   "self_modes": []
+  },
+  "MA1499.2": {
+   "name": "HOXB4",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA1500.2": {
+   "name": "HOXB6",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1501.2": {
+   "name": "HOXB7",
+   "cls": "NO_SELF",
+   "outdeg": 10,
+   "self_modes": []
+  },
+  "MA1502.2": {
+   "name": "HOXB8",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1503.2": {
+   "name": "HOXB9",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1504.2": {
+   "name": "HOXC4",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1505.2": {
+   "name": "HOXC8",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA1506.2": {
+   "name": "HOXD10",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1507.2": {
+   "name": "HOXD4",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1508.2": {
+   "name": "IKZF1",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA1509.1": {
+   "name": "IRF6",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA1511.2": {
+   "name": "KLF10",
+   "cls": "NO_SELF",
+   "outdeg": 7,
+   "self_modes": []
+  },
+  "MA1512.2": {
+   "name": "KLF11",
+   "cls": "NO_SELF",
+   "outdeg": 4,
+   "self_modes": []
+  },
+  "MA1513.2": {
+   "name": "KLF15",
+   "cls": "NO_SELF",
+   "outdeg": 5,
+   "self_modes": []
+  },
+  "MA1514.2": {
+   "name": "KLF17",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1515.2": {
+   "name": "KLF2",
+   "cls": "NO_SELF",
+   "outdeg": 11,
+   "self_modes": []
+  },
+  "MA1516.2": {
+   "name": "KLF3",
+   "cls": "NO_SELF",
+   "outdeg": 3,
+   "self_modes": []
+  },
+  "MA1517.2": {
+   "name": "KLF6",
+   "cls": "NO_SELF",
+   "outdeg": 23,
+   "self_modes": []
+  },
+  "MA1518.3": {
+   "name": "LHX1",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1519.2": {
+   "name": "LHX5",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1520.2": {
+   "name": "MAF",
+   "cls": "NO_SELF",
+   "outdeg": 7,
+   "self_modes": []
+  },
+  "MA1521.2": {
+   "name": "MAFA",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA1522.2": {
+   "name": "MAZ",
+   "cls": "NO_SELF",
+   "outdeg": 8,
+   "self_modes": []
+  },
+  "MA1524.3": {
+   "name": "MSGN1",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1525.3": {
+   "name": "NFATC4",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1529.2": {
+   "name": "NHLH2",
+   "cls": "NO_SELF",
+   "outdeg": 4,
+   "self_modes": []
+  },
+  "MA1530.2": {
+   "name": "NKX6-3",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1531.2": {
+   "name": "NR1D1",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA1532.2": {
+   "name": "NR1D2",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1533.2": {
+   "name": "NR1I2",
+   "cls": "NO_SELF",
+   "outdeg": 27,
+   "self_modes": []
+  },
+  "MA1534.2": {
+   "name": "NR1I3",
+   "cls": "NO_SELF",
+   "outdeg": 5,
+   "self_modes": []
+  },
+  "MA1535.2": {
+   "name": "NR2C1",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1538.1": {
+   "name": "NR2F1",
+   "cls": "NO_SELF",
+   "outdeg": 9,
+   "self_modes": []
+  },
+  "MA1540.3": {
+   "name": "NR5A1",
+   "cls": "NO_SELF",
+   "outdeg": 29,
+   "self_modes": []
+  },
+  "MA1541.2": {
+   "name": "NR6A1",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1542.2": {
+   "name": "OSR1",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1544.2": {
+   "name": "OVOL1",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1545.2": {
+   "name": "OVOL2",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1547.2": {
+   "name": "PITX2",
+   "cls": "NO_SELF",
+   "outdeg": 11,
+   "self_modes": []
+  },
+  "MA1548.2": {
+   "name": "PLAGL2",
+   "cls": "NO_SELF",
+   "outdeg": 4,
+   "self_modes": []
+  },
+  "MA1550.2": {
+   "name": "PPARD",
+   "cls": "NO_SELF",
+   "outdeg": 10,
+   "self_modes": []
+  },
+  "MA1554.2": {
+   "name": "RFX7",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1557.1": {
+   "name": "SMAD5",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1558.2": {
+   "name": "SNAI1",
+   "cls": "SELF",
+   "outdeg": 11,
+   "self_modes": [
+    "Unknown"
+   ]
+  },
+  "MA1559.2": {
+   "name": "SNAI3",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1560.2": {
+   "name": "SOHLH2",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1561.2": {
+   "name": "SOX12",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1562.2": {
+   "name": "SOX14",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1563.2": {
+   "name": "SOX18",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1564.2": {
+   "name": "SP9",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1565.2": {
+   "name": "TBX18",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1566.3": {
+   "name": "TBX3",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA1567.3": {
+   "name": "TBX6",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1568.2": {
+   "name": "TCF21",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1569.2": {
+   "name": "TFAP2E",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1571.1": {
+   "name": "TGIF2LX",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1572.1": {
+   "name": "TGIF2LY",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1573.2": {
+   "name": "THAP11",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1574.2": {
+   "name": "THRB",
+   "cls": "NO_SELF",
+   "outdeg": 3,
+   "self_modes": []
+  },
+  "MA1577.2": {
+   "name": "TLX2",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1578.2": {
+   "name": "VEZF1",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA1579.2": {
+   "name": "ZBTB26",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1580.1": {
+   "name": "ZBTB32",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1581.2": {
+   "name": "ZBTB6",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1583.2": {
+   "name": "ZFP57",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1584.2": {
+   "name": "ZIC5",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1585.2": {
+   "name": "ZKSCAN1",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1587.1": {
+   "name": "ZNF135",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1588.1": {
+   "name": "ZNF136",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1589.2": {
+   "name": "ZNF140",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1592.2": {
+   "name": "ZNF274",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1593.2": {
+   "name": "ZNF317",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1594.1": {
+   "name": "ZNF382",
+   "cls": "NO_SELF",
+   "outdeg": 10,
+   "self_modes": []
+  },
+  "MA1596.1": {
+   "name": "ZNF460",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1597.1": {
+   "name": "ZNF528",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1599.2": {
+   "name": "ZNF682",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1600.2": {
+   "name": "ZNF684",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1601.2": {
+   "name": "ZNF75D",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1602.2": {
+   "name": "ZSCAN29",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1603.2": {
+   "name": "DMRT1",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1604.2": {
+   "name": "EBF2",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1606.2": {
+   "name": "FOXF1",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA1607.2": {
+   "name": "FOXL2",
+   "cls": "NO_SELF",
+   "outdeg": 5,
+   "self_modes": []
+  },
+  "MA1608.2": {
+   "name": "ISL1",
+   "cls": "NO_SELF",
+   "outdeg": 3,
+   "self_modes": []
+  },
+  "MA1615.2": {
+   "name": "PLAGL1",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA1616.2": {
+   "name": "PRDM15",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1618.2": {
+   "name": "PTF1A",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA1624.2": {
+   "name": "STAT5A",
+   "cls": "NO_SELF",
+   "outdeg": 13,
+   "self_modes": []
+  },
+  "MA1627.2": {
+   "name": "WT1",
+   "cls": "NO_SELF",
+   "outdeg": 65,
+   "self_modes": []
+  },
+  "MA1628.2": {
+   "name": "ZIC1",
+   "cls": "NO_SELF",
+   "outdeg": 4,
+   "self_modes": []
+  },
+  "MA1630.3": {
+   "name": "ZNF281",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1632.2": {
+   "name": "ATF2",
+   "cls": "NO_SELF",
+   "outdeg": 34,
+   "self_modes": []
+  },
+  "MA1633.2": {
+   "name": "BACH1",
+   "cls": "NO_SELF",
+   "outdeg": 3,
+   "self_modes": []
+  },
+  "MA1634.2": {
+   "name": "BATF",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA1637.2": {
+   "name": "EBF3",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA1638.2": {
+   "name": "HAND2",
+   "cls": "NO_SELF",
+   "outdeg": 4,
+   "self_modes": []
+  },
+  "MA1641.2": {
+   "name": "MYF5",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1643.2": {
+   "name": "NFIB",
+   "cls": "NO_SELF",
+   "outdeg": 3,
+   "self_modes": []
+  },
+  "MA1644.2": {
+   "name": "NFYC",
+   "cls": "NO_SELF",
+   "outdeg": 13,
+   "self_modes": []
+  },
+  "MA1645.2": {
+   "name": "NKX2-2",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA1646.2": {
+   "name": "OSR2",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1647.3": {
+   "name": "PRDM4",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1648.2": {
+   "name": "TCF12",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA1649.2": {
+   "name": "ZBTB12",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1650.2": {
+   "name": "ZBTB14",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA1651.2": {
+   "name": "ZFP42",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1652.2": {
+   "name": "ZKSCAN5",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1653.2": {
+   "name": "ZNF148",
+   "cls": "NO_SELF",
+   "outdeg": 10,
+   "self_modes": []
+  },
+  "MA1654.2": {
+   "name": "ZNF16",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1655.2": {
+   "name": "ZNF341",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1656.2": {
+   "name": "ZNF449",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1657.2": {
+   "name": "ZNF652",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1683.2": {
+   "name": "FOXA3",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA1684.1": {
+   "name": "FOXN1",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA1707.2": {
+   "name": "DMRTA1",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1708.2": {
+   "name": "ETV7",
+   "cls": "NO_SELF",
+   "outdeg": 3,
+   "self_modes": []
+  },
+  "MA1709.2": {
+   "name": "ZIM3",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1710.2": {
+   "name": "ZNF257",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1711.2": {
+   "name": "ZNF343",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1712.2": {
+   "name": "ZNF454",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1713.2": {
+   "name": "ZNF610",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1714.2": {
+   "name": "ZNF675",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1715.1": {
+   "name": "ZNF707",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1716.2": {
+   "name": "ZNF76",
+   "cls": "NO_SELF",
+   "outdeg": 3,
+   "self_modes": []
+  },
+  "MA1717.2": {
+   "name": "ZNF784",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1718.1": {
+   "name": "ZNF8",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1719.2": {
+   "name": "ZNF816",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1720.2": {
+   "name": "ZNF85",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1721.2": {
+   "name": "ZNF93",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1722.2": {
+   "name": "ZSCAN31",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1723.2": {
+   "name": "PRDM9",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1724.2": {
+   "name": "RFX6",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1725.2": {
+   "name": "ZNF189",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1726.2": {
+   "name": "ZNF331",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1727.2": {
+   "name": "ZNF417",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1728.2": {
+   "name": "ZNF549",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1729.2": {
+   "name": "ZNF680",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1730.2": {
+   "name": "ZNF708",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1731.2": {
+   "name": "ZNF768",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1928.2": {
+   "name": "BNC2",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1931.1": {
+   "name": "ELK1",
+   "cls": "NO_SELF",
+   "outdeg": 20,
+   "self_modes": []
+  },
+  "MA1934.2": {
+   "name": "ERF",
+   "cls": "NO_SELF",
+   "outdeg": 3,
+   "self_modes": []
+  },
+  "MA1936.2": {
+   "name": "ERF",
+   "cls": "NO_SELF",
+   "outdeg": 3,
+   "self_modes": []
+  },
+  "MA1938.2": {
+   "name": "ERF",
+   "cls": "NO_SELF",
+   "outdeg": 3,
+   "self_modes": []
+  },
+  "MA1948.2": {
+   "name": "ETV5",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA1957.1": {
+   "name": "HOXB2",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1959.2": {
+   "name": "KLF7",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA1961.2": {
+   "name": "PATZ1",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1962.1": {
+   "name": "POU2F1",
+   "cls": "NO_SELF",
+   "outdeg": 43,
+   "self_modes": []
+  },
+  "MA1963.2": {
+   "name": "SATB1",
+   "cls": "NO_SELF",
+   "outdeg": 16,
+   "self_modes": []
+  },
+  "MA1964.2": {
+   "name": "SMAD2",
+   "cls": "NO_SELF",
+   "outdeg": 5,
+   "self_modes": []
+  },
+  "MA1965.2": {
+   "name": "SP5",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1968.2": {
+   "name": "TFCP2",
+   "cls": "NO_SELF",
+   "outdeg": 9,
+   "self_modes": []
+  },
+  "MA1969.2": {
+   "name": "THRA",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA1970.2": {
+   "name": "TRPS1",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA1971.2": {
+   "name": "ZBED2",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1972.1": {
+   "name": "ZFP14",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1973.2": {
+   "name": "ZKSCAN3",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1974.2": {
+   "name": "ZNF211",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1975.2": {
+   "name": "ZNF214",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1976.2": {
+   "name": "ZNF320",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1977.2": {
+   "name": "ZNF324",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1978.2": {
+   "name": "ZNF354A",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1979.2": {
+   "name": "ZNF416",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1980.1": {
+   "name": "ZNF418",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1981.2": {
+   "name": "ZNF530",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1982.2": {
+   "name": "ZNF574",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1983.2": {
+   "name": "ZNF582",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1984.2": {
+   "name": "ZNF667",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1985.1": {
+   "name": "ZNF669",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1986.2": {
+   "name": "ZNF692",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1987.2": {
+   "name": "ZNF701",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1989.2": {
+   "name": "BCL11B",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1990.2": {
+   "name": "GLI1",
+   "cls": "NO_SELF",
+   "outdeg": 21,
+   "self_modes": []
+  },
+  "MA1992.2": {
+   "name": "IKZF3",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1993.2": {
+   "name": "NEUROD2",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1994.2": {
+   "name": "NKX2-1",
+   "cls": "NO_SELF",
+   "outdeg": 7,
+   "self_modes": []
+  },
+  "MA1995.2": {
+   "name": "NPAS4",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA1998.2": {
+   "name": "PRDM14",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA1999.2": {
+   "name": "PRDM5",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA2001.2": {
+   "name": "SIX4",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA2003.2": {
+   "name": "NKX2-4",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA2093.1": {
+   "name": "HOXB1",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA2094.1": {
+   "name": "PAX8",
+   "cls": "NO_SELF",
+   "outdeg": 8,
+   "self_modes": []
+  },
+  "MA2095.1": {
+   "name": "SOX7",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA2096.1": {
+   "name": "ZNF524",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA2097.1": {
+   "name": "ZNF75A",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA2098.1": {
+   "name": "ZNF766",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA2099.1": {
+   "name": "ZNF770",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA2100.1": {
+   "name": "ZSCAN16",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA2101.1": {
+   "name": "ZNF677",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA2102.1": {
+   "name": "ZBTB17",
+   "cls": "NO_SELF",
+   "outdeg": 3,
+   "self_modes": []
+  },
+  "MA2117.1": {
+   "name": "FOXP4",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA2118.1": {
+   "name": "FOXS1",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA2119.1": {
+   "name": "HOXA3",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA2120.1": {
+   "name": "ZNF184",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA2121.1": {
+   "name": "ZNF213",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA2122.1": {
+   "name": "EBF4",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA2123.1": {
+   "name": "HAND1",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA2124.1": {
+   "name": "HMGA1",
+   "cls": "NO_SELF",
+   "outdeg": 18,
+   "self_modes": []
+  },
+  "MA2323.1": {
+   "name": "PGR",
+   "cls": "NO_SELF",
+   "outdeg": 26,
+   "self_modes": []
+  },
+  "MA2324.1": {
+   "name": "BCL11A",
+   "cls": "NO_SELF",
+   "outdeg": 2,
+   "self_modes": []
+  },
+  "MA2325.1": {
+   "name": "EPAS1",
+   "cls": "NO_SELF",
+   "outdeg": 11,
+   "self_modes": []
+  },
+  "MA2326.1": {
+   "name": "IKZF2",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA2328.1": {
+   "name": "ZBED4",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA2329.1": {
+   "name": "ZBTB11",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA2330.1": {
+   "name": "ZBTB24",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA2331.1": {
+   "name": "ZNF157",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA2332.1": {
+   "name": "ZNF175",
+   "cls": "NO_SELF",
+   "outdeg": 1,
+   "self_modes": []
+  },
+  "MA2333.1": {
+   "name": "ZNF35",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA2334.1": {
+   "name": "ZNF547",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA2335.1": {
+   "name": "ZNF558",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA2336.1": {
+   "name": "ZSCAN21",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  },
+  "MA2337.1": {
+   "name": "NR1H3",
+   "cls": "NO_SELF",
+   "outdeg": 6,
+   "self_modes": []
+  },
+  "MA2339.1": {
+   "name": "NANOG",
+   "cls": "NO_SELF",
+   "outdeg": 26,
+   "self_modes": []
+  },
+  "MA2340.1": {
+   "name": "ZBTB2",
+   "cls": "NO_SELF",
+   "outdeg": 4,
+   "self_modes": []
+  },
+  "MA2341.1": {
+   "name": "FEZF2",
+   "cls": "UNCURATED",
+   "outdeg": 0,
+   "self_modes": []
+  }
+ },
+ "counts": {
+  "NO_SELF": 406,
+  "UNCURATED": 309,
+  "SELF": 21
+ },
+ "n_regulators": 795,
+ "n_self_loops": 24,
+ "self_loop_modes": {
+  "Repression": 4,
+  "Unknown": 13,
+  "Activation": 10
+ },
+ "ecoli_reference_fraction": 0.5,
+ "source": "TRRUST v2 (Han et al., NAR 2018)"
+}

@@ -1,0 +1,25 @@
+{
+  "question": "Can the fixed cell model's rich relationship layers (90-95% descriptive coverage) raise the 55% trustworthy PREDICTION coverage?",
+  "method": "leave-one-out: predict a measured gene's knockout effect from its neighbours of each edge type (in the gwps screen); Pearson r vs the real measured effect.",
+  "predict_r_by_relationship": {
+    "complex_curated": 0.233,
+    "codependency": 0.094,
+    "PPI": 0.091,
+    "pathway_reactome": 0.064,
+    "coexpression": 0.063,
+    "regulatory": 0.034,
+    "causal_directed": 0.032,
+    "signaling": 0.03
+  },
+  "coverage_by_relationship": {
+    "complex_curated": 2261,
+    "codependency": 7149,
+    "PPI": 8045,
+    "pathway_reactome": 5893,
+    "coexpression": 8524,
+    "regulatory": 8640,
+    "causal_directed": 4602,
+    "signaling": 3185
+  },
+  "verdict": "NO. Descriptive/correlational relationships DO NOT confer knockout predictability. The edge types covering ~half the genome (regulatory, coexpr, PPI, pathway) predict at r=0.03-0.09 -- the weak-tier floor. Only tightly-curated functional complexes predict (0.23), and they are already used. The fixed model's 90-95% completeness is DESCRIPTIVE (what genes are / how they relate structurally); causal predictability needs direct interventional measurement OR functional-complex membership. Two genes can be co-expressed, PPI-linked, in the same pathway, even regulate each other, and still have completely different knockout consequences. Trustworthy coverage stays 55%."
+}

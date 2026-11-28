@@ -1,0 +1,162 @@
+{
+  "test": "physics_reduce",
+  "n_dof": 40821,
+  "n_null": 6,
+  "t_setup": 41.919475078582764,
+  "reductions": [
+    {
+      "name": "linearity -> superposition",
+      "quantity": 1.3490024265476597e-13,
+      "threshold": 1e-08,
+      "direction": "below",
+      "verdict": "HOLDS",
+      "margin": 1.3490024265476596e-05,
+      "speedup": 810.8297784781539,
+      "note": "add 119 us against solve 96 ms",
+      "detail": {}
+    },
+    {
+      "name": "reusable factorisation",
+      "quantity": 433.3280312231362,
+      "threshold": 10.0,
+      "direction": "above",
+      "verdict": "HOLDS",
+      "margin": 43.33280312231362,
+      "speedup": 433.3280312231362,
+      "note": "setup 41.9 s, each solve 97 ms",
+      "detail": {}
+    },
+    {
+      "name": "locality (norm) -> truncate",
+      "quantity": 1.0,
+      "threshold": 0.25,
+      "direction": "below",
+      "verdict": "FAILS",
+      "margin": 4.0,
+      "speedup": 1.0,
+      "note": "NO radius up to 100 reaches 90% of the norm -- the largest tested holds 0.78",
+      "detail": {
+        "rows": [
+          {
+            "R": 10.0,
+            "atoms": 32,
+            "frac": 0.0023517307268317777,
+            "norm_in": 0.5359159165028428,
+            "peak_in": 1.0
+          },
+          {
+            "R": 20.0,
+            "atoms": 78,
+            "frac": 0.005732343646652458,
+            "norm_in": 0.710891570728139,
+            "peak_in": 1.0
+          },
+          {
+            "R": 30.0,
+            "atoms": 127,
+            "frac": 0.009333431322113618,
+            "norm_in": 0.7569814917772366,
+            "peak_in": 1.0
+          },
+          {
+            "R": 50.0,
+            "atoms": 234,
+            "frac": 0.017197030939957374,
+            "norm_in": 0.7610277419904378,
+            "peak_in": 1.0
+          },
+          {
+            "R": 70.0,
+            "atoms": 896,
+            "frac": 0.06584846035128977,
+            "norm_in": 0.7676760011362508,
+            "peak_in": 1.0
+          },
+          {
+            "R": 100.0,
+            "atoms": 4040,
+            "frac": 0.29690600426251196,
+            "norm_in": 0.7838413612713503,
+            "peak_in": 1.0
+          }
+        ]
+      }
+    },
+    {
+      "name": "modal truncation",
+      "quantity": 0.9975152349688964,
+      "threshold": 0.9,
+      "direction": "above",
+      "verdict": "HOLDS",
+      "margin": 0.024847650311036203,
+      "speedup": 755.9444444444445,
+      "note": "54 of 40821 dimensions capture 99.8% of a real response",
+      "detail": {
+        "n_modes": 54
+      }
+    },
+    {
+      "name": "conserved directions (null space)",
+      "quantity": 6.0,
+      "threshold": 1.0,
+      "direction": "above",
+      "verdict": "HOLDS",
+      "margin": 6.0,
+      "speedup": 1.0001470047776553,
+      "note": "6 directions at numerical zero, gap 1.4e+10 to the first real mode",
+      "detail": {
+        "n_null": 6,
+        "gap": 14055743259.160168
+      }
+    },
+    {
+      "name": "timescale separation -> event stepping",
+      "quantity": 8362059.640163931,
+      "threshold": 1000.0,
+      "direction": "above",
+      "verdict": "HOLDS",
+      "margin": 8362.05964016393,
+      "speedup": 8362059.640163931,
+      "note": "lambda spans 2.05e-05 to 1.71e+02",
+      "detail": {}
+    }
+  ],
+  "composed": 5125459787870.597,
+  "axes": {
+    "solves": 810.8297784781539,
+    "dimensions": 755.9444444444445,
+    "steps": 8362059.640163931
+  },
+  "log": [
+    "====================================================================================================",
+    "AUTOMATED MODEL REDUCTION -- find the structure, prove it, price it",
+    "====================================================================================================",
+    "  A scored exam, not a demo: this system's structure was established by hand, so every verdict",
+    "  can be checked. Verdicts are GRADED -- anything within 3x of a threshold reads MARGINAL,",
+    "  because a threshold is a judgement and a measurement that lands on one should say so.",
+    "\n  system: 40821 degrees of freedom, 263270 couplings, 4861323 nonzeros",
+    "  setup: 41.9 s, null space DISCOVERED as 6 directions",
+    "\n  PROBING THE VOCABULARY",
+    "    reduction                               verdict       quantity   vs thr    speedup",
+    "    linearity -> superposition              HOLDS        1.349e-13  1.3e-05      810.8",
+    "      add 119 us against solve 96 ms",
+    "    reusable factorisation                  HOLDS            433.3       43      433.3",
+    "      setup 41.9 s, each solve 97 ms",
+    "    locality (norm) -> truncate             FAILS                1        4          1",
+    "      NO radius up to 100 reaches 90% of the norm -- the largest tested holds 0.78",
+    "    modal truncation                        HOLDS           0.9975    0.025      755.9",
+    "      54 of 40821 dimensions capture 99.8% of a real response",
+    "    conserved directions (null space)       HOLDS                6        6          1",
+    "      6 directions at numerical zero, gap 1.4e+10 to the first real mode",
+    "    timescale separation -> event stepping  HOLDS        8.362e+06  8.4e+03  8.362e+06",
+    "      lambda spans 2.05e-05 to 1.71e+02",
+    "\n  COMPOSED across independent cost axes -- NOT a product over reductions, because linearity",
+    "  and reusable factorisation both eliminate re-solving and would double-count:",
+    "    dimensions           755.9x",
+    "    solves               810.8x",
+    "    steps            8.362e+06x",
+    "    TOTAL            5.125e+12x",
+    "  REJECTED 1 -- these matter more, they are what stops a scheme:",
+    "    locality (norm) -> truncate: NO radius up to 100 reaches 90% of the norm -- the largest tested holds 0.78"
+  ]
+}

@@ -1,0 +1,9 @@
+=================================================================================================
+GENEREGC -- one predictor from strength + partners + substitutes (EXAM)
+=================================================================================================
+  G6-A1 screens, pooled (2,784 knockdown x cell type): median r generic 0.342, G3 0.381, combined 0.409 -> FAIL
+         per cell type (G3 -> combined): K562 0.263->0.290, RPE1 0.556->0.550, HepG2 0.444->0.456, Jurkat 0.297->0.325
+  G6-A2 each clue adds (screens): without strength 0.382, without partners 0.381, without substitute 0.410; Monte Carlo p partners 0.005, substitute 0.005 -> FAIL
+  G6-B1 cancer lines (3,087 genes, EXAM lines): median r own RNA 0.049 -> combined 0.249 (p_MC 0.005) -> PASS
+  G6-B2 each clue adds (lines): without strength 0.172, without partners 0.165, without substitute 0.238; Monte Carlo p partners 0.005, substitute 1 -> FAIL
+  Facts written 4

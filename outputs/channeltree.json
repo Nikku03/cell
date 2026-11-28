@@ -1,0 +1,68 @@
+{
+ "morphology": {
+  "b": 4,
+  "L": 4,
+  "leaves": 256,
+  "n_cells": 389
+ },
+ "param_split": {
+  "leaves": 32768,
+  "hierarchy": 4760,
+  "readout": 9
+ },
+ "params": {
+  "channel_tree": 21153,
+  "tanh_tree": 16425,
+  "mlp": 21151,
+  "mlp_deep": 21239
+ },
+ "sweep": [
+  {
+   "k": 2,
+   "ct": 1.0,
+   "tt": 0.508,
+   "m1": 1.0,
+   "m2": 1.0,
+   "learnt": true
+  },
+  {
+   "k": 3,
+   "ct": 1.0,
+   "tt": 1.0,
+   "m1": 1.0,
+   "m2": 1.0,
+   "learnt": true
+  },
+  {
+   "k": 4,
+   "ct": 1.0,
+   "tt": 0.477,
+   "m1": 1.0,
+   "m2": 1.0,
+   "learnt": true
+  },
+  {
+   "k": 5,
+   "ct": 1.0,
+   "tt": 1.0,
+   "m1": 1.0,
+   "m2": 1.0,
+   "learnt": true
+  },
+  {
+   "k": 6,
+   "ct": 1.0,
+   "tt": 0.502,
+   "m1": 1.0,
+   "m2": 1.0,
+   "learnt": true
+  }
+ ],
+ "harness_control_k2_mlp": 1.0,
+ "verdict": "FAIL",
+ "symmetry": {
+  "tanh_tree_odd": true,
+  "channel_tree_odd": false
+ },
+ "note": "reconstituted from run stdout after a serialisation crash; values as printed"
+}

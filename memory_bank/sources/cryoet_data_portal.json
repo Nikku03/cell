@@ -1,0 +1,48 @@
+{
+ "name": "CryoET Data Portal (Chan Zuckerberg Biohub / CZ Imaging Institute)",
+ "url": "https://cryoetdataportal.czscience.com/",
+ "looked_at": "2026-11-25",
+ "what": "3D cryo-electron tomograms of frozen cells and organelles, with labelled objects (points, oriented points, segmentation masks); objects named by GO cellular component or UniProt accession",
+ "size_on_home_page": {
+  "datasets": 392,
+  "species": 51,
+  "tomograms": 60512,
+  "annotations": 179902
+ },
+ "access": {
+  "bucket": "s3://cryoet-data-portal-public (public HTTPS listing works from here; us-west-2)",
+  "api": "GraphQL via the cryoet-data-portal Python client (endpoint not reachable from this sandbox)",
+  "formats": "MRC / OME-Zarr tomograms (multiple GB each), ndJSON points, MRC / Zarr masks, JSON metadata"
+ },
+ "terms": "Terms of use: publicly available, provided as is, no re-identification; no data licence stated -> treat as local only, cite Ermel et al. 2024 Nat Methods 21:2200 (doi:10.1038/s41592-024-02477-2) and the dataset authors",
+ "human": {
+  "datasets": 47,
+  "lines": {
+   "HEK293 / HEK293T": 16,
+   "HUVEC-C": 16,
+   "HSC-3": 4,
+   "Jurkat E6.1": 3,
+   "HeLa PINK1-GFP": 2,
+   "hTERT-RPE1": 1,
+   "not reported": 1
+  },
+  "labelled_objects_in_human_cells (first 3 runs per dataset)": [
+   "membrane",
+   "intracellular membrane-bounded organelle (HEK293T lysosome captures)",
+   "cytosolic ribosome and membrane-bound ribosome (HEK293, HSC-3 unroofed plasma membranes)",
+   "actin filament (RPE1)"
+  ],
+  "not_labelled_in_human": [
+   "proteasome",
+   "ATP synthase",
+   "chaperonin",
+   "nuclear pore",
+   "ER",
+   "mitochondria",
+   "microtubules"
+  ]
+ },
+ "richest_whole_cell_labels": "Chlamydomonas reinhardtii (ribosome, proteasome, F1-F0 ATP synthase, CCT chaperonin, RubisCO, ER, mitochondria, nuclear envelope); S. pombe (ER, mitochondria, microtubules, fatty acid synthase)",
+ "scan_note": "objects scanned in the first run of 356 of 392 datasets (connection dropped near the end); membranes are labelled in 329 of them",
+ "use_for_cellbrain": "only direct evidence of assembled machines in place (limit 7, 'is the machine built'), but human labels today are thin (ribosomes in 2 lines, actin in RPE1); Jurkat and RPE1 tomograms exist unlabelled for machines, so machines would need picking with a particle-finding model on a GPU"
+}

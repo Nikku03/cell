@@ -1,0 +1,137 @@
+=================================================================================================
+HOW DO WE KNOW A PATH IS IRRELEVANT TO THE TARGET BEFORE DELETING IT?
+=================================================================================================
+  The pruner ranks by MASS and the engine reports a TAIL. accuracy.py measured the
+  consequence: pruning binds by 8.4 decades. This tests the bound that would fix it.
+
+  enumerable width: 4 controllers, n = 16 states, L = 4, 1,048,576 paths, 200 targets.
+  EXACT tail by full enumeration: 1.187971e-102
+
+=================================================================================================
+B0  THE CEILING GATE: IS THE TAIL CONCENTRATED ON FEW PATHS AT ALL?
+=================================================================================================
+  If it is not, no pruner can be cheap and accurate whatever it ranks by, and the bound
+  question is moot. PREDECLARED: top 1% carrying < 50% kills the route; > 90% clears it.
+
+      top fraction of paths   share of the tail
+                      0.01%              25.66%
+                      0.10%              60.43%
+                      1.00%              91.11%
+                      5.00%              98.89%
+                     10.00%              99.73%
+                     50.00%             100.00%
+
+  B0: top 1% of paths carry 91.11% of the tail -- CLEARS the gate, pruning is viable.
+
+=================================================================================================
+B1  ADMISSIBILITY, CHECKED EXHAUSTIVELY AT EVERY LEVEL
+=================================================================================================
+  ONE violation anywhere and the bound is not admissible and this module stops.
+
+     level   prefixes   violations   worst ratio bound/true
+         0         16            0                2.187e+24
+         1        256            0                1.793e+22
+         2       4096            0                4.532e+18
+         3      65536            0                2.018e+12
+
+  B1: PASS -- admissible at every prefix at every level.
+
+=================================================================================================
+B2  TIGHTNESS AGAINST THE BOUND THE ENGINE ALREADY HAS
+=================================================================================================
+  The mass bound is admissible too, and useless. Its ratio is w_prefix / true.
+
+     level   median ratio, NEW bound   median ratio, MASS bound         gain
+         0                 1.271e+24                 1.034e+102    8.138e+77
+         1                 8.160e+21                 1.570e+102    1.924e+80
+         2                 1.501e+18                 3.834e+102    2.554e+84
+         3                 4.681e+11                 3.048e+103    6.511e+91
+
+=================================================================================================
+B3  HEAD TO HEAD AT EQUAL RETAINED-PATH COUNT
+=================================================================================================
+  Same number of paths kept under each ranking; compare the fraction of the exact tail
+  recovered. PREDECLARED: the bound wins only if it wins at EVERY retained count.
+
+  ranking prefixes at level 3 (65,536 of them, each owning 16 leaves)
+
+          kept    tail via MASS   tail via BOUND    mass %   bound %
+            65      1.9617e-103      3.5749e-103    16.51%    30.09%
+           655      4.6047e-103      7.8807e-103    38.76%    66.34%
+          3276      7.7366e-103      1.0562e-102    65.12%    88.91%
+          6553      9.1882e-103      1.1273e-102    77.34%    94.89%
+         16384      1.0819e-102      1.1754e-102    91.08%    98.94%
+         32768      1.1605e-102      1.1864e-102    97.68%    99.87%
+
+  B3: the bound ranking wins at EVERY retained count.
+
+=================================================================================================
+B4  THE CERTIFICATE AGAINST THE DEFICIT IT IS SUPPOSED TO BOUND
+=================================================================================================
+
+          kept    MASS cert/deficit    BOUND cert/deficit
+            65           9.633e+101             2.483e+11
+           655           1.133e+102             2.643e+11
+          3276           1.450e+102             2.890e+11
+          6553           1.707e+102             3.074e+11
+         16384           2.297e+102             3.532e+11
+         32768           3.211e+102             4.220e+11
+
+  B4: worst BOUND certificate ratio 4.220e+11 -- above the predeclared 1e3 bar; it is far tighter than mass but is NOT yet a tight certificate.
+
+=================================================================================================
+B5  DOES THE ADVANTAGE SURVIVE DEPTH? THE SCALING LAW
+=================================================================================================
+  An advantage that shrinks with depth is not an answer for an engine built to run deep
+  windows. PREDECLARED before running.
+  B5's FIRST RUN HAD A BUG OF MINE AND IT IS RECORDED RATHER THAN QUIETLY FIXED: the
+  path count was written nCtrl^(L+1) instead of (2^nCtrl)^(L+1), so the enumerability
+  guard was computing 5^5 = 3,125 for a case that is really 32^5 = 33,554,432, let it
+  through, and the module died. The printed path column was wrong by the same factor.
+  DEPTH IS NOW ISOLATED PROPERLY: L is swept at FIXED width, since varying both at once
+  cannot show what depth alone does -- which is the whole predeclared question.
+  AND THE METRIC HAS TO BE THE DEFICIT, NOT THE RECOVERED SHARE. The recovered-tail ratio
+  SATURATES: once mass ranking already recovers most of the tail the ratio is squeezed
+  towards 1 no matter how much better the bound is, so it measures how easy the case is
+  rather than how good the bound is. The MISSED share does not saturate, so the
+  comparison is missed-by-mass over missed-by-bound.
+
+     nCtrl   L          paths   top-1%  recovered ratio   DEFICIT ratio
+         3   3          4,096   73.25%            2.364           1.362
+         3   4         32,768   79.78%            1.424           1.294
+         3   5        262,144   82.96%            1.488           1.432
+         3   6      2,097,152   85.29%            1.467           1.512
+         4   3         65,536   89.04%            1.889           1.646
+         4   4      1,048,576   91.11%            1.711           1.819
+         5   3      1,048,576   98.47%            1.276           2.083
+
+  DEPTH TREND AT FIXED WIDTH (nCtrl = 3), on the DEFICIT ratio:
+    over all 4 depths L = 3..6:  +0.059 per level
+    over the last three depths:      +0.109 per level
+  BOTH FITS AGREE IN SIGN ON THIS METRIC, WHICH THEY DID NOT ON THE OTHER ONE. On the
+  recovered-share metric the L = 3 point was a wild outlier and the fit through it
+  said the advantage was DECAYING; on the deficit metric it is not an outlier and both
+  fits say growth. That the verdict flipped with the metric is the reason the metric
+  had to be argued before the fit was read, and not after.
+
+  B5: the advantage GROWS with depth over the last three points.
+
+  AND THE WIDTH TREND, WHICH MATTERS MORE FOR THE ENGINE. At fixed L = 3 the deficit
+  ratio rises 1.36 -> 2.08 from 3 to 5 controllers, and the tail's
+  concentration rises with it: the top 1% of paths carry 73.25% at 3 controllers and
+  98.47% at 5. The engine runs WIDE and deep, and BOTH trends point the favourable
+  way over the range that can be checked. That is the strongest thing this module
+  can say about the engine's own regime, and it is an extrapolation from three widths.
+
+=================================================================================================
+B6  WHAT THIS DOES NOT SETTLE
+=================================================================================================
+  1. Everything here is at widths small enough to enumerate EXACTLY, which is the only
+     way to check admissibility and to know the true tail. The engine runs at widths
+     where neither is available; that the bound stays admissible there follows from the
+     derivation, but that it stays USEFUL there does not, and B5 is the only evidence.
+  2. The bound relaxes the coupling between targets -- each target is allowed its own
+     best completion. A tighter bound exists and is not built here.
+  3. Admissibility is a property of the bound, not of the engine's implementation. This
+     module does not modify the pruner; wiring the bound into engine_budget is the next
+     step and is not taken here.
