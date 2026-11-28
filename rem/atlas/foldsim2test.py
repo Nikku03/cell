@@ -29,6 +29,8 @@ CLAIMS (declared before the EXAM run; thresholds set after the DEV fit and previ
         with HCT116's own sites. PASS: median score against the untreated map >= {T_B1} AND gain rule on score(vs
         untreated) - score(vs the map after 6 h without CTCF) over regions.
         Controls: sites at random places must not pass; planted (untreated map replaced by simulated x noise) must pass.
+        (The four degron maps differ up to 5-fold in depth, and a noisier map scores lower; so for B1 and B2 the four
+        maps of a region are first thinned at random to the same number of contacts.)
  G22-B2 TAKING THE GENE-READING MACHINE AWAY CHANGES THE FOLDING LESS (HCT116, RNA polymerase II degron). Per region: drop_CTCF
         = score(vs CTCF-line untreated) - score(vs CTCF removed); drop_Pol2 likewise for the polymerase line. PASS: gain
         rule on drop_CTCF - drop_Pol2 over EXAM regions.
@@ -66,8 +68,9 @@ CLAIMS (declared before the EXAM run; thresholds set after the DEV fit and previ
  G22-Z1 THE ZONE RULE DRAWS THE LARGE-SCALE PATTERN (repair of G21-S4, whose planted control was too noisy; its outcome,
         r 0.49, is already known). Same statistic and bar (median r >= 0.25 and gain rule over the 11 EXAM chromosomes);
         planted noise SD 0.5 instead of 1.
- REPORTED: (1) THE CEILING: score between the two K562 half maps on EXAM regions, the ceiling for one full map
-        sqrt(2r / (1 + r)), and each model's score as a share of it; fitted numbers; AUC for loops without clear stop
+ REPORTED: (1) THE CEILING: score r between the two K562 half maps (thinned to equal depth) on EXAM regions; the best score
+        any model could get against the full map, which is k times deeper: sqrt(k r / (1 + (k - 1) r)); and each
+        model's score as a share of it; fitted numbers; AUC for loops without clear stop
         signs; scores per cell type; curves; r values.
 NOT: the 3D model is a chain of springs without volume exclusion; zones are not in the scored 3D maps unless k_zone was
 chosen > 0; traces are of one 2 Mb region per cell line, on a DEV chromosome (a different kind of measurement, not used
@@ -109,7 +112,8 @@ SEED = 20261204
 DEV, EXAM, NB, SITE, WIN = ft.DEV, ft.EXAM, ft.NB, ft.SITE, ft.WIN
 N_MC = 20 if TRIAL else 100
 V1 = dict(w=0.0, release=0.0, e=0.0, beta=0.0)
-GRID2 = [("w", (0.3, 0.6)), ("release", (0.01, 0.03)), ("e", (0.1, 0.25)), ("beta", (2.0,))]
+GRID2 = [("w", (0.3, 0.6)), ("release", (0.01, 0.03)), ("e", (0.1, 0.3, 0.6)), ("beta", (2.0, 8.0)), ("processivity_kb", (400,)), ("separation_kb", (100,)),
+         ("w", (0.15,)), ("e", (0.05,))]              # coordinate descent, in this order; a value is kept when map score + loop AUC rises by > 0.005
 GRID3 = dict(k_loop=(0.3, 1.0, 3.0), radius=(0.7, 1.5, 3.0), k_zone=(0.0, 0.001))
 OTHER = ("gm12878", "imr90", "hepg2")
 
@@ -208,6 +212,14 @@ def paired(a, b, thr=None):
     ks = sorted(set(a) & set(b)); x = np.array([a[k] for k in ks]); y = np.array([b[k] for k in ks]); ok, p, med, n = gain(x - y)
     return dict(regions=len(ks), median_score=float(np.median(x)) if len(ks) else 0.0, median_comparison=float(np.median(y)) if len(ks) else 0.0, sign_p=p, median_gain=med,
                 passed=bool(len(ks) and ok and (thr is None or np.median(x) >= thr)))
+
+
+def thin(M, target, rng):
+    """a raw count map thinned at random (binomial) to `target` contacts, so that compared maps have the same depth."""
+    M = np.asarray(M, float); tot = M.sum()
+    if tot <= target:
+        return M
+    T = rng.binomial(np.triu(np.rint(M).astype(np.int64)), target / tot).astype(float); return T + np.triu(T, 1).T
 
 
 def planted(sim, rng):
@@ -367,8 +379,12 @@ def evaluate(dev, exam, rng):
     m1 = maps(D, "k562", exam, P1, rng); m2 = maps(D, "k562", exam, P, rng); s1, s2 = scores(m1, FK), scores(m2, FK); s2r = scores(maps(D, "k562", exam, P, rng, shuffle="places"), FK)
     u1 = paired(s2, s1); u1.update(median_v1=u1.pop("median_comparison"), median_v2=u1.pop("median_score"), median_random_places=float(np.median(list(s2r.values()))))
     pl = planted(m2, rng); out["G22-U1"] = ctl(u1, paired(s2r, s1)["passed"], paired(scores(m2, pl), scores(m1, pl))["passed"])
-    hA, hB = Lc["maps_k562_halfA"], Lc["maps_k562_halfB"]; half = [ft.region_score(hA[k].astype(float), hB[k].astype(float)) for k in s2]
-    rAB = float(np.median([v for v in half if v is not None])); ceil = float(np.sqrt(2 * rAB / (1 + rAB)))
+    hA, hB = Lc["maps_k562_halfA"], Lc["maps_k562_halfB"]; half, deeper = [], []
+    for k in s2:
+        t = min(hA[k].sum(), hB[k].sum()); r = ft.region_score(thin(hA[k], t, rng), thin(hB[k], t, rng))
+        if r is not None:
+            half.append(r); deeper.append(FK[k].sum() / t)
+    rAB, kd = float(np.median(half)), float(np.median(deeper)); ceil = float(np.sqrt(kd * rAB / (1 + (kd - 1) * rAB)))
     # ---- loops
     o1, o2, orr = loop_occ(D, exam, P1, rng), loop_occ(D, exam, P, rng), loop_occ(D, exam, P, rng, shuffle="places"); a1, a2, ar = loop_auc(o1), loop_auc(o2), loop_auc(orr)
     ok, p, med, n = gain(np.array([a2[c] - a1[c] for c in exam])); anyocc = lambda oc: float(np.mean(np.concatenate([o > 0 for o, _, _, _ in oc.values()])))
@@ -381,10 +397,11 @@ def evaluate(dev, exam, rng):
     m3 = maps(D, "k562", exam, P, rng, kind="3d", zone=zone); s3 = scores(m3, FK); s3r = scores(maps(D, "k562", exam, P, rng, shuffle="places", kind="3d", zone=zone), FK)
     d1 = paired(s3, s3r, T_D1); d1["median_random_places"] = d1.pop("median_comparison"); d1["median_1d_v2"] = u1["median_v2"]
     out["G22-D1"] = ctl(d1, paired(scores(m3, rotated(FK, list(s3))), s3r, T_D1)["passed"], paired(scores(m3, planted(m3, rng)), s3r, T_D1)["passed"])
-    rep["ceiling"] = dict(half_vs_half=rAB, ceiling_full_map=ceil, v1_share=u1["median_v1"] / ceil, v2_share=u1["median_v2"] / ceil, model3d_share=d1["median_score"] / ceil)
+    rep["ceiling"] = dict(half_vs_half=rAB, full_map_times_deeper=kd, ceiling_full_map=ceil, v1_share=u1["median_v1"] / ceil, v2_share=u1["median_v2"] / ceil, model3d_share=d1["median_score"] / ceil)
     # ---- HCT116: break one part
     mh = maps(D, "hct116", exam, P, rng); mhr = maps(D, "hct116", exam, P, rng, shuffle="places"); names = ("ctcf_untreated", "ctcf_auxin", "pol2_untreated", "pol2_auxin")
-    sc = {k: scores(mh, E[f"maps_hct116_{k}"]) for k in names}; scr = {k: scores(mhr, E[f"maps_hct116_{k}"]) for k in names[:2]}
+    raw = {k: E[f"maps_hct116_{k}"] for k in names}; depth = {k: min(float(raw[q][k].sum()) for q in names) for k in mh}
+    eq = {q: {k: thin(raw[q][k], depth[k], rng) for k in mh} for q in names}; sc = {q: scores(mh, eq[q]) for q in names}; scr = {q: scores(mhr, eq[q]) for q in names[:2]}
     b1 = paired(sc["ctcf_untreated"], sc["ctcf_auxin"], T_B1); b1["median_after_ctcf_removed"] = b1.pop("median_comparison")
     out["G22-B1"] = ctl(b1, paired(scr["ctcf_untreated"], scr["ctcf_auxin"], T_B1)["passed"], paired(scores(mh, planted(mh, rng)), sc["ctcf_auxin"], T_B1)["passed"])
     ks = sorted(set.intersection(*(set(v) for v in sc.values()))); drop = lambda a, b: np.array([sc[a][k] - sc[b][k] for k in ks])
