@@ -1,23 +1,29 @@
 """FOLDSIM2TEST (G22) -- five ways to make the folding simulator better, each tested.
 
-Asked by the user: "Well do all 5": (1) measure the best possible score, (2) add the missing stop signs and anchors,
-(3) test on 'break one part' experiments, (4) make it truly 3D and check against microscope distances, (5) more cells,
-including single cells. Also: repair the zone test that came back void in G21.
-Simulator versions (foldsim.py). V1 = G21: stop signs with a clear CTCF motif only. V2 adds, with numbers fitted on DEV
-chromosomes of K562 (`fit`): weak stop signs (CTCF sites without a clear motif; capture = w x strength rank), leaky signs
-(a stalled leg restarts with probability `release` per step), anchors without direction at the stronger half of H3K27ac
-sites (capture = e x rank), motors landing more often on active DNA (beta). 3D = the V2 motors on a chain of beads
-joined by springs, each motor a spring between its legs, bead positions solved exactly (no volume exclusion; numbers
-k_loop, contact radius, optional zone springs k_zone, fitted on DEV).
+Asked by the user: "Well do all 5": (1) measure the best possible score, (2) add the missing parts, (3) test on 'break
+one part' experiments, (4) make it truly 3D and check against microscope distances, (5) more cells, including single
+cells. Also: repair the zone test that came back void in G21.
+Simulator versions (foldsim.py):
+  V1 = G21: motors and stop signs with a clear CTCF motif; contact from the distance along the looped chain.
+  V2 = V1 + the parts that helped on DEV chromosomes of K562 (`fit`). Tried: the ZONE RULE in the map (contact x
+       exp(kappa x z_i x z_j); z = activity of each 25 kb bin: log(1 + H3K27ac peak signal), running mean over +- `smooth`
+       bins, standardised within the window -- one recipe for every cell type); weak stop signs (CTCF sites without a
+       clear motif, capture w x rank); leaky signs (`release`); anchors without direction at H3K27ac sites (e); motors
+       landing on active DNA (beta); longer or denser motors. A part is kept when map score + loop AUC rises by > 0.005.
+  3D = the V2 motors on a chain of beads joined by springs; each motor is a spring (k_loop) between its legs; beads of
+       the same zone (sign of z) pull on each other weakly (k_zone); bead positions solved exactly; two beads touch
+       when closer than `radius`. No volume exclusion: the chain can pass through itself.
 Data: layers of G19-G21 plus FOLDSIM2_LOCAL (K562 repeat-half maps; microscope traces of single chromosomes, Bintu et al.
 2018) and FOLDSIM2_ENCODE (HCT116 CTCF / RNA polymerase II degron maps; GM12878, IMR-90, HepG2 maps and sites).
 Halves (house rule): DEV = odd autosomes (all fitting, previews, trial), EXAM = even autosomes (scored once here; the
-EXAM regions of K562 and HCT116 were already scored once for V1 in G21, which is the comparison). Map score, USED
-regions and the gain rule (one-sided sign test p < 0.05 AND median gain >= +0.01) as in G21.
+EXAM regions of K562 and HCT116 were already scored once for V1 in G21). Map score, USED regions and the gain rule
+(one-sided sign test p < 0.05 AND median gain >= +0.01) as in G21. 'Random places' = stop signs AND activity marks at
+random positions of the chromosome. Maps that are compared with each other are first thinned at random to the same
+number of contacts per region (a noisier map scores lower).
 
 CLAIMS (declared before the EXAM run; thresholds set after the DEV fit and preview; ids G22-*):
  G22-U1 V2 DRAWS BETTER MAPS THAN V1 (K562, EXAM regions). PASS: gain rule on score(V2) - score(V1) over regions.
-        Controls: V2 with all its sites at random places must not pass; planted (measured map replaced by the V2 map x
+        Controls: V2 with its sites at random places must not pass; planted (measured map replaced by the V2 map x
         log-normal noise SD 0.05) must pass.
  G22-U2 V2 FINDS LOOPS BETTER THAN V1, INCLUDING LOOPS WITHOUT STOP SIGNS (K562). For every called loop: occupancy (share of
         snapshots with a motor held between its two anchor windows) against the same windows moved 100 kb left, and
@@ -25,25 +31,26 @@ CLAIMS (declared before the EXAM run; thresholds set after the DEV fit and previ
         AUC(V1) over the 11 EXAM chromosomes.
         Controls: V2 with sites at random places must not pass; planted (V1 with 0.005 added to the occupancy of a
         random fifth of the loops, against V1) must pass.
- G22-B1 TAKE THE STOP-SIGN PROTEIN AWAY AND THE MAP STOPS MATCHING (HCT116 CTCF degron, EXAM regions). The V2 simulator
-        with HCT116's own sites. PASS: median score against the untreated map >= {T_B1} AND gain rule on score(vs
-        untreated) - score(vs the map after 6 h without CTCF) over regions.
-        Controls: sites at random places must not pass; planted (untreated map replaced by simulated x noise) must pass.
-        (The four degron maps differ up to 5-fold in depth, and a noisier map scores lower; so for B1 and B2 the four
-        maps of a region are first thinned at random to the same number of contacts.)
- G22-B2 TAKING THE GENE-READING MACHINE AWAY CHANGES THE FOLDING LESS (HCT116, RNA polymerase II degron). Per region: drop_CTCF
-        = score(vs CTCF-line untreated) - score(vs CTCF removed); drop_Pol2 likewise for the polymerase line. PASS: gain
-        rule on drop_CTCF - drop_Pol2 over EXAM regions.
+ G22-B1 BREAK THE STOP SIGNS: THE SIMULATOR WITHOUT STOP SIGNS PREDICTS THE CELL WITHOUT CTCF (HCT116 CTCF degron, EXAM
+        regions). Two simulated maps (HCT116's own sites): whole (V2) and with every stop sign removed; two measured
+        maps: untreated and 6 h without CTCF. Per region: [score(whole, untreated) - score(no signs, untreated)] +
+        [score(no signs, CTCF removed) - score(whole, CTCF removed)]. PASS: gain rule on this double difference.
+        Controls: every simulated map compared with ANOTHER region's two measured maps must not pass; planted (untreated
+        map replaced by whole x noise, CTCF-removed map by no-signs x noise) must pass.
+ G22-B2 BREAK THE MOTOR: THE SIMULATOR WITHOUT MOTORS PREDICTS THE CELL WITHOUT COHESIN (HCT116 RAD21 degron, EXAM regions).
+        As B1 with 'no motors' (zones only) in place of 'no signs', and the maps of the cohesin degron line.
+        Controls: as B1.
+ G22-B3 TAKING THE GENE-READING MACHINE AWAY CHANGES THE FOLDING LESS THAN TAKING CTCF AWAY (HCT116 degrons). Per region:
+        drop = score(whole simulator, untreated) - score(whole simulator, protein removed), for the CTCF line and for
+        the RNA polymerase II line. PASS: gain rule on drop_CTCF - drop_Pol2 over EXAM regions.
         Controls: the two lines swapped must not pass; planted (polymerase-removed maps replaced by its untreated maps)
         must pass.
- G22-B3 THE 3D MODEL PREDICTS HOW CONTACT-WITH-DISTANCE CHANGES WHEN A PART IS REMOVED (HCT116 degrons). Curve = log of
-        [mean contact at each distance (50 kb - 2.5 Mb) with the part / without], mean over EXAM regions, centred.
-        Predicted: 3D model with motors / the same chain with none; and with stop signs / with motors but no CTCF stop
-        signs. Measured: untreated / 6 h auxin maps of the cohesin line and of the CTCF line (each map divided by its
-        total). PASS: Pearson r(predicted, measured cohesin curve) >= {T_B3} AND the CTCF curve is flatter than the
-        cohesin curve (SD ratio < 0.5) in the measurement AND in the prediction.
-        Controls: the predicted cohesin curve reversed along distance must not pass; planted (measured curves replaced
-        by the predicted ones + noise of a fifth of the cohesin curve's SD) must pass.
+ G22-B4 THE 3D MODEL PREDICTS HOW CONTACT-WITH-DISTANCE CHANGES WHEN THE MOTOR IS REMOVED (HCT116 RAD21 degron). Curve = log
+        of [mean contact at each distance (50 kb - 2.5 Mb) with the motor / without], mean over EXAM regions, centred.
+        Predicted: 3D model with motors / the same chain with none. Measured: untreated / 6 h auxin maps (each divided
+        by its total). PASS: Pearson r(predicted, measured) >= {T_B4}.
+        Controls: the predicted curve reversed along distance must not pass; planted (measured = predicted + noise of a
+        fifth of its SD) must pass.
  G22-D1 THE 3D MODEL'S MAPS LOOK LIKE THE MEASURED MAPS (K562, EXAM regions). PASS: median score >= {T_D1} AND gain rule on
         score(real sites) - score(sites at random places).
         Controls: each simulated map compared with ANOTHER region's measured map must not pass; planted must pass.
@@ -59,7 +66,7 @@ CLAIMS (declared before the EXAM run; thresholds set after the DEV fit and previ
         Controls: both measured matrices reversed must not reach p_MC < 0.05; planted (untreated = a second model run,
         auxin = the model without motors) must.
  G22-E1 IT WORKS IN THREE MORE CELL TYPES (GM12878, IMR-90, HepG2; K562's numbers, each cell's own sites; EXAM regions). Per
-        cell type: median score >= {T_E1} AND gain rule on score(real) - score(random places). PASS: all three.
+        cell type: median V2 score >= {T_E1} AND gain rule on score(real) - score(random places). PASS: all three.
         Controls (per cell type): maps compared with another region's measured map must not pass; planted must pass.
  G22-E2 SINGLE CHROMOSOMES PUT THEIR BORDERS WHERE THE MODEL DOES (K562 traces, chr21:28-30 Mb). Border share per position
         (foldsim.border_calls) in the measured single chromosomes against the same in 2,000 sampled model shapes:
@@ -69,12 +76,13 @@ CLAIMS (declared before the EXAM run; thresholds set after the DEV fit and previ
         r 0.49, is already known). Same statistic and bar (median r >= 0.25 and gain rule over the 11 EXAM chromosomes);
         planted noise SD 0.5 instead of 1.
  REPORTED: (1) THE CEILING: score r between the two K562 half maps (thinned to equal depth) on EXAM regions; the best score
-        any model could get against the full map, which is k times deeper: sqrt(k r / (1 + (k - 1) r)); and each
-        model's score as a share of it; fitted numbers; AUC for loops without clear stop
-        signs; scores per cell type; curves; r values.
-NOT: the 3D model is a chain of springs without volume exclusion; zones are not in the scored 3D maps unless k_zone was
-chosen > 0; traces are of one 2 Mb region per cell line, on a DEV chromosome (a different kind of measurement, not used
-in fitting); the EXAM regions are scored a second time (for V2); cancer or immortalised cell lines except IMR-90.
+        any model could get against the full map, which is k times deeper: sqrt(k r / (1 + (k - 1) r)); each model's
+        score as a share of it; scores of zones alone and motors alone; fitted numbers; AUC for loops without clear
+        stop signs; every score behind the double differences; curves; r values.
+NOT: the 3D model is a chain of springs without volume exclusion; the zone value is one activity mark (H3K27ac), not
+the full chromatin state; traces are of one 2 Mb region per cell line, on a DEV chromosome (chr21; a different kind of
+measurement, never used in fitting, but there is no EXAM version of it); the EXAM regions are scored a second time;
+cancer or immortalised cell lines except IMR-90.
 
 Run: python3 -I rem/atlas/foldsim2test.py fit | preview | declare | test [--trial]
 """
@@ -92,7 +100,7 @@ import numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__))
 R = lambda *p: os.path.normpath(os.path.join(HERE, "..", "..", *p))
 TRIAL = "--trial" in sys.argv
-T_B1 = T_B3 = T_D1 = T_E1 = None                 # set after the DEV fit and preview, before declaring
+T_B4 = T_D1 = T_E1 = None                           # set after the DEV fit and preview, before declaring
 
 
 def _load(name):
@@ -106,15 +114,17 @@ lt, ld, fs, kt, gx, cbb, Fact, gain, spearman = ft.lt, ft.ld, ft.fs, ft.kt, ft.g
 LEDGER = gx.LEDGER
 OUT = R("outputs", "foldsim")
 FIT2 = os.path.join(OUT, "fit2.json")
-CLAIMS = ["G22-U1", "G22-U2", "G22-B1", "G22-B2", "G22-B3", "G22-D1", "G22-D2", "G22-D3", "G22-E1", "G22-E2", "G22-Z1"]
+CLAIMS = ["G22-U1", "G22-U2", "G22-B1", "G22-B2", "G22-B3", "G22-B4", "G22-D1", "G22-D2", "G22-D3", "G22-E1", "G22-E2", "G22-Z1"]
+TRACE_CLAIMS = ("G22-D2", "G22-D3", "G22-E2")
 LAYERS = ft.LAYERS + ["FOLDSIM2_LOCAL", "FOLDSIM2_ENCODE"]
 SEED = 20261204
 DEV, EXAM, NB, SITE, WIN = ft.DEV, ft.EXAM, ft.NB, ft.SITE, ft.WIN
+BINBP = 25000
 N_MC = 20 if TRIAL else 100
-V1 = dict(w=0.0, release=0.0, e=0.0, beta=0.0)
-GRID2 = [("w", (0.3, 0.6)), ("release", (0.01, 0.03)), ("e", (0.1, 0.3, 0.6)), ("beta", (2.0, 8.0)), ("processivity_kb", (400,)), ("separation_kb", (100,)),
-         ("w", (0.15,)), ("e", (0.05,))]              # coordinate descent, in this order; a value is kept when map score + loop AUC rises by > 0.005
-GRID3 = dict(k_loop=(0.3, 1.0, 3.0), radius=(0.7, 1.5, 3.0), k_zone=(0.0, 0.001))
+V1 = dict(w=0.0, release=0.0, e=0.0, beta=0.0, kappa=0.0, smooth=4)
+MOTOR = ("processivity_kb", "separation_kb", "c", "alpha", "w", "release", "e", "beta")
+GRID2 = [("kappa", (0.1, 0.2, 0.4)), ("smooth", (2, 8)), ("w", (0.3,)), ("processivity_kb", (400,)), ("separation_kb", (100,)), ("release", (0.01,)), ("e", (0.1,)), ("beta", (2.0,))]
+GRID3 = dict(k_loop=(1.0, 3.0), radius=(0.7, 1.5, 3.0), k_zone=(0.0, 0.001, 0.002))     # coordinate descent in the order of GRID2, then the full GRID3
 OTHER = ("gm12878", "imr90", "hepg2")
 
 
@@ -155,45 +165,68 @@ def load():
     return D
 
 
+def params():
+    """(V2 with the 3D numbers, V1 = the G21 numbers) from the two fit files."""
+    P = json.load(open(FIT2))["params"]; return P, dict(P, **json.load(open(ft.FIT))["params"], **V1)
+
+
+def zone_z(D, cl, c, start, nb, binbp, smooth, rng=None):
+    """zone value per bin of a window: log(1 + H3K27ac peak signal in the bin), running mean over +- `smooth` bins, standardised
+    within the window. rng: the marks are put at random places of the chromosome first."""
+    C = D["C"][cl]; m = C["ac_chrom"] == c; pos = C["ac_pos"][m] if rng is None else rng.integers(0, D["len"][c], int(m.sum())); lo = start - smooth * binbp
+    h = np.bincount(np.clip((pos - lo) // binbp, -1, nb + 2 * smooth).astype(int) + 1, weights=C["ac_signal"][m], minlength=nb + 2 * smooth + 2)[1:nb + 2 * smooth + 1]
+    x = np.convolve(np.log1p(h), np.ones(2 * smooth + 1) / (2 * smooth + 1), "valid"); return (x - x.mean()) / (x.std() + 1e-9)
+
+
+def zfac(D, cl, k, P, rng=None):
+    """the zone rule as a factor on a region's map: exp(kappa x z_i x z_j)."""
+    c, b0 = D["reg"][k]; z = zone_z(D, cl, c, b0 * BINBP, NB, BINBP, P["smooth"], rng); return np.exp(P["kappa"] * np.outer(z, z))
+
+
+def plain(P):
+    """contact map of a chain with no motors under the 1D rule."""
+    i = np.arange(NB); return (np.abs(i[:, None] - i[None, :]) + 1.0) ** (-P["alpha"])
+
+
 def simulate(D, cl, c, P, rng, shuffle=None, R_=10, snaps=100, motors=True):
+    """motors on one chromosome of a cell line. shuffle: 'signs' = stop signs at random places, 'places' = every site."""
     C = D["C"][cl]; m = (C["chrom"] == c) & C["strong"]; pos, st, p = [C["pos"][m]], [C["strand"][m]], [P["c"] * C["q"][m]]
     if P["w"] > 0:
         m = (C["chrom"] == c) & ~C["strong"]; pos.append(C["pos"][m]); st.append(C["strand"][m]); p.append(P["w"] * C["q_all"][m])
-    am = (C["ac_chrom"] == c)
+    if shuffle in ("places", "signs"):
+        pos = [rng.integers(0, D["len"][c], len(x)) for x in pos]
+    am = (C["ac_chrom"] == c); n = D["len"][c] // SITE + 1; apos = C["ac_pos"][am] if shuffle != "places" else rng.integers(0, D["len"][c], int(am.sum()))
     if P["e"] > 0:
-        m = am & (C["ac_q"] >= 0.5); pos.append(C["ac_pos"][m]); st.append(np.zeros(int(m.sum()), int)); p.append(P["e"] * C["ac_q"][m])
-    pos, st, p = np.concatenate(pos), np.concatenate(st), np.concatenate(p); n = D["len"][c] // SITE + 1
-    if shuffle == "places":
-        pos = rng.integers(0, D["len"][c], len(pos))
-    load = None
+        m = C["ac_q"][am] >= 0.5; pos.append(apos[m]); st.append(np.zeros(int(m.sum()), int)); p.append(P["e"] * C["ac_q"][am][m])
+    pos, st, p = np.concatenate(pos), np.concatenate(st), np.concatenate(p); load = None
     if P["beta"] > 0:
-        apos = C["ac_pos"][am] if shuffle != "places" else rng.integers(0, D["len"][c], int(am.sum()))
         h = np.bincount(np.minimum(apos // SITE, n - 1), weights=C["ac_signal"][am], minlength=n); load = 1.0 + P["beta"] * h / max(h.mean(), 1e-9)
     return fs.chromosome(D["len"][c], pos, st, None, P["processivity_kb"], P["separation_kb"] if motors else 1e15, P["c"], load=load, R=R_, snaps=snaps, every=5, rng=rng,
                          release=P["release"], p=p)
 
 
-def regs(D, cl, chroms, strong_only=True):
+def regs(D, cl, chroms):
     C = D["C"][cl]; out = []
     for k, (c, b0) in enumerate(D["reg"]):
-        if c in chroms and int(((C["chrom"] == c) & C["strong"] & (C["pos"] >= b0 * 25000) & (C["pos"] < (b0 + NB) * 25000)).sum()) >= 15:
+        if c in chroms and int(((C["chrom"] == c) & C["strong"] & (C["pos"] >= b0 * BINBP) & (C["pos"] < (b0 + NB) * BINBP)).sum()) >= 15:
             out.append((k, c, b0))
     return out
 
 
-def maps(D, cl, chroms, P, rng, shuffle=None, kind="1d", zone=None, R_=20, snaps=150, max_snaps=1500):
-    """simulated maps {region index: map} of the regions of a cell line on `chroms` (1D rule or 3D chain model)."""
-    out = {}; rg = regs(D, cl, chroms)
+def maps(D, cl, chroms, P, rng, shuffle=None, kind="1d", R_=20, snaps=150, max_snaps=1500, motors=True):
+    """simulated maps {region index: map} of the regions of a cell line on `chroms`: the 1D rule (x zone factor when kappa > 0)
+    or the 3D chain model (zone springs when k_zone > 0)."""
+    out = {}; rg = regs(D, cl, chroms); zr = rng if shuffle == "places" else None
     for c in chroms:
         rc = [r for r in rg if r[1] == c]
         if not rc:
             continue
-        L, Rr, n = simulate(D, cl, c, P, rng, shuffle=shuffle, R_=R_, snaps=snaps)
+        L, Rr, n = simulate(D, cl, c, P, rng, shuffle=shuffle, R_=R_ if motors else 1, snaps=snaps if motors else 1, motors=motors)
         for k, _, b0 in rc:
             if kind == "1d":
-                out[k] = fs.contact_map(L, Rr, b0 * 5, b0 * 5 + NB * 5, 5, (P["alpha"],), max_snaps=max_snaps, rng=rng)[0]
+                M = fs.contact_map(L, Rr, b0 * 5, b0 * 5 + NB * 5, 5, (P["alpha"],), max_snaps=max_snaps, rng=rng)[0]; out[k] = M * zfac(D, cl, k, P, zr) if P["kappa"] > 0 else M
             else:
-                z = None if zone is None else zone[k]
+                z = zone_z(D, cl, c, b0 * BINBP, NB, BINBP, P["smooth"], zr) if P["k_zone"] > 0 else None
                 out[k] = fs.chain3d(L, Rr, b0 * 5, b0 * 5 + NB * 5, 5, P["k_loop"], P["radius"], zone=z, k_zone=P["k_zone"], max_snaps=min(max_snaps, 600), rng=rng)[0]
     return out
 
@@ -202,15 +235,21 @@ def scores(sim, meas):
     """{region: score} for regions with a usable measured map."""
     out = {}
     for k in sim:
-        r = ft.region_score(sim[k], meas[k].astype(float))
+        if isinstance(meas, dict) and k not in meas:
+            continue
+        r = ft.region_score(sim[k], np.asarray(meas[k], float))
         if r is not None:
             out[k] = r
     return out
 
 
+def med(d):
+    return float(np.median(list(d.values()))) if len(d) else 0.0
+
+
 def paired(a, b, thr=None):
-    ks = sorted(set(a) & set(b)); x = np.array([a[k] for k in ks]); y = np.array([b[k] for k in ks]); ok, p, med, n = gain(x - y)
-    return dict(regions=len(ks), median_score=float(np.median(x)) if len(ks) else 0.0, median_comparison=float(np.median(y)) if len(ks) else 0.0, sign_p=p, median_gain=med,
+    ks = sorted(set(a) & set(b)); x = np.array([a[k] for k in ks]); y = np.array([b[k] for k in ks]); ok, p, md, n = gain(x - y)
+    return dict(regions=len(ks), median_score=float(np.median(x)) if len(ks) else 0.0, median_comparison=float(np.median(y)) if len(ks) else 0.0, sign_p=p, median_gain=md,
                 passed=bool(len(ks) and ok and (thr is None or np.median(x) >= thr)))
 
 
@@ -230,9 +269,19 @@ def rotated(meas, ks):
     ks = sorted(ks); return {k: meas[ks[(i + 1) % len(ks)]] for i, k in enumerate(ks)}
 
 
-def zones25(D, dev):
-    zv, bc, bs = ft.zone_values(D, dev); key = {(c, int(s)): v for c, s, v in zip(bc, bs, zv)}
-    return {k: np.array([key.get((c, (b0 + j) * 25000 // 100000 * 100000), 0.0) for j in range(NB)]) for k, (c, b0) in enumerate(D["reg"])}
+def ctl(res, neg, pl):
+    res["controls"] = dict(negative_passed=bool(neg), planted_passed=bool(pl), ok=bool(not neg and pl)); return res
+
+
+def broken(whole, part, U, A, rng):
+    """'break one part': whole / part-removed simulated maps against the measured maps before (U) and after (A) the part was
+    destroyed. Double difference per region; controls: another region's measured maps; planted maps."""
+    def dd(U_, A_):
+        s = [scores(whole, U_), scores(part, U_), scores(part, A_), scores(whole, A_)]; ks = sorted(set.intersection(*(set(x) for x in s)))
+        return np.array([s[0][k] - s[1][k] + s[2][k] - s[3][k] for k in ks]), [float(np.median([x[k] for k in ks])) if ks else 0.0 for x in s], ks
+    d, m, ks = dd(U, A); ok, p, md, n = gain(d)
+    res = dict(regions=len(ks), whole_vs_before=m[0], broken_vs_before=m[1], broken_vs_after=m[2], whole_vs_after=m[3], sign_p=p, median_gain=md, passed=bool(ok))
+    return ctl(res, gain(dd(rotated(U, ks), rotated(A, ks))[0])[0], gain(dd(planted(whole, rng), planted(part, rng))[0])[0]), ks
 
 
 # ---------------------------------------------------------------- loops (U2)
@@ -259,7 +308,7 @@ def bare_auc(occ):
     a = np.concatenate([auc_of(o, cl, cr)[bare] for o, cl, cr, bare in occ.values()]); return float(a.mean()) if len(a) else 0.0, int(len(a))
 
 
-# ---------------------------------------------------------------- compaction curve (B3)
+# ---------------------------------------------------------------- contact with distance (B4)
 def curve(maps_, ks, raw=True):
     out = []
     for k in ks:
@@ -271,7 +320,8 @@ def curve(maps_, ks, raw=True):
 # ---------------------------------------------------------------- microscope traces (D2, D3, E2)
 def trace_model(D, cl, start, nseg, P, rng, shuffle=None, motors=True, n_s=2000):
     L, Rr, n = simulate(D, cl, "21", P, rng, shuffle=shuffle, R_=20, snaps=100, motors=motors); lo = start // SITE
-    X = fs.chain3d(L, Rr, lo, lo + nseg * 6, 6, P["k_loop"], P["radius"], max_snaps=n_s, rng=rng, sample=True)[2]
+    z = zone_z(D, cl, "21", start, nseg, 6 * SITE, P["smooth"], rng if shuffle == "places" else None) if P["k_zone"] > 0 else None
+    X = fs.chain3d(L, Rr, lo, lo + nseg * 6, 6, P["k_loop"], P["radius"], zone=z, k_zone=P["k_zone"], max_snaps=n_s, rng=rng, sample=True)[2]
     M = np.zeros((nseg, nseg))
     for i in range(nseg):
         M[i] = np.median(np.sqrt(((X[:, i:i + 1] - X) ** 2).sum(2)), 0)
@@ -294,7 +344,7 @@ def border_r(bs, bm):
 def traces(D, P, rng):
     Lc = D["Lc"]; out = {}
     Mk, Bk = Lc["trace_k562_28_median_nm"], Lc["trace_k562_28_border_share"]; n = len(Mk); st = int(Lc["trace_k562_28_start"])
-    Ms, Bs = trace_model(D, "k562", st, n, P, rng); nullM, nullB, nullRev = [], [], []
+    Ms, Bs = trace_model(D, "k562", st, n, P, rng); nullM, nullB = [], []
     for _ in range(N_MC):
         m_, b_ = trace_model(D, "k562", st, n, P, rng, shuffle="places", n_s=1000); nullM.append(dist_r(m_, Mk)); nullB.append(border_r(b_, Bk))
     M2, B2 = trace_model(D, "k562", st, n, P, rng)
@@ -332,52 +382,50 @@ def z1(D, dev, exam, rng):
             i = rng.integers(0, n, 400_000); j = i + rng.integers(20, 500, 400_000); ok = j < n; i, j = i[ok], j[ok]; ok = valid[i] & valid[j]; i, j = i[ok], j[ok]; d = j - i
             obs = np.exp(0.5 * z[i] * z[j] + rng.normal(0, 0.5, len(i))) * (d.astype(float) ** -1.0) if plant else Mb[i, j]
             mu = np.bincount(d, weights=obs) / np.maximum(np.bincount(d), 1); rs.append(spearman(z[i] * z[j], obs / np.maximum(mu[d], 1e-12)))
-        ok_, p, med, n_ = gain(np.array(rs)); return dict(median_r=float(np.median(rs)), sign_p=p, chromosomes=n_, passed=bool(np.median(rs) >= 0.25 and ok_))
+        ok_, p, md, n_ = gain(np.array(rs)); return dict(median_r=float(np.median(rs)), sign_p=p, chromosomes=n_, passed=bool(np.median(rs) >= 0.25 and ok_))
     res = run(zv); sh = zv.copy()
     for c in np.unique(bc):
         ix = np.nonzero(bc == c)[0]; sh[ix] = np.roll(zv[ix], 100)
-    res["controls"] = dict(negative_passed=run(sh)["passed"], planted_passed=run(zv, plant=True)["passed"]); res["controls"]["ok"] = bool(not res["controls"]["negative_passed"] and res["controls"]["planted_passed"])
-    return res
+    return ctl(res, run(sh)["passed"], run(zv, plant=True)["passed"])
 
 
 # ---------------------------------------------------------------- fit (DEV only)
-def objective(D, P, rng, chroms):
-    sim = maps(D, "k562", chroms, P, rng, R_=10, snaps=100, max_snaps=300); sc = scores(sim, D["FK"]["maps"]); auc = loop_auc(loop_occ(D, chroms, P, rng))
-    return float(np.median(list(sc.values()))), float(np.median(list(auc.values())))
-
-
 def fit():
-    t0 = time.time(); D = load(); rng = np.random.default_rng(SEED + 1); base = dict(json.load(open(ft.FIT))["params"]); P = dict(base, **V1); log = []
-    best = objective(D, P, rng, DEV); log.append(dict(P, map=best[0], auc=best[1])); print("fit v1", best, f"({time.time() - t0:.0f}s)", flush=True)
+    t0 = time.time(); D = load(); FK = D["FK"]["maps"]; P = dict(json.load(open(ft.FIT))["params"], **V1); cache, log = {}, []
+
+    def objective(Q):
+        key = tuple(Q[k] for k in MOTOR)
+        if key not in cache:                                   # the same random numbers for every motor setting; the zone factor is applied afterwards
+            rng = np.random.default_rng(SEED + 1); m = maps(D, "k562", DEV, dict(Q, kappa=0.0), rng, R_=10, snaps=100, max_snaps=600)
+            cache[key] = (m, float(np.median(list(loop_auc(loop_occ(D, DEV, Q, rng)).values()))))
+        m, auc = cache[key]; sc = scores({k: M * zfac(D, "k562", k, Q) if Q["kappa"] > 0 else M for k, M in m.items()}, FK)
+        log.append(dict(Q, map=med(sc), auc=auc)); print("fit", {k: Q[k] for k in MOTOR[:2] + MOTOR[4:] + ("kappa", "smooth")}, round(med(sc), 4), round(auc, 4), f"({time.time() - t0:.0f}s)", flush=True)
+        return med(sc) + auc
+    best = objective(P)
     for name, vals in GRID2:
         for v in vals:
-            Q = dict(P, **{name: v}); o = objective(D, Q, rng, DEV); log.append(dict(Q, map=o[0], auc=o[1])); print("fit", name, v, o, f"({time.time() - t0:.0f}s)", flush=True)
-            if sum(o) > sum(best) + 0.005:
+            Q = dict(P, **{name: v}); o = objective(Q)
+            if o > best + 0.005:
                 best, P = o, Q
-    zone = zones25(D, DEV); FK = D["FK"]["maps"]; rows3 = []; rg = regs(D, "k562", DEV); snaps = {}
-    for c in DEV:
-        if any(r[1] == c for r in rg):
-            snaps[c] = simulate(D, "k562", c, P, rng, R_=20, snaps=150)
+    rng = np.random.default_rng(SEED + 1); rg = regs(D, "k562", DEV); snaps = {c: simulate(D, "k562", c, P, rng, R_=20, snaps=150) for c in DEV if any(r[1] == c for r in rg)}; rows3 = []
     for kl in GRID3["k_loop"]:
         for rad in GRID3["radius"]:
             for kz in GRID3["k_zone"]:
-                sim = {k: fs.chain3d(snaps[c][0], snaps[c][1], b0 * 5, b0 * 5 + NB * 5, 5, kl, rad, zone=zone[k], k_zone=kz, max_snaps=300, rng=rng)[0] for k, c, b0 in rg}
-                sc = scores(sim, FK); rows3.append(dict(k_loop=kl, radius=rad, k_zone=kz, map=float(np.median(list(sc.values())))))
+                sim = {k: fs.chain3d(snaps[c][0], snaps[c][1], b0 * 5, b0 * 5 + NB * 5, 5, kl, rad, zone=zone_z(D, "k562", c, b0 * BINBP, NB, BINBP, P["smooth"]), k_zone=kz, max_snaps=300, rng=rng)[0]
+                       for k, c, b0 in rg}
+                rows3.append(dict(k_loop=kl, radius=rad, k_zone=kz, map=med(scores(sim, FK))))
         print("fit3d", kl, [round(r["map"], 3) for r in rows3[-len(GRID3["radius"]) * len(GRID3["k_zone"]):]], f"({time.time() - t0:.0f}s)", flush=True)
     b3 = max(rows3, key=lambda r: r["map"]); P.update(k_loop=b3["k_loop"], radius=b3["radius"], k_zone=b3["k_zone"])
     json.dump(dict(params=P, log=log, grid3d=rows3, fitted_on="DEV (odd autosomes), K562", seed=SEED + 1), open(FIT2, "w"), indent=1); print("chosen", P)
 
 
 # ---------------------------------------------------------------- evaluate
-def ctl(res, neg, pl):
-    res["controls"] = dict(negative_passed=bool(neg), planted_passed=bool(pl), ok=bool(not neg and pl)); return res
-
-
 def evaluate(dev, exam, rng):
-    D = load(); P = json.load(open(FIT2))["params"]; P1 = dict(P, **V1); out, rep = {}, dict(params=P); FK, FH, E, Lc = D["FK"]["maps"], D["FH"], D["E"], D["Lc"]
-    # ---- K562 maps: V1, V2, V2 with sites at random places
+    D = load(); P, P1 = params(); out, rep = {}, dict(params=P, params_v1={k: P1[k] for k in MOTOR}); FK, FH, E, Lc = D["FK"]["maps"], D["FH"], D["E"], D["Lc"]
+    # ---- K562 maps: V1, V2, V2 with every site at random places; zones alone, motors alone
     m1 = maps(D, "k562", exam, P1, rng); m2 = maps(D, "k562", exam, P, rng); s1, s2 = scores(m1, FK), scores(m2, FK); s2r = scores(maps(D, "k562", exam, P, rng, shuffle="places"), FK)
-    u1 = paired(s2, s1); u1.update(median_v1=u1.pop("median_comparison"), median_v2=u1.pop("median_score"), median_random_places=float(np.median(list(s2r.values()))))
+    u1 = paired(s2, s1); u1.update(median_v1=u1.pop("median_comparison"), median_v2=u1.pop("median_score"), median_random_places=med(s2r),
+                                   median_zones_alone=med(scores({k: plain(P) * zfac(D, "k562", k, P) for k in m2}, FK)), median_v2_motors_alone=med(scores({k: m2[k] / zfac(D, "k562", k, P) for k in m2}, FK)))
     pl = planted(m2, rng); out["G22-U1"] = ctl(u1, paired(s2r, s1)["passed"], paired(scores(m2, pl), scores(m1, pl))["passed"])
     hA, hB = Lc["maps_k562_halfA"], Lc["maps_k562_halfB"]; half, deeper = [], []
     for k in s2:
@@ -387,59 +435,58 @@ def evaluate(dev, exam, rng):
     rAB, kd = float(np.median(half)), float(np.median(deeper)); ceil = float(np.sqrt(kd * rAB / (1 + (kd - 1) * rAB)))
     # ---- loops
     o1, o2, orr = loop_occ(D, exam, P1, rng), loop_occ(D, exam, P, rng), loop_occ(D, exam, P, rng, shuffle="places"); a1, a2, ar = loop_auc(o1), loop_auc(o2), loop_auc(orr)
-    ok, p, med, n = gain(np.array([a2[c] - a1[c] for c in exam])); anyocc = lambda oc: float(np.mean(np.concatenate([o > 0 for o, _, _, _ in oc.values()])))
-    u2 = dict(auc_v1=float(np.median(list(a1.values()))), auc_v2=float(np.median(list(a2.values()))), auc_random_places=float(np.median(list(ar.values()))), sign_p=p, median_gain=med,
+    ok, p, md, n = gain(np.array([a2[c] - a1[c] for c in exam])); anyocc = lambda oc: float(np.mean(np.concatenate([o > 0 for o, _, _, _ in oc.values()])))
+    u2 = dict(auc_v1=med(a1), auc_v2=med(a2), auc_random_places=med(ar), sign_p=p, median_gain=md,
               auc_loops_without_clear_signs=dict(v1=bare_auc(o1)[0], v2=bare_auc(o2)[0], loops=bare_auc(o2)[1]), share_of_loops_with_any_occupancy=dict(v1=anyocc(o1), v2=anyocc(o2)), passed=bool(ok))
     opl = {c: (o + 0.005 * (rng.random(len(o)) < 0.2), cl, cr, b) for c, (o, cl, cr, b) in o1.items()}; apl = loop_auc(opl)
     out["G22-U2"] = ctl(u2, gain(np.array([ar[c] - a1[c] for c in exam]))[0], gain(np.array([apl[c] - a1[c] for c in exam]))[0])
     # ---- 3D maps (K562)
-    zone = zones25(D, dev) if P["k_zone"] > 0 else None
-    m3 = maps(D, "k562", exam, P, rng, kind="3d", zone=zone); s3 = scores(m3, FK); s3r = scores(maps(D, "k562", exam, P, rng, shuffle="places", kind="3d", zone=zone), FK)
+    m3 = maps(D, "k562", exam, P, rng, kind="3d"); s3 = scores(m3, FK); s3r = scores(maps(D, "k562", exam, P, rng, shuffle="places", kind="3d"), FK)
     d1 = paired(s3, s3r, T_D1); d1["median_random_places"] = d1.pop("median_comparison"); d1["median_1d_v2"] = u1["median_v2"]
     out["G22-D1"] = ctl(d1, paired(scores(m3, rotated(FK, list(s3))), s3r, T_D1)["passed"], paired(scores(m3, planted(m3, rng)), s3r, T_D1)["passed"])
     rep["ceiling"] = dict(half_vs_half=rAB, full_map_times_deeper=kd, ceiling_full_map=ceil, v1_share=u1["median_v1"] / ceil, v2_share=u1["median_v2"] / ceil, model3d_share=d1["median_score"] / ceil)
     # ---- HCT116: break one part
-    mh = maps(D, "hct116", exam, P, rng); mhr = maps(D, "hct116", exam, P, rng, shuffle="places"); names = ("ctcf_untreated", "ctcf_auxin", "pol2_untreated", "pol2_auxin")
-    raw = {k: E[f"maps_hct116_{k}"] for k in names}; depth = {k: min(float(raw[q][k].sum()) for q in names) for k in mh}
-    eq = {q: {k: thin(raw[q][k], depth[k], rng) for k in mh} for q in names}; sc = {q: scores(mh, eq[q]) for q in names}; scr = {q: scores(mhr, eq[q]) for q in names[:2]}
-    b1 = paired(sc["ctcf_untreated"], sc["ctcf_auxin"], T_B1); b1["median_after_ctcf_removed"] = b1.pop("median_comparison")
-    out["G22-B1"] = ctl(b1, paired(scr["ctcf_untreated"], scr["ctcf_auxin"], T_B1)["passed"], paired(scores(mh, planted(mh, rng)), sc["ctcf_auxin"], T_B1)["passed"])
+    whole = maps(D, "hct116", exam, P, rng); nosign = maps(D, "hct116", exam, dict(P, c=0.0, w=0.0), rng); nomotor = {k: plain(P) * zfac(D, "hct116", k, P) for k in whole}
+    names = ("ctcf_untreated", "ctcf_auxin", "pol2_untreated", "pol2_auxin"); raw = {q: E[f"maps_hct116_{q}"] for q in names}; depth = {k: min(float(raw[q][k].sum()) for q in names) for k in whole}
+    eq = {q: {k: thin(raw[q][k], depth[k], rng) for k in whole} for q in names}; sc = {q: scores(whole, eq[q]) for q in names}
+    out["G22-B1"], _ = broken(whole, nosign, eq["ctcf_untreated"], eq["ctcf_auxin"], rng)
+    out["G22-B1"]["random_signs_vs_before"] = med(scores(maps(D, "hct116", exam, P, rng, shuffle="signs"), eq["ctcf_untreated"]))
+    cu, ca = FH["maps_untreated"], FH["maps_auxin"]; dco = {k: min(float(cu[k].sum()), float(ca[k].sum())) for k in whole}
+    equ, eqa = {k: thin(cu[k], dco[k], rng) for k in whole}, {k: thin(ca[k], dco[k], rng) for k in whole}; out["G22-B2"], _ = broken(whole, nomotor, equ, eqa, rng)
     ks = sorted(set.intersection(*(set(v) for v in sc.values()))); drop = lambda a, b: np.array([sc[a][k] - sc[b][k] for k in ks])
-    dc, dp = drop("ctcf_untreated", "ctcf_auxin"), drop("pol2_untreated", "pol2_auxin"); ok, p, med, n = gain(dc - dp)
-    b2 = dict(regions=len(ks), median_drop_ctcf=float(np.median(dc)), median_drop_pol2=float(np.median(dp)), median_score_pol2_untreated=float(np.median([sc["pol2_untreated"][k] for k in ks])),
-              median_score_pol2_removed=float(np.median([sc["pol2_auxin"][k] for k in ks])), sign_p=p, median_gain=med, passed=bool(ok))
-    out["G22-B2"] = ctl(b2, gain(dp - dc)[0], gain(dc)[0])
-    su, sa = scores(mh, FH["maps_untreated"]), scores(mh, FH["maps_auxin"]); rep["v2_hct116_cohesin_line"] = dict(untreated=float(np.median(list(su.values()))), no_cohesin=float(np.median(list(sa.values()))))
+    dc, dp = drop("ctcf_untreated", "ctcf_auxin"), drop("pol2_untreated", "pol2_auxin"); ok, p, md, n = gain(dc - dp)
+    b3 = dict(regions=len(ks), median_drop_ctcf=float(np.median(dc)), median_drop_pol2=float(np.median(dp)), median_score_pol2_untreated=float(np.median([sc["pol2_untreated"][k] for k in ks])),
+              median_score_pol2_removed=float(np.median([sc["pol2_auxin"][k] for k in ks])), sign_p=p, median_gain=md, passed=bool(ok))
+    out["G22-B3"] = ctl(b3, gain(dp - dc)[0], gain(dc)[0])
     # ---- contact with distance (3D model)
-    m3h = maps(D, "hct116", exam, P, rng, kind="3d"); m0 = maps(D, "hct116", exam, dict(P, separation_kb=1e15), rng, kind="3d", R_=2, snaps=5)
-    m3n = maps(D, "hct116", exam, dict(P, c=0.0, w=0.0), rng, kind="3d"); ks = sorted(set(m3h) & set(sc["ctcf_untreated"]) & set(su)); cen = lambda v: v - v.mean()
-    pc, pn = cen(np.log(curve(m3h, ks, raw=False) / curve(m0, ks, raw=False))), cen(np.log(curve(m3h, ks, raw=False) / curve(m3n, ks, raw=False)))
-    mc, mn = cen(np.log(curve(FH["maps_untreated"], ks) / curve(FH["maps_auxin"], ks))), cen(np.log(curve(E["maps_hct116_ctcf_untreated"], ks) / curve(E["maps_hct116_ctcf_auxin"], ks)))
-    b3f = lambda pc_, mc_, mn_: bool(np.corrcoef(pc_, mc_)[0, 1] >= T_B3 and mn_.std() / mc_.std() < 0.5 and pn.std() / pc.std() < 0.5)
-    b3 = dict(r=float(np.corrcoef(pc, mc)[0, 1]), sd_ratio_measured=float(mn.std() / mc.std()), sd_ratio_predicted=float(pn.std() / pc.std()), amplitude_predicted_over_measured=float(pc.std() / mc.std()),
-              regions=len(ks), passed=b3f(pc, mc, mn), curve_kb=[int(x * 25) for x in range(2, 101, 7)], predicted_cohesin=[float(x) for x in pc[::7]], predicted_ctcf=[float(x) for x in pn[::7]],
-              measured_cohesin=[float(x) for x in mc[::7]], measured_ctcf=[float(x) for x in mn[::7]])
-    nz = lambda v: v + rng.normal(0, pc.std() / 5, len(v)); out["G22-B3"] = ctl(b3, b3f(pc[::-1], mc, mn), b3f(pc, nz(pc), nz(pn)))
+    m3h = maps(D, "hct116", exam, P, rng, kind="3d"); m0 = maps(D, "hct116", exam, P, rng, kind="3d", motors=False); ks = sorted(set(m3h) & set(scores(whole, cu)) & set(scores(whole, ca)))
+    cen = lambda v: v - v.mean(); pc = cen(np.log(curve(m3h, ks, raw=False) / curve(m0, ks, raw=False))); mc = cen(np.log(curve(cu, ks) / curve(ca, ks)))
+    mn = cen(np.log(curve(raw["ctcf_untreated"], ks) / curve(raw["ctcf_auxin"], ks))); r_ = lambda a, b: float(np.corrcoef(a, b)[0, 1])
+    b4 = dict(r=r_(pc, mc), amplitude_predicted_over_measured=float(pc.std() / mc.std()), sd_ctcf_curve_over_cohesin_curve=float(mn.std() / mc.std()), regions=len(ks), passed=bool(r_(pc, mc) >= T_B4),
+              curve_kb=[int(x * 25) for x in range(2, 101, 7)], predicted=[float(x) for x in pc[::7]], measured=[float(x) for x in mc[::7]], measured_ctcf_removal=[float(x) for x in mn[::7]])
+    out["G22-B4"] = ctl(b4, r_(pc[::-1], mc) >= T_B4, r_(pc, pc + rng.normal(0, pc.std() / 5, len(pc))) >= T_B4)
     # ---- more cell types
     e1 = dict(cells={}); allok, cok = True, True; other_maps = {}
     for k in OTHER:
         mk = maps(D, k, exam, P, rng); Mk = E[f"maps_{k}"]; sk = scores(mk, Mk); skr = scores(maps(D, k, exam, P, rng, shuffle="places"), Mk); r = paired(sk, skr, T_E1); r["median_random_places"] = r.pop("median_comparison")
-        neg = paired(scores(mk, rotated(Mk, list(sk))), skr, T_E1)["passed"]; pl = paired(scores(mk, planted(mk, rng)), skr, T_E1)["passed"]
+        r["median_v1"] = med(scores(maps(D, k, exam, P1, rng), Mk)); neg = paired(scores(mk, rotated(Mk, list(sk))), skr, T_E1)["passed"]; pl = paired(scores(mk, planted(mk, rng)), skr, T_E1)["passed"]
         e1["cells"][k] = dict(r, negative_passed=bool(neg), planted_passed=bool(pl)); allok &= r["passed"]; cok &= (not neg) and pl; other_maps[k] = (mk, sk)
     e1["passed"] = bool(allok); e1["controls"] = dict(ok=bool(cok)); out["G22-E1"] = e1
     tr, tx = traces(D, P, rng); out.update(tr); out["G22-Z1"] = z1(D, dev, exam, rng)
     for cid in CLAIMS:
         ok = out[cid]["controls"]["ok"]; out[cid]["gate"] = dict(real=out[cid]["passed"], controls_ok=ok, verdict=("PASS" if out[cid]["passed"] else "FAIL") if ok else "VOID (controls)")
-    return out, rep, dict(D=D, P=P, mh=mh, m3h=m3h, sc=sc, other=other_maps, traces=tx)
+    return out, rep, dict(D=D, P=P, whole=whole, nosign=nosign, nomotor=nomotor, m3h=m3h, sc=sc, other=other_maps, traces=tx)
 
 
 def preview():
-    global T_B1, T_B3, T_D1, T_E1
-    T_B1 = T_B3 = T_D1 = T_E1 = -1.0
-    out, rep, _ = evaluate(DEV[:6], DEV[6:], np.random.default_rng(SEED + 2))
+    """DEV only, to set the thresholds. The microscope claims have no EXAM version (chr21 is a DEV chromosome): only their controls are shown."""
+    global T_B4, T_D1, T_E1
+    T_B4 = T_D1 = T_E1 = -1.0
+    out, rep, _ = evaluate(DEV[:6], DEV[6:], np.random.default_rng(SEED + 2)); hide = ("gate", "curve_kb", "predicted", "measured", "measured_ctcf_removal")
     for cid in CLAIMS:
-        print(cid, json.dumps({k: (round(v, 3) if isinstance(v, float) else v) for k, v in out[cid].items() if k not in ("gate", "curve_kb", "predicted", "measured_cohesin", "measured_ctcf")}, default=float)[:520])
-    print(json.dumps(rep, default=float)[:600])
+        o = dict(controls=out[cid]["controls"]) if cid in TRACE_CLAIMS else {k: (round(v, 3) if isinstance(v, float) else v) for k, v in out[cid].items() if k not in hide}
+        print(cid, json.dumps(o, default=float)[:900])
+    print(json.dumps(rep, default=float)[:900])
 
 
 def save_page(x):
@@ -447,13 +494,14 @@ def save_page(x):
     use), and the microscope summaries (median distance per pair of segments; Bintu et al. 2018) next to the model's."""
     D, E, Lc = x["D"], x["D"]["E"], x["D"]["Lc"]; Z = {}; pick = lambda sc: [max(sc, key=sc.get), sorted(sc, key=sc.get)[len(sc) // 2]]
     f32 = lambda M: np.asarray(M, np.float32)
-    for name, sim, sc, meas in [("hct116", x["mh"], x["sc"]["ctcf_untreated"], ("hct116_ctcf_untreated", "hct116_ctcf_auxin"))] + [(k, x["other"][k][0], x["other"][k][1], (k,)) for k in OTHER]:
+    for name, sim, sc, meas in [("hct116", x["whole"], x["sc"]["ctcf_untreated"], ("hct116_ctcf_untreated", "hct116_ctcf_auxin"))] + [(k, x["other"][k][0], x["other"][k][1], (k,)) for k in OTHER]:
         ks = pick(sc); Z[f"{name}_keys"] = np.array(ks); Z[f"{name}_score"] = np.array([sc[k] for k in ks]); Z[f"{name}_sim"] = f32([sim[k] for k in ks])
         Z[f"{name}_chrom"] = np.array([D["reg"][k][0] for k in ks]); Z[f"{name}_bin0"] = np.array([D["reg"][k][1] for k in ks])
         for m in meas:
             Mm = E[f"maps_{m}"]; Z[f"{m}_measured"] = f32([Mm[k] for k in ks])
         if name == "hct116":
-            Z["hct116_sim3d"] = f32([x["m3h"][k] for k in ks])
+            Z["hct116_sim3d"] = f32([x["m3h"][k] for k in ks]); Z["hct116_nosign"] = f32([x["nosign"][k] for k in ks]); Z["hct116_nomotor"] = f32([x["nomotor"][k] for k in ks])
+            Z["hct116_cohesin_untreated_measured"] = f32([D["FH"]["maps_untreated"][k] for k in ks]); Z["hct116_cohesin_auxin_measured"] = f32([D["FH"]["maps_auxin"][k] for k in ks])
     for k, v in x["traces"].items():
         Z["trace_" + k] = f32(v)
     for t in ("k562_28", "hct116_34_untreated", "hct116_34_auxin"):
@@ -466,12 +514,12 @@ def _read():
 
 
 def claim_text(cid):
-    doc = __doc__.format(T_B1=T_B1, T_B3=T_B3, T_D1=T_D1, T_E1=T_E1, N_MC=100)
+    doc = __doc__.format(T_B4=T_B4, T_D1=T_D1, T_E1=T_E1, N_MC=100)
     return doc.split(" " + cid)[1].split(" G22-")[0].split(" REPORTED:")[0].strip()[:1500]
 
 
 def declare():
-    assert None not in (T_B1, T_B3, T_D1, T_E1), "set the thresholds first"
+    assert None not in (T_B4, T_D1, T_E1), "set the thresholds first"
     have = {r["id"] for r in _read() if r["op"] == "declare"}
     with open(LEDGER, "a") as f:
         for cid in CLAIMS:

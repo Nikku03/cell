@@ -1,0 +1,57 @@
+{
+ "added": "2026-11-28",
+ "facts_written": 5,
+ "layers": {
+  "LAYER-FOLDSIM2_RAW_MAPS": "LAYER-FOLDSIM2_RAW_MAPS/3de252ae43996dd8bc7d",
+  "LAYER-FOLDSIM2_RAW_SITES": "LAYER-FOLDSIM2_RAW_SITES/18df8b25de7f48aa90a6",
+  "LAYER-FOLDSIM2_RAW_TRACING": "LAYER-FOLDSIM2_RAW_TRACING/5b7358557b63e0c78a51",
+  "LAYER-FOLDSIM2_LOCAL": "LAYER-FOLDSIM2_LOCAL/ec54dd50d8a951df1bab",
+  "LAYER-FOLDSIM2_ENCODE": "LAYER-FOLDSIM2_ENCODE/3f4d053e821ab7452c5a"
+ },
+ "build": {
+  "traces": {
+   "k562_28": {
+    "chromosomes": 13997,
+    "segments": 65,
+    "chromosomes_with_calls": 9079,
+    "median_neighbour_nm": 210.58574581857897
+   },
+   "hct116_34_untreated": {
+    "chromosomes": 11631,
+    "segments": 83,
+    "chromosomes_with_calls": 11437,
+    "median_neighbour_nm": 181.867507160041
+   },
+   "hct116_34_auxin": {
+    "chromosomes": 9526,
+    "segments": 83,
+    "chromosomes_with_calls": 9137,
+    "median_neighbour_nm": 213.22799935897092
+   }
+  },
+  "maps": {
+   "hct116_ctcf_untreated": 6091842.0,
+   "hct116_ctcf_auxin": 8618068.0,
+   "hct116_pol2_untreated": 1661644.5,
+   "hct116_pol2_auxin": 5980766.0,
+   "gm12878": 6035675.0,
+   "imr90": 1040764.5,
+   "hepg2": 1159604.5
+  },
+  "k562_half_counts": [
+   1926532.5,
+   1458685.0
+  ],
+  "ctcf": {
+   "gm12878": 39513,
+   "imr90": 43529,
+   "hepg2": 42543
+  },
+  "h3k27ac": {
+   "hct116": 39879,
+   "gm12878": 56169,
+   "imr90": 115281,
+   "hepg2": 54556
+  }
+ }
+}
