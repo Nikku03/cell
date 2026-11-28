@@ -141,6 +141,26 @@ class HicRemote:
                     out[n] += w
         return out
 
+    def region(self, chrom, binsize, lo, hi):
+        """dense symmetric raw-count matrix of bins lo..hi-1 x lo..hi-1 of one chromosome (only the blocks that cover it)."""
+        bbc, bcc, bm = self.zoom(chrom, binsize); need = set()
+        if self.version >= 9:
+            for pad in range(lo // bbc, (hi - 1) // bbc + 1):
+                for depth in range(int(np.log2(1 + (hi - lo) / np.sqrt(2) / bbc)) + 1):
+                    need.add(depth * bcc + pad)
+        else:
+            for a in range(lo // bbc, (hi - 1) // bbc + 1):
+                for b in range(lo // bbc, (hi - 1) // bbc + 1):
+                    need.add(a * bcc + b)
+        M = np.zeros((hi - lo, hi - lo))
+        for bn in sorted(need):
+            if bn not in bm or bm[bn][1] <= 0:
+                continue
+            fp, sz = bm[bn]; x, y, v = self._records(zlib.decompress(self._get(fp, sz)))
+            a, b = np.minimum(x, y), np.maximum(x, y); m = (a >= lo) & (b < hi)
+            np.add.at(M, (a[m] - lo, b[m] - lo), v[m])
+        return M + M.T - np.diag(np.diag(M))
+
     def blocks(self, chrom, binsize):
         k = self.chroms[chrom][0]; pos, size = self.index[f"{k}_{k}"]
         b = self._get(pos, size); p = [0]
