@@ -229,8 +229,10 @@ def build():
     E1, bchr, bstart, cinfo = e1_tracks([("untreated", H["untreated"]), ("auxin_6h", H["auxin_6h"])], tss_pc)
     np.savez_compressed(os.path.join(cbb.LAY, "loopcode_hct116.npz"), loop_chrom=np.array([r[0] for r in L]), loop_a=np.array([r[1] for r in L]),
                         loop_b=np.array([r[2] for r in L]), conditions=np.array(list(HCT)), obs=np.stack([H[c]["obs"] for c in HCT], 1),
-                        ctrl=np.stack([(H[c]["ctrl_left"] + H[c]["ctrl_right"]) / 2 for c in HCT], 1), bin_chrom=bchr, bin_start=bstart,
-                        e1=E1.astype(np.float32), e1_cols=np.array(["untreated", "auxin_6h"]))
+                        ctrl_left=np.stack([H[c]["ctrl_left"] for c in HCT], 1), ctrl_right=np.stack([H[c]["ctrl_right"] for c in HCT], 1),
+                        bin_chrom=bchr, bin_start=bstart, e1=E1.astype(np.float32), e1_cols=np.array(["untreated", "auxin_6h"]),
+                        pc_chrom=np.array(AUTO), pc_untreated=np.array([cinfo[c]["untreated"]["pc"] for c in AUTO]),
+                        pc_auxin=np.array([cinfo[c]["auxin_6h"]["pc"] for c in AUTO]), pc_r=np.array([cinfo[c]["auxin_6h"]["r"] for c in AUTO]))
     rel = (M["score"] - M["min"]) / (M["max"] - M["min"])
     info = dict(k562={k: int(len(t["chrom"])) for k, t in T.items()}, ctcf_sites_with_motif_rel_0_8=int((rel >= 0.8).sum()),
                 motif_plus_share=float((M["strand"][rel >= 0.8] == "+").mean()), marks={m: round(float(cover[m].mean()), 4) for m in MARKS},
