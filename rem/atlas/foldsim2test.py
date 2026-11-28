@@ -31,14 +31,14 @@ CLAIMS (declared before the EXAM run; thresholds set after the DEV fit and previ
         AUC(V1) over the 11 EXAM chromosomes.
         Controls: V2 with sites at random places must not pass; planted (V1 with 0.005 added to the occupancy of a
         random fifth of the loops, against V1) must pass.
- G22-B1 BREAK THE STOP SIGNS: THE SIMULATOR WITHOUT STOP SIGNS PREDICTS THE CELL WITHOUT CTCF (HCT116 CTCF degron, EXAM
-        regions). Two simulated maps (HCT116's own sites): whole (V2) and with every stop sign removed; two measured
-        maps: untreated and 6 h without CTCF. Per region: [score(whole, untreated) - score(no signs, untreated)] +
-        [score(no signs, CTCF removed) - score(whole, CTCF removed)]. PASS: gain rule on this double difference.
+ G22-B1 BREAK THE STOP SIGNS: EACH SIMULATOR MATCHES ITS OWN CELL BEST (HCT116 CTCF degron, EXAM regions). Two simulated maps
+        (HCT116's own sites): whole (V2) and with every stop sign removed; two measured maps: untreated and 6 h without
+        CTCF. PASS: gain rule on score(whole, untreated) - score(no signs, untreated) AND gain rule on
+        score(no signs, CTCF removed) - score(whole, CTCF removed).
         Controls: every simulated map compared with ANOTHER region's two measured maps must not pass; planted (untreated
         map replaced by whole x noise, CTCF-removed map by no-signs x noise) must pass.
- G22-B2 BREAK THE MOTOR: THE SIMULATOR WITHOUT MOTORS PREDICTS THE CELL WITHOUT COHESIN (HCT116 RAD21 degron, EXAM regions).
-        As B1 with 'no motors' (zones only) in place of 'no signs', and the maps of the cohesin degron line.
+ G22-B2 BREAK THE MOTOR: EACH SIMULATOR MATCHES ITS OWN CELL BEST (HCT116 RAD21 degron, EXAM regions). As B1 with 'no motors'
+        (zones only) in place of 'no signs', and the maps of the cohesin degron line (untreated, 6 h without cohesin).
         Controls: as B1.
  G22-B3 TAKING THE GENE-READING MACHINE AWAY CHANGES THE FOLDING LESS THAN TAKING CTCF AWAY (HCT116 degrons). Per region:
         drop = score(whole simulator, untreated) - score(whole simulator, protein removed), for the CTCF line and for
@@ -58,8 +58,9 @@ CLAIMS (declared before the EXAM run; thresholds set after the DEV fit and previ
         10,000 chromosomes). Model: 2,000 sampled shapes; its median distance for every two segments. Both matrices
         divided by the mean of each diagonal; Spearman r over pairs >= 2 segments apart. PASS: r >= 0.01 AND r above
         95% of {N_MC} simulations with the sites at random places (p_MC < 0.05).
-        Controls: the model compared with the measured matrix reversed along the region must not reach p_MC < 0.05;
-        the model compared with a second run of itself (planted) must.
+        Controls: the model compared with the measured matrix of ANOTHER region (the first 65 segments of the HCT116
+        region) must not reach p_MC < 0.05 (a mirror image is no control here: this region's measured matrix correlates
+        0.62 with its own mirror image); the model compared with a second run of itself (planted) must.
  G22-D3 UNDER THE MICROSCOPE TOO, THE MATCH NEEDS THE MOTOR (HCT116 cohesin degron, chr21:34.6-37.1 Mb, 83 segments). As
         D2 with HCT116's sites: r_untreated - r_auxin. PASS: difference >= 0.01 AND above 95% of the differences from
         {N_MC} random-place simulations.
@@ -100,7 +101,7 @@ import numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__))
 R = lambda *p: os.path.normpath(os.path.join(HERE, "..", "..", *p))
 TRIAL = "--trial" in sys.argv
-T_B4 = T_D1 = T_E1 = None                           # set after the DEV fit and preview, before declaring
+T_B4, T_D1, T_E1 = 0.5, 0.25, 0.20                  # set after the DEV fit and preview (DEV values 0.88; 0.37 / 0.49; 0.39, 0.34, 0.32), before declaring
 
 
 def _load(name):
@@ -275,13 +276,15 @@ def ctl(res, neg, pl):
 
 def broken(whole, part, U, A, rng):
     """'break one part': whole / part-removed simulated maps against the measured maps before (U) and after (A) the part was
-    destroyed. Double difference per region; controls: another region's measured maps; planted maps."""
-    def dd(U_, A_):
+    destroyed. Each simulator must match its own cell better than the other simulator does (gain rule on both differences)."""
+    def two(U_, A_):
         s = [scores(whole, U_), scores(part, U_), scores(part, A_), scores(whole, A_)]; ks = sorted(set.intersection(*(set(x) for x in s)))
-        return np.array([s[0][k] - s[1][k] + s[2][k] - s[3][k] for k in ks]), [float(np.median([x[k] for k in ks])) if ks else 0.0 for x in s], ks
-    d, m, ks = dd(U, A); ok, p, md, n = gain(d)
-    res = dict(regions=len(ks), whole_vs_before=m[0], broken_vs_before=m[1], broken_vs_after=m[2], whole_vs_after=m[3], sign_p=p, median_gain=md, passed=bool(ok))
-    return ctl(res, gain(dd(rotated(U, ks), rotated(A, ks))[0])[0], gain(dd(planted(whole, rng), planted(part, rng))[0])[0]), ks
+        g1 = gain(np.array([s[0][k] - s[1][k] for k in ks])); g2 = gain(np.array([s[2][k] - s[3][k] for k in ks]))
+        return bool(g1[0] and g2[0]), g1, g2, [float(np.median([x[k] for k in ks])) if ks else 0.0 for x in s], ks
+    ok, g1, g2, m, ks = two(U, A)
+    res = dict(regions=len(ks), whole_vs_before=m[0], broken_vs_before=m[1], broken_vs_after=m[2], whole_vs_after=m[3], before=dict(sign_p=g1[1], median_gain=g1[2], passed=bool(g1[0])),
+               after=dict(sign_p=g2[1], median_gain=g2[2], passed=bool(g2[0])), passed=ok)
+    return ctl(res, two(rotated(U, ks), rotated(A, ks))[0], two(planted(whole, rng), planted(part, rng))[0]), ks
 
 
 # ---------------------------------------------------------------- loops (U2)
@@ -352,9 +355,9 @@ def traces(D, P, rng):
 
     def claim(obs, null, rev, pl):
         res = dict(r=float(obs), p_mc=pmc(obs, null), null_95=float(np.quantile(null, 0.95)), passed=bool(obs >= 0.01 and pmc(obs, null) < 0.05))
-        res["controls"] = dict(reversed_p_mc=pmc(rev, null), planted_p_mc=pmc(pl, null), ok=bool(pmc(rev, null) >= 0.05 and pmc(pl, null) < 0.05)); return res
+        res["controls"] = dict(negative_p_mc=pmc(rev, null), planted_p_mc=pmc(pl, null), ok=bool(pmc(rev, null) >= 0.05 and pmc(pl, null) < 0.05)); return res
     scale = float(np.nanmedian(np.diag(Mk, 1)) / np.median(np.diag(Ms, 1)))
-    out["G22-D2"] = claim(dist_r(Ms, Mk), nullM, dist_r(Ms, Mk[::-1, ::-1]), dist_r(Ms, M2)); out["G22-D2"].update(segments=n, nm_per_unit=scale)
+    out["G22-D2"] = claim(dist_r(Ms, Mk), nullM, dist_r(Ms, Lc["trace_hct116_34_untreated_median_nm"][:n, :n]), dist_r(Ms, M2)); out["G22-D2"].update(segments=n, nm_per_unit=scale)
     out["G22-E2"] = claim(border_r(Bs, Bk), nullB, border_r(Bs, Bk[::-1]), border_r(Bs, B2))
     out["G22-E2"].update(measured_border_share_range=[float(np.nanmin(Bk)), float(np.nanmax(Bk))], model_border_share_range=[float(np.nanmin(Bs)), float(np.nanmax(Bs))])
     Mu, Ma = Lc["trace_hct116_34_untreated_median_nm"], Lc["trace_hct116_34_auxin_median_nm"]; n = len(Mu); st = int(Lc["trace_hct116_34_untreated_start"])
@@ -364,7 +367,7 @@ def traces(D, P, rng):
     Mh2, _ = trace_model(D, "hct116", st, n, P, rng); M0, _ = trace_model(D, "hct116", st, n, P, rng, motors=False)
     res = dict(r_untreated=float(dist_r(Mh, Mu)), r_auxin=float(dist_r(Mh, Ma)), difference=float(dobs), p_mc=pmc(dobs, null), segments=n, passed=bool(dobs >= 0.01 and pmc(dobs, null) < 0.05))
     rev = dist_r(Mh, Mu[::-1, ::-1]) - dist_r(Mh, Ma[::-1, ::-1]); pl = dist_r(Mh, Mh2) - dist_r(Mh, M0)
-    res["controls"] = dict(reversed_p_mc=pmc(rev, null), planted_p_mc=pmc(pl, null), ok=bool(pmc(rev, null) >= 0.05 and pmc(pl, null) < 0.05))
+    res["controls"] = dict(negative_p_mc=pmc(rev, null), planted_p_mc=pmc(pl, null), ok=bool(pmc(rev, null) >= 0.05 and pmc(pl, null) < 0.05))
     res["border_share_r"] = dict(untreated=border_r(Bh, Lc["trace_hct116_34_untreated_border_share"]), auxin=border_r(Bh, Lc["trace_hct116_34_auxin_border_share"]))
     out["G22-D3"] = res
     return out, dict(k562_model_nm=Ms * scale, k562_model_border=Bs, hct116_model_nm=Mh * float(np.nanmedian(np.diag(Mu, 1)) / np.median(np.diag(Mh, 1))), hct116_model_border=Bh)
@@ -480,8 +483,6 @@ def evaluate(dev, exam, rng):
 
 def preview():
     """DEV only, to set the thresholds. The microscope claims have no EXAM version (chr21 is a DEV chromosome): only their controls are shown."""
-    global T_B4, T_D1, T_E1
-    T_B4 = T_D1 = T_E1 = -1.0
     out, rep, _ = evaluate(DEV[:6], DEV[6:], np.random.default_rng(SEED + 2)); hide = ("gate", "curve_kb", "predicted", "measured", "measured_ctcf_removal")
     for cid in CLAIMS:
         o = dict(controls=out[cid]["controls"]) if cid in TRACE_CLAIMS else {k: (round(v, 3) if isinstance(v, float) else v) for k, v in out[cid].items() if k not in hide}

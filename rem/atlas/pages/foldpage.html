@@ -36,7 +36,17 @@ canvas{display:block;max-width:100%;border-radius:3px}
 #track{width:100%;height:190px;touch-action:manipulation;cursor:pointer;background:var(--panel)}
 .maps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
 @media (max-width:640px){.maps{grid-template-columns:minmax(0,1fr)}}
+.maps.two{grid-template-columns:repeat(2,minmax(0,1fr))}
 .sq{width:100%;aspect-ratio:1/1;max-width:100%;image-rendering:pixelated;border:1px solid var(--line)}
+.lc svg{display:block;width:100%;height:auto;overflow:visible}
+.lc text{font-family:var(--mono);font-size:11px;fill:var(--ink2)}
+.lc .ax{stroke:var(--axis);stroke-width:1} .lc .zero{stroke:var(--axis);stroke-width:1;stroke-dasharray:3 3}
+.lc .s0{stroke:var(--blue)} .lc .s1{stroke:var(--orange)} .lc path{fill:none;stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.lc .dot0{fill:var(--blue)} .lc .dot1{fill:var(--orange)}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
+.step{border-top:2px solid var(--ink);padding-top:8px;display:flex;flex-direction:column;gap:4px;min-width:0;font-size:14.5px}
+.step .k{font-family:var(--mono);font-size:12px;color:var(--ink2);letter-spacing:.04em;text-transform:uppercase}
+.step .v{font-weight:600}
 .controls{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
 button,.seg label{font:inherit;font-size:14px;border:1px solid var(--axis);background:var(--panel);color:var(--ink);padding:6px 11px;border-radius:4px;cursor:pointer}
 button:hover,.seg label:hover{border-color:var(--ink)}
@@ -71,9 +81,9 @@ a{color:var(--blue)}
 
 <div class="wrap">
 <header style="display:flex;flex-direction:column;gap:12px">
-  <div class="mono small muted">K562 · HCT116 · THP-1 · A549 &nbsp;|&nbsp; tests G16–G21</div>
+  <div class="mono small muted">K562 · HCT116 · THP-1 · A549 · GM12878 · IMR-90 · HepG2 &nbsp;|&nbsp; tests G16–G22</div>
   <h1>How a chromosome folds</h1>
-  <p class="lede">Two metres of DNA fold inside each cell by a few simple rules. We tested each rule on real measurements, then built a simulator from the rules alone and checked it against DNA it had never seen.</p>
+  <p class="lede">Two metres of DNA fold inside each cell by a few simple rules. We tested each rule on real measurements, then built a simulator from the rules alone and checked it against DNA it had never seen. Version 2 puts the zone rule into the maps, adds a 3D model, and is tested on cells where one part was destroyed, on microscope images and on three more cell types.</p>
 </header>
 
 <section aria-label="The rules">
@@ -128,17 +138,39 @@ a{color:var(--blue)}
 </section>
 
 <section aria-label="Real cells">
-  <h2>Does it match real cells?</h2>
+  <h2>Does it match real cells? Destroy a part and see</h2>
   <p class="muted" id="real-intro"></p>
   <div class="panel">
+    <div class="controls"><span class="small muted">Cell type:</span><div class="seg" id="cell-seg" role="radiogroup" aria-label="Cell type"></div></div>
     <div class="controls"><span class="small muted">Region:</span><div class="seg" id="region-seg" role="radiogroup" aria-label="Region"></div></div>
-    <div class="maps">
-      <div class="col"><h3>Measured, motor present</h3><canvas class="sq" id="m-unt" width="120" height="120" role="img" aria-label="Measured contact map with cohesin"></canvas></div>
-      <div class="col"><h3>Simulated from stop signs</h3><canvas class="sq" id="m-sim" width="120" height="120" role="img" aria-label="Simulated contact map"></canvas></div>
-      <div class="col"><h3>Measured, motor destroyed</h3><canvas class="sq" id="m-aux" width="120" height="120" role="img" aria-label="Measured contact map without cohesin"></canvas></div>
+    <div class="controls" id="break-row"><span class="small muted">Destroy a part:</span><div class="seg" id="break-seg" role="radiogroup" aria-label="Part destroyed"></div></div>
+    <div class="maps two">
+      <div class="col"><h3 id="h-meas">Measured in the cell</h3><canvas class="sq" id="m-meas" width="120" height="120" role="img" aria-label="Measured contact map"></canvas></div>
+      <div class="col"><h3 id="h-sim">Simulated</h3><canvas class="sq" id="m-sim" width="120" height="120" role="img" aria-label="Simulated contact map"></canvas></div>
     </div>
+    <div class="key"><span>fewer contacts than expected<span class="ramp"></span>more</span></div>
     <div class="read" id="real-read"></div>
     <p class="note" id="real-note"></p>
+  </div>
+</section>
+
+<section aria-label="Upgrades">
+  <h2>Five upgrades, each put to the test</h2>
+  <p class="muted" id="up-intro"></p>
+  <div class="steps" id="steps"></div>
+  <div class="charts" id="charts2"></div>
+  <div class="panel">
+    <h3>Under the microscope</h3>
+    <p class="note" id="micro-intro"></p>
+    <div class="controls"><span class="small muted">Cells:</span><div class="seg" id="micro-seg" role="radiogroup" aria-label="Microscope data set"></div></div>
+    <div class="maps two">
+      <div class="col"><h3>Measured, thousands of single chromosomes</h3><canvas class="sq" id="t-meas" width="83" height="83" role="img" aria-label="Measured distances between segments"></canvas></div>
+      <div class="col"><h3>3D model, motors on</h3><canvas class="sq" id="t-sim" width="83" height="83" role="img" aria-label="Modelled distances between segments"></canvas></div>
+    </div>
+    <div class="key"><span>farther apart than expected<span class="ramp"></span>closer</span></div>
+    <div class="read" id="micro-read"></div>
+    <div class="lc" id="border-chart"></div>
+    <p class="note" id="micro-note"></p>
   </div>
 </section>
 
@@ -149,7 +181,7 @@ a{color:var(--blue)}
 </section>
 
 <section aria-label="Simulator tests">
-  <h2>How the simulator scored on unseen DNA</h2>
+  <h2>Every test of the simulator, on unseen DNA</h2>
   <div class="tw panel"><table id="simtable"><thead><tr><th>Question</th><th>Result</th><th>Numbers</th></tr></thead><tbody></tbody></table></div>
   <p class="note" id="fitnote"></p>
 </section>
@@ -161,7 +193,7 @@ a{color:var(--blue)}
 
 <section aria-label="Sources">
   <h2>Where the data came from</h2>
-  <p class="small muted">K562 time course: Bond et al. 2023, Genome Research (GEO GSE213909). THP-1: Reed et al. 2022, Cell Reports (GSE201376). A549 and HCT116 maps, CTCF and histone data: ENCODE (Reddy, Aiden and Bernstein labs; Rao et al. 2017, Cell). CTCF motif: JASPAR MA0139.1. Genome: UCSC hg38. The real maps shown on this page are from ENCODE.</p>
+  <p class="small muted">K562 time course: Bond et al. 2023, Genome Research (GEO GSE213909, GSE214123). THP-1: Reed et al. 2022, Cell Reports (GSE201376). A549, HCT116 (cohesin, CTCF and RNA polymerase II removal), GM12878, IMR-90 and HepG2 maps, CTCF and histone data: ENCODE (Reddy, Aiden, Snyder and Bernstein labs; Rao et al. 2017, Cell). Microscope traces of single chromosomes: Bintu et al. 2018, Science (the page shows medians over thousands of chromosomes). CTCF motif: JASPAR MA0139.1. Genome: UCSC hg38. The contact maps shown on this page are from ENCODE.</p>
 </section>
 </div>
 <div id="tip" hidden></div>
@@ -239,20 +271,36 @@ $('#s-motors').addEventListener('input',e=>{nMotors=+e.target.value;applyMotors(
 $('#s-reach').addEventListener('input',e=>{life=+e.target.value/2;});
 $('#s-zone').addEventListener('input',e=>{zoneK=+e.target.value/100;});
 
-/* ---------------- real maps ---------------- */
-let MAPS=null,cur=0;
+/* ---------------- real maps: cell type x region x destroyed part ---------------- */
+let MAPS=null,cc=0,cr=0,cb=0;
 function b64(s){const b=atob(s),a=new Uint8Array(b.length);for(let i=0;i<b.length;i++)a[i]=b.charCodeAt(i);return a;}
-function drawReal(){if(!MAPS)return;const R=MAPS.regions[cur],n=MAPS.n;
-  [['#m-unt','untreated'],['#m-sim','sim'],['#m-aux','auxin']].forEach(([id,k])=>{const a=R[k+'_a']||(R[k+'_a']=b64(R[k])),g=MAPS.ranges[k],w=MAPS.windows[k];drawMapFrom($(id),(i,j)=>a[i*n+j]===0?null:g[0]+a[i*n+j]/255*(g[1]-g[0]),n,w[0],w[1]);});
-  $('#real-read').textContent='chr'+R.chrom+': '+R.start_mb.toFixed(1)+'–'+R.end_mb.toFixed(1)+' Mb · match with motor '+R.score.toFixed(2)+' · match after the motor is destroyed '+R.score_auxin.toFixed(2);}
-function initReal(m){MAPS=m;const seg=$('#region-seg');m.regions.forEach((R,i)=>{const id='rg'+i;seg.insertAdjacentHTML('beforeend','<input type="radio" name="rg" id="'+id+'"'+(i===0?' checked':'')+'><label for="'+id+'">'+R.label+'</label>');
-    seg.querySelector('#'+id).addEventListener('change',()=>{cur=i;drawReal();});});
-  ['#m-unt','#m-sim','#m-aux'].forEach((id,q)=>{const cv=$(id);cv.addEventListener('mousemove',e=>{const r=cv.getBoundingClientRect(),n=MAPS.n,i=Math.floor((e.clientY-r.top)/r.height*n),j=Math.floor((e.clientX-r.left)/r.width*n);if(i<0||j<0||i>=n||j>=n)return;
-      const kk=['untreated','sim','auxin'][q],R=MAPS.regions[cur],a=R[kk+'_a'],v=a[i*n+j],g=MAPS.ranges[kk];showTip(e,(R.start_mb+i*0.025).toFixed(2)+' Mb × '+(R.start_mb+j*0.025).toFixed(2)+' Mb: '+(v===0?'no data':Math.pow(2,g[0]+v/255*(g[1]-g[0])).toFixed(2)+'× expected'));});cv.addEventListener('mouseleave',hideTip);});
-  drawReal();}
+function seg(el,name,items,cur,on){el.innerHTML='';items.forEach((lab,i)=>{const id=name+i;el.insertAdjacentHTML('beforeend','<input type="radio" name="'+name+'" id="'+id+'"'+(i===cur?' checked':'')+'><label for="'+id+'"></label>');
+  el.lastElementChild.textContent=lab;el.querySelector('#'+id).addEventListener('change',()=>on(i));});}
+function view(){const C=MAPS.cells[cc],R=C.regions[cr];return [C,R,R.views[C.breaks[cb].id]];}
+function drawReal(){if(!MAPS)return;const [C,R,V]=view(),n=MAPS.n;
+  [['#m-meas','meas'],['#m-sim','sim']].forEach(([id,k])=>{const a=V[k+'_a']||(V[k+'_a']=b64(V[k])),g=MAPS.ranges[k],w=MAPS.windows[k];drawMapFrom($(id),(i,j)=>a[i*n+j]===0?null:g[0]+a[i*n+j]/255*(g[1]-g[0]),n,w[0],w[1]);});
+  const B=C.breaks[cb];$('#h-meas').textContent=B.meas;$('#h-sim').textContent=B.sim;
+  $('#real-read').textContent=C.label+' · chr'+R.chrom+': '+R.start_mb.toFixed(1)+'–'+R.end_mb.toFixed(1)+' Mb · match between these two maps '+V.score.toFixed(2)+(V.cross!=null?' · the whole simulator against this cell '+V.cross.toFixed(2):'');}
+function setCell(i){cc=i;cr=0;cb=0;const C=MAPS.cells[cc];seg($('#region-seg'),'rg',C.regions.map(r=>r.label),0,j=>{cr=j;drawReal();});
+  seg($('#break-seg'),'bk',C.breaks.map(b=>b.label),0,j=>{cb=j;drawReal();});$('#break-row').style.display=C.breaks.length>1?'':'none';drawReal();}
+function initReal(m){MAPS=m;seg($('#cell-seg'),'cl',m.cells.map(c=>c.label),0,setCell);
+  ['#m-meas','#m-sim'].forEach((id,q)=>{const cv=$(id);cv.addEventListener('mousemove',e=>{const r=cv.getBoundingClientRect(),n=MAPS.n,i=Math.floor((e.clientY-r.top)/r.height*n),j=Math.floor((e.clientX-r.left)/r.width*n);if(i<0||j<0||i>=n||j>=n)return;
+      const kk=['meas','sim'][q],[C,R,V]=view(),a=V[kk+'_a'],v=a[i*n+j],g=MAPS.ranges[kk];showTip(e,(R.start_mb+i*0.025).toFixed(2)+' Mb × '+(R.start_mb+j*0.025).toFixed(2)+' Mb: '+(v===0?'no data':Math.pow(2,g[0]+v/255*(g[1]-g[0])).toFixed(2)+'× expected'));});cv.addEventListener('mouseleave',hideTip);});
+  setCell(0);initMicro();}
+
+/* ---------------- microscope ---------------- */
+let ct=0;
+function drawMicro(){if(!MAPS||!MAPS.traces)return;const T=MAPS.traces[ct],n=T.n,g=MAPS.trange;
+  [['#t-meas','meas'],['#t-sim','sim']].forEach(([id,k])=>{const cv=$(id);cv.width=n;cv.height=n;const a=T[k+'_a']||(T[k+'_a']=b64(T[k]));drawMapFrom(cv,(i,j)=>a[i*n+j]===0?null:g[0]+a[i*n+j]/255*(g[1]-g[0]),n,g[0]*0.8,g[1]*0.8);});
+  $('#micro-read').textContent='chr21: '+T.start_mb.toFixed(1)+'–'+(T.start_mb+n*0.03).toFixed(1)+' Mb · '+n+' segments of 30 kb · '+T.chromosomes.toLocaleString()+' chromosomes · match '+T.r.toFixed(2);
+  const bc=$('#border-chart');bc.innerHTML='';if(T.border_meas)linechart({title:'Where single chromosomes put a border',xlab:'position along the region (Mb)',x:T.border_x,series:[{name:'measured',y:T.border_meas},{name:'3D model',y:T.border_sim}],fmt:'pct',bare:true},bc);}
+function initMicro(){if(!MAPS.traces)return;seg($('#micro-seg'),'mt',MAPS.traces.map(t=>t.label),0,i=>{ct=i;drawMicro();});
+  ['#t-meas','#t-sim'].forEach((id,q)=>{const cv=$(id);cv.addEventListener('mousemove',e=>{const T=MAPS.traces[ct],n=T.n,r=cv.getBoundingClientRect(),i=Math.floor((e.clientY-r.top)/r.height*n),j=Math.floor((e.clientX-r.left)/r.width*n);if(i<0||j<0||i>=n||j>=n)return;
+      const a=T[['meas','sim'][q]+'_a'],v=a[i*n+j],g=MAPS.trange;showTip(e,(T.start_mb+i*0.03).toFixed(2)+' Mb and '+(T.start_mb+j*0.03).toFixed(2)+' Mb: '+(v===0?'no data':Math.pow(2,-(g[0]+v/255*(g[1]-g[0]))).toFixed(2)+'× the usual distance for this spacing'));});cv.addEventListener('mouseleave',hideTip);});
+  drawMicro();}
 
 /* ---------------- charts ---------------- */
-function chart(c){const el=document.createElement('div');el.className='panel chart';el.innerHTML='<h3></h3><div class="bars"></div><p class="note"></p>';el.querySelector('h3').textContent=c.title;el.querySelector('.note').textContent=c.note||'';
+function chart(c,target){const el=document.createElement('div');el.className='panel chart';el.innerHTML='<h3></h3><div class="bars"></div><p class="note"></p>';el.querySelector('h3').textContent=c.title;el.querySelector('.note').textContent=c.note||'';
   const max=c.max||Math.max(...c.items.map(d=>d.v));const bars=el.querySelector('.bars');
   c.items.forEach(d=>{const row=document.createElement('div');row.className='row';row.tabIndex=0;
     row.innerHTML='<span class="lab"></span><span class="trk"><span class="bar'+(d.alt?' alt':'')+'" style="width:'+(Math.max(d.v,0)/max*100).toFixed(1)+'%"></span>'+(c.ref!=null?'<span class="ref" style="left:'+(c.ref/max*100).toFixed(1)+'%"></span>':'')+'</span><span class="val"></span>';
@@ -260,15 +308,30 @@ function chart(c){const el=document.createElement('div');el.className='panel cha
     const t=d.label+': '+(c.fmt==='pct'?Math.round(d.v*100)+'%':d.v.toFixed(2))+(d.tip?' — '+d.tip:'')+(c.ref!=null?' (dashed line: '+c.refLabel+')':'');
     row.addEventListener('mousemove',e=>showTip(e,t));row.addEventListener('mouseleave',hideTip);row.addEventListener('focus',()=>{const r=row.getBoundingClientRect();showTip({clientX:r.left+40,clientY:r.bottom-6},t);});row.addEventListener('blur',hideTip);
     bars.appendChild(row);});
-  $('#charts').appendChild(el);}
-function fill(){DATA.charts.forEach(chart);
+  (target||$('#charts')).appendChild(el);}
+function linechart(c,target){const el=document.createElement('div');el.className=c.bare?'chart lc':'panel chart lc';el.innerHTML='<h3></h3><div class="key"></div><div class="plot"></div><p class="note"></p>';
+  el.querySelector('h3').textContent=c.title;el.querySelector('.note').textContent=c.note||'';
+  const W=520,H=210,ml=44,mr=12,mt=10,mb=34,n=c.x.length,all=[].concat(...c.series.map(s=>s.y)).filter(v=>v!=null);let lo=Math.min(...all,0),hi=Math.max(...all,0);const pad=(hi-lo)*0.08||0.1;lo-=lo<0?pad:0;hi+=pad;
+  const X=i=>ml+i/(n-1)*(W-ml-mr),Y=v=>mt+(hi-v)/(hi-lo)*(H-mt-mb),f=v=>c.fmt==='pct'?Math.round(v*100)+'%':(v>0?'+':'')+v.toFixed(1);
+  let g='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+c.title.replace(/"/g,'')+'"><line class="ax" x1="'+ml+'" x2="'+ml+'" y1="'+mt+'" y2="'+(H-mb)+'"/><line class="'+(lo<0?'zero':'ax')+'" x1="'+ml+'" x2="'+(W-mr)+'" y1="'+Y(0)+'" y2="'+Y(0)+'"/>';
+  [lo<0?lo+pad:null,hi-pad,0].forEach(v=>{if(v!=null)g+='<text x="'+(ml-6)+'" y="'+(Y(v)+4)+'" text-anchor="end">'+f(v)+'</text>';});
+  const tk=[0,Math.floor((n-1)/2),n-1];tk.forEach((i,q)=>{g+='<text x="'+X(i)+'" y="'+(H-mb+15)+'" text-anchor="'+(q===0?'start':(q===2?'end':'middle'))+'">'+c.x[i]+'</text>';});
+  g+='<text x="'+((ml+W-mr)/2)+'" y="'+(H-4)+'" text-anchor="middle">'+c.xlab+'</text>';
+  c.series.forEach((s,q)=>{let d='',pen=false;s.y.forEach((v,i)=>{if(v==null){pen=false;return;}d+=(pen?'L':'M')+X(i).toFixed(1)+' '+Y(v).toFixed(1);pen=true;});g+='<path class="s'+q+'" d="'+d+'"/>';});
+  g+='<rect class="hit" x="'+ml+'" y="'+mt+'" width="'+(W-ml-mr)+'" height="'+(H-mt-mb)+'" fill="transparent"/></svg>';el.querySelector('.plot').innerHTML=g;
+  el.querySelector('.key').innerHTML=c.series.map((s,q)=>'<span><span class="sw" style="background:var(--'+(q?'orange':'blue')+')"></span>'+s.name+'</span>').join('');
+  const hit=el.querySelector('.hit');hit.addEventListener('mousemove',e=>{const r=hit.getBoundingClientRect(),i=Math.max(0,Math.min(n-1,Math.round((e.clientX-r.left)/r.width*(n-1))));
+    showTip(e,c.x[i]+(c.unit||'')+': '+c.series.map(s=>s.name+' '+(s.y[i]==null?'no data':f(s.y[i]))).join(' · '));});hit.addEventListener('mouseleave',hideTip);
+  (target||$('#charts')).appendChild(el);}
+function fill(){DATA.charts.forEach(c=>chart(c));DATA.charts2.forEach(c=>(c.type==='line'?linechart:chart)(c,$('#charts2')));
   const tb=$('#simtable tbody');DATA.sim.forEach(r=>{const tr=document.createElement('tr');tr.innerHTML='<td></td><td class="'+(r.verdict==='PASS'?'pass':(r.verdict==='FAIL'?'fail':'muted'))+'"></td><td class="mono small"></td>';tr.children[0].textContent=r.q;tr.children[1].textContent=r.verdict==='PASS'?'Yes':(r.verdict==='FAIL'?'No':'Not counted');tr.children[2].textContent=r.n;tb.appendChild(tr);});
-  $('#fitnote').textContent=DATA.fitnote;$('#real-intro').textContent=DATA.real_intro;$('#real-note').textContent=DATA.real_note;
+  DATA.steps.forEach(t=>{const d=document.createElement('div');d.className='step';d.innerHTML='<span class="k"></span><span class="v"></span><span></span>';d.children[0].textContent=t.k;d.children[1].textContent=t.v;d.children[2].textContent=t.t;$('#steps').appendChild(d);});
+  $('#fitnote').textContent=DATA.fitnote;$('#real-intro').textContent=DATA.real_intro;$('#real-note').textContent=DATA.real_note;$('#up-intro').textContent=DATA.up_intro;$('#micro-intro').textContent=DATA.micro_intro;$('#micro-note').textContent=DATA.micro_note;
   DATA.open.forEach(t=>{const li=document.createElement('li');li.textContent=t;$('#open').appendChild(li);});}
 
 function start(){fill();boot();requestAnimationFrame(loop);
   fetch('maps.json').then(r=>r.json()).then(initReal).catch(()=>{$('#real-read').textContent='The real maps could not be loaded.';});
-  const redraw=()=>{readTheme();drawTrack();drawSimMap();drawReal();};
+  const redraw=()=>{readTheme();drawTrack();drawSimMap();drawReal();drawMicro();};
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change',redraw);new MutationObserver(redraw).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
   addEventListener('resize',()=>{sizeTrack();drawTrack();});
   if(matchMedia('(prefers-reduced-motion: reduce)').matches){paused=true;$('#btn-pause').setAttribute('aria-pressed','true');$('#btn-pause').textContent='Play';}}

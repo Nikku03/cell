@@ -1,8 +1,9 @@
 """FOLDPAGE -- builds the final page 'How a chromosome folds' (rules, an in-browser simulator, measured vs simulated maps,
 the evidence) from the recorded test outputs, so every number on the page comes from a results file.
 
-Reads: outputs/k562_3d, thp1_3d, a549_3d (G16-G18), outputs/loopcode (G19, G20), outputs/foldsim (G21 + HCT116 example
-maps, ENCODE-derived). Template: rem/atlas/pages/foldpage.html. Writes index.html + maps.json to the folder given.
+Reads: outputs/k562_3d, thp1_3d, a549_3d (G16-G18), outputs/loopcode (G19, G20), outputs/foldsim (G21, G22 + example maps,
+ENCODE-derived, and medians of the microscope traces). Template: rem/atlas/pages/foldpage.html. Writes index.html +
+maps.json to the folder given.
 
 Run: python3 -I rem/atlas/foldpage.py OUT_DIR
 """
@@ -22,8 +23,14 @@ _s = importlib.util.spec_from_file_location("foldsim", os.path.join(HERE, "folds
 J = lambda *p: json.load(open(R("outputs", *p)))
 
 
-RANGES = dict(untreated=(-1.5, 1.5), sim=(-0.4, 0.4), auxin=(-1.5, 1.5))          # log2 range stored in a byte
-WINDOWS = dict(untreated=(-0.7, 1.1), sim=(-0.22, 0.32), auxin=(-0.7, 1.1))         # log2 range shown (each map its own)
+RANGES = dict(meas=(-1.5, 1.5), sim=(-1.0, 1.0))          # log2 range stored in a byte
+WINDOWS = dict(meas=(-0.7, 1.1), sim=(-0.45, 0.7))         # log2 range shown (each kind its own)
+TRANGE = (-0.6, 0.6)                                       # microscope: log2(usual distance / distance)
+CELLS = dict(hct116="HCT116", gm12878="GM12878", imr90="IMR-90", hepg2="HepG2")
+
+
+def b64(q):
+    return base64.b64encode(q.astype(np.uint8).tobytes()).decode()
 
 
 def oe8(M, kind):
@@ -37,13 +44,27 @@ def oe8(M, kind):
     with np.errstate(divide="ignore", invalid="ignore"):
         L = np.log2(np.where(O > 0, O, np.nan))
     lo, hi = RANGES[kind]; q = np.clip((L - lo) / (hi - lo), 0, 1) * 254 + 1; q[~np.isfinite(L)] = 0
-    return base64.b64encode(q.astype(np.uint8).tobytes()).decode()
+    return b64(q)
+
+
+def dist8(M):
+    """median distances between segments -> log2(mean distance at that spacing / distance): closer than usual = high."""
+    n = len(M); O = np.full((n, n), np.nan); i = np.arange(n)
+    with np.errstate(all="ignore"):
+        for k in range(1, n):
+            d = np.diag(M, k).astype(float); mu = np.nanmean(d)
+            if np.isfinite(mu) and mu > 0:
+                O[i[:n - k], i[:n - k] + k] = O[i[:n - k] + k, i[:n - k]] = -np.log2(d / mu)
+    lo, hi = TRANGE; q = np.clip((O - lo) / (hi - lo), 0, 1) * 254 + 1; q[~np.isfinite(O)] = 0
+    return b64(q)
 
 
 def score(P, M):
-    Mb, valid = fs.balance(M); Om, Os = fs.obs_over_exp(Mb, valid), fs.obs_over_exp(P, valid); iu = np.triu_indices(len(M), 2); sep = iu[1] - iu[0]
-    m = (sep <= 60) & np.isfinite(Om[iu]) & np.isfinite(Os[iu])
+    """the map score of the tests (foldsimtest.region_score)."""
     from scipy.stats import spearmanr
+    Mb, valid = fs.balance(M); Pb, v2 = fs.balance(np.where(valid[:, None] & valid[None, :], P, 0.0)); valid = valid & v2
+    Om, Os = fs.obs_over_exp(Mb, valid), fs.obs_over_exp(Pb, valid); iu = np.triu_indices(len(M), 2); sep = iu[1] - iu[0]
+    m = (sep <= 60) & np.isfinite(Om[iu]) & np.isfinite(Os[iu])
     return float(spearmanr(Os[iu][m], Om[iu][m])[0])
 
 

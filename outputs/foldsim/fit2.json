@@ -1,0 +1,299 @@
+{
+ "params": {
+  "processivity_kb": 400,
+  "separation_kb": 150,
+  "c": 1.0,
+  "alpha": 0.75,
+  "w": 0.3,
+  "release": 0.0,
+  "e": 0.0,
+  "beta": 0.0,
+  "kappa": 0.1,
+  "smooth": 4,
+  "k_loop": 3.0,
+  "radius": 1.5,
+  "k_zone": 0.001
+ },
+ "log": [
+  {
+   "processivity_kb": 200,
+   "separation_kb": 150,
+   "c": 1.0,
+   "alpha": 0.75,
+   "w": 0.0,
+   "release": 0.0,
+   "e": 0.0,
+   "beta": 0.0,
+   "kappa": 0.0,
+   "smooth": 4,
+   "map": 0.26130856717926043,
+   "auc": 0.7176724137931034
+  },
+  {
+   "processivity_kb": 200,
+   "separation_kb": 150,
+   "c": 1.0,
+   "alpha": 0.75,
+   "w": 0.0,
+   "release": 0.0,
+   "e": 0.0,
+   "beta": 0.0,
+   "kappa": 0.1,
+   "smooth": 4,
+   "map": 0.4616581494722726,
+   "auc": 0.7176724137931034
+  },
+  {
+   "processivity_kb": 200,
+   "separation_kb": 150,
+   "c": 1.0,
+   "alpha": 0.75,
+   "w": 0.0,
+   "release": 0.0,
+   "e": 0.0,
+   "beta": 0.0,
+   "kappa": 0.2,
+   "smooth": 4,
+   "map": 0.458861961063688,
+   "auc": 0.7176724137931034
+  },
+  {
+   "processivity_kb": 200,
+   "separation_kb": 150,
+   "c": 1.0,
+   "alpha": 0.75,
+   "w": 0.0,
+   "release": 0.0,
+   "e": 0.0,
+   "beta": 0.0,
+   "kappa": 0.4,
+   "smooth": 4,
+   "map": 0.45586327479037786,
+   "auc": 0.7176724137931034
+  },
+  {
+   "processivity_kb": 200,
+   "separation_kb": 150,
+   "c": 1.0,
+   "alpha": 0.75,
+   "w": 0.0,
+   "release": 0.0,
+   "e": 0.0,
+   "beta": 0.0,
+   "kappa": 0.1,
+   "smooth": 2,
+   "map": 0.44061031312437277,
+   "auc": 0.7176724137931034
+  },
+  {
+   "processivity_kb": 200,
+   "separation_kb": 150,
+   "c": 1.0,
+   "alpha": 0.75,
+   "w": 0.0,
+   "release": 0.0,
+   "e": 0.0,
+   "beta": 0.0,
+   "kappa": 0.1,
+   "smooth": 8,
+   "map": 0.4531749641814034,
+   "auc": 0.7176724137931034
+  },
+  {
+   "processivity_kb": 200,
+   "separation_kb": 150,
+   "c": 1.0,
+   "alpha": 0.75,
+   "w": 0.3,
+   "release": 0.0,
+   "e": 0.0,
+   "beta": 0.0,
+   "kappa": 0.1,
+   "smooth": 4,
+   "map": 0.4817115744267311,
+   "auc": 0.7248563218390804
+  },
+  {
+   "processivity_kb": 400,
+   "separation_kb": 150,
+   "c": 1.0,
+   "alpha": 0.75,
+   "w": 0.3,
+   "release": 0.0,
+   "e": 0.0,
+   "beta": 0.0,
+   "kappa": 0.1,
+   "smooth": 4,
+   "map": 0.4915581847816689,
+   "auc": 0.7492816091954023
+  },
+  {
+   "processivity_kb": 400,
+   "separation_kb": 100,
+   "c": 1.0,
+   "alpha": 0.75,
+   "w": 0.3,
+   "release": 0.0,
+   "e": 0.0,
+   "beta": 0.0,
+   "kappa": 0.1,
+   "smooth": 4,
+   "map": 0.49894332737259794,
+   "auc": 0.728448275862069
+  },
+  {
+   "processivity_kb": 400,
+   "separation_kb": 150,
+   "c": 1.0,
+   "alpha": 0.75,
+   "w": 0.3,
+   "release": 0.01,
+   "e": 0.0,
+   "beta": 0.0,
+   "kappa": 0.1,
+   "smooth": 4,
+   "map": 0.4776681119393852,
+   "auc": 0.7606096832038255
+  },
+  {
+   "processivity_kb": 400,
+   "separation_kb": 150,
+   "c": 1.0,
+   "alpha": 0.75,
+   "w": 0.3,
+   "release": 0.0,
+   "e": 0.1,
+   "beta": 0.0,
+   "kappa": 0.1,
+   "smooth": 4,
+   "map": 0.4811056675901204,
+   "auc": 0.7268120393120393
+  },
+  {
+   "processivity_kb": 400,
+   "separation_kb": 150,
+   "c": 1.0,
+   "alpha": 0.75,
+   "w": 0.3,
+   "release": 0.0,
+   "e": 0.0,
+   "beta": 2.0,
+   "kappa": 0.1,
+   "smooth": 4,
+   "map": 0.4480707185813352,
+   "auc": 0.7435344827586207
+  }
+ ],
+ "grid3d": [
+  {
+   "k_loop": 1.0,
+   "radius": 0.7,
+   "k_zone": 0.0,
+   "map": 0.3233090077334437
+  },
+  {
+   "k_loop": 1.0,
+   "radius": 0.7,
+   "k_zone": 0.001,
+   "map": 0.3993714492336726
+  },
+  {
+   "k_loop": 1.0,
+   "radius": 0.7,
+   "k_zone": 0.002,
+   "map": 0.39389209464244307
+  },
+  {
+   "k_loop": 1.0,
+   "radius": 1.5,
+   "k_zone": 0.0,
+   "map": 0.43351861575563244
+  },
+  {
+   "k_loop": 1.0,
+   "radius": 1.5,
+   "k_zone": 0.001,
+   "map": 0.459379860086743
+  },
+  {
+   "k_loop": 1.0,
+   "radius": 1.5,
+   "k_zone": 0.002,
+   "map": 0.42011498223284255
+  },
+  {
+   "k_loop": 1.0,
+   "radius": 3.0,
+   "k_zone": 0.0,
+   "map": 0.3640401321612822
+  },
+  {
+   "k_loop": 1.0,
+   "radius": 3.0,
+   "k_zone": 0.001,
+   "map": 0.4586342112293139
+  },
+  {
+   "k_loop": 1.0,
+   "radius": 3.0,
+   "k_zone": 0.002,
+   "map": 0.40954346344456205
+  },
+  {
+   "k_loop": 3.0,
+   "radius": 0.7,
+   "k_zone": 0.0,
+   "map": 0.3485491327420918
+  },
+  {
+   "k_loop": 3.0,
+   "radius": 0.7,
+   "k_zone": 0.001,
+   "map": 0.4372983525051345
+  },
+  {
+   "k_loop": 3.0,
+   "radius": 0.7,
+   "k_zone": 0.002,
+   "map": 0.41144010565178063
+  },
+  {
+   "k_loop": 3.0,
+   "radius": 1.5,
+   "k_zone": 0.0,
+   "map": 0.4097774283881372
+  },
+  {
+   "k_loop": 3.0,
+   "radius": 1.5,
+   "k_zone": 0.001,
+   "map": 0.4944945832162035
+  },
+  {
+   "k_loop": 3.0,
+   "radius": 1.5,
+   "k_zone": 0.002,
+   "map": 0.45371114536398793
+  },
+  {
+   "k_loop": 3.0,
+   "radius": 3.0,
+   "k_zone": 0.0,
+   "map": 0.3270598117883407
+  },
+  {
+   "k_loop": 3.0,
+   "radius": 3.0,
+   "k_zone": 0.001,
+   "map": 0.47168483228962893
+  },
+  {
+   "k_loop": 3.0,
+   "radius": 3.0,
+   "k_zone": 0.002,
+   "map": 0.4264187674122853
+  }
+ ],
+ "fitted_on": "DEV (odd autosomes), K562",
+ "seed": 20261205
+}
