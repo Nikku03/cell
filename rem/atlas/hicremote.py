@@ -1,4 +1,4 @@
-"""HICREMOTE -- read parts of a Juicer .hic file (version 7-8) over HTTPS with byte-range requests, so a 5-25 GB contact
+"""HICREMOTE -- read parts of a Juicer .hic file (version 7-9) over HTTPS with byte-range requests, so a 5-25 GB contact
 map never has to be stored: only the header, the index and the blocks of one chromosome at one resolution are fetched.
 
 Used by k3dbank.py (G16, K562 time course). Written from the published .hic format (Durand et al. 2016 Cell Systems;
@@ -27,8 +27,10 @@ class HicRemote:
             raise ValueError("not a .hic file")
         p = [4]
         ver = self._i32(b, p); master = self._i64(b, p); self._s(b, p)
-        if ver < 7 or ver > 8:
+        if ver < 7 or ver > 9:
             raise ValueError(f".hic version {ver} not supported")
+        if ver >= 9:                               # normalisation-vector index position and length
+            self._i64(b, p); self._i64(b, p)
         for _ in range(self._i32(b, p)):           # attributes (can be long: statistics, graphs)
             while True:
                 try:
@@ -37,13 +39,21 @@ class HicRemote:
                     b = self._get(0, len(b) * 4)
         n = self._i32(b, p); self.chroms = {}
         for k in range(n):
-            name = self._s(b, p); ln = self._i32(b, p); self.chroms[name] = (k, ln)
+            name = self._s(b, p); ln = self._i64(b, p) if ver >= 9 else self._i32(b, p); self.chroms[name] = (k, ln)
         self.resolutions = [self._i32(b, p) for _ in range(self._i32(b, p))]
         self.version = ver
-        f = self._get(master, 1 << 20); q = [0]
-        self._i32(f, q); self.index = {}
-        for _ in range(self._i32(f, q)):
-            key = self._s(f, q); pos = self._i64(f, q); size = self._i32(f, q); self.index[key] = (pos, size)
+        size = 1 << 20
+        while True:                                # master index: chr1_chr2 -> (position, size); grow the read if it is cut short
+            f = self._get(master, size); q = [0]; self.index = {}
+            try:
+                self._i64(f, q) if ver >= 9 else self._i32(f, q)
+                for _ in range(self._i32(f, q)):
+                    key = self._s(f, q); pos = self._i64(f, q); sz = self._i32(f, q); self.index[key] = (pos, sz)
+                break
+            except (struct.error, ValueError):
+                if len(f) < size:
+                    raise
+                size *= 4
 
     # -- byte helpers
     def _get(self, start, n, tries=6):
@@ -103,10 +113,15 @@ class HicRemote:
                     if x < 0:
                         continue
                     want.setdefault((x, y), []).append(n)
-                    for bn in ((y // bbc) * bcc + x // bbc, (x // bbc) * bcc + y // bbc):
+                    if self.version >= 9:           # v9 intra blocks: depth (log2 of distance) x position along the diagonal
+                        bns = (int(np.log2(1 + abs(x - y) / np.sqrt(2) / bbc)) * bcc + (x + y) // 2 // bbc,)
+                    else:
+                        bns = ((y // bbc) * bcc + x // bbc, (x // bbc) * bcc + y // bbc)
+                    for bn in bns:
                         if bn in bm:
                             need.add(bn)
-        bl = sorted(bm[bn] for bn in need if bm[bn][1] > 0); out = np.zeros(len(pairs)); g = 0
+        K = 1 << 32; wk = np.array(sorted(x * K + y for x, y in want), np.int64); ks = np.zeros(len(wk))
+        bl = sorted(bm[bn] for bn in need if bm[bn][1] > 0); g = 0
         while g < len(bl):
             h = g; start = bl[g][0]
             while h + 1 < len(bl) and bl[h + 1][0] + bl[h + 1][1] - start <= self.chunk and bl[h + 1][0] <= bl[h][0] + bl[h][1] + 4096:
@@ -114,10 +129,16 @@ class HicRemote:
             buf = self._get(start, bl[h][0] + bl[h][1] - start)
             for fp, sz in bl[g:h + 1]:
                 x, y, v = self._records(zlib.decompress(buf[fp - start:fp - start + sz]))
-                for a, c, w in zip(np.minimum(x, y).tolist(), np.maximum(x, y).tolist(), v.tolist()):
-                    for n in want.get((a, c), ()):
-                        out[n] += w
+                key = np.minimum(x, y).astype(np.int64) * K + np.maximum(x, y).astype(np.int64)
+                ix = np.minimum(np.searchsorted(wk, key), len(wk) - 1); m = wk[ix] == key
+                np.add.at(ks, ix[m], v[m])
             g = h + 1
+        out = np.zeros(len(pairs)); pos = {int(k): n for n, k in enumerate(wk)}
+        for (x, y), ns in want.items():
+            w = ks[pos[x * K + y]]
+            if w:
+                for n in ns:
+                    out[n] += w
         return out
 
     def blocks(self, chrom, binsize):
@@ -158,13 +179,18 @@ class HicRemote:
         p = [0]; n = self._i32(d, p)
         xo = self._i32(d, p); yo = self._i32(d, p)
         short = d[p[0]] == 0; p[0] += 1
+        sx = sy = True
+        if self.version >= 9:                      # v9: bin offsets may be 16- or 32-bit
+            sx = d[p[0]] == 0; sy = d[p[0] + 1] == 0; p[0] += 2
         typ = d[p[0]]; p[0] += 1
         if typ == 1:
             X, Y, V = [], [], []
-            rows = struct.unpack_from("<h", d, p[0])[0]; p[0] += 2
-            ct = np.dtype([("x", "<i2"), ("v", "<i2" if short else "<f4")])
+            fy, wy = ("<h", 2) if sy else ("<i", 4); fx, wx = ("<h", 2) if sx else ("<i", 4)
+            rows = struct.unpack_from(fy, d, p[0])[0]; p[0] += wy
+            ct = np.dtype([("x", "<i2" if sx else "<i4"), ("v", "<i2" if short else "<f4")])
             for _ in range(rows):
-                y, cols = struct.unpack_from("<hh", d, p[0]); p[0] += 4
+                y = struct.unpack_from(fy, d, p[0])[0]; p[0] += wy
+                cols = struct.unpack_from(fx, d, p[0])[0]; p[0] += wx
                 a = np.frombuffer(d, ct, cols, p[0]); p[0] += cols * ct.itemsize
                 X.append(a["x"].astype(np.int64) + xo); Y.append(np.full(cols, yo + y, np.int64)); V.append(a["v"].astype(np.float64))
             x, y, v = (np.concatenate(z) if z else np.zeros(0) for z in (X, Y, V))
