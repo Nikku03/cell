@@ -125,6 +125,9 @@ def load():
     S["rad"] = rad
     o = np.lexsort((S["pos"], S["chrom"])); S = {k: v[o] for k, v in S.items()}
     LA = Z["loop_anchor"]; L = dict(chrom=LA[:, 0], a0=LA[:, 1].astype(np.int64), a1=LA[:, 2].astype(np.int64), b0=LA[:, 4].astype(np.int64), b1=LA[:, 5].astype(np.int64))
+    sw = L["a0"] > L["b0"]                                # a few loops list their ends right-to-left: put the left end first
+    for x, y in (("a0", "b0"), ("a1", "b1")):
+        L[x], L[y] = np.where(sw, L[y], L[x]), np.where(sw, L[x], L[y])
     return dict(A=A, Z=Z, H=H, S=S, L=L)
 
 

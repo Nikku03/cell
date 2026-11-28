@@ -26,7 +26,7 @@ CLAIMS (declared before running; ids G20-*):
         sign of the chosen change): share of the 72 h change reached at 6 h, F_act for anchor H3K27ac and F_loop for the
         loop; d = F_act - F_loop. PASS: d >= +0.01 AND d > 0 in >= 95% of 2,000 bootstrap resamples of loops.
         Controls: the loops' measured 6 h change replaced by F_act x (their 72 h change) + counting noise (equal timing;
-        50 runs) must pass <= 10%; replaced by (F_act - 0.25) x (72 h change) + noise (planted lag) must pass >= 90%.
+        200 runs) must pass <= 10%; replaced by (F_act - 0.25) x (72 h change) + noise (planted lag) must pass >= 90%.
  G20-E1 A LOOP CARRIES ITS FAR END'S ACTIVITY TO THE GENE. Pairs: an expressed gene whose start site is within 10 kb of
         one anchor, and the loop's other anchor (its window, >= 1 H3K27ac site, > 20 kb from the gene start). Matched
         control for each pair: the H3K27ac site whose distance from the gene start is closest to the looped distance
@@ -46,7 +46,7 @@ CLAIMS (declared before running; ids G20-*):
         its noise cannot bias F_zone). d = F_act - F_zone. PASS: the E1 change at 72 h goes with the chosen sign
         (pooled sum > 0), d >= +0.01 AND d > 0 in >= 95% of 2,000 bootstrap resamples of bins.
         Controls: E1 change at 6 h replaced by F_act x (72 h change) + noise (SD of the 6 h E1 change among the half
-        of bins with the smallest H3K27ac change; 50 runs) must pass <= 10%; replaced by (F_act - 0.25) x (72 h change)
+        of bins with the smallest H3K27ac change; 200 runs) must pass <= 10%; replaced by (F_act - 0.25) x (72 h change)
         + noise must pass >= 90%.
  REPORTED: D1 weights and r of single features; D2 shares at 6 h for JUN, ATAC, CTCF as well; E1 with promoter H3K27ac
         change partialled out; numbers of loops / pairs / bins used.
@@ -86,7 +86,7 @@ CLAIMS = ["G20-D1", "G20-D2", "G20-E1", "G20-M2", "G20-M3"]
 LAYERS = ["LOOPCODE_K562", "K562_PMA_3D"]
 SEED = 20261202
 DEV = [str(c) for c in range(1, 23, 2)]; EXAM = [str(c) for c in range(2, 23, 2)]
-NNEG, NPL, NSIM = (3, 2, 20) if TRIAL else (10, 5, 50)
+NNEG, NPL, NSIM = (3, 2, 20) if TRIAL else (10, 5, 200)
 N_BOOT = 500 if TRIAL else 2000
 WIN, SEL = 5000, 0.5
 ASSAYS = ["ctcf", "rad21", "h3k27ac", "jun", "atac"]
@@ -143,6 +143,9 @@ def load():
     S = {a: Sites(A, a) for a in ASSAYS}
     LA = Z["loop_anchor"]; L = dict(chrom=LA[:, 0], a0=LA[:, 1].astype(np.int64), a1=LA[:, 2].astype(np.int64), b0=LA[:, 4].astype(np.int64), b1=LA[:, 5].astype(np.int64),
                                     lfc=Z["loop_lfc"][:, 1].astype(float))
+    sw = L["a0"] > L["b0"]                                # a few loops list their ends right-to-left: put the left end first
+    for x, y in (("a0", "b0"), ("a1", "b1")):
+        L[x], L[y] = np.where(sw, L[y], L[x]), np.where(sw, L[x], L[y])
     W = {a: (S[a].window(L["chrom"], L["a0"] - WIN, L["a1"] + WIN)[0], S[a].window(L["chrom"], L["b0"] - WIN, L["b1"] + WIN)[0]) for a in ASSAYS}
     WI = S["h3k27ac"].window(L["chrom"], L["a1"] + WIN, L["b0"] - WIN)[0]
     cols = [tuple(map(int, c.split("_"))) for c in Z["rna_cols"]]; e = np.log2(Z["tpm"].astype(float) + 1)
