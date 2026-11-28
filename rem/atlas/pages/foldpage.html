@@ -38,7 +38,7 @@ canvas{display:block;max-width:100%;border-radius:3px}
 @media (max-width:640px){.maps{grid-template-columns:minmax(0,1fr)}}
 .maps.two{grid-template-columns:repeat(2,minmax(0,1fr))}
 .sq{width:100%;aspect-ratio:1/1;max-width:100%;image-rendering:pixelated;border:1px solid var(--line)}
-.lc svg{display:block;width:100%;height:auto;overflow:visible}
+.lc svg{display:block;width:100%;height:auto;overflow:visible} .lc.chart:not(.panel){max-width:680px}
 .lc text{font-family:var(--mono);font-size:11px;fill:var(--ink2)}
 .lc .ax{stroke:var(--axis);stroke-width:1} .lc .zero{stroke:var(--axis);stroke-width:1;stroke-dasharray:3 3}
 .lc .s0{stroke:var(--blue)} .lc .s1{stroke:var(--orange)} .lc path{fill:none;stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
@@ -311,8 +311,8 @@ function chart(c,target){const el=document.createElement('div');el.className='pa
   (target||$('#charts')).appendChild(el);}
 function linechart(c,target){const el=document.createElement('div');el.className=c.bare?'chart lc':'panel chart lc';el.innerHTML='<h3></h3><div class="key"></div><div class="plot"></div><p class="note"></p>';
   el.querySelector('h3').textContent=c.title;el.querySelector('.note').textContent=c.note||'';
-  const W=520,H=210,ml=44,mr=12,mt=10,mb=34,n=c.x.length,all=[].concat(...c.series.map(s=>s.y)).filter(v=>v!=null);let lo=Math.min(...all,0),hi=Math.max(...all,0);const pad=(hi-lo)*0.08||0.1;lo-=lo<0?pad:0;hi+=pad;
-  const X=i=>ml+i/(n-1)*(W-ml-mr),Y=v=>mt+(hi-v)/(hi-lo)*(H-mt-mb),f=v=>c.fmt==='pct'?Math.round(v*100)+'%':(v>0?'+':'')+v.toFixed(1);
+  const W=c.bare?Math.max(330,Math.min(640,(target&&target.clientWidth)||640)):330,H=c.bare?190:210,ml=40,mr=10,mt=10,mb=34,n=c.x.length,all=[].concat(...c.series.map(s=>s.y)).filter(v=>v!=null);let lo=Math.min(...all,0),hi=Math.max(...all,0);const pad=(hi-lo)*0.08||0.1;lo-=lo<0?pad:0;hi+=pad;
+  const X=i=>ml+i/(n-1)*(W-ml-mr),Y=v=>mt+(hi-v)/(hi-lo)*(H-mt-mb),f=v=>c.fmt==='pct'?Math.round(v*100)+'%':(c.fmt==='spct'?(v>0?'+':'')+Math.round(v*100)+'%':(v>0?'+':'')+v.toFixed(1));
   let g='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+c.title.replace(/"/g,'')+'"><line class="ax" x1="'+ml+'" x2="'+ml+'" y1="'+mt+'" y2="'+(H-mb)+'"/><line class="'+(lo<0?'zero':'ax')+'" x1="'+ml+'" x2="'+(W-mr)+'" y1="'+Y(0)+'" y2="'+Y(0)+'"/>';
   [lo<0?lo+pad:null,hi-pad,0].forEach(v=>{if(v!=null)g+='<text x="'+(ml-6)+'" y="'+(Y(v)+4)+'" text-anchor="end">'+f(v)+'</text>';});
   const tk=[0,Math.floor((n-1)/2),n-1];tk.forEach((i,q)=>{g+='<text x="'+X(i)+'" y="'+(H-mb+15)+'" text-anchor="'+(q===0?'start':(q===2?'end':'middle'))+'">'+c.x[i]+'</text>';});
