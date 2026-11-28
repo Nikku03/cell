@@ -33,8 +33,8 @@ SITE = 5000
 
 class Sim:
     """R independent copies of a lattice of n sites with motors; vectorised over copies."""
-    def __init__(self, n, p_left, p_right, n_motors, lifetime, load=None, R=10, rng=None):
-        self.n, self.R, self.nc, self.tau = int(n), int(R), int(max(n_motors, 0)), float(lifetime)
+    def __init__(self, n, p_left, p_right, n_motors, lifetime, load=None, R=10, rng=None, release=0.0):
+        self.n, self.R, self.nc, self.tau = int(n), int(R), int(max(n_motors, 0)), float(lifetime); self.release = float(release)
         self.pl, self.pr = np.asarray(p_left, float), np.asarray(p_right, float); self.rng = rng or np.random.default_rng(0)
         w = np.ones(self.n - 1) if load is None else np.maximum(np.asarray(load, float)[:-1], 0) + 1e-12
         self.cum = np.cumsum(w / w.sum())
@@ -64,6 +64,8 @@ class Sim:
         todo = ~self.on
         if todo.any():
             self._land(todo)
+        if self.release > 0:                                  # leaky stop signs: a stalled leg may start moving again
+            self.sl &= self.rng.random((self.R, self.nc)) >= self.release; self.sr &= self.rng.random((self.R, self.nc)) >= self.release
         t = np.minimum(self.r + 1, self.n - 1); can = self.on & ~self.sr & (self.r + 1 < self.n) & ~self.occ[self.rep, t]
         self.occ[self.rep[can], self.r[can]] = False; self.r[can] += 1; self.occ[self.rep[can], self.r[can]] = True
         self.sr[can] = self.rng.random(int(can.sum())) < self.pr[self.r[can]]
@@ -83,18 +85,24 @@ class Sim:
         return (np.concatenate(L), np.concatenate(Rr)) if L else (np.zeros((0, self.nc), int), np.zeros((0, self.nc), int))
 
 
-def capture(n, pos, strand, q, c):
-    """capture probabilities per lattice site from stop signs: pos (bp), strand (+1 / -1), q (strength rank 0-1), scale c."""
-    pl, pr = np.zeros(n), np.zeros(n); x = np.minimum(np.asarray(pos) // SITE, n - 1); p = np.clip(c * np.asarray(q, float), 0, 1)
-    for arr, m in ((pl, np.asarray(strand) > 0), (pr, np.asarray(strand) < 0)):
+def capture_p(n, pos, strand, p):
+    """capture probabilities per lattice site: pos (bp), strand (+1, -1, or 0 = holds legs from both sides), probability p."""
+    pl, pr = np.zeros(n), np.zeros(n); x = np.minimum(np.asarray(pos) // SITE, n - 1); p = np.clip(np.asarray(p, float), 0, 1); st = np.asarray(strand)
+    for arr, m in ((pl, st >= 0), (pr, st <= 0)):
         keep = np.ones(n); np.multiply.at(keep, x[m], 1 - p[m]); arr[:] = 1 - keep
     return pl, pr
 
 
-def chromosome(length_bp, pos, strand, q, processivity_kb=200, separation_kb=150, c=0.9, load=None, R=10, snaps=100, every=5, rng=None):
-    """simulate one chromosome (or region of length_bp); returns (legs_left, legs_right) of all snapshots, lattice size."""
-    n = int(length_bp // SITE) + 1; pl, pr = capture(n, pos, strand, q, c); tau = processivity_kb * 1000 / (2 * SITE)
-    S = Sim(n, pl, pr, int(round(length_bp / (separation_kb * 1000))), tau, load=load, R=R, rng=rng)
+def capture(n, pos, strand, q, c):
+    """as capture_p with probability = c x strength rank q."""
+    return capture_p(n, pos, strand, c * np.asarray(q, float))
+
+
+def chromosome(length_bp, pos, strand, q, processivity_kb=200, separation_kb=150, c=0.9, load=None, R=10, snaps=100, every=5, rng=None, release=0.0, p=None):
+    """simulate one chromosome (or region of length_bp); returns (legs_left, legs_right) of all snapshots, lattice size.
+    p (optional): capture probability per site, used instead of c x q."""
+    n = int(length_bp // SITE) + 1; pl, pr = capture_p(n, pos, strand, p) if p is not None else capture(n, pos, strand, q, c); tau = processivity_kb * 1000 / (2 * SITE)
+    S = Sim(n, pl, pr, int(round(length_bp / (separation_kb * 1000))), tau, load=load, R=R, rng=rng, release=release)
     return S.run(burn=int(4 * tau) + 20, snaps=snaps, every=every) + (n,)
 
 
@@ -152,6 +160,58 @@ def balance(M, iters=200):
         if np.abs(s - 1).max() < 1e-5:
             break
     out = np.zeros(M.shape); out[np.ix_(valid, valid)] = W; return out, valid
+
+
+# ---------------------------------------------------------------- 3D chain model
+def _pcontact(var, radius):
+    """probability that a 3D Gaussian separation with per-axis variance var lies within `radius`."""
+    from scipy.special import erf
+    x = radius / np.sqrt(np.maximum(var, 1e-12)); return erf(x / np.sqrt(2)) - np.sqrt(2 / np.pi) * x * np.exp(-x * x / 2)
+
+
+def chain3d(L, Rr, lo, hi, bin_sites=5, k_loop=1.0, radius=1.0, zone=None, k_zone=0.0, max_snaps=1000, rng=None, sample=False):
+    """3D chain model of lattice sites lo..hi-1: bins are beads joined by springs (neighbours: 1; each motor ties the beads
+    of its two legs with k_loop; optional weak springs k_zone between beads of the same zone). In every snapshot the bead
+    positions then follow a Gaussian law that is solved exactly (no volume exclusion). Returns the mean contact map
+    (probability that two beads are within `radius`), the mean per-axis variance of their separation, and, if sample,
+    one sampled conformation per snapshot (snapshots, beads, 3), in units where a free neighbour spring has variance 1."""
+    rng = rng or np.random.default_rng(0); N = (hi - lo) // bin_sites; rows = np.arange(len(L))
+    if len(rows) > max_snaps:
+        rows = rng.choice(len(L), max_snaps, replace=False)
+    base = np.zeros((N, N)); i = np.arange(N - 1); base[i, i] += 1; base[i + 1, i + 1] += 1; base[i, i + 1] -= 1; base[i + 1, i] -= 1
+    if zone is not None and k_zone > 0:
+        same = (np.sign(zone)[:, None] == np.sign(zone)[None, :]) & ~np.eye(N, dtype=bool); base += k_zone * (np.diag(same.sum(1)) - same)
+    J = np.full((N, N), 1.0 / N); P = np.zeros((N, N)); V = np.zeros((N, N)); X = []
+    for s in rows:
+        m = (L[s] >= lo) & (Rr[s] < lo + N * bin_sites); a, b = (L[s][m] - lo) // bin_sites, (Rr[s][m] - lo) // bin_sites; k = a != b; a, b = a[k], b[k]
+        Lm = base.copy(); np.add.at(Lm, (a, a), k_loop); np.add.at(Lm, (b, b), k_loop); np.add.at(Lm, (a, b), -k_loop); np.add.at(Lm, (b, a), -k_loop)
+        A = Lm + J; C = np.linalg.inv(A) - J; d = np.diag(C); var = d[:, None] + d[None, :] - 2 * C; P += _pcontact(var, radius); V += var
+        if sample:
+            x = np.linalg.solve(np.linalg.cholesky(A).T, rng.normal(size=(N, 3))); X.append(x - x.mean(0))
+    n = max(len(rows), 1)
+    return P / n, V / n, (np.array(X) if sample else None)
+
+
+def border_calls(X, w=4, span=3):
+    """domain borders in single chromosomes from 3D positions X (chromosomes, segments, 3; nan = not seen).
+    Score at position p (between segments p-1 and p) = mean distance between the w segments left of p and the w right of
+    p / mean distance within each side. A border is called where the score is the highest within +- span positions.
+    Returns (share of chromosomes with a border at each position; nan where it cannot be scored, chromosomes used)."""
+    import warnings
+    n = X.shape[1]; S = np.full((X.shape[0], n), np.nan); iu = np.triu_indices(w, 1)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        for c0 in range(0, len(X), 1000):
+            x = X[c0:c0 + 1000]; D = np.sqrt(((x[:, :, None, :] - x[:, None, :, :]) ** 2).sum(3))
+            for p in range(w, n - w + 1):
+                inter = np.nanmean(D[:, p - w:p, p:p + w], axis=(1, 2))
+                intra = (np.nanmean(D[:, p - w:p, p - w:p][:, iu[0], iu[1]], 1) + np.nanmean(D[:, p:p + w, p:p + w][:, iu[0], iu[1]], 1)) / 2
+                S[c0:c0 + 1000, p] = inter / intra
+        ok = np.isfinite(S[:, w:n - w + 1]).mean(1) >= 0.8; Sv = S[ok]; best = np.zeros(Sv.shape, bool)
+        for p in range(w, n - w + 1):
+            best[:, p] = Sv[:, p] >= np.nanmax(Sv[:, max(w, p - span):min(n - w, p + span) + 1], 1)
+    best &= np.isfinite(Sv); share = np.full(n, np.nan); share[w:n - w + 1] = best[:, w:n - w + 1].mean(0)
+    return share, int(ok.sum())
 
 
 def demo():
