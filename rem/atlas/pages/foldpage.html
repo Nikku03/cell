@@ -111,7 +111,7 @@ a{color:var(--blue)}
         </div>
         <div class="controls">
           <label class="slider" for="s-motors">Motors on the DNA <input id="s-motors" type="range" min="0" max="24" value="10"></label>
-          <label class="slider" for="s-reach">How far a motor reels <input id="s-reach" type="range" min="10" max="160" value="70"></label>
+          <label class="slider" for="s-reach">How far a motor reels <input id="s-reach" type="range" min="10" max="240" value="130"></label>
           <label class="slider" for="s-zone">Zone stickiness <input id="s-zone" type="range" min="0" max="100" value="55"></label>
         </div>
         <div class="read" id="readout" aria-live="off"></div>
@@ -181,7 +181,7 @@ function hideTip(){tip.hidden=true;}
 /* ---------------- simulator (same rules as foldsim.py, on 240 sites) ---------------- */
 const NS=240,BS=3,NB=NS/BS,W=0.3;
 let signs=[],motors=[],occ=new Uint8Array(NS),pl=new Float32Array(NS),pr=new Float32Array(NS);
-let life=35,nMotors=10,motorsOn=true,zonesOn=false,zoneK=0.55,paused=false;
+let life=65,nMotors=10,motorsOn=true,zonesOn=false,zoneK=0.55,paused=false;
 const zone=new Float32Array(NB);for(let i=0;i<NB;i++)zone[i]=(Math.floor(i/16)%2===0)?1:-1;
 const EMA=new Float32Array(NB*NB),D=new Float32Array(NB*NB),ra=new Float32Array(NB),rb=new Float32Array(NB);let emaN=0;
 const PRESETS={two:[[22,1],[112,-1],[126,1],[216,-1]],flip:[[22,1],[112,1],[126,1],[216,-1]],del:[[22,1],[216,-1]],none:[]};
@@ -209,7 +209,7 @@ function drawMapFrom(cv,get,n,lo,hi){const ctx=cv.getContext('2d'),im=ctx.create
 function drawSimMap(){const mean=new Float32Array(NB),cnt=new Float32Array(NB);
   for(let i=0;i<NB;i++)for(let j=i;j<NB;j++){mean[j-i]+=EMA[i*NB+j];cnt[j-i]++;}
   for(let k=0;k<NB;k++)mean[k]/=Math.max(cnt[k],1);
-  drawMapFrom($('#simmap'),(i,j)=>{const k=Math.abs(i-j);return Math.log2(EMA[i*NB+j]/Math.max(mean[k],1e-9));},NB,-0.7,1.3);}
+  drawMapFrom($('#simmap'),(i,j)=>{const k=Math.abs(i-j);return Math.log2(EMA[i*NB+j]/Math.max(mean[k],1e-9));},NB,-0.45,0.85);}
 const track=$('#track');let TW=600,TH=190,dpr=1;
 function sizeTrack(){dpr=Math.min(window.devicePixelRatio||1,2);TW=track.clientWidth||600;TH=190;track.width=Math.round(TW*dpr);track.height=Math.round(TH*dpr);}
 const X=s=>14+(s+0.5)/NS*(TW-28),BASE=()=>TH-46;
@@ -243,12 +243,12 @@ $('#s-zone').addEventListener('input',e=>{zoneK=+e.target.value/100;});
 let MAPS=null,cur=0;
 function b64(s){const b=atob(s),a=new Uint8Array(b.length);for(let i=0;i<b.length;i++)a[i]=b.charCodeAt(i);return a;}
 function drawReal(){if(!MAPS)return;const R=MAPS.regions[cur],n=MAPS.n;
-  [['#m-unt','untreated'],['#m-sim','sim'],['#m-aux','auxin']].forEach(([id,k])=>{const a=R[k+'_a']||(R[k+'_a']=b64(R[k]));drawMapFrom($(id),(i,j)=>a[i*n+j]===0?null:a[i*n+j]/255*3-1.5,n,-0.9,1.3);});
+  [['#m-unt','untreated'],['#m-sim','sim'],['#m-aux','auxin']].forEach(([id,k])=>{const a=R[k+'_a']||(R[k+'_a']=b64(R[k])),g=MAPS.ranges[k],w=MAPS.windows[k];drawMapFrom($(id),(i,j)=>a[i*n+j]===0?null:g[0]+a[i*n+j]/255*(g[1]-g[0]),n,w[0],w[1]);});
   $('#real-read').textContent='chr'+R.chrom+': '+R.start_mb.toFixed(1)+'–'+R.end_mb.toFixed(1)+' Mb · match with motor '+R.score.toFixed(2)+' · match after the motor is destroyed '+R.score_auxin.toFixed(2);}
 function initReal(m){MAPS=m;const seg=$('#region-seg');m.regions.forEach((R,i)=>{const id='rg'+i;seg.insertAdjacentHTML('beforeend','<input type="radio" name="rg" id="'+id+'"'+(i===0?' checked':'')+'><label for="'+id+'">'+R.label+'</label>');
     seg.querySelector('#'+id).addEventListener('change',()=>{cur=i;drawReal();});});
   ['#m-unt','#m-sim','#m-aux'].forEach((id,q)=>{const cv=$(id);cv.addEventListener('mousemove',e=>{const r=cv.getBoundingClientRect(),n=MAPS.n,i=Math.floor((e.clientY-r.top)/r.height*n),j=Math.floor((e.clientX-r.left)/r.width*n);if(i<0||j<0||i>=n||j>=n)return;
-      const R=MAPS.regions[cur],a=R[['untreated','sim','auxin'][q]+'_a'],v=a[i*n+j];showTip(e,(R.start_mb+i*0.025).toFixed(2)+' Mb × '+(R.start_mb+j*0.025).toFixed(2)+' Mb: '+(v===0?'no data':Math.pow(2,v/255*3-1.5).toFixed(2)+'× expected'));});cv.addEventListener('mouseleave',hideTip);});
+      const kk=['untreated','sim','auxin'][q],R=MAPS.regions[cur],a=R[kk+'_a'],v=a[i*n+j],g=MAPS.ranges[kk];showTip(e,(R.start_mb+i*0.025).toFixed(2)+' Mb × '+(R.start_mb+j*0.025).toFixed(2)+' Mb: '+(v===0?'no data':Math.pow(2,g[0]+v/255*(g[1]-g[0])).toFixed(2)+'× expected'));});cv.addEventListener('mouseleave',hideTip);});
   drawReal();}
 
 /* ---------------- charts ---------------- */
@@ -262,7 +262,7 @@ function chart(c){const el=document.createElement('div');el.className='panel cha
     bars.appendChild(row);});
   $('#charts').appendChild(el);}
 function fill(){DATA.charts.forEach(chart);
-  const tb=$('#simtable tbody');DATA.sim.forEach(r=>{const tr=document.createElement('tr');tr.innerHTML='<td></td><td class="'+(r.verdict==='PASS'?'pass':'fail')+'"></td><td class="mono small"></td>';tr.children[0].textContent=r.q;tr.children[1].textContent=r.verdict==='PASS'?'Yes':(r.verdict==='FAIL'?'No':r.verdict);tr.children[2].textContent=r.n;tb.appendChild(tr);});
+  const tb=$('#simtable tbody');DATA.sim.forEach(r=>{const tr=document.createElement('tr');tr.innerHTML='<td></td><td class="'+(r.verdict==='PASS'?'pass':(r.verdict==='FAIL'?'fail':'muted'))+'"></td><td class="mono small"></td>';tr.children[0].textContent=r.q;tr.children[1].textContent=r.verdict==='PASS'?'Yes':(r.verdict==='FAIL'?'No':'Not counted');tr.children[2].textContent=r.n;tb.appendChild(tr);});
   $('#fitnote').textContent=DATA.fitnote;$('#real-intro').textContent=DATA.real_intro;$('#real-note').textContent=DATA.real_note;
   DATA.open.forEach(t=>{const li=document.createElement('li');li.textContent=t;$('#open').appendChild(li);});}
 

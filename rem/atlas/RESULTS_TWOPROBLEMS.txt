@@ -6811,3 +6811,49 @@ G20 WHAT GUIDES THE CHANGES OVER TIME, AND HOW A LOOP ACTS ON A GENE   (loopdynt
   IN SIMPLE: we now have the folding rules and they hold on DNA the models never saw. Loops are made by a motor that
   pulls DNA through until it hits two stop signs facing each other; open and closed zones form because similar
   chromatin sticks together; and both are re-drawn by gene-switching activity, which comes first.
+
+========================================================================================================================
+G21 THE FOLDING SIMULATOR: built from the rules, tested against real cells   (foldsim.py, foldsimbank.py, foldsimtest.py)
+    Asked: "Do whatever is needed. Give me final product."
+    foldsim.py puts motors (cohesin) and stop signs (CTCF sites with a clear motif: position, direction, strength
+    rank) on a line of 5 kb sites and plays out the G19 rules: each motor leg moves outward, legs do not pass each
+    other, a leg moving left stalls at a + sign and a leg moving right at a - sign, motors fall off and land again.
+    Contacts come from the 'effective distance' along the chain with each motor tying its two legs together. It is
+    never given a measured contact. Four numbers were fitted once on DEV regions of K562 (grid of 36): a motor reels
+    about 200 kb, one motor per 150 kb, a strong sign holds with probability 1.0, contact ~ distance^-0.75 -- close to
+    published estimates. A fifth (landing preference for H3K27ac, beta 8, the top of the grid) was fitted on DEV loops.
+    Measured maps: 88 fixed 3 Mb regions at 25 kb (K562 0 h, local; HCT116 with / without cohesin, ENCODE), read
+    remotely. Thresholds were set from a DEV-only preview before declaring.
+    Before declaring (DEV only): simulated maps are now balanced like the measured ones (the planted control showed
+    the two were processed differently); planted noise SD 0.05. With identical processing a score of about 0.13-0.15
+    arises even with stop signs at random places (window-edge effect of balancing), so S1 / S5 also need a gain.
+  G21-S1 the simulated map looks like the measured map (K562)   PASS: 27 usable EXAM regions (of 44); median map
+         score 0.38 with the real stop signs, 0.13 with the same number at random places (gain +0.23 on the regions,
+         sign p < 0.001). With directions shuffled 0.33: at 25 kb the borders matter more than the directions.
+  G21-S2 the simulator finds the loops (K562)   PASS: average precision 0.175 vs 0.081 for distance alone (gain on all
+         11 EXAM chromosomes); with shuffled directions 0.093. For scale: the fitted formulas of G19-R2 reach 0.18
+         (direction-blind) and 0.32 (with direction) -- the rule-only simulator is about as good as the direction-blind
+         formula and clearly below the fitted one. 25% of its top-ranked pairs are real loops (8x chance).
+  G21-S3 the simulator predicts which loops change over 72 h (K562)   PASS: median rank r 0.24 over 7,289 loops on EXAM
+         chromosomes. Almost all of it comes from letting motors land where activity (H3K27ac) is: landing preference
+         alone 0.22, stop-sign changes alone 0.09. A mechanism for "activity redraws the loops": more motors start
+         inside active stretches and are caught by the nearest facing signs.
+  G21-S4 the zone rule draws the large-scale pattern (K562)   VOID (controls): measured median r 0.49 on the 11 EXAM
+         chromosomes (above the 0.25 bar), but the planted control failed on EXAM (it had passed on DEV; its noise was
+         set too close to the bar), so by the house rule this is not counted as a pass.
+  G21-S5 another cell line, and taking the motor away (HCT116)   PASS: with K562's numbers and HCT116's own stop signs,
+         median map score 0.40 against the untreated map and 0.23 against the map after cohesin was destroyed (33
+         regions; gain +0.17, sign p < 0.001).
+  REPORTED: loop strength by loop size in HCT116 (EXAM loops; untreated -> no cohesin -> 20 / 40 / 60 / 180 min after it
+         returns): short loops (median 122 kb) 2.01 -> 1.10 -> 1.29, 1.49, 1.62, 2.17; middle (373 kb) 3.40 -> 1.29 ->
+         1.61, 2.20, 2.60, 4.06; long (1.7 Mb) 3.14 -> 1.42 -> 3.19, 3.45, 3.67, 4.39. Short and middle loops come back
+         step by step over an hour; the long-range ones are back at once (not interpreted).
+  IN SIMPLE: a simulator that knows only where the stop signs are and which way they face draws maps that look like
+  the measured ones (0.38-0.40 on a 0-to-1 scale, against 0.13 for random signs), also in a cell type it was not
+  tuned on, and the match drops when the real cells lose their motor. It finds real loops 8 times better than chance,
+  and it predicts which loops strengthen when motors are allowed to land where genes are active. It is a first working
+  model, not a finished one: fitted formulas still find loops better, the maps miss fine detail, and it is a line of
+  DNA with a distance rule, not a 3D physical model.
+  FINAL PRODUCT: the page "How a Chromosome Folds" (rules, an in-browser simulator, measured vs simulated maps, the
+  evidence): https://claude.ai/artifact/7gx3z2cYc9fonshGQQmzb7 ; built by rem/atlas/foldpage.py from the results
+  files (template rem/atlas/pages/foldpage.html; copy in outputs/foldsim/page/).

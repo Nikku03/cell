@@ -261,3 +261,11 @@ In total, 44,082 facts and 16 layers were added.
 - **Change follows activity (G20, all PASS):** loop change r 0.44 from CTCF + cohesin, 0.57 with activity added; anchors' H3K27ac reaches 52% of its change by 6 h, loops 37%, zones 33%; zone change predicted at r 0.48 from activity change.
 - **Loops act by contact (G20):** a gene follows a looped enhancer's activity change (r 0.22) better than an equally distant unlooped one (0.12).
 - **Open:** CTCF explains about half of the loops (19% have no clear CTCF site at either end); no physical 3D simulation yet; cause shown only for cohesin.
+
+## The folding simulator (foldsim, foldsimbank, foldsimtest G21, foldpage; 2026-11-28)
+
+- **`rem/atlas/foldsim.py`:** motors + directional stop signs on a line of 5-kb sites -> loops and contact maps; four numbers fitted once on DEV (motor reels ~200 kb, one per 150 kb, capture 1.0, contact ~ distance^-0.75), optional landing preference for active DNA. Never sees a measured contact. `python3 -I rem/atlas/foldsim.py demo`.
+- **New layers:** `FOLDSIM_K562_MAPS` (local; 88 fixed 3-Mb regions at 25 kb) and `FOLDSIM_HCT116` (ENCODE; the same regions with / without cohesin + HCT116 CTCF sites with motif direction). `hicremote.region()` reads a map window.
+- **S1 PASS:** simulated vs measured K562 maps 0.38 (random stop signs 0.13). **S2 PASS:** finds loops, AP 0.175 vs 0.081 for distance (fitted formulas: 0.18 / 0.32). **S3 PASS:** predicts loop change over 72 h, r 0.24, mostly from motors landing where activity is. **S4 VOID:** zones r 0.49 but its planted control failed. **S5 PASS:** transfers to HCT116 (0.40) and the match drops without cohesin (0.23).
+- **Final page:** "How a Chromosome Folds" (rules, in-browser simulator, measured vs simulated maps, evidence), built by `foldpage.py` from the results files; copy in `outputs/foldsim/page/`.
+- **Open:** a 3D physical model; loops made without CTCF; a properly powered zone test; perturbation tests (single stop-sign deletions / inversions).

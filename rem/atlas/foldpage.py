@@ -22,14 +22,21 @@ _s = importlib.util.spec_from_file_location("foldsim", os.path.join(HERE, "folds
 J = lambda *p: json.load(open(R("outputs", *p)))
 
 
-def oe8(M, measured):
-    if measured:
-        Mb, valid = fs.balance(M); O = fs.obs_over_exp(Mb, valid)
+RANGES = dict(untreated=(-1.5, 1.5), sim=(-0.4, 0.4), auxin=(-1.5, 1.5))          # log2 range stored in a byte
+WINDOWS = dict(untreated=(-0.7, 1.1), sim=(-0.22, 0.32), auxin=(-0.7, 1.1))         # log2 range shown (each map its own)
+
+
+def oe8(M, kind):
+    if kind != "sim":
+        Mb, valid = fs.balance(M); S = np.where(valid[:, None] & valid[None, :], Mb, np.nan); P = np.pad(S, 1, constant_values=np.nan)
+        with np.errstate(all="ignore"):                                              # 3 x 3 mean for display only
+            Mb = np.nan_to_num(np.nanmean(np.stack([P[1 + a:1 + a + len(M), 1 + b:1 + b + len(M)] for a in (-1, 0, 1) for b in (-1, 0, 1)]), 0))
+        O = fs.obs_over_exp(Mb, valid)
     else:
         O = fs.obs_over_exp(M)
     with np.errstate(divide="ignore", invalid="ignore"):
         L = np.log2(np.where(O > 0, O, np.nan))
-    q = np.clip((L + 1.5) / 3, 0, 1) * 254 + 1; q[~np.isfinite(L)] = 0
+    lo, hi = RANGES[kind]; q = np.clip((L - lo) / (hi - lo), 0, 1) * 254 + 1; q[~np.isfinite(L)] = 0
     return base64.b64encode(q.astype(np.uint8).tobytes()).decode()
 
 
@@ -85,7 +92,8 @@ def build(out):
              n=f"precision {s2['ap_simulator']:.2f} against {s2['ap_distance']:.2f} for distance alone; {s2['ap_simulator_shuffled_directions']:.2f} with directions shuffled"),
         dict(q="Does it predict which loops get stronger or weaker over 72 hours? (K562)", verdict=v(s3),
              n=f"match {s3['median_r']:.2f} ({s3['loops_used']:,} loops); stop signs alone {s3['stop_signs_only']:.2f}"),
-        dict(q="Does the zone rule draw the large-scale pattern? (K562)", verdict=v(s4), n=f"match {s4['median_r']:.2f} on each unseen chromosome"),
+        dict(q="Does the zone rule draw the large-scale pattern? (K562)", verdict=v(s4),
+             n=(f"match {s4['median_r']:.2f} on unseen chromosomes" if v(s4) != "void" else f"measured match {s4['median_r']:.2f}, but a safety check on this test itself failed, so it is not counted")),
         dict(q="Does it work in another cell type, and only when the motor is there? (HCT116)", verdict=v(s5),
              n=f"match {s5['median_score']:.2f} with the motor, {s5['median_score_vs_no_cohesin_map']:.2f} after the motor is destroyed ({s5['regions']} regions)"),
     ]
@@ -93,18 +101,19 @@ def build(out):
     fitnote = (f"The simulator has four numbers, set once on the odd-numbered chromosomes of K562: a motor reels about {P['processivity_kb']} kb before it falls off, "
                f"there is one motor per {P['separation_kb']} kb, a strong stop sign holds with probability {P['c']:.1f}, and contact falls with distance to the power {P['alpha']}. "
                "It is given the stop-sign map and never sees a measured contact. 'Match' is a rank correlation between simulated and measured maps (0 = none, 1 = identical); measured maps are noisy, so 1 is out of reach.")
-    Z = np.load(R("outputs", "foldsim", "hct116_example_maps.npz")); keys = [int(k) for k in Z["keys"]]; sc = np.array([s5["scores"][str(k)] for k in keys]); o = np.argsort(-sc)
+    Z = np.load(R("outputs", "foldsim", "hct116_example_maps.npz")); keys = [int(k) for k in Z["keys"]]; use = [i for i, k in enumerate(keys) if str(k) in s5["scores"]]
+    sc = np.full(len(keys), np.nan); sc[use] = [s5["scores"][str(keys[i])] for i in use]; o = np.array(sorted(use, key=lambda i: -sc[i]))
     pick = [("Best match", o[0]), ("Typical", o[len(o) // 2]), ("Poor match", o[int(len(o) * 0.85)])]
     regions = []
     for label, i in pick:
         b0 = int(Z["bin0"][i])
         regions.append(dict(label=label, chrom=str(Z["chrom"][i]), start_mb=b0 * 0.025, end_mb=(b0 + 120) * 0.025, score=float(sc[i]), score_auxin=score(Z["sim"][i].astype(float), Z["auxin"][i].astype(float)),
-                            untreated=oe8(Z["untreated"][i].astype(float), True), sim=oe8(Z["sim"][i].astype(float), False), auxin=oe8(Z["auxin"][i].astype(float), True)))
+                            untreated=oe8(Z["untreated"][i].astype(float), "untreated"), sim=oe8(Z["sim"][i].astype(float), "sim"), auxin=oe8(Z["auxin"][i].astype(float), "auxin")))
     data = dict(charts=charts, sim=sim, fitnote=fitnote,
                 real_intro=("HCT116 cells, a cell type the simulator was not tuned on. It gets only that cell's stop-sign map. Left: the measured map. Middle: the simulator's map. "
                             "Right: the measured map after the motor was destroyed, where the neighbourhoods and loops are gone."),
                 real_note=(f"Three of the {s5['regions']} test regions on unseen chromosomes: the best, a typical one and a poor one. The simulator gets the positions of most neighbourhood borders right; "
-                           "it misses finer detail and contacts that do not depend on stop signs."),
+                           "it misses finer detail and contacts that do not depend on stop signs. Each map uses its own colour range (the simulator's contrasts are fainter), and measured maps are lightly smoothed for display."),
                 open=[f"Stop signs explain only part of the loops: {r1['anchors']['at_none'] * 100:.0f}% of loops have no clear stop sign at either end and {r1['anchors']['at_one'] * 100:.0f}% at only one.",
                       f"The simulator's maps match measured ones at about {s1['median_score']:.2f} on a 0-to-1 scale. It captures the main neighbourhoods, not every detail.",
                       "Only the motor-removal experiment proves cause. The other tests show what goes together and in which order.",
@@ -113,7 +122,7 @@ def build(out):
     os.makedirs(out, exist_ok=True)
     html = open(os.path.join(HERE, "pages", "foldpage.html"), encoding="utf-8").read().replace("__DATA__", json.dumps(data, ensure_ascii=False))
     open(os.path.join(out, "index.html"), "w", encoding="utf-8").write(html)
-    json.dump(dict(n=120, regions=regions), open(os.path.join(out, "maps.json"), "w"))
+    json.dump(dict(n=120, ranges=RANGES, windows=WINDOWS, regions=regions), open(os.path.join(out, "maps.json"), "w"))
     print("wrote", out, os.path.getsize(os.path.join(out, "index.html")), os.path.getsize(os.path.join(out, "maps.json")))
 
 
