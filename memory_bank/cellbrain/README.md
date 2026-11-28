@@ -252,3 +252,12 @@ In total, 44,082 facts and 16 layers were added.
 - **L1 FAIL:** most-changed loops lean the right way (60%) but no more than shuffled labels (p_MC 0.23).
 - **Timing not measurable** (no loop change to time) -- genes respond without the 3D map moving.
 - **Across G16-G18:** open/closed neighbourhood tracks genes in all 3 cell types; loops only in K562; gene activity leads and the 3D map follows (or does not need to move).
+
+## The folding rules (loopcodebank, loopcodetest G19, loopdyntest G20; 2026-11-28)
+
+- **New layers:** `LOOPCODE_K562` (local; K562 CTCF sites with motif direction from the hg38 sequence, cohesin / H3K27ac / JUN / ATAC site counts at 0, 6, 72 h, six ENCODE histone marks per 100-kb bin) and `LOOPCODE_HCT116` (ENCODE; loop and control pixel counts with cohesin present, destroyed, and returning; E1 with and without cohesin). `hicremote.py` now reads .hic v7-9.
+- **Loops = motor + stop signs (G19, all PASS on unseen chromosomes):** 77% of loops with a clear CTCF site at each end are convergent (chance 25%); the CTCF map with directions ranks loop pairs 13x above chance (AP 0.08 distance -> 0.18 -> 0.32 with direction); destroying cohesin removes 89% of loop signal, and it returns within an hour of cohesin coming back.
+- **Zones = like with like (G19):** unchanged without cohesin (r 0.98); predicted from chromatin marks at r 0.84.
+- **Change follows activity (G20, all PASS):** loop change r 0.44 from CTCF + cohesin, 0.57 with activity added; anchors' H3K27ac reaches 52% of its change by 6 h, loops 37%, zones 33%; zone change predicted at r 0.48 from activity change.
+- **Loops act by contact (G20):** a gene follows a looped enhancer's activity change (r 0.22) better than an equally distant unlooped one (0.12).
+- **Open:** CTCF explains about half of the loops (19% have no clear CTCF site at either end); no physical 3D simulation yet; cause shown only for cohesin.

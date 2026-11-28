@@ -1,0 +1,18 @@
+{
+ "name": "ENCODE HCT116 RAD21-degron in situ Hi-C (Aiden lab; Rao et al. 2017 Cell 171:305, 'Cohesin loss eliminates all loop domains')",
+ "doi": "10.1016/j.cell.2017.09.026",
+ "looked_at": "2026-11-28 (ENCODE portal; GRCh38 re-processing, .hic version 9)",
+ "what": "HCT116 cells with an auxin-inducible degron on the cohesin subunit RAD21: untreated, 6 h auxin (cohesin destroyed), and 20 / 40 / 60 / 180 min after wash-out",
+ "files": {
+  "untreated": "ENCSR123UVP / ENCFF750AOC",
+  "auxin_6h": "ENCSR637QCS / ENCFF301BWY",
+  "washout_20": "ENCSR176BRX / ENCFF775PBO",
+  "washout_40": "ENCSR179GCO / ENCFF944AII",
+  "washout_60": "ENCSR206PBT / ENCFF545AXP",
+  "washout_180": "ENCSR152HRS / ENCFF085TWV",
+  "loops_untreated": "ENCFF402GDT"
+ },
+ "also_there": "intact Hi-C auxin time course at 10-180 min and 24 h (ENCSR357QXT ... ENCSR168NHR): how fast loops fade as cohesin is destroyed -- not used yet",
+ "licence": "ENCODE: free use",
+ "use_for_cellbrain": "G19-K1/K2/K3 (2026-11-28): cohesin loss removes 89% of loop signal; loops return within an hour of wash-out; compartments unchanged (r 0.98). Other inputs of G19/G20: JASPAR MA0139.1 (CC BY 4.0), UCSC hg38.2bit, ENCODE K562 histone peaks (Bernstein lab), Bond 2023 per-site tables (GSE213908 / GSE213295)."
+}

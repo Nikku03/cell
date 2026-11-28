@@ -1,0 +1,180 @@
+{
+ "G20-D1": {
+  "loops_exam": 8914,
+  "median_r_full": 0.5674955246320762,
+  "median_r_arch": 0.4362607398837204,
+  "sign_p": 0.00048828125,
+  "median_gain": 0.12691172537522188,
+  "chromosomes": 11,
+  "passed": true,
+  "weights": {
+   "loop size": 0.0716336864325183,
+   "ctcf mean of anchors": 0.11763064818361552,
+   "ctcf larger anchor": -0.027744620724167286,
+   "rad21 mean of anchors": 0.023717045348206567,
+   "rad21 larger anchor": -0.0245140023015006,
+   "h3k27ac mean of anchors": -0.009463322965749235,
+   "h3k27ac larger anchor": -0.021211642816412676,
+   "jun mean of anchors": 0.02902974985414826,
+   "jun larger anchor": -0.01906407299410285,
+   "atac mean of anchors": 0.06429294788349978,
+   "atac larger anchor": -0.014405837484588563,
+   "h3k27ac inside the loop": 0.12252235134000314
+  },
+  "single_feature_r_exam": {
+   "loop size": 0.20731788100722803,
+   "ctcf mean of anchors": 0.37504730705497163,
+   "ctcf larger anchor": 0.3603791115429111,
+   "rad21 mean of anchors": 0.19537366012772167,
+   "rad21 larger anchor": 0.18872499470630427,
+   "h3k27ac mean of anchors": 0.24276433485917479,
+   "h3k27ac larger anchor": 0.23754247891016628,
+   "jun mean of anchors": 0.3143414660664999,
+   "jun larger anchor": 0.2952882477939278,
+   "atac mean of anchors": 0.35503276536572304,
+   "atac larger anchor": 0.3241652304701919,
+   "h3k27ac inside the loop": 0.4233510865485571
+  },
+  "controls": {
+   "permuted_pass_rate": 0.0,
+   "planted_pass_rate": 1.0,
+   "runs": [
+    10,
+    5
+   ],
+   "ok": true
+  },
+  "gate": {
+   "real": true,
+   "controls_ok": true,
+   "verdict": "PASS"
+  }
+ },
+ "G20-D2": {
+  "units": 2112,
+  "rows": 2853,
+  "d": 0.15248711357845324,
+  "d_boot_5": 0.12858622990415655,
+  "p_boot": 0.0004997501249375312,
+  "denominators_positive": true,
+  "passed": true,
+  "F_act": 0.5175211975439533,
+  "F_loop": 0.3650340839655001,
+  "controls": {
+   "equal_timing_pass_rate": 0.035,
+   "planted_lag_pass_rate": 1.0,
+   "runs": 200,
+   "ok": true
+  },
+  "other_marks_share_at_6h": {
+   "jun": {
+    "loops": 2163,
+    "F_mark": 0.43159644365088484,
+    "F_loop": 0.3803656356014647,
+    "d": 0.05123080804942015,
+    "p_boot": 0.0024987506246876563
+   },
+   "atac": {
+    "loops": 2611,
+    "F_mark": 0.4477537754415157,
+    "F_loop": 0.3444440810073494,
+    "d": 0.10330969443416627,
+    "p_boot": 0.0004997501249375312
+   },
+   "ctcf": {
+    "loops": 1539,
+    "F_mark": 0.3739145720046363,
+    "F_loop": 0.32114241756500234,
+    "d": 0.052772154439633956,
+    "p_boot": 0.011494252873563218
+   }
+  },
+  "gate": {
+   "real": true,
+   "controls_ok": true,
+   "verdict": "PASS"
+  }
+ },
+ "G20-E1": {
+  "pairs": 4251,
+  "genes": 2331,
+  "r_looped": 0.21695656732107277,
+  "r_control": 0.12315497858134535,
+  "difference": 0.09380158873972742,
+  "p_boot": 0.0004997501249375312,
+  "passed": true,
+  "with_promoter_change_removed": {
+   "r_looped": 0.12499622879456644,
+   "r_control": 0.07140097721754869
+  },
+  "median_distance_kb": 250.871,
+  "controls": {
+   "permuted_pass_rate": 0.0,
+   "planted_pass_rate": 1.0,
+   "runs": [
+    10,
+    5
+   ],
+   "ok": true
+  },
+  "gate": {
+   "real": true,
+   "controls_ok": true,
+   "verdict": "PASS"
+  }
+ },
+ "G20-M2": {
+  "bins_exam": 13313,
+  "median_r": 0.48240391209384026,
+  "sign_p": 0.00048828125,
+  "chromosomes": 11,
+  "passed": true,
+  "weights": {
+   "H3K27ac": 0.05328049074204263,
+   "open DNA (ATAC)": 0.06451505723563175,
+   "JUN": 0.0359891622286206,
+   "CTCF": 0.021574662791236737,
+   "mean gene change": 0.009054578449772544
+  },
+  "single_feature_r_exam": {
+   "H3K27ac": 0.37152175850344044,
+   "open DNA (ATAC)": 0.4372318271011059,
+   "JUN": 0.40520299187756637,
+   "CTCF": 0.203398891514815,
+   "mean gene change": 0.05467080751259307
+  },
+  "controls": {
+   "negative_passed": false,
+   "planted_pass_rate": 1.0,
+   "ok": true
+  },
+  "gate": {
+   "real": true,
+   "controls_ok": true,
+   "verdict": "PASS"
+  }
+ },
+ "G20-M3": {
+  "units": 6172,
+  "rows": 11762,
+  "d": 0.17125630216096105,
+  "d_boot_5": 0.1462247322119153,
+  "p_boot": 0.0004997501249375312,
+  "denominators_positive": true,
+  "passed": true,
+  "F_act": 0.5047911993997597,
+  "F_zone": 0.33353489723879864,
+  "noise_sd_E1_6h": 0.13787536004089923,
+  "controls": {
+   "equal_timing_pass_rate": 0.05,
+   "planted_lag_pass_rate": 1.0,
+   "runs": 200,
+   "ok": true
+  },
+  "gate": {
+   "real": true,
+   "controls_ok": true,
+   "verdict": "PASS"
+  }
+ }
+}

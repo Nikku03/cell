@@ -6743,3 +6743,71 @@ ACROSS G16-G18 (K562 PMA 72 h, THP-1 LPS+IFNg 24 h, A549 dexamethasone 12 h):
   open/closed neighbourhood moves with the genes   PASS x 3 (+0.38, +0.64, +0.27 log2; 67%, 78%, 79% agree)
   loop change at the gene start predicts direction  PASS in K562 only (+0.25); FAIL in THP-1 (+0.06) and A549 (+0.04)
   which comes first                                  genes first in K562 and THP-1; in A549 genes change while loops do not
+
+========================================================================================================================
+G19 THE RULES THAT FOLD A CHROMOSOME (static rules)   (loopcodebank.py, loopcodetest.py; code c.f. ledger; 2026-11-28)
+    Asked: "crack the loop mechanism which is guiding the dynamic chromosome folding ... what guides them, how?"
+    The field's working model was tested piece by piece on data, each piece declared before its run: a ring-shaped
+    motor (cohesin) reels DNA in until it meets CTCF proteins whose DNA sites point into the loop; separately, chromatin
+    of the same activity state sticks together (open / closed zones). DNA halves: fitted on odd autosomes (DEV), scored
+    once on even autosomes (EXAM). Trials on DEV showed only controls.
+    Data: K562 CTCF / cohesin sites (Bond 2023, local), CTCF motif direction read from the hg38 sequence (JASPAR
+    MA0139.1; 34,931 of 65,346 CTCF sites carry a clear motif, 50% on each strand), ENCODE histone peaks; HCT116 with
+    a degron on cohesin's RAD21 (ENCODE / Rao 2017): untreated, 6 h auxin, and 20-180 min after wash-out (.hic v9 read
+    remotely; hicremote.py extended and checked against full reads).
+    Disclosed: the build log printed total loop / control pixel counts for the untreated HCT116 map (E about 2.4, all
+    chromosomes) after the claim thresholds were committed (d551bc6e) and before the ledger declaration; two K562 loops
+    listed right-to-left were put in order before declaring.
+  G19-R1 CTCF sites at loop ends point at each other   PASS: of 4,182 EXAM loops with one clear CTCF site at each end,
+         77.4% convergent (chance 25%), 21.6% same direction, 1.0% divergent. Controls ok (shuffled 0%, planted 100%).
+         Reach of the rule: 51% of the 15,524 EXAM loops have a clear CTCF site at both ends, 31% at one, 19% at none.
+  G19-R2 the CTCF map predicts which sites loop, and direction is part of the code   PASS: 458,740 candidate site pairs,
+         13,533 true (base rate 3.0%). Average precision: distance only 0.08; + strength, cohesin, sites in between
+         (direction-blind) 0.18; + direction 0.32. Gain from direction +0.15 on every one of the 11 EXAM chromosomes
+         (p 0.0005). Of the top-ranked 13,533 pairs 38% are real loops (13x chance). Sites in between count against a
+         pair (strongest weights). Controls ok (shuffled directions 0%, planted 100%).
+  G19-K1 remove the motor and the loops go   PASS (cause, not correlation): 2,985 EXAM loops; loop strength E 2.42
+         untreated -> 1.15 after 6 h without cohesin; 89% of the loop signal lost; median per-loop drop 1.1 log2.
+  G19-K2 return the motor and the loops come back   PASS: recovered share 24% at 20 min, 48% at 40 min, 65% at 60 min,
+         126% at 180 min (stronger than before; bootstrap p 0.0005).
+  G19-K3 the zones do not need the motor   PASS: E1 with and without cohesin r 0.978 (median over EXAM chromosomes;
+         lowest 0.84); the pattern is the cohesin-less map's own first eigenvector on 9 of 11.
+  G19-M1 the zones follow the chromatin marks   PASS: E1 predicted on unseen chromosomes from marks r 0.84 (gene
+         positions alone 0.43; gain on all 11, p 0.006). Largest weights: open DNA sites, H3K27ac, H3K4me1, H3K27me3,
+         H3K36me3. Controls ok.
+
+G20 WHAT GUIDES THE CHANGES OVER TIME, AND HOW A LOOP ACTS ON A GENE   (loopdyntest.py; K562 + PMA, 0 / 6 / 72 h)
+    Per-site counts of CTCF, cohesin, H3K27ac, JUN and open DNA at the same times as the loops, zones and RNA.
+    Before declaring: timing controls set to 200 runs (a 20-run trial gave 3 equal-timing passes; 2-3% with 200).
+  G20-D1 what moves a loop: activity at its ends, beyond CTCF and cohesin   PASS: 8,914 EXAM loops; loop change
+         predicted with rank r 0.44 from CTCF + cohesin changes at the anchors, 0.57 when activity (H3K27ac, JUN, open
+         DNA; H3K27ac inside the loop) is added (gain on all 11 chromosomes, p 0.0005). Single best predictors: H3K27ac
+         inside the loop 0.42, CTCF at anchors 0.38, open DNA 0.36, JUN 0.31, H3K27ac at anchors 0.24, cohesin 0.20.
+  G20-D2 a loop's ends light up before the loop changes   PASS: 2,112 cross-fitted EXAM loops; at 6 h the anchors'
+         H3K27ac has made 52% of its 72 h change, the loop 37% (d +0.15, p 0.0005). Also ahead of the loop: open DNA
+         45% vs 34%, JUN 43% vs 38%, CTCF 37% vs 32%. Controls ok (equal timing passes 3.5%, planted lag 100%).
+  G20-E1 a loop carries its far end's activity to the gene   PASS: 4,251 gene-loop pairs (2,331 genes; median 251 kb
+         away). Gene change follows the H3K27ac change at the looped far end with rank r 0.22, at an equally distant
+         unlooped active site 0.12 (difference +0.09, p 0.0005); with the promoter's own change removed 0.13 vs 0.07.
+  G20-M2 a zone changes where activity changes   PASS: 13,313 EXAM bins; E1 change predicted with rank r 0.48 (all 11
+         chromosomes). Singly: open DNA 0.44, JUN 0.41, H3K27ac 0.37, CTCF 0.20, the bin's mean gene change 0.05.
+  G20-M3 activity changes before the zone does   PASS: 6,172 EXAM bins; at 6 h H3K27ac has made 50% of its 72 h
+         change, the zone 33% (d +0.17, p 0.0005). Controls ok (equal timing 5%, planted lag 100%).
+  THE PICTURE (G16-G20 together):
+    1 LOOPS = a motor + stop signs. Cohesin reels DNA in; CTCF sites facing each other stop it. Take cohesin away and
+      loops are gone within hours; give it back and they re-form within an hour. The CTCF map with directions tells
+      where loops can form (13x better than chance), and stop signs in between get in the way.
+    2 ZONES = like sticks with like. Open, active chromatin gathers with open; closed with closed. No motor needed.
+    3 CHANGE IS DRIVEN BY ACTIVITY. A signal switches on factors (JUN), DNA opens, genes start, acetylation rises --
+      THEN loops strengthen between the active sites and the stretch drifts into the open zone. Order at 6 h (share of
+      the final change): transcription 67% > H3K27ac about 50% > open DNA / JUN about 44% > CTCF 37% = loops 31-37%,
+      zones 33%.
+    4 LOOPS WORK BY CONTACT. A gene tracks the activity of an enhancer it is looped to about twice as well as one at
+      the same distance that it is not looped to.
+  NOT SOLVED (how far the code goes): the CTCF map alone finds 38% precision, and 19% of loops have no clear CTCF site
+    at either end (enhancer-promoter contacts made another way); loop change is predicted at r 0.57 and zone change at
+    0.48 (most of the variance still open); the gene link is modest (r 0.2); only cohesin removal is a true cause test;
+    two cancer lines; no physical simulation of the 3D shape yet.
+  IN SIMPLE: we now have the folding rules and they hold on DNA the models never saw. Loops are made by a motor that
+  pulls DNA through until it hits two stop signs facing each other; open and closed zones form because similar
+  chromatin sticks together; and both are re-drawn by gene-switching activity, which comes first.

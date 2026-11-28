@@ -1,0 +1,182 @@
+{
+ "G19-R1": {
+  "loops": 4182,
+  "share_convergent": 0.7740315638450502,
+  "p": 0.0,
+  "table": {
+   "convergent": 3237,
+   "both_plus": 450,
+   "both_minus": 454,
+   "divergent": 41
+  },
+  "passed": true,
+  "anchors": {
+   "loops": 15524,
+   "sites_at_both": 0.5057330584900799,
+   "at_one": 0.3066220046379799,
+   "at_none": 0.18764493687194017
+  },
+  "controls": {
+   "shuffled_pass_rate": 0.0,
+   "planted_pass_rate": 1.0,
+   "runs": 20,
+   "ok": true
+  },
+  "gate": {
+   "real": true,
+   "controls_ok": true,
+   "verdict": "PASS"
+  }
+ },
+ "G19-R2": {
+  "passed": true,
+  "sign_p": 0.00048828125,
+  "median_gain": 0.1474096229373655,
+  "chromosomes": 11,
+  "pairs_exam": 458740,
+  "true_pairs_exam": 13533,
+  "base_rate": 0.02950037058028513,
+  "ap_pooled": {
+   "M0": 0.08062017612771206,
+   "M1": 0.1835770382357464,
+   "M2": 0.322464349080531
+  },
+  "ap_median_chromosome": {
+   "M0": 0.08113136181101463,
+   "M1": 0.19938288783311997,
+   "M2": 0.33125436066925934
+  },
+  "precision_top_n": 0.3776694007241558,
+  "m2_weights": {
+   "log distance": 6.530463440987108,
+   "log distance^2": -6.444270394509987,
+   "strength left": 0.17096304400906362,
+   "strength right": 0.11210387887979384,
+   "strength product": 0.4066226250477872,
+   "cohesin left": -0.051763579638152174,
+   "cohesin right": -0.05256202823406567,
+   "sites between (log)": -0.12977457019062105,
+   "strength between": -1.4195420890414683,
+   "convergent": 0.5666879988255622,
+   "both +": 0.6597011622897323,
+   "both -": 0.648381650488956,
+   "+ strength between": -1.1427797016481946,
+   "- strength between": -1.537754096981341,
+   "convergent x strength left": 0.30943665376881296,
+   "convergent x strength right": 0.3897594634539572
+  },
+  "controls": {
+   "shuffled_pass_rate": 0.0,
+   "planted_pass_rate": 1.0,
+   "runs": [
+    10,
+    5
+   ],
+   "ok": true
+  },
+  "gate": {
+   "real": true,
+   "controls_ok": true,
+   "verdict": "PASS"
+  }
+ },
+ "G19-K1": {
+  "loops": 2985,
+  "E_untreated": 2.418624308955164,
+  "E_auxin": 1.1526973176687942,
+  "share_lost": 0.8923623987655633,
+  "sign_p": 2.3635864030713435e-298,
+  "median_drop_log2": 1.1080976513334573,
+  "passed": true,
+  "controls": {
+   "negative_passed": false,
+   "planted_passed": true,
+   "ok": true
+  },
+  "E_by_condition": {
+   "untreated": 2.418624308955164,
+   "auxin_6h": 1.1526973176687942,
+   "washout_20": 1.4588477460166773,
+   "washout_40": 1.7618963769529856,
+   "washout_60": 1.9711828909230178,
+   "washout_180": 2.750477255089305
+  },
+  "gate": {
+   "real": true,
+   "controls_ok": true,
+   "verdict": "PASS"
+  }
+ },
+ "G19-K2": {
+  "R_20": 0.2418389294605282,
+  "R_180": 1.2621422470792956,
+  "p_boot": 0.0004997501249375312,
+  "passed": true,
+  "R_by_time": {
+   "20": 0.2418389294605282,
+   "40": 0.48122764067551377,
+   "60": 0.646550376829015,
+   "180": 1.2621422470792956
+  },
+  "controls": {
+   "negative_passed": false,
+   "planted_passed": true,
+   "ok": true
+  },
+  "gate": {
+   "real": true,
+   "controls_ok": true,
+   "verdict": "PASS"
+  }
+ },
+ "G19-K3": {
+  "median_r": 0.9776445860964766,
+  "min_r": 0.8398114036291018,
+  "own_first_eigenvector": 9,
+  "chromosomes": 11,
+  "passed": true,
+  "controls": {
+   "negative_passed": false,
+   "planted_passed": true,
+   "ok": true
+  },
+  "gate": {
+   "real": true,
+   "controls_ok": true,
+   "verdict": "PASS"
+  }
+ },
+ "G19-M1": {
+  "median_r": 0.8377300856159642,
+  "median_r_baseline": 0.4273939723933299,
+  "sign_p": 0.005859375,
+  "median_gain": 0.4029665984758769,
+  "chromosomes": 11,
+  "passed": true,
+  "weights": {
+   "H3K27ac": -0.14180675502908258,
+   "H3K4me1": 0.15065067250105552,
+   "H3K4me3": 0.02720666359667921,
+   "H3K36me3": 0.12194120218452426,
+   "H3K27me3": 0.14277738779341906,
+   "H3K9me3": -0.022935134281055522,
+   "open sites (ATAC)": 0.44910997027588057,
+   "CTCF sites": -0.002367451947257655,
+   "H3K27ac counts": 0.20993737114229835,
+   "gene starts": -0.002445527345687354,
+   "expressed gene starts": 0.014174065991203003,
+   "summed expression": 0.04323006625744087
+  },
+  "bins_exam": 13319,
+  "controls": {
+   "negative_passed": false,
+   "planted_pass_rate": 1.0,
+   "ok": true
+  },
+  "gate": {
+   "real": true,
+   "controls_ok": true,
+   "verdict": "PASS"
+  }
+ }
+}
