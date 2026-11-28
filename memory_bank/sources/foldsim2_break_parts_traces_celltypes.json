@@ -1,0 +1,13 @@
+{
+ "name": "Data for testing the folding simulator harder (G22): 'destroy one part' maps, microscope traces of single chromosomes, three more cell types, repeat maps",
+ "looked_at": "2026-11-28",
+ "what": {
+  "destroy_one_part_maps": "ENCODE intact Hi-C of HCT116 degron lines (Aiden lab; GRCh38, .hic v9; free use): CTCF-degron untreated ENCFF029ISF and 6 h auxin ENCFF661HPC; RNA polymerase II (POLR2A)-degron untreated ENCFF037MOQ and 6 h auxin ENCFF518GOJ. The cohesin (RAD21) degron maps are in encode_hct116_rad21_degron_hic.json. Depths differ up to 5-fold: thin to equal depth before comparing scores.",
+  "more_cell_types": "ENCODE (free use): contact maps GM12878 ENCFF457YAT, IMR-90 ENCFF281ILS, HepG2 ENCFF306VTV; CTCF ChIP-seq peaks GM12878 ENCFF356LIU, IMR-90 ENCFF307XFM, HepG2 ENCFF612ZUY (scanned for the JASPAR MA0139.1 motif); H3K27ac peaks HCT116 ENCFF083ADY (ENCSR000EUT), GM12878 ENCFF367KIF (ENCSR000AKC), IMR-90 ENCFF730BVO (ENCSR002YRE), HepG2 ENCFF886SZT (ENCSR000AMO).",
+  "microscope_traces": "Bintu et al. 2018 Science 362:eaau1783 (doi 10.1126/science.aau1783), tables in github.com/BogdanBintu/ChromatinImaging (Data/): 3D positions (nm) of consecutive 30 kb segments in thousands of single chromosomes: K562 chr21:28-30 Mb (65 segments, 13,997 chromosomes); HCT116 RAD21-degron chr21:34.6-37.1 Mb (83 segments) untreated (11,631) and 6 h auxin (9,526); also IMR-90, A549 and cell-cycle sets (not used). No licence stated: kept local only; the repository holds only medians over chromosomes.",
+  "repeat_maps": "Bond et al. 2023 (GEO GSE214123, local only): per-replicate .hic files of K562 at 0 h. Half A = biological replicates 1 and 2 (6 files), half B = replicates 3 and 4 (4 files)."
+ },
+ "layers": "FOLDSIM2_ENCODE (maps of 88 fixed 3 Mb regions at 25 kb for 7 map sets; CTCF and H3K27ac sites) and FOLDSIM2_LOCAL (K562 half maps; per trace set the median distance between every two segments and the share of single chromosomes with a border at each position). Built by rem/atlas/foldsim2bank.py.",
+ "licence": "ENCODE: free use. Bintu 2018 tables and Bond 2023 GEO files: no licence stated, local only.",
+ "use_for_cellbrain": "G22 (2026-11-28): ceiling of the map score 0.96 from the K562 repeat maps; version 2 of the folding simulator transfers to GM12878 / IMR-90 / HepG2 (0.48 / 0.47 / 0.45); polymerase removal changes folding less than CTCF removal (PASS); the simulator with a part removed does not yet predict the CTCF- or cohesin-depleted map (FAIL x2); 3D model vs microscope: K562 distances r 0.58 and single-chromosome borders r 0.54 (PASS), HCT116 distances 0.02 (FAIL)."
+}

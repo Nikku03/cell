@@ -150,12 +150,16 @@ def build(out, g22dir=None):
              f"Version 1 reached {pct(ce['v1_share'])} of that, version 2 {pct(ce['v2_share'])}."),
         dict(k="2 · Missing parts", v="Zones were the big gap" if yes(U1) else "No clear gain", t=f"Writing the zone rule into the map lifts the match from {U1['median_v1']:.2f} to {U1['median_v2']:.2f}. "
              "Weak stop signs helped a little. Leaky signs, anchors without direction and landing on active DNA did not help and were left out."),
-        dict(k="3 · Destroy a part", v=f"{n_break} of 3 predictions held", t=("Motor removal is predicted. " if yes(B2) else "Motor removal is not predicted well. ") +
-             ("Stop-sign removal is predicted too. " if yes(B1) else "For stop-sign removal only half holds: the whole cell needs the signs, but the cell without CTCF still looks like it has some. ") +
-             ("Removing the gene-reading machine barely changes the fold, as the rules say." if yes(B3) else "The gene-reading machine test did not come out as expected.")),
-        dict(k="4 · Real 3D", v="Matches the microscope where the motor matters" if yes(D3) else "Mixed against the microscope",
-             t=f"A chain of beads and springs gives maps at {D1['median_score']:.2f}. " + (f"In HCT116 its distances match the images at {D3['r_untreated']:.2f} with the motor and {D3['r_auxin']:.2f} without. " if v(D3) != "void" else "") +
-             (f"The K562 image test was {'passed' if yes(D2) else ('not passed' if v(D2) == 'FAIL' else 'not counted')}.")),
+        dict(k="3 · Destroy a part", v=f"{n_break} of 3 predictions held",
+             t=(f"Take the stop signs or the motors out of the simulator and its match with the whole cell falls ({B1['whole_vs_before']:.2f} to {B1['broken_vs_before']:.2f}; {B2['whole_vs_before']:.2f} to {B2['broken_vs_before']:.2f}): both parts are needed. "
+                if B1["before"]["passed"] and B2["before"]["passed"] else "Taking a part out of the simulator did not clearly cost it its match with the whole cell. ") +
+               ("The cells that really lost the part are matched best by the simulator without it. " if B1["after"]["passed"] and B2["after"]["passed"] else
+                "But cells that really lost a part still look a little more like the whole simulator than the broken one, so the broken cell is not predicted yet. ") +
+               ("Removing the gene-reading machine barely changes the fold, as the rules say." if yes(B3) else "The gene-reading machine test did not come out as expected.")),
+        dict(k="4 · Real 3D", v=("Matches the microscope" if yes(D2) and yes(D3) else ("Matches the microscope in K562, not in HCT116" if yes(D2) else "Mixed against the microscope")),
+             t=f"A chain of beads and springs draws maps at {D1['median_score']:.2f}. " +
+               (f"In K562 its distances match the microscope images ({D2['r']:.2f}). " if yes(D2) else f"In K562 its distances do not clearly match the microscope images ({D2['r']:.2f}). ") +
+               (f"In HCT116 they match with the motor ({D3['r_untreated']:.2f}) and less without ({D3['r_auxin']:.2f})." if yes(D3) else f"In HCT116 they do not ({D3['r_untreated']:.2f}).")),
         dict(k="5 · More cells", v=f"{n_cells} of 3 new cell types", t="Same numbers, each cell's own stop signs and activity marks: " + ", ".join(f"{CELLS[k]} {ec[k]['median_score']:.2f}" for k in ec) +
              (f". Single chromosomes put borders where the model does (match {E2['r']:.2f})." if yes(E2) else ".")),
     ]
@@ -191,7 +195,7 @@ def build(out, g22dir=None):
     ]
     fitnote = (f"Version 2 has seven numbers, set once on the odd-numbered chromosomes of K562: a motor reels about {P['processivity_kb']} kb, there is one motor per {P['separation_kb']} kb, "
                f"a strong stop sign holds with probability {P['c']:.1f} and a weak one {P['w']:.1f} times its rank, contact falls with distance to the power {P['alpha']}, "
-               f"and like zones touch more by a factor set by {P['kappa']}. The 3D model adds three: a motor's spring is {P['k_loop']:.0f} times a link of the chain, two beads touch within {P['radius']} links, "
+               f"like zones touch more by a factor set by {P['kappa']}, and a zone is read from the activity mark averaged over {2 * P['smooth'] + 1} bins of 25 kb. The 3D model adds three: a motor's spring is {P['k_loop']:.0f} times a link of the chain, two beads touch within {P['radius']} links, "
                f"and beads of the same zone pull with {P['k_zone']} of a link. Every other cell type uses the same numbers. The simulator is given stop signs and an activity mark and never sees a measured contact. "
                "'Match' is a rank correlation between simulated and measured maps (0 = none, 1 = identical).")
     Z = np.load(os.path.join(g22dir, "foldsim2_page.npz")); labels = ("Best match", "Typical"); cells = []
@@ -215,8 +219,8 @@ def build(out, g22dir=None):
         M = Z[f"trace_{key}_measured_nm"]; n = len(M)
         return dict(label=label, n=n, start_mb=start, chromosomes=info[key]["chromosomes"], r=float(r), meas=dist8(M), sim=dist8(Z[f"trace_{model}_model_nm"]),
                     border_x=[f"{start + i * 0.03:.1f}" for i in range(n)], border_meas=nn(Z[f"trace_{key}_measured_border"]), border_sim=nn(Z[f"trace_{model}_model_border"]))
-    traces = [trace("HCT116, motor present", "hct116_34_untreated", "hct116", D3["r_untreated"], 34.6), trace("HCT116, motor destroyed", "hct116_34_auxin", "hct116", D3["r_auxin"], 34.6),
-              trace("K562", "k562_28", "k562", D2["r"], 28.0)]
+    traces = [trace("K562", "k562_28", "k562", D2["r"], 28.0), trace("HCT116, motor present", "hct116_34_untreated", "hct116", D3["r_untreated"], 34.6),
+              trace("HCT116, motor destroyed", "hct116_34_auxin", "hct116", D3["r_auxin"], 34.6)]
     data = dict(charts=charts, charts2=charts2, sim=sim, steps=steps, fitnote=fitnote,
                 real_intro=("Four cell types the simulator was not tuned on. It gets only that cell's stop-sign map and activity mark. For HCT116 you can destroy a part: the lab removed the cell's stop-sign protein (CTCF) "
                             "or its motor (cohesin), and the same part is switched off in the simulator."),
@@ -225,16 +229,19 @@ def build(out, g22dir=None):
                 up_intro="After version 1 we listed five ways to make the simulator better. Here is what each one gave, on chromosomes kept aside.",
                 micro_intro=("A different kind of measurement: the 3D position of 30 kb pieces of DNA, imaged in thousands of single chromosomes. Each square compares the typical distance between two pieces "
                              "with what is usual for their spacing. The 3D model was never fitted to these images."),
-                micro_note=(void(D3, f"HCT116: the model with motors scores {D3['r_untreated']:.2f} against cells that have their motor and {D3['r_auxin']:.2f} against cells that lost it") + ". " +
-                            void(D2, f"K562: match {D2['r']:.2f}; random sites do as well {pct(D2['p_mc'])} of the time") + ". " +
+                micro_note=(void(D2, f"K562: the model's distances match the measured ones at {D2['r']:.2f}; models with sites at random places do as well {pct(D2['p_mc'])} of the time") + ". " +
+                            void(D3, (f"HCT116: the model matches cells with their motor ({D3['r_untreated']:.2f}) better than cells that lost it ({D3['r_auxin']:.2f})" if yes(D3) else
+                                      f"HCT116: no match ({D3['r_untreated']:.2f} with the motor, {D3['r_auxin']:.2f} without), so this test was not passed")) + ". " +
                             void(E2, f"Borders in single K562 chromosomes match the model's at {E2['r']:.2f}") + ". The line chart shows how often a border falls at each position; "
                             "the two ends count as borders more often in both, because they have fewer neighbours."),
                 open=[f"Loops without stop signs are still not found: the simulator picks them out {pct(bare['v2'])} of the time, and chance is 50%. " +
                       f"{r1['anchors']['at_none'] * 100:.0f}% of loops have no clear stop sign at either end.",
                       f"Version 2 reaches {pct(ce['v2_share'])} of the best possible map score. The rest is finer detail the rules do not cover yet.",
-                      ("After CTCF is destroyed, the real cell still looks more like the whole simulator than like the one without stop signs. Either some stop signs survive the treatment, or borders have a second cause."
-                       if not B1["after"]["passed"] else "Stop-sign removal is predicted in both directions, but the margin is small."),
+                      ("The simulator does not yet predict a broken cell. After CTCF or cohesin is destroyed, the real map still looks a little more like the whole simulator than like the simulator without that part. "
+                       "Likely reasons: the zone part is crude (one activity mark), and some stop signs or motors survive the treatment."
+                       if not (B1["after"]["passed"] and B2["after"]["passed"]) else "Removal of stop signs and motors is predicted in both directions, but the margins are small."),
                       f"The 3D model lets DNA pass through itself. It gets the shape of the contact-with-distance change but only {pct(B4['amplitude_predicted_over_measured'])} of its size.",
+                      *(["In HCT116 the 3D model does not match the microscope distances. A version without zone springs did on practice runs (0.69 with the motor, 0.39 without), so the zone springs look wrong for that region."] if not yes(D3) else []),
                       "The microscope data cover one 2 Mb region per cell line, so those tests are narrow.",
                       "Only the removal experiments prove cause. The other tests show what goes together and in which order.",
                       "Mostly cancer cell lines, and one stimulus for the timing."])

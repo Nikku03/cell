@@ -6857,3 +6857,76 @@ G21 THE FOLDING SIMULATOR: built from the rules, tested against real cells   (fo
   FINAL PRODUCT: the page "How a Chromosome Folds" (rules, an in-browser simulator, measured vs simulated maps, the
   evidence): https://claude.ai/artifact/7gx3z2cYc9fonshGQQmzb7 ; built by rem/atlas/foldpage.py from the results
   files (template rem/atlas/pages/foldpage.html; copy in outputs/foldsim/page/).
+
+G22 FIVE UPGRADES OF THE FOLDING SIMULATOR, each tested   (foldsim.py v2 + 3D chain, foldsim2bank.py, foldsim2test.py)
+    Asked: "But how can we make it better?" -> "Well do all 5": (1) measure the best possible score, (2) add the missing
+    parts, (3) test on 'destroy one part' experiments, (4) make it truly 3D and check against microscope distances,
+    (5) more cells, including single cells; plus a repair of the zone test that was void in G21.
+    New data (foldsim2bank.py): K562 repeat maps (biological replicates 1+2 vs 3+4; Bond 2023, local); ENCODE intact
+    Hi-C of HCT116 with CTCF destroyed and with RNA polymerase II destroyed (6 h auxin each, with their untreated maps);
+    ENCODE maps, CTCF sites and H3K27ac peaks of GM12878, IMR-90, HepG2; microscope traces of single chromosomes (Bintu
+    et al. 2018: 3D positions of 30 kb segments; K562 chr21:28-30 Mb, 13,997 chromosomes; HCT116 chr21:34.6-37.1 Mb with
+    / without cohesin; local only, medians kept).
+    FIT (K562, DEV chromosomes only; a part is kept when map score + loop AUC rises by > 0.005):
+      kept      the ZONE RULE written into the map (contact x exp(0.1 x z_i x z_j); z = H3K27ac signal per 25 kb bin,
+                log, running mean over 9 bins, standardised in the window): map score 0.26 -> 0.46;
+                weak stop signs (CTCF sites without a clear motif, capture 0.3 x rank): 0.48; motor reach 400 kb
+                instead of 200: 0.49 (loop AUC 0.72 -> 0.75).
+      not kept  denser motors (one per 100 kb), leaky stop signs, anchors without direction at H3K27ac sites, motors
+                landing on active DNA: each lowered map score + loop AUC on DEV.
+      3D model  beads (25 kb) joined by springs; each motor a spring between its legs (3x a chain link); beads of the
+                same zone pull weakly (0.001); two beads touch within 1.5 links; solved exactly, no volume exclusion.
+                DEV map score 0.49 (0.41 without zone springs).
+    DEV record before declaring (ledger note G22): a first design (weak signs and motor numbers only, no zones) gave
+    no gain over version 1 on held-out DEV chromosomes and was dropped; that preview also showed the microscope
+    outcomes once (they have no EXAM version: chr21 is a DEV chromosome) -- their pass rules were not changed
+    afterwards, but the 3D model was (zone springs, chosen on Hi-C maps); 'destroy one part' claims were tightened to
+    need both halves; the mirror-image control of D2 was replaced (the measured K562 matrix correlates 0.62 with its
+    own mirror image). Controls-only trial: all 12 ok. Declared, committed, then scored once on EXAM chromosomes.
+  (1) THE CEILING (reported): two repeat maps of the same cells agree at 0.84; the full map is 2.3x deeper, so the best
+         possible score is about 0.96. Version 1 reaches 42% of it, version 2 60%, the 3D model 49%.
+  G22-U1 version 2 draws better maps than version 1 (K562)   PASS: 0.58 vs 0.40 on 27 EXAM regions (gain +0.20, sign
+         p < 0.001). Zones alone 0.48, version-2 motors alone 0.45, everything at random places 0.01.
+  G22-U2 version 2 finds loops better than version 1 (K562)   PASS: a called loop beats the same span moved 100 kb
+         aside 76% vs 73% of the time (gain +0.03 on all 11 EXAM chromosomes). Loops with no clear stop sign at
+         either end (2,913): 54% vs 51%, chance 50% -- still not found.
+  G22-B1 destroy the stop signs: each simulator matches its own cell best (HCT116 CTCF degron)   FAIL: first half holds
+         (whole cell: whole simulator 0.44, simulator without stop signs 0.22; 33 regions, p < 0.001), second half does
+         not (cell without CTCF: simulator without signs 0.33, whole simulator 0.39).
+  G22-B2 destroy the motor: each simulator matches its own cell best (HCT116 RAD21 degron)   FAIL: first half holds
+         (whole cell: whole simulator 0.52, zones-only simulator 0.31), second half does not (cell without cohesin:
+         zones only 0.35, whole simulator 0.37).
+         Reading of B1 + B2: both parts are needed to match the whole cell, and the whole simulator's match drops when
+         the cell loses the part (0.44 -> 0.39; 0.52 -> 0.37), but the simulator with the part removed is not a better
+         picture of the broken cell. The zone part (one activity mark) is too crude to stand alone, and residual CTCF /
+         cohesin after 6 h of auxin cannot be excluded.
+  G22-B3 removing RNA polymerase II changes the folding less than removing CTCF (HCT116)   PASS: the whole simulator's
+         match drops by 0.07 without CTCF and by 0.00 without the polymerase (0.45 -> 0.47); sign p 0.001, 33 regions.
+  G22-B4 the 3D model predicts how contact-with-distance changes when the motor is removed (HCT116)   PASS: curve
+         r 0.83 (bar 0.5): with the motor, more contact at 100-700 kb and less beyond 1.2 Mb. But the predicted change
+         is only 23% the size of the measured one. (Without zone springs the curve ran the other way on DEV: r -0.45.)
+         The measured curve for CTCF removal is a quarter as large as for cohesin removal.
+  G22-D1 the 3D model's maps look like the measured maps (K562)   PASS: 0.47 vs -0.05 with everything at random places
+         (27 regions). Below the 1D rule with the zone factor (0.58).
+  G22-D2 the 3D model predicts distances seen under the microscope (K562, chr21:28-30 Mb)   PASS: r 0.58 between the
+         distance-normalised median-distance matrices; none of 100 random-place simulations did as well (p_MC 0.01).
+         Disclosed: the first design (no zone springs) gave r 0.22, p_MC 0.10 on the same region.
+  G22-D3 under the microscope too, the match needs the motor (HCT116, chr21:34.6-37.1 Mb)   FAIL: r 0.02 with the motor
+         and -0.06 without (difference 0.08, p_MC 0.18). Disclosed: the first design (no zone springs) gave 0.69 and
+         0.39 (p_MC 0.01) on DEV runs -- the zone springs that helped K562 hurt here, so the 3D zone part is not robust.
+  G22-E1 it works in three more cell types with K562's numbers   PASS: GM12878 0.48, IMR-90 0.47, HepG2 0.45 (version 1:
+         0.36, 0.34, 0.32; everything at random places 0.07, 0.08, 0.11); 31-32 EXAM regions each, all p < 0.001.
+  G22-E2 single chromosomes put their borders where the model does (K562 traces)   PASS: r 0.54 between measured and
+         modelled border share per position; p_MC 0.01. (Both profiles rise at the two ends of the region by
+         construction; the random-place simulations share that.)
+  G22-Z1 the zone rule draws the large-scale pattern (repair of G21-S4)   PASS: median r 0.49 on the 11 EXAM
+         chromosomes (the same value as in G21), now with a planted control that passes.
+  IN SIMPLE: 9 of 12 held. The biggest gain came from writing the zone rule into the maps: the match went from 0.40
+  to 0.58, where 0.96 is the best any model could get. The same numbers work in three more cell types. A real 3D
+  model (beads and springs) draws maps almost as well, matches microscope distances and single-chromosome borders in
+  K562, and gets the shape of the motor's effect on contact with distance. What did not hold: we can show that the
+  whole cell needs its stop signs and motors, but we cannot yet predict what the cell looks like after one of them is
+  destroyed; the 3D model fails against the microscope in HCT116; and loops without stop signs are still not found.
+  PAGE: "How a Chromosome Folds", version 2 (same link): https://claude.ai/artifact/7gx3z2cYc9fonshGQQmzb7 -- adds a
+  'destroy a part' viewer (measured cell next to the simulator), the ceiling, the microscope comparison and the new
+  cell types; built by rem/atlas/foldpage.py (copy in outputs/foldsim/page/).
